@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/kwunyeung/desmos/x/dwitter/types"
+	"github.com/kwunyeung/desmos/x/magpie/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"

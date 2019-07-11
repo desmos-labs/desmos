@@ -1,4 +1,4 @@
-package dwitter
+package magpie
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/rs/xid"
 )
 
-// NewHandler returns a handler for "dwitter" type messages.
+// NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
@@ -19,7 +19,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgLike(ctx, keeper, msg)
 		// case MsgUnlike:
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Dwitter Msg type: %v", msg.Type())
+			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

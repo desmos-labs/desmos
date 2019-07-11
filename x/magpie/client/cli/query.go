@@ -6,25 +6,25 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/kwunyeung/desmos/x/dwitter/types"
+	"github.com/kwunyeung/desmos/x/magpie/types"
 	"github.com/spf13/cobra"
 )
 
 // GetQueryCmd adds the query commands
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	dwitterQueryCmd := &cobra.Command{
+	magpieQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the dwitter module",
+		Short:                      "Querying commands for the magpie module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	dwitterQueryCmd.AddCommand(client.GetCommands(
+	magpieQueryCmd.AddCommand(client.GetCommands(
 		GetCmdPost(storeKey, cdc),
 		GetCmdLike(storeKey, cdc),
 		// GetCmdNames(storeKey, cdc),
 	)...)
-	return dwitterQueryCmd
+	return magpieQueryCmd
 }
 
 // GetCmdPost queries a post

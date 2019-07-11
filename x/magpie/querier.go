@@ -1,4 +1,4 @@
-package dwitter
+package magpie
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -7,15 +7,15 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-// query endpoints supported by the dwitter Querier
+// query endpoints supported by the magpie Querier
 const (
 	QueryPost = "post"
 	QueryLike = "like"
 )
 
 // Params for queries:
-// - 'custom/dwitter/post'
-// - 'custom/dwitter/like'
+// - 'custom/magpie/post'
+// - 'custom/magpie/like'
 
 // NewQuerier is the module level router for state queries
 func NewQuerier(keeper Keeper) sdk.Querier {
@@ -26,7 +26,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case QueryLike:
 			return queryLike(ctx, path[1:], req, keeper)
 		default:
-			return nil, sdk.ErrUnknownRequest("unknown dwitter query endpoint")
+			return nil, sdk.ErrUnknownRequest("unknown magpie query endpoint")
 		}
 	}
 }

@@ -13,8 +13,8 @@ func init() {
 
 // RegisterCodec registers concrete types on the Amino codec
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgCreatePost{}, "dwitter/MsgCreatePost", nil)
-	cdc.RegisterConcrete(MsgEditPost{}, "dwitter/MsgEditPost", nil)
-	cdc.RegisterConcrete(MsgLike{}, "dwitter/MsgLike", nil)
-	cdc.RegisterConcrete(MsgUnlike{}, "dwitter/MsgUnlike", nil)
+	cdc.RegisterConcrete(MsgCreatePost{}, "magpie/MsgCreatePost", nil)
+	cdc.RegisterConcrete(MsgEditPost{}, "magpie/MsgEditPost", nil)
+	cdc.RegisterConcrete(MsgLike{}, "magpie/MsgLike", nil)
+	cdc.RegisterConcrete(MsgUnlike{}, "magpie/MsgUnlike", nil)
 }
