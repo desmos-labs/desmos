@@ -11,25 +11,25 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/kwunyeung/desmos/x/dwitter/types"
+	"github.com/kwunyeung/desmos/x/magpie/types"
 )
 
 // GetTxCmd set the tx commands
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	dwitterTxCmd := &cobra.Command{
+	magpieTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "dwitter transaction subcommands",
+		Short:                      "magpie transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	dwitterTxCmd.AddCommand(client.PostCommands(
+	magpieTxCmd.AddCommand(client.PostCommands(
 		GetCmdCreatePost(cdc),
 		GetCmdAddLike(cdc),
 	)...)
 
-	return dwitterTxCmd
+	return magpieTxCmd
 }
 
 // GetCmdCreatePost is the CLI command for creating a post

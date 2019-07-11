@@ -1,4 +1,4 @@
-package dwitter
+package magpie
 
 import (
 	"encoding/json"
@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/kwunyeung/desmos/x/dwitter/client/cli"
-	"github.com/kwunyeung/desmos/x/dwitter/client/rest"
+	"github.com/kwunyeung/desmos/x/magpie/client/cli"
+	"github.com/kwunyeung/desmos/x/magpie/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"

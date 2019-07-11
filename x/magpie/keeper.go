@@ -1,4 +1,4 @@
-package dwitter
+package magpie
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,7 +16,7 @@ type Keeper struct {
 	cdc *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
-// NewKeeper creates new instances of the dwitter Keeper
+// NewKeeper creates new instances of the magpie Keeper
 func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{
 		coinKeeper: coinKeeper,

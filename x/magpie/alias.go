@@ -1,7 +1,7 @@
-package dwitter
+package magpie
 
 import (
-	"github.com/kwunyeung/desmos/x/dwitter/types"
+	"github.com/kwunyeung/desmos/x/magpie/types"
 )
 
 const (

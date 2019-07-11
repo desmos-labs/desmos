@@ -17,7 +17,7 @@ type Post struct {
 	Owner   sdk.AccAddress `json:"owner"`
 }
 
-// NewPost returns an empty Dwitter post
+// NewPost returns an empty Magpie post
 func NewPost() Post {
 	return Post{}
 }

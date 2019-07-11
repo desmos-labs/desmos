@@ -1,4 +1,4 @@
-package dwitter
+package magpie
 
 import (
 	"fmt"

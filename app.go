@@ -22,7 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	dwitter "github.com/kwunyeung/desmos/x/dwitter"
+	magpie "github.com/kwunyeung/desmos/x/magpie"
 )
 
 const (
@@ -44,7 +44,7 @@ var (
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
 		params.AppModuleBasic{},
-		dwitter.AppModule{},
+		magpie.AppModule{},
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		slashing.AppModuleBasic{},
@@ -72,7 +72,7 @@ type desmosApp struct {
 	tkeyStaking      *sdk.TransientStoreKey
 	keyDistr         *sdk.KVStoreKey
 	tkeyDistr        *sdk.TransientStoreKey
-	keyDwitter       *sdk.KVStoreKey
+	keyMagpie        *sdk.KVStoreKey
 	keyParams        *sdk.KVStoreKey
 	tkeyParams       *sdk.TransientStoreKey
 	keySlashing      *sdk.KVStoreKey
@@ -85,7 +85,7 @@ type desmosApp struct {
 	distrKeeper         distr.Keeper
 	feeCollectionKeeper auth.FeeCollectionKeeper
 	paramsKeeper        params.Keeper
-	dwitterKeeper       dwitter.Keeper
+	magpieKeeper        magpie.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -112,7 +112,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		tkeyStaking:      sdk.NewTransientStoreKey(staking.TStoreKey),
 		keyDistr:         sdk.NewKVStoreKey(distr.StoreKey),
 		tkeyDistr:        sdk.NewTransientStoreKey(distr.TStoreKey),
-		keyDwitter:       sdk.NewKVStoreKey(dwitter.StoreKey),
+		keyMagpie:        sdk.NewKVStoreKey(magpie.StoreKey),
 		keyParams:        sdk.NewKVStoreKey(params.StoreKey),
 		tkeyParams:       sdk.NewTransientStoreKey(params.TStoreKey),
 		keySlashing:      sdk.NewKVStoreKey(slashing.StoreKey),
@@ -181,11 +181,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 			app.slashingKeeper.Hooks()),
 	)
 
-	// The DwitterKeeper is the Keeper from the module for this tutorial
+	// The MagpieKeeper is the Keeper from the module for this tutorial
 	// It handles interactions with the namestore
-	app.dwitterKeeper = dwitter.NewKeeper(
+	app.magpieKeeper = magpie.NewKeeper(
 		app.bankKeeper,
-		app.keyDwitter,
+		app.keyMagpie,
 		app.cdc,
 	)
 
@@ -194,7 +194,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper, app.feeCollectionKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		dwitter.NewAppModule(app.dwitterKeeper, app.bankKeeper),
+		magpie.NewAppModule(app.magpieKeeper, app.bankKeeper),
 		distr.NewAppModule(app.distrKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.feeCollectionKeeper, app.distrKeeper, app.accountKeeper),
@@ -211,7 +211,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		auth.ModuleName,
 		bank.ModuleName,
 		slashing.ModuleName,
-		dwitter.ModuleName,
+		magpie.ModuleName,
 		genutil.ModuleName,
 	)
 
@@ -241,7 +241,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		app.keyDistr,
 		app.tkeyDistr,
 		app.keySlashing,
-		app.keyDwitter,
+		app.keyMagpie,
 		app.keyParams,
 		app.tkeyParams,
 	)
