@@ -12,22 +12,34 @@ build_tags := $(strip $(build_tags))
 
 # process linker flags
 
-ldflags = github.com/cosmos/cosmos-sdk/version.Name=desmos \
+ldflags = github.com/cosmos/cosmos-sdk/version.Name=Desmos \
  	-X github.com/cosmos/cosmos-sdk/version.ServerName=desmosd \
  	-X github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli \
  	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
     -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)"
 
+ifneq ($(GOSUM),)
+ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
+endif
+
+ifeq ($(WITH_CLEVELDB),yes)
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
+endif
+ldflags += $(LDFLAGS)
+ldflags := $(strip $(ldflags))
+
+BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
+
 all: lint install
 
 install: go.sum
-		GO111MODULE=on go install $(BUILD_FLAGS) ./cmd/desmosd
-		GO111MODULE=on go install $(BUILD_FLAGS) ./cmd/desmoscli
+		go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmosd
+		go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoscli
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
-		GO111MODULE=on go mod verify
+		go mod verify
 
 lint:
 	golangci-lint run
