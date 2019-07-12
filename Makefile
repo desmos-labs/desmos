@@ -12,9 +12,9 @@ build_tags := $(strip $(build_tags))
 
 # process linker flags
 
-ldflags = github.com/cosmos/cosmos-sdk/version.Name=Desmos \
- 	-X github.com/cosmos/cosmos-sdk/version.ServerName=desmosd \
- 	-X github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli \
+ldflags = -X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" \
+ 	-X "github.com/cosmos/cosmos-sdk/version.ServerName=desmosd" \
+ 	-X "github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli" \
  	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
     -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)"
