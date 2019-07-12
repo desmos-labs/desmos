@@ -1,4 +1,24 @@
+VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+COMMIT := $(shell git log -1 --format='%H')
+export GO111MODULE = on
+
 include Makefile.ledger
+
+ifeq ($(WITH_CLEVELDB),yes)
+  build_tags += gcc
+endif
+build_tags += $(BUILD_TAGS)
+build_tags := $(strip $(build_tags))
+
+# process linker flags
+
+ldflags = github.com/cosmos/cosmos-sdk/version.Name=desmos \
+ 	-X github.com/cosmos/cosmos-sdk/version.ServerName=desmosd \
+ 	-X github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli \
+ 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
+    -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
+  	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)"
+
 all: lint install
 
 install: go.sum
