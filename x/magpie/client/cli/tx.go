@@ -11,6 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/kwunyeung/desmos/x/magpie/types"
 )
 
@@ -39,21 +40,24 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Short: "create a new post",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			if err := cliCtx.EnsureAccountExists(); err != nil {
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+
+			from := cliCtx.GetFromAddress()
+			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], time.Now(), cliCtx.GetFromAddress())
+			msg := types.NewMsgCreatePost(args[0], time.Now(), from)
 			var err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
 
-			cliCtx.PrintResponse = true
+			// cliCtx.PrintResponse = true
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -67,21 +71,24 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 		Short: "like a post",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			if err := cliCtx.EnsureAccountExists(); err != nil {
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+
+			from := cliCtx.GetFromAddress()
+			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			msg := types.NewMsgLike(args[0], time.Now(), cliCtx.GetFromAddress())
+			msg := types.NewMsgLike(args[0], time.Now(), from)
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
 
-			cliCtx.PrintResponse = true
+			// cliCtx.PrintResponse = true
 
 			// return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, msgs)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})

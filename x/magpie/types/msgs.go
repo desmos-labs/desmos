@@ -29,15 +29,15 @@ func NewMsgCreatePost(message string, time time.Time, owner sdk.AccAddress) MsgC
 func (msg MsgCreatePost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreatePost) Type() string { return "create_post" }
+func (msg MsgCreatePost) Type() string { return "create-post" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
 		return sdk.ErrInvalidAddress(msg.Owner.String())
 	}
-	if len(msg.Message) == 0 || !msg.Time.IsZero() {
-		return sdk.ErrUnknownRequest("Post message and/or time cannot be empty")
+	if len(msg.Message) == 0 || msg.Time.IsZero() {
+		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
 	return nil
 }
@@ -74,14 +74,14 @@ func NewMsgEditPost(id string, message string, time time.Time, owner sdk.AccAddr
 func (msg MsgEditPost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgEditPost) Type() string { return "edit_post" }
+func (msg MsgEditPost) Type() string { return "edit-post" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
 		return sdk.ErrInvalidAddress(msg.Owner.String())
 	}
-	if len(msg.Message) == 0 || !msg.Time.IsZero() || len(msg.ID) == 0 {
+	if len(msg.Message) == 0 || msg.Time.IsZero() || len(msg.ID) == 0 {
 		return sdk.ErrUnknownRequest("Post id, message and/or time cannot be empty")
 	}
 	return nil
@@ -124,7 +124,7 @@ func (msg MsgLike) ValidateBasic() sdk.Error {
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(msg.Liker.String())
 	}
-	if len(msg.PostID) == 0 || !msg.Time.IsZero() {
+	if len(msg.PostID) == 0 || msg.Time.IsZero() {
 		return sdk.ErrUnknownRequest("Post id, and/or time cannot be empty")
 	}
 	return nil
@@ -167,7 +167,7 @@ func (msg MsgUnlike) ValidateBasic() sdk.Error {
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(msg.Liker.String())
 	}
-	if len(msg.ID) == 0 || !msg.Time.IsZero() {
+	if len(msg.ID) == 0 || msg.Time.IsZero() {
 		return sdk.ErrUnknownRequest("Like id, and/or time cannot be empty")
 	}
 	return nil
