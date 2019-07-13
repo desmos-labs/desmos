@@ -67,7 +67,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 // GetCmdAddLike is the CLI command for adding a like to a post
 func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "post [post-id]",
+		Use:   "like [post-id]",
 		Short: "like a post",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
