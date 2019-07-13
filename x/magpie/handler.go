@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/kwunyeung/desmos/x/magpie/types"
 	"github.com/rs/xid"
 )
 
@@ -37,8 +38,21 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 		Likes:   0,
 		Owner:   msg.Owner,
 	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
+		),
+	)
+
 	keeper.SetPost(ctx, post)
-	return sdk.Result{}
+	return sdk.Result{
+		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.ID),
+		Events: ctx.EventManager().Events(),
+	}
 }
 
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg MsgEditPost) sdk.Result {
