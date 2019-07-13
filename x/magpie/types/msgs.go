@@ -29,7 +29,7 @@ func NewMsgCreatePost(message string, time time.Time, owner sdk.AccAddress) MsgC
 func (msg MsgCreatePost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreatePost) Type() string { return "create-post" }
+func (msg MsgCreatePost) Type() string { return "create_post" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreatePost) ValidateBasic() sdk.Error {
@@ -74,7 +74,7 @@ func NewMsgEditPost(id string, message string, time time.Time, owner sdk.AccAddr
 func (msg MsgEditPost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgEditPost) Type() string { return "edit-post" }
+func (msg MsgEditPost) Type() string { return "edit_post" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() sdk.Error {

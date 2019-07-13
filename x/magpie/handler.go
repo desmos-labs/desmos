@@ -44,11 +44,24 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-			sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
 		),
 	)
 
-	keeper.SetPost(ctx, post)
+	err, success := keeper.SetPost(ctx, post)
+
+	if err != nil {
+		return err.Result()
+	}
+
+	if success {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeCreatePost,
+				sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
+			),
+		)
+	}
+
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.ID),
 		Events: ctx.EventManager().Events(),
@@ -60,8 +73,33 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg MsgEditPost) sdk.Resu
 		return sdk.ErrUnauthorized("Incorrect Owner").Result() // If not, throw an error
 	}
 
-	keeper.EditPost(ctx, msg.ID, msg.Message)
-	return sdk.Result{}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		),
+	)
+
+	err, success := keeper.EditPost(ctx, msg.ID, msg.Message)
+
+	if err != nil {
+		return err.Result()
+	}
+
+	if success {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeEditPost,
+				sdk.NewAttribute(types.AttributeKeyPostID, msg.ID),
+			),
+		)
+	}
+
+	return sdk.Result{
+		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(msg.ID),
+		Events: ctx.EventManager().Events(),
+	}
 }
 
 func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
@@ -79,8 +117,34 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 		Owner:  msg.Liker,
 	}
 
-	keeper.SetLike(ctx, like.ID, like)
-	return sdk.Result{}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Liker.String()),
+		),
+	)
+
+	err, success := keeper.SetLike(ctx, like.ID, like)
+
+	if err != nil {
+		return err.Result()
+	}
+
+	if success {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeLikePost,
+				sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
+				sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+			),
+		)
+	}
+
+	return sdk.Result{
+		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.ID),
+		Events: ctx.EventManager().Events(),
+	}
 }
 
 //

@@ -21,10 +21,10 @@ const (
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
-	r.HandleFunc(fmt.Sprintf("/%s/posts", storeName), createPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/posts/{postID}", storeName), getPostHandler(cliCtx, storeName)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/%s/like", storeName), likePostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/like/{likeID}", storeName), getLikeHandler(cliCtx, storeName)).Methods("GET")
+	r.HandleFunc("/magpie/posts", createPostHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/magpie/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
+	r.HandleFunc("/magpie/like", likePostHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/magpie/like/{likeID}", getLikeHandler(cliCtx, storeName)).Methods("GET")
 }
 
 // --------------------------------------------------------------------------------------
