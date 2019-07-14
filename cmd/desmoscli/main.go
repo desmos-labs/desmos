@@ -37,7 +37,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "desmoscli",
-		Short: "desmos Client",
+		Short: "Desmos Command Line Interface",
 	}
 
 	// Add --chain-id to persistent flags and mark it required

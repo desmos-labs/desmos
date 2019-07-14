@@ -34,7 +34,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:               "desmosd",
-		Short:             "desmos App Daemon (server)",
+		Short:             "Desmos App Daemon (server)",
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 	// CLI commands to initialize the chain
