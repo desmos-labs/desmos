@@ -187,14 +187,16 @@ func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
 type MsgCreateSession struct {
 	Owner         sdk.AccAddress
 	Created       time.Time
+	Expiry        time.Time
 	Namespace     string
 	ExternalOwner sdk.AccAddress
 }
 
-// NewMsgCreateSession is the contructor of MsgUnlike
+// NewMsgCreateSession is the contructor of MsgCreateSession
 func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner sdk.AccAddress) MsgCreateSession {
 	return MsgCreateSession{
 		Created:       created,
+		Expiry:        created.Add(time.Minute * 10),
 		Owner:         owner,
 		Namespace:     namespace,
 		ExternalOwner: externalOwner,
