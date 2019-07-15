@@ -31,6 +31,7 @@ type (
 	MsgCreateSession = types.MsgCreateSession
 	Post             = types.Post
 	Like             = types.Like
+	Session          = types.Session
 	QueryResPost     = types.QueryResPost
 	QueryResLike     = types.QueryResLike
 	QueryResSession  = types.QueryResSession
