@@ -34,7 +34,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 	post := Post{
 		ID:      xid.New().String(),
 		Message: msg.Message,
-		Time:    msg.Time,
+		Created: msg.Time,
 		Likes:   0,
 		Owner:   msg.Owner,
 	}
@@ -111,10 +111,10 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 	}
 
 	like := Like{
-		ID:     xid.New().String(),
-		Time:   msg.Time,
-		PostID: msg.PostID,
-		Owner:  msg.Liker,
+		ID:      xid.New().String(),
+		Created: msg.Time,
+		PostID:  msg.PostID,
+		Owner:   msg.Liker,
 	}
 
 	ctx.EventManager().EmitEvent(
