@@ -62,7 +62,6 @@ Created: %s`, l.ID, l.Owner, l.PostID, l.Created))
 
 // Session is a struct of a user session
 type Session struct {
-	ID            string         `json:"id"`
 	Owner         sdk.AccAddress `json:"onwer"`
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
@@ -77,10 +76,9 @@ func NewSession() Session {
 
 // implement fmt.Stringer
 func (s Session) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`ID: %s
-Owner: %s
+	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
 Created: %s
 Expiry: %s
 Namespace: %s
-ExternalOwner`, s.ID, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
+ExternalOwner`, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
 }

@@ -56,10 +56,9 @@ type QueryResSession struct {
 }
 
 func (r QueryResSession) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`ID: %s
-Owner: %s
+	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
 Created: %s
 Expiry: %s
 Namesapce: %s
-External Owner: %s`, r.ID, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner))
+External Owner: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner))
 }
