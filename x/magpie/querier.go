@@ -41,7 +41,7 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 		return []byte{}, sdk.ErrUnknownRequest("could not get post")
 	}
 
-	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.Message, post.Owner, post.Time, post.Likes})
+	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.Message, post.Owner, post.Created, post.Modified, post.Likes, post.Namespace, post.ExternalOwner})
 	if err2 != nil {
 		panic("could not marshal result to JSON")
 	}
@@ -57,7 +57,7 @@ func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 		return []byte{}, sdk.ErrUnknownRequest("could not get like")
 	}
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Time})
+	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Created})
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

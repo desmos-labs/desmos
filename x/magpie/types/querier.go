@@ -10,19 +10,25 @@ import (
 
 // QueryResPost is a result struct
 type QueryResPost struct {
-	ID      string         `json:"ID"`
-	Message string         `json:"message"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Time    time.Time      `json:"time"`
-	Likes   uint           `json:"likes"`
+	ID            string         `json:"ID"`
+	Message       string         `json:"message"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Created       time.Time      `json:"created"`
+	Modified      time.Time      `jsond:"modified"`
+	Likes         uint           `json:"likes"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner sdk.AccAddress `json:"external_owner"`
 }
 
 func (r QueryResPost) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 Message: %s
-Time: %s
-Likes: %d`, r.ID, r.Owner, r.Message, r.Time, r.Likes))
+Creatd: %s
+Modified: %s
+Likes: %d
+Namespace: %s
+ExternalOwner: %s`, r.ID, r.Owner, r.Message, r.Created, r.Modified, r.Likes, r.Namespace, r.ExternalOwner))
 }
 
 // QueryResLike is a result struct
