@@ -8,13 +8,18 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Post is a struct of a Dwiiter post
+// Should a new namespace be registered before accepting posting?
+
+// Post is a struct of a Magpie post
 type Post struct {
-	ID      string         `json:"id"`
-	Message string         `json:"message"`
-	Time    time.Time      `json:"time"`
-	Likes   uint           `json:"likes"`
-	Owner   sdk.AccAddress `json:"owner"`
+	ID            string         `json:"id"`
+	Message       string         `json:"message"`
+	Created       time.Time      `json:"created"`
+	Modified      time.Time      `json:"modified"`
+	Likes         uint           `json:"likes"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Namespace     string         `json:"namespace"`      // External service namespace, e.g. cosmos
+	ExternalOwner sdk.AccAddress `json:"external_owner"` // External owner address of the post
 }
 
 // NewPost returns an empty Magpie post
@@ -27,16 +32,19 @@ func (p Post) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 Message: %s
-Time: %s
-Likes: %d`, p.ID, p.Owner, p.Message, p.Time, p.Likes))
+Created: %s
+Modified: %s
+Likes: %d
+Namespace: %s
+External Onwer: %s`, p.ID, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
 }
 
 // Like is a struct of a user like
 type Like struct {
-	ID     string         `json:"id"`
-	PostID string         `json:"post_id"`
-	Time   time.Time      `json:"time"`
-	Owner  sdk.AccAddress `json:"owner"`
+	ID      string         `json:"id"`
+	PostID  string         `json:"post_id"`
+	Created time.Time      `json:"Created"`
+	Owner   sdk.AccAddress `json:"owner"`
 }
 
 // NewLike returns an empty Like
@@ -49,5 +57,30 @@ func (l Like) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 PostID: %s
-Time: %s`, l.ID, l.Owner, l.PostID, l.Time))
+Created: %s`, l.ID, l.Owner, l.PostID, l.Created))
+}
+
+// Session is a struct of a user session
+type Session struct {
+	ID            string         `json:"id"`
+	Owner         sdk.AccAddress `json:"onwer"`
+	Created       time.Time      `json:"created"`
+	Expired       time.Time      `json:"expired"`
+	Namesapce     string         `json:"namespace"`
+	ExternalOwner sdk.AccAddress `json:"external_owner"`
+}
+
+// NewSession return an empty Session
+func NewSession() Session {
+	return Session{}
+}
+
+// implement fmt.Stringer
+func (s Session) String() string {
+	return strings.TrimSpace(fmt.Sprintf(`ID: %s
+Owner: %s
+Created: %s
+Expired: %s
+Namespace: %s
+ExternalOwner`, s.ID, s.Created, s.Expired, s.Namesapce, s.ExternalOwner))
 }
