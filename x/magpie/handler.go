@@ -19,6 +19,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case MsgLike:
 			return handleMsgLike(ctx, keeper, msg)
 		// case MsgUnlike:
+		case MsgCreateSession:
+			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -147,4 +149,31 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 	}
 }
 
-//
+func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession) sdk.Result {
+
+	// query if a previous TX with the same namespace and external owner exists
+	// if a query exists,
+	// see if current time is between creation time and expiry time
+	// if yes, then continue and emit event
+	// else return error
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		),
+	)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreateSession,
+			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner.String()),
+		),
+	)
+
+	return sdk.Result{
+		Events: ctx.EventManager().Events(),
+	}
+}
