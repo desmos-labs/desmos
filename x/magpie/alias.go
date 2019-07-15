@@ -22,12 +22,13 @@ var (
 )
 
 type (
-	MsgCreatePost = types.MsgCreatePost
-	MsgEditPost   = types.MsgEditPost
-	MsgLike       = types.MsgLike
-	MsgUnlike     = types.MsgUnlike
-	Post          = types.Post
-	Like          = types.Like
-	QueryResPost  = types.QueryResPost
-	QueryResLike  = types.QueryResLike
+	MsgCreatePost   = types.MsgCreatePost
+	MsgEditPost     = types.MsgEditPost
+	MsgLike         = types.MsgLike
+	MsgUnlike       = types.MsgUnlike
+	Post            = types.Post
+	Like            = types.Like
+	QueryResPost    = types.QueryResPost
+	QueryResLike    = types.QueryResLike
+	QueryResSession = types.QueryResSession
 )

@@ -24,7 +24,7 @@ func (r QueryResPost) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 Message: %s
-Creatd: %s
+Created: %s
 Modified: %s
 Likes: %d
 Namespace: %s
@@ -45,20 +45,21 @@ Owner: %s
 PostID: %s`, r.ID, r.Owner, r.PostID))
 }
 
-// // Query Result Payload for a resolve query
-// type QueryResResolve struct {
-// 	Value string `json:"value"`
-// }
+// QueryResSession is a result struct
+type QueryResSession struct {
+	ID            string         `json:"ID"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Created       time.Time      `json:"created"`
+	Expiry        time.Time      `json:"Expiry"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner sdk.AccAddress `json:"external_owner"`
+}
 
-// // implement fmt.Stringer
-// func (r QueryResResolve) String() string {
-// 	return r.Value
-// }
-
-// // Query Result Payload for a names query
-// type QueryResNames []string
-
-// // implement fmt.Stringer
-// func (n QueryResNames) String() string {
-// 	return strings.Join(n[:], "\n")
-// }
+func (r QueryResSession) String() string {
+	return strings.TrimSpace(fmt.Sprintf(`ID: %s
+Owner: %s
+Created: %s
+Expiry: %s
+Namesapce: %s
+External Owner: %s`, r.ID, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner))
+}

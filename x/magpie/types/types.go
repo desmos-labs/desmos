@@ -65,7 +65,7 @@ type Session struct {
 	ID            string         `json:"id"`
 	Owner         sdk.AccAddress `json:"onwer"`
 	Created       time.Time      `json:"created"`
-	Expired       time.Time      `json:"expired"`
+	Expiry        time.Time      `json:"expiry"`
 	Namesapce     string         `json:"namespace"`
 	ExternalOwner sdk.AccAddress `json:"external_owner"`
 }
@@ -80,7 +80,7 @@ func (s Session) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 Created: %s
-Expired: %s
+Expiry: %s
 Namespace: %s
-ExternalOwner`, s.ID, s.Created, s.Expired, s.Namesapce, s.ExternalOwner))
+ExternalOwner`, s.ID, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
 }
