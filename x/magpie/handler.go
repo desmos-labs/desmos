@@ -169,7 +169,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		sdk.NewEvent(
 			types.EventTypeCreateSession,
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner.String()),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
 		),
 	)
 

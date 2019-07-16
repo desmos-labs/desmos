@@ -189,11 +189,11 @@ type MsgCreateSession struct {
 	Created       time.Time
 	Expiry        time.Time
 	Namespace     string
-	ExternalOwner sdk.AccAddress
+	ExternalOwner string
 }
 
 // NewMsgCreateSession is the contructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner sdk.AccAddress) MsgCreateSession {
+func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreateSession {
 	return MsgCreateSession{
 		Created:       created,
 		Expiry:        created.Add(time.Minute * 10),
@@ -223,7 +223,7 @@ func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Session namespace cannot be empty")
 	}
 
-	if msg.ExternalOwner.Empty() {
+	if msg.ExternalOwner == "" {
 		return sdk.ErrUnknownRequest("Session external owner cannot be empty")
 	}
 	return nil

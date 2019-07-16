@@ -17,4 +17,5 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgEditPost{}, "magpie/MsgEditPost", nil)
 	cdc.RegisterConcrete(MsgLike{}, "magpie/MsgLike", nil)
 	cdc.RegisterConcrete(MsgUnlike{}, "magpie/MsgUnlike", nil)
+	cdc.RegisterConcrete(MsgCreateSession{}, "magpie/MsgCreateSession", nil)
 }
