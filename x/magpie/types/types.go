@@ -66,7 +66,7 @@ type Session struct {
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
 	Namesapce     string         `json:"namespace"`
-	ExternalOwner sdk.AccAddress `json:"external_owner"`
+	ExternalOwner string `json:"external_owner"`
 }
 
 // NewSession return an empty Session
@@ -80,5 +80,5 @@ func (s Session) String() string {
 Created: %s
 Expiry: %s
 Namespace: %s
-ExternalOwner`, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
+External Owner`, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
 }

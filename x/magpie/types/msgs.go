@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	mputils "github.com/kwunyeung/desmos/x/magpie/utils"
 )
 
 // RouterKey was defined in your key.go file
@@ -185,15 +186,15 @@ func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
-	Owner         sdk.AccAddress
-	Created       time.Time
-	Expiry        time.Time
-	Namespace     string
-	ExternalOwner string
+	Owner         string         `json:"owner"`
+	Created       time.Time      `json:"created"`
+	Expiry        time.Time      `json:"expiry"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string 	`json:"external_owner"`
 }
 
 // NewMsgCreateSession is the contructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreateSession {
+func NewMsgCreateSession(created time.Time, owner string, namespace string, externalOwner string) MsgCreateSession {
 	return MsgCreateSession{
 		Created:       created,
 		Expiry:        created.Add(time.Minute * 10),
@@ -211,8 +212,8 @@ func (msg MsgCreateSession) Type() string { return "create_session" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSession) ValidateBasic() sdk.Error {
-	if msg.Owner.Empty() {
-		return sdk.ErrInvalidAddress(msg.Owner.String())
+	if msg.Owner == "" {
+		return sdk.ErrUnknownRequest("Message owner cannot be empty.")
 	}
 
 	if msg.Created.IsZero() {
@@ -223,6 +224,7 @@ func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Session namespace cannot be empty")
 	}
 
+	// the external signer address doesn't have to be exists on Desmos
 	if msg.ExternalOwner == "" {
 		return sdk.ErrUnknownRequest("Session external owner cannot be empty")
 	}
@@ -236,5 +238,17 @@ func (msg MsgCreateSession) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgCreateSession) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+
+	addresses := []sdk.AccAddress{}
+	// address, err := sdk.AccAddressFromBech32(msg.ExternalOwner.String())
+
+	address, err := mputils.GetAccAddressFromExternal(msg.ExternalOwner, msg.Namespace)
+
+	if err != nil{
+		return nil
+	}
+
+	addresses = append(addresses, address)
+
+	return addresses
 }

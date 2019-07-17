@@ -10,11 +10,11 @@ import (
 
 // QueryResPost is a result struct
 type QueryResPost struct {
-	ID            string         `json:"ID"`
+	ID            string         `json:"id"`
 	Message       string         `json:"message"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Created       time.Time      `json:"created"`
-	Modified      time.Time      `jsond:"modified"`
+	Modified      time.Time      `json:"modified"`
 	Likes         uint           `json:"likes"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner sdk.AccAddress `json:"external_owner"`
@@ -28,12 +28,12 @@ Created: %s
 Modified: %s
 Likes: %d
 Namespace: %s
-ExternalOwner: %s`, r.ID, r.Owner, r.Message, r.Created, r.Modified, r.Likes, r.Namespace, r.ExternalOwner))
+External Owner: %s`, r.ID, r.Owner, r.Message, r.Created, r.Modified, r.Likes, r.Namespace, r.ExternalOwner))
 }
 
 // QueryResLike is a result struct
 type QueryResLike struct {
-	ID     string         `json:"ID"`
+	ID     string         `json:"id"`
 	PostID string         `json:"post_id"`
 	Owner  sdk.AccAddress `json:"owner"`
 	Time   time.Time      `json:"time"`
@@ -47,10 +47,10 @@ PostID: %s`, r.ID, r.Owner, r.PostID))
 
 // QueryResSession is a result struct
 type QueryResSession struct {
-	ID            string         `json:"ID"`
+	ID            string         `json:"id"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Created       time.Time      `json:"created"`
-	Expiry        time.Time      `json:"Expiry"`
+	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner sdk.AccAddress `json:"external_owner"`
 }

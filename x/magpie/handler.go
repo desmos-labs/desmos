@@ -161,7 +161,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner),
 		),
 	)
 

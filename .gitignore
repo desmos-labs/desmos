@@ -9,7 +9,6 @@
 vendor
 .vendor-new
 build
-examples
 
 # IDE
 .idea/
