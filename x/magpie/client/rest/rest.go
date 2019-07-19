@@ -25,6 +25,8 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc("/magpie/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
 	r.HandleFunc("/magpie/like", likePostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/magpie/like/{likeID}", getLikeHandler(cliCtx, storeName)).Methods("GET")
+	r.HandleFunc("/magpie/session", createSessionHander(cliCtx)).Methods("POST")
+	r.HandleFunc("/magpie/session/{sessionID}", getSessionHandler(cliCtx, storeName)).Methods("GET")
 }
 
 // --------------------------------------------------------------------------------------
@@ -154,7 +156,7 @@ type createSessionReq struct {
 	Signature     string       `json:"signature"`
 }
 
-func createSessionHander(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func createSessionHander(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req createSessionReq
 
@@ -183,5 +185,20 @@ func createSessionHander(cliCtx context.CLIContext, storeName string) http.Handl
 		}
 
 		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+func getSessionHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		sessionID := vars["sessionID"]
+
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/session/%s", storeName, sessionID), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
