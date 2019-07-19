@@ -31,9 +31,10 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 // Tx Handler
 
 type createPostReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	Message string       `json:"message"`
-	Owner   string       `json:"owner"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Message  string       `json:"message"`
+	ParentID string       `json:"parent_id"`
+	Owner    string       `json:"owner"`
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -63,7 +64,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		// }
 
 		// create the message
-		msg := types.NewMsgCreatePost(req.Message, time.Now(), addr)
+		msg := types.NewMsgCreatePost(req.Message, req.ParentID, time.Now(), addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -143,14 +144,3 @@ func getLikeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
-
-// func namesHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/names", storeName), nil)
-// 		if err != nil {
-// 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-// 			return
-// 		}
-// 		rest.PostProcessResponse(w, cliCtx, res)
-// 	}
-// }

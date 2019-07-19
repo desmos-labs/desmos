@@ -39,9 +39,9 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create [message]",
+		Use:   "create [message] [parent-post-id]",
 		Short: "create a new post",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -54,7 +54,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], time.Now(), from)
+			msg := types.NewMsgCreatePost(args[0], args[1], time.Now(), from)
 			var err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -148,7 +148,7 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 			// 	return err
 			// }
 
-			msg := types.NewMsgCreateSession(time.Now(), args[0], args[1], args[2])
+			msg := types.NewMsgCreateSession(time.Now(), sdk.AccAddress(args[0]), args[1], args[2])
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err
