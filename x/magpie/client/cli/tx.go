@@ -39,9 +39,9 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create [message] [parent-post-id]",
+		Use:   "create [message] [parent-post-id] [namespace] [external address]",
 		Short: "create a new post",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -54,7 +54,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], args[1], time.Now(), from)
+			msg := types.NewMsgCreatePost(args[0], args[1], time.Now(), from, args[2], args[3])
 			var err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -101,9 +101,9 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 // GetCmdAddLike is the CLI command for adding a like to a post
 func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "like [post-id]",
+		Use:   "like [post-id] [namespace] [external address]",
 		Short: "like a post",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -116,7 +116,7 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgLike(args[0], time.Now(), from)
+			msg := types.NewMsgLike(args[0], time.Now(), from, args[1], args[2])
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

@@ -20,7 +20,7 @@ type Post struct {
 	Likes         uint           `json:"likes"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Namespace     string         `json:"namespace"`      // External service namespace, e.g. cosmos
-	ExternalOwner sdk.AccAddress `json:"external_owner"` // External owner address of the post
+	ExternalOwner string         `json:"external_owner"` // External owner address of the post
 }
 
 // NewPost returns an empty Magpie post
@@ -43,10 +43,12 @@ External Onwer: %s`, p.ID, p.ParentID, p.Owner, p.Message, p.Created, p.Modified
 
 // Like is a struct of a user like
 type Like struct {
-	ID      string         `json:"id"`
-	PostID  string         `json:"post_id"`
-	Created time.Time      `json:"Created"`
-	Owner   sdk.AccAddress `json:"owner"`
+	ID            string         `json:"id"`
+	PostID        string         `json:"post_id"`
+	Created       time.Time      `json:"Created"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 // NewLike returns an empty Like
@@ -59,7 +61,9 @@ func (l Like) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
 PostID: %s
-Created: %s`, l.ID, l.Owner, l.PostID, l.Created))
+Created: %s
+Namespace: %s
+External Owner: %s`, l.ID, l.Owner, l.PostID, l.Created, l.Namespace, l.ExternalOwner))
 }
 
 // Session is a struct of a user session
@@ -68,7 +72,7 @@ type Session struct {
 	Owner         sdk.AccAddress `json:"onwer"`
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
-	Namesapce     string         `json:"namespace"`
+	Namespace     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
 	Signature     string         `json:"signature"`
 }
@@ -85,5 +89,5 @@ Created: %s
 Expiry: %s
 Namespace: %s
 External Owner: %s
-Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner, s.Signature))
+Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namespace, s.ExternalOwner, s.Signature))
 }

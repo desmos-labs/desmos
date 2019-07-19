@@ -18,7 +18,7 @@ type QueryResPost struct {
 	Modified      time.Time      `json:"modified"`
 	Likes         uint           `json:"likes"`
 	Namespace     string         `json:"namespace"`
-	ExternalOwner sdk.AccAddress `json:"external_owner"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 func (r QueryResPost) String() string {
@@ -35,16 +35,21 @@ External Owner: %s`, r.ID, r.ParentID, r.Owner, r.Message, r.Created, r.Modified
 
 // QueryResLike is a result struct
 type QueryResLike struct {
-	ID     string         `json:"id"`
-	PostID string         `json:"post_id"`
-	Owner  sdk.AccAddress `json:"owner"`
-	Time   time.Time      `json:"time"`
+	ID            string         `json:"id"`
+	PostID        string         `json:"post_id"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Created       time.Time      `json:"time"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 func (r QueryResLike) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
 Owner: %s
-PostID: %s`, r.ID, r.Owner, r.PostID))
+PostID: %s
+Created: %s
+Namespace: %s
+External Owner: %s`, r.ID, r.Owner, r.PostID, r.Created, r.Namespace, r.ExternalOwner))
 }
 
 // QueryResSession is a result struct
@@ -54,7 +59,7 @@ type QueryResSession struct {
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
-	ExternalOwner sdk.AccAddress `json:"external_owner"`
+	ExternalOwner string         `json:"external_owner"`
 	Signature     string         `json:"signature"`
 }
 
@@ -62,7 +67,7 @@ func (r QueryResSession) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
 Created: %s
 Expiry: %s
-Namesapce: %s
+Namespace: %s
 External Owner: %s
 Signature: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner, r.Signature))
 }

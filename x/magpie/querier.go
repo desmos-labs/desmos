@@ -57,7 +57,7 @@ func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 		return []byte{}, sdk.ErrUnknownRequest("could not get like")
 	}
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Created})
+	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Created, like.Namespace, like.ExternalOwner})
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}
@@ -65,19 +65,18 @@ func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 	return res, nil
 }
 
-// func queryNames(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-// 	var namesList QueryResNames
+func querySession(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	session := keeper.GetSession(ctx, path[0])
 
-// 	iterator := keeper.GetNamesIterator(ctx)
+	if session.ID == "" {
+		return []byte{}, sdk.ErrUnknownRequest("could not get session")
+	}
 
-// 	for ; iterator.Valid(); iterator.Next() {
-// 		namesList = append(namesList, string(iterator.Key()))
-// 	}
+	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResSession{session.ID, session.Owner, session.Created, session.Expiry, session.Namespace, session.ExternalOwner, session.Signature})
 
-// 	res, err := codec.MarshalJSONIndent(keeper.cdc, namesList)
-// 	if err != nil {
-// 		panic("could not marshal result to JSON")
-// 	}
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
 
-// 	return res, nil
-// }
+	return res, nil
+}

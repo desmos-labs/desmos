@@ -39,7 +39,7 @@ func ValidateGenesis(data GenesisState) error {
 			return fmt.Errorf("Invalid Post: Namespace: %s. Error: Missing Namespace", record.Namespace)
 		}
 
-		if record.ExternalOwner.String() == "" {
+		if record.ExternalOwner == "" {
 			return fmt.Errorf("Invalid Post: ExternalOwner: %s. Error: Missing ExternalOwner", record.ExternalOwner)
 		}
 	}

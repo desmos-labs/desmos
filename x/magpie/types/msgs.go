@@ -11,19 +11,23 @@ const RouterKey = ModuleName
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID string         `json:"parent_id"`
-	Message  string         `json:"message"`
-	Time     time.Time      `json:"time"`
-	Owner    sdk.AccAddress `json:"owner"`
+	ParentID      string         `json:"parent_id"`
+	Message       string         `json:"message"`
+	Created       time.Time      `json:"created"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(parentID string, message string, time time.Time, owner sdk.AccAddress) MsgCreatePost {
+func NewMsgCreatePost(parentID string, message string, time time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreatePost {
 	return MsgCreatePost{
-		ParentID: parentID,
-		Message:  message,
-		Time:     time,
-		Owner:    owner,
+		ParentID:      parentID,
+		Message:       message,
+		Created:       time,
+		Owner:         owner,
+		Namespace:     namespace,
+		ExternalOwner: externalOwner,
 	}
 }
 
@@ -38,7 +42,7 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
 		return sdk.ErrInvalidAddress(msg.Owner.String())
 	}
-	if len(msg.Message) == 0 || msg.Time.IsZero() {
+	if len(msg.Message) == 0 || msg.Created.IsZero() {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
 	return nil
@@ -101,17 +105,21 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 
 // MsgLike defines the MsgLike message
 type MsgLike struct {
-	PostID string         `json:"post_id"`
-	Time   time.Time      `json:"time"`
-	Liker  sdk.AccAddress `json:"liker"`
+	PostID        string         `json:"post_id"`
+	Created       time.Time      `json:"created"`
+	Liker         sdk.AccAddress `json:"liker"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 // NewMsgLike is a constructor function for MsgLike
-func NewMsgLike(postID string, time time.Time, liker sdk.AccAddress) MsgLike {
+func NewMsgLike(postID string, created time.Time, liker sdk.AccAddress, namespace string, externalOwner string) MsgLike {
 	return MsgLike{
-		PostID: postID,
-		Time:   time,
-		Liker:  liker,
+		PostID:        postID,
+		Created:       created,
+		Liker:         liker,
+		Namespace:     namespace,
+		ExternalOwner: externalOwner,
 	}
 }
 
@@ -126,7 +134,7 @@ func (msg MsgLike) ValidateBasic() sdk.Error {
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(msg.Liker.String())
 	}
-	if len(msg.PostID) == 0 || msg.Time.IsZero() {
+	if len(msg.PostID) == 0 || msg.Created.IsZero() {
 		return sdk.ErrUnknownRequest("Post id, and/or time cannot be empty")
 	}
 	return nil

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	restName = "name"
+	restName = "magpie"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
@@ -33,10 +33,12 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 // Tx Handler
 
 type createPostReq struct {
-	BaseReq  rest.BaseReq `json:"base_req"`
-	Message  string       `json:"message"`
-	ParentID string       `json:"parent_id"`
-	Owner    string       `json:"owner"`
+	BaseReq       rest.BaseReq `json:"base_req"`
+	Message       string       `json:"message"`
+	ParentID      string       `json:"parent_id"`
+	Owner         string       `json:"owner"`
+	Namespace     string       `json:"namespace"`
+	ExternalOwner string       `json:"external_owner"`
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -66,7 +68,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		// }
 
 		// create the message
-		msg := types.NewMsgCreatePost(req.Message, req.ParentID, time.Now(), addr)
+		msg := types.NewMsgCreatePost(req.Message, req.ParentID, time.Now(), addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -78,9 +80,11 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type addLikeReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
-	Owner   string       `json:"owner"`
+	BaseReq       rest.BaseReq `json:"base_req"`
+	PostID        string       `json:"post_id"`
+	Owner         string       `json:"owner"`
+	Namespace     string       `json:"namespace"`
+	ExternalOwner string       `json:"external_owner"`
 }
 
 func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -103,7 +107,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		// create the message
-		msg := types.NewMsgLike(req.PostID, time.Now(), addr)
+		msg := types.NewMsgLike(req.PostID, time.Now(), addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

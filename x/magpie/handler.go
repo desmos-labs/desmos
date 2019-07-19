@@ -35,11 +35,13 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 	// 	return sdk.ErrUnauthorized("Incorrect Owner").Result()
 	// }
 	post := Post{
-		ID:      xid.New().String(),
-		Message: msg.Message,
-		Created: msg.Time,
-		Likes:   0,
-		Owner:   msg.Owner,
+		ID:            xid.New().String(),
+		Message:       msg.Message,
+		Created:       msg.Created,
+		Likes:         0,
+		Owner:         msg.Owner,
+		Namespace:     msg.Namespace,
+		ExternalOwner: msg.ExternalOwner,
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -61,6 +63,8 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 			sdk.NewEvent(
 				types.EventTypeCreatePost,
 				sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
+				sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
+				sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
 			),
 		)
 	}
@@ -114,10 +118,12 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 	}
 
 	like := Like{
-		ID:      xid.New().String(),
-		Created: msg.Time,
-		PostID:  msg.PostID,
-		Owner:   msg.Liker,
+		ID:            xid.New().String(),
+		Created:       msg.Created,
+		PostID:        msg.PostID,
+		Owner:         msg.Liker,
+		Namespace:     msg.Namespace,
+		ExternalOwner: msg.ExternalOwner,
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -140,6 +146,8 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 				types.EventTypeLikePost,
 				sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
 				sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
 			),
 		)
 	}
@@ -189,7 +197,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		Created:       msg.Created,
 		Expiry:        msg.Created.Add(time.Minute * 10),
 		Owner:         msg.Owner,
-		Namesapce:     msg.Namespace,
+		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
 		Signature:     msg.Signature,
 	}
