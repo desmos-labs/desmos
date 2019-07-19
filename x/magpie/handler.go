@@ -204,6 +204,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypeCreateSession,
+				sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
 				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
 			),
