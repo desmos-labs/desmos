@@ -41,7 +41,7 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 		return []byte{}, sdk.ErrUnknownRequest("could not get post")
 	}
 
-	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.Message, post.Owner, post.Created, post.Modified, post.Likes, post.Namespace, post.ExternalOwner})
+	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.ParentID, post.Message, post.Owner, post.Created, post.Modified, post.Likes, post.Namespace, post.ExternalOwner})
 	if err2 != nil {
 		panic("could not marshal result to JSON")
 	}

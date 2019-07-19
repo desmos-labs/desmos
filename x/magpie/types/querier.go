@@ -11,6 +11,7 @@ import (
 // QueryResPost is a result struct
 type QueryResPost struct {
 	ID            string         `json:"id"`
+	ParentID      string         `json:"parent_id"`
 	Message       string         `json:"message"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Created       time.Time      `json:"created"`
@@ -22,13 +23,14 @@ type QueryResPost struct {
 
 func (r QueryResPost) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
+ParentID: %s
 Owner: %s
 Message: %s
 Created: %s
 Modified: %s
 Likes: %d
 Namespace: %s
-External Owner: %s`, r.ID, r.Owner, r.Message, r.Created, r.Modified, r.Likes, r.Namespace, r.ExternalOwner))
+External Owner: %s`, r.ID, r.ParentID, r.Owner, r.Message, r.Created, r.Modified, r.Likes, r.Namespace, r.ExternalOwner))
 }
 
 // QueryResLike is a result struct
@@ -53,6 +55,7 @@ type QueryResSession struct {
 	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner sdk.AccAddress `json:"external_owner"`
+	Signature     string         `json:"signature"`
 }
 
 func (r QueryResSession) String() string {
@@ -60,5 +63,6 @@ func (r QueryResSession) String() string {
 Created: %s
 Expiry: %s
 Namesapce: %s
-External Owner: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner))
+External Owner: %s
+Signature: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner, r.Signature))
 }

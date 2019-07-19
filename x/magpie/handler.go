@@ -2,6 +2,7 @@ package magpie
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/kwunyeung/desmos/x/magpie/types"
@@ -165,13 +166,49 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		),
 	)
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateSession,
-			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-		),
-	)
+	// check if the signature is signed by the external address
+	// addr, err := utils.GetAccAddressFromExternal(msg.ExternalOwner, msg.Namespace)
+
+	// if err != nil {
+	// 	return err.Result()
+	// }
+
+	// acc := auth.NewBaseAccountWithAddress(addr)
+
+	// pubkey := acc.GetPubKey()
+
+	// message := fmt.Sprintf(`{"account_number":"0","chain_id":"%s","fee":"","memo":"","msgs":[{"type":"desmos/MsgCreateSession","value":{"created":"%s","external_owner":"%s","namespace":"%s","owner":"%s","signature":null}}],"sequence":"0"}
+	// `, ctx.ChainID(), msg.Created, msg.ExternalOwner, msg.Namespace, msg.Owner.String())
+
+	// if !pubkey.VerifyBytes([]byte(message), []byte(msg.Signature)) {
+	// 	return sdk.ErrUnauthorized("The session signature is not correct.").Result()
+	// }
+
+	session := Session{
+		ID:            xid.New().String(),
+		Created:       msg.Created,
+		Expiry:        msg.Created.Add(time.Minute * 10),
+		Owner:         msg.Owner,
+		Namesapce:     msg.Namespace,
+		ExternalOwner: msg.ExternalOwner,
+		Signature:     msg.Signature,
+	}
+
+	err, success := keeper.SetSession(ctx, session)
+
+	if err != nil {
+		return err.Result()
+	}
+
+	if success {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeCreateSession,
+				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+			),
+		)
+	}
 
 	return sdk.Result{
 		Events: ctx.EventManager().Events(),

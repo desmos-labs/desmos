@@ -1,6 +1,8 @@
 package magpie
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 
@@ -112,4 +114,40 @@ func (k Keeper) GetLike(ctx sdk.Context, id string) Like {
 func (k Keeper) GetPostsIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
 	return sdk.KVStorePrefixIterator(store, []byte{})
+}
+
+func (k Keeper) SetSession(ctx sdk.Context, session Session) (sdk.Error, bool) {
+	if session.Owner.Empty() {
+		return sdk.ErrInvalidAddress("No address found."), false
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(session.ID), k.cdc.MustMarshalBinaryBare(session))
+
+	return nil, true
+}
+
+func (k Keeper) GetSession(ctx sdk.Context, id string) Session {
+	store := ctx.KVStore(k.storeKey)
+	if !store.Has([]byte(id)) {
+		return NewSession()
+	}
+
+	bz := store.Get([]byte(id))
+	var session Session
+	k.cdc.MustUnmarshalBinaryBare(bz, &session)
+	return session
+}
+
+func (k Keeper) EditSession(ctx sdk.Context, id string, expiry time.Time) (sdk.Error, bool) {
+	session := k.GetSession(ctx, id)
+	session.Expiry = expiry
+	err, success := k.SetSession(ctx, session)
+
+	if err != nil {
+		return sdk.ErrUnknownRequest("Cannot update session."), false
+	}
+
+	return nil, success
+
 }

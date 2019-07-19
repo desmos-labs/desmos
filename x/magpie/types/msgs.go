@@ -187,21 +187,23 @@ func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
-	Owner         sdk.AccAddress `json:"owner"`
-	Created       time.Time      `json:"created"`
-	Expiry        time.Time      `json:"expiry"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
+	Owner   sdk.AccAddress `json:"owner"`
+	Created time.Time      `json:"created"`
+	// Expiry        time.Time      `json:"expiry"`
+	Namespace     string `json:"namespace"`
+	ExternalOwner string `json:"external_owner"`
+	Signature     string `json:"signature"`
 }
 
 // NewMsgCreateSession is the contructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreateSession {
+func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string, signature string) MsgCreateSession {
 	return MsgCreateSession{
-		Created:       created,
-		Expiry:        created.Add(time.Minute * 10),
+		Created: created,
+		// Expiry:        created.Add(time.Minute * 10),
 		Owner:         owner,
 		Namespace:     namespace,
 		ExternalOwner: externalOwner,
+		Signature:     signature,
 	}
 }
 
@@ -234,6 +236,7 @@ func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateSession) GetSignBytes() []byte {
+	// fmt.Printf("%x", ModuleCdc.MustMarshalJSON(msg))
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 

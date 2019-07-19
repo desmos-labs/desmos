@@ -64,11 +64,13 @@ Created: %s`, l.ID, l.Owner, l.PostID, l.Created))
 
 // Session is a struct of a user session
 type Session struct {
+	ID            string         `json:"ID"`
 	Owner         sdk.AccAddress `json:"onwer"`
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
 	Namesapce     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
+	Signature     string         `json:"signature"`
 }
 
 // NewSession return an empty Session
@@ -82,5 +84,6 @@ func (s Session) String() string {
 Created: %s
 Expiry: %s
 Namespace: %s
-External Owner`, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner))
+External Owner: %s
+Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namesapce, s.ExternalOwner, s.Signature))
 }

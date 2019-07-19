@@ -144,3 +144,44 @@ func getLikeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
+
+type createSessionReq struct {
+	BaseReq       rest.BaseReq `json:"base_req"`
+	Messenger     string       `json:"messager"`
+	Namespace     string       `json:"namespace"`
+	Owner         string       `json:"owner"`
+	ExternalOwner string       `json:"external_owner"`
+	Signature     string       `json:"signature"`
+}
+
+func createSessionHander(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req createSessionReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		addr, err := sdk.AccAddressFromBech32(req.Owner)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		// create the session
+		msg := types.NewMsgCreateSession(time.Now(), addr, req.Namespace, req.ExternalOwner, req.Signature)
+		err = msg.ValidateBasic()
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
