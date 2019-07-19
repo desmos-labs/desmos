@@ -13,6 +13,7 @@ import (
 // Post is a struct of a Magpie post
 type Post struct {
 	ID            string         `json:"id"`
+	ParentID      string         `json:"parent_id"`
 	Message       string         `json:"message"`
 	Created       time.Time      `json:"created"`
 	Modified      time.Time      `json:"modified"`
@@ -30,13 +31,14 @@ func NewPost() Post {
 // implement fmt.Stringer
 func (p Post) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`ID: %s
+Parent ID: %s
 Owner: %s
 Message: %s
 Created: %s
 Modified: %s
 Likes: %d
 Namespace: %s
-External Onwer: %s`, p.ID, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
+External Onwer: %s`, p.ID, p.ParentID, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
 }
 
 // Like is a struct of a user like
@@ -66,7 +68,7 @@ type Session struct {
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
 	Namesapce     string         `json:"namespace"`
-	ExternalOwner string `json:"external_owner"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 // NewSession return an empty Session

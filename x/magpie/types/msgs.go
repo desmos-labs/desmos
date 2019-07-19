@@ -4,7 +4,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	mputils "github.com/kwunyeung/desmos/x/magpie/utils"
 )
 
 // RouterKey was defined in your key.go file
@@ -12,17 +11,19 @@ const RouterKey = ModuleName
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	Message string         `json:"message"`
-	Time    time.Time      `json:"time"`
-	Owner   sdk.AccAddress `json:"owner"`
+	ParentID string         `json:"parent_id"`
+	Message  string         `json:"message"`
+	Time     time.Time      `json:"time"`
+	Owner    sdk.AccAddress `json:"owner"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(message string, time time.Time, owner sdk.AccAddress) MsgCreatePost {
+func NewMsgCreatePost(parentID string, message string, time time.Time, owner sdk.AccAddress) MsgCreatePost {
 	return MsgCreatePost{
-		Message: message,
-		Time:    time,
-		Owner:   owner,
+		ParentID: parentID,
+		Message:  message,
+		Time:     time,
+		Owner:    owner,
 	}
 }
 
@@ -186,15 +187,15 @@ func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
-	Owner         string         `json:"owner"`
+	Owner         sdk.AccAddress `json:"owner"`
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
-	ExternalOwner string 	`json:"external_owner"`
+	ExternalOwner string         `json:"external_owner"`
 }
 
 // NewMsgCreateSession is the contructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner string, namespace string, externalOwner string) MsgCreateSession {
+func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreateSession {
 	return MsgCreateSession{
 		Created:       created,
 		Expiry:        created.Add(time.Minute * 10),
@@ -212,7 +213,7 @@ func (msg MsgCreateSession) Type() string { return "create_session" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSession) ValidateBasic() sdk.Error {
-	if msg.Owner == "" {
+	if msg.Owner.Empty() {
 		return sdk.ErrUnknownRequest("Message owner cannot be empty.")
 	}
 
@@ -238,17 +239,17 @@ func (msg MsgCreateSession) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgCreateSession) GetSigners() []sdk.AccAddress {
+	// addresses := []sdk.AccAddress{}
+	// // address, err := sdk.AccAddressFromBech32(msg.ExternalOwner.String())
 
-	addresses := []sdk.AccAddress{}
-	// address, err := sdk.AccAddressFromBech32(msg.ExternalOwner.String())
+	// address, err := mputils.GetAccAddressFromExternal(msg.ExternalOwner, msg.Namespace)
 
-	address, err := mputils.GetAccAddressFromExternal(msg.ExternalOwner, msg.Namespace)
+	// if err != nil{
+	// 	return nil
+	// }
 
-	if err != nil{
-		return nil
-	}
+	// addresses = append(addresses, address)
 
-	addresses = append(addresses, address)
-
-	return addresses
+	// return addresses
+	return []sdk.AccAddress{msg.Owner}
 }
