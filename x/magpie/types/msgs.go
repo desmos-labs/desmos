@@ -20,10 +20,10 @@ type MsgCreatePost struct {
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(parentID string, message string, time time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreatePost {
+func NewMsgCreatePost(message string, parentID string, time time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreatePost {
 	return MsgCreatePost{
-		ParentID:      parentID,
 		Message:       message,
+		ParentID:      parentID,
 		Created:       time,
 		Owner:         owner,
 		Namespace:     namespace,
@@ -42,8 +42,11 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
 		return sdk.ErrInvalidAddress(msg.Owner.String())
 	}
-	if len(msg.Message) == 0 || msg.Created.IsZero() {
+	if len(msg.Message) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	}
+	if msg.Created.IsZero() {
+		return sdk.ErrUnknownRequest("The created time cannot be empty")
 	}
 	return nil
 }
