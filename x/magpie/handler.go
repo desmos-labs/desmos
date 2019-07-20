@@ -199,13 +199,13 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 	pubkey := secp256k1.PubKeySecp256k1(pkBytes33)
 
 	message := fmt.Sprintf(`{"account_number":"0","chain_id":"%s","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":[{"type":"desmos/MsgCreateSession","value":{"created":"%s","external_owner":"%s","namespace":"%s","owner":"%s","pubkey":"%s",signature":null}}],"sequence":"0"}`,
-		ctx.ChainID(), msg.Created, msg.ExternalOwner, msg.Namespace, msg.Pubkey, msg.Owner.String())
+		ctx.ChainID(), msg.Created.Format(time.RFC3339), msg.ExternalOwner, msg.Namespace, msg.Owner.String(), msg.Pubkey)
 
 	// message := `{"account_number":"0","chain_id":"tesmos-1","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":[{"type":"desmos/MsgCreateSession","value":{"created":"2019-07-19T10:08:05.161Z","external_owner":"cosmos10505nl7yftsme9jk2glhjhta7w0475uv6pzj70","namespace":"cosmos","owner":"desmos186vmnukgywe9hwr233x8jcyvavm7zpven4jxlr","signature":null}}],"sequence":"0"}`
 	sig, _ := base64.StdEncoding.DecodeString(msg.Signature)
 
 	if !pubkey.VerifyBytes([]byte(message), sig) {
-		return sdk.ErrUnauthorized("The session signature is not correct.").Result()
+		return sdk.ErrUnauthorized("The session signature is not correct. " + message).Result()
 		// panic("The session signature is not correct.")
 	}
 
