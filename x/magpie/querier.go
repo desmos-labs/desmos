@@ -72,7 +72,7 @@ func querySession(ctx sdk.Context, path []string, req abci.RequestQuery, keeper 
 		return []byte{}, sdk.ErrUnknownRequest("could not get session")
 	}
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResSession{session.ID, session.Owner, session.Created, session.Expiry, session.Namespace, session.ExternalOwner, session.Signature})
+	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResSession{session.ID, session.Owner, session.Created, session.Expiry, session.Namespace, session.ExternalOwner, session.Pubkey, session.Signature})
 
 	if err != nil {
 		panic("could not marshal result to JSON")

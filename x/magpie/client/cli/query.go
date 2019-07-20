@@ -22,7 +22,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	magpieQueryCmd.AddCommand(client.GetCommands(
 		GetCmdPost(storeKey, cdc),
 		GetCmdLike(storeKey, cdc),
-		// GetCmdNames(storeKey, cdc),
+		GetCmdSession(storeKey, cdc),
 	)...)
 	return magpieQueryCmd
 }
@@ -62,11 +62,35 @@ func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/like/%s", queryRoute, likeID), nil)
 			if err != nil {
-				fmt.Printf("could not resolve whois - %s \n", likeID)
+				fmt.Printf("could not find like - %s \n", likeID)
 				return nil
 			}
 
 			var out types.Like
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+// GetCmdSession queries a session by ID
+func GetCmdSession(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "session [id]",
+		Short: "Get the session by ID",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			sessionsID := args[0]
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/session/%s", queryRoute, sessionsID), nil)
+
+			if err != nil {
+				fmt.Printf("could not find session - %s \n", sessionsID)
+				return nil
+			}
+
+			var out types.Session
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

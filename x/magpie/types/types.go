@@ -74,6 +74,7 @@ type Session struct {
 	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
+	Pubkey        string         `json:"pubkey"`
 	Signature     string         `json:"signature"`
 }
 
@@ -89,5 +90,6 @@ Created: %s
 Expiry: %s
 Namespace: %s
 External Owner: %s
-Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namespace, s.ExternalOwner, s.Signature))
+Pubkey: %s
+Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namespace, s.ExternalOwner, s.Pubkey, s.Signature))
 }

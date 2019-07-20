@@ -133,9 +133,9 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateSession is the CLI command for creating a session for create post
 func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-session [namespace] [external address] [external signer signature]",
+		Use:   "create-session [namespace] [external address] [pubkey] [external signer signature]",
 		Short: "record a session for external service to post a magpie",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -148,7 +148,9 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 			// 	return err
 			// }
 
-			msg := types.NewMsgCreateSession(time.Now(), from, args[0], args[1], args[2])
+			// pubkey, _ := sdk.GetAccPubKeyBech32(args[2])
+
+			msg := types.NewMsgCreateSession(time.Now(), from, args[0], args[1], args[2], args[3])
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

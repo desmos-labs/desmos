@@ -195,22 +195,22 @@ func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
-	Owner   sdk.AccAddress `json:"owner"`
-	Created time.Time      `json:"created"`
-	// Expiry        time.Time      `json:"expiry"`
-	Namespace     string `json:"namespace"`
-	ExternalOwner string `json:"external_owner"`
-	Signature     string `json:"signature"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Created       time.Time      `json:"created"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
+	Pubkey        string         `json:"pubkey"`
+	Signature     string         `json:"signature"`
 }
 
 // NewMsgCreateSession is the contructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string, signature string) MsgCreateSession {
+func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string, pubkey string, signature string) MsgCreateSession {
 	return MsgCreateSession{
-		Created: created,
-		// Expiry:        created.Add(time.Minute * 10),
+		Created:       created,
 		Owner:         owner,
 		Namespace:     namespace,
 		ExternalOwner: externalOwner,
+		Pubkey:        pubkey,
 		Signature:     signature,
 	}
 }
@@ -233,6 +233,10 @@ func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 
 	if len(msg.Namespace) == 0 {
 		return sdk.ErrUnknownRequest("Session namespace cannot be empty")
+	}
+
+	if len(msg.Pubkey) == 0 {
+		return sdk.ErrUnknownRequest("Signer pubkey cannot be empty")
 	}
 
 	// the external signer address doesn't have to be exists on Desmos

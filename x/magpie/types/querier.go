@@ -60,6 +60,7 @@ type QueryResSession struct {
 	Expiry        time.Time      `json:"expiry"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
+	Pubkey        string         `json:"pubkey"`
 	Signature     string         `json:"signature"`
 }
 
@@ -69,5 +70,6 @@ Created: %s
 Expiry: %s
 Namespace: %s
 External Owner: %s
-Signature: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner, r.Signature))
+Pubkey: %s
+Signature: %s`, r.Owner, r.Created, r.Expiry, r.Namespace, r.ExternalOwner, r.Pubkey, r.Signature))
 }

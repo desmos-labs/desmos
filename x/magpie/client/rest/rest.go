@@ -157,6 +157,7 @@ type createSessionReq struct {
 	Namespace     string       `json:"namespace"`
 	Owner         string       `json:"owner"`
 	ExternalOwner string       `json:"external_owner"`
+	Pubkey        string       `json:"pubkey"`
 	Signature     string       `json:"signature"`
 }
 
@@ -181,7 +182,7 @@ func createSessionHander(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		// create the session
-		msg := types.NewMsgCreateSession(time.Now(), addr, req.Namespace, req.ExternalOwner, req.Signature)
+		msg := types.NewMsgCreateSession(time.Now(), addr, req.Namespace, req.ExternalOwner, req.Pubkey, req.Signature)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
