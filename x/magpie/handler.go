@@ -39,6 +39,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 	// }
 	post := Post{
 		ID:            xid.New().String(),
+		ParentID:      msg.ParentID,
 		Message:       msg.Message,
 		Created:       msg.Created,
 		Likes:         0,
