@@ -213,7 +213,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 	session := Session{
 		ID:            xid.New().String(),
 		Created:       msg.Created,
-		Expiry:        msg.Created.Add(time.Minute * 10),
+		Expiry:        msg.Created.Add(time.Minute * 14400),
 		Owner:         msg.Owner,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
