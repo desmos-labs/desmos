@@ -17,6 +17,7 @@ const (
 	AttributeKeySessionID     = "session_id"
 	AttributeKeyNamespace     = "namespace"
 	AttributeKeyExternalOwner = "external_owner"
+	AttributeKeyExpiry        = "expiry"
 
 	AttributeValueCategory = ModuleName
 )

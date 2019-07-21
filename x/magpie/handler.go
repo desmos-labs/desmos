@@ -234,6 +234,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 				sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
 				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+				sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
 			),
 		)
 	}
