@@ -28,6 +28,9 @@ func main() {
 
 	config := sdk.GetConfig()
 	app.SetBech32AddressPrefixes(config)
+
+	// 852 is the international dialing code of Hong Kong
+	config.SetCoinType(852)
 	config.Seal()
 
 	ctx := server.NewDefaultContext()
