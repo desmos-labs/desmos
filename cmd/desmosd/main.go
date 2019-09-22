@@ -17,8 +17,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	app "github.com/kwunyeung/desmos"
 	abci "github.com/tendermint/tendermint/abci/types"
-	dbm "github.com/tendermint/tendermint/libs/db"
 	tmtypes "github.com/tendermint/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
 )
 
 func main() {
@@ -30,6 +30,7 @@ func main() {
 	app.SetBech32AddressPrefixes(config)
 
 	// 852 is the international dialing code of Hong Kong
+	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 	config.SetCoinType(852)
 	config.Seal()
 
