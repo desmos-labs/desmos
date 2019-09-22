@@ -6,9 +6,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
-	dbm "github.com/tendermint/tendermint/libs/db"
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -51,6 +51,16 @@ var (
 		slashing.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
+
+	// module account permissions
+	maccPerms = map[string][]string{
+		auth.FeeCollectorName: nil,
+		distr.ModuleName:      nil,
+		// mint.ModuleName:           {supply.Minter},
+		staking.BondedPoolName:    {supply.Burner, supply.Staking},
+		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
+		// gov.ModuleName:            {supply.Burner},
+	}
 )
 
 // MakeCodec generates the necessary codecs for Amino
@@ -59,6 +69,7 @@ func MakeCodec() *codec.Codec {
 	ModuleBasics.RegisterCodec(cdc)
 	sdk.RegisterCodec(cdc)
 	codec.RegisterCrypto(cdc)
+	codec.RegisterEvidences(cdc)
 	return cdc
 }
 
@@ -94,30 +105,30 @@ type desmosApp struct {
 }
 
 // NewDesmosApp is a constructor function for desmosApp
-func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
+func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *desmosApp {
 
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc))
+	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 
 	// Here you initialize your application with the store keys it requires
 	var app = &desmosApp{
-		BaseApp:        bApp,
-		cdc:            cdc,
+		BaseApp: bApp,
+		cdc:     cdc,
 
-		keyMain:        sdk.NewKVStoreKey(bam.MainStoreKey),
-		keyAccount:     sdk.NewKVStoreKey(auth.StoreKey),
-		keySupply:      sdk.NewKVStoreKey(supply.StoreKey),
-		keyStaking:     sdk.NewKVStoreKey(staking.StoreKey),
-		tkeyStaking:    sdk.NewTransientStoreKey(staking.TStoreKey),
-		keyDistr:       sdk.NewKVStoreKey(distr.StoreKey),
-		tkeyDistr:      sdk.NewTransientStoreKey(distr.TStoreKey),
-		keyMagpie:      sdk.NewKVStoreKey(magpie.StoreKey),
-		keyParams:      sdk.NewKVStoreKey(params.StoreKey),
-		tkeyParams:     sdk.NewTransientStoreKey(params.TStoreKey),
-		keySlashing:    sdk.NewKVStoreKey(slashing.StoreKey),
+		keyMain:     sdk.NewKVStoreKey(bam.MainStoreKey),
+		keyAccount:  sdk.NewKVStoreKey(auth.StoreKey),
+		keySupply:   sdk.NewKVStoreKey(supply.StoreKey),
+		keyStaking:  sdk.NewKVStoreKey(staking.StoreKey),
+		tkeyStaking: sdk.NewTransientStoreKey(staking.TStoreKey),
+		keyDistr:    sdk.NewKVStoreKey(distr.StoreKey),
+		// tkeyDistr:   sdk.NewTransientStoreKey(distr.TStoreKey),
+		keyMagpie:   sdk.NewKVStoreKey(magpie.StoreKey),
+		keyParams:   sdk.NewKVStoreKey(params.StoreKey),
+		tkeyParams:  sdk.NewTransientStoreKey(params.TStoreKey),
+		keySlashing: sdk.NewKVStoreKey(slashing.StoreKey),
 	}
 
 	// The ParamsKeeper handles parameter storage for the application
@@ -129,13 +140,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
 	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 
-	// account permissions
-	maccPerms := map[string][]string{
-		auth.FeeCollectorName:     []string{supply.Basic},
-		distr.ModuleName:          []string{supply.Basic},
-		staking.BondedPoolName:    []string{supply.Burner, supply.Staking},
-		staking.NotBondedPoolName: []string{supply.Burner, supply.Staking},
-	}
+	// // account permissions
+	// maccPerms := map[string][]string{
+	// 	auth.FeeCollectorName:     []string{supply.Basic},
+	// 	distr.ModuleName:          []string{supply.Basic},
+	// 	staking.BondedPoolName:    []string{supply.Burner, supply.Staking},
+	// 	staking.NotBondedPoolName: []string{supply.Burner, supply.Staking},
+	// }
 
 	// The AccountKeeper handles address -> account lookups
 	app.accountKeeper = auth.NewAccountKeeper(
@@ -150,14 +161,14 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		app.accountKeeper,
 		bankSupspace,
 		bank.DefaultCodespace,
+		app.ModuleAccountAddrs(),
 	)
 
 	app.supplyKeeper = supply.NewKeeper(
-		app.cdc, 
-		app.keySupply, 
-		app.accountKeeper, 
-		app.bankKeeper, 
-		supply.DefaultCodespace, 
+		app.cdc,
+		app.keySupply,
+		app.accountKeeper,
+		app.bankKeeper,
 		maccPerms,
 	)
 	// The FeeCollectionKeeper collects transaction fees and renders them to the fee distribution module
@@ -181,6 +192,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB) *desmosApp {
 		app.supplyKeeper,
 		distr.DefaultCodespace,
 		auth.FeeCollectorName,
+		app.ModuleAccountAddrs(),
 	)
 
 	app.slashingKeeper = slashing.NewKeeper(
@@ -307,6 +319,25 @@ func (app *desmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci
 }
 func (app *desmosApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keyMain)
+}
+
+// ModuleAccountAddrs returns all the app's module account addresses.
+func (app *desmosApp) ModuleAccountAddrs() map[string]bool {
+	modAccAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		modAccAddrs[supply.NewModuleAddress(acc).String()] = true
+	}
+
+	return modAccAddrs
+}
+
+// GetMaccPerms returns a mapping of the application's module account permissions.
+func GetMaccPerms() map[string][]string {
+	modAccPerms := make(map[string][]string)
+	for k, v := range maccPerms {
+		modAccPerms[k] = v
+	}
+	return modAccPerms
 }
 
 //_________________________________________________________
