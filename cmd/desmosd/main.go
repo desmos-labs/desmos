@@ -30,6 +30,7 @@ func main() {
 	app.SetBech32AddressPrefixes(config)
 
 	// 852 is the international dialing code of Hong Kong
+	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 	config.SetCoinType(852)
 	config.Seal()
 
