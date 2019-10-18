@@ -23,7 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	magpie "github.com/kwunyeung/desmos/x/magpie"
+	"github.com/kwunyeung/desmos/x/magpie"
 )
 
 const (
@@ -32,13 +32,13 @@ const (
 )
 
 var (
-	// default home directories for the application CLI
+	// Default home directories for the application CLI
 	DefaultCLIHome = os.ExpandEnv("$HOME/.desmoscli")
 
-	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored
+	// DefaultNodeHome sets the folder where the application data and configuration will be stored
 	DefaultNodeHome = os.ExpandEnv("$HOME/.desmosd")
 
-	// ModuleBasicManager is in charge of setting up basic module elemnets
+	// ModuleBasicManager is in charge of setting up basic module elements
 	ModuleBasics = module.NewBasicManager(
 		genaccounts.AppModuleBasic{},
 		genutil.AppModuleBasic{},
@@ -52,7 +52,7 @@ var (
 		supply.AppModuleBasic{},
 	)
 
-	// module account permissions
+	// Module account permissions
 	maccPerms = map[string][]string{
 		auth.FeeCollectorName: nil,
 		distr.ModuleName:      nil,
@@ -133,6 +133,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 
 	// The ParamsKeeper handles parameter storage for the application
 	app.paramsKeeper = params.NewKeeper(app.cdc, app.keyParams, app.tkeyParams, params.DefaultCodespace)
+
 	// Set specific supspaces
 	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	bankSupspace := app.paramsKeeper.Subspace(bank.DefaultParamspace)
@@ -171,6 +172,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		app.bankKeeper,
 		maccPerms,
 	)
+
 	// The FeeCollectionKeeper collects transaction fees and renders them to the fee distribution module
 	// app.feeCollectionKeeper = auth.NewFeeCollectionKeeper(cdc, app.keyFeeCollection)
 
@@ -203,7 +205,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		slashing.DefaultCodespace,
 	)
 
-	// register the staking hooks
+	// Register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
@@ -211,8 +213,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 			app.slashingKeeper.Hooks()),
 	)
 
-	// The MagpieKeeper is the Keeper from the module for this tutorial
-	// It handles interactions with the namestore
+	// The magpieKeeper is our keeper
 	app.magpieKeeper = magpie.NewKeeper(
 		app.bankKeeper,
 		app.keyMagpie,
@@ -295,10 +296,6 @@ func SetBech32AddressPrefixes(config *sdk.Config) {
 
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
 type GenesisState map[string]json.RawMessage
-
-func NewDefaultGenesisState() GenesisState {
-	return ModuleBasics.DefaultGenesis()
-}
 
 func (app *desmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState

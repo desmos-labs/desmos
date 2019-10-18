@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/keeper"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -68,14 +69,14 @@ func DefaultGenesisState() GenesisState {
 	}
 }
 
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, record := range data.Posts {
 		keeper.SetPost(ctx, record)
 	}
 	return []abci.ValidatorUpdate{}
 }
 
-func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 	var posts []Post
 	iterator := k.GetPostsIterator(ctx)
 	for ; iterator.Valid(); iterator.Next() {

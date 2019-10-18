@@ -8,7 +8,7 @@ const (
 	EventTypeUnlikePost    = "unlike"
 	EventTypeCreateSession = "create_session"
 
-	AttributeKeyPostOnwer     = "power_owner"
+	AttributeKeyPostOwner     = "power_owner"
 	AttributeKeyLiker         = "liker"
 	AttributeKeyCreated       = "created"
 	AttributeKeyModified      = "modified"

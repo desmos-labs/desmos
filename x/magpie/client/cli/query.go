@@ -6,7 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/kwunyeung/desmos/x/magpie/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/keeper"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +44,7 @@ func GetCmdPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.QueryResPost
+			var out keeper.QueryResPost
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
