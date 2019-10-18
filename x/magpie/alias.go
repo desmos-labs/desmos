@@ -1,7 +1,8 @@
 package magpie
 
 import (
-	"github.com/kwunyeung/desmos/x/magpie/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/keeper"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 )
 
 const (
@@ -11,28 +12,46 @@ const (
 )
 
 var (
+	// Keeper methods
+	NewKeeper  = keeper.NewKeeper
+	NewHandler = keeper.NewHandler
+	NewQuerier = keeper.NewQuerier
+
+	// Codec
+	ModuleCdc     = types.ModuleCdc
+	RegisterCodec = types.RegisterCodec
+
+	// Types
+	NewLike    = types.NewLike
+	NewPost    = types.NewPost
+	NewSession = types.NewSession
+
+	// Msgs
 	NewMsgCreatePost = types.NewMsgCreatePost
 	NewMsgEditPost   = types.NewMsgEditPost
 	NewMsgLike       = types.NewMsgLike
 	NewMsgUnlike     = types.NewMsgUnlike
 	NewMsgSession    = types.NewMsgCreateSession
-	NewLike          = types.NewLike
-	NewPost          = types.NewPost
-	NewSession       = types.NewSession
-	ModuleCdc        = types.ModuleCdc
-	RegisterCodec    = types.RegisterCodec
 )
 
 type (
+	// Keeper
+	Keeper = keeper.Keeper
+
+	// Types
+	Post    = types.Post
+	Like    = types.Like
+	Session = types.Session
+
+	// Msgs
 	MsgCreatePost    = types.MsgCreatePost
 	MsgEditPost      = types.MsgEditPost
 	MsgLike          = types.MsgLike
 	MsgUnlike        = types.MsgUnlike
 	MsgCreateSession = types.MsgCreateSession
-	Post             = types.Post
-	Like             = types.Like
-	Session          = types.Session
-	QueryResPost     = types.QueryResPost
-	QueryResLike     = types.QueryResLike
-	QueryResSession  = types.QueryResSession
+
+	// Queries
+	QueryResPost    = keeper.QueryResPost
+	QueryResLike    = keeper.QueryResLike
+	QueryResSession = keeper.QueryResSession
 )

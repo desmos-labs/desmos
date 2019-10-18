@@ -6,9 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// RouterKey was defined in your key.go file
-const RouterKey = ModuleName
-
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
 	ParentID      string         `json:"parent_id"`
