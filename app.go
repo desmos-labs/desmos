@@ -73,22 +73,13 @@ func MakeCodec() *codec.Codec {
 	return cdc
 }
 
-type desmosApp struct {
+type DesmosApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
-	// Keys to access the substores
-	keyMain     *sdk.KVStoreKey
-	keyAccount  *sdk.KVStoreKey
-	keySupply   *sdk.KVStoreKey
-	keyStaking  *sdk.KVStoreKey
-	tkeyStaking *sdk.TransientStoreKey
-	keyDistr    *sdk.KVStoreKey
-	tkeyDistr   *sdk.TransientStoreKey
-	keyMagpie   *sdk.KVStoreKey
-	keyParams   *sdk.KVStoreKey
-	tkeyParams  *sdk.TransientStoreKey
-	keySlashing *sdk.KVStoreKey
+	// sdk keys to access the substores
+	keys  map[string]*sdk.KVStoreKey
+	tkeys map[string]*sdk.TransientStoreKey
 
 	// Keepers
 	accountKeeper  auth.AccountKeeper
@@ -104,8 +95,8 @@ type desmosApp struct {
 	mm *module.Manager
 }
 
-// NewDesmosApp is a constructor function for desmosApp
-func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *desmosApp {
+// NewDesmosApp is a constructor function for DesmosApp
+func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *DesmosApp {
 
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
@@ -113,26 +104,27 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
 	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 
+	keys := sdk.NewKVStoreKeys(
+		// Basics
+		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
+		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
+		params.StoreKey,
+
+		// Custom modules
+		magpie.StoreKey,
+	)
+	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
+
 	// Here you initialize your application with the store keys it requires
-	var app = &desmosApp{
+	var app = &DesmosApp{
 		BaseApp: bApp,
 		cdc:     cdc,
-
-		keyMain:     sdk.NewKVStoreKey(bam.MainStoreKey),
-		keyAccount:  sdk.NewKVStoreKey(auth.StoreKey),
-		keySupply:   sdk.NewKVStoreKey(supply.StoreKey),
-		keyStaking:  sdk.NewKVStoreKey(staking.StoreKey),
-		tkeyStaking: sdk.NewTransientStoreKey(staking.TStoreKey),
-		keyDistr:    sdk.NewKVStoreKey(distr.StoreKey),
-		// tkeyDistr:   sdk.NewTransientStoreKey(distr.TStoreKey),
-		keyMagpie:   sdk.NewKVStoreKey(magpie.StoreKey),
-		keyParams:   sdk.NewKVStoreKey(params.StoreKey),
-		tkeyParams:  sdk.NewTransientStoreKey(params.TStoreKey),
-		keySlashing: sdk.NewKVStoreKey(slashing.StoreKey),
+		keys:    keys,
+		tkeys:   tkeys,
 	}
 
 	// The ParamsKeeper handles parameter storage for the application
-	app.paramsKeeper = params.NewKeeper(app.cdc, app.keyParams, app.tkeyParams, params.DefaultCodespace)
+	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tkeys[params.TStoreKey], params.DefaultCodespace)
 
 	// Set specific supspaces
 	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
@@ -141,68 +133,33 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
 	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 
-	// // account permissions
-	// maccPerms := map[string][]string{
-	// 	auth.FeeCollectorName:     []string{supply.Basic},
-	// 	distr.ModuleName:          []string{supply.Basic},
-	// 	staking.BondedPoolName:    []string{supply.Burner, supply.Staking},
-	// 	staking.NotBondedPoolName: []string{supply.Burner, supply.Staking},
-	// }
-
 	// The AccountKeeper handles address -> account lookups
-	app.accountKeeper = auth.NewAccountKeeper(
-		app.cdc,
-		app.keyAccount,
-		authSubspace,
-		auth.ProtoBaseAccount,
-	)
+	app.accountKeeper = auth.NewAccountKeeper(app.cdc, keys[auth.StoreKey], authSubspace, auth.ProtoBaseAccount)
 
 	// The BankKeeper allows you perform sdk.Coins interactions
-	app.bankKeeper = bank.NewBaseKeeper(
-		app.accountKeeper,
-		bankSupspace,
-		bank.DefaultCodespace,
-		app.ModuleAccountAddrs(),
-	)
+	app.bankKeeper = bank.NewBaseKeeper(app.accountKeeper, bankSupspace, bank.DefaultCodespace, app.ModuleAccountAddrs())
 
-	app.supplyKeeper = supply.NewKeeper(
-		app.cdc,
-		app.keySupply,
-		app.accountKeeper,
-		app.bankKeeper,
-		maccPerms,
-	)
+	app.supplyKeeper = supply.NewKeeper(app.cdc, keys[supply.StoreKey], app.accountKeeper, app.bankKeeper, maccPerms)
 
 	// The FeeCollectionKeeper collects transaction fees and renders them to the fee distribution module
 	// app.feeCollectionKeeper = auth.NewFeeCollectionKeeper(cdc, app.keyFeeCollection)
 
 	// The staking keeper
 	stakingKeeper := staking.NewKeeper(
-		app.cdc,
-		app.keyStaking,
-		app.tkeyStaking,
-		app.supplyKeeper,
-		stakingSubspace,
-		staking.DefaultCodespace,
+		app.cdc, keys[staking.StoreKey], tkeys[staking.StoreKey],
+		app.supplyKeeper, stakingSubspace, staking.DefaultCodespace,
 	)
 
 	app.distrKeeper = distr.NewKeeper(
-		app.cdc,
-		app.keyDistr,
-		distrSubspace,
-		&stakingKeeper,
-		app.supplyKeeper,
-		distr.DefaultCodespace,
-		auth.FeeCollectorName,
+		app.cdc, keys[distr.StoreKey], distrSubspace,
+		&stakingKeeper, app.supplyKeeper,
+		distr.DefaultCodespace, auth.FeeCollectorName,
 		app.ModuleAccountAddrs(),
 	)
 
 	app.slashingKeeper = slashing.NewKeeper(
-		app.cdc,
-		app.keySlashing,
-		&stakingKeeper,
-		slashingSubspace,
-		slashing.DefaultCodespace,
+		app.cdc, keys[slashing.StoreKey], &stakingKeeper,
+		slashingSubspace, slashing.DefaultCodespace,
 	)
 
 	// Register the staking hooks
@@ -216,7 +173,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 	// The magpieKeeper is our keeper
 	app.magpieKeeper = magpie.NewKeeper(
 		app.bankKeeper,
-		app.keyMagpie,
+		keys[magpie.StoreKey],
 		app.cdc,
 	)
 
@@ -265,21 +222,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		),
 	)
 
-	app.MountStores(
-		app.keyMain,
-		app.keyAccount,
-		app.keySupply,
-		app.keyStaking,
-		app.tkeyStaking,
-		app.keyDistr,
-		app.tkeyDistr,
-		app.keySlashing,
-		app.keyMagpie,
-		app.keyParams,
-		app.tkeyParams,
-	)
+	app.MountKVStores(keys)
+	app.MountTransientStores(tkeys)
 
-	err := app.LoadLatestVersion(app.keyMain)
+	err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
 	if err != nil {
 		cmn.Exit(err.Error())
 	}
@@ -297,7 +243,7 @@ func SetBech32AddressPrefixes(config *sdk.Config) {
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
 type GenesisState map[string]json.RawMessage
 
-func (app *desmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 
 	err := app.cdc.UnmarshalJSON(req.AppStateBytes, &genesisState)
@@ -308,18 +254,18 @@ func (app *desmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) ab
 	return app.mm.InitGenesis(ctx, genesisState)
 }
 
-func (app *desmosApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *DesmosApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
-func (app *desmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *DesmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
-func (app *desmosApp) LoadHeight(height int64) error {
-	return app.LoadVersion(height, app.keyMain)
+func (app *DesmosApp) LoadHeight(height int64) error {
+	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *desmosApp) ModuleAccountAddrs() map[string]bool {
+func (app *DesmosApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[supply.NewModuleAddress(acc).String()] = true
@@ -339,7 +285,7 @@ func GetMaccPerms() map[string][]string {
 
 //_________________________________________________________
 
-func (app *desmosApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
+func (app *DesmosApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
 ) (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 
 	// as if they could withdraw from the start of the next block
