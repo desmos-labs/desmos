@@ -53,22 +53,18 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		),
 	)
 
-	err, success := keeper.SetPost(ctx, post)
-
-	if err != nil {
+	if err := keeper.SetPost(ctx, post); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeCreatePost,
-				sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreatePost,
+			sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.ID),
@@ -89,20 +85,16 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 		),
 	)
 
-	err, success := keeper.EditPost(ctx, msg.ID, msg.Message)
-
-	if err != nil {
+	if err := keeper.EditPost(ctx, msg.ID, msg.Message); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeEditPost,
-				sdk.NewAttribute(types.AttributeKeyPostID, msg.ID),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeEditPost,
+			sdk.NewAttribute(types.AttributeKeyPostID, msg.ID),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(msg.ID),
@@ -135,23 +127,19 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 		),
 	)
 
-	err, success := keeper.SetLike(ctx, like.ID, like)
-
-	if err != nil {
+	if err := keeper.SetLike(ctx, like.ID, like); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeLikePost,
-				sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
-				sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeLikePost,
+			sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
+			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.ID),
@@ -218,23 +206,19 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		Signature:     msg.Signature,
 	}
 
-	err, success := keeper.SetSession(ctx, session)
-
-	if err != nil {
+	if err := keeper.SetSession(ctx, session); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeCreateSession,
-				sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-				sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreateSession,
+			sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+			sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
+		),
+	)
 
 	return sdk.Result{
 		Events: ctx.EventManager().Events(),
