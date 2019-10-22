@@ -13,7 +13,7 @@ type GenesisState struct {
 	Likes []Like `json:"likes"`
 }
 
-func NewGenesisState(posts []Post) GenesisState {
+func NewGenesisState() GenesisState {
 	return GenesisState{Posts: nil}
 }
 
@@ -71,7 +71,7 @@ func DefaultGenesisState() GenesisState {
 
 func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, record := range data.Posts {
-		keeper.SetPost(ctx, record)
+		keeper.SavePost(ctx, record)
 	}
 	return []abci.ValidatorUpdate{}
 }
@@ -82,7 +82,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 	for ; iterator.Valid(); iterator.Next() {
 		id := string(iterator.Key())
 		var post Post
-		post = k.GetPost(ctx, id)
+		post, _ = k.GetPost(ctx, id)
 		posts = append(posts, post)
 	}
 

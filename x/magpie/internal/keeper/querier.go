@@ -31,12 +31,11 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 // nolint: unparam
-func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	id := path[0]
 
-	post := keeper.GetPost(ctx, id)
-
-	if post.String() == "" {
+	post, found := keeper.GetPost(ctx, id)
+	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get post")
 	}
 
@@ -49,10 +48,9 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 }
 
 // nolint: unparam
-func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	like := keeper.GetLike(ctx, path[0])
-
-	if like.String() == "" {
+func queryLike(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	like, found := keeper.GetLike(ctx, path[0])
+	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get like")
 	}
 
@@ -64,10 +62,9 @@ func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 	return res, nil
 }
 
-func querySession(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	session := keeper.GetSession(ctx, path[0])
-
-	if session.ID == "" {
+func querySession(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	session, found := keeper.GetSession(ctx, path[0])
+	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get session")
 	}
 
