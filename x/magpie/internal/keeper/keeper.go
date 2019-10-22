@@ -26,15 +26,15 @@ func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) 
 	}
 }
 
-func (k Keeper) SetPost(ctx sdk.Context, post types.Post) (sdk.Error, bool) {
+func (k Keeper) SetPost(ctx sdk.Context, post types.Post) sdk.Error {
 	if post.Owner.Empty() {
-		return sdk.ErrInvalidAddress("No address found."), false
+		return sdk.ErrInvalidAddress("No address found.")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(post.ID), k.cdc.MustMarshalBinaryBare(post))
 
-	return nil, true
+	return nil
 }
 
 func (k Keeper) GetPost(ctx sdk.Context, id string) types.Post {
@@ -49,53 +49,45 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) types.Post {
 	return post
 }
 
-func (k Keeper) EditPost(ctx sdk.Context, id string, message string) (sdk.Error, bool) {
+func (k Keeper) EditPost(ctx sdk.Context, id string, message string) sdk.Error {
 	post := k.GetPost(ctx, id)
 	post.Message = message
-	err, success := k.SetPost(ctx, post)
 
-	if err != nil {
-		return sdk.ErrUnknownRequest("Cannot save post."), false
+	if err := k.SetPost(ctx, post); err != nil {
+		return err
 	}
 
-	return nil, success
+	return nil
 }
 
 func (k Keeper) GetPostOwner(ctx sdk.Context, id string) sdk.AccAddress {
 	return k.GetPost(ctx, id).Owner
 }
 
-// func (k Keeper) GetPostsByOwner(ctx sdk.Context, owner sdk.AccAddress) []Post {
-// 	matchingPosts := []Post{}
-// 	return matchingPosts
-// }
-
 func (k Keeper) GetPostLikes(ctx sdk.Context, id string) uint {
 	return k.GetPost(ctx, id).Likes
 }
 
-func (k Keeper) AddPostLike(ctx sdk.Context, id string) {
+func (k Keeper) AddPostLike(ctx sdk.Context, id string) sdk.Error {
 	post := k.GetPost(ctx, id)
 	post.Likes = post.Likes + 1
-	k.SetPost(ctx, post)
+	return k.SetPost(ctx, post)
 }
 
-func (k Keeper) SetLike(ctx sdk.Context, id string, like types.Like) (sdk.Error, bool) {
+func (k Keeper) SetLike(ctx sdk.Context, id string, like types.Like) sdk.Error {
 	if like.Owner.Empty() || (len(like.PostID) == 0) {
-		return sdk.ErrUnauthorized("Liker and post id must exist."), false
+		return sdk.ErrUnauthorized("Liker and post id must exist.")
 	}
 
 	post := k.GetPost(ctx, like.PostID)
 	if len(post.ID) == 0 {
-		return sdk.ErrUnknownRequest("The post requested does not exist."), false
+		return sdk.ErrUnknownRequest("The post requested does not exist.")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(id), k.cdc.MustMarshalBinaryBare(like))
 
-	k.AddPostLike(ctx, like.PostID)
-
-	return nil, true
+	return k.AddPostLike(ctx, like.PostID)
 }
 
 func (k Keeper) GetLike(ctx sdk.Context, id string) types.Like {
@@ -115,15 +107,15 @@ func (k Keeper) GetPostsIterator(ctx sdk.Context) sdk.Iterator {
 	return sdk.KVStorePrefixIterator(store, []byte{})
 }
 
-func (k Keeper) SetSession(ctx sdk.Context, session types.Session) (sdk.Error, bool) {
+func (k Keeper) SetSession(ctx sdk.Context, session types.Session) sdk.Error {
 	if session.Owner.Empty() {
-		return sdk.ErrInvalidAddress("No address found."), false
+		return sdk.ErrInvalidAddress("No address found.")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(session.ID), k.cdc.MustMarshalBinaryBare(session))
 
-	return nil, true
+	return nil
 }
 
 func (k Keeper) GetSession(ctx sdk.Context, id string) types.Session {
@@ -138,15 +130,9 @@ func (k Keeper) GetSession(ctx sdk.Context, id string) types.Session {
 	return session
 }
 
-func (k Keeper) EditSession(ctx sdk.Context, id string, expiry time.Time) (sdk.Error, bool) {
+func (k Keeper) EditSession(ctx sdk.Context, id string, expiry time.Time) sdk.Error {
 	session := k.GetSession(ctx, id)
 	session.Expiry = expiry
-	err, success := k.SetSession(ctx, session)
 
-	if err != nil {
-		return sdk.ErrUnknownRequest("Cannot update session."), false
-	}
-
-	return nil, success
-
+	return k.SetSession(ctx, session)
 }
