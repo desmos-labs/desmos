@@ -58,7 +58,7 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-// MsgEditPost defines the EditPost message
+// MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
 	ID      string         `json:"id"`
 	Message string         `json:"message"`

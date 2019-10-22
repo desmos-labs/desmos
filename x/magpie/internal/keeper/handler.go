@@ -53,7 +53,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		),
 	)
 
-	if err := keeper.SetPost(ctx, post); err != nil {
+	if err := keeper.SavePost(ctx, post); err != nil {
 		return err.Result()
 	}
 
@@ -73,8 +73,14 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 }
 
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
-	if !msg.Owner.Equals(keeper.GetPostOwner(ctx, msg.ID)) { // Checks if the the msg sender is the same as the current owner
-		return sdk.ErrUnauthorized("Incorrect Owner").Result() // If not, throw an error
+	existing, found := keeper.GetPost(ctx, msg.ID)
+	if found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.ID)).Result()
+	}
+
+	// checks if the the msg sender is the same as the current owner
+	if !msg.Owner.Equals(existing.Owner) {
+		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -85,7 +91,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 		),
 	)
 
-	if err := keeper.EditPost(ctx, msg.ID, msg.Message); err != nil {
+	if err := keeper.EditPostMessage(ctx, existing, msg.Message); err != nil {
 		return err.Result()
 	}
 
@@ -103,10 +109,8 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 }
 
 func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result {
-
-	post := keeper.GetPost(ctx, msg.PostID)
-
-	if msg.PostID != post.ID {
+	post, found := keeper.GetPost(ctx, msg.PostID)
+	if !found {
 		return sdk.ErrUnknownRequest("Post doesn't exist").Result()
 	}
 
@@ -127,7 +131,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 		),
 	)
 
-	if err := keeper.SetLike(ctx, like.ID, like); err != nil {
+	if err := keeper.SavePostLike(ctx, post, like); err != nil {
 		return err.Result()
 	}
 
@@ -206,7 +210,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		Signature:     msg.Signature,
 	}
 
-	if err := keeper.SetSession(ctx, session); err != nil {
+	if err := keeper.SaveSession(ctx, session); err != nil {
 		return err.Result()
 	}
 
