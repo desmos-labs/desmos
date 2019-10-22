@@ -53,7 +53,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		),
 	)
 
-	if err := keeper.SavePost(ctx, post); err != nil {
+	if err := keeper.CreatePost(ctx, post); err != nil {
 		return err.Result()
 	}
 
