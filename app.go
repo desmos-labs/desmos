@@ -172,9 +172,9 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 
 	// The magpieKeeper is our keeper
 	app.magpieKeeper = magpie.NewKeeper(
-		app.bankKeeper,
-		keys[magpie.StoreKey],
 		app.cdc,
+		keys[magpie.StoreKey],
+		app.bankKeeper,
 	)
 
 	app.mm = module.NewManager(
