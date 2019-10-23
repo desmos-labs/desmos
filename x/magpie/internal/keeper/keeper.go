@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -90,12 +91,21 @@ func (k Keeper) getLikeStoreKey(id string) []byte {
 
 // SavePostLike allows to save a new like to the given post
 func (k Keeper) SavePostLike(ctx sdk.Context, post types.Post, like types.Like) sdk.Error {
-	if like.Owner.Empty() || (len(like.PostID) == 0) {
+	if like.Owner.Empty() || len(strings.TrimSpace(like.PostID)) == 0 {
 		return sdk.ErrUnauthorized("Liker and post id must exist.")
 	}
 
-	// store the like
 	store := ctx.KVStore(k.storeKey)
+
+	// Check for any pre-existing likes with the same id
+	if store.Has(k.getLikeStoreKey(like.ID)) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.ID))
+	}
+
+	// Set the like data
+	like.PostID = post.ID
+
+	// store the like
 	store.Set(k.getLikeStoreKey(like.ID), k.cdc.MustMarshalBinaryBare(like))
 
 	// update the likes counter
@@ -125,10 +135,21 @@ func (k Keeper) getSessionStoreKey(id string) []byte {
 	return []byte(types.SessionStorePrefix + id)
 }
 
+// CreateSession allows to create a new session checking that no other session
+// with the same id already exist
+func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error {
+	// Check for any previously existing session
+	if _, found := k.GetSession(ctx, session.ID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.ID))
+	}
+
+	return k.SaveSession(ctx, session)
+}
+
 // SaveSession allows to save a session inside the given context
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
 	if session.Owner.Empty() {
-		return sdk.ErrInvalidAddress("No address found.")
+		return sdk.ErrInvalidAddress("Owner address cannot be empty")
 	}
 
 	store := ctx.KVStore(k.storeKey)

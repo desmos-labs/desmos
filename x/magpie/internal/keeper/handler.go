@@ -210,7 +210,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		Signature:     msg.Signature,
 	}
 
-	if err := keeper.SaveSession(ctx, session); err != nil {
+	if err := keeper.CreateSession(ctx, session); err != nil {
 		return err.Result()
 	}
 

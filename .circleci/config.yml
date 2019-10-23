@@ -1,0 +1,87 @@
+version: 2.1
+
+executors:
+  golang:
+    docker:
+      - image: circleci/golang:1.12.7
+
+commands:
+  make:
+    parameters:
+      description:
+        type: string
+      target:
+        type: string
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - restore_cache:
+          name: "Restore source code cache"
+          keys:
+            - go-src-v1-{{ .Revision }}
+      - checkout
+      - restore_cache:
+          name: "Restore go modules cache"
+          keys:
+            - go-mod-v2-{{ checksum "go.sum" }}
+      - run:
+          name: << parameters.description >>
+          command: |
+            make << parameters.target >>
+
+
+jobs:
+  setup_dependencies:
+    executor: golang
+    steps:
+      - checkout
+      - restore_cache:
+          name: "Restore go modules cache"
+          keys:
+            - go-mod-v2-{{ checksum "go.sum" }}
+      - run:
+          name: Cache go modules
+          command: make go-mod-cache
+      - run:
+          name: Build
+          command: make build
+      - run:
+          name: Git garbage collection
+          command: git gc
+      - save_cache:
+          name: "Save go modules cache"
+          key: go-mod-v2-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - save_cache:
+          name: "Save source code cache"
+          key: go-src-v1-{{ .Revision }}
+          paths:
+            - ".git"
+
+  test:
+    executor: golang
+    steps:
+      - make:
+          target: test
+          description: "Test all"
+
+workflows:
+  version: 2
+  test-suite:
+    jobs:
+      - setup_dependencies:
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore:
+                - gh-pages
+      - test:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+          requires:
+            - setup_dependencies
