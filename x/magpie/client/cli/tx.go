@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/kwunyeung/desmos/x/magpie/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 )
 
 // GetTxCmd set the tx commands

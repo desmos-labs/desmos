@@ -1,4 +1,4 @@
-package magpie
+package keeper
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kwunyeung/desmos/x/magpie/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 	"github.com/rs/xid"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
@@ -16,14 +16,13 @@ import (
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
-		case MsgCreatePost:
+		case types.MsgCreatePost:
 			return handleMsgCreatePost(ctx, keeper, msg)
-		case MsgEditPost:
+		case types.MsgEditPost:
 			return handleMsgEditPost(ctx, keeper, msg)
-		case MsgLike:
+		case types.MsgLike:
 			return handleMsgLike(ctx, keeper, msg)
-		// case MsgUnlike:
-		case MsgCreateSession:
+		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
@@ -33,11 +32,9 @@ func NewHandler(keeper Keeper) sdk.Handler {
 }
 
 // Handle creating a new post
-func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.Result {
-	// if !msg.Owner.Equals(keeper.GetOwner(ctx, msg.Name)) {
-	// 	return sdk.ErrUnauthorized("Incorrect Owner").Result()
-	// }
-	post := Post{
+func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
+
+	post := types.Post{
 		ID:            xid.New().String(),
 		ParentID:      msg.ParentID,
 		Message:       msg.Message,
@@ -51,7 +48,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
 		),
 	)
@@ -79,7 +76,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg MsgCreatePost) sdk.
 	}
 }
 
-func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg MsgEditPost) sdk.Result {
+func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
 	if !msg.Owner.Equals(keeper.GetPostOwner(ctx, msg.ID)) { // Checks if the the msg sender is the same as the current owner
 		return sdk.ErrUnauthorized("Incorrect Owner").Result() // If not, throw an error
 	}
@@ -87,7 +84,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg MsgEditPost) sdk.Resu
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
 		),
 	)
@@ -113,7 +110,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg MsgEditPost) sdk.Resu
 	}
 }
 
-func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
+func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result {
 
 	post := keeper.GetPost(ctx, msg.PostID)
 
@@ -121,7 +118,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 		return sdk.ErrUnknownRequest("Post doesn't exist").Result()
 	}
 
-	like := Like{
+	like := types.Like{
 		ID:            xid.New().String(),
 		Created:       msg.Created,
 		PostID:        msg.PostID,
@@ -133,7 +130,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Liker.String()),
 		),
 	)
@@ -162,7 +159,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg MsgLike) sdk.Result {
 	}
 }
 
-func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession) sdk.Result {
+func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateSession) sdk.Result {
 
 	// query if a previous TX with the same namespace and external owner exists
 	// if a query exists,
@@ -173,7 +170,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
 		),
 	)
@@ -210,7 +207,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg MsgCreateSession
 		// panic("The session signature is not correct.")
 	}
 
-	session := Session{
+	session := types.Session{
 		ID:            xid.New().String(),
 		Created:       msg.Created,
 		Expiry:        msg.Created.Add(time.Minute * 14400),

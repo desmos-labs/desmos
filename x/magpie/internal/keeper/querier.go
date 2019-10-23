@@ -1,8 +1,7 @@
-package magpie
+package keeper
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -38,7 +37,7 @@ func queryPost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 	post := keeper.GetPost(ctx, id)
 
 	if post.String() == "" {
-		return []byte{}, sdk.ErrUnknownRequest("could not get post")
+		return nil, sdk.ErrUnknownRequest("could not get post")
 	}
 
 	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.ParentID, post.Message, post.Owner, post.Created, post.Modified, post.Likes, post.Namespace, post.ExternalOwner})
@@ -54,7 +53,7 @@ func queryLike(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 	like := keeper.GetLike(ctx, path[0])
 
 	if like.String() == "" {
-		return []byte{}, sdk.ErrUnknownRequest("could not get like")
+		return nil, sdk.ErrUnknownRequest("could not get like")
 	}
 
 	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Created, like.Namespace, like.ExternalOwner})
@@ -69,7 +68,7 @@ func querySession(ctx sdk.Context, path []string, req abci.RequestQuery, keeper 
 	session := keeper.GetSession(ctx, path[0])
 
 	if session.ID == "" {
-		return []byte{}, sdk.ErrUnknownRequest("could not get session")
+		return nil, sdk.ErrUnknownRequest("could not get session")
 	}
 
 	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResSession{session.ID, session.Owner, session.Created, session.Expiry, session.Namespace, session.ExternalOwner, session.Pubkey, session.Signature})

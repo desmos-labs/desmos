@@ -1,10 +1,11 @@
-package magpie
+package keeper
 
 import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -12,10 +13,8 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	coinKeeper bank.Keeper
-
-	storeKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-
-	cdc *codec.Codec // The wire codec for binary encoding/decoding.
+	storeKey   sdk.StoreKey // Unexposed key to access store from sdk.Context
+	cdc        *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
@@ -27,7 +26,7 @@ func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) 
 	}
 }
 
-func (k Keeper) SetPost(ctx sdk.Context, post Post) (sdk.Error, bool) {
+func (k Keeper) SetPost(ctx sdk.Context, post types.Post) (sdk.Error, bool) {
 	if post.Owner.Empty() {
 		return sdk.ErrInvalidAddress("No address found."), false
 	}
@@ -38,14 +37,14 @@ func (k Keeper) SetPost(ctx sdk.Context, post Post) (sdk.Error, bool) {
 	return nil, true
 }
 
-func (k Keeper) GetPost(ctx sdk.Context, id string) Post {
+func (k Keeper) GetPost(ctx sdk.Context, id string) types.Post {
 	store := ctx.KVStore(k.storeKey)
 	if !store.Has([]byte(id)) {
-		return NewPost()
+		return types.NewPost()
 	}
 
 	bz := store.Get([]byte(id))
-	var post Post
+	var post types.Post
 	k.cdc.MustUnmarshalBinaryBare(bz, &post)
 	return post
 }
@@ -81,7 +80,7 @@ func (k Keeper) AddPostLike(ctx sdk.Context, id string) {
 	k.SetPost(ctx, post)
 }
 
-func (k Keeper) SetLike(ctx sdk.Context, id string, like Like) (sdk.Error, bool) {
+func (k Keeper) SetLike(ctx sdk.Context, id string, like types.Like) (sdk.Error, bool) {
 	if like.Owner.Empty() || (len(like.PostID) == 0) {
 		return sdk.ErrUnauthorized("Liker and post id must exist."), false
 	}
@@ -99,14 +98,14 @@ func (k Keeper) SetLike(ctx sdk.Context, id string, like Like) (sdk.Error, bool)
 	return nil, true
 }
 
-func (k Keeper) GetLike(ctx sdk.Context, id string) Like {
+func (k Keeper) GetLike(ctx sdk.Context, id string) types.Like {
 	store := ctx.KVStore(k.storeKey)
 	if !store.Has([]byte(id)) {
-		return NewLike()
+		return types.NewLike()
 	}
 
 	bz := store.Get([]byte(id))
-	var like Like
+	var like types.Like
 	k.cdc.MustUnmarshalBinaryBare(bz, &like)
 	return like
 }
@@ -116,7 +115,7 @@ func (k Keeper) GetPostsIterator(ctx sdk.Context) sdk.Iterator {
 	return sdk.KVStorePrefixIterator(store, []byte{})
 }
 
-func (k Keeper) SetSession(ctx sdk.Context, session Session) (sdk.Error, bool) {
+func (k Keeper) SetSession(ctx sdk.Context, session types.Session) (sdk.Error, bool) {
 	if session.Owner.Empty() {
 		return sdk.ErrInvalidAddress("No address found."), false
 	}
@@ -127,14 +126,14 @@ func (k Keeper) SetSession(ctx sdk.Context, session Session) (sdk.Error, bool) {
 	return nil, true
 }
 
-func (k Keeper) GetSession(ctx sdk.Context, id string) Session {
+func (k Keeper) GetSession(ctx sdk.Context, id string) types.Session {
 	store := ctx.KVStore(k.storeKey)
 	if !store.Has([]byte(id)) {
-		return NewSession()
+		return types.NewSession()
 	}
 
 	bz := store.Get([]byte(id))
-	var session Session
+	var session types.Session
 	k.cdc.MustUnmarshalBinaryBare(bz, &session)
 	return session
 }
