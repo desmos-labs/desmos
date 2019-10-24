@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,7 +20,7 @@ type Keeper struct {
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, coinKeeper bank.Keeper) Keeper {
 	return Keeper{
 		coinKeeper: coinKeeper,
 		storeKey:   storeKey,
@@ -26,127 +28,151 @@ func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) 
 	}
 }
 
-func (k Keeper) SetPost(ctx sdk.Context, post types.Post) (sdk.Error, bool) {
+// -------------
+// --- Posts
+// -------------
+
+func (k Keeper) getPostStoreKey(postId string) []byte {
+	return []byte(types.PostStorePrefix + postId)
+}
+
+// CreatePost allows to create a new post checking for any id conflict with exiting posts
+func (k Keeper) CreatePost(ctx sdk.Context, post types.Post) sdk.Error {
+	if _, exists := k.GetPost(ctx, post.ID); exists {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.ID))
+	}
+
+	return k.SavePost(ctx, post)
+}
+
+// SavePost allows to save the given post inside the current context
+func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
 	if post.Owner.Empty() {
-		return sdk.ErrInvalidAddress("No address found."), false
+		return sdk.ErrInvalidAddress("Post owner cannot be empty")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(post.ID), k.cdc.MustMarshalBinaryBare(post))
-
-	return nil, true
+	store.Set(k.getPostStoreKey(post.ID), k.cdc.MustMarshalBinaryBare(&post))
+	return nil
 }
 
-func (k Keeper) GetPost(ctx sdk.Context, id string) types.Post {
+// GetPost returns the post having the given id inside the current context.
+func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool) {
 	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(id)) {
-		return types.NewPost()
+
+	key := k.getPostStoreKey(id)
+	if !store.Has(key) {
+		return types.NewPost(), false
 	}
 
-	bz := store.Get([]byte(id))
-	var post types.Post
-	k.cdc.MustUnmarshalBinaryBare(bz, &post)
-	return post
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
+	return post, true
 }
 
-func (k Keeper) EditPost(ctx sdk.Context, id string, message string) (sdk.Error, bool) {
-	post := k.GetPost(ctx, id)
+// EditPosts allows to edit the message associated with the given post
+func (k Keeper) EditPostMessage(ctx sdk.Context, post types.Post, message string) sdk.Error {
 	post.Message = message
-	err, success := k.SetPost(ctx, post)
-
-	if err != nil {
-		return sdk.ErrUnknownRequest("Cannot save post."), false
-	}
-
-	return nil, success
+	return k.SavePost(ctx, post)
 }
 
-func (k Keeper) GetPostOwner(ctx sdk.Context, id string) sdk.AccAddress {
-	return k.GetPost(ctx, id).Owner
-}
-
-// func (k Keeper) GetPostsByOwner(ctx sdk.Context, owner sdk.AccAddress) []Post {
-// 	matchingPosts := []Post{}
-// 	return matchingPosts
-// }
-
-func (k Keeper) GetPostLikes(ctx sdk.Context, id string) uint {
-	return k.GetPost(ctx, id).Likes
-}
-
-func (k Keeper) AddPostLike(ctx sdk.Context, id string) {
-	post := k.GetPost(ctx, id)
-	post.Likes = post.Likes + 1
-	k.SetPost(ctx, post)
-}
-
-func (k Keeper) SetLike(ctx sdk.Context, id string, like types.Like) (sdk.Error, bool) {
-	if like.Owner.Empty() || (len(like.PostID) == 0) {
-		return sdk.ErrUnauthorized("Liker and post id must exist."), false
-	}
-
-	post := k.GetPost(ctx, like.PostID)
-	if len(post.ID) == 0 {
-		return sdk.ErrUnknownRequest("The post requested does not exist."), false
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(id), k.cdc.MustMarshalBinaryBare(like))
-
-	k.AddPostLike(ctx, like.PostID)
-
-	return nil, true
-}
-
-func (k Keeper) GetLike(ctx sdk.Context, id string) types.Like {
-	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(id)) {
-		return types.NewLike()
-	}
-
-	bz := store.Get([]byte(id))
-	var like types.Like
-	k.cdc.MustUnmarshalBinaryBare(bz, &like)
-	return like
-}
-
+// GetPostsIterator returns an iterator over the whole set of posts
 func (k Keeper) GetPostsIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
-	return sdk.KVStorePrefixIterator(store, []byte{})
+	return sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
 }
 
-func (k Keeper) SetSession(ctx sdk.Context, session types.Session) (sdk.Error, bool) {
+// -------------
+// --- Likes
+// -------------
+
+func (k Keeper) getLikeStoreKey(id string) []byte {
+	return []byte(types.LikeStorePrefix + id)
+}
+
+// SavePostLike allows to save a new like to the given post
+func (k Keeper) SavePostLike(ctx sdk.Context, post types.Post, like types.Like) sdk.Error {
+	if like.Owner.Empty() || len(strings.TrimSpace(like.PostID)) == 0 {
+		return sdk.ErrUnauthorized("Liker and post id must exist.")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+
+	// Check for any pre-existing likes with the same id
+	if store.Has(k.getLikeStoreKey(like.ID)) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.ID))
+	}
+
+	// Set the like data
+	like.PostID = post.ID
+
+	// store the like
+	store.Set(k.getLikeStoreKey(like.ID), k.cdc.MustMarshalBinaryBare(like))
+
+	// update the likes counter
+	post.Likes = post.Likes + 1
+	return k.SavePost(ctx, post)
+}
+
+// GetLike returns the like having the given id
+func (k Keeper) GetLike(ctx sdk.Context, id string) (like types.Like, found bool) {
+	store := ctx.KVStore(k.storeKey)
+
+	key := k.getLikeStoreKey(id)
+	if !store.Has(key) {
+		return types.NewLike(), false
+	}
+
+	bz := store.Get(key)
+	k.cdc.MustUnmarshalBinaryBare(bz, &like)
+	return like, true
+}
+
+// -------------
+// --- Sessions
+// -------------
+
+func (k Keeper) getSessionStoreKey(id string) []byte {
+	return []byte(types.SessionStorePrefix + id)
+}
+
+// CreateSession allows to create a new session checking that no other session
+// with the same id already exist
+func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error {
+	// Check for any previously existing session
+	if _, found := k.GetSession(ctx, session.ID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.ID))
+	}
+
+	return k.SaveSession(ctx, session)
+}
+
+// SaveSession allows to save a session inside the given context
+func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
 	if session.Owner.Empty() {
-		return sdk.ErrInvalidAddress("No address found."), false
+		return sdk.ErrInvalidAddress("Owner address cannot be empty")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(session.ID), k.cdc.MustMarshalBinaryBare(session))
-
-	return nil, true
+	store.Set(k.getSessionStoreKey(session.ID), k.cdc.MustMarshalBinaryBare(session))
+	return nil
 }
 
-func (k Keeper) GetSession(ctx sdk.Context, id string) types.Session {
+// GetSession returns the session having the specified id
+func (k Keeper) GetSession(ctx sdk.Context, id string) (session types.Session, found bool) {
 	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(id)) {
-		return types.NewSession()
+
+	key := k.getSessionStoreKey(id)
+	if !store.Has(key) {
+		return types.NewSession(), false
 	}
 
-	bz := store.Get([]byte(id))
-	var session types.Session
+	bz := store.Get(key)
 	k.cdc.MustUnmarshalBinaryBare(bz, &session)
-	return session
+	return session, true
 }
 
-func (k Keeper) EditSession(ctx sdk.Context, id string, expiry time.Time) (sdk.Error, bool) {
-	session := k.GetSession(ctx, id)
+// EditSessionExpiration allows to edit the expiration time of the given session
+func (k Keeper) EditSessionExpiration(ctx sdk.Context, session types.Session, expiry time.Time) sdk.Error {
 	session.Expiry = expiry
-	err, success := k.SetSession(ctx, session)
-
-	if err != nil {
-		return sdk.ErrUnknownRequest("Cannot update session."), false
-	}
-
-	return nil, success
-
+	return k.SaveSession(ctx, session)
 }

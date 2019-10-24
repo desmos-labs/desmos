@@ -1,14 +1,13 @@
 # OS
-.DS_Store
+.DS_Store/
 *.swp
 *.swo
-.vscode
-.idea
+.vscode/
 
 # Build
-vendor
-.vendor-new
-build
+vendor/
+.vendor-new/
+build/
 
 # IDE
 .idea/

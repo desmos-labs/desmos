@@ -53,22 +53,18 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		),
 	)
 
-	err, success := keeper.SetPost(ctx, post)
-
-	if err != nil {
+	if err := keeper.CreatePost(ctx, post); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeCreatePost,
-				sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreatePost,
+			sdk.NewAttribute(types.AttributeKeyPostID, post.ID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.ID),
@@ -77,8 +73,14 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 }
 
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
-	if !msg.Owner.Equals(keeper.GetPostOwner(ctx, msg.ID)) { // Checks if the the msg sender is the same as the current owner
-		return sdk.ErrUnauthorized("Incorrect Owner").Result() // If not, throw an error
+	existing, found := keeper.GetPost(ctx, msg.ID)
+	if found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.ID)).Result()
+	}
+
+	// checks if the the msg sender is the same as the current owner
+	if !msg.Owner.Equals(existing.Owner) {
+		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -89,20 +91,16 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 		),
 	)
 
-	err, success := keeper.EditPost(ctx, msg.ID, msg.Message)
-
-	if err != nil {
+	if err := keeper.EditPostMessage(ctx, existing, msg.Message); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeEditPost,
-				sdk.NewAttribute(types.AttributeKeyPostID, msg.ID),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeEditPost,
+			sdk.NewAttribute(types.AttributeKeyPostID, msg.ID),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(msg.ID),
@@ -111,10 +109,8 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 }
 
 func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result {
-
-	post := keeper.GetPost(ctx, msg.PostID)
-
-	if msg.PostID != post.ID {
+	post, found := keeper.GetPost(ctx, msg.PostID)
+	if !found {
 		return sdk.ErrUnknownRequest("Post doesn't exist").Result()
 	}
 
@@ -135,23 +131,19 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 		),
 	)
 
-	err, success := keeper.SetLike(ctx, like.ID, like)
-
-	if err != nil {
+	if err := keeper.SavePostLike(ctx, post, like); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeLikePost,
-				sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
-				sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeLikePost,
+			sdk.NewAttribute(types.AttributeKeyLikeID, like.ID),
+			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+		),
+	)
 
 	return sdk.Result{
 		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.ID),
@@ -218,23 +210,19 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		Signature:     msg.Signature,
 	}
 
-	err, success := keeper.SetSession(ctx, session)
-
-	if err != nil {
+	if err := keeper.CreateSession(ctx, session); err != nil {
 		return err.Result()
 	}
 
-	if success {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeCreateSession,
-				sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
-				sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-				sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-				sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
-			),
-		)
-	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreateSession,
+			sdk.NewAttribute(types.AttributeKeySessionID, session.ID),
+			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+			sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
+		),
+	)
 
 	return sdk.Result{
 		Events: ctx.EventManager().Events(),
