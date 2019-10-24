@@ -6,6 +6,11 @@ labels: ''
 assignees: ''
 
 ---
+<!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
+v                            ✰  Thanks for opening an issue! ✰    
+v    Before smashing the submit button please review the template.
+v    Please also ensure that this is not a duplicate issue :)  
+☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  --> 
 
 **Describe the bug**
 A clear and concise description of what the bug is.

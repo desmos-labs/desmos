@@ -6,6 +6,12 @@ labels: ''
 assignees: ''
 
 ---
+<!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
+v                            ✰  Thanks for opening an issue! ✰    
+v    Before smashing the submit button please review the template.
+v    Word of caution: poorly thought-out proposals may be rejected 
+v                     without deliberation 
+☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  --> 
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
