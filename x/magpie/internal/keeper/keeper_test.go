@@ -12,29 +12,33 @@ import (
 // --- Posts
 // -------------
 
+func defaultPostId() types.PostId {
+	return types.PostId(1)
+}
+
 func TestKeeper_CreatePost_DuplicateId(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	existing := types.Post{ID: "post-id", Owner: TestPostOwner}
+	existing := types.Post{Id: defaultPostId(), Owner: TestPostOwner}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getPostStoreKey(existing.ID), cdc.MustMarshalBinaryBare(&existing))
+	store.Set(k.getPostStoreKey(existing.Id), cdc.MustMarshalBinaryBare(&existing))
 
 	err := k.CreatePost(ctx, existing)
 	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Post with id post-id already exists")
+	assert.Contains(t, err.Result().Log, "Post with id 1 already exists")
 }
 
 func TestKeeper_CreatePost_NewPost(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	post := types.Post{ID: "new-post", Owner: TestPostOwner}
+	post := types.Post{Id: defaultPostId(), Owner: TestPostOwner}
 	err := k.CreatePost(ctx, post)
 	assert.NoError(t, err)
 
 	var stored types.Post
 	store := ctx.KVStore(k.storeKey)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.ID)), &stored)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.Id)), &stored)
 	assert.Equal(t, post, stored)
 }
 
@@ -51,31 +55,49 @@ func TestKeeper_SavePost_InvalidOwner(t *testing.T) {
 func TestKeeper_SavePost_ValidPost(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	post := types.Post{ID: "post-id", Owner: TestPostOwner}
+	post := types.Post{Id: defaultPostId(), Owner: TestPostOwner}
 	err := k.SavePost(ctx, post)
 	assert.NoError(t, err)
 
 	var stored types.Post
 	store := ctx.KVStore(k.storeKey)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.ID)), &stored)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.Id)), &stored)
 	assert.Equal(t, post, stored)
+}
+
+func TestKeeper_SavePost_UpgradesLastIdProperly(t *testing.T) {
+	cdc, ctx, k := SetupTestInput()
+
+	post1 := types.Post{Id: defaultPostId(), Owner: TestPostOwner}
+	post2 := types.Post{Id: post1.Id.Next(), Owner: TestPostOwner}
+	post3 := types.Post{Id: post2.Id.Next(), Owner: TestPostOwner}
+
+	_ = k.SavePost(ctx, post1)
+	_ = k.SavePost(ctx, post2)
+	_ = k.SavePost(ctx, post3)
+
+	var lastId uint64
+	store := ctx.KVStore(k.storeKey)
+	cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIdStoreKey)), &lastId)
+	assert.Equal(t, uint64(3), lastId)
+
 }
 
 func TestKeeper_GetPost_NonExistent(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	_, found := k.GetPost(ctx, "non-existent")
+	_, found := k.GetPost(ctx, defaultPostId())
 	assert.False(t, found)
 }
 
 func TestKeeper_GetPost_Existent(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	post := types.Post{ID: "existent", Owner: TestPostOwner}
+	post := types.Post{Id: defaultPostId(), Owner: TestPostOwner}
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getPostStoreKey(post.ID), cdc.MustMarshalBinaryBare(&post))
+	store.Set(k.getPostStoreKey(post.Id), cdc.MustMarshalBinaryBare(&post))
 
-	stored, found := k.GetPost(ctx, post.ID)
+	stored, found := k.GetPost(ctx, post.Id)
 	assert.True(t, found)
 	assert.Equal(t, post, stored)
 }
@@ -83,88 +105,133 @@ func TestKeeper_GetPost_Existent(t *testing.T) {
 func TestKeeper_EditPostMessage(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	post := types.Post{ID: "editing-post", Owner: TestPostOwner, Message: "initial message"}
+	post := types.Post{Id: defaultPostId(), Owner: TestPostOwner, Message: "initial message"}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getPostStoreKey(post.ID), cdc.MustMarshalBinaryBare(&post))
+	store.Set(k.getPostStoreKey(post.Id), cdc.MustMarshalBinaryBare(&post))
 
 	err := k.EditPostMessage(ctx, post, "New message")
 	assert.NoError(t, err)
 
 	var updated types.Post
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.ID)), &updated)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.Id)), &updated)
 	assert.Equal(t, "New message", updated.Message)
+}
+
+func TestKeeper_GetPosts_EmptyList(t *testing.T) {
+	_, ctx, k := SetupTestInput()
+	posts := k.GetPosts(ctx)
+	assert.Empty(t, posts)
+}
+
+func TestKeeper_GetPosts_ExistingList(t *testing.T) {
+	cdc, ctx, k := SetupTestInput()
+
+	post1 := types.Post{Id: defaultPostId()}
+	post2 := types.Post{Id: post1.Id.Next()}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Set(k.getPostStoreKey(post1.Id), cdc.MustMarshalBinaryBare(&post1))
+	store.Set(k.getPostStoreKey(post2.Id), cdc.MustMarshalBinaryBare(&post2))
+
+	posts := k.GetPosts(ctx)
+	assert.Len(t, posts, 2)
+	assert.Contains(t, posts, post1)
+	assert.Contains(t, posts, post2)
 }
 
 // -------------
 // --- Likes
 // -------------
 
-func TestKeeper_SavePostLike_EmptyOwner(t *testing.T) {
+func defaultLikeId() types.LikeId {
+	return types.LikeId(1)
+}
+
+func TestKeeper_AddLikeToPost_EmptyOwner(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	like := types.Like{ID: "like"}
-	err := k.SavePostLike(ctx, types.Post{}, like)
+	like := types.Like{Id: defaultLikeId()}
+	err := k.AddLikeToPost(ctx, types.Post{}, like)
 	assert.Error(t, err)
 	assert.Contains(t, err.Result().Log, "Liker and post id must exist")
 }
 
-func TestKeeper_SavePostLike_EmptyPostId(t *testing.T) {
+func TestKeeper_AddLikeToPost_EmptyPostId(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	like := types.Like{Owner: TestPostOwner, ID: " "}
-	err := k.SavePostLike(ctx, types.Post{}, like)
+	like := types.Like{Owner: TestPostOwner, Id: types.LikeId(0)}
+	err := k.AddLikeToPost(ctx, types.Post{}, like)
 	assert.Error(t, err)
 	assert.Contains(t, err.Result().Log, "Liker and post id must exist")
 }
 
-func TestKeeper_SavePostLike_ExistingId(t *testing.T) {
+func TestKeeper_AddLikeToPost_ExistingId(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	like := types.Like{Owner: TestPostOwner, PostID: "post-id", ID: "like-id"}
+	post := types.Post{Id: defaultPostId()}
+	like := types.Like{Owner: TestPostOwner, PostId: post.Id, Id: defaultLikeId()}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getLikeStoreKey(like.ID), cdc.MustMarshalBinaryBare(&like))
+	store.Set(k.getLikeStoreKey(like.Id), cdc.MustMarshalBinaryBare(&like))
 
-	err := k.SavePostLike(ctx, types.Post{}, like)
+	err := k.AddLikeToPost(ctx, post, like)
 	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Like with id like-id already existing")
+	assert.Contains(t, err.Result().Log, "Like with id 1 already existing")
 }
 
-func TestKeeper_SavePostLike_ValidLike(t *testing.T) {
+func TestKeeper_AddLikeToPost_ValidLike(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	like := types.Like{Owner: TestPostOwner, ID: "like-id", PostID: "new post id"}
-	post := types.Post{Owner: TestPostOwner, ID: "post-id"}
+	like := types.Like{Owner: TestPostOwner, Id: defaultLikeId(), PostId: defaultPostId()}
+	post := types.Post{Owner: TestPostOwner, Id: defaultPostId().Next()}
 
-	err := k.SavePostLike(ctx, post, like)
+	err := k.AddLikeToPost(ctx, post, like)
 	assert.NoError(t, err)
 
 	var storedLike types.Like
 	var storedPost types.Post
 	store := ctx.KVStore(k.storeKey)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getLikeStoreKey(like.ID)), &storedLike)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.ID)), &storedPost)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getLikeStoreKey(like.Id)), &storedLike)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getPostStoreKey(post.Id)), &storedPost)
 
-	assert.Equal(t, post.ID, storedLike.PostID)
+	assert.Equal(t, post.Id, storedLike.PostId)
 	assert.Equal(t, uint(1), storedPost.Likes)
+}
+
+func TestKeeper_AddLikeToPost_UpdatesLastLikeId(t *testing.T) {
+	cdc, ctx, k := SetupTestInput()
+
+	post := types.Post{Id: defaultPostId()}
+	like1 := types.Like{Owner: TestPostOwner, Id: defaultLikeId(), PostId: post.Id}
+	like2 := types.Like{Owner: TestPostOwner, Id: like1.Id.Next(), PostId: post.Id}
+	like3 := types.Like{Owner: TestPostOwner, Id: like2.Id.Next(), PostId: post.Id}
+
+	_ = k.AddLikeToPost(ctx, post, like1)
+	_ = k.AddLikeToPost(ctx, post, like2)
+	_ = k.AddLikeToPost(ctx, post, like3)
+
+	var lastId uint64
+	store := ctx.KVStore(k.storeKey)
+	cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIdStoreKey)), &lastId)
+	assert.Equal(t, uint64(3), lastId)
 }
 
 func TestKeeper_GetLike_NonExistent(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	_, found := k.GetLike(ctx, "non-existent")
+	_, found := k.GetLike(ctx, defaultLikeId())
 	assert.False(t, found)
 }
 
 func TestKeeper_GetLike_Existent(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	like := types.Like{Owner: TestPostOwner, ID: "like-id"}
+	like := types.Like{Owner: TestPostOwner, Id: defaultLikeId()}
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getLikeStoreKey(like.ID), cdc.MustMarshalBinaryBare(&like))
+	store.Set(k.getLikeStoreKey(like.Id), cdc.MustMarshalBinaryBare(&like))
 
-	stored, found := k.GetLike(ctx, like.ID)
+	stored, found := k.GetLike(ctx, like.Id)
 	assert.True(t, found)
 	assert.Equal(t, like, stored)
 }
@@ -173,36 +240,40 @@ func TestKeeper_GetLike_Existent(t *testing.T) {
 // --- Sessions
 // --------------
 
+func defaultSessionId() types.SessionId {
+	return types.SessionId(1)
+}
+
 func TestKeeper_CreateSession_ExistingId(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	session := types.Session{ID: "session-id"}
+	session := types.Session{Id: defaultSessionId()}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getSessionStoreKey(session.ID), cdc.MustMarshalBinaryBare(&session))
+	store.Set(k.getSessionStoreKey(session.Id), cdc.MustMarshalBinaryBare(&session))
 
 	err := k.CreateSession(ctx, session)
 	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Session with id session-id already exists")
+	assert.Contains(t, err.Result().Log, "Session with id 1 already exists")
 }
 
 func TestKeeper_CreatePost_ValidSession(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	session := types.Session{ID: "session-id", Owner: TestPostOwner}
+	session := types.Session{Id: defaultSessionId(), Owner: TestPostOwner}
 	err := k.CreateSession(ctx, session)
 	assert.NoError(t, err)
 
 	var stored types.Session
 	store := ctx.KVStore(k.storeKey)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.ID)), &stored)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.Id)), &stored)
 	assert.Equal(t, session, stored)
 }
 
 func TestKeeper_SaveSession_EmptyOwner(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	session := types.Session{ID: "session-id"}
+	session := types.Session{Id: defaultSessionId()}
 	err := k.SaveSession(ctx, session)
 	assert.Error(t, err)
 	assert.Contains(t, err.Result().Log, "Owner address cannot be empty")
@@ -211,33 +282,33 @@ func TestKeeper_SaveSession_EmptyOwner(t *testing.T) {
 func TestKeeper_SaveSession_ValidSession(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	session := types.Session{Owner: TestPostOwner, ID: "session-id"}
+	session := types.Session{Owner: TestPostOwner, Id: defaultSessionId()}
 
 	err := k.SaveSession(ctx, session)
 	assert.NoError(t, err)
 
 	var stored types.Session
 	store := ctx.KVStore(k.storeKey)
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.ID)), &stored)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.Id)), &stored)
 	assert.Equal(t, session, stored)
 }
 
 func TestKeeper_GetSession_NonExistent(t *testing.T) {
 	_, ctx, k := SetupTestInput()
 
-	_, found := k.GetSession(ctx, "inexistent-session")
+	_, found := k.GetSession(ctx, defaultSessionId())
 	assert.False(t, found)
 }
 
 func TestKeeper_GetSession_Existent(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	session := types.Session{Owner: TestPostOwner, ID: "session-id"}
+	session := types.Session{Owner: TestPostOwner, Id: defaultSessionId()}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getSessionStoreKey(session.ID), cdc.MustMarshalBinaryBare(&session))
+	store.Set(k.getSessionStoreKey(session.Id), cdc.MustMarshalBinaryBare(&session))
 
-	stored, found := k.GetSession(ctx, session.ID)
+	stored, found := k.GetSession(ctx, session.Id)
 	assert.True(t, found)
 	assert.Equal(t, session, stored)
 }
@@ -245,10 +316,10 @@ func TestKeeper_GetSession_Existent(t *testing.T) {
 func TestKeeper_EditSessionExpiration(t *testing.T) {
 	cdc, ctx, k := SetupTestInput()
 
-	session := types.Session{Owner: TestPostOwner, ID: "session-id"}
+	session := types.Session{Owner: TestPostOwner, Id: defaultSessionId()}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getSessionStoreKey(session.ID), cdc.MustMarshalBinaryBare(&session))
+	store.Set(k.getSessionStoreKey(session.Id), cdc.MustMarshalBinaryBare(&session))
 
 	location, _ := time.LoadLocation("UTC")
 	expiration := time.Date(2017, 10, 20, 11, 45, 32, 0, location)
@@ -256,6 +327,6 @@ func TestKeeper_EditSessionExpiration(t *testing.T) {
 	assert.NoError(t, err)
 
 	var stored types.Session
-	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.ID)), &stored)
+	cdc.MustUnmarshalBinaryBare(store.Get(k.getSessionStoreKey(session.Id)), &stored)
 	assert.Equal(t, expiration, stored.Expiry)
 }

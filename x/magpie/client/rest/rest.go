@@ -15,10 +15,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	restName = "magpie"
-)
-
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc("/magpie/posts", createPostHandler(cliCtx)).Methods("POST")
@@ -68,7 +64,13 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		// }
 
 		// create the message
-		msg := types.NewMsgCreatePost(req.Message, req.ParentID, time.Now(), addr, req.Namespace, req.ExternalOwner)
+		parentId, err := types.ParsePostId(req.ParentID)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgCreatePost(req.Message, parentId, time.Now(), addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -107,7 +109,13 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		// create the message
-		msg := types.NewMsgLike(req.PostID, time.Now(), addr, req.Namespace, req.ExternalOwner)
+		postId, err := types.ParsePostId(req.PostID)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgLike(postId, time.Now(), addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
