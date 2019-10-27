@@ -43,7 +43,7 @@ func ParseSessionId(value string) (SessionId, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	Id            SessionId      `json:"id"`
+	SessionID     SessionId      `json:"id"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Created       time.Time      `json:"created"`
 	Expiry        time.Time      `json:"expiry"`

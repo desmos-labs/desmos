@@ -35,8 +35,13 @@ func (k Keeper) getPostStoreKey(postId types.PostId) []byte {
 }
 
 // GetLastPostId returns the last post id that has been used
-func (k Keeper) GetLastPostId(ctx sdk.Context) (id types.PostId) {
+func (k Keeper) GetLastPostId(ctx sdk.Context) types.PostId {
 	store := ctx.KVStore(k.storeKey)
+	if !store.Has([]byte(types.LastPostIdStoreKey)) {
+		return types.PostId(0)
+	}
+
+	var id types.PostId
 	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIdStoreKey)), &id)
 	return id
 }
@@ -49,8 +54,8 @@ func (k Keeper) SetLastPostId(ctx sdk.Context, id types.PostId) {
 
 // CreatePost allows to create a new post checking for any id conflict with exiting posts
 func (k Keeper) CreatePost(ctx sdk.Context, post types.Post) sdk.Error {
-	if _, exists := k.GetPost(ctx, post.Id); exists {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.Id))
+	if _, exists := k.GetPost(ctx, post.PostID); exists {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID))
 	}
 
 	return k.SavePost(ctx, post)
@@ -63,10 +68,10 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getPostStoreKey(post.Id), k.cdc.MustMarshalBinaryBare(&post))
+	store.Set(k.getPostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
 	// Save the last post id
-	k.SetLastPostId(ctx, post.Id)
+	k.SetLastPostId(ctx, post.PostID)
 
 	return nil
 }
@@ -114,8 +119,13 @@ func (k Keeper) getLikeStoreKey(id types.LikeId) []byte {
 }
 
 // GetLastLikeId returns the last like id that has been used
-func (k Keeper) GetLastLikeId(ctx sdk.Context) (id types.LikeId) {
+func (k Keeper) GetLastLikeId(ctx sdk.Context) types.LikeId {
 	store := ctx.KVStore(k.storeKey)
+	if !store.Has([]byte(types.LastLikeIdStoreKey)) {
+		return types.LikeId(0)
+	}
+
+	var id types.LikeId
 	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIdStoreKey)), &id)
 	return id
 }
@@ -129,13 +139,13 @@ func (k Keeper) SetLastLikeId(ctx sdk.Context, id types.LikeId) {
 // AddLikeToPost allows to add a new like to a given post
 func (k Keeper) AddLikeToPost(ctx sdk.Context, post types.Post, like types.Like) sdk.Error {
 	// Set the correct post id inside the like
-	like.PostId = post.Id
+	like.PostID = post.PostID
 
 	// Store the like and update the last like id
 	if err := k.SaveLike(ctx, like); err != nil {
 		return err
 	}
-	k.SetLastLikeId(ctx, like.Id)
+	k.SetLastLikeId(ctx, like.LikeID)
 
 	// Update the likes counter and save the post
 	post.Likes = post.Likes + 1
@@ -144,17 +154,17 @@ func (k Keeper) AddLikeToPost(ctx sdk.Context, post types.Post, like types.Like)
 
 // SaveLike allows to save the given like inside the store
 func (k Keeper) SaveLike(ctx sdk.Context, like types.Like) sdk.Error {
-	if like.Owner.Empty() || !like.PostId.Valid() {
+	if like.Owner.Empty() || !like.PostID.Valid() {
 		return sdk.ErrUnauthorized("Liker and post id must exist.")
 	}
 
 	// Check for any pre-existing likes with the same id
-	if _, found := k.GetLike(ctx, like.Id); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.Id))
+	if _, found := k.GetLike(ctx, like.LikeID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.LikeID))
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getLikeStoreKey(like.Id), k.cdc.MustMarshalBinaryBare(&like))
+	store.Set(k.getLikeStoreKey(like.LikeID), k.cdc.MustMarshalBinaryBare(&like))
 
 	return nil
 }
@@ -197,8 +207,13 @@ func (k Keeper) getSessionStoreKey(id types.SessionId) []byte {
 }
 
 // GetLastLikeId returns the last like id that has been used
-func (k Keeper) GetLastSessionId(ctx sdk.Context) (id types.SessionId) {
+func (k Keeper) GetLastSessionId(ctx sdk.Context) types.SessionId {
 	store := ctx.KVStore(k.storeKey)
+	if !store.Has([]byte(types.LastSessionIdStoreKey)) {
+		return types.SessionId(0)
+	}
+
+	var id types.SessionId
 	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIdStoreKey)), &id)
 	return id
 }
@@ -213,8 +228,8 @@ func (k Keeper) SetLastSessionId(ctx sdk.Context, id types.SessionId) {
 // with the same id already exist
 func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error {
 	// Check for any previously existing session
-	if _, found := k.GetSession(ctx, session.Id); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.Id))
+	if _, found := k.GetSession(ctx, session.SessionID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.SessionID))
 	}
 
 	return k.SaveSession(ctx, session)
@@ -228,10 +243,10 @@ func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
 
 	// Save the session
 	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getSessionStoreKey(session.Id), k.cdc.MustMarshalBinaryBare(session))
+	store.Set(k.getSessionStoreKey(session.SessionID), k.cdc.MustMarshalBinaryBare(session))
 
 	// Update the last used session id
-	k.SetLastSessionId(ctx, session.Id)
+	k.SetLastSessionId(ctx, session.SessionID)
 
 	return nil
 }

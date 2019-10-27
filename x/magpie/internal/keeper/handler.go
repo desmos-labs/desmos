@@ -34,8 +34,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
 
 	post := types.Post{
-		Id:            keeper.GetLastPostId(ctx).Next(),
-		ParentId:      msg.ParentID,
+		PostID:        keeper.GetLastPostId(ctx).Next(),
+		ParentID:      msg.ParentID,
 		Message:       msg.Message,
 		Created:       msg.Created,
 		Likes:         0,
@@ -59,14 +59,14 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeCreatePost,
-			sdk.NewAttribute(types.AttributeKeyPostID, post.Id.String()),
+			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
 		),
 	)
 
 	return sdk.Result{
-		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.Id),
+		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
 		Events: ctx.EventManager().Events(),
 	}
 }
@@ -114,9 +114,9 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 	}
 
 	like := types.Like{
-		Id:            keeper.GetLastLikeId(ctx).Next(),
+		LikeID:        keeper.GetLastLikeId(ctx).Next(),
 		Created:       msg.Created,
-		PostId:        msg.PostID,
+		PostID:        msg.PostID,
 		Owner:         msg.Liker,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
@@ -137,7 +137,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeLikePost,
-			sdk.NewAttribute(types.AttributeKeyLikeID, like.Id.String()),
+			sdk.NewAttribute(types.AttributeKeyLikeID, like.LikeID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
@@ -145,7 +145,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 	)
 
 	return sdk.Result{
-		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.Id),
+		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.LikeID),
 		Events: ctx.EventManager().Events(),
 	}
 }
@@ -182,7 +182,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	}
 
 	session := types.Session{
-		Id:            keeper.GetLastSessionId(ctx).Next(),
+		SessionID:     keeper.GetLastSessionId(ctx).Next(),
 		Created:       msg.Created,
 		Expiry:        msg.Created.Add(time.Minute * 14400),
 		Owner:         msg.Owner,
@@ -199,7 +199,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeCreateSession,
-			sdk.NewAttribute(types.AttributeKeySessionID, session.Id.String()),
+			sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
 			sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),

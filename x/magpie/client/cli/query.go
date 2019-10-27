@@ -73,11 +73,11 @@ func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdSession queries a session by Id
+// GetCmdSession queries a session by PostID
 func GetCmdSession(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "session [id]",
-		Short: "Get the session by Id",
+		Short: "Get the session by PostID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

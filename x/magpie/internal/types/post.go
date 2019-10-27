@@ -13,7 +13,7 @@ import (
 // --- Post id
 // ---------------
 
-// PostId represents a unique post id
+// PostID represents a unique post id
 type PostId uint64
 
 func (id PostId) Valid() bool {
@@ -43,8 +43,8 @@ func ParsePostId(value string) (PostId, error) {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	Id            PostId         `json:"id"`
-	ParentId      PostId         `json:"parent_id"`
+	PostID        PostId         `json:"id"`
+	ParentID      PostId         `json:"parent_id"`
 	Message       string         `json:"message"`
 	Created       time.Time      `json:"created"`
 	Modified      time.Time      `json:"modified"`
@@ -61,20 +61,20 @@ func NewPost() Post {
 
 // implement fmt.Stringer
 func (p Post) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`Id: %s
-Parent Id: %s
+	return strings.TrimSpace(fmt.Sprintf(`PostID: %s
+Parent PostID: %s
 Owner: %s
 Message: %s
 Created: %s
 Modified: %s
 Likes: %d
 Namespace: %s
-External Onwer: %s`, p.Id, p.ParentId, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
+External Onwer: %s`, p.PostID, p.ParentID, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
 }
 
 func (p Post) Validate() error {
-	if !p.Id.Valid() {
-		return fmt.Errorf("invalid post id: %s", p.Id)
+	if !p.PostID.Valid() {
+		return fmt.Errorf("invalid post id: %s", p.PostID)
 	}
 
 	if p.Owner == nil {

@@ -43,8 +43,8 @@ func ParseLikeId(value string) (LikeId, error) {
 
 // Like is a struct of a user like
 type Like struct {
-	Id            LikeId         `json:"id"`
-	PostId        PostId         `json:"post_id"`
+	LikeID        LikeId         `json:"id"`
+	PostID        PostId         `json:"post_id"`
 	Created       time.Time      `json:"created"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Namespace     string         `json:"namespace"`
@@ -58,17 +58,17 @@ func NewLike() Like {
 
 // implement fmt.Stringer
 func (l Like) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`Id: %s
+	return strings.TrimSpace(fmt.Sprintf(`PostID: %s
 Owner: %s
-PostId: %s
+PostID: %s
 Created: %s
 Namespace: %s
-External Owner: %s`, l.Id, l.Owner, l.PostId, l.Created, l.Namespace, l.ExternalOwner))
+External Owner: %s`, l.LikeID, l.Owner, l.PostID, l.Created, l.Namespace, l.ExternalOwner))
 }
 
 func (l Like) Validate() error {
-	if !l.Id.Valid() {
-		return fmt.Errorf("invalid like id %s", l.Id)
+	if !l.LikeID.Valid() {
+		return fmt.Errorf("invalid like id %s", l.LikeID)
 	}
 
 	if l.Owner == nil {
@@ -79,8 +79,8 @@ func (l Like) Validate() error {
 		return fmt.Errorf("invalid like creation time: %s", l.Created)
 	}
 
-	if !l.PostId.Valid() {
-		return fmt.Errorf("invalid like post id: %s", l.PostId)
+	if !l.PostID.Valid() {
+		return fmt.Errorf("invalid like post id: %s", l.PostID)
 	}
 
 	return nil
