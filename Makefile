@@ -58,9 +58,15 @@ endif
 ########################################
 ### Tools & dependencies
 
+go-mod-cache: go.sum
+	@echo "--> Download go modules to local cache"
+	@go mod download
+.PHONY: go-mod-cache
+
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
-	go mod verify
+	@go mod verify
+	@go mod tidy
 
 lint:
 	golangci-lint run

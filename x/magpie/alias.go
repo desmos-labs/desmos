@@ -39,9 +39,12 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	Post    = types.Post
-	Like    = types.Like
-	Session = types.Session
+	Post      = types.Post
+	PostId    = types.PostId
+	Like      = types.Like
+	LikeId    = types.LikeId
+	Session   = types.Session
+	SessionId = types.SessionId
 
 	// Msgs
 	MsgCreatePost    = types.MsgCreatePost
@@ -49,9 +52,4 @@ type (
 	MsgLike          = types.MsgLike
 	MsgUnlike        = types.MsgUnlike
 	MsgCreateSession = types.MsgCreateSession
-
-	// Queries
-	QueryResPost    = keeper.QueryResPost
-	QueryResLike    = keeper.QueryResLike
-	QueryResSession = keeper.QueryResSession
 )

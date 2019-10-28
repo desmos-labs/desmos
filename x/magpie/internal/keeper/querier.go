@@ -1,8 +1,11 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -32,14 +35,17 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 // nolint: unparam
 func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	id := path[0]
+	id, err := types.ParsePostId(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
 
 	post, found := keeper.GetPost(ctx, id)
 	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get post")
 	}
 
-	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResPost{post.ID, post.ParentID, post.Message, post.Owner, post.Created, post.Modified, post.Likes, post.Namespace, post.ExternalOwner})
+	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, &post)
 	if err2 != nil {
 		panic("could not marshal result to JSON")
 	}
@@ -49,12 +55,17 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 
 // nolint: unparam
 func queryLike(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	like, found := keeper.GetLike(ctx, path[0])
+	id, err := types.ParseLikeId(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid like id: %s", path[0]))
+	}
+
+	like, found := keeper.GetLike(ctx, id)
 	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get like")
 	}
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResLike{like.ID, like.PostID, like.Owner, like.Created, like.Namespace, like.ExternalOwner})
+	res, err := codec.MarshalJSONIndent(keeper.cdc, &like)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}
@@ -63,12 +74,17 @@ func queryLike(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 }
 
 func querySession(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	session, found := keeper.GetSession(ctx, path[0])
+	id, err := types.ParseSessionId(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid session id: %s", path[0]))
+	}
+
+	session, found := keeper.GetSession(ctx, id)
 	if !found {
 		return nil, sdk.ErrUnknownRequest("could not get session")
 	}
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, QueryResSession{session.ID, session.Owner, session.Created, session.Expiry, session.Namespace, session.ExternalOwner, session.Pubkey, session.Signature})
+	res, err := codec.MarshalJSONIndent(keeper.cdc, &session)
 
 	if err != nil {
 		panic("could not marshal result to JSON")

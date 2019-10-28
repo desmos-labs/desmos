@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/kwunyeung/desmos/x/magpie/internal/keeper"
 	"github.com/kwunyeung/desmos/x/magpie/internal/types"
 	"github.com/spf13/cobra"
 )
@@ -44,7 +43,7 @@ func GetCmdPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out keeper.QueryResPost
+			var out types.Post
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -74,11 +73,11 @@ func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdSession queries a session by ID
+// GetCmdSession queries a session by PostID
 func GetCmdSession(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "session [id]",
-		Short: "Get the session by ID",
+		Short: "Get the session by PostID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

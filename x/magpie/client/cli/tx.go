@@ -16,7 +16,7 @@ import (
 )
 
 // GetTxCmd set the tx commands
-func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
+func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	magpieTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "magpie transaction subcommands",
@@ -43,24 +43,25 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Short: "create a new post",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
-
 			from := cliCtx.GetFromAddress()
 			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], args[1], time.Now(), from, args[2], args[3])
-			var err = msg.ValidateBasic()
+			parentId, err := types.ParsePostId(args[1])
 			if err != nil {
 				return err
 			}
 
-			// cliCtx.PrintResponse = true
+			msg := types.NewMsgCreatePost(args[0], parentId, time.Now(), from, args[2], args[3])
+			if err = msg.ValidateBasic(); err != nil {
+				return err
+			}
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -74,24 +75,25 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 		Short: "edit an owned post",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
-
 			from := cliCtx.GetFromAddress()
 			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			msg := types.NewMsgEditPost(args[0], args[1], time.Now(), from)
-			var err = msg.ValidateBasic()
+			postId, err := types.ParsePostId(args[0])
 			if err != nil {
 				return err
 			}
 
-			// cliCtx.PrintResponse = true
+			msg := types.NewMsgEditPost(postId, args[1], time.Now(), from)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -105,26 +107,26 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 		Short: "like a post",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
-
 			from := cliCtx.GetFromAddress()
 			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			msg := types.NewMsgLike(args[0], time.Now(), from, args[1], args[2])
-			err := msg.ValidateBasic()
+			postId, err := types.ParsePostId(args[0])
 			if err != nil {
 				return err
 			}
 
-			// cliCtx.PrintResponse = true
+			msg := types.NewMsgLike(postId, time.Now(), from, args[1], args[2])
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
 
-			// return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, msgs)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -137,28 +139,21 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 		Short: "record a session for external service to post a magpie",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			// accGetter := authtypes.NewAccountRetriever(cliCtx)
-
 			from := cliCtx.GetFromAddress()
-			// if err := accGetter.EnsureExists(from); err != nil {
-			// 	return err
-			// }
-
-			// pubkey, _ := sdk.GetAccPubKeyBech32(args[2])
-
-			msg := types.NewMsgCreateSession(time.Now(), from, args[0], args[1], args[2], args[3])
-			err := msg.ValidateBasic()
-			if err != nil {
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+			if err := accGetter.EnsureExists(from); err != nil {
 				return err
 			}
 
-			// cliCtx.PrintResponse = true
+			msg := types.NewMsgCreateSession(time.Now(), from, args[0], args[1], args[2], args[3])
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
 
-			// return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, msgs)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
