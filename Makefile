@@ -39,9 +39,9 @@ all: lint install
 ### Install
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmosd
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoscli
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoskeyutil
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmosd/main.go
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoscli/main.go
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoskeyutil/main.go
 
 ########################################
 ### Build

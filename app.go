@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/desmos-labs/desmos/x/posts"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
@@ -23,7 +24,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/kwunyeung/desmos/x/magpie"
+	"github.com/desmos-labs/desmos/x/magpie"
 )
 
 const (
@@ -45,11 +46,14 @@ var (
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
 		params.AppModuleBasic{},
-		magpie.AppModule{},
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		slashing.AppModuleBasic{},
 		supply.AppModuleBasic{},
+
+		// Custom modules
+		magpie.AppModule{},
+		posts.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -89,7 +93,10 @@ type DesmosApp struct {
 	slashingKeeper slashing.Keeper
 	distrKeeper    distr.Keeper
 	paramsKeeper   params.Keeper
-	magpieKeeper   magpie.Keeper
+
+	// Custom modules
+	magpieKeeper magpie.Keeper
+	postsKeeper  posts.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -111,7 +118,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		params.StoreKey,
 
 		// Custom modules
-		magpie.StoreKey,
+		magpie.StoreKey, posts.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -170,12 +177,9 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 			app.slashingKeeper.Hooks()),
 	)
 
-	// The magpieKeeper is our keeper
-	app.magpieKeeper = magpie.NewKeeper(
-		app.cdc,
-		keys[magpie.StoreKey],
-		app.bankKeeper,
-	)
+	// Custom modules
+	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
+	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
 
 	app.mm = module.NewManager(
 		genaccounts.NewAppModule(app.accountKeeper),
@@ -183,10 +187,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
-		magpie.NewAppModule(app.magpieKeeper, app.bankKeeper),
 		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
+
+		// Custom modules
+		magpie.NewAppModule(app.magpieKeeper),
+		posts.NewAppModule(app.postsKeeper),
 	)
 
 	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
@@ -201,8 +208,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Base
 		bank.ModuleName,
 		slashing.ModuleName,
 		supply.ModuleName,
-		magpie.ModuleName,
 		genutil.ModuleName,
+
+		// Custom modules
+		magpie.ModuleName,
+		posts.ModuleName,
 	)
 
 	// register all module routes and module queriers
@@ -272,15 +282,6 @@ func (app *DesmosApp) ModuleAccountAddrs() map[string]bool {
 	}
 
 	return modAccAddrs
-}
-
-// GetMaccPerms returns a mapping of the application's module account permissions.
-func GetMaccPerms() map[string][]string {
-	modAccPerms := make(map[string][]string)
-	for k, v := range maccPerms {
-		modAccPerms[k] = v
-	}
-	return modAccPerms
 }
 
 //_________________________________________________________

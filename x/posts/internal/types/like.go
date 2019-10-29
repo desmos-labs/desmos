@@ -13,28 +13,28 @@ import (
 // --- Like id
 // ---------------
 
-// LikeId represents a unique like id
-type LikeId uint64
+// LikeID represents a unique like id
+type LikeID uint64
 
-func (id LikeId) Valid() bool {
+func (id LikeID) Valid() bool {
 	return id != 0
 }
 
-func (id LikeId) Next() LikeId {
+func (id LikeID) Next() LikeID {
 	return id + 1
 }
 
-func (id LikeId) String() string {
+func (id LikeID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
-func ParseLikeId(value string) (LikeId, error) {
+func ParseLikeID(value string) (LikeID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return LikeId(0), err
+		return LikeID(0), err
 	}
 
-	return LikeId(intVal), err
+	return LikeID(intVal), err
 }
 
 // ---------------
@@ -43,8 +43,8 @@ func ParseLikeId(value string) (LikeId, error) {
 
 // Like is a struct of a user like
 type Like struct {
-	LikeID        LikeId         `json:"id"`
-	PostID        PostId         `json:"post_id"`
+	LikeID        LikeID         `json:"id"`
+	PostID        PostID         `json:"post_id"`
 	Created       time.Time      `json:"created"`
 	Owner         sdk.AccAddress `json:"owner"`
 	Namespace     string         `json:"namespace"`

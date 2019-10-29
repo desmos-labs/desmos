@@ -14,27 +14,27 @@ import (
 // ---------------
 
 // PostID represents a unique post id
-type PostId uint64
+type PostID uint64
 
-func (id PostId) Valid() bool {
+func (id PostID) Valid() bool {
 	return id != 0
 }
 
-func (id PostId) Next() PostId {
+func (id PostID) Next() PostID {
 	return id + 1
 }
 
-func (id PostId) String() string {
+func (id PostID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
-func ParsePostId(value string) (PostId, error) {
+func ParsePostID(value string) (PostID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return PostId(0), err
+		return PostID(0), err
 	}
 
-	return PostId(intVal), err
+	return PostID(intVal), err
 }
 
 // ---------------
@@ -43,8 +43,8 @@ func ParsePostId(value string) (PostId, error) {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID        PostId         `json:"id"`
-	ParentID      PostId         `json:"parent_id"`
+	PostID        PostID         `json:"id"`
+	ParentID      PostID         `json:"parent_id"`
 	Message       string         `json:"message"`
 	Created       time.Time      `json:"created"`
 	Modified      time.Time      `json:"modified"`

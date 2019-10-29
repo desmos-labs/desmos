@@ -6,7 +6,7 @@ import (
 	"os"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	app "github.com/kwunyeung/desmos"
+	app "github.com/desmos-labs/desmos"
 	"github.com/tendermint/tendermint/libs/bech32"
 )
 

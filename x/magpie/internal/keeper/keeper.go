@@ -6,222 +6,47 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/kwunyeung/desmos/x/magpie/internal/types"
+	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	coinKeeper bank.Keeper
-	storeKey   sdk.StoreKey // Unexposed key to access store from sdk.Context
-	cdc        *codec.Codec // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
+	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, coinKeeper bank.Keeper) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
-		coinKeeper: coinKeeper,
-		storeKey:   storeKey,
-		cdc:        cdc,
+		StoreKey: storeKey,
+		Cdc:      cdc,
 	}
-}
-
-// -------------
-// --- Posts
-// -------------
-
-func (k Keeper) getPostStoreKey(postId types.PostId) []byte {
-	return []byte(types.PostStorePrefix + postId.String())
-}
-
-// GetLastPostId returns the last post id that has been used
-func (k Keeper) GetLastPostId(ctx sdk.Context) types.PostId {
-	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(types.LastPostIdStoreKey)) {
-		return types.PostId(0)
-	}
-
-	var id types.PostId
-	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIdStoreKey)), &id)
-	return id
-}
-
-// SetLastPostId allows to set the last used post id
-func (k Keeper) SetLastPostId(ctx sdk.Context, id types.PostId) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(types.LastPostIdStoreKey), k.cdc.MustMarshalBinaryBare(&id))
-}
-
-// CreatePost allows to create a new post checking for any id conflict with exiting posts
-func (k Keeper) CreatePost(ctx sdk.Context, post types.Post) sdk.Error {
-	if _, exists := k.GetPost(ctx, post.PostID); exists {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID))
-	}
-
-	return k.SavePost(ctx, post)
-}
-
-// SavePost allows to save the given post inside the current context
-func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
-	if post.Owner.Empty() {
-		return sdk.ErrInvalidAddress("Post owner cannot be empty")
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getPostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
-
-	// Save the last post id
-	k.SetLastPostId(ctx, post.PostID)
-
-	return nil
-}
-
-// GetPost returns the post having the given id inside the current context.
-func (k Keeper) GetPost(ctx sdk.Context, id types.PostId) (post types.Post, found bool) {
-	store := ctx.KVStore(k.storeKey)
-
-	key := k.getPostStoreKey(id)
-	if !store.Has(key) {
-		return types.NewPost(), false
-	}
-
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
-	return post, true
-}
-
-// EditPosts allows to edit the message associated with the given post
-func (k Keeper) EditPostMessage(ctx sdk.Context, post types.Post, message string) sdk.Error {
-	post.Message = message
-	return k.SavePost(ctx, post)
-}
-
-// GetPosts returns the list of all the posts that are stored into the current state
-func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
-
-	var posts []types.Post
-	for ; iterator.Valid(); iterator.Next() {
-		var post types.Post
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
-		posts = append(posts, post)
-	}
-
-	return posts
-}
-
-// -------------
-// --- Likes
-// -------------
-
-func (k Keeper) getLikeStoreKey(id types.LikeId) []byte {
-	return []byte(types.LikeStorePrefix + id.String())
-}
-
-// GetLastLikeId returns the last like id that has been used
-func (k Keeper) GetLastLikeId(ctx sdk.Context) types.LikeId {
-	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(types.LastLikeIdStoreKey)) {
-		return types.LikeId(0)
-	}
-
-	var id types.LikeId
-	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIdStoreKey)), &id)
-	return id
-}
-
-// SetLastLikeId allows to set the last used like id
-func (k Keeper) SetLastLikeId(ctx sdk.Context, id types.LikeId) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(types.LastLikeIdStoreKey), k.cdc.MustMarshalBinaryBare(&id))
-}
-
-// AddLikeToPost allows to add a new like to a given post
-func (k Keeper) AddLikeToPost(ctx sdk.Context, post types.Post, like types.Like) sdk.Error {
-	// Set the correct post id inside the like
-	like.PostID = post.PostID
-
-	// Store the like and update the last like id
-	if err := k.SaveLike(ctx, like); err != nil {
-		return err
-	}
-	k.SetLastLikeId(ctx, like.LikeID)
-
-	// Update the likes counter and save the post
-	post.Likes = post.Likes + 1
-	return k.SavePost(ctx, post)
-}
-
-// SaveLike allows to save the given like inside the store
-func (k Keeper) SaveLike(ctx sdk.Context, like types.Like) sdk.Error {
-	if like.Owner.Empty() || !like.PostID.Valid() {
-		return sdk.ErrUnauthorized("Liker and post id must exist.")
-	}
-
-	// Check for any pre-existing likes with the same id
-	if _, found := k.GetLike(ctx, like.LikeID); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.LikeID))
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getLikeStoreKey(like.LikeID), k.cdc.MustMarshalBinaryBare(&like))
-
-	return nil
-}
-
-// GetLike returns the like having the given id
-func (k Keeper) GetLike(ctx sdk.Context, id types.LikeId) (like types.Like, found bool) {
-	store := ctx.KVStore(k.storeKey)
-
-	key := k.getLikeStoreKey(id)
-	if !store.Has(key) {
-		return types.NewLike(), false
-	}
-
-	bz := store.Get(key)
-	k.cdc.MustUnmarshalBinaryBare(bz, &like)
-	return like, true
-}
-
-// GetLikes allows to returns the list of likes that have been stored inside the given context
-func (k Keeper) GetLikes(ctx sdk.Context) []types.Like {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.LikeStorePrefix))
-
-	var likes []types.Like
-	for ; iterator.Valid(); iterator.Next() {
-		var like types.Like
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &like)
-		likes = append(likes, like)
-	}
-
-	return likes
 }
 
 // -------------
 // --- Sessions
 // -------------
 
-func (k Keeper) getSessionStoreKey(id types.SessionId) []byte {
+func (k Keeper) getSessionStoreKey(id types.SessionID) []byte {
 	return []byte(types.SessionStorePrefix + id.String())
 }
 
 // GetLastLikeId returns the last like id that has been used
-func (k Keeper) GetLastSessionId(ctx sdk.Context) types.SessionId {
-	store := ctx.KVStore(k.storeKey)
-	if !store.Has([]byte(types.LastSessionIdStoreKey)) {
-		return types.SessionId(0)
+func (k Keeper) GetLastSessionID(ctx sdk.Context) types.SessionID {
+	store := ctx.KVStore(k.StoreKey)
+	if !store.Has([]byte(types.LastSessionIDStoreKey)) {
+		return types.SessionID(0)
 	}
 
-	var id types.SessionId
-	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIdStoreKey)), &id)
+	var id types.SessionID
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &id)
 	return id
 }
 
-// SetLastSessionId allows to set the last used like id
-func (k Keeper) SetLastSessionId(ctx sdk.Context, id types.SessionId) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(types.LastSessionIdStoreKey), k.cdc.MustMarshalBinaryBare(&id))
+// SetLastSessionID allows to set the last used like id
+func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
 }
 
 // CreateSession allows to create a new session checking that no other session
@@ -242,18 +67,18 @@ func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
 	}
 
 	// Save the session
-	store := ctx.KVStore(k.storeKey)
-	store.Set(k.getSessionStoreKey(session.SessionID), k.cdc.MustMarshalBinaryBare(session))
+	store := ctx.KVStore(k.StoreKey)
+	store.Set(k.getSessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
 
 	// Update the last used session id
-	k.SetLastSessionId(ctx, session.SessionID)
+	k.SetLastSessionID(ctx, session.SessionID)
 
 	return nil
 }
 
 // GetSession returns the session having the specified id
-func (k Keeper) GetSession(ctx sdk.Context, id types.SessionId) (session types.Session, found bool) {
-	store := ctx.KVStore(k.storeKey)
+func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.Session, found bool) {
+	store := ctx.KVStore(k.StoreKey)
 
 	key := k.getSessionStoreKey(id)
 	if !store.Has(key) {
@@ -261,7 +86,7 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionId) (session types.S
 	}
 
 	bz := store.Get(key)
-	k.cdc.MustUnmarshalBinaryBare(bz, &session)
+	k.Cdc.MustUnmarshalBinaryBare(bz, &session)
 	return session, true
 }
 
@@ -273,13 +98,13 @@ func (k Keeper) EditSessionExpiration(ctx sdk.Context, session types.Session, ex
 
 // GetSessions returns the list of all the sessions present inside the current context
 func (k Keeper) GetSessions(ctx sdk.Context) []types.Session {
-	store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.SessionStorePrefix))
 
 	var sessions []types.Session
 	for ; iterator.Valid(); iterator.Next() {
 		var session types.Session
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &session)
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &session)
 		sessions = append(sessions, session)
 	}
 

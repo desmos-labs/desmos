@@ -1,0 +1,210 @@
+package types
+
+import (
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
+// ----------------------
+// --- MsgCreatePost
+// ----------------------
+
+// MsgCreatePost defines a CreatePost message
+type MsgCreatePost struct {
+	ParentID      PostID         `json:"parent_id"`
+	Message       string         `json:"message"`
+	Created       time.Time      `json:"created"`
+	Owner         sdk.AccAddress `json:"owner"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
+}
+
+// NewMsgCreatePost is a constructor function for MsgSetName
+func NewMsgCreatePost(message string, parentID PostID, time time.Time, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreatePost {
+	return MsgCreatePost{
+		Message:       message,
+		ParentID:      parentID,
+		Created:       time,
+		Owner:         owner,
+		Namespace:     namespace,
+		ExternalOwner: externalOwner,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgCreatePost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgCreatePost) Type() string { return ActionCreatePost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgCreatePost) ValidateBasic() sdk.Error {
+	if msg.Owner.Empty() {
+		return sdk.ErrInvalidAddress(msg.Owner.String())
+	}
+	if len(msg.Message) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	}
+	if msg.Created.IsZero() {
+		return sdk.ErrUnknownRequest("The created time cannot be empty")
+	}
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgCreatePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Owner}
+}
+
+// ----------------------
+// --- MsgEditPost
+// ----------------------
+
+// MsgEditPost defines the EditPostMessage message
+type MsgEditPost struct {
+	PostID  PostID         `json:"id"`
+	Message string         `json:"message"`
+	Time    time.Time      `json:"time"`
+	Owner   sdk.AccAddress `json:"owner"`
+}
+
+// NewMsgEditPost is the constructor function for MsgEditPost
+func NewMsgEditPost(id PostID, message string, time time.Time, owner sdk.AccAddress) MsgEditPost {
+	return MsgEditPost{
+		PostID:  id,
+		Message: message,
+		Time:    time,
+		Owner:   owner,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgEditPost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgEditPost) Type() string { return ActionEditPost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgEditPost) ValidateBasic() sdk.Error {
+	if msg.Owner.Empty() {
+		return sdk.ErrInvalidAddress(msg.Owner.String())
+	}
+	if len(msg.Message) == 0 || msg.Time.IsZero() || !msg.PostID.Valid() {
+		return sdk.ErrUnknownRequest("Post id, message and/or time cannot be empty")
+	}
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgEditPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Owner}
+}
+
+// ----------------------
+// --- MsgLike
+// ----------------------
+
+// MsgLike defines the MsgLike message
+type MsgLike struct {
+	PostID        PostID         `json:"post_id"`
+	Created       time.Time      `json:"created"`
+	Liker         sdk.AccAddress `json:"liker"`
+	Namespace     string         `json:"namespace"`
+	ExternalOwner string         `json:"external_owner"`
+}
+
+// NewMsgLike is a constructor function for MsgLike
+func NewMsgLike(postID PostID, created time.Time, liker sdk.AccAddress, namespace string, externalOwner string) MsgLike {
+	return MsgLike{
+		PostID:        postID,
+		Created:       created,
+		Liker:         liker,
+		Namespace:     namespace,
+		ExternalOwner: externalOwner,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgLike) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgLike) Type() string { return ActionLikePost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgLike) ValidateBasic() sdk.Error {
+	if msg.Liker.Empty() {
+		return sdk.ErrInvalidAddress(msg.Liker.String())
+	}
+	if !msg.PostID.Valid() || msg.Created.IsZero() {
+		return sdk.ErrUnknownRequest("Post id, and/or time cannot be empty")
+	}
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgLike) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgLike) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Liker}
+}
+
+// MsgUnlike defines the MsgUnlike message
+type MsgUnlike struct {
+	ID    string
+	Time  time.Time
+	Liker sdk.AccAddress
+}
+
+// ----------------------
+// --- MsgUnlike
+// ----------------------
+
+// NewMsgUnlike is the constructor of MsgUnlike
+func NewMsgUnlike(id string, time time.Time, liker sdk.AccAddress) MsgUnlike {
+	return MsgUnlike{
+		ID:    id,
+		Time:  time,
+		Liker: liker,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgUnlike) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgUnlike) Type() string { return "unlike" }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgUnlike) ValidateBasic() sdk.Error {
+	if msg.Liker.Empty() {
+		return sdk.ErrInvalidAddress(msg.Liker.String())
+	}
+	if len(msg.ID) == 0 || msg.Time.IsZero() {
+		return sdk.ErrUnknownRequest("Like id, and/or time cannot be empty")
+	}
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgUnlike) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Liker}
+}
