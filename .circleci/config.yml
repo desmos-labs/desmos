@@ -31,7 +31,7 @@ commands:
 
 
 jobs:
-  setup_dependencies:
+  setup-dependencies:
     executor: golang
     steps:
       - checkout
@@ -66,11 +66,65 @@ jobs:
           target: test
           description: "Test all"
 
+  test-cover:
+    executor: golang
+    parallelism: 4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v2-{{ checksum "go.sum" }}
+      - run:
+          name: Run tests
+          command: |
+            export VERSION="$(git describe --tags --long | sed 's/v\(.*\)/\1/')"
+            export GO111MODULE=on
+            mkdir -p /tmp/logs /tmp/workspace/profiles
+            for pkg in $(go list ./... | grep -v '/simulation' | circleci tests split); do
+              id=$(echo "$pkg" | sed 's|[/.]|_|g')
+              go test -mod=readonly -timeout 8m -race -coverprofile=/tmp/workspace/profiles/$id.out -covermode=atomic -tags='ledger test_ledger_mock' "$pkg" | tee "/tmp/logs/$id-$RANDOM.log"
+            done
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - "profiles/*"
+      - store_artifacts:
+          path: /tmp/logs
+
+  upload-coverage:
+    executor: golang
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - run:
+          name: gather
+          command: |
+            echo "--> Concatenating profiles:"
+            ls /tmp/workspace/profiles/
+            echo "mode: atomic" > coverage.txt
+            for prof in $(ls /tmp/workspace/profiles/); do
+              tail -n +2 /tmp/workspace/profiles/"$prof" >> coverage.txt
+            done
+# Removed for now as it is not necessary
+#      - run:
+#          name: filter out DONTCOVER
+#          command: |
+#            excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
+#            for filename in ${excludelist}; do
+#              filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
+#              echo "Excluding ${filename} from coverage report..."
+#              sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
+#            done
+      - run:
+          name: upload
+          command: bash <(curl -s https://codecov.io/bash) -f coverage.txt
+
 workflows:
   version: 2
   test-suite:
     jobs:
-      - setup_dependencies:
+      - setup-dependencies:
           filters:
             tags:
               only:
@@ -84,4 +138,10 @@ workflows:
               ignore:
                 - gh-pages
           requires:
-            - setup_dependencies
+            - setup-dependencies
+      - test-cover:
+          requires:
+            - setup-dependencies
+      - upload-coverage:
+          requires:
+            - test-cover
