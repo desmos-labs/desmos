@@ -4,10 +4,10 @@ package types
 const (
 	EventTypeCreatePost = "create_post"
 	EventTypeEditPost   = "edit_post"
-	EventTypeLikePost   = "like"
-	EventTypeUnlikePost = "unlike"
+	EventTypeLikePost   = "like_post"
+	EventTypeUnlikePost = "unlike_post"
 
-	AttributeKeyPostOwner     = "power_owner"
+	AttributeKeyPostOwner     = "post_owner"
 	AttributeKeyLiker         = "liker"
 	AttributeKeyCreated       = "created"
 	AttributeKeyModified      = "modified"

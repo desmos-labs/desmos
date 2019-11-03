@@ -15,7 +15,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgCreatePost(ctx, keeper, msg)
 		case types.MsgEditPost:
 			return handleMsgEditPost(ctx, keeper, msg)
-		case types.MsgLike:
+		case types.MsgLikePost:
 			return handleMsgLike(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
@@ -55,6 +55,8 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		sdk.NewEvent(
 			types.EventTypeCreatePost,
 			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+			sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyCreated, post.Created.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
 		),
@@ -74,7 +76,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionEditPost),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Editor.String()),
 		),
 	)
 
@@ -85,7 +87,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if !msg.Owner.Equals(existing.Owner) {
+	if !msg.Editor.Equals(existing.Owner) {
 		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 
@@ -114,7 +116,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 }
 
-func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result {
+func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Result {
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -132,18 +134,18 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 	}
 
 	// Check the like creation date
-	if !msg.Created.After(post.Created) {
+	if !msg.Time.After(post.Created) {
 		return sdk.ErrUnknownRequest("Like cannot have a creation date before the post itself").Result()
 	}
 
 	// Create and store the like
 	like := types.Like{
 		LikeID:        keeper.GetLastLikeID(ctx).Next(),
-		Created:       msg.Created,
+		Created:       msg.Time,
 		PostID:        msg.PostID,
 		Owner:         msg.Liker,
 		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
+		ExternalOwner: msg.ExternalLiker,
 	}
 
 	if err := keeper.AddLikeToPost(ctx, post, like); err != nil {
@@ -157,7 +159,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result
 			sdk.NewAttribute(types.AttributeKeyLikeID, like.LikeID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalLiker),
 		),
 	)
 

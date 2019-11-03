@@ -52,7 +52,7 @@ func Test_handleMsgCreatePost_returns_error_with_existing_post_id(t *testing.T) 
 	assert.Contains(t, ctx.EventManager().Events(), expected)
 }
 
-func Test_handleMsgCreatePost__valid_request(t *testing.T) {
+func Test_handleMsgCreatePost_valid_request(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	expectedPostID := types.PostID(1)
@@ -76,6 +76,8 @@ func Test_handleMsgCreatePost__valid_request(t *testing.T) {
 	creationEvent := sdk.NewEvent(
 		types.EventTypeCreatePost,
 		sdk.NewAttribute(types.AttributeKeyPostID, expectedPostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Owner.String()),
+		sdk.NewAttribute(types.AttributeKeyCreated, msg.Created.String()),
 		sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 		sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
 	)
@@ -119,7 +121,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 				PostID:  types.PostID(0),
 				Message: "Edited message",
 				Time:    testPost.Created.AddDate(1, 0, 0),
-				Owner:   testPostOwner,
+				Editor:  testPostOwner,
 			},
 			error: "Post with id 0 not found",
 		},
@@ -129,7 +131,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 				PostID:  testPost.PostID,
 				Message: "Edited message",
 				Time:    testPost.Created.AddDate(1, 0, 0),
-				Owner:   editor,
+				Editor:  editor,
 			},
 			error: "Incorrect owner",
 		}, {
@@ -138,7 +140,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 				PostID:  testPost.PostID,
 				Message: "Edited message",
 				Time:    testPost.Created,
-				Owner:   testPost.Owner,
+				Editor:  testPost.Owner,
 			},
 			error: "Edit date cannot be before creation date",
 		},
@@ -166,7 +168,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 				sdk.EventTypeMessage,
 				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 				sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionEditPost),
-				sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Owner.String()),
+				sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Editor.String()),
 			)
 			assert.Contains(t, ctx.EventManager().Events(), expectedEvent)
 		})
@@ -185,7 +187,7 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 		PostID:  testPost.PostID,
 		Message: "Edited message",
 		Time:    testPost.Created.AddDate(1, 0, 0),
-		Owner:   testPost.Owner,
+		Editor:  testPost.Owner,
 	}
 
 	handler := keeper.NewHandler(k)
@@ -226,33 +228,33 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 // --- handleMsgLike
 // --------------------
 
-func Test_handleMsgLike_invalid_requests(t *testing.T) {
+func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 
 	liker, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	tests := []struct {
 		name  string
-		msg   types.MsgLike
+		msg   types.MsgLikePost
 		error string
 	}{
 		{
 			name: "Post not found",
-			msg: types.MsgLike{
+			msg: types.MsgLikePost{
 				PostID:        types.PostID(0),
-				Created:       testPost.Created.AddDate(1, 0, 0),
+				Time:          testPost.Created.AddDate(1, 0, 0),
 				Liker:         liker,
 				Namespace:     "cosmos",
-				ExternalOwner: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+				ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
 			},
 			error: "Post with id 0 not found",
 		},
 		{
 			name: "Like date before post date",
-			msg: types.MsgLike{
+			msg: types.MsgLikePost{
 				PostID:        testPost.PostID,
-				Created:       testPost.Created,
+				Time:          testPost.Created,
 				Liker:         liker,
 				Namespace:     "cosmos",
-				ExternalOwner: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+				ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
 			},
 			error: "Like cannot have a creation date before the post itself",
 		},
@@ -286,7 +288,7 @@ func Test_handleMsgLike_invalid_requests(t *testing.T) {
 	}
 }
 
-func Test_handleMsgLike_valid_request(t *testing.T) {
+func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	// Insert the post
@@ -296,12 +298,12 @@ func Test_handleMsgLike_valid_request(t *testing.T) {
 	// Handle the message
 	expectedLikeID := types.LikeID(1)
 	liker, _ := sdk.AccAddressFromBech32("cosmos1dshanwvhmq4c5jk9a3ywtuyex426cflq5l4mqp")
-	msg := types.MsgLike{
+	msg := types.MsgLikePost{
 		PostID:        testPost.PostID,
-		Created:       testPost.Created.AddDate(1, 0, 0),
+		Time:          testPost.Created.AddDate(1, 0, 0),
 		Liker:         liker,
 		Namespace:     "cosmos",
-		ExternalOwner: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+		ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
 	}
 
 	handler := keeper.NewHandler(k)
@@ -317,7 +319,7 @@ func Test_handleMsgLike_valid_request(t *testing.T) {
 		sdk.NewAttribute(types.AttributeKeyLikeID, expectedLikeID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-		sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+		sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalLiker),
 	)
 	assert.Len(t, ctx.EventManager().Events(), 2)
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
@@ -344,10 +346,10 @@ func Test_handleMsgLike_valid_request(t *testing.T) {
 	expectedLike := types.Like{
 		LikeID:        expectedLikeID,
 		PostID:        msg.PostID,
-		Created:       msg.Created,
+		Created:       msg.Time,
 		Owner:         msg.Liker,
 		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
+		ExternalOwner: msg.ExternalLiker,
 	}
 
 	var storedLike types.Like

@@ -120,7 +120,7 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgLike(postID, time.Now(), from, args[1], args[2])
+			msg := types.NewMsgLikePost(postID, time.Now(), from, args[1], args[2])
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

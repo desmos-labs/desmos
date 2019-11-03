@@ -12,5 +12,6 @@ const (
 
 	ActionCreatePost = "create_post"
 	ActionEditPost   = "edit_post"
-	ActionLikePost   = "like"
+	ActionLikePost   = "like_post"
+	ActionUnlikePost = "unlike_post"
 )

@@ -28,8 +28,8 @@ var (
 	// Msgs
 	NewMsgCreatePost = types.NewMsgCreatePost
 	NewMsgEditPost   = types.NewMsgEditPost
-	NewMsgLike       = types.NewMsgLike
-	NewMsgUnlike     = types.NewMsgUnlike
+	NewMsgLikePost   = types.NewMsgLikePost
+	NewMsgUnlikePost = types.NewMsgUnlikePost
 )
 
 type (
@@ -45,6 +45,6 @@ type (
 	// Msgs
 	MsgCreatePost = types.MsgCreatePost
 	MsgEditPost   = types.MsgEditPost
-	MsgLike       = types.MsgLike
-	MsgUnlike     = types.MsgUnlike
+	MsgLikePost   = types.MsgLikePost
+	MsgUnlikePost = types.MsgUnlikePost
 )

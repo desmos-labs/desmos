@@ -107,7 +107,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgLike(postID, time.Now(), addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgLikePost(postID, time.Now(), addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

@@ -68,10 +68,10 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID  PostID         `json:"id"`
+	PostID  PostID         `json:"post_id"`
 	Message string         `json:"message"`
 	Time    time.Time      `json:"time"`
-	Owner   sdk.AccAddress `json:"owner"`
+	Editor  sdk.AccAddress `json:"editor"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
@@ -80,7 +80,7 @@ func NewMsgEditPost(id PostID, message string, time time.Time, owner sdk.AccAddr
 		PostID:  id,
 		Message: message,
 		Time:    time,
-		Owner:   owner,
+		Editor:  owner,
 	}
 }
 
@@ -92,8 +92,8 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() sdk.Error {
-	if msg.Owner.Empty() {
-		return sdk.ErrInvalidAddress(msg.Owner.String())
+	if msg.Editor.Empty() {
+		return sdk.ErrInvalidAddress(msg.Editor.String())
 	}
 	if len(msg.Message) == 0 || msg.Time.IsZero() || !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Post id, message and/or time cannot be empty")
@@ -108,103 +108,106 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	return []sdk.AccAddress{msg.Editor}
 }
 
 // ----------------------
-// --- MsgLike
+// --- MsgLikePost
 // ----------------------
 
-// MsgLike defines the MsgLike message
-type MsgLike struct {
-	PostID        PostID         `json:"post_id"`
-	Created       time.Time      `json:"created"`
-	Liker         sdk.AccAddress `json:"liker"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
+// MsgLikePost defines the MsgLikePost message
+type MsgLikePost struct {
+	PostID        PostID         `json:"post_id"`        // Id of the post to like
+	Time          time.Time      `json:"time"`           // Date and time in which the like has been set
+	Namespace     string         `json:"namespace"`      // Chan id of the chain from which the like has been set
+	ExternalLiker string         `json:"external_liker"` // External address of the liker
+	Liker         sdk.AccAddress `json:"liker"`          // Address of the user liking the post
 }
 
-// NewMsgLike is a constructor function for MsgLike
-func NewMsgLike(postID PostID, created time.Time, liker sdk.AccAddress, namespace string, externalOwner string) MsgLike {
-	return MsgLike{
+// NewMsgLikePost is a constructor function for MsgLikePost
+func NewMsgLikePost(postID PostID, created time.Time, liker sdk.AccAddress, namespace string, externalOwner string) MsgLikePost {
+	return MsgLikePost{
 		PostID:        postID,
-		Created:       created,
+		Time:          created,
 		Liker:         liker,
 		Namespace:     namespace,
-		ExternalOwner: externalOwner,
+		ExternalLiker: externalOwner,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgLike) Route() string { return RouterKey }
+func (msg MsgLikePost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgLike) Type() string { return ActionLikePost }
+func (msg MsgLikePost) Type() string { return ActionLikePost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgLike) ValidateBasic() sdk.Error {
+func (msg MsgLikePost) ValidateBasic() sdk.Error {
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(msg.Liker.String())
 	}
-	if !msg.PostID.Valid() || msg.Created.IsZero() {
+	if !msg.PostID.Valid() || msg.Time.IsZero() {
 		return sdk.ErrUnknownRequest("Post id, and/or time cannot be empty")
 	}
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgLike) GetSignBytes() []byte {
+func (msg MsgLikePost) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgLike) GetSigners() []sdk.AccAddress {
+func (msg MsgLikePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Liker}
 }
 
-// MsgUnlike defines the MsgUnlike message
-type MsgUnlike struct {
-	ID    string
-	Time  time.Time
-	Liker sdk.AccAddress
+// ----------------------
+// --- MsgUnlikePost
+// ----------------------
+
+// MsgUnlikePost defines the MsgUnlikePost message
+type MsgUnlikePost struct {
+	PostID PostID         `json:"post_id"` // Id of the post to unlike
+	Time   time.Time      `json:"time"`    // Time at which the unlike has been set
+	Liker  sdk.AccAddress `json:"liker"`   // Address of the user that has previously liked the post
 }
 
-// ----------------------
-// --- MsgUnlike
-// ----------------------
-
-// NewMsgUnlike is the constructor of MsgUnlike
-func NewMsgUnlike(id string, time time.Time, liker sdk.AccAddress) MsgUnlike {
-	return MsgUnlike{
-		ID:    id,
-		Time:  time,
-		Liker: liker,
+// MsgUnlikePostPost is the constructor of MsgUnlikePost
+func NewMsgUnlikePost(postID PostID, time time.Time, liker sdk.AccAddress) MsgUnlikePost {
+	return MsgUnlikePost{
+		PostID: postID,
+		Time:   time,
+		Liker:  liker,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgUnlike) Route() string { return RouterKey }
+func (msg MsgUnlikePost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgUnlike) Type() string { return "unlike" }
+func (msg MsgUnlikePost) Type() string { return ActionUnlikePost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgUnlike) ValidateBasic() sdk.Error {
+func (msg MsgUnlikePost) ValidateBasic() sdk.Error {
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(msg.Liker.String())
 	}
-	if len(msg.ID) == 0 || msg.Time.IsZero() {
-		return sdk.ErrUnknownRequest("Like id, and/or time cannot be empty")
+	if !msg.PostID.Valid() {
+		return sdk.ErrUnknownRequest("Invalid post id")
+	}
+	if msg.Time.IsZero() {
+		return sdk.ErrUnknownRequest("Time cannot be empty")
 	}
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgUnlike) GetSignBytes() []byte {
+func (msg MsgUnlikePost) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgUnlike) GetSigners() []sdk.AccAddress {
+func (msg MsgUnlikePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Liker}
 }
