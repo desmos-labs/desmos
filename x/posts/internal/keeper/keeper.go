@@ -137,9 +137,7 @@ func (k Keeper) AddLikeToPost(ctx sdk.Context, post types.Post, like types.Like)
 	}
 	k.SetLastLikeID(ctx, like.LikeID)
 
-	// Update the likes counter and save the post
-	post.Likes++
-	return k.SavePost(ctx, post)
+	return nil
 }
 
 // SaveLike allows to save the given like inside the store

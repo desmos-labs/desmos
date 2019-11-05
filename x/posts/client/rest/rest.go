@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -62,7 +61,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreatePost(req.Message, parentID, time.Now(), addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgCreatePost(req.Message, parentID, addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -107,7 +106,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgLikePost(postID, time.Now(), addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgLikePost(postID, addr, req.Namespace, req.ExternalOwner)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -40,8 +41,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		PostID:        keeper.GetLastPostID(ctx).Next(),
 		ParentID:      msg.ParentID,
 		Message:       msg.Message,
-		Created:       msg.Created,
-		Likes:         0,
+		Created:       ctx.BlockHeight(),
 		Owner:         msg.Owner,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
@@ -55,8 +55,9 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		sdk.NewEvent(
 			types.EventTypeCreatePost,
 			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+			sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
+			sdk.NewAttribute(types.AttributeKeyCreationTime, strconv.FormatInt(post.Created, 10)),
 			sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
-			sdk.NewAttribute(types.AttributeKeyCreated, post.Created.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
 		),
@@ -91,14 +92,14 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 
-	// Check that the edit date is not before the creation date
-	if !msg.Time.After(existing.Created) {
+	// Check the validity of the current block height respect to the creation date of the post
+	if ctx.BlockHeight() < existing.Created {
 		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
 	}
 
 	// Edit the post
 	existing.Message = msg.Message
-	existing.Modified = msg.Time
+	existing.LastEdited = ctx.BlockHeight()
 	if err := keeper.SavePost(ctx, existing); err != nil {
 		return err.Result()
 	}
@@ -107,6 +108,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 		sdk.NewEvent(
 			types.EventTypeEditPost,
 			sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
+			sdk.NewAttribute(types.AttributeKeyPostEditTime, strconv.FormatInt(existing.LastEdited, 10)),
 		),
 	)
 
@@ -133,16 +135,16 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
-	// Check the like creation date
-	if !msg.Time.After(post.Created) {
-		return sdk.ErrUnknownRequest("Like cannot have a creation date before the post itself").Result()
+	// Check the like date to make sure it's before the post creation date.
+	if ctx.BlockHeight() < post.Created {
+		return sdk.ErrUnknownRequest("Like cannot have a creation time before the post itself").Result()
 	}
 
 	// Create and store the like
 	like := types.Like{
 		LikeID:        keeper.GetLastLikeID(ctx).Next(),
-		Created:       msg.Time,
-		PostID:        msg.PostID,
+		Created:       ctx.BlockHeight(),
+		PostID:        post.PostID,
 		Owner:         msg.Liker,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalLiker,
@@ -159,7 +161,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 			sdk.NewAttribute(types.AttributeKeyLikeID, like.LikeID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalLiker),
+			sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 		),
 	)
 

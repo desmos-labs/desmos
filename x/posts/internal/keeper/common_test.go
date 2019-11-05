@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,14 +42,12 @@ func testCodec() *codec.Codec {
 }
 
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var testTimeZone, _ = time.LoadLocation("UTC")
 var testPost = types.Post{
 	PostID:        types.PostID(3257),
 	ParentID:      types.PostID(502),
 	Message:       "Post message",
-	Created:       time.Date(2019, 10, 31, 12, 25, 0, 0, testTimeZone),
-	Modified:      time.Date(2019, 11, 1, 12, 25, 0, 0, testTimeZone),
-	Likes:         54,
+	Created:       10,
+	LastEdited:    50,
 	Owner:         testPostOwner,
 	Namespace:     "cosmos",
 	ExternalOwner: "cosmos1qe2vysfe8gsqcg0mr0qejd9urknnk7aa9r9fk2",

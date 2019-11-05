@@ -1,10 +1,9 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -46,9 +45,8 @@ type Post struct {
 	PostID        PostID         `json:"id"`
 	ParentID      PostID         `json:"parent_id"`
 	Message       string         `json:"message"`
-	Created       time.Time      `json:"created"`
-	Modified      time.Time      `json:"modified"`
-	Likes         uint           `json:"likes"`
+	Created       int64          `json:"created"`     // Block height at which the post has been created
+	LastEdited    int64          `json:"last_edited"` // Block height at which the post has been edited the last time
 	Owner         sdk.AccAddress `json:"owner"`
 	Namespace     string         `json:"namespace"`      // External service namespace, e.g. cosmos
 	ExternalOwner string         `json:"external_owner"` // External owner address of the post
@@ -61,15 +59,12 @@ func NewPost() Post {
 
 // implement fmt.Stringer
 func (p Post) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`PostID: %s
-Parent PostID: %s
-Owner: %s
-Message: %s
-Created: %s
-Modified: %s
-Likes: %d
-Namespace: %s
-External Onwer: %s`, p.PostID, p.ParentID, p.Owner, p.Message, p.Created, p.Modified, p.Likes, p.Namespace, p.ExternalOwner))
+	bytes, err := json.Marshal(&p)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
 }
 
 func (p Post) Validate() error {
@@ -85,12 +80,12 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post message: %s", p.Message)
 	}
 
-	if p.Created.String() == "" {
-		return fmt.Errorf("invalid post creation time: %s", p.Created)
+	if p.Created == 0 {
+		return fmt.Errorf("invalid post creation block heigth: %d", p.Created)
 	}
 
-	if p.Modified.String() == "" {
-		return fmt.Errorf("invalid Post edit time %s", p.Modified)
+	if p.LastEdited == 0 || p.LastEdited < p.Created {
+		return fmt.Errorf("invalid Post edit time %d", p.LastEdited)
 	}
 
 	if p.Namespace == "" {

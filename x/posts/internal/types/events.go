@@ -7,14 +7,18 @@ const (
 	EventTypeLikePost   = "like_post"
 	EventTypeUnlikePost = "unlike_post"
 
-	AttributeKeyPostOwner     = "post_owner"
-	AttributeKeyLiker         = "liker"
-	AttributeKeyCreated       = "created"
-	AttributeKeyModified      = "modified"
-	AttributeKeyPostID        = "post_id"
-	AttributeKeyLikeID        = "like_id"
+	// Post attributes
+	AttributeKeyPostID       = "post_id"
+	AttributeKeyPostParentID = "post_parent_id"
+	AttributeKeyPostOwner    = "post_owner"
+	AttributeKeyPostEditTime = "post_edit_time"
+
+	// Like attributes
+	AttributeKeyLikeID    = "like_id"
+	AttributeKeyLikeOwner = "liker"
+
+	// Generic attributes
+	AttributeKeyCreationTime  = "creation_time"
 	AttributeKeyNamespace     = "namespace"
 	AttributeKeyExternalOwner = "external_owner"
-
-	AttributeValueCategory = ModuleName
 )

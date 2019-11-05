@@ -1,10 +1,9 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -45,7 +44,7 @@ func ParseLikeID(value string) (LikeID, error) {
 type Like struct {
 	LikeID        LikeID         `json:"id"`
 	PostID        PostID         `json:"post_id"`
-	Created       time.Time      `json:"created"`
+	Created       int64          `json:"created"` // Block height at which the like was created
 	Owner         sdk.AccAddress `json:"owner"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
@@ -58,12 +57,11 @@ func NewLike() Like {
 
 // implement fmt.Stringer
 func (l Like) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`PostID: %s
-Owner: %s
-PostID: %s
-Created: %s
-Namespace: %s
-External Owner: %s`, l.LikeID, l.Owner, l.PostID, l.Created, l.Namespace, l.ExternalOwner))
+	bytes, err := json.Marshal(&l)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
 }
 
 func (l Like) Validate() error {
@@ -75,8 +73,8 @@ func (l Like) Validate() error {
 		return fmt.Errorf("invalid like owner: %s", l.Owner)
 	}
 
-	if l.Created.String() == "" {
-		return fmt.Errorf("invalid like creation time: %s", l.Created)
+	if l.Created == 0 {
+		return fmt.Errorf("invalid like creation block heigth: %d", l.Created)
 	}
 
 	if !l.PostID.Valid() {

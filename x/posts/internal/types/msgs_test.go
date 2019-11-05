@@ -19,7 +19,6 @@ var msgCreatePost = types.MsgCreatePost{
 	ParentID:      types.PostID(53),
 	Message:       "My new post",
 	Owner:         testOwner,
-	Created:       time.Date(2019, 10, 31, 9, 42, 0, 0, timeZone),
 	Namespace:     "cosmos",
 	ExternalOwner: "cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge",
 }
@@ -41,7 +40,7 @@ func TestMsgCreatePost_ValidateBasic_Schema_valid(t *testing.T) {
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	actual := msgCreatePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreatePost","value":{"created":"2019-10-31T09:42:00Z","external_owner":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","message":"My new post","namespace":"cosmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","parent_id":"53"}}`
+	expected := `{"type":"desmos/MsgCreatePost","value":{"external_owner":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","message":"My new post","namespace":"cosmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","parent_id":"53"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
@@ -59,7 +58,6 @@ var msgEditPost = types.MsgEditPost{
 	PostID:  types.PostID(94),
 	Message: "Edited post message",
 	Editor:  testOwner,
-	Time:    time.Date(2019, 11, 2, 10, 38, 5, 96000000, timeZone),
 }
 
 func TestMsgEditPost_Route(t *testing.T) {
@@ -79,7 +77,7 @@ func TestMsgEditPost_ValidateBasic_Schema_valid(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94","time":"2019-11-02T10:38:05.096Z"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
@@ -96,7 +94,6 @@ func TestMsgEditPost_GetSigners(t *testing.T) {
 var msgLike = types.MsgLikePost{
 	PostID:        types.PostID(94),
 	Liker:         testOwner,
-	Time:          time.Date(2019, 11, 2, 10, 38, 5, 96000000, timeZone),
 	Namespace:     "cosmos",
 	ExternalLiker: "cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge",
 }
@@ -118,7 +115,7 @@ func TestMsgLikePost_ValidateBasic_Schema_valid(t *testing.T) {
 
 func TestMsgLikePost_GetSignBytes(t *testing.T) {
 	actual := msgLike.GetSignBytes()
-	expected := `{"type":"desmos/MsgLikePost","value":{"external_liker":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","namespace":"cosmos","post_id":"94","time":"2019-11-02T10:38:05.096Z"}}`
+	expected := `{"type":"desmos/MsgLikePost","value":{"external_liker":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","namespace":"cosmos","post_id":"94"}}`
 	assert.Equal(t, expected, string(actual))
 }
 

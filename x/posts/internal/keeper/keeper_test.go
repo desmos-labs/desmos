@@ -241,7 +241,6 @@ func TestKeeper_AddLikeToPost_ValidLike(t *testing.T) {
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+post.PostID.String())), &storedPost)
 
 	assert.Equal(t, post.PostID, storedLike.PostID)
-	assert.Equal(t, uint(1), storedPost.Likes)
 }
 
 func TestKeeper_AddLikeToPost_UpdatesLastLikeId(t *testing.T) {
