@@ -1,10 +1,8 @@
 package types
 
 import (
-	"fmt"
+	"encoding/json"
 	"strconv"
-	"strings"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -49,14 +47,14 @@ func ParseSessionID(value string) (SessionID, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionID      `json:"id"`             // Id of the session
-	Owner         sdk.AccAddress `json:"owner"`          // Desmos owner of this session
-	Created       time.Time      `json:"created"`        // Creation time
-	Expiry        time.Time      `json:"expiry"`         // Expiration time
-	Namespace     string         `json:"namespace"`      // Bech32 HRP of the external_owner field
-	ExternalOwner string         `json:"external_owner"` // External chain owner address
-	PubKey        string         `json:"pub_key"`        // External chain owner public key
-	Signature     string         `json:"signature"`      // Session signature
+	SessionID     SessionID      `json:"id"`              // Id of the session
+	Owner         sdk.AccAddress `json:"owner"`           // Desmos owner of this session
+	Created       int64          `json:"creation_time"`   // Block height at which the session has been created
+	Expiry        int64          `json:"expiration_time"` // Block height at which the session will expire
+	Namespace     string         `json:"namespace"`       // Bech32 HRP of the external_owner field
+	ExternalOwner string         `json:"external_owner"`  // External chain owner address
+	PubKey        string         `json:"pub_key"`         // External chain owner public key
+	Signature     string         `json:"signature"`       // Session signature
 }
 
 // NewSession return an empty Session
@@ -66,11 +64,9 @@ func NewSession() Session {
 
 // implement fmt.Stringer
 func (s Session) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
-Created: %s
-Expiry: %s
-Namespace: %s
-External Owner: %s
-Pubkey: %s
-Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namespace, s.ExternalOwner, s.PubKey, s.Signature))
+	bytes, err := json.Marshal(&s)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
 }

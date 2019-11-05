@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -48,10 +46,9 @@ func testCodec() *codec.Codec {
 }
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var timeZone, _ = time.LoadLocation("UTC")
-var session = types.Session{
+var testSession = types.Session{
 	SessionID: types.SessionID(1),
 	Owner:     testOwner,
-	Created:   time.Date(2019, 10, 31, 9, 42, 0, 0, timeZone),
-	Expiry:    time.Date(2019, 11, 1, 9, 42, 0, 0, timeZone),
+	Created:   10,
+	Expiry:    15,
 }

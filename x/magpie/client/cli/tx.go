@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"time"
-
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -49,7 +47,7 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateSession(time.Now(), from, args[0], args[1], args[2], args[3])
+			msg := types.NewMsgCreateSession(from, args[0], args[1], args[2], args[3])
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

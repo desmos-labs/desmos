@@ -1,11 +1,10 @@
 package keeper
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"time"
-
-	"encoding/base64"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -70,14 +69,14 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	// Verify the signature
 	if !pubkey.VerifyBytes(signedBytes, sig) {
-		return sdk.ErrUnauthorized("The session signature is not valid").Result()
+		return sdk.ErrUnauthorized("The testSession signature is not valid").Result()
 	}
 
-	// Create the session
+	// Create the testSession
 	session := types.Session{
 		SessionID:     keeper.GetLastSessionID(ctx).Next(),
-		Created:       msg.Created,
-		Expiry:        msg.Created.Add(time.Minute * 14400),
+		Created:       ctx.BlockHeight(),
+		Expiry:        ctx.BlockHeight() + 240, // 24 hours, counting a 6 secs block interval
 		Owner:         msg.Owner,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
@@ -95,7 +94,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 			sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
 			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-			sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
+			sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 		),
 	)
 

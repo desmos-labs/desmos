@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"testing"
-	"time"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
@@ -114,22 +113,4 @@ func TestKeeper_GetSession_Existent(t *testing.T) {
 	stored, found := k.GetSession(ctx, session.SessionID)
 	assert.True(t, found)
 	assert.Equal(t, session, stored)
-}
-
-func TestKeeper_EditSessionExpiration(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	session := types.Session{Owner: testOwner, SessionID: defaultSessionID()}
-
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionStorePrefix+session.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&session))
-
-	location, _ := time.LoadLocation("UTC")
-	expiration := time.Date(2017, 10, 20, 11, 45, 32, 0, location)
-	err := k.EditSessionExpiration(ctx, session, expiration)
-	assert.NoError(t, err)
-
-	var stored types.Session
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
-	assert.Equal(t, expiration, stored.Expiry)
 }

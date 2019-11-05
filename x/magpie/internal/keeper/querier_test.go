@@ -30,11 +30,11 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 func Test_querySession_ValidIdReturnsAssociatedSession(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	// Store a test session
+	// Store a test testSession
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionStorePrefix+session.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&session))
+	store.Set([]byte(types.SessionStorePrefix+testSession.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&testSession))
 
-	path := []string{keeper.QuerySession, session.SessionID.String()}
+	path := []string{keeper.QuerySession, testSession.SessionID.String()}
 
 	querier := keeper.NewQuerier(k)
 	actualBz, err := querier(ctx, path, request)
@@ -43,5 +43,5 @@ func Test_querySession_ValidIdReturnsAssociatedSession(t *testing.T) {
 
 	var actual types.Session
 	k.Cdc.MustUnmarshalJSON(actualBz, &actual)
-	assert.Equal(t, session, actual)
+	assert.Equal(t, testSession, actual)
 }

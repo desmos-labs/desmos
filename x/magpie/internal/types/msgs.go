@@ -1,15 +1,12 @@
 package types
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
 	Owner         sdk.AccAddress `json:"owner"`
-	Created       time.Time      `json:"created"`
 	Namespace     string         `json:"namespace"`
 	ExternalOwner string         `json:"external_owner"`
 	PubKey        string         `json:"pub_key"`
@@ -17,9 +14,8 @@ type MsgCreateSession struct {
 }
 
 // NewMsgCreateSession is the constructor of MsgCreateSession
-func NewMsgCreateSession(created time.Time, owner sdk.AccAddress, namespace string, externalOwner string, pubkey string, signature string) MsgCreateSession {
+func NewMsgCreateSession(owner sdk.AccAddress, namespace string, externalOwner string, pubkey string, signature string) MsgCreateSession {
 	return MsgCreateSession{
-		Created:       created,
 		Owner:         owner,
 		Namespace:     namespace,
 		ExternalOwner: externalOwner,
@@ -38,10 +34,6 @@ func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
 		return sdk.ErrUnknownRequest("Session owner cannot be empty.")
-	}
-
-	if msg.Created.IsZero() {
-		return sdk.ErrUnknownRequest("Session created time cannot be empty")
 	}
 
 	if len(msg.Namespace) == 0 {

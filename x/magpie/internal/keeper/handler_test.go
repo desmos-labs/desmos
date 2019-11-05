@@ -13,12 +13,11 @@ func Test_handleMsgCreateSession_EmitsMessageEvent(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	msgShareDocument := types.MsgCreateSession{
-		Owner:         session.Owner,
-		Created:       session.Created,
-		Namespace:     session.Namespace,
-		ExternalOwner: session.ExternalOwner,
-		PubKey:        session.PubKey,
-		Signature:     session.Signature,
+		Owner:         testSession.Owner,
+		Namespace:     testSession.Namespace,
+		ExternalOwner: testSession.ExternalOwner,
+		PubKey:        testSession.PubKey,
+		Signature:     testSession.Signature,
 	}
 
 	handler := keeper.NewHandler(k)

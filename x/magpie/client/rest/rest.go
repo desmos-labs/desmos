@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
@@ -55,7 +54,7 @@ func createSessionHander(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		// create the session
-		msg := types.NewMsgCreateSession(time.Now(), addr, req.Namespace, req.ExternalOwner, req.Pubkey, req.Signature)
+		msg := types.NewMsgCreateSession(addr, req.Namespace, req.ExternalOwner, req.Pubkey, req.Signature)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

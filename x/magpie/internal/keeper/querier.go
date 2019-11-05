@@ -11,7 +11,7 @@ import (
 
 // query endpoints supported by the magpie Querier
 const (
-	QuerySession = "session"
+	QuerySession = "testSession"
 )
 
 // Params for queries:
@@ -34,7 +34,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 func querySession(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	id, err := types.ParseSessionID(path[0])
 	if err != nil {
-		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid session id: %s", path[0]))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid testSession id: %s", path[0]))
 	}
 
 	session, found := keeper.GetSession(ctx, id)
