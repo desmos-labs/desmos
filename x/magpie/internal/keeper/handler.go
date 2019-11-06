@@ -42,8 +42,6 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		),
 	)
 
-	// TODO: The following code should be tested
-
 	// Get the public key used to sign the message
 	pkBytes, _ := base64.StdEncoding.DecodeString(msg.PubKey)
 	var pkBytes33 = [33]byte{}
@@ -56,7 +54,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	stdSignDoc := auth.StdSignDoc{
 		AccountNumber: 0,
-		ChainID:       ctx.ChainID(),
+		ChainID:       msg.Namespace,
 		Fee:           json.RawMessage(auth.NewStdFee(200000, nil).Bytes()),
 		Memo:          "",
 		Msgs:          []json.RawMessage{json.RawMessage(signedMsg.GetSignBytes())},
@@ -69,7 +67,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	// Verify the signature
 	if !pubkey.VerifyBytes(signedBytes, sig) {
-		return sdk.ErrUnauthorized("The testSession signature is not valid").Result()
+		return sdk.ErrUnauthorized("The session signature is not valid").Result()
 	}
 
 	// Create the testSession
@@ -92,8 +90,8 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		sdk.NewEvent(
 			types.EventTypeCreateSession,
 			sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+			sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
 			sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 		),
 	)

@@ -51,7 +51,7 @@ type Session struct {
 	Owner         sdk.AccAddress `json:"owner"`           // Desmos owner of this session
 	Created       int64          `json:"creation_time"`   // Block height at which the session has been created
 	Expiry        int64          `json:"expiration_time"` // Block height at which the session will expire
-	Namespace     string         `json:"namespace"`       // Bech32 HRP of the external_owner field
+	Namespace     string         `json:"namespace"`       // External chain identifier
 	ExternalOwner string         `json:"external_owner"`  // External chain owner address
 	PubKey        string         `json:"pub_key"`         // External chain owner public key
 	Signature     string         `json:"signature"`       // Session signature
@@ -60,6 +60,18 @@ type Session struct {
 // NewSession return an empty Session
 func NewSession() Session {
 	return Session{}
+}
+
+// Equals returns true iff s and other contain the same data
+func (s Session) Equals(other Session) bool {
+	return s.SessionID == other.SessionID &&
+		s.Owner.Equals(other.Owner) &&
+		s.Created == other.Created &&
+		s.Expiry == other.Expiry &&
+		s.Namespace == other.Namespace &&
+		s.ExternalOwner == other.ExternalOwner &&
+		s.PubKey == other.PubKey &&
+		s.Signature == other.Signature
 }
 
 // implement fmt.Stringer
