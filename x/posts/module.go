@@ -1,4 +1,4 @@
-package magpie
+package posts
 
 import (
 	"encoding/json"
@@ -8,8 +8,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/desmos/x/magpie/client/cli"
-	"github.com/desmos-labs/desmos/x/magpie/client/rest"
+	"github.com/desmos-labs/desmos/x/posts/client/cli"
+	"github.com/desmos-labs/desmos/x/posts/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"

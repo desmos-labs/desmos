@@ -1,8 +1,8 @@
 package magpie
 
 import (
-	"github.com/kwunyeung/desmos/x/magpie/internal/keeper"
-	"github.com/kwunyeung/desmos/x/magpie/internal/types"
+	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
+	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
 const (
@@ -22,16 +22,10 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewLike    = types.NewLike
-	NewPost    = types.NewPost
 	NewSession = types.NewSession
 
 	// Msgs
-	NewMsgCreatePost = types.NewMsgCreatePost
-	NewMsgEditPost   = types.NewMsgEditPost
-	NewMsgLike       = types.NewMsgLike
-	NewMsgUnlike     = types.NewMsgUnlike
-	NewMsgSession    = types.NewMsgCreateSession
+	NewMsgSession = types.NewMsgCreateSession
 )
 
 type (
@@ -39,17 +33,9 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	Post      = types.Post
-	PostId    = types.PostId
-	Like      = types.Like
-	LikeId    = types.LikeId
 	Session   = types.Session
-	SessionId = types.SessionId
+	SessionID = types.SessionID
 
 	// Msgs
-	MsgCreatePost    = types.MsgCreatePost
-	MsgEditPost      = types.MsgEditPost
-	MsgLike          = types.MsgLike
-	MsgUnlike        = types.MsgUnlike
 	MsgCreateSession = types.MsgCreateSession
 )

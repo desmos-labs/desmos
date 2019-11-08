@@ -1,10 +1,8 @@
 package types
 
 import (
-	"fmt"
+	"encoding/json"
 	"strconv"
-	"strings"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -13,28 +11,34 @@ import (
 // --- Session id
 // ------------------
 
-// SessionId represents a unique session id
-type SessionId uint64
+// SessionID represents a unique session id
+type SessionID uint64
 
-func (id SessionId) Valid() bool {
+// Valid returns true if and only if this id can be considered
+// valid to be stored on the chain
+func (id SessionID) Valid() bool {
 	return id != 0
 }
 
-func (id SessionId) Next() SessionId {
+// Next returns the next id to this one
+func (id SessionID) Next() SessionID {
 	return id + 1
 }
 
-func (id SessionId) String() string {
+// String implements fmt.Stringer
+func (id SessionID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
-func ParseSessionId(value string) (SessionId, error) {
+// ParseSessionID take the given string value and parses it returning a SessionID.
+// If the given value is not valid, returns an error instead
+func ParseSessionID(value string) (SessionID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return SessionId(0), err
+		return SessionID(0), err
 	}
 
-	return SessionId(intVal), err
+	return SessionID(intVal), err
 }
 
 // ------------------
@@ -43,14 +47,14 @@ func ParseSessionId(value string) (SessionId, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionId      `json:"id"`
-	Owner         sdk.AccAddress `json:"owner"`
-	Created       time.Time      `json:"created"`
-	Expiry        time.Time      `json:"expiry"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
-	Pubkey        string         `json:"pubkey"`
-	Signature     string         `json:"signature"`
+	SessionID     SessionID      `json:"id"`              // Id of the session
+	Owner         sdk.AccAddress `json:"owner"`           // Desmos owner of this session
+	Created       int64          `json:"creation_time"`   // Block height at which the session has been created
+	Expiry        int64          `json:"expiration_time"` // Block height at which the session will expire
+	Namespace     string         `json:"namespace"`       // External chain identifier
+	ExternalOwner string         `json:"external_owner"`  // External chain owner address
+	PubKey        string         `json:"pub_key"`         // External chain owner public key
+	Signature     string         `json:"signature"`       // Session signature
 }
 
 // NewSession return an empty Session
@@ -58,13 +62,23 @@ func NewSession() Session {
 	return Session{}
 }
 
+// Equals returns true iff s and other contain the same data
+func (s Session) Equals(other Session) bool {
+	return s.SessionID == other.SessionID &&
+		s.Owner.Equals(other.Owner) &&
+		s.Created == other.Created &&
+		s.Expiry == other.Expiry &&
+		s.Namespace == other.Namespace &&
+		s.ExternalOwner == other.ExternalOwner &&
+		s.PubKey == other.PubKey &&
+		s.Signature == other.Signature
+}
+
 // implement fmt.Stringer
 func (s Session) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
-Created: %s
-Expiry: %s
-Namespace: %s
-External Owner: %s
-Pubkey: %s
-Signature: %s`, s.Owner, s.Created, s.Expiry, s.Namespace, s.ExternalOwner, s.Pubkey, s.Signature))
+	bytes, err := json.Marshal(&s)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
 }

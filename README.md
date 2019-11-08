@@ -16,7 +16,7 @@ make install
 
 ## Start a testnet
 
-Run the [desmos-faucet](https://github.com/kwunyeung/desmos-faucet).
+Run the [desmos-faucet](https://github.com/desmos-labs/desmos-faucet).
 
 ``` sh
 desmosd init {moniker} --chain-id {chain id}

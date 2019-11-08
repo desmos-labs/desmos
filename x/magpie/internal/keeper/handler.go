@@ -1,13 +1,14 @@
 package keeper
 
 import (
-	"fmt"
-	"time"
-
 	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kwunyeung/desmos/x/magpie/internal/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
@@ -15,138 +16,12 @@ import (
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
-		case types.MsgCreatePost:
-			return handleMsgCreatePost(ctx, keeper, msg)
-		case types.MsgEditPost:
-			return handleMsgEditPost(ctx, keeper, msg)
-		case types.MsgLike:
-			return handleMsgLike(ctx, keeper, msg)
 		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
+			errMsg := fmt.Sprintf("Unrecognized Magpie message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
-	}
-}
-
-// Handle creating a new post
-func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
-
-	post := types.Post{
-		PostID:        keeper.GetLastPostId(ctx).Next(),
-		ParentID:      msg.ParentID,
-		Message:       msg.Message,
-		Created:       msg.Created,
-		Likes:         0,
-		Owner:         msg.Owner,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-		),
-	)
-
-	if err := keeper.CreatePost(ctx, post); err != nil {
-		return err.Result()
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreatePost,
-			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
-		),
-	)
-
-	return sdk.Result{
-		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
-		Events: ctx.EventManager().Events(),
-	}
-}
-
-func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
-	existing, found := keeper.GetPost(ctx, msg.ID)
-	if found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.ID)).Result()
-	}
-
-	// checks if the the msg sender is the same as the current owner
-	if !msg.Owner.Equals(existing.Owner) {
-		return sdk.ErrUnauthorized("Incorrect owner").Result()
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-		),
-	)
-
-	if err := keeper.EditPostMessage(ctx, existing, msg.Message); err != nil {
-		return err.Result()
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeEditPost,
-			sdk.NewAttribute(types.AttributeKeyPostID, msg.ID.String()),
-		),
-	)
-
-	return sdk.Result{
-		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(msg.ID),
-		Events: ctx.EventManager().Events(),
-	}
-}
-
-func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLike) sdk.Result {
-	post, found := keeper.GetPost(ctx, msg.PostID)
-	if !found {
-		return sdk.ErrUnknownRequest("Post doesn't exist").Result()
-	}
-
-	like := types.Like{
-		LikeID:        keeper.GetLastLikeId(ctx).Next(),
-		Created:       msg.Created,
-		PostID:        msg.PostID,
-		Owner:         msg.Liker,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Liker.String()),
-		),
-	)
-
-	if err := keeper.AddLikeToPost(ctx, post, like); err != nil {
-		return err.Result()
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeLikePost,
-			sdk.NewAttribute(types.AttributeKeyLikeID, like.LikeID.String()),
-			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-		),
-	)
-
-	return sdk.Result{
-		Data:   keeper.cdc.MustMarshalBinaryLengthPrefixed(like.LikeID),
-		Events: ctx.EventManager().Events(),
 	}
 }
 
@@ -162,33 +37,48 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreationSession),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
 		),
 	)
 
-	pkBytes, _ := base64.StdEncoding.DecodeString(msg.Pubkey)
-
+	// Get the public key used to sign the message
+	pkBytes, _ := base64.StdEncoding.DecodeString(msg.PubKey)
 	var pkBytes33 = [33]byte{}
 	copy(pkBytes33[:], pkBytes)
 	pubkey := secp256k1.PubKeySecp256k1(pkBytes33)
 
-	message := fmt.Sprintf(`{"account_number":"0","chain_id":"%s","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":[{"type":"desmos/MsgCreateSession","value":{"created":"%s","external_owner":"%s","namespace":"%s","owner":"%s","pubkey":"%s","signature":null}}],"sequence":"0"}`,
-		ctx.ChainID(), msg.Created.Format(time.RFC3339Nano), msg.ExternalOwner, msg.Namespace, msg.Owner.String(), msg.Pubkey)
+	// Create the StdSignDoc by using the given message data, with an empty string
+	signedMsg := msg
+	signedMsg.Signature = ""
 
-	sig, _ := base64.StdEncoding.DecodeString(msg.Signature)
-
-	if !pubkey.VerifyBytes([]byte(message), sig) {
-		return sdk.ErrUnauthorized("The session signature is not correct. " + message).Result()
+	stdSignDoc := auth.StdSignDoc{
+		AccountNumber: 0,
+		ChainID:       msg.Namespace,
+		Fee:           json.RawMessage(auth.NewStdFee(200000, nil).Bytes()),
+		Memo:          "",
+		Msgs:          []json.RawMessage{json.RawMessage(signedMsg.GetSignBytes())},
+		Sequence:      0,
 	}
 
+	// Create the signature bytes
+	signedBytes := sdk.MustSortJSON(keeper.Cdc.MustMarshalJSON(stdSignDoc))
+	sig, _ := base64.StdEncoding.DecodeString(msg.Signature)
+
+	// Verify the signature
+	if !pubkey.VerifyBytes(signedBytes, sig) {
+		return sdk.ErrUnauthorized("The session signature is not valid").Result()
+	}
+
+	// Create the session
 	session := types.Session{
-		SessionID:     keeper.GetLastSessionId(ctx).Next(),
-		Created:       msg.Created,
-		Expiry:        msg.Created.Add(time.Minute * 14400),
+		SessionID:     keeper.GetLastSessionID(ctx).Next(),
+		Created:       ctx.BlockHeight(),
+		Expiry:        ctx.BlockHeight() + 240, // 24 hours, counting a 6 secs block interval
 		Owner:         msg.Owner,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
-		Pubkey:        msg.Pubkey,
+		PubKey:        msg.PubKey,
 		Signature:     msg.Signature,
 	}
 
@@ -200,9 +90,9 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		sdk.NewEvent(
 			types.EventTypeCreateSession,
 			sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
-			sdk.NewAttribute(types.AttributeKeyExpiry, session.Expiry.Format(time.RFC3339Nano)),
+			sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
+			sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
+			sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 		),
 	)
 

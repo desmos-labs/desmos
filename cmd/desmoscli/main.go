@@ -13,16 +13,11 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	app "github.com/kwunyeung/desmos"
+	app "github.com/desmos-labs/desmos"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
-)
-
-const (
-	storeAcc    = "acc"
-	storeDesmos = "desmos"
 )
 
 func main() {
