@@ -19,7 +19,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case types.MsgLikePost:
 			return handleMsgLike(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
+			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

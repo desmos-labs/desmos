@@ -19,7 +19,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Magpie Msg type: %v", msg.Type())
+			errMsg := fmt.Sprintf("Unrecognized Magpie message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
