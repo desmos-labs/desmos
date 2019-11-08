@@ -48,10 +48,10 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 	store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
 }
 
-// CreateSession allows to create a new testSession checking that no other testSession
+// CreateSession allows to create a new session checking that no other session
 // with the same id already exist
 func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error {
-	// Check for any previously existing testSession
+	// Check for any previously existing session
 	if _, found := k.GetSession(ctx, session.SessionID); found {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.SessionID))
 	}
@@ -59,23 +59,23 @@ func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error 
 	return k.SaveSession(ctx, session)
 }
 
-// SaveSession allows to save a testSession inside the given context
+// SaveSession allows to save a session inside the given context
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
 	if session.Owner.Empty() {
 		return sdk.ErrInvalidAddress("Owner address cannot be empty")
 	}
 
-	// Save the testSession
+	// Save the session
 	store := ctx.KVStore(k.StoreKey)
 	store.Set(k.getSessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
 
-	// Update the last used testSession id
+	// Update the last used session id
 	k.SetLastSessionID(ctx, session.SessionID)
 
 	return nil
 }
 
-// GetSession returns the testSession having the specified id
+// GetSession returns the session having the specified id
 func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.Session, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 

@@ -18,7 +18,7 @@ var request abci.RequestQuery
 func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	path := []string{keeper.QuerySession, types.SessionID(1).String()}
+	path := []string{keeper.QuerySessions, types.SessionID(1).String()}
 
 	querier := keeper.NewQuerier(k)
 	_, err := querier(ctx, path, request)
@@ -30,11 +30,11 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 func Test_querySession_ValidIdReturnsAssociatedSession(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	// Store a test testSession
+	// Store a test session
 	store := ctx.KVStore(k.StoreKey)
 	store.Set([]byte(types.SessionStorePrefix+testSession.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&testSession))
 
-	path := []string{keeper.QuerySession, testSession.SessionID.String()}
+	path := []string{keeper.QuerySessions, testSession.SessionID.String()}
 
 	querier := keeper.NewQuerier(k)
 	actualBz, err := querier(ctx, path, request)

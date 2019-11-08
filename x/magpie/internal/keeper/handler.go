@@ -70,7 +70,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		return sdk.ErrUnauthorized("The session signature is not valid").Result()
 	}
 
-	// Create the testSession
+	// Create the session
 	session := types.Session{
 		SessionID:     keeper.GetLastSessionID(ctx).Next(),
 		Created:       ctx.BlockHeight(),
