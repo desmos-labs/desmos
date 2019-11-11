@@ -14,7 +14,6 @@ const (
 	AttributeKeyPostEditTime = "post_edit_time"
 
 	// Like attributes
-	AttributeKeyLikeID    = "like_id"
 	AttributeKeyLikeOwner = "liker"
 
 	// Generic attributes

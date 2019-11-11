@@ -218,7 +218,7 @@ func TestKeeper_AddLikeToPost_ExistingId(t *testing.T) {
 	like := types.Like{Owner: testPostOwner, PostID: post.PostID, LikeID: defaultLikeID()}
 
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LikeStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
+	store.Set([]byte(types.LikesStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
 
 	err := k.AddLikeToPost(ctx, post, like)
 	assert.Error(t, err)
@@ -237,7 +237,7 @@ func TestKeeper_AddLikeToPost_ValidLike(t *testing.T) {
 	var storedLike types.Like
 	var storedPost types.Post
 	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikeStorePrefix+like.LikeID.String())), &storedLike)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+like.LikeID.String())), &storedLike)
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+post.PostID.String())), &storedPost)
 
 	assert.Equal(t, post.PostID, storedLike.PostID)
@@ -273,7 +273,7 @@ func TestKeeper_GetLike_Existent(t *testing.T) {
 
 	like := types.Like{Owner: testPostOwner, LikeID: defaultLikeID()}
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LikeStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
+	store.Set([]byte(types.LikesStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
 
 	stored, found := k.GetLike(ctx, like.LikeID)
 	assert.True(t, found)

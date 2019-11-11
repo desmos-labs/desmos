@@ -110,19 +110,15 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 
 // MsgLikePost defines the MsgLikePost message
 type MsgLikePost struct {
-	PostID        PostID         `json:"post_id"`        // Id of the post to like
-	Namespace     string         `json:"namespace"`      // Chan id of the chain from which the like has been set
-	ExternalLiker string         `json:"external_liker"` // External address of the liker
-	Liker         sdk.AccAddress `json:"liker"`          // Address of the user liking the post
+	PostID PostID         `json:"post_id"` // Id of the post to like
+	Liker  sdk.AccAddress `json:"liker"`   // Address of the user liking the post
 }
 
 // NewMsgLikePost is a constructor function for MsgLikePost
-func NewMsgLikePost(postID PostID, liker sdk.AccAddress, namespace string, externalOwner string) MsgLikePost {
+func NewMsgLikePost(postID PostID, liker sdk.AccAddress) MsgLikePost {
 	return MsgLikePost{
-		PostID:        postID,
-		Liker:         liker,
-		Namespace:     namespace,
-		ExternalLiker: externalOwner,
+		PostID: postID,
+		Liker:  liker,
 	}
 }
 

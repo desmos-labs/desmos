@@ -47,7 +47,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		ExternalOwner: msg.ExternalOwner,
 	}
 
-	if err := keeper.CreatePost(ctx, post); err != nil {
+	if err := keeper.SavePost(ctx, post); err != nil {
 		return err.Result()
 	}
 
@@ -142,15 +142,11 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 
 	// Create and store the like
 	like := types.Like{
-		LikeID:        keeper.GetLastLikeID(ctx).Next(),
-		Created:       ctx.BlockHeight(),
-		PostID:        post.PostID,
-		Owner:         msg.Liker,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalLiker,
+		Created: ctx.BlockHeight(),
+		Owner:   msg.Liker,
 	}
 
-	if err := keeper.AddLikeToPost(ctx, post, like); err != nil {
+	if err := keeper.SaveLike(ctx, post.PostID, like); err != nil {
 		return err.Result()
 	}
 
@@ -158,15 +154,13 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeLikePost,
-			sdk.NewAttribute(types.AttributeKeyLikeID, like.LikeID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 			sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 		),
 	)
 
 	return sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(like.LikeID),
+		Data:   []byte("Like added properly"),
 		Events: ctx.EventManager().Events(),
 	}
 }

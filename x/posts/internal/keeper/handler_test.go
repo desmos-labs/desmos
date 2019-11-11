@@ -372,6 +372,6 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	}
 
 	var storedLike types.Like
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikeStorePrefix+expectedLikeID.String())), &storedLike)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+expectedLikeID.String())), &storedLike)
 	assert.Equal(t, expectedLike, storedLike)
 }

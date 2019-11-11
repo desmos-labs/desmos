@@ -42,12 +42,8 @@ func ParseLikeID(value string) (LikeID, error) {
 
 // Like is a struct of a user like
 type Like struct {
-	LikeID        LikeID         `json:"id"`
-	PostID        PostID         `json:"post_id"`
-	Created       int64          `json:"created"` // Block height at which the like was created
-	Owner         sdk.AccAddress `json:"owner"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
+	Created int64          `json:"created"` // Block height at which the like was created
+	Owner   sdk.AccAddress `json:"owner"`
 }
 
 // NewLike returns an empty Like
@@ -65,11 +61,7 @@ func (l Like) String() string {
 }
 
 func (l Like) Validate() error {
-	if !l.LikeID.Valid() {
-		return fmt.Errorf("invalid like id %s", l.LikeID)
-	}
-
-	if l.Owner == nil {
+	if l.Owner.Empty() {
 		return fmt.Errorf("invalid like owner: %s", l.Owner)
 	}
 
@@ -77,9 +69,34 @@ func (l Like) Validate() error {
 		return fmt.Errorf("invalid like creation block heigth: %d", l.Created)
 	}
 
-	if !l.PostID.Valid() {
-		return fmt.Errorf("invalid like post id: %s", l.PostID)
-	}
-
 	return nil
+}
+
+func (l Like) Equals(other Like) bool {
+	return l.Created == other.Created &&
+		l.Owner.Equals(other.Owner)
+}
+
+// ------------
+// --- Likes
+// ------------
+
+type Likes []Like
+
+func (likes Likes) AppendIfMissing(like Like) (Likes, bool) {
+	for _, like := range likes {
+		if like.Equals(like) {
+			return likes, false
+		}
+	}
+	return append(likes, like), true
+}
+
+func (likes Likes) ContainsOwnerLike(owner sdk.AccAddress) bool {
+	for _, like := range likes {
+		if like.Owner.Equals(owner) {
+			return true
+		}
+	}
+	return false
 }
