@@ -37,7 +37,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create [message] [parent-post-id] [namespace] [external address]",
+		Use:   "create [message] [parent-post-id]",
 		Short: "Create a new post",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -56,7 +56,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], parentID, from, args[2], args[3])
+			msg := types.NewMsgCreatePost(args[0], parentID, from)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}

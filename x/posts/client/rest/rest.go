@@ -25,12 +25,9 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 // --- Tx Handler
 
 type createPostReq struct {
-	BaseReq       rest.BaseReq `json:"base_req"`
-	Message       string       `json:"message"`
-	ParentID      string       `json:"parent_id"`
-	Owner         string       `json:"owner"`
-	Namespace     string       `json:"namespace"`
-	ExternalOwner string       `json:"external_owner"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Message  string       `json:"message"`
+	ParentID string       `json:"parent_id"`
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -47,7 +44,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(req.Owner)
+		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -60,7 +57,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreatePost(req.Message, parentID, addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgCreatePost(req.Message, parentID, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

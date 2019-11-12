@@ -38,13 +38,11 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	)
 
 	post := types.Post{
-		PostID:        keeper.GetLastPostID(ctx).Next(),
-		ParentID:      msg.ParentID,
-		Message:       msg.Message,
-		Created:       ctx.BlockHeight(),
-		Owner:         msg.Owner,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
+		PostID:   keeper.GetLastPostID(ctx).Next(),
+		ParentID: msg.ParentID,
+		Message:  msg.Message,
+		Created:  ctx.BlockHeight(),
+		Owner:    msg.Owner,
 	}
 
 	if err := keeper.SavePost(ctx, post); err != nil {
@@ -58,8 +56,6 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 			sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, strconv.FormatInt(post.Created, 10)),
 			sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, post.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, post.ExternalOwner),
 		),
 	)
 

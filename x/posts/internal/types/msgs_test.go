@@ -16,11 +16,9 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var msgCreatePost = types.MsgCreatePost{
-	ParentID:      types.PostID(53),
-	Message:       "My new post",
-	Owner:         testOwner,
-	Namespace:     "cosmos",
-	ExternalOwner: "cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge",
+	ParentID: types.PostID(53),
+	Message:  "My new post",
+	Owner:    testOwner,
 }
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -40,7 +38,7 @@ func TestMsgCreatePost_ValidateBasic_Schema_valid(t *testing.T) {
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	actual := msgCreatePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreatePost","value":{"external_owner":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","message":"My new post","namespace":"cosmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","parent_id":"53"}}`
+	expected := `{"type":"desmos/MsgCreatePost","value":{"message":"My new post","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","parent_id":"53"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
@@ -92,10 +90,8 @@ func TestMsgEditPost_GetSigners(t *testing.T) {
 // ----------------------
 
 var msgLike = types.MsgLikePost{
-	PostID:        types.PostID(94),
-	Liker:         testOwner,
-	Namespace:     "cosmos",
-	ExternalLiker: "cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge",
+	PostID: types.PostID(94),
+	Liker:  testOwner,
 }
 
 func TestMsgLikePost_Route(t *testing.T) {
@@ -115,7 +111,7 @@ func TestMsgLikePost_ValidateBasic_Schema_valid(t *testing.T) {
 
 func TestMsgLikePost_GetSignBytes(t *testing.T) {
 	actual := msgLike.GetSignBytes()
-	expected := `{"type":"desmos/MsgLikePost","value":{"external_liker":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","namespace":"cosmos","post_id":"94"}}`
+	expected := `{"type":"desmos/MsgLikePost","value":{"liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"94"}}`
 	assert.Equal(t, expected, string(actual))
 }
 

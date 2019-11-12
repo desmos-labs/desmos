@@ -68,7 +68,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 
 	key := k.getPostStoreKey(id)
 	if !store.Has(key) {
-		return types.NewPost(), false
+		return types.Post{}, false
 	}
 
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
@@ -119,7 +119,7 @@ func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) 
 }
 
 // GetLikes allows to returns the list of likes that have been stored inside the given context
-func (k Keeper) GetLikes(ctx sdk.Context) (map[types.PostID]types.Likes, sdk.Error) {
+func (k Keeper) GetLikes(ctx sdk.Context) map[types.PostID]types.Likes {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.LikesStorePrefix))
 
@@ -127,14 +127,9 @@ func (k Keeper) GetLikes(ctx sdk.Context) (map[types.PostID]types.Likes, sdk.Err
 	for ; iterator.Valid(); iterator.Next() {
 		var postLikes types.Likes
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
-
-		postID, err := types.ParsePostID(strings.TrimPrefix(types.LikesStorePrefix, string(iterator.Key())))
-		if err != nil {
-			return nil, sdk.ErrUnknownRequest(err.Error())
-		}
-
+		postID, _ := types.ParsePostID(strings.TrimPrefix(types.LikesStorePrefix, string(iterator.Key())))
 		likesData[postID] = postLikes
 	}
 
-	return likesData, nil
+	return likesData
 }

@@ -12,21 +12,17 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID      PostID         `json:"parent_id"`
-	Message       string         `json:"message"`
-	Owner         sdk.AccAddress `json:"owner"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
+	ParentID PostID         `json:"parent_id"`
+	Message  string         `json:"message"`
+	Owner    sdk.AccAddress `json:"owner"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(message string, parentID PostID, owner sdk.AccAddress, namespace string, externalOwner string) MsgCreatePost {
+func NewMsgCreatePost(message string, parentID PostID, owner sdk.AccAddress) MsgCreatePost {
 	return MsgCreatePost{
-		Message:       message,
-		ParentID:      parentID,
-		Owner:         owner,
-		Namespace:     namespace,
-		ExternalOwner: externalOwner,
+		Message:  message,
+		ParentID: parentID,
+		Owner:    owner,
 	}
 }
 
