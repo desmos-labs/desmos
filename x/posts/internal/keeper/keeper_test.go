@@ -53,10 +53,10 @@ func TestKeeper_SavePost(t *testing.T) {
 		error        sdk.Error
 	}{
 		{
-			name:         "Duplicate ID returns error",
+			name:         "Duplicate ID is overridden",
 			existingPost: types.NewPost(types.PostID(0), types.PostID(0), "Post", 0, testPostOwner),
 			newPost:      types.NewPost(types.PostID(0), types.PostID(10), "New post", 0, testPostOwner),
-			error:        sdk.ErrUnknownRequest("Post with id 0 already existing"),
+			error:        nil,
 		},
 		{
 			name:         "Not duplicate ID saved correctly",
@@ -172,129 +172,108 @@ func TestKeeper_GetPosts(t *testing.T) {
 	}
 }
 
-//
-//// -------------
-//// --- Likes
-//// -------------
-//
-//func defaultLikeID() types.LikeID {
-//	return types.LikeID(1)
-//}
-//
-//func TestKeeper_GetLastLikeId_FirstId(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//	assert.Equal(t, types.LikeID(0), k.GetLastLikeID(ctx))
-//}
-//
-//func TestKeeper_GetLastLikeId_Existing(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	ids := []types.LikeID{types.LikeID(0), types.LikeID(3), types.LikeID(18446744073709551615)}
-//
-//	store := ctx.KVStore(k.StoreKey)
-//	for _, id := range ids {
-//		store.Set([]byte(types.LastLikeIDStoreKey), k.Cdc.MustMarshalBinaryBare(id))
-//		assert.Equal(t, id, k.GetLastLikeID(ctx))
-//	}
-//}
-//
-//func TestKeeper_SetLastLikeId(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	ids := []types.LikeID{types.LikeID(0), types.LikeID(3), types.LikeID(18446744073709551615)}
-//
-//	store := ctx.KVStore(k.StoreKey)
-//	for _, id := range ids {
-//		k.SetLastLikeID(ctx, id)
-//		var stored types.LikeID
-//		k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIDStoreKey)), &stored)
-//		assert.Equal(t, id, stored)
-//	}
-//}
-//
-//func TestKeeper_AddLikeToPost_EmptyOwner(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	like := types.Like{LikeID: defaultLikeID()}
-//	err := k.AddLikeToPost(ctx, types.Post{}, like)
-//	assert.Error(t, err)
-//	assert.Contains(t, err.Result().Log, "Liker and post id must exist")
-//}
-//
-//func TestKeeper_AddLikeToPost_EmptyPostId(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	like := types.Like{Owner: testPostOwner, LikeID: types.LikeID(0)}
-//	err := k.AddLikeToPost(ctx, types.Post{}, like)
-//	assert.Error(t, err)
-//	assert.Contains(t, err.Result().Log, "Liker and post id must exist")
-//}
-//
-//func TestKeeper_AddLikeToPost_ExistingId(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	post := types.Post{PostID: defaultPostID()}
-//	like := types.Like{Owner: testPostOwner, PostID: post.PostID, LikeID: defaultLikeID()}
-//
-//	store := ctx.KVStore(k.StoreKey)
-//	store.Set([]byte(types.LikesStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
-//
-//	err := k.AddLikeToPost(ctx, post, like)
-//	assert.Error(t, err)
-//	assert.Contains(t, err.Result().Log, "Like with id 1 already existing")
-//}
-//
-//func TestKeeper_AddLikeToPost_ValidLike(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	like := types.Like{Owner: testPostOwner, LikeID: defaultLikeID(), PostID: defaultPostID()}
-//	post := types.Post{Owner: testPostOwner, PostID: defaultPostID().Next()}
-//
-//	err := k.AddLikeToPost(ctx, post, like)
-//	assert.NoError(t, err)
-//
-//	var storedLike types.Like
-//	var storedPost types.Post
-//	store := ctx.KVStore(k.StoreKey)
-//	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+like.LikeID.String())), &storedLike)
-//	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+post.PostID.String())), &storedPost)
-//
-//	assert.Equal(t, post.PostID, storedLike.PostID)
-//}
-//
-//func TestKeeper_AddLikeToPost_UpdatesLastLikeId(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	post := types.Post{PostID: defaultPostID()}
-//	like1 := types.Like{Owner: testPostOwner, LikeID: defaultLikeID(), PostID: post.PostID}
-//	like2 := types.Like{Owner: testPostOwner, LikeID: like1.LikeID.Next(), PostID: post.PostID}
-//	like3 := types.Like{Owner: testPostOwner, LikeID: like2.LikeID.Next(), PostID: post.PostID}
-//
-//	_ = k.AddLikeToPost(ctx, post, like1)
-//	_ = k.AddLikeToPost(ctx, post, like2)
-//	_ = k.AddLikeToPost(ctx, post, like3)
-//
-//	var lastID uint64
-//	store := ctx.KVStore(k.StoreKey)
-//	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIDStoreKey)), &lastID)
-//	assert.Equal(t, uint64(3), lastID)
-//}
-//
-//func TestKeeper_GetLike_NonExistent(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	_, found := k.GetLike(ctx, defaultLikeID())
-//	assert.False(t, found)
-//}
-//
-//func TestKeeper_GetLike_Existent(t *testing.T) {
-//	ctx, k := SetupTestInput()
-//
-//	like := types.Like{Owner: testPostOwner, LikeID: defaultLikeID()}
-//	store := ctx.KVStore(k.StoreKey)
-//	store.Set([]byte(types.LikesStorePrefix+like.LikeID.String()), k.Cdc.MustMarshalBinaryBare(&like))
-//
-//	stored, found := k.GetLike(ctx, like.LikeID)
-//	assert.True(t, found)
-//	assert.Equal(t, like, stored)
-//}
+// -------------
+// --- Likes
+// -------------
+
+func TestKeeper_SaveLike(t *testing.T) {
+	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+
+	tests := []struct {
+		name           string
+		storedLikes    types.Likes
+		postID         types.PostID
+		like           types.Like
+		error          sdk.Error
+		expectedStored types.Likes
+	}{
+		{
+			name:           "Like from same liker already present returns error",
+			storedLikes:    types.Likes{types.NewLike(10, liker)},
+			postID:         types.PostID(10),
+			like:           types.NewLike(50, liker),
+			error:          sdk.ErrUnknownRequest("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already liked the post with id 10"),
+			expectedStored: types.Likes{types.NewLike(10, liker)},
+		},
+		{
+			name:           "First like is stored properly",
+			storedLikes:    types.Likes{},
+			postID:         types.PostID(15),
+			like:           types.NewLike(15, liker),
+			error:          nil,
+			expectedStored: types.Likes{types.NewLike(15, liker)},
+		},
+		{
+			name:        "Second like is stored properly",
+			storedLikes: types.Likes{types.NewLike(10, liker)},
+			postID:      types.PostID(87),
+			like:        types.NewLike(1, otherLiker),
+			error:       nil,
+			expectedStored: types.Likes{
+				types.NewLike(10, liker),
+				types.NewLike(1, otherLiker),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if len(test.storedLikes) != 0 {
+				store.Set([]byte(types.LikesStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+			}
+
+			err := k.SaveLike(ctx, test.postID, test.like)
+			assert.Equal(t, test.error, err)
+
+			var stored types.Likes
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+test.postID.String())), &stored)
+			assert.Equal(t, test.expectedStored, stored)
+		})
+	}
+}
+
+func TestKeeper_GetLikes(t *testing.T) {
+	liker1, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	liker2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+
+	tests := []struct {
+		name  string
+		likes map[types.PostID]types.Likes
+	}{
+		{
+			name:  "Empty likes data are returned correctly",
+			likes: map[types.PostID]types.Likes{},
+		},
+		{
+			name: "Non empty likes data are returned correcly",
+			likes: map[types.PostID]types.Likes{
+				types.PostID(5): {
+					types.NewLike(10, liker1),
+					types.NewLike(50, liker2),
+				},
+				types.PostID(10): {
+					types.NewLike(5, liker1),
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+			for postID, likes := range test.likes {
+				store.Set([]byte(types.LikesStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(&likes))
+			}
+
+			likesData := k.GetLikes(ctx)
+			assert.Equal(t, test.likes, likesData)
+		})
+	}
+}

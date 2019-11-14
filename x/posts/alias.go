@@ -39,7 +39,6 @@ type (
 	// Types
 	PostID = types.PostID
 	Post   = types.Post
-	LikeID = types.LikeID
 	Like   = types.Like
 	Likes  = types.Likes
 

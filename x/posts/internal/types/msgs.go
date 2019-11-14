@@ -1,7 +1,7 @@
 package types
 
 import (
-	"time"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -14,7 +14,7 @@ import (
 type MsgCreatePost struct {
 	ParentID PostID         `json:"parent_id"`
 	Message  string         `json:"message"`
-	Owner    sdk.AccAddress `json:"owner"`
+	Creator  sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
@@ -22,7 +22,7 @@ func NewMsgCreatePost(message string, parentID PostID, owner sdk.AccAddress) Msg
 	return MsgCreatePost{
 		Message:  message,
 		ParentID: parentID,
-		Owner:    owner,
+		Creator:  owner,
 	}
 }
 
@@ -34,8 +34,8 @@ func (msg MsgCreatePost) Type() string { return ActionCreatePost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreatePost) ValidateBasic() sdk.Error {
-	if msg.Owner.Empty() {
-		return sdk.ErrInvalidAddress(msg.Owner.String())
+	if msg.Creator.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 	if len(msg.Message) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
@@ -50,7 +50,7 @@ func (msg MsgCreatePost) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	return []sdk.AccAddress{msg.Creator}
 }
 
 // ----------------------
@@ -65,7 +65,7 @@ type MsgEditPost struct {
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id PostID, message string, time time.Time, owner sdk.AccAddress) MsgEditPost {
+func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress) MsgEditPost {
 	return MsgEditPost{
 		PostID:  id,
 		Message: message,
@@ -81,11 +81,14 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() sdk.Error {
-	if msg.Editor.Empty() {
-		return sdk.ErrInvalidAddress(msg.Editor.String())
+	if !msg.PostID.Valid() {
+		return sdk.ErrUnknownRequest("Invalid post id")
 	}
-	if len(msg.Message) == 0 || !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Post id, message and/or time cannot be empty")
+	if msg.Editor.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
+	}
+	if len(msg.Message) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
 	return nil
 }
@@ -126,11 +129,11 @@ func (msg MsgLikePost) Type() string { return ActionLikePost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLikePost) ValidateBasic() sdk.Error {
-	if msg.Liker.Empty() {
-		return sdk.ErrInvalidAddress(msg.Liker.String())
-	}
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Post id cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid post id")
+	}
+	if msg.Liker.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
 	}
 	return nil
 }
@@ -152,15 +155,13 @@ func (msg MsgLikePost) GetSigners() []sdk.AccAddress {
 // MsgUnlikePost defines the MsgUnlikePost message
 type MsgUnlikePost struct {
 	PostID PostID         `json:"post_id"` // Id of the post to unlike
-	Time   time.Time      `json:"time"`    // Time at which the unlike has been set
 	Liker  sdk.AccAddress `json:"liker"`   // Address of the user that has previously liked the post
 }
 
 // MsgUnlikePostPost is the constructor of MsgUnlikePost
-func NewMsgUnlikePost(postID PostID, time time.Time, liker sdk.AccAddress) MsgUnlikePost {
+func NewMsgUnlikePost(postID PostID, liker sdk.AccAddress) MsgUnlikePost {
 	return MsgUnlikePost{
 		PostID: postID,
-		Time:   time,
 		Liker:  liker,
 	}
 }
@@ -173,14 +174,11 @@ func (msg MsgUnlikePost) Type() string { return ActionUnlikePost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgUnlikePost) ValidateBasic() sdk.Error {
-	if msg.Liker.Empty() {
-		return sdk.ErrInvalidAddress(msg.Liker.String())
-	}
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
-	if msg.Time.IsZero() {
-		return sdk.ErrUnknownRequest("Time cannot be empty")
+	if msg.Liker.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
 	}
 	return nil
 }

@@ -45,18 +45,12 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
-// If another post having the save ID is already present, returns an error.
+// If another post has the same ID of the given post, the old post will be overridden
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := k.getPostStoreKey(post.PostID)
-	if store.Has(key) {
-		msg := fmt.Sprintf("Post with id %s already existing", post.PostID.String())
-		return sdk.ErrUnknownRequest(msg)
-	}
-
 	// Save the post and set the last post id
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&post))
+	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
 	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
 	return nil
 }
@@ -107,7 +101,7 @@ func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) 
 
 	// Check for double likes
 	if likes.ContainsOwnerLike(like.Owner) {
-		msg := fmt.Sprintf("%s has already likes the post with id %s", like.Owner, postID.String())
+		msg := fmt.Sprintf("%s has already liked the post with id %s", like.Owner, postID.String())
 		return sdk.ErrUnknownRequest(msg)
 	}
 
@@ -127,7 +121,7 @@ func (k Keeper) GetLikes(ctx sdk.Context) map[types.PostID]types.Likes {
 	for ; iterator.Valid(); iterator.Next() {
 		var postLikes types.Likes
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
-		postID, _ := types.ParsePostID(strings.TrimPrefix(types.LikesStorePrefix, string(iterator.Key())))
+		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.LikesStorePrefix))
 		likesData[postID] = postLikes
 	}
 

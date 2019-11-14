@@ -33,7 +33,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
 		),
 	)
 
@@ -42,7 +42,12 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		ParentID: msg.ParentID,
 		Message:  msg.Message,
 		Created:  ctx.BlockHeight(),
-		Owner:    msg.Owner,
+		Owner:    msg.Creator,
+	}
+
+	if _, found := keeper.GetPost(ctx, post.PostID); found {
+		msg := fmt.Sprintf("Post with id %s already exists", post.PostID.String())
+		return sdk.ErrUnknownRequest(msg).Result()
 	}
 
 	if err := keeper.SavePost(ctx, post); err != nil {
@@ -137,11 +142,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 	}
 
 	// Create and store the like
-	like := types.Like{
-		Created: ctx.BlockHeight(),
-		Owner:   msg.Liker,
-	}
-
+	like := types.NewLike(ctx.BlockHeight(), msg.Liker)
 	if err := keeper.SaveLike(ctx, post.PostID, like); err != nil {
 		return err.Result()
 	}

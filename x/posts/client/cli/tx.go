@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"time"
-
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -88,7 +86,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], time.Now(), from)
+			msg := types.NewMsgEditPost(postID, args[1], from)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
