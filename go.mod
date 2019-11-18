@@ -3,7 +3,6 @@ module github.com/desmos-labs/desmos
 go 1.13
 
 require (
-	github.com/Workiva/go-datastructures v1.0.50
 	github.com/cosmos/cosmos-sdk v0.37.3
 	github.com/gorilla/mux v1.7.3
 	github.com/magiconair/properties v1.8.1
