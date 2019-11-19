@@ -33,8 +33,9 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	Session   = types.Session
 	SessionID = types.SessionID
+	Session   = types.Session
+	Sessions  = types.Sessions
 
 	// Msgs
 	MsgCreateSession = types.MsgCreateSession

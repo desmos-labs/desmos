@@ -24,7 +24,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case QuerySessions:
 			return querySession(ctx, path[1:], req, keeper)
 		default:
-			return nil, sdk.ErrUnknownRequest("unknown magpie query endpoint")
+			return nil, sdk.ErrUnknownRequest("Unknown magpie query endpoint")
 		}
 	}
 }
@@ -39,7 +39,7 @@ func querySession(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Ke
 
 	session, found := keeper.GetSession(ctx, id)
 	if !found {
-		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s not found", id.String()))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s not found", id))
 	}
 
 	res, err := codec.MarshalJSONIndent(keeper.Cdc, &session)

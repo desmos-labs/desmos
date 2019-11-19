@@ -47,14 +47,14 @@ func ParseSessionID(value string) (SessionID, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionID      `json:"id"`              // Id of the session
-	Owner         sdk.AccAddress `json:"owner"`           // Desmos owner of this session
-	Created       int64          `json:"creation_time"`   // Block height at which the session has been created
-	Expiry        int64          `json:"expiration_time"` // Block height at which the session will expire
-	Namespace     string         `json:"namespace"`       // External chain identifier
-	ExternalOwner string         `json:"external_owner"`  // External chain owner address
-	PubKey        string         `json:"pub_key"`         // External chain owner public key
-	Signature     string         `json:"signature"`       // Session signature
+	SessionID     SessionID      `json:"id,string"`              // Id of the session
+	Owner         sdk.AccAddress `json:"owner"`                  // Desmos owner of this session
+	Created       int64          `json:"creation_time,string"`   // Block height at which the session has been created
+	Expiry        int64          `json:"expiration_time,string"` // Block height at which the session will expire
+	Namespace     string         `json:"namespace"`              // External chain identifier
+	ExternalOwner string         `json:"external_owner"`         // External chain owner address
+	PubKey        string         `json:"pub_key"`                // External chain owner public key
+	Signature     string         `json:"signature"`              // Session signature
 }
 
 // NewSession return an empty Session
@@ -81,4 +81,27 @@ func (s Session) String() string {
 		panic(err)
 	}
 	return string(bytes)
+}
+
+// ---------------
+// --- Sessions
+// ---------------
+
+// Sessions represents a slice of Session objects
+type Sessions []Session
+
+// Equals returns true if and only if slice contains the
+// same session objects as the other slice, false otherwise
+func (slice Sessions) Equals(other Sessions) bool {
+	if len(slice) != len(other) {
+		return false
+	}
+
+	for index, s := range slice {
+		if !s.Equals(other[index]) {
+			return false
+		}
+	}
+
+	return true
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type GenesisState struct {
-	Sessions []Session `json:"sessions"`
+	Sessions Sessions `json:"sessions"`
 }
 
 // DefaultGenesisState returns a default GenesisState

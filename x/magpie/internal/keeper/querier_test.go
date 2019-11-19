@@ -16,32 +16,62 @@ var request abci.RequestQuery
 // ----------------------------------
 
 func Test_querySession_InvalidIdReturnsError(t *testing.T) {
-	ctx, k := SetupTestInput()
+	tests := []struct {
+		name          string
+		storedSession types.Session
+		query         []string
+		expErr        string
+		expRes        types.Session
+	}{
+		{
+			name:   "Not found session returns error",
+			query:  []string{keeper.QuerySessions, types.SessionID(50).String()},
+			expErr: "Session with id 50 not found",
+		},
+		{
+			name:          "Existing session is returned",
+			storedSession: testSession,
+			query:         []string{keeper.QuerySessions, testSession.SessionID.String()},
+			expRes:        testSession,
+		},
+		{
+			name:   "Invalid id",
+			query:  []string{keeper.QuerySessions, "invalid-id"},
+			expErr: "Invalid session id: invalid-id",
+		},
+		{
+			name:   "Unknown endpoint",
+			query:  []string{"endpoint"},
+			expErr: "Unknown magpie query endpoint",
+		},
+	}
 
-	path := []string{keeper.QuerySessions, types.SessionID(1).String()}
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
 
-	querier := keeper.NewQuerier(k)
-	_, err := querier(ctx, path, request)
+			if !(types.Session{}).Equals(test.storedSession) {
+				_ = k.SaveSession(ctx, test.storedSession)
+			}
 
-	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Session with id 1 not found")
-}
+			querier := keeper.NewQuerier(k)
+			res, err := querier(ctx, test.query, request)
 
-func Test_querySession_ValidIdReturnsAssociatedSession(t *testing.T) {
-	ctx, k := SetupTestInput()
+			if len(test.expErr) != 0 {
+				assert.Error(t, err)
+				assert.Contains(t, err.Result().Log, test.expErr)
 
-	// Store a test session
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionStorePrefix+testSession.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&testSession))
+				assert.Nil(t, res)
+			}
 
-	path := []string{keeper.QuerySessions, testSession.SessionID.String()}
+			if !(types.Session{}).Equals(test.expRes) {
+				assert.NoError(t, err)
 
-	querier := keeper.NewQuerier(k)
-	actualBz, err := querier(ctx, path, request)
-
-	assert.NoError(t, err)
-
-	var actual types.Session
-	k.Cdc.MustUnmarshalJSON(actualBz, &actual)
-	assert.Equal(t, testSession, actual)
+				var returned types.Session
+				k.Cdc.MustUnmarshalJSON(res, &returned)
+				assert.Equal(t, test.expRes, returned)
+			}
+		})
+	}
 }

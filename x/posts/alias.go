@@ -37,10 +37,10 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	Post   = types.Post
 	PostID = types.PostID
+	Post   = types.Post
 	Like   = types.Like
-	LikeID = types.LikeID
+	Likes  = types.Likes
 
 	// Msgs
 	MsgCreatePost = types.MsgCreatePost
