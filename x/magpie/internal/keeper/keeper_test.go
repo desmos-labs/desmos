@@ -79,9 +79,9 @@ func TestKeeper_SaveSession(t *testing.T) {
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
 	assert.Equal(t, session, stored)
 
-	var storedLastId types.SessionID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &storedLastId)
-	assert.Equal(t, session.SessionID, storedLastId)
+	var storedLastID types.SessionID
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &storedLastID)
+	assert.Equal(t, session.SessionID, storedLastID)
 }
 
 func TestKeeper_GetSession(t *testing.T) {

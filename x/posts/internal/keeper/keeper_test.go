@@ -15,7 +15,7 @@ import (
 func TestKeeper_GetLastPostId(t *testing.T) {
 	tests := []struct {
 		name       string
-		existingId types.PostID
+		existingID types.PostID
 		expected   types.PostID
 	}{
 		{
@@ -24,7 +24,7 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 		},
 		{
 			name:       "Existing ID returns correct value",
-			existingId: types.PostID(3),
+			existingID: types.PostID(3),
 			expected:   types.PostID(3),
 		},
 	}
@@ -34,9 +34,9 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
-			if test.existingId.Valid() {
+			if test.existingID.Valid() {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingId))
+				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
 			actual := k.GetLastPostID(ctx)
@@ -163,7 +163,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.posts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(&p))
+				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			posts := k.GetPosts(ctx)
@@ -269,7 +269,7 @@ func TestKeeper_GetLikes(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for postID, likes := range test.likes {
-				store.Set([]byte(types.LikesStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(&likes))
+				store.Set([]byte(types.LikesStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(likes))
 			}
 
 			likesData := k.GetLikes(ctx)
