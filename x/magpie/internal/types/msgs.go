@@ -1,7 +1,9 @@
 package types
 
 import (
+	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"strings"
 )
 
 // MsgCreateSession defines the MsgCreateSession message
@@ -33,21 +35,26 @@ func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSession) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty() {
-		return sdk.ErrUnknownRequest("Session owner cannot be empty.")
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid session owner: %s", msg.Owner))
 	}
 
-	if len(msg.Namespace) == 0 {
+	if len(strings.TrimSpace(msg.Namespace)) == 0 {
 		return sdk.ErrUnknownRequest("Session namespace cannot be empty")
 	}
 
-	if len(msg.PubKey) == 0 {
-		return sdk.ErrUnknownRequest("Signer pubkey cannot be empty")
+	if len(strings.TrimSpace(msg.PubKey)) == 0 {
+		return sdk.ErrUnknownRequest("Signer public key cannot be empty")
 	}
 
 	// The external signer address doesn't have to exist on Desmos
-	if msg.ExternalOwner == "" {
+	if len(strings.TrimSpace(msg.ExternalOwner)) == 0 {
 		return sdk.ErrUnknownRequest("Session external owner cannot be empty")
 	}
+
+	if len(strings.TrimSpace(msg.Signature)) == 0 {
+		return sdk.ErrUnknownRequest("Session signature cannot be empty")
+	}
+
 	return nil
 }
 

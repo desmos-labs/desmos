@@ -82,7 +82,13 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		Signature:     msg.Signature,
 	}
 
-	if err := keeper.CreateSession(ctx, session); err != nil {
+	// Check for any previously existing session
+	if _, found := keeper.GetSession(ctx, session.SessionID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.SessionID)).Result()
+	}
+
+	// Save the session
+	if err := keeper.SaveSession(ctx, session); err != nil {
 		return err.Result()
 	}
 

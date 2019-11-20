@@ -7,84 +7,69 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// --------------
-// --- Sessions
-// --------------
+func TestKeeper_GetLastSessionID(t *testing.T) {
+	tests := []struct {
+		name       string
+		existingID types.SessionID
+		expID      types.SessionID
+	}{
+		{
+			name:  "First ID is returned properly",
+			expID: types.SessionID(0),
+		},
+		{
+			name:       "Existing ID is returned properly",
+			existingID: types.SessionID(18446744073709551615),
+			expID:      types.SessionID(18446744073709551615),
+		},
+	}
 
-func defaultSessionID() types.SessionID {
-	return types.SessionID(1)
-}
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
 
-func TestKeeper_GetLastSessionId_FirstId(t *testing.T) {
+			if test.existingID.Valid() {
+				store := ctx.KVStore(k.StoreKey)
+				store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
+			}
+
+			assert.Equal(t, test.expID, k.GetLastSessionID(ctx))
+		})
+	}
+
 	ctx, k := SetupTestInput()
 	assert.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
 }
 
-func TestKeeper_GetLastSessionId_Existing(t *testing.T) {
-	ctx, k := SetupTestInput()
+func TestKeeper_SetLastSessionID(t *testing.T) {
+	tests := []struct {
+		id types.SessionID
+	}{
+		{id: types.SessionID(0)},
+		{id: types.SessionID(3)},
+		{id: types.SessionID(18446744073709551615)},
+	}
 
-	ids := []types.SessionID{types.SessionID(0), types.SessionID(3), types.SessionID(18446744073709551615)}
+	for _, test := range tests {
+		test := test
+		t.Run(t.Name(), func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
 
-	store := ctx.KVStore(k.StoreKey)
-	for _, id := range ids {
-		store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(id))
-		assert.Equal(t, id, k.GetLastSessionID(ctx))
+			k.SetLastSessionID(ctx, test.id)
+
+			var stored types.SessionID
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &stored)
+			assert.Equal(t, test.id, stored)
+		})
 	}
 }
 
-func TestKeeper_SetLastSessionId(t *testing.T) {
+func TestKeeper_SaveSession(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	ids := []types.SessionID{types.SessionID(0), types.SessionID(3), types.SessionID(18446744073709551615)}
-
-	store := ctx.KVStore(k.StoreKey)
-	for _, id := range ids {
-		k.SetLastSessionID(ctx, id)
-		var stored types.SessionID
-		k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &stored)
-		assert.Equal(t, id, stored)
-	}
-}
-
-func TestKeeper_CreateSession_ExistingId(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	session := types.Session{SessionID: defaultSessionID()}
-
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionStorePrefix+session.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&session))
-
-	err := k.CreateSession(ctx, session)
-	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Session with id 1 already exists")
-}
-
-func TestKeeper_CreatePost_ValidSession(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	session := types.Session{SessionID: defaultSessionID(), Owner: testOwner}
-	err := k.CreateSession(ctx, session)
-	assert.NoError(t, err)
-
-	var stored types.Session
-	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
-	assert.Equal(t, session, stored)
-}
-
-func TestKeeper_SaveSession_EmptyOwner(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	session := types.Session{SessionID: defaultSessionID()}
-	err := k.SaveSession(ctx, session)
-	assert.Error(t, err)
-	assert.Contains(t, err.Result().Log, "Owner address cannot be empty")
-}
-
-func TestKeeper_SaveSession_ValidSession(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	session := types.Session{Owner: testOwner, SessionID: defaultSessionID()}
+	session := types.Session{Owner: testOwner, SessionID: types.SessionID(1)}
 
 	err := k.SaveSession(ctx, session)
 	assert.NoError(t, err)
@@ -93,24 +78,97 @@ func TestKeeper_SaveSession_ValidSession(t *testing.T) {
 	store := ctx.KVStore(k.StoreKey)
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
 	assert.Equal(t, session, stored)
+
+	var storedLastId types.SessionID
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &storedLastId)
+	assert.Equal(t, session.SessionID, storedLastId)
 }
 
-func TestKeeper_GetSession_NonExistent(t *testing.T) {
-	ctx, k := SetupTestInput()
+func TestKeeper_GetSession(t *testing.T) {
+	tests := []struct {
+		name          string
+		storedSession types.Session
+		id            types.SessionID
+		expFound      bool
+		expSession    types.Session
+	}{
+		{
+			name:       "Non existent session",
+			id:         types.SessionID(0),
+			expFound:   false,
+			expSession: types.Session{},
+		},
+		{
+			name:          "Valid session is returned",
+			storedSession: types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+			id:            types.SessionID(1),
+			expFound:      true,
+			expSession:    types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+		},
+	}
 
-	_, found := k.GetSession(ctx, defaultSessionID())
-	assert.False(t, found)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			if !(types.Session{}).Equals(test.storedSession) {
+				store := ctx.KVStore(k.StoreKey)
+				store.Set([]byte(types.SessionStorePrefix+test.id.String()), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
+			}
+
+			result, found := k.GetSession(ctx, types.SessionID(1))
+			assert.Equal(t, test.expSession, result)
+			assert.Equal(t, test.expFound, found)
+		})
+	}
 }
 
-func TestKeeper_GetSession_Existent(t *testing.T) {
-	ctx, k := SetupTestInput()
+func TestKeeper_GetSessions(t *testing.T) {
+	tests := []struct {
+		name           string
+		storedSessions types.Sessions
+		expSessions    types.Sessions
+	}{
+		{
+			name:           "Empty slice",
+			storedSessions: types.Sessions{},
+			expSessions:    types.Sessions{},
+		},
+		{
+			name: "Non empty, non double items",
+			storedSessions: types.Sessions{
+				types.Session{SessionID: types.SessionID(1)},
+				types.Session{SessionID: types.SessionID(2)},
+			},
+			expSessions: types.Sessions{
+				types.Session{SessionID: types.SessionID(1)},
+				types.Session{SessionID: types.SessionID(2)},
+			},
+		},
+		{
+			name: "Non empty, double items",
+			storedSessions: types.Sessions{
+				types.Session{SessionID: types.SessionID(1)},
+				types.Session{SessionID: types.SessionID(1)},
+			},
+			expSessions: types.Sessions{
+				types.Session{SessionID: types.SessionID(1)},
+			},
+		},
+	}
 
-	session := types.Session{Owner: testOwner, SessionID: defaultSessionID()}
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
 
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionStorePrefix+session.SessionID.String()), k.Cdc.MustMarshalBinaryBare(&session))
+			for _, s := range test.storedSessions {
+				_ = k.SaveSession(ctx, s)
+			}
 
-	stored, found := k.GetSession(ctx, session.SessionID)
-	assert.True(t, found)
-	assert.Equal(t, session, stored)
+			sessions := k.GetSessions(ctx)
+			assert.True(t, test.expSessions.Equals(sessions))
+		})
+	}
 }

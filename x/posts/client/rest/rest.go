@@ -18,20 +18,16 @@ import (
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
-	r.HandleFunc("/posts/like", likePostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/like/{likeID}", getLikeHandler(cliCtx, storeName)).Methods("GET")
+	r.HandleFunc("/posts/likes", likePostHandler(cliCtx)).Methods("POST")
 }
 
 // --------------------------------------------------------------------------------------
-// Tx Handler
+// --- Tx Handler
 
 type createPostReq struct {
-	BaseReq       rest.BaseReq `json:"base_req"`
-	Message       string       `json:"message"`
-	ParentID      string       `json:"parent_id"`
-	Owner         string       `json:"owner"`
-	Namespace     string       `json:"namespace"`
-	ExternalOwner string       `json:"external_owner"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Message  string       `json:"message"`
+	ParentID string       `json:"parent_id"`
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -48,7 +44,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(req.Owner)
+		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -61,7 +57,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreatePost(req.Message, parentID, addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgCreatePost(req.Message, parentID, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -73,11 +69,8 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type addLikeReq struct {
-	BaseReq       rest.BaseReq `json:"base_req"`
-	PostID        string       `json:"post_id"`
-	Owner         string       `json:"owner"`
-	Namespace     string       `json:"namespace"`
-	ExternalOwner string       `json:"external_owner"`
+	BaseReq rest.BaseReq `json:"base_req"`
+	PostID  string       `json:"post_id"`
 }
 
 func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -93,7 +86,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(req.Owner)
+		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -106,7 +99,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgLikePost(postID, addr, req.Namespace, req.ExternalOwner)
+		msg := types.NewMsgLikePost(postID, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -117,8 +110,8 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-//--------------------------------------------------------------------------------------
-// Query Handlers
+// --------------------------------------------------------------------------------------
+// --- Query Handlers
 
 func getPostHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -126,21 +119,6 @@ func getPostHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		postID := vars["postID"]
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", storeName, postID), nil)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-			return
-		}
-
-		rest.PostProcessResponse(w, cliCtx, res)
-	}
-}
-
-func getLikeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		likeID := vars["likeID"]
-
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/like/%s", storeName, likeID), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
