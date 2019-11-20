@@ -41,7 +41,7 @@ To start a 4 node testnet run:
 make localnet-start
 ```
 
-This command creates a 4-node network using the demsosdnode image.
+This command creates a 4-node network using the `desmoslabs/desmosdnode` image.
 The ports for each node are found in this table:
 
 | Node ID | P2P Port | RPC Port |
@@ -60,7 +60,7 @@ make build-linux localnet-start
 #### Configuration
 
 The `make localnet-start` creates files for a 4-node testnet in `./build` by
-calling the `demosd testnet` command. This outputs a handful of files in the
+calling the `desmosd testnet` command. This outputs a handful of files in the
 `./build` directory:
 
 ```bash
