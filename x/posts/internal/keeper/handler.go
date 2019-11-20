@@ -2,8 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"strconv"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
@@ -37,29 +35,40 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		),
 	)
 
-	post := types.Post{
-		PostID:   keeper.GetLastPostID(ctx).Next(),
-		ParentID: msg.ParentID,
-		Message:  msg.Message,
-		Created:  ctx.BlockHeight(),
-		Owner:    msg.Creator,
-	}
+	post := types.NewPost(
+		keeper.GetLastPostID(ctx).Next(),
+		msg.ParentID,
+		msg.Message,
+		msg.AllowsComments,
+		ctx.BlockHeight(),
+		msg.Creator,
+	)
 
+	// Check for double posting
 	if _, found := keeper.GetPost(ctx, post.PostID); found {
-		msg := fmt.Sprintf("Post with id %s already exists", post.PostID.String())
-		return sdk.ErrUnknownRequest(msg).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID)).Result()
 	}
 
-	if err := keeper.SavePost(ctx, post); err != nil {
-		return err.Result()
+	// If valid, check the parent post
+	if post.ParentID.Valid() {
+		parentPost, found := keeper.GetPost(ctx, post.ParentID)
+		if !found {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Parent post with id %s not found", post.ParentID)).Result()
+		}
+
+		if !parentPost.AllowsComments {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments", parentPost.PostID)).Result()
+		}
 	}
+
+	keeper.SavePost(ctx, post)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeCreatePost,
 			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
-			sdk.NewAttribute(types.AttributeKeyCreationTime, strconv.FormatInt(post.Created, 10)),
+			sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
 			sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
 		),
 	)
@@ -94,22 +103,20 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if ctx.BlockHeight() < existing.Created {
+	if existing.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
 		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
 	}
 
 	// Edit the post
 	existing.Message = msg.Message
-	existing.LastEdited = ctx.BlockHeight()
-	if err := keeper.SavePost(ctx, existing); err != nil {
-		return err.Result()
-	}
+	existing.LastEdited = sdk.NewInt(ctx.BlockHeight())
+	keeper.SavePost(ctx, existing)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeEditPost,
 			sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyPostEditTime, strconv.FormatInt(existing.LastEdited, 10)),
+			sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
 		),
 	)
 
@@ -137,7 +144,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 	}
 
 	// Check the like date to make sure it's before the post creation date.
-	if ctx.BlockHeight() < post.Created {
+	if post.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
 		return sdk.ErrUnknownRequest("Like cannot have a creation time before the post itself").Result()
 	}
 

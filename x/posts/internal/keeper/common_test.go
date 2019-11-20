@@ -42,11 +42,11 @@ func testCodec() *codec.Codec {
 }
 
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var testPost = types.Post{
-	PostID:     types.PostID(3257),
-	ParentID:   types.PostID(502),
-	Message:    "Post message",
-	Created:    10,
-	LastEdited: 50,
-	Owner:      testPostOwner,
-}
+var testPost = types.NewPost(
+	types.PostID(3257),
+	types.PostID(0),
+	"Post message",
+	false,
+	10,
+	testPostOwner,
+)

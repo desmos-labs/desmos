@@ -14,78 +14,97 @@ import (
 // --- handleMsgCreatePost
 // ---------------------------
 
-func Test_handleMsgCreatePost_returns_error_with_existing_post_id(t *testing.T) {
-	ctx, k := SetupTestInput()
-
-	msg := types.MsgCreatePost{
-		ParentID: testPost.ParentID,
-		Message:  testPost.Message,
-		Creator:  testPost.Owner,
+func Test_handleMsgCreatePost(t *testing.T) {
+	tests := []struct {
+		name        string
+		storedPosts types.Posts
+		lastPostID  types.PostID
+		msg         types.MsgCreatePost
+		expPost     types.Post
+		expError    string
+	}{
+		{
+			name: "Trying to store post with same id returns error",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, testPost.Created.Int64(), testPost.Owner),
+			},
+			lastPostID: types.PostID(0),
+			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, testPost.Owner),
+			expError:   "Post with id 1 already exists",
+		},
+		{
+			name:    "Post with new id is stored properly",
+			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, testPost.Owner),
+			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, 0, testPost.Owner),
+		},
+		{
+			name:     "Storing a valid post with missing parent id returns error",
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, testPost.Owner),
+			expError: "Parent post with id 50 not found",
+		},
+		{
+			name: "Storing a valid post with parent stored but not accepting comments returns error",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, 0, testPost.Owner),
+			},
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, testPost.Owner),
+			expError: "Post with id 50 does not allow comments",
+		},
 	}
 
-	existing := testPost
-	existing.PostID = types.PostID(1)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
 
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(types.PostID(0)))
-	store.Set([]byte(types.PostStorePrefix+existing.PostID.String()), k.Cdc.MustMarshalBinaryBare(&existing))
+			for _, p := range test.storedPosts {
+				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+			}
 
-	handler := keeper.NewHandler(k)
-	res := handler(ctx, msg)
+			if test.lastPostID.Valid() {
+				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
+			}
 
-	// Check the response
-	assert.False(t, res.IsOK())
-	assert.Contains(t, res.Log, "Post with id 1 already exists")
-	assert.Empty(t, res.Events, 0)
+			handler := keeper.NewHandler(k)
+			res := handler(ctx, test.msg)
 
-	// Check the events
-	assert.Len(t, ctx.EventManager().Events(), 1)
-	expected := sdk.NewEvent(
-		sdk.EventTypeMessage,
-		sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
-		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
-	)
-	assert.Contains(t, ctx.EventManager().Events(), expected)
-}
+			if len(test.expError) != 0 {
+				assert.False(t, res.IsOK())
+				assert.Contains(t, res.Log, test.expError)
+			}
 
-func Test_handleMsgCreatePost_valid_request(t *testing.T) {
-	ctx, k := SetupTestInput()
+			if len(test.expError) == 0 {
+				assert.True(t, res.IsOK())
 
-	expectedPostID := types.PostID(1)
-	msg := types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.Owner)
-	handler := keeper.NewHandler(k)
-	res := handler(ctx, msg)
+				// Check the post
+				var stored types.Post
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
+				assert.Equal(t, test.expPost, stored)
 
-	// Check the response
-	assert.True(t, res.IsOK())
-	assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(expectedPostID), res.Data)
+				// Check the data
+				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
-	// Check the events
-	creationEvent := sdk.NewEvent(
-		types.EventTypeCreatePost,
-		sdk.NewAttribute(types.AttributeKeyPostID, expectedPostID.String()),
-		sdk.NewAttribute(types.AttributeKeyPostParentID, msg.ParentID.String()),
-		sdk.NewAttribute(types.AttributeKeyCreationTime, strconv.FormatInt(ctx.BlockHeight(), 10)),
-		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Creator.String()),
-	)
-	assert.Len(t, ctx.EventManager().Events(), 2)
-	assert.Equal(t, ctx.EventManager().Events(), res.Events)
-	assert.Contains(t, ctx.EventManager().Events(), creationEvent)
-
-	// Check the stored post
-	expected := types.Post{
-		PostID:     expectedPostID,
-		ParentID:   msg.ParentID,
-		Message:    msg.Message,
-		LastEdited: 0,
-		Owner:      msg.Creator,
+				// Check the events
+				msgEvent := sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+					sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Creator.String()),
+				)
+				creationEvent := sdk.NewEvent(
+					types.EventTypeCreatePost,
+					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
+					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.Created.String()),
+					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Owner.String()),
+				)
+				assert.Contains(t, ctx.EventManager().Events(), msgEvent)
+				assert.Contains(t, ctx.EventManager().Events(), creationEvent)
+			}
+		})
 	}
 
-	var stored types.Post
-	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+expectedPostID.String())), &stored)
-	assert.Equal(t, expected, stored)
 }
 
 // --------------------------
@@ -123,7 +142,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 		}, {
 			name:        "Edit date before creation date",
 			storedPost:  &testPost,
-			blockHeight: testPost.Created - 1,
+			blockHeight: testPost.Created.Int64() - 1,
 			msg: types.MsgEditPost{
 				PostID:  testPost.PostID,
 				Message: "Edited message",
@@ -174,7 +193,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 
 func Test_handleMsgEditPost_valid_request(t *testing.T) {
 	ctx, k := SetupTestInput()
-	ctx = ctx.WithBlockHeight(testPost.Created + 1)
+	ctx = ctx.WithBlockHeight(testPost.Created.Int64() + 1)
 
 	// Insert the post
 	store := ctx.KVStore(k.StoreKey)
@@ -206,7 +225,7 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 		Message:    msg.Message,
 		Owner:      testPost.Owner,
 		Created:    testPost.Created,
-		LastEdited: ctx.BlockHeight(),
+		LastEdited: sdk.NewInt(ctx.BlockHeight()),
 	}
 
 	var stored types.Post
@@ -239,7 +258,7 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 		{
 			name:         "Like date before post date",
 			existingPost: &testPost,
-			blockHeight:  testPost.Created - 1,
+			blockHeight:  testPost.Created.Int64() - 1,
 			msg: types.MsgLikePost{
 				PostID: testPost.PostID,
 				Liker:  liker,
@@ -286,7 +305,7 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 
 func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	ctx, k := SetupTestInput()
-	ctx = ctx.WithBlockHeight(testPost.Created)
+	ctx = ctx.WithBlockHeight(testPost.Created.Int64())
 
 	// Insert the post
 	store := ctx.KVStore(k.StoreKey)

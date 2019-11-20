@@ -13,7 +13,7 @@ import (
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var msgCreatePost = types.NewMsgCreatePost("My new post", types.PostID(53), testOwner)
+var msgCreatePost = types.NewMsgCreatePost("My new post", types.PostID(53), false, testOwner)
 
 func TestMsgCreatePost_Route(t *testing.T) {
 	actual := msgCreatePost.Route()
@@ -34,17 +34,17 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), nil),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, nil),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name:  "Empty post message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), creator),
+			msg:   types.NewMsgCreatePost("", types.PostID(0), false, creator),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
 		},
 		{
 			name:  "Valid message does not return any error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), creator),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, creator),
 			error: nil,
 		},
 	}
@@ -62,7 +62,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	actual := msgCreatePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreatePost","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53"}}`
+	expected := `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53"}}`
 	assert.Equal(t, expected, string(actual))
 }
 

@@ -40,7 +40,21 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 		return nil, sdk.ErrUnknownRequest("could not get post")
 	}
 
-	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &post)
+	// Get the likes
+	postLikes := keeper.GetPostLikes(ctx, post.PostID)
+
+	// Get the children
+	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
+	postChildren := make(types.Posts, len(childrenIDs))
+	for index, childrenID := range childrenIDs {
+		children, _ := keeper.GetPost(ctx, childrenID)
+		postChildren[index] = children
+	}
+
+	// Crete the response object
+	postResponse := NewPostResponse(post, postLikes, postChildren)
+
+	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &postResponse)
 	if err2 != nil {
 		panic("could not marshal result to JSON")
 	}

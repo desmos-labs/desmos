@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -35,9 +36,9 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create [message] [parent-post-id]",
+		Use:   "create [message] [allows-comments] [[parent-post-id]]",
 		Short: "Create a new post",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -49,12 +50,20 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			parentID, err := types.ParsePostID(args[1])
+			allowsComments, err := strconv.ParseBool(args[1])
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], parentID, from)
+			parentID := types.PostID(0)
+			if len(args) > 2 {
+				parentID, err = types.ParsePostID(args[2])
+				if err != nil {
+					return err
+				}
+			}
+
+			msg := types.NewMsgCreatePost(args[0], parentID, allowsComments, from)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}

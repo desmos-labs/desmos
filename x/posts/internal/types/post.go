@@ -36,28 +36,53 @@ func ParsePostID(value string) (PostID, error) {
 	return PostID(intVal), err
 }
 
+// ----------------
+// --- Post IDs
+// ----------------
+
+// PostIDs represents a slice of PostID objects
+type PostIDs []PostID
+
+// Equals returns true iff the ids slice and the other
+// one contain the same data in the same order
+func (ids PostIDs) Equals(other PostIDs) bool {
+	if len(ids) != len(other) {
+		return false
+	}
+
+	for index, id := range ids {
+		if id != other[index] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // ---------------
 // --- Post
 // ---------------
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID     PostID         `json:"id"`
-	ParentID   PostID         `json:"parent_id"`
-	Message    string         `json:"message"`
-	Created    int64          `json:"created"`     // Block height at which the post has been created
-	LastEdited int64          `json:"last_edited"` // Block height at which the post has been edited the last time
-	Owner      sdk.AccAddress `json:"owner"`
+	PostID         PostID         `json:"id,string"`
+	ParentID       PostID         `json:"parent_id,string"`
+	Message        string         `json:"message"`
+	Created        sdk.Int        `json:"created"`     // Block height at which the post has been created
+	LastEdited     sdk.Int        `json:"last_edited"` // Block height at which the post has been edited the last time
+	AllowsComments bool           `json:"allows_comments"`
+	Owner          sdk.AccAddress `json:"owner"`
 }
 
-func NewPost(ID, parentID PostID, message string, created int64, owner sdk.AccAddress) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, created int64, owner sdk.AccAddress) Post {
 	return Post{
-		PostID:     ID,
-		ParentID:   parentID,
-		Message:    message,
-		Created:    created,
-		LastEdited: 0,
-		Owner:      owner,
+		PostID:         id,
+		ParentID:       parentID,
+		Message:        message,
+		Created:        sdk.NewInt(created),
+		LastEdited:     sdk.ZeroInt(),
+		AllowsComments: allowsComments,
+		Owner:          owner,
 	}
 }
 
@@ -85,12 +110,12 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post message: %s", p.Message)
 	}
 
-	if p.Created == 0 {
-		return fmt.Errorf("invalid post creation block heigth: %d", p.Created)
+	if p.Created.Equal(sdk.ZeroInt()) {
+		return fmt.Errorf("invalid post creation block heigth: %s", p.Created)
 	}
 
-	if p.LastEdited == 0 || p.LastEdited < p.Created {
-		return fmt.Errorf("invalid Post edit time %d", p.LastEdited)
+	if p.LastEdited.Equal(sdk.ZeroInt()) || p.LastEdited.LT(p.Created) {
+		return fmt.Errorf("invalid Post edit time %s", p.LastEdited)
 	}
 
 	return nil
@@ -102,6 +127,7 @@ func (p Post) Equals(other Post) bool {
 		p.Message == other.Message &&
 		p.Created == other.Created &&
 		p.LastEdited == other.LastEdited &&
+		p.AllowsComments == other.AllowsComments &&
 		p.Owner.Equals(other.Owner)
 }
 
@@ -109,8 +135,11 @@ func (p Post) Equals(other Post) bool {
 // --- Posts
 // -------------
 
+// Posts represents a slice of Post objects
 type Posts []Post
 
+// Equals returns true iff the p slice contains the same
+// data in the same order of the other slice
 func (p Posts) Equals(other Posts) bool {
 	if len(p) != len(other) {
 		return false
