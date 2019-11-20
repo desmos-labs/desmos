@@ -42,22 +42,26 @@ func ParsePostID(value string) (PostID, error) {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID        PostID         `json:"id"`
-	ParentID      PostID         `json:"parent_id"`
-	Message       string         `json:"message"`
-	Created       int64          `json:"created"`     // Block height at which the post has been created
-	LastEdited    int64          `json:"last_edited"` // Block height at which the post has been edited the last time
-	Owner         sdk.AccAddress `json:"owner"`
-	Namespace     string         `json:"namespace"`      // External service namespace, e.g. cosmos
-	ExternalOwner string         `json:"external_owner"` // External owner address of the post
+	PostID     PostID         `json:"id"`
+	ParentID   PostID         `json:"parent_id"`
+	Message    string         `json:"message"`
+	Created    int64          `json:"created"`     // Block height at which the post has been created
+	LastEdited int64          `json:"last_edited"` // Block height at which the post has been edited the last time
+	Owner      sdk.AccAddress `json:"owner"`
 }
 
-// NewPost returns an empty Magpie post
-func NewPost() Post {
-	return Post{}
+func NewPost(ID, parentID PostID, message string, created int64, owner sdk.AccAddress) Post {
+	return Post{
+		PostID:     ID,
+		ParentID:   parentID,
+		Message:    message,
+		Created:    created,
+		LastEdited: 0,
+		Owner:      owner,
+	}
 }
 
-// implement fmt.Stringer
+// String implements fmt.Stringer
 func (p Post) String() string {
 	bytes, err := json.Marshal(&p)
 	if err != nil {
@@ -67,6 +71,7 @@ func (p Post) String() string {
 	return string(bytes)
 }
 
+// Validate implements validator
 func (p Post) Validate() error {
 	if !p.PostID.Valid() {
 		return fmt.Errorf("invalid post id: %s", p.PostID)
@@ -88,13 +93,34 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid Post edit time %d", p.LastEdited)
 	}
 
-	if p.Namespace == "" {
-		return fmt.Errorf("invalid post namespace: %s", p.Namespace)
-	}
-
-	if p.ExternalOwner == "" {
-		return fmt.Errorf("invalid post external owner: %s", p.ExternalOwner)
-	}
-
 	return nil
+}
+
+func (p Post) Equals(other Post) bool {
+	return p.PostID == other.PostID &&
+		p.ParentID == other.ParentID &&
+		p.Message == other.Message &&
+		p.Created == other.Created &&
+		p.LastEdited == other.LastEdited &&
+		p.Owner.Equals(other.Owner)
+}
+
+// -------------
+// --- Posts
+// -------------
+
+type Posts []Post
+
+func (p Posts) Equals(other Posts) bool {
+	if len(p) != len(other) {
+		return false
+	}
+
+	for index, post := range p {
+		if !post.Equals(other[index]) {
+			return false
+		}
+	}
+
+	return true
 }

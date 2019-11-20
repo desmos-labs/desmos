@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,50 +43,33 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	return id
 }
 
-// SetLastPostID allows to set the last used post id
-func (k Keeper) SetLastPostID(ctx sdk.Context, id types.PostID) {
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
-}
-
-// CreatePost allows to create a new post checking for any id conflict with exiting posts
-func (k Keeper) CreatePost(ctx sdk.Context, post types.Post) sdk.Error {
-	if _, exists := k.GetPost(ctx, post.PostID); exists {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID))
-	}
-
-	return k.SavePost(ctx, post)
-}
-
-// SavePost allows to save the given post inside the current context
+// SavePost allows to save the given post inside the current context.
+// It assumes that the given post has already been validated.
+// If another post has the same ID of the given post, the old post will be overridden
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
-	if post.Owner.Empty() {
-		return sdk.ErrInvalidAddress("Post owner cannot be empty")
-	}
-
 	store := ctx.KVStore(k.StoreKey)
-	store.Set(k.getPostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
-	// Save the last post id
-	k.SetLastPostID(ctx, post.PostID)
-
+	// Save the post and set the last post id
+	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
+	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
 	return nil
 }
 
 // GetPost returns the post having the given id inside the current context.
+// If no post having the given id can be found inside the current context, false will be returned.
 func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
 	key := k.getPostStoreKey(id)
 	if !store.Has(key) {
-		return types.NewPost(), false
+		return types.Post{}, false
 	}
 
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
 	return post, true
 }
 
-// GetPosts returns the list of all the posts that are stored into the current state
+// GetPosts returns the list of all the posts that are stored into the current state.
 func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
@@ -104,84 +88,42 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // --- Likes
 // -------------
 
-func (k Keeper) getLikeStoreKey(id types.LikeID) []byte {
-	return []byte(types.LikeStorePrefix + id.String())
-}
-
-// GetLastLikeID returns the last like id that has been used
-func (k Keeper) GetLastLikeID(ctx sdk.Context) types.LikeID {
+// SaveLike allows to save the given like inside the store.
+// It assumes that the given like is valid.
+// If another like from the same owner and for the same post exists, returns an error.
+func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
-	if !store.Has([]byte(types.LastLikeIDStoreKey)) {
-		return types.LikeID(0)
+	key := []byte(types.LikesStorePrefix + postID.String())
+
+	// Get the existent likes
+	var likes types.Likes
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &likes)
+
+	// Check for double likes
+	if likes.ContainsOwnerLike(like.Owner) {
+		msg := fmt.Sprintf("%s has already liked the post with id %s", like.Owner, postID.String())
+		return sdk.ErrUnknownRequest(msg)
 	}
 
-	var id types.LikeID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastLikeIDStoreKey)), &id)
-	return id
-}
-
-// SetLastLikeID allows to set the last used like id
-func (k Keeper) SetLastLikeID(ctx sdk.Context, id types.LikeID) {
-	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LastLikeIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
-}
-
-// AddLikeToPost allows to add a new like to a given post
-func (k Keeper) AddLikeToPost(ctx sdk.Context, post types.Post, like types.Like) sdk.Error {
-	// Set the correct post id inside the like
-	like.PostID = post.PostID
-
-	// Store the like and update the last like id
-	if err := k.SaveLike(ctx, like); err != nil {
-		return err
-	}
-	k.SetLastLikeID(ctx, like.LikeID)
+	// Save the new like
+	likes = append(likes, like)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&likes))
 
 	return nil
-}
-
-// SaveLike allows to save the given like inside the store
-func (k Keeper) SaveLike(ctx sdk.Context, like types.Like) sdk.Error {
-	if like.Owner.Empty() || !like.PostID.Valid() {
-		return sdk.ErrUnauthorized("Liker and post id must exist.")
-	}
-
-	// Check for any pre-existing likes with the same id
-	if _, found := k.GetLike(ctx, like.LikeID); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Like with id %s already existing", like.LikeID))
-	}
-
-	store := ctx.KVStore(k.StoreKey)
-	store.Set(k.getLikeStoreKey(like.LikeID), k.Cdc.MustMarshalBinaryBare(&like))
-
-	return nil
-}
-
-// GetLike returns the like having the given id
-func (k Keeper) GetLike(ctx sdk.Context, id types.LikeID) (like types.Like, found bool) {
-	store := ctx.KVStore(k.StoreKey)
-
-	key := k.getLikeStoreKey(id)
-	if !store.Has(key) {
-		return types.NewLike(), false
-	}
-
-	bz := store.Get(key)
-	k.Cdc.MustUnmarshalBinaryBare(bz, &like)
-	return like, true
 }
 
 // GetLikes allows to returns the list of likes that have been stored inside the given context
-func (k Keeper) GetLikes(ctx sdk.Context) []types.Like {
+func (k Keeper) GetLikes(ctx sdk.Context) map[types.PostID]types.Likes {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.LikeStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.LikesStorePrefix))
 
-	var likes []types.Like
+	likesData := map[types.PostID]types.Likes{}
 	for ; iterator.Valid(); iterator.Next() {
-		var like types.Like
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &like)
-		likes = append(likes, like)
+		var postLikes types.Likes
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
+		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.LikesStorePrefix))
+		likesData[postID] = postLikes
 	}
 
-	return likes
+	return likesData
 }

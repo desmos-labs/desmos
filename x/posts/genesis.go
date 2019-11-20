@@ -7,8 +7,8 @@ import (
 )
 
 type GenesisState struct {
-	Posts []Post `json:"posts"`
-	Likes []Like `json:"likes"`
+	Posts []Post           `json:"posts"`
+	Likes map[PostID]Likes `json:"likes"`
 }
 
 // DefaultGenesisState returns a default GenesisState
@@ -25,7 +25,6 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
-// noinspection GoUnhandledErrorResult
 func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, post := range data.Posts {
 		if err := keeper.SavePost(ctx, post); err != nil {
@@ -33,9 +32,11 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abc
 		}
 	}
 
-	for _, like := range data.Likes {
-		if err := keeper.SaveLike(ctx, like); err != nil {
-			panic(err)
+	for postID, likes := range data.Likes {
+		for _, like := range likes {
+			if err := keeper.SaveLike(ctx, postID, like); err != nil {
+				panic(err)
+			}
 		}
 	}
 
@@ -50,9 +51,11 @@ func ValidateGenesis(data GenesisState) error {
 		}
 	}
 
-	for _, record := range data.Likes {
-		if err := record.Validate(); err != nil {
-			return err
+	for _, likes := range data.Likes {
+		for _, record := range likes {
+			if err := record.Validate(); err != nil {
+				return err
+			}
 		}
 	}
 

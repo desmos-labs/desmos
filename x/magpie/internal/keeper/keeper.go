@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
@@ -48,23 +46,9 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 	store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
 }
 
-// CreateSession allows to create a new session checking that no other session
-// with the same id already exist
-func (k Keeper) CreateSession(ctx sdk.Context, session types.Session) sdk.Error {
-	// Check for any previously existing session
-	if _, found := k.GetSession(ctx, session.SessionID); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.SessionID))
-	}
-
-	return k.SaveSession(ctx, session)
-}
-
-// SaveSession allows to save a session inside the given context
+// SaveSession allows to save a session inside the given context.
+// It assumes the given session has already been validated.
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
-	if session.Owner.Empty() {
-		return sdk.ErrInvalidAddress("Owner address cannot be empty")
-	}
-
 	// Save the session
 	store := ctx.KVStore(k.StoreKey)
 	store.Set(k.getSessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
@@ -81,7 +65,7 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 
 	key := k.getSessionStoreKey(id)
 	if !store.Has(key) {
-		return types.NewSession(), false
+		return types.Session{}, false
 	}
 
 	bz := store.Get(key)
@@ -90,7 +74,7 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 }
 
 // GetSessions returns the list of all the sessions present inside the current context
-func (k Keeper) GetSessions(ctx sdk.Context) []types.Session {
+func (k Keeper) GetSessions(ctx sdk.Context) types.Sessions {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.SessionStorePrefix))
 

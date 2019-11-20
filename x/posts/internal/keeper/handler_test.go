@@ -18,11 +18,9 @@ func Test_handleMsgCreatePost_returns_error_with_existing_post_id(t *testing.T) 
 	ctx, k := SetupTestInput()
 
 	msg := types.MsgCreatePost{
-		ParentID:      testPost.ParentID,
-		Message:       testPost.Message,
-		Owner:         testPost.Owner,
-		Namespace:     testPost.Namespace,
-		ExternalOwner: testPost.ExternalOwner,
+		ParentID: testPost.ParentID,
+		Message:  testPost.Message,
+		Creator:  testPost.Owner,
 	}
 
 	existing := testPost
@@ -46,7 +44,7 @@ func Test_handleMsgCreatePost_returns_error_with_existing_post_id(t *testing.T) 
 		sdk.EventTypeMessage,
 		sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-		sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
 	)
 	assert.Contains(t, ctx.EventManager().Events(), expected)
 }
@@ -55,14 +53,7 @@ func Test_handleMsgCreatePost_valid_request(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	expectedPostID := types.PostID(1)
-	msg := types.MsgCreatePost{
-		ParentID:      testPost.ParentID,
-		Message:       testPost.Message,
-		Owner:         testPost.Owner,
-		Namespace:     testPost.Namespace,
-		ExternalOwner: testPost.ExternalOwner,
-	}
-
+	msg := types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.Owner)
 	handler := keeper.NewHandler(k)
 	res := handler(ctx, msg)
 
@@ -76,9 +67,7 @@ func Test_handleMsgCreatePost_valid_request(t *testing.T) {
 		sdk.NewAttribute(types.AttributeKeyPostID, expectedPostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostParentID, msg.ParentID.String()),
 		sdk.NewAttribute(types.AttributeKeyCreationTime, strconv.FormatInt(ctx.BlockHeight(), 10)),
-		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Owner.String()),
-		sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
-		sdk.NewAttribute(types.AttributeKeyExternalOwner, msg.ExternalOwner),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Creator.String()),
 	)
 	assert.Len(t, ctx.EventManager().Events(), 2)
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
@@ -86,13 +75,11 @@ func Test_handleMsgCreatePost_valid_request(t *testing.T) {
 
 	// Check the stored post
 	expected := types.Post{
-		PostID:        expectedPostID,
-		ParentID:      msg.ParentID,
-		Message:       msg.Message,
-		LastEdited:    0,
-		Owner:         msg.Owner,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalOwner,
+		PostID:     expectedPostID,
+		ParentID:   msg.ParentID,
+		Message:    msg.Message,
+		LastEdited: 0,
+		Owner:      msg.Creator,
 	}
 
 	var stored types.Post
@@ -194,12 +181,7 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 	store.Set([]byte(types.PostStorePrefix+testPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&testPost))
 
 	// Handle the message
-	msg := types.MsgEditPost{
-		PostID:  testPost.PostID,
-		Message: "Edited message",
-		Editor:  testPost.Owner,
-	}
-
+	msg := types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Owner)
 	handler := keeper.NewHandler(k)
 	res := handler(ctx, msg)
 
@@ -219,14 +201,12 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 
 	// Check the stored post
 	expected := types.Post{
-		PostID:        testPost.PostID,
-		ParentID:      testPost.ParentID,
-		Message:       msg.Message,
-		Owner:         testPost.Owner,
-		Namespace:     testPost.Namespace,
-		ExternalOwner: testPost.ExternalOwner,
-		Created:       testPost.Created,
-		LastEdited:    ctx.BlockHeight(),
+		PostID:     testPost.PostID,
+		ParentID:   testPost.ParentID,
+		Message:    msg.Message,
+		Owner:      testPost.Owner,
+		Created:    testPost.Created,
+		LastEdited: ctx.BlockHeight(),
 	}
 
 	var stored types.Post
@@ -251,10 +231,8 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 		{
 			name: "Post not found",
 			msg: types.MsgLikePost{
-				PostID:        types.PostID(0),
-				Liker:         liker,
-				Namespace:     "cosmos",
-				ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+				PostID: types.PostID(0),
+				Liker:  liker,
 			},
 			error: "Post with id 0 not found",
 		},
@@ -263,10 +241,8 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 			existingPost: &testPost,
 			blockHeight:  testPost.Created - 1,
 			msg: types.MsgLikePost{
-				PostID:        testPost.PostID,
-				Liker:         liker,
-				Namespace:     "cosmos",
-				ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+				PostID: testPost.PostID,
+				Liker:  liker,
 			},
 			error: "Like cannot have a creation time before the post itself",
 		},
@@ -317,13 +293,10 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	store.Set([]byte(types.PostStorePrefix+testPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&testPost))
 
 	// Handle the message
-	expectedLikeID := types.LikeID(1)
 	liker, _ := sdk.AccAddressFromBech32("cosmos1dshanwvhmq4c5jk9a3ywtuyex426cflq5l4mqp")
 	msg := types.MsgLikePost{
-		PostID:        testPost.PostID,
-		Liker:         liker,
-		Namespace:     "cosmos",
-		ExternalLiker: "cosmos14xf748kl34mhn54zymlnppvg7pq58f0q0u968d",
+		PostID: testPost.PostID,
+		Liker:  liker,
 	}
 
 	handler := keeper.NewHandler(k)
@@ -331,14 +304,12 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Check the response
 	assert.True(t, res.IsOK())
-	assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(expectedLikeID), res.Data)
+	//assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(expectedLikeID), res.Data)
 
 	// Check the events
 	creationEvent := sdk.NewEvent(
 		types.EventTypeLikePost,
-		sdk.NewAttribute(types.AttributeKeyLikeID, expectedLikeID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyNamespace, msg.Namespace),
 		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 	)
 	assert.Len(t, ctx.EventManager().Events(), 2)
@@ -347,14 +318,12 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Check that the post has a new like
 	expectedPost := types.Post{
-		PostID:        testPost.PostID,
-		ParentID:      testPost.ParentID,
-		Message:       testPost.Message,
-		LastEdited:    testPost.LastEdited,
-		Owner:         testPost.Owner,
-		Namespace:     testPost.Namespace,
-		ExternalOwner: testPost.ExternalOwner,
-		Created:       testPost.Created,
+		PostID:     testPost.PostID,
+		ParentID:   testPost.ParentID,
+		Message:    testPost.Message,
+		LastEdited: testPost.LastEdited,
+		Owner:      testPost.Owner,
+		Created:    testPost.Created,
 	}
 
 	var storedPost types.Post
@@ -362,16 +331,9 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	assert.Equal(t, expectedPost, storedPost)
 
 	// Check the stored like
-	expectedLike := types.Like{
-		LikeID:        expectedLikeID,
-		PostID:        msg.PostID,
-		Owner:         msg.Liker,
-		Namespace:     msg.Namespace,
-		ExternalOwner: msg.ExternalLiker,
-		Created:       ctx.BlockHeight(),
-	}
+	expectedLikes := types.Likes{types.NewLike(ctx.BlockHeight(), msg.Liker)}
 
-	var storedLike types.Like
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikeStorePrefix+expectedLikeID.String())), &storedLike)
-	assert.Equal(t, expectedLike, storedLike)
+	var storedLikes types.Likes
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+storedPost.PostID.String())), &storedLikes)
+	assert.Equal(t, expectedLikes, storedLikes)
 }

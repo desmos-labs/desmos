@@ -7,7 +7,7 @@ const (
 
 	PostStorePrefix    = "post:"
 	LastPostIDStoreKey = "last_post_id"
-	LikeStorePrefix    = "like:"
+	LikesStorePrefix   = "likes:"
 	LastLikeIDStoreKey = "last_like_id"
 
 	ActionCreatePost = "create_post"
