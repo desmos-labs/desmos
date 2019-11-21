@@ -1,19 +1,35 @@
+#!/usr/bin/make -f
+
 PACKAGES_NOSIMULATION=$(shell go list ./... | grep -v '/simulation')
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
+LEDGER_ENABLED ?= true
+BINDIR ?= $(GOPATH)/bin
 
 export GO111MODULE = on
 
 include Makefile.ledger
+include contrib/devtools/Makefile
+
+########################################
+### Build flags
+
+ifneq ($(GOSUM),)
+  ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
+endif
 
 ifeq ($(WITH_CLEVELDB),yes)
   build_tags += gcc
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
+
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
 
-# process linker flags
+ldflags += $(LDFLAGS)
+ldflags := $(strip $(ldflags))
 
+# Process linker flags
 ldflags = -X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" \
  	-X "github.com/cosmos/cosmos-sdk/version.ServerName=desmosd" \
  	-X "github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli" \
@@ -21,17 +37,10 @@ ldflags = -X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" \
     -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)"
 
-ifneq ($(GOSUM),)
-ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
-endif
-
-ifeq ($(WITH_CLEVELDB),yes)
-  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
-endif
-ldflags += $(LDFLAGS)
-ldflags := $(strip $(ldflags))
-
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
+
+########################################
+### All
 
 all: lint install
 
@@ -70,10 +79,11 @@ go.sum: go.mod
 	@go mod verify
 	@go mod tidy
 
-lint:
-	golangci-lint run
+lint: golangci-lint
+	$(BINDIR)/golangci-lint run
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
 	go mod verify
+.PHONY: lint
 
 ########################################
 ### Testing

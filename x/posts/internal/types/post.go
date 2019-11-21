@@ -50,9 +50,9 @@ type Post struct {
 	Owner      sdk.AccAddress `json:"owner"`
 }
 
-func NewPost(ID, parentID PostID, message string, created int64, owner sdk.AccAddress) Post {
+func NewPost(id, parentID PostID, message string, created int64, owner sdk.AccAddress) Post {
 	return Post{
-		PostID:     ID,
+		PostID:     id,
 		ParentID:   parentID,
 		Message:    message,
 		Created:    created,

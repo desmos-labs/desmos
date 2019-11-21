@@ -1,5 +1,3 @@
-LEDGER_ENABLED ?= true
-
 build_tags = netgo
 ifeq ($(LEDGER_ENABLED),true)
   ifeq ($(OS),Windows_NT)
