@@ -2,10 +2,11 @@ package types_test
 
 import (
 	"fmt"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 // ------------------

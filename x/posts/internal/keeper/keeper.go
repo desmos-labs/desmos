@@ -114,6 +114,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // SaveLike allows to save the given like inside the store.
 // It assumes that the given like is valid.
 // If another like from the same owner and for the same post exists, returns an error.
+// nolint: interfacer
 func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
 	key := []byte(types.LikesStorePrefix + postID.String())
