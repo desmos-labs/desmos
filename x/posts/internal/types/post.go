@@ -30,6 +30,11 @@ func (id PostID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
+// Equals compares two PostID instances
+func (id PostID) Equals(other PostID) bool {
+	return id == other
+}
+
 // ParsePostID returns the PostID represented inside the provided
 // value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
@@ -117,23 +122,23 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post message: %s", p.Message)
 	}
 
-	if p.Created.Equal(sdk.ZeroInt()) {
-		return fmt.Errorf("invalid post creation block heigth: %s", p.Created)
+	if sdk.ZeroInt().Equal(p.Created) {
+		return fmt.Errorf("invalid post creation block height: %s", p.Created)
 	}
 
-	if p.LastEdited.Equal(sdk.ZeroInt()) || p.LastEdited.LT(p.Created) {
-		return fmt.Errorf("invalid Post edit time %s", p.LastEdited)
+	if p.Created.GT(p.LastEdited) {
+		return fmt.Errorf("invalid post last edit block height: %s", p.LastEdited)
 	}
 
 	return nil
 }
 
 func (p Post) Equals(other Post) bool {
-	return p.PostID == other.PostID &&
-		p.ParentID == other.ParentID &&
+	return p.PostID.Equals(other.PostID) &&
+		p.ParentID.Equals(other.ParentID) &&
 		p.Message == other.Message &&
-		p.Created == other.Created &&
-		p.LastEdited == other.LastEdited &&
+		p.Created.Equal(other.Created) &&
+		p.LastEdited.Equal(other.LastEdited) &&
 		p.AllowsComments == other.AllowsComments &&
 		p.Owner.Equals(other.Owner)
 }

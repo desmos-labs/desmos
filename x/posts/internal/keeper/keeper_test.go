@@ -111,24 +111,21 @@ func TestKeeper_SavePost(t *testing.T) {
 
 func TestKeeper_GetPost(t *testing.T) {
 	tests := []struct {
-		name          string
-		existingPost  types.Post
-		ID            types.PostID
-		expectedFound bool
-		expected      types.Post
+		name       string
+		postExists bool
+		ID         types.PostID
+		expected   types.Post
 	}{
 		{
-			name:          "Non existent post is not found",
-			ID:            types.PostID(123),
-			expectedFound: false,
-			expected:      types.Post{},
+			name:     "Non existent post is not found",
+			ID:       types.PostID(123),
+			expected: types.Post{},
 		},
 		{
-			name:          "Existing post is found properly",
-			existingPost:  types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "", 0, testPostOwner),
-			ID:            types.PostID(45),
-			expectedFound: true,
-			expected:      types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "", 0, testPostOwner),
+			name:       "Existing post is found properly",
+			ID:         types.PostID(45),
+			postExists: true,
+			expected:   types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "", 0, testPostOwner),
 		},
 	}
 
@@ -138,16 +135,15 @@ func TestKeeper_GetPost(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 
-			if !(types.Post{}).Equals(test.existingPost) {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
-				)
+			if test.postExists {
+				store.Set([]byte(types.PostStorePrefix+test.expected.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
-			assert.Equal(t, test.expected, expected)
-			assert.Equal(t, test.expectedFound, found)
+			assert.Equal(t, test.postExists, found)
+			if test.postExists {
+				assert.Equal(t, test.expected, expected)
+			}
 		})
 	}
 }
