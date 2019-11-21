@@ -64,24 +64,24 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	tests := []struct {
 		name        string
 		msg         types.MsgCreatePost
-		expSignJson string
+		expSignJSON string
 	}{
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "Ref#123", testOwner),
-			expSignJson: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"Ref#123","message":"My new post","parent_id":"53"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"Ref#123","message":"My new post","parent_id":"53"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "", testOwner),
-			expSignJson: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"","message":"My post","parent_id":"15"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"","message":"My post","parent_id":"15"}}`,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expSignJson, string(test.msg.GetSignBytes()))
+			assert.Equal(t, test.expSignJSON, string(test.msg.GetSignBytes()))
 		})
 	}
 }

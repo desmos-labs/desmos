@@ -1,9 +1,10 @@
 package cli
 
 import (
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/viper"
-	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -37,7 +38,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 }
 
 var (
-	flagParentId          = "parent-id"
+	flagParentID          = "parent-id"
 	flagExternalReference = "external-reference"
 )
 
@@ -63,7 +64,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			parentID, err := types.ParsePostID(viper.GetString(flagParentId))
+			parentID, err := types.ParsePostID(viper.GetString(flagParentID))
 			if err != nil {
 				return err
 			}
@@ -79,7 +80,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(flagParentId, "0", "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
 	cmd.Flags().String(flagExternalReference, "", "External reference to this post")
 
 	return flags.GetCommands(cmd)[0]
