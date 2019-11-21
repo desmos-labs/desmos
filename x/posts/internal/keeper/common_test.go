@@ -47,6 +47,7 @@ var testPost = types.NewPost(
 	types.PostID(0),
 	"Post message",
 	false,
+	"",
 	10,
 	testPostOwner,
 )

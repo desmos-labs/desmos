@@ -15,18 +15,23 @@ import (
 // PostID represents a unique post id
 type PostID uint64
 
+// Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
 	return id != 0
 }
 
+// Next returns the subsequent id to this one
 func (id PostID) Next() PostID {
 	return id + 1
 }
 
+// String implements fmt.Stringer
 func (id PostID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
+// ParsePostID returns the PostID represented inside the provided
+// value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
@@ -65,24 +70,26 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID         PostID         `json:"id,string"`
-	ParentID       PostID         `json:"parent_id,string"`
-	Message        string         `json:"message"`
-	Created        sdk.Int        `json:"created"`     // Block height at which the post has been created
-	LastEdited     sdk.Int        `json:"last_edited"` // Block height at which the post has been edited the last time
-	AllowsComments bool           `json:"allows_comments"`
-	Owner          sdk.AccAddress `json:"owner"`
+	PostID            PostID         `json:"id,string"`          // Unique id
+	ParentID          PostID         `json:"parent_id,string"`   // Post of which this one is a comment
+	Message           string         `json:"message"`            // Message contained inside the post
+	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
+	LastEdited        sdk.Int        `json:"last_edited"`        // Block height at which the post has been edited the last time
+	AllowsComments    bool           `json:"allows_comments"`    // Tells if users can reference this PostID as the parent
+	ExternalReference string         `json:"external_reference"` // Used to know when to display this post
+	Owner             sdk.AccAddress `json:"owner"`              // Creator of the Post
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, created int64, owner sdk.AccAddress) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, externalReference string, created int64, owner sdk.AccAddress) Post {
 	return Post{
-		PostID:         id,
-		ParentID:       parentID,
-		Message:        message,
-		Created:        sdk.NewInt(created),
-		LastEdited:     sdk.ZeroInt(),
-		AllowsComments: allowsComments,
-		Owner:          owner,
+		PostID:            id,
+		ParentID:          parentID,
+		Message:           message,
+		Created:           sdk.NewInt(created),
+		LastEdited:        sdk.ZeroInt(),
+		AllowsComments:    allowsComments,
+		ExternalReference: externalReference,
+		Owner:             owner,
 	}
 }
 

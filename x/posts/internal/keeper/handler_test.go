@@ -26,28 +26,28 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		{
 			name: "Trying to store post with same id returns error",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, testPost.Created.Int64(), testPost.Owner),
+				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "", testPost.Created.Int64(), testPost.Owner),
 			},
 			lastPostID: types.PostID(0),
-			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, testPost.Owner),
+			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "", testPost.Owner),
 			expError:   "Post with id 1 already exists",
 		},
 		{
 			name:    "Post with new id is stored properly",
-			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, testPost.Owner),
-			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, 0, testPost.Owner),
+			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "", testPost.Owner),
+			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "", 0, testPost.Owner),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns error",
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "", testPost.Owner),
 			expError: "Parent post with id 50 not found",
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns error",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, 0, testPost.Owner),
+				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "", 0, testPost.Owner),
 			},
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "", testPost.Owner),
 			expError: "Post with id 50 does not allow comments",
 		},
 	}

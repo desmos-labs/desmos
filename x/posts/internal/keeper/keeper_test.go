@@ -55,25 +55,25 @@ func TestKeeper_SavePost(t *testing.T) {
 		{
 			name: "Post with ID already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, 0, testPostOwner),
+				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "", 0, testPostOwner),
 			},
-			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, 0, testPostOwner),
+			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
 			name: "Post which ID is not already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, 0, testPostOwner),
+				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "", 0, testPostOwner),
 			},
-			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, 0, testPostOwner),
+			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
 			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, 0, testPostOwner),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, testPostOwner),
 			},
-			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, 0, testPostOwner),
+			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 		},
 	}
@@ -125,10 +125,10 @@ func TestKeeper_GetPost(t *testing.T) {
 		},
 		{
 			name:          "Existing post is found properly",
-			existingPost:  types.NewPost(types.PostID(45), types.PostID(0), "Post", false, 0, testPostOwner),
+			existingPost:  types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "", 0, testPostOwner),
 			ID:            types.PostID(45),
 			expectedFound: true,
-			expected:      types.NewPost(types.PostID(45), types.PostID(0), "Post", false, 0, testPostOwner),
+			expected:      types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "", 0, testPostOwner),
 		},
 	}
 
@@ -167,11 +167,11 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, 10, testPost.Owner),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, 10, testPost.Owner),
-				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, 10, testPost.Owner),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, 10, testPost.Owner),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, 10, testPost.Owner),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "", 10, testPost.Owner),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "", 10, testPost.Owner),
+				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "", 10, testPost.Owner),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "", 10, testPost.Owner),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "", 10, testPost.Owner),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55), types.PostID(78)},
@@ -209,8 +209,8 @@ func TestKeeper_GetPosts(t *testing.T) {
 		{
 			name: "Existing list is returned properly",
 			posts: types.Posts{
-				types.NewPost(types.PostID(13), types.PostID(0), "", false, 0, testPostOwner),
-				types.NewPost(types.PostID(76), types.PostID(0), "", false, 0, testPostOwner),
+				types.NewPost(types.PostID(13), types.PostID(0), "", false, "", 0, testPostOwner),
+				types.NewPost(types.PostID(76), types.PostID(0), "", false, "", 0, testPostOwner),
 			},
 		},
 	}

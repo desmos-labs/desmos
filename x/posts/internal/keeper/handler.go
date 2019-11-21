@@ -41,6 +41,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
+		msg.ExternalReference,
 		ctx.BlockHeight(),
 		msg.Creator,
 	)

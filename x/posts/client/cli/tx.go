@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/spf13/viper"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -34,12 +36,17 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	return postsTxCmd
 }
 
+var (
+	flagParentId          = "parent-id"
+	flagExternalReference = "external-reference"
+)
+
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "create [message] [allows-comments] [[parent-post-id]]",
+	cmd := &cobra.Command{
+		Use:   "create [message] [allows-comments]",
 		Short: "Create a new post",
-		Args:  cobra.RangeArgs(2, 3),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -56,15 +63,14 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			parentID := types.PostID(0)
-			if len(args) > 2 {
-				parentID, err = types.ParsePostID(args[2])
-				if err != nil {
-					return err
-				}
+			parentID, err := types.ParsePostID(viper.GetString(flagParentId))
+			if err != nil {
+				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[0], parentID, allowsComments, from)
+			externalReference := viper.GetString(flagExternalReference)
+
+			msg := types.NewMsgCreatePost(args[0], parentID, allowsComments, externalReference, from)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -72,6 +78,11 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
+
+	cmd.Flags().String(flagParentId, "0", "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(flagExternalReference, "", "External reference to this post")
+
+	return flags.GetCommands(cmd)[0]
 }
 
 // GetCmdEditPost is the CLI command for editing a post
