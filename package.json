@@ -1,0 +1,22 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "description": "Desmos documentation",
+  "main": "index.js",
+  "scripts": {
+    "docs:serve": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "lodash": "^4.17.11",
+    "markdown-it": "^8.4.2",
+    "markdown-it-meta": "0.0.1",
+    "vuepress": "^1.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "vuepress-plugin-latex": "^0.1.3"
+  }
+}
