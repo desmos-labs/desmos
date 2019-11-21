@@ -84,6 +84,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 
 // GetPostChildrenIDs returns the IDs of all the children posts associated to the post
 // having the given postID
+// nolint: interfacer
 func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) []types.PostID {
 	store := ctx.KVStore(k.StoreKey)
 
@@ -137,6 +138,7 @@ func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) 
 }
 
 // GetPostLikes returns the list of likes that has been associated to the post having the given id
+// nolint: interfacer
 func (k Keeper) GetPostLikes(ctx sdk.Context, postID types.PostID) types.Likes {
 	store := ctx.KVStore(k.StoreKey)
 

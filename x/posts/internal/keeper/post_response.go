@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/json"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
