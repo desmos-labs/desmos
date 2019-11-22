@@ -6,10 +6,11 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/genaccounts"
 	"net"
 	"os"
 	"path/filepath"
+
+	"github.com/cosmos/cosmos-sdk/x/genaccounts"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

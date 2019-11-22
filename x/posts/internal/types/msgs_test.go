@@ -13,7 +13,7 @@ import (
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var msgCreatePost = types.NewMsgCreatePost("My new post", types.PostID(53), testOwner)
+var msgCreatePost = types.NewMsgCreatePost("My new post", types.PostID(53), false, "Ref#123", testOwner)
 
 func TestMsgCreatePost_Route(t *testing.T) {
 	actual := msgCreatePost.Route()
@@ -34,17 +34,17 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), nil),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "", nil),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name:  "Empty post message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), creator),
+			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "", creator),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
 		},
 		{
 			name:  "Valid message does not return any error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), creator),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "", creator),
 			error: nil,
 		},
 	}
@@ -61,9 +61,29 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
-	actual := msgCreatePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreatePost","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53"}}`
-	assert.Equal(t, expected, string(actual))
+	tests := []struct {
+		name        string
+		msg         types.MsgCreatePost
+		expSignJSON string
+	}{
+		{
+			name:        "Message with non-empty external reference",
+			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "Ref#123", testOwner),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"Ref#123","message":"My new post","parent_id":"53"}}`,
+		},
+		{
+			name:        "Message with non-empty external reference",
+			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "", testOwner),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"","message":"My post","parent_id":"15"}}`,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expSignJSON, string(test.msg.GetSignBytes()))
+		})
+	}
 }
 
 func TestMsgCreatePost_GetSigners(t *testing.T) {

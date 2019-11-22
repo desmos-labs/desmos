@@ -27,9 +27,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, post := range data.Posts {
-		if err := keeper.SavePost(ctx, post); err != nil {
-			panic(err)
-		}
+		keeper.SavePost(ctx, post)
 	}
 
 	for postID, likes := range data.Likes {
