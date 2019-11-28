@@ -85,7 +85,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 // GetPostChildrenIDs returns the IDs of all the children posts associated to the post
 // having the given postID
 // nolint: interfacer
-func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) []types.PostID {
+func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.PostIDs {
 	store := ctx.KVStore(k.StoreKey)
 
 	var postIDs types.PostIDs

@@ -42,17 +42,18 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 
 	// Get the likes
 	postLikes := keeper.GetPostLikes(ctx, post.PostID)
+	if postLikes == nil {
+		postLikes = types.Likes{}
+	}
 
 	// Get the children
 	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
-	postChildren := make(types.Posts, len(childrenIDs))
-	for index, childrenID := range childrenIDs {
-		children, _ := keeper.GetPost(ctx, childrenID)
-		postChildren[index] = children
+	if childrenIDs == nil {
+		childrenIDs = types.PostIDs{}
 	}
 
 	// Crete the response object
-	postResponse := NewPostResponse(post, postLikes, postChildren)
+	postResponse := NewPostResponse(post, postLikes, childrenIDs)
 
 	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &postResponse)
 	if err2 != nil {

@@ -10,11 +10,11 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	types.Post
-	Likes    types.Likes `json:"likes"`
-	Children types.Posts `json:"children"`
+	Likes    types.Likes   `json:"likes"`
+	Children types.PostIDs `json:"children"`
 }
 
-func NewPostResponse(post types.Post, likes types.Likes, children types.Posts) PostQueryResponse {
+func NewPostResponse(post types.Post, likes types.Likes, children types.PostIDs) PostQueryResponse {
 	return PostQueryResponse{
 		Post:     post,
 		Likes:    likes,
