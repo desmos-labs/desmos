@@ -3,7 +3,6 @@ package cli
 import (
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
@@ -83,7 +82,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
 	cmd.Flags().String(flagExternalReference, "", "External reference to this post")
 
-	return flags.GetCommands(cmd)[0]
+	return cmd
 }
 
 // GetCmdEditPost is the CLI command for editing a post
