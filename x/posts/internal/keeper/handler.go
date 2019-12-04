@@ -26,16 +26,6 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator.String()),
-		),
-	)
-
 	post := types.NewPost(
 		keeper.GetLastPostID(ctx).Next(),
 		msg.ParentID,
@@ -65,15 +55,14 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	keeper.SavePost(ctx, post)
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreatePost,
-			sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
-			sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
-			sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
-		),
+	createEvent := sdk.NewEvent(
+		types.EventTypePostCreated,
+		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
+		sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
 	)
+	ctx.EventManager().EmitEvent(createEvent)
 
 	return sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
@@ -83,15 +72,6 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 // handleMsgEditPost handles MsgEditsPost messages
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionEditPost),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Editor.String()),
-		),
-	)
 
 	// Get the existing post
 	existing, found := keeper.GetPost(ctx, msg.PostID)
@@ -116,7 +96,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeEditPost,
+			types.EventTypePostEdited,
 			sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
 		),
@@ -129,15 +109,6 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 }
 
 func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Result {
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionLikePost),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Liker.String()),
-		),
-	)
 
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
@@ -159,7 +130,7 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 	// Emit the event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeLikePost,
+			types.EventTypePostLiked,
 			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 			sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 		),

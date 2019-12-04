@@ -86,20 +86,14 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
 				// Check the events
-				msgEvent := sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreatePost),
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-					sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Creator.String()),
-				)
 				creationEvent := sdk.NewEvent(
-					types.EventTypeCreatePost,
+					types.EventTypePostCreated,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.Created.String()),
 					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Owner.String()),
 				)
-				assert.Contains(t, ctx.EventManager().Events(), msgEvent)
+				assert.Len(t, ctx.EventManager().Events(), 1)
 				assert.Contains(t, ctx.EventManager().Events(), creationEvent)
 			}
 		})
@@ -179,14 +173,7 @@ func Test_handleMSgEditPost_invalid_requests(t *testing.T) {
 			assert.Empty(t, res.Events, 0)
 
 			// Check the events
-			assert.Len(t, ctx.EventManager().Events(), 1)
-			expectedEvent := sdk.NewEvent(
-				sdk.EventTypeMessage,
-				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-				sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionEditPost),
-				sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Editor.String()),
-			)
-			assert.Contains(t, ctx.EventManager().Events(), expectedEvent)
+			assert.Empty(t, ctx.EventManager().Events())
 		})
 	}
 }
@@ -210,11 +197,11 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 
 	// Check the events
 	editEvent := sdk.NewEvent(
-		types.EventTypeEditPost,
+		types.EventTypePostEdited,
 		sdk.NewAttribute(types.AttributeKeyPostID, testPost.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostEditTime, strconv.FormatInt(ctx.BlockHeight(), 10)),
 	)
-	assert.Len(t, ctx.EventManager().Events(), 2)
+	assert.Len(t, ctx.EventManager().Events(), 1)
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
 	assert.Contains(t, ctx.EventManager().Events(), editEvent)
 
@@ -291,14 +278,7 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 			assert.Contains(t, res.Log, test.error)
 
 			// Events
-			assert.Len(t, ctx.EventManager().Events(), 1)
-			expectedEvent := sdk.NewEvent(
-				sdk.EventTypeMessage,
-				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-				sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionLikePost),
-				sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Liker.String()),
-			)
-			assert.Contains(t, ctx.EventManager().Events(), expectedEvent)
+			assert.Empty(t, ctx.EventManager().Events())
 		})
 	}
 }
@@ -327,11 +307,11 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Check the events
 	creationEvent := sdk.NewEvent(
-		types.EventTypeLikePost,
+		types.EventTypePostLiked,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 	)
-	assert.Len(t, ctx.EventManager().Events(), 2)
+	assert.Len(t, ctx.EventManager().Events(), 1)
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
 	assert.Contains(t, ctx.EventManager().Events(), creationEvent)
 

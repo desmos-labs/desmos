@@ -20,16 +20,13 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		types.NewLike(11, liker),
 		types.NewLike(12, otherLiker),
 	}
-	children := types.Posts{
-		types.NewPost(types.PostID(98), types.PostID(10), "First comment!", true, "", 10, liker),
-		types.NewPost(types.PostID(100), types.PostID(11), "Second :(", true, "", 10, otherLiker),
-	}
+	children := types.PostIDs{types.PostID(98), types.PostID(100)}
 
 	response := keeper.NewPostResponse(post, likes, children)
 	jsonData, err := json.Marshal(&response)
 	assert.NoError(t, err)
 	assert.Equal(t,
-		`{"id":"10","parent_id":"0","message":"Post","created":"10","last_edited":"0","allows_comments":true,"external_reference":"","owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","likes":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":[{"id":"98","parent_id":"10","message":"First comment!","created":"10","last_edited":"0","allows_comments":true,"external_reference":"","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"id":"100","parent_id":"11","message":"Second :(","created":"10","last_edited":"0","allows_comments":true,"external_reference":"","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}]}`,
+		`{"id":"10","parent_id":"0","message":"Post","created":"10","last_edited":"0","allows_comments":true,"external_reference":"","owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","likes":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["98","100"]}`,
 		string(jsonData),
 	)
 }
