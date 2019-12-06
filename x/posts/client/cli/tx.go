@@ -31,6 +31,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdCreatePost(cdc),
 		GetCmdEditPost(cdc),
 		GetCmdAddLike(cdc),
+		GetCmdRemoveLike(cdc),
 	)...)
 
 	return postsTxCmd
@@ -140,6 +141,38 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgLikePost(postID, from)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdRemoveLike is the CLI command for removing a like from a post
+func GetCmdRemoveLike(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "unlike [post-id]",
+		Short: "Unlike a post",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+			from := cliCtx.GetFromAddress()
+			if err := accGetter.EnsureExists(from); err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUnlikePost(postID, from)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -256,7 +256,7 @@ func TestKeeper_SaveLike(t *testing.T) {
 			expectedStored: types.Likes{types.NewLike(10, liker)},
 		},
 		{
-			name:           "First like is stored properly",
+			name:           "First liker is stored properly",
 			storedLikes:    types.Likes{},
 			postID:         types.PostID(15),
 			like:           types.NewLike(15, liker),
@@ -264,7 +264,7 @@ func TestKeeper_SaveLike(t *testing.T) {
 			expectedStored: types.Likes{types.NewLike(15, liker)},
 		},
 		{
-			name:        "Second like is stored properly",
+			name:        "Second liker is stored properly",
 			storedLikes: types.Likes{types.NewLike(10, liker)},
 			postID:      types.PostID(87),
 			like:        types.NewLike(1, otherLiker),
@@ -292,6 +292,59 @@ func TestKeeper_SaveLike(t *testing.T) {
 			var stored types.Likes
 			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+test.postID.String())), &stored)
 			assert.Equal(t, test.expectedStored, stored)
+		})
+	}
+}
+
+func TestKeeper_RemoveLike(t *testing.T) {
+	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+
+	tests := []struct {
+		name           string
+		storedLikes    types.Likes
+		postID         types.PostID
+		liker          sdk.AccAddress
+		error          sdk.Error
+		expectedStored types.Likes
+	}{
+		{
+			name:           "Like from same liker is removed properly",
+			storedLikes:    types.Likes{types.NewLike(10, liker)},
+			postID:         types.PostID(10),
+			liker:          liker,
+			error:          nil,
+			expectedStored: types.Likes{},
+		},
+		{
+			name:           "Non existing like returned error",
+			storedLikes:    types.Likes{},
+			postID:         types.PostID(15),
+			liker:          liker,
+			error:          sdk.ErrUnauthorized("Cannot unlike a post without liking it"),
+			expectedStored: types.Likes{},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if len(test.storedLikes) != 0 {
+				store.Set([]byte(types.LikesStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+			}
+
+			err := k.RemoveLike(ctx, test.postID, test.liker)
+			assert.Equal(t, test.error, err)
+
+			var stored types.Likes
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+test.postID.String())), &stored)
+
+			assert.Len(t, stored, len(test.expectedStored))
+			for index, like := range test.expectedStored {
+				assert.Equal(t, like, stored[index])
+			}
 		})
 	}
 }

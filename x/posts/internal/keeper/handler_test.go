@@ -315,7 +315,7 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
 	assert.Contains(t, ctx.EventManager().Events(), creationEvent)
 
-	// Check that the post has a new like
+	// Check that the post has a new liker
 	expectedPost := types.Post{
 		PostID:     testPost.PostID,
 		ParentID:   testPost.ParentID,
@@ -329,7 +329,7 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
 	assert.Equal(t, expectedPost, storedPost)
 
-	// Check the stored like
+	// Check the stored liker
 	expectedLikes := types.Likes{types.NewLike(ctx.BlockHeight(), msg.Liker)}
 
 	var storedLikes types.Likes

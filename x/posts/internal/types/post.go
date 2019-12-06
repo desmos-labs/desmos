@@ -47,12 +47,12 @@ func (id *PostID) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	postId, err := ParsePostID(s)
+	postID, err := ParsePostID(s)
 	if err != nil {
 		return err
 	}
 
-	*id = postId
+	*id = postID
 	return nil
 }
 

@@ -158,3 +158,83 @@ func TestLikes_ContainsOwnerLike(t *testing.T) {
 		})
 	}
 }
+
+func TestLikes_IndexOfByOwner(t *testing.T) {
+	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	tests := []struct {
+		name     string
+		likes    types.Likes
+		owner    sdk.AccAddress
+		expIndex int
+	}{
+		{
+			name:     "Non-empty list returns proper index with valid value",
+			likes:    types.Likes{types.NewLike(1, liker)},
+			owner:    liker,
+			expIndex: 0,
+		},
+		{
+			name:     "Empty list returns -1",
+			likes:    types.Likes{},
+			owner:    liker,
+			expIndex: -1,
+		},
+		{
+			name:     "Non-empty list returns -1 with not found address",
+			likes:    types.Likes{types.NewLike(1, liker)},
+			owner:    otherLiker,
+			expIndex: -1,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expIndex, test.likes.IndexOfByOwner(test.owner))
+		})
+	}
+}
+
+func TestLikes_RemoveLikeOfOwner(t *testing.T) {
+	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	tests := []struct {
+		name      string
+		likes     types.Likes
+		owner     sdk.AccAddress
+		expResult types.Likes
+		expEdited bool
+	}{
+		{
+			name:      "Like is removed from non-empty list",
+			likes:     types.Likes{types.NewLike(1, liker)},
+			owner:     liker,
+			expResult: types.Likes{},
+			expEdited: true,
+		},
+		{
+			name:      "Empty list is not edited",
+			likes:     types.Likes{},
+			owner:     liker,
+			expResult: types.Likes{},
+			expEdited: false,
+		},
+		{
+			name:      "Non-empty list with not found address is not edited",
+			likes:     types.Likes{types.NewLike(1, liker)},
+			owner:     otherLiker,
+			expResult: types.Likes{types.NewLike(1, liker)},
+			expEdited: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			result, edited := test.likes.RemoveLikeOfOwner(test.owner)
+			assert.Equal(t, test.expEdited, edited)
+			assert.Equal(t, test.expResult, result)
+		})
+	}
+}

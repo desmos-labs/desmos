@@ -19,6 +19,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
 	r.HandleFunc("/posts/likes", likePostHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/posts/likes", unlikePostHandler(cliCtx)).Methods("DELETE")
 }
 
 // --------------------------------------------------------------------------------------
@@ -102,6 +103,48 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgLikePost(postID, addr)
+		err = msg.ValidateBasic()
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+type removeLikeReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	PostID  string       `json:"post_id"`
+}
+
+func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req removeLikeReq
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		// create the message
+		postID, err := types.ParsePostID(req.PostID)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgUnlikePost(postID, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

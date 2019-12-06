@@ -112,9 +112,9 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // --- Likes
 // -------------
 
-// SaveLike allows to save the given like inside the store.
-// It assumes that the given like is valid.
-// If another like from the same owner and for the same post exists, returns an error.
+// SaveLike allows to save the given liker inside the store.
+// It assumes that the given liker is valid.
+// If another liker from the same owner and for the same post exists, returns an error.
 // nolint: interfacer
 func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
@@ -130,9 +130,38 @@ func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) 
 		return sdk.ErrUnknownRequest(msg)
 	}
 
-	// Save the new like
+	// Save the new liker
 	likes = append(likes, like)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&likes))
+
+	return nil
+}
+
+// RemoveLike removes the liker from the given liker from the post having the
+// given postID. If no liker was previously added from the given liker, an error
+// is returned.
+// nolint: interfacer
+func (k Keeper) RemoveLike(ctx sdk.Context, postID types.PostID, liker sdk.AccAddress) sdk.Error {
+	store := ctx.KVStore(k.StoreKey)
+	key := []byte(types.LikesStorePrefix + postID.String())
+
+	// Get the existing likes
+	var likes types.Likes
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &likes)
+
+	// Check if the liker exists
+	if !likes.ContainsOwnerLike(liker) {
+		return sdk.ErrUnauthorized("Cannot unlike a post without liking it")
+	}
+
+	// Remove and save the likes list
+	if newLikes, edited := likes.RemoveLikeOfOwner(liker); edited {
+		if len(newLikes) == 0 {
+			store.Delete(key)
+		} else {
+			store.Set(key, k.Cdc.MustMarshalBinaryBare(&newLikes))
+		}
+	}
 
 	return nil
 }

@@ -58,14 +58,6 @@ func Test_handleMsgCreateSession(t *testing.T) {
 			handler := keeper.NewHandler(k)
 			res := handler(ctx, test.msg)
 
-			firstEvent := sdk.NewEvent(
-				sdk.EventTypeMessage,
-				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-				sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreationSession),
-				sdk.NewAttribute(sdk.AttributeKeySender, test.msg.Owner.String()),
-			)
-			assert.Contains(t, ctx.EventManager().Events(), firstEvent)
-
 			if len(test.error) == 0 {
 
 				// Check the response
@@ -98,11 +90,11 @@ func Test_handleMsgCreateSession(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 				)
 
-				assert.Contains(t, res.Events, firstEvent)
 				assert.Contains(t, res.Events, creationEvent)
 			} else {
 				assert.False(t, res.IsOK())
 				assert.Contains(t, res.Log, test.error)
+				assert.Empty(t, res.Events)
 			}
 		})
 	}

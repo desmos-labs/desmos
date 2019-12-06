@@ -17,6 +17,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgEditPost(ctx, keeper, msg)
 		case types.MsgLikePost:
 			return handleMsgLike(ctx, keeper, msg)
+		case types.MsgUnlikePost:
+			return handleMsgUnLike(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -66,7 +68,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	return sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
-		Events: ctx.EventManager().Events(),
+		Events: sdk.Events{createEvent},
 	}
 }
 
@@ -94,17 +96,16 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	existing.LastEdited = sdk.NewInt(ctx.BlockHeight())
 	keeper.SavePost(ctx, existing)
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypePostEdited,
-			sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
-		),
+	editEvent := sdk.NewEvent(
+		types.EventTypePostEdited,
+		sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
 	)
+	ctx.EventManager().EmitEvent(editEvent)
 
 	return sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(existing.PostID),
-		Events: ctx.EventManager().Events(),
+		Events: sdk.Events{editEvent},
 	}
 }
 
@@ -116,28 +117,58 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
-	// Check the like date to make sure it's before the post creation date.
+	// Check the liker date to make sure it's before the post creation date.
 	if post.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
 		return sdk.ErrUnknownRequest("Like cannot have a creation time before the post itself").Result()
 	}
 
-	// Create and store the like
+	// Create and store the liker
 	like := types.NewLike(ctx.BlockHeight(), msg.Liker)
 	if err := keeper.SaveLike(ctx, post.PostID, like); err != nil {
 		return err.Result()
 	}
 
 	// Emit the event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypePostLiked,
-			sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-			sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
-		),
+	likeEvent := sdk.NewEvent(
+		types.EventTypePostLiked,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
 	)
+	ctx.EventManager().EmitEvent(likeEvent)
 
 	return sdk.Result{
 		Data:   []byte("Like added properly"),
-		Events: ctx.EventManager().Events(),
+		Events: sdk.Events{likeEvent},
+	}
+}
+
+func handleMsgUnLike(ctx sdk.Context, keeper Keeper, msg types.MsgUnlikePost) sdk.Result {
+
+	// Get the post
+	post, found := keeper.GetPost(ctx, msg.PostID)
+	if !found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
+	}
+
+	// Check the liker date to make sure it's before the post creation date.
+	if post.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
+		return sdk.ErrUnknownRequest("Cannot unlike a post before it's created").Result()
+	}
+
+	if err := keeper.RemoveLike(ctx, post.PostID, msg.Liker); err != nil {
+		return err.Result()
+	}
+
+	// Emit the event
+	unlikeEvent := sdk.NewEvent(
+		types.EventTypePostUnliked,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
+	)
+	ctx.EventManager().EmitEvent(unlikeEvent)
+
+	return sdk.Result{
+		Data:   []byte("Like removed properly"),
+		Events: sdk.Events{unlikeEvent},
 	}
 }
