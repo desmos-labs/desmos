@@ -16,14 +16,13 @@ Validators should expect to equip their datacenter location with redundant power
 
 We anticipate that network requirements will be low initially. The current testnet requires minimal resources. Then bandwidth, CPU and memory requirements will rise as the network grows. Large hard drives are recommended for storing years of blockchain history.
 
-## Set Up a Website
+## Set up a website
 Set up a dedicated validator's website and signal your intention to become a validator on our [forum](). This is important since delegators will want to have information about the entity they are delegating their Desmos tokens to.
 
-## Seek Legal Advice
+## Seek legal advice
 Seek legal advice if you intend to run a Validator.
 
 ## Community
-Discuss the finer details of being a validator on our community chat and forum:
+Discuss the finer details of being a validator on our community chat:
 
-* [Validator Chat]()
-* [Validator Forum]()
+* [Validator Chat](https://discord.gg/J6VsHDT)

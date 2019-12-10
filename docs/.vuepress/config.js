@@ -30,6 +30,8 @@ module.exports = {
                     ["developers/overview", "Overview"],
                     ["developers/perform-transactions", "Performing transactions"],
                     ["developers/query-data", "Querying data"],
+                    ["developers/observe-data", "Observing data"],
+                    ["developers/developer-faq", "F.A.Q"],
                 ]
             },
             {

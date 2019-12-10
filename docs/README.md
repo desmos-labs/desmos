@@ -16,5 +16,5 @@ redirects you to the proper documentation on third party websites.
 To get started, use the navigation bar to move thought pages. 
 
 :::tip WELCOME 
-Welcome to a whole new world of social network.  
+Welcome to a whole new world of social networks.  
 ::: 
