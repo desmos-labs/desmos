@@ -79,3 +79,27 @@ func (likes Likes) ContainsOwnerLike(owner sdk.AccAddress) bool {
 	}
 	return false
 }
+
+// IndexOfByOwner returns the index of the like having the
+// given owner inside the likes slice.
+func (likes Likes) IndexOfByOwner(owner sdk.AccAddress) int {
+	for index, like := range likes {
+		if like.Owner.Equals(owner) {
+			return index
+		}
+	}
+	return -1
+}
+
+// RemoveLikeOfOwner returns a new Likes slice not containing the
+// like of the given owner.
+// If the like was removed properly, true is also returned. Otherwise,
+// if no like was found, false is returned instead.
+func (likes Likes) RemoveLikeOfOwner(owner sdk.AccAddress) (Likes, bool) {
+	index := likes.IndexOfByOwner(owner)
+	if index == -1 {
+		return likes, false
+	}
+
+	return append(likes[:index], likes[index+1:]...), true
+}

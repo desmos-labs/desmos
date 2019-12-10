@@ -8,6 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// -------------
+// --- PostID
+// -------------
+
+func TestPostID_MarshalJSON(t *testing.T) {
+	json := types.ModuleCdc.MustMarshalJSON(types.PostID(10))
+	assert.Equal(t, `"10"`, string(json))
+}
+
+func TestPostID_UnmarshalJSON(t *testing.T) {
+	var id types.PostID
+	types.ModuleCdc.MustUnmarshalJSON([]byte(`"10"`), &id)
+	assert.Equal(t, types.PostID(10), id)
+}
+
 // -----------
 // --- Post
 // -----------

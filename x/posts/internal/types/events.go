@@ -2,10 +2,10 @@ package types
 
 // Magpie module event types
 const (
-	EventTypeCreatePost = "create_post"
-	EventTypeEditPost   = "edit_post"
-	EventTypeLikePost   = "like_post"
-	EventTypeUnlikePost = "unlike_post"
+	EventTypePostCreated = "post_created"
+	EventTypePostEdited  = "post_edited"
+	EventTypePostLiked   = "post_liked"
+	EventTypePostUnliked = "post_unliked"
 
 	// Post attributes
 	AttributeKeyPostID       = "post_id"

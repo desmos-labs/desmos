@@ -35,6 +35,27 @@ func (id PostID) Equals(other PostID) bool {
 	return id == other
 }
 
+// MarshalJSON implements Marshaler
+func (id PostID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.String())
+}
+
+// UnmarshalJSON implements Unmarshaler
+func (id *PostID) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	postID, err := ParsePostID(s)
+	if err != nil {
+		return err
+	}
+
+	*id = postID
+	return nil
+}
+
 // ParsePostID returns the PostID represented inside the provided
 // value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
@@ -75,8 +96,8 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID            PostID         `json:"id,string"`          // Unique id
-	ParentID          PostID         `json:"parent_id,string"`   // Post of which this one is a comment
+	PostID            PostID         `json:"id"`                 // Unique id
+	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
 	Message           string         `json:"message"`            // Message contained inside the post
 	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
 	LastEdited        sdk.Int        `json:"last_edited"`        // Block height at which the post has been edited the last time
