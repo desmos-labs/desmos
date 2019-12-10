@@ -5,10 +5,11 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	PostStorePrefix    = "post:"
-	LastPostIDStoreKey = "last_post_id"
-	LikesStorePrefix   = "likes:"
-	LastLikeIDStoreKey = "last_like_id"
+	PostStorePrefix         = "post:"
+	LastPostIDStoreKey      = "last_post_id"
+	PostCommentsStorePrefix = "comments:"
+
+	LikesStorePrefix = "likes:"
 
 	ActionCreatePost = "create_post"
 	ActionEditPost   = "edit_post"

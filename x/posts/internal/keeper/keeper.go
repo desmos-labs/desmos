@@ -46,13 +46,26 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
 // If another post has the same ID of the given post, the old post will be overridden
-func (k Keeper) SavePost(ctx sdk.Context, post types.Post) sdk.Error {
+func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
-	// Save the post and set the last post id
+	// Save the post
 	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
+
+	// Set the last post id
 	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
-	return nil
+
+	// Save the comments to the parent post, if it is valid
+	if post.ParentID.Valid() {
+		parentCommentsKey := []byte(types.PostCommentsStorePrefix + post.ParentID.String())
+
+		var commentsIDs []types.PostID
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
+
+		commentsIDs = append(commentsIDs, post.PostID)
+
+		store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&commentsIDs))
+	}
 }
 
 // GetPost returns the post having the given id inside the current context.
@@ -67,6 +80,17 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
 	return post, true
+}
+
+// GetPostChildrenIDs returns the IDs of all the children posts associated to the post
+// having the given postID
+// nolint: interfacer
+func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.PostIDs {
+	store := ctx.KVStore(k.StoreKey)
+
+	var postIDs types.PostIDs
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+postID.String())), &postIDs)
+	return postIDs
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state.
@@ -88,9 +112,10 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // --- Likes
 // -------------
 
-// SaveLike allows to save the given like inside the store.
-// It assumes that the given like is valid.
-// If another like from the same owner and for the same post exists, returns an error.
+// SaveLike allows to save the given liker inside the store.
+// It assumes that the given liker is valid.
+// If another liker from the same owner and for the same post exists, returns an error.
+// nolint: interfacer
 func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
 	key := []byte(types.LikesStorePrefix + postID.String())
@@ -105,11 +130,50 @@ func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) 
 		return sdk.ErrUnknownRequest(msg)
 	}
 
-	// Save the new like
+	// Save the new liker
 	likes = append(likes, like)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&likes))
 
 	return nil
+}
+
+// RemoveLike removes the liker from the given liker from the post having the
+// given postID. If no liker was previously added from the given liker, an error
+// is returned.
+// nolint: interfacer
+func (k Keeper) RemoveLike(ctx sdk.Context, postID types.PostID, liker sdk.AccAddress) sdk.Error {
+	store := ctx.KVStore(k.StoreKey)
+	key := []byte(types.LikesStorePrefix + postID.String())
+
+	// Get the existing likes
+	var likes types.Likes
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &likes)
+
+	// Check if the liker exists
+	if !likes.ContainsOwnerLike(liker) {
+		return sdk.ErrUnauthorized("Cannot unlike a post without liking it")
+	}
+
+	// Remove and save the likes list
+	if newLikes, edited := likes.RemoveLikeOfOwner(liker); edited {
+		if len(newLikes) == 0 {
+			store.Delete(key)
+		} else {
+			store.Set(key, k.Cdc.MustMarshalBinaryBare(&newLikes))
+		}
+	}
+
+	return nil
+}
+
+// GetPostLikes returns the list of likes that has been associated to the post having the given id
+// nolint: interfacer
+func (k Keeper) GetPostLikes(ctx sdk.Context, postID types.PostID) types.Likes {
+	store := ctx.KVStore(k.StoreKey)
+
+	var likes types.Likes
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+postID.String())), &likes)
+	return likes
 }
 
 // GetLikes allows to returns the list of likes that have been stored inside the given context

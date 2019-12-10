@@ -33,15 +33,6 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	// if yes, then continue and emit event
 	// else return error
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ActionCreationSession),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-		),
-	)
-
 	// Get the public key used to sign the message
 	pkBytes, _ := base64.StdEncoding.DecodeString(msg.PubKey)
 	var pkBytes33 = [33]byte{}
@@ -92,17 +83,17 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 		return err.Result()
 	}
 
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateSession,
-			sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
-			sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
-			sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
-			sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
-		),
+	createSessionEvent := sdk.NewEvent(
+		types.EventTypeCreateSession,
+		sdk.NewAttribute(types.AttributeKeySessionID, session.SessionID.String()),
+		sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
+		sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
+		sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 	)
+	ctx.EventManager().EmitEvent(createSessionEvent)
 
 	return sdk.Result{
-		Events: ctx.EventManager().Events(),
+		Data:   types.ModuleCdc.MustMarshalBinaryLengthPrefixed(session.SessionID),
+		Events: sdk.Events{createSessionEvent},
 	}
 }
