@@ -5,7 +5,7 @@ If you plan to use a KMS (key management system), you should go through these st
 [Validators](overview.md) are responsible for committing new blocks to the blockchain through voting. A validator's stake is slashed if they become unavailable or sign blocks at the same height. Please read about [Sentry Node Architecture](validator-faq.md#how-can-validators-protect-themselves-from-denial-of-service-attacks) to protect your node from DDOS attacks and to ensure high-availability.
 
 ::: danger Warning
-If you want to become a validator for the Hub's `mainnet`, you should [research security](security.md).
+If you want to become a validator for the `mainnet`, you should [research security](security.md).
 :::
 
 ## Create Your Validator

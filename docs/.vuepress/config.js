@@ -12,7 +12,7 @@ module.exports = {
         'latex'
     ],
     themeConfig: {
-        repo: "demos-labs/desmos",
+        repo: "desmos-labs/desmos",
         editLinks: true,
         docsDir: "docs",
         docsBranch: "master",
