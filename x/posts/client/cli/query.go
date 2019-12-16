@@ -32,7 +32,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 }
 
 // GetCmdQueryPost queries a post
-func GetCmdQueryPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdQueryPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [id]",
 		Short: "Retrieve the post having the given id, if any.",

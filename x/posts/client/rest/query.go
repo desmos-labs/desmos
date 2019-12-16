@@ -48,7 +48,7 @@ func queryProposalsWithParameterHandlerFn(cliCtx context.CLIContext) http.Handle
 		var (
 			creatorAddr  sdk.AccAddress
 			creationTime sdk.Int
-			parentID     types.PostID
+			parentID     *types.PostID
 		)
 
 		if v := r.URL.Query().Get(RestCreator); len(v) != 0 {
@@ -68,11 +68,12 @@ func queryProposalsWithParameterHandlerFn(cliCtx context.CLIContext) http.Handle
 		}
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
-			parentID, err = types.ParsePostID(v)
-			if !ok {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("cannot parse parent id: %s", v))
+			parsedParentID, err := types.ParsePostID(v)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+			parentID = &parsedParentID
 		}
 
 		params := types.NewQueryPostsParams(page, limit, parentID, creationTime, creatorAddr)
