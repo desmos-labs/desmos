@@ -2,7 +2,6 @@ package types
 
 const (
 	ModuleName = "posts"
-	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
 	PostStorePrefix         = "post:"
@@ -15,4 +14,10 @@ const (
 	ActionEditPost   = "edit_post"
 	ActionLikePost   = "like_post"
 	ActionUnlikePost = "unlike_post"
+
+	// Queries
+	QuerierRoute = ModuleName
+	QueryPost    = "post"
+	QueryPosts   = "posts"
+	QueryLike    = "like"
 )

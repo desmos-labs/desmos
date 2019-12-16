@@ -7,7 +7,7 @@ import (
 
 const (
 	ModuleName = types.ModuleName
-	RouterKey  = types.RouterKey
+	RouterKey  = types.QuerierRoute
 	StoreKey   = types.StoreKey
 )
 
@@ -30,6 +30,9 @@ var (
 	NewMsgEditPost   = types.NewMsgEditPost
 	NewMsgLikePost   = types.NewMsgLikePost
 	NewMsgUnlikePost = types.NewMsgUnlikePost
+
+	// Queries
+	NewQueryPostsParams = types.NewQueryPostsParams
 )
 
 type (
@@ -49,4 +52,7 @@ type (
 	MsgEditPost   = types.MsgEditPost
 	MsgLikePost   = types.MsgLikePost
 	MsgUnlikePost = types.MsgUnlikePost
+
+	// Queries
+	QueryPostsParams = types.QueryPostsParams
 )

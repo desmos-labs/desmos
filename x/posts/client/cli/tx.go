@@ -17,6 +17,17 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
+// Posts flags
+const (
+	flagNumLimit = "limit"
+	flagPage     = "page"
+
+	flagCreator           = "creator"
+	flagParentID          = "parent-id"
+	flagCreationTime      = "creation-time"
+	flagExternalReference = "external-reference"
+)
+
 // GetTxCmd set the tx commands
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	postsTxCmd := &cobra.Command{
@@ -36,11 +47,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 
 	return postsTxCmd
 }
-
-var (
-	flagParentID          = "parent-id"
-	flagExternalReference = "external-reference"
-)
 
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {

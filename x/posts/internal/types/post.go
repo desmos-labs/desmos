@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -185,4 +186,14 @@ func (p Posts) Equals(other Posts) bool {
 	}
 
 	return true
+}
+
+// String implements stringer interface
+func (p Posts) String() string {
+	out := "ID - [Creator] Message\n"
+	for _, post := range p {
+		out += fmt.Sprintf("%d - [%s] %s\n",
+			post.PostID, post.Owner, post.Message)
+	}
+	return strings.TrimSpace(out)
 }

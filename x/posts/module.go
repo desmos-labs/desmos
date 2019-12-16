@@ -50,12 +50,12 @@ func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 
 // Register rest routes
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr, StoreKey)
+	rest.RegisterRoutes(ctx, rtr, RouterKey)
 }
 
 // Get the root query command of this module
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetQueryCmd(StoreKey, cdc)
+	return cli.GetQueryCmd(RouterKey, cdc)
 }
 
 // Get the root tx command of this module

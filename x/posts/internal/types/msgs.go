@@ -31,7 +31,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, exte
 }
 
 // Route should return the name of the module
-func (msg MsgCreatePost) Route() string { return RouterKey }
+func (msg MsgCreatePost) Route() string { return QuerierRoute }
 
 // Type should return the action
 func (msg MsgCreatePost) Type() string { return ActionCreatePost }
@@ -78,7 +78,7 @@ func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress) MsgEditPost
 }
 
 // Route should return the name of the module
-func (msg MsgEditPost) Route() string { return RouterKey }
+func (msg MsgEditPost) Route() string { return QuerierRoute }
 
 // Type should return the action
 func (msg MsgEditPost) Type() string { return ActionEditPost }
@@ -126,7 +126,7 @@ func NewMsgLikePost(postID PostID, liker sdk.AccAddress) MsgLikePost {
 }
 
 // Route should return the name of the module
-func (msg MsgLikePost) Route() string { return RouterKey }
+func (msg MsgLikePost) Route() string { return QuerierRoute }
 
 // Type should return the action
 func (msg MsgLikePost) Type() string { return ActionLikePost }
@@ -171,7 +171,7 @@ func NewMsgUnlikePost(postID PostID, liker sdk.AccAddress) MsgUnlikePost {
 }
 
 // Route should return the name of the module
-func (msg MsgUnlikePost) Route() string { return RouterKey }
+func (msg MsgUnlikePost) Route() string { return QuerierRoute }
 
 // Type should return the action
 func (msg MsgUnlikePost) Type() string { return ActionUnlikePost }
