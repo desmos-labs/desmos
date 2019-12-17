@@ -22,17 +22,17 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewLike             = types.NewLike
+	NewReaction         = types.NewReaction
 	NewPost             = types.NewPost
 	ParsePostID         = types.ParsePostID
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
-	NewMsgCreatePost = types.NewMsgCreatePost
-	NewMsgEditPost   = types.NewMsgEditPost
-	NewMsgLikePost   = types.NewMsgLikePost
-	NewMsgUnlikePost = types.NewMsgUnlikePost
+	NewMsgCreatePost         = types.NewMsgCreatePost
+	NewMsgEditPost           = types.NewMsgEditPost
+	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
+	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
 )
 
 type (
@@ -44,13 +44,13 @@ type (
 	PostIDs      = types.PostIDs
 	Post         = types.Post
 	Posts        = types.Posts
-	Like         = types.Like
-	Likes        = types.Likes
+	Reaction     = types.Reaction
+	Reactions    = types.Reactions
 	GenesisState = types.GenesisState
 
 	// Msgs
-	MsgCreatePost = types.MsgCreatePost
-	MsgEditPost   = types.MsgEditPost
-	MsgLikePost   = types.MsgLikePost
-	MsgUnlikePost = types.MsgUnlikePost
+	MsgCreatePost         = types.MsgCreatePost
+	MsgEditPost           = types.MsgEditPost
+	MsgAddPostReaction    = types.MsgAddPostReaction
+	MsgRemovePostReaction = types.MsgRemovePostReaction
 )

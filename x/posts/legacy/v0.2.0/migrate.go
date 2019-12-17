@@ -9,5 +9,6 @@ import (
 // moving the external reference into the arbitrary data map and adding the new
 // subspace field
 func Migrate(oldGenState v120docs.GenesisState) GenesisState {
+	// TODO: Implement the migration
 	return GenesisState{}
 }

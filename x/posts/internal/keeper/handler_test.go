@@ -26,28 +26,28 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		{
 			name: "Trying to store post with same id returns error",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "", testPost.Created.Int64(), testPost.Owner),
+				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Owner),
 			},
 			lastPostID: types.PostID(0),
-			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "", testPost.Owner),
+			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Owner),
 			expError:   "Post with id 1 already exists",
 		},
 		{
 			name:    "Post with new id is stored properly",
-			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "", testPost.Owner),
-			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "", 0, testPost.Owner),
+			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Owner),
+			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Owner),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns error",
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "", testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner),
 			expError: "Parent post with id 50 not found",
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns error",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "", 0, testPost.Owner),
+				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Owner),
 			},
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "", testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner),
 			expError: "Post with id 50 does not allow comments",
 		},
 	}
@@ -80,7 +80,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				// Check the post
 				var stored types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
-				assert.Equal(t, test.expPost, stored)
+				assert.True(t, stored.Equals(test.expPost))
 
 				// Check the data
 				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
@@ -207,21 +207,23 @@ func Test_handleMsgEditPost_valid_request(t *testing.T) {
 
 	// Check the stored post
 	expected := types.Post{
-		PostID:     testPost.PostID,
-		ParentID:   testPost.ParentID,
-		Message:    msg.Message,
-		Owner:      testPost.Owner,
-		Created:    testPost.Created,
-		LastEdited: sdk.NewInt(ctx.BlockHeight()),
+		PostID:       testPost.PostID,
+		ParentID:     testPost.ParentID,
+		Message:      msg.Message,
+		Owner:        testPost.Owner,
+		Created:      testPost.Created,
+		Subspace:     "desmos",
+		OptionalData: map[string]string{},
+		LastEdited:   sdk.NewInt(ctx.BlockHeight()),
 	}
 
 	var stored types.Post
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &stored)
-	assert.Equal(t, expected, stored)
+	assert.True(t, stored.Equals(expected))
 }
 
 // --------------------
-// --- handleMsgLike
+// --- handleMsgAddPostReaction
 // --------------------
 
 func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
@@ -230,27 +232,21 @@ func Test_handleMsgLikePost_invalid_requests(t *testing.T) {
 	tests := []struct {
 		name         string
 		existingPost *types.Post
-		msg          types.MsgLikePost
+		msg          types.MsgAddPostReaction
 		blockHeight  int64
 		error        string
 	}{
 		{
-			name: "Post not found",
-			msg: types.MsgLikePost{
-				PostID: types.PostID(0),
-				Liker:  liker,
-			},
+			name:  "Post not found",
+			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", liker),
 			error: "Post with id 0 not found",
 		},
 		{
-			name:         "Like date before post date",
+			name:         "Reaction date before post date",
 			existingPost: &testPost,
 			blockHeight:  testPost.Created.Int64() - 1,
-			msg: types.MsgLikePost{
-				PostID: testPost.PostID,
-				Liker:  liker,
-			},
-			error: "Like cannot have a creation time before the post itself",
+			msg:          types.NewMsgAddPostReaction(testPost.PostID, "like", liker),
+			error:        "Reaction cannot have a creation time before the post itself",
 		},
 	}
 
@@ -293,10 +289,7 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Handle the message
 	liker, _ := sdk.AccAddressFromBech32("cosmos1dshanwvhmq4c5jk9a3ywtuyex426cflq5l4mqp")
-	msg := types.MsgLikePost{
-		PostID: testPost.PostID,
-		Liker:  liker,
-	}
+	msg := types.NewMsgAddPostReaction(testPost.PostID, "like", liker)
 
 	handler := keeper.NewHandler(k)
 	res := handler(ctx, msg)
@@ -307,9 +300,10 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Check the events
 	creationEvent := sdk.NewEvent(
-		types.EventTypePostLiked,
+		types.EventTypeReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionOwner, msg.User.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionValue, msg.Value),
 	)
 	assert.Len(t, ctx.EventManager().Events(), 1)
 	assert.Equal(t, ctx.EventManager().Events(), res.Events)
@@ -317,22 +311,24 @@ func Test_handleMsgLikePost_valid_request(t *testing.T) {
 
 	// Check that the post has a new liker
 	expectedPost := types.Post{
-		PostID:     testPost.PostID,
-		ParentID:   testPost.ParentID,
-		Message:    testPost.Message,
-		LastEdited: testPost.LastEdited,
-		Owner:      testPost.Owner,
-		Created:    testPost.Created,
+		PostID:       testPost.PostID,
+		ParentID:     testPost.ParentID,
+		Message:      testPost.Message,
+		LastEdited:   testPost.LastEdited,
+		Owner:        testPost.Owner,
+		Subspace:     "desmos",
+		OptionalData: map[string]string{},
+		Created:      testPost.Created,
 	}
 
 	var storedPost types.Post
 	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
-	assert.Equal(t, expectedPost, storedPost)
+	assert.True(t, storedPost.Equals(expectedPost))
 
 	// Check the stored liker
-	expectedLikes := types.Likes{types.NewLike(ctx.BlockHeight(), msg.Liker)}
+	expectedLikes := types.Reactions{types.NewReaction("like", ctx.BlockHeight(), msg.User)}
 
-	var storedLikes types.Likes
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+storedPost.PostID.String())), &storedLikes)
+	var storedLikes types.Reactions
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+storedPost.PostID.String())), &storedLikes)
 	assert.Equal(t, expectedLikes, storedLikes)
 }

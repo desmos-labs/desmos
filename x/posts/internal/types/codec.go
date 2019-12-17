@@ -15,6 +15,6 @@ func init() {
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgCreatePost{}, "desmos/MsgCreatePost", nil)
 	cdc.RegisterConcrete(MsgEditPost{}, "desmos/MsgEditPost", nil)
-	cdc.RegisterConcrete(MsgLikePost{}, "desmos/MsgLikePost", nil)
-	cdc.RegisterConcrete(MsgUnlikePost{}, "desmos/MsgUnlikePost", nil)
+	cdc.RegisterConcrete(MsgAddPostReaction{}, "desmos/MsgAddPostReaction", nil)
+	cdc.RegisterConcrete(MsgRemovePostReaction{}, "desmos/MsgRemovePostReaction", nil)
 }

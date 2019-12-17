@@ -164,40 +164,45 @@ func TestMsgEditPost_GetSigners(t *testing.T) {
 }
 
 // ----------------------
-// --- MsgLikePost
+// --- MsgAddPostReaction
 // ----------------------
 
-var msgLike = types.NewMsgLikePost(types.PostID(94), testOwner)
+var msgLike = types.NewMsgAddPostReaction(types.PostID(94), "like", testOwner)
 
-func TestMsgLikePost_Route(t *testing.T) {
+func TestMsgAddPostReaction_Route(t *testing.T) {
 	actual := msgLike.Route()
 	assert.Equal(t, "posts", actual)
 }
 
-func TestMsgLikePost_Type(t *testing.T) {
+func TestMsgAddPostReaction_Type(t *testing.T) {
 	actual := msgLike.Type()
-	assert.Equal(t, "like_post", actual)
+	assert.Equal(t, "add_post_reaction", actual)
 }
 
-func TestMsgLikePost_ValidateBasic(t *testing.T) {
+func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgLikePost
+		msg   types.MsgAddPostReaction
 		error sdk.Error
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgLikePost(types.PostID(0), testOwner),
+			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", testOwner),
 			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
-			name:  "Invalid liker returns error",
-			msg:   types.NewMsgLikePost(types.PostID(5), nil),
-			error: sdk.ErrInvalidAddress("Invalid liker address: "),
+			name:  "Invalid user returns error",
+			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", nil),
+			error: sdk.ErrInvalidAddress("Invalid user address: "),
+		},
+		{
+			name:  "Invalid value returns error",
+			msg:   types.NewMsgAddPostReaction(types.PostID(5), "", testOwner),
+			error: sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgLikePost(types.PostID(10), testOwner),
+			msg:   types.NewMsgAddPostReaction(types.PostID(10), "like", testOwner),
 			error: nil,
 		},
 	}
@@ -210,23 +215,23 @@ func TestMsgLikePost_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgLikePost_GetSignBytes(t *testing.T) {
+func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
 	actual := msgLike.GetSignBytes()
-	expected := `{"type":"desmos/MsgLikePost","value":{"liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"94"}}`
+	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"94","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
-func TestMsgLikePost_GetSigners(t *testing.T) {
+func TestMsgAddPostReaction_GetSigners(t *testing.T) {
 	actual := msgLike.GetSigners()
 	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgLike.Liker, actual[0])
+	assert.Equal(t, msgLike.User, actual[0])
 }
 
 // ----------------------
-// --- MsgUnlikePost
+// --- MsgRemovePostReaction
 // ----------------------
 
-var msgUnlikePost = types.NewMsgUnlikePost(types.PostID(94), testOwner)
+var msgUnlikePost = types.NewMsgRemovePostReaction(types.PostID(94), testOwner, "like")
 
 func TestMsgUnlikePost_Route(t *testing.T) {
 	actual := msgUnlikePost.Route()
@@ -235,28 +240,33 @@ func TestMsgUnlikePost_Route(t *testing.T) {
 
 func TestMsgUnlikePost_Type(t *testing.T) {
 	actual := msgUnlikePost.Type()
-	assert.Equal(t, "unlike_post", actual)
+	assert.Equal(t, "remove_post_reaction", actual)
 }
 
 func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgUnlikePost
+		msg   types.MsgRemovePostReaction
 		error sdk.Error
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgUnlikePost(types.PostID(0), testOwner),
+			msg:   types.NewMsgRemovePostReaction(types.PostID(0), testOwner, "like"),
 			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
-			name:  "Invalid liker address: ",
-			msg:   types.NewMsgUnlikePost(types.PostID(10), nil),
-			error: sdk.ErrInvalidAddress("Invalid liker address: "),
+			name:  "Invalid user address: ",
+			msg:   types.NewMsgRemovePostReaction(types.PostID(10), nil, "like"),
+			error: sdk.ErrInvalidAddress("Invalid user address: "),
+		},
+		{
+			name:  "Invalid value returns no error",
+			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, ""),
+			error: sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgUnlikePost(types.PostID(10), testOwner),
+			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, "like"),
 			error: nil,
 		},
 	}
@@ -268,12 +278,12 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 
 func TestMsgUnlikePost_GetSignBytes(t *testing.T) {
 	actual := msgUnlikePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgUnlikePost","value":{"liker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"94"}}`
+	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"94","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
 func TestMsgUnlikePost_GetSigners(t *testing.T) {
 	actual := msgUnlikePost.GetSigners()
 	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgUnlikePost.Liker, actual[0])
+	assert.Equal(t, msgUnlikePost.User, actual[0])
 }

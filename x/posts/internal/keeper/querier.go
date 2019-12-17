@@ -41,9 +41,9 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 	}
 
 	// Get the likes
-	postLikes := keeper.GetPostLikes(ctx, post.PostID)
+	postLikes := keeper.GetPostReactions(ctx, post.PostID)
 	if postLikes == nil {
-		postLikes = types.Likes{}
+		postLikes = types.Reactions{}
 	}
 
 	// Get the children

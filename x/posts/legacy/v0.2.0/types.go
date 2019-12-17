@@ -8,8 +8,8 @@ const (
 
 // GenesisState contains the data of a v0.2.0 genesis state for the posts module
 type GenesisState struct {
-	Posts []Post            `json:"posts"`
-	Likes map[string][]Like `json:"likes"`
+	Posts []Post                `json:"posts"`
+	Likes map[string][]Reaction `json:"reactions"`
 }
 
 // PostID represents a unique post id
@@ -28,8 +28,9 @@ type Post struct {
 	Owner          sdk.AccAddress    `json:"owner"`                   // Creator of the Post
 }
 
-// Like is a struct of a user like
-type Like struct {
-	Created sdk.Int        `json:"created"` // Block height at which the like was created
-	Owner   sdk.AccAddress `json:"owner"`
+// Reaction is a struct of a user reaction to a post
+type Reaction struct {
+	Created sdk.Int        `json:"created"` // Block height at which the reaction was created
+	Owner   sdk.AccAddress `json:"owner"`   // User that has created the reaction
+	Value   string         `json:"value"`   // Value of the reaction
 }

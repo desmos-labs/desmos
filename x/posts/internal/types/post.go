@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -145,11 +144,11 @@ func (p Post) Validate() error {
 	}
 
 	if len(strings.TrimSpace(p.Message)) == 0 {
-		return fmt.Errorf("invalid post message: %s. Message must be non empty and non blank", p.Message)
+		return fmt.Errorf("post message must be non empty and non blank")
 	}
 
 	if len(strings.TrimSpace(p.Subspace)) == 0 {
-		return fmt.Errorf("invalid post subspace: %s. Subspace must be non empty and non blank", p.Subspace)
+		return fmt.Errorf("post subspace must be non empty and non blank")
 	}
 
 	if sdk.ZeroInt().Equal(p.Created) {
@@ -164,13 +163,20 @@ func (p Post) Validate() error {
 }
 
 func (p Post) Equals(other Post) bool {
+	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
+	if equalsOptionalData {
+		for key := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		}
+	}
+
 	return p.PostID.Equals(other.PostID) &&
 		p.ParentID.Equals(other.ParentID) &&
 		p.Message == other.Message &&
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
 		p.Subspace == other.Subspace &&
-		reflect.DeepEqual(p.OptionalData, other.OptionalData) &&
+		equalsOptionalData &&
 		p.AllowsComments == other.AllowsComments &&
 		p.Owner.Equals(other.Owner)
 }

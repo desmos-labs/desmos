@@ -2,8 +2,8 @@ package types
 
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
-	Posts Posts            `json:"posts"`
-	Likes map[string]Likes `json:"likes"`
+	Posts     Posts                `json:"posts"`
+	Reactions map[string]Reactions `json:"reactions"`
 }
 
 // DefaultGenesisState returns a default GenesisState
@@ -19,8 +19,8 @@ func ValidateGenesis(data GenesisState) error {
 		}
 	}
 
-	for _, likes := range data.Likes {
-		for _, record := range likes {
+	for _, reactions := range data.Reactions {
+		for _, record := range reactions {
 			if err := record.Validate(); err != nil {
 				return err
 			}

@@ -5,31 +5,31 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func convertLikesMap(likes map[PostID]Likes) map[string]Likes {
-	likesMap := make(map[string]Likes, len(likes))
-	for key, value := range likes {
-		likesMap[key.String()] = value
+func convertReactionsMap(reactions map[PostID]Reactions) map[string]Reactions {
+	reactionsMap := make(map[string]Reactions, len(reactions))
+	for key, value := range reactions {
+		reactionsMap[key.String()] = value
 	}
-	return likesMap
+	return reactionsMap
 }
 
-func convertGenesisLikes(likes map[string]Likes) map[PostID]Likes {
-	likesMap := make(map[PostID]Likes, len(likes))
-	for key, value := range likes {
+func convertGenesisReactions(reactions map[string]Reactions) map[PostID]Reactions {
+	reactionsMap := make(map[PostID]Reactions, len(reactions))
+	for key, value := range reactions {
 		postID, err := ParsePostID(key)
 		if err != nil {
 			panic(err)
 		}
-		likesMap[postID] = value
+		reactionsMap[postID] = value
 	}
-	return likesMap
+	return reactionsMap
 }
 
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
-		Posts: k.GetPosts(ctx),
-		Likes: convertLikesMap(k.GetLikes(ctx)),
+		Posts:     k.GetPosts(ctx),
+		Reactions: convertReactionsMap(k.GetReactions(ctx)),
 	}
 }
 
@@ -39,22 +39,22 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		keeper.SavePost(ctx, post)
 	}
 
-	likesMap := convertGenesisLikes(data.Likes)
-	for postID, likes := range likesMap {
-		for _, like := range likes {
-			if err := keeper.SaveLike(ctx, postID, like); err != nil {
+	reactionsMap := convertGenesisReactions(data.Reactions)
+	for postID, reactions := range reactionsMap {
+		for _, reaction := range reactions {
+			if err := keeper.SaveReaction(ctx, postID, reaction); err != nil {
 				panic(err)
 			}
 		}
 	}
 
-	for postID, likes := range data.Likes {
-		for _, like := range likes {
+	for postID, reactions := range data.Reactions {
+		for _, reaction := range reactions {
 			postID, err := ParsePostID(postID)
 			if err != nil {
 				panic(err)
 			}
-			if err := keeper.SaveLike(ctx, postID, like); err != nil {
+			if err := keeper.SaveReaction(ctx, postID, reaction); err != nil {
 				panic(err)
 			}
 		}

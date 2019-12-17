@@ -42,7 +42,7 @@ func TestPost_String(t *testing.T) {
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"desmos"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"subspace":"desmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
@@ -58,20 +58,20 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: nil},
-			expError: "invalid post owner: ",
+			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "", Subspace: "desmos"},
+			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: ""},
-			expError: "invalid post message: ",
-		},
-		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Created: sdk.NewInt(0)},
+			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(0)},
 			expError: "invalid post creation block height: 0",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
+			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
 			expError: "invalid post last edit block height: 9",
+		},
+		{
+			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
+			expError: "post subspace must be non empty and non blank",
 		},
 	}
 

@@ -18,7 +18,7 @@ import (
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
-	r.HandleFunc("/posts/likes", likePostHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/likes", unlikePostHandler(cliCtx)).Methods("DELETE")
 }
 
@@ -72,14 +72,15 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type addLikeReq struct {
+type addReactionReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	PostID  string       `json:"post_id"`
+	Value   string       `json:"value"`
 }
 
-func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func addReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req addLikeReq
+		var req addReactionReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -103,7 +104,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgLikePost(postID, addr)
+		msg := types.NewMsgAddPostReaction(postID, req.Value, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -114,14 +115,15 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type removeLikeReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
+type removeReactionReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	PostID   string       `json:"post_id"`
+	Reaction string       `json:"reaction"`
 }
 
 func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req removeLikeReq
+		var req removeReactionReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -145,7 +147,7 @@ func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgUnlikePost(postID, addr)
+		msg := types.NewMsgRemovePostReaction(postID, addr, req.Reaction)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

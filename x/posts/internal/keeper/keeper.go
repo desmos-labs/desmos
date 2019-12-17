@@ -109,53 +109,56 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 }
 
 // -------------
-// --- Likes
+// --- Reactions
 // -------------
 
-// SaveLike allows to save the given liker inside the store.
-// It assumes that the given liker is valid.
-// If another liker from the same owner and for the same post exists, returns an error.
+// SaveReaction allows to save the given reaction inside the store.
+// It assumes that the given reaction is valid.
+// If another reaction from the same user for the same post and with the same value exists, returns an error.
 // nolint: interfacer
-func (k Keeper) SaveLike(ctx sdk.Context, postID types.PostID, like types.Like) sdk.Error {
+func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction types.Reaction) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
-	key := []byte(types.LikesStorePrefix + postID.String())
+	key := []byte(types.PostReactionsStorePrefix + postID.String())
 
-	// Get the existent likes
-	var likes types.Likes
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &likes)
+	// Get the existent reactions
+	var reactions types.Reactions
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
-	// Check for double likes
-	if likes.ContainsOwnerLike(like.Owner) {
-		msg := fmt.Sprintf("%s has already liked the post with id %s", like.Owner, postID.String())
+	// Check for double reactions
+	if reactions.ContainsReactionFrom(reaction.Owner, reaction.Value) {
+		msg := fmt.Sprintf("%s has already reacted with %s to the post with id %s",
+			reaction.Owner, reaction.Value, postID)
 		return sdk.ErrUnknownRequest(msg)
 	}
 
-	// Save the new liker
-	likes = append(likes, like)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&likes))
+	// Save the new reaction
+	reactions = append(reactions, reaction)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reactions))
 
 	return nil
 }
 
-// RemoveLike removes the liker from the given liker from the post having the
-// given postID. If no liker was previously added from the given liker, an error
+// RemoveReaction removes the reaction from the given user from the post having the
+// given postID. If no reaction with the same value was previously added from the given user, an error
 // is returned.
 // nolint: interfacer
-func (k Keeper) RemoveLike(ctx sdk.Context, postID types.PostID, liker sdk.AccAddress) sdk.Error {
+func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
-	key := []byte(types.LikesStorePrefix + postID.String())
+	key := []byte(types.PostReactionsStorePrefix + postID.String())
 
-	// Get the existing likes
-	var likes types.Likes
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &likes)
+	// Get the existing reactions
+	var reactions types.Reactions
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
-	// Check if the liker exists
-	if !likes.ContainsOwnerLike(liker) {
-		return sdk.ErrUnauthorized("Cannot unlike a post without liking it")
+	// Check if the user exists
+	if !reactions.ContainsReactionFrom(user, value) {
+		msg := fmt.Sprintf("Cannot remove the reaction with value %s from user %s as it does not exist",
+			value, user)
+		return sdk.ErrUnauthorized(msg)
 	}
 
-	// Remove and save the likes list
-	if newLikes, edited := likes.RemoveLikeOfOwner(liker); edited {
+	// Remove and save the reactions list
+	if newLikes, edited := reactions.RemoveReaction(user, value); edited {
 		if len(newLikes) == 0 {
 			store.Delete(key)
 		} else {
@@ -166,28 +169,28 @@ func (k Keeper) RemoveLike(ctx sdk.Context, postID types.PostID, liker sdk.AccAd
 	return nil
 }
 
-// GetPostLikes returns the list of likes that has been associated to the post having the given id
+// GetPostReactions returns the list of reactions that has been associated to the post having the given id
 // nolint: interfacer
-func (k Keeper) GetPostLikes(ctx sdk.Context, postID types.PostID) types.Likes {
+func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Reactions {
 	store := ctx.KVStore(k.StoreKey)
 
-	var likes types.Likes
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LikesStorePrefix+postID.String())), &likes)
-	return likes
+	var reactions types.Reactions
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+postID.String())), &reactions)
+	return reactions
 }
 
-// GetLikes allows to returns the list of likes that have been stored inside the given context
-func (k Keeper) GetLikes(ctx sdk.Context) map[types.PostID]types.Likes {
+// GetReactions allows to returns the list of reactions that have been stored inside the given context
+func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.Reactions {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.LikesStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostReactionsStorePrefix))
 
-	likesData := map[types.PostID]types.Likes{}
+	reactionsData := map[types.PostID]types.Reactions{}
 	for ; iterator.Valid(); iterator.Next() {
-		var postLikes types.Likes
+		var postLikes types.Reactions
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
-		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.LikesStorePrefix))
-		likesData[postID] = postLikes
+		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PostReactionsStorePrefix))
+		reactionsData[postID] = postLikes
 	}
 
-	return likesData
+	return reactionsData
 }

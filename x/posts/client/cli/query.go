@@ -65,7 +65,7 @@ func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.Like
+			var out types.Reaction
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
