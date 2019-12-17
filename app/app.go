@@ -58,12 +58,10 @@ var (
 
 	// Module account permissions
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName: nil,
-		distr.ModuleName:      nil,
-		// mint.ModuleName:           {supply.Minter},
+		auth.FeeCollectorName:     nil,
+		distr.ModuleName:          nil,
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
-		// gov.ModuleName:            {supply.Burner},
 	}
 )
 
@@ -104,6 +102,8 @@ type DesmosApp struct {
 
 // NewDesmosApp is a constructor function for DesmosApp
 func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *DesmosApp {
+	// Initialize the app overriding the various methods we want to customize
+	Init()
 
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
@@ -286,8 +286,7 @@ func (app *DesmosApp) ModuleAccountAddrs() map[string]bool {
 
 //_________________________________________________________
 
-func (app *DesmosApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
-) (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
+func (app *DesmosApp) ExportAppStateAndValidators(_ bool, _ []string) (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 
 	// as if they could withdraw from the start of the next block
 	ctx := app.NewContext(true, abci.Header{Height: app.LastBlockHeight()})

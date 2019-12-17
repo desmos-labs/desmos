@@ -4,6 +4,8 @@ import (
 	"os"
 	"path"
 
+	app2 "github.com/desmos-labs/desmos/app"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
@@ -13,7 +15,6 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	app "github.com/desmos-labs/desmos"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
@@ -23,11 +24,11 @@ import (
 func main() {
 	cobra.EnableCommandSorting = false
 
-	cdc := app.MakeCodec()
+	cdc := app2.MakeCodec()
 
 	// Read in the configuration file for the sdk
 	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	app2.SetBech32AddressPrefixes(config)
 
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
@@ -48,7 +49,7 @@ func main() {
 	// Construct Root Command
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
-		client.ConfigCmd(app.DefaultCLIHome),
+		client.ConfigCmd(app2.DefaultCLIHome),
 		queryCmd(cdc),
 		txCmd(cdc),
 		client.LineBreak,
@@ -60,7 +61,7 @@ func main() {
 		client.NewCompletionCmd(rootCmd, true),
 	)
 
-	executor := cli.PrepareMainCmd(rootCmd, "DM", app.DefaultCLIHome)
+	executor := cli.PrepareMainCmd(rootCmd, "DM", app2.DefaultCLIHome)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)
@@ -70,7 +71,7 @@ func main() {
 func registerRoutes(rs *lcd.RestServer) {
 	client.RegisterRoutes(rs.CliCtx, rs.Mux)
 	authrest.RegisterTxRoutes(rs.CliCtx, rs.Mux)
-	app.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
+	app2.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
 }
 
 func queryCmd(cdc *amino.Codec) *cobra.Command {
@@ -91,7 +92,7 @@ func queryCmd(cdc *amino.Codec) *cobra.Command {
 	)
 
 	// add modules' query commands
-	app.ModuleBasics.AddQueryCommands(queryCmd, cdc)
+	app2.ModuleBasics.AddQueryCommands(queryCmd, cdc)
 
 	return queryCmd
 }
@@ -114,7 +115,7 @@ func txCmd(cdc *amino.Codec) *cobra.Command {
 	)
 
 	// add modules' tx commands
-	app.ModuleBasics.AddTxCommands(txCmd, cdc)
+	app2.ModuleBasics.AddTxCommands(txCmd, cdc)
 
 	return txCmd
 }

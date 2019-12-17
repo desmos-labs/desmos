@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 
+	app2 "github.com/desmos-labs/desmos/app"
+
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/cosmos/cosmos-sdk/server"
@@ -17,7 +19,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	app "github.com/desmos-labs/desmos"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
@@ -26,10 +27,10 @@ import (
 func main() {
 	cobra.EnableCommandSorting = false
 
-	cdc := app.MakeCodec()
+	cdc := app2.MakeCodec()
 
 	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	app2.SetBech32AddressPrefixes(config)
 
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
@@ -44,24 +45,24 @@ func main() {
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 	// CLI commands to initialize the chain
-	rootCmd.AddCommand(genutilcli.InitCmd(ctx, cdc, app.ModuleBasics, app.DefaultNodeHome))
-	rootCmd.AddCommand(genutilcli.CollectGenTxsCmd(ctx, cdc, genaccounts.AppModuleBasic{}, app.DefaultNodeHome))
+	rootCmd.AddCommand(genutilcli.InitCmd(ctx, cdc, app2.ModuleBasics, app2.DefaultNodeHome))
+	rootCmd.AddCommand(genutilcli.CollectGenTxsCmd(ctx, cdc, genaccounts.AppModuleBasic{}, app2.DefaultNodeHome))
 	rootCmd.AddCommand(genutilcli.MigrateGenesisCmd(ctx, cdc))
 	rootCmd.AddCommand(
 		genutilcli.GenTxCmd(
-			ctx, cdc, app.ModuleBasics, staking.AppModuleBasic{},
-			genaccounts.AppModuleBasic{}, app.DefaultNodeHome, app.DefaultCLIHome,
+			ctx, cdc, app2.ModuleBasics, staking.AppModuleBasic{},
+			genaccounts.AppModuleBasic{}, app2.DefaultNodeHome, app2.DefaultCLIHome,
 		),
 	)
-	rootCmd.AddCommand(genutilcli.ValidateGenesisCmd(ctx, cdc, app.ModuleBasics))
-	rootCmd.AddCommand(genaccscli.AddGenesisAccountCmd(ctx, cdc, app.DefaultNodeHome, app.DefaultCLIHome))
+	rootCmd.AddCommand(genutilcli.ValidateGenesisCmd(ctx, cdc, app2.ModuleBasics))
+	rootCmd.AddCommand(genaccscli.AddGenesisAccountCmd(ctx, cdc, app2.DefaultNodeHome, app2.DefaultCLIHome))
 	rootCmd.AddCommand(client.NewCompletionCmd(rootCmd, true))
-	rootCmd.AddCommand(testnetCmd(ctx, cdc, app.ModuleBasics, genaccounts.AppModuleBasic{}))
+	rootCmd.AddCommand(testnetCmd(ctx, cdc, app2.ModuleBasics, genaccounts.AppModuleBasic{}))
 
 	server.AddCommands(ctx, cdc, rootCmd, newApp, exportAppStateAndTMValidators)
 
 	// prepare and add flags
-	executor := cli.PrepareBaseCmd(rootCmd, "DM", app.DefaultNodeHome)
+	executor := cli.PrepareBaseCmd(rootCmd, "DM", app2.DefaultNodeHome)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)
@@ -69,7 +70,7 @@ func main() {
 }
 
 func newApp(logger log.Logger, db dbm.DB, _ io.Writer) abci.Application {
-	return app.NewDesmosApp(logger, db)
+	return app2.NewDesmosApp(logger, db)
 }
 
 func exportAppStateAndTMValidators(
@@ -77,7 +78,7 @@ func exportAppStateAndTMValidators(
 ) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 
 	if height != -1 {
-		desmosApp := app.NewDesmosApp(logger, db)
+		desmosApp := app2.NewDesmosApp(logger, db)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
 			return nil, nil, err
@@ -85,7 +86,7 @@ func exportAppStateAndTMValidators(
 		return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	desmosApp := app.NewDesmosApp(logger, db)
+	desmosApp := app2.NewDesmosApp(logger, db)
 
 	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }
