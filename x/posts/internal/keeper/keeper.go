@@ -142,7 +142,13 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		}
 	}
 
-	start, end := client.Paginate(len(filteredPosts), params.Page, params.Limit, 100)
+	// Default page
+	page := params.Page
+	if page == 0 {
+		page = 1
+	}
+
+	start, end := client.Paginate(len(filteredPosts), page, params.Limit, 100)
 	if start < 0 || end < 0 {
 		filteredPosts = types.Posts{}
 	} else {

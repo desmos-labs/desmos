@@ -162,6 +162,7 @@ func (p Post) Equals(other Post) bool {
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
 		p.AllowsComments == other.AllowsComments &&
+		p.ExternalReference == other.ExternalReference &&
 		p.Owner.Equals(other.Owner)
 }
 

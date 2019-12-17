@@ -1,0 +1,176 @@
+package keeper_test
+
+import (
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/stretchr/testify/assert"
+	abci "github.com/tendermint/tendermint/abci/types"
+)
+
+func Test_queryPost(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	otherCreator, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	tests := []struct {
+		name        string
+		path        []string
+		storedPosts types.Posts
+		storedLikes map[types.PostID]types.Likes
+		expResult   keeper.PostQueryResponse
+		expError    sdk.Error
+	}{
+		{
+			name:     "Invalid ID returns error",
+			path:     []string{types.QueryPost, ""},
+			expError: sdk.ErrUnknownRequest("Invalid post id: "),
+		},
+		{
+			name:     "Post not found returns error",
+			path:     []string{types.QueryPost, "1"},
+			expError: sdk.ErrUnknownRequest("Post with id 1 not found"),
+		},
+		{
+			name: "Post without likes is returned properly",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+			},
+			path: []string{types.QueryPost, "1"},
+			expResult: keeper.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.Likes{},
+				types.PostIDs{types.PostID(2)},
+			),
+		},
+		{
+			name: "Post without children is returned properly",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+			},
+			path: []string{types.QueryPost, "1"},
+			expResult: keeper.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.Likes{},
+				types.PostIDs{},
+			),
+		},
+		{
+			name: "Post with all data is returned properly",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+			},
+			storedLikes: map[types.PostID]types.Likes{
+				types.PostID(1): {
+					types.NewLike(0, creator),
+					types.NewLike(10, otherCreator),
+				},
+			},
+			path: []string{types.QueryPost, "1"},
+			expResult: keeper.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.Likes{
+					types.NewLike(0, creator),
+					types.NewLike(10, otherCreator),
+				},
+				types.PostIDs{types.PostID(2)},
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			for _, p := range test.storedPosts {
+				k.SavePost(ctx, p)
+			}
+
+			for postID, likes := range test.storedLikes {
+				for _, l := range likes {
+					_ = k.SaveLike(ctx, postID, l)
+				}
+			}
+
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if test.expError != nil {
+				assert.Equal(t, test.expError, err)
+				assert.Nil(t, result)
+			} else {
+				assert.Nil(t, err)
+				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				assert.Equal(t, string(expectedIndented), string(result))
+			}
+		})
+	}
+}
+
+func Test_queryPosts(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	tests := []struct {
+		name        string
+		storedPosts types.Posts
+		params      types.QueryPostsParams
+		expResponse []keeper.PostQueryResponse
+	}{
+		{
+			name: "Empty params returns all",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+			},
+			params: types.QueryPostsParams{},
+			expResponse: []keeper.PostQueryResponse{
+				keeper.NewPostResponse(
+					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+					types.Likes{},
+					types.PostIDs{types.PostID(2)},
+				),
+				keeper.NewPostResponse(
+					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+					types.Likes{},
+					types.PostIDs{},
+				),
+			},
+		},
+		{
+			name: "Non empty params return proper posts",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+			},
+			params: types.NewQueryPostsParams(1, 1, nil, sdk.NewInt(-1), nil),
+			expResponse: []keeper.PostQueryResponse{
+				keeper.NewPostResponse(
+					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+					types.Likes{},
+					types.PostIDs{types.PostID(2)},
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			for _, p := range test.storedPosts {
+				k.SavePost(ctx, p)
+			}
+
+			querier := keeper.NewQuerier(k)
+			request := abci.RequestQuery{Data: k.Cdc.MustMarshalJSON(&test.params)}
+			result, err := querier(ctx, []string{types.QueryPosts}, request)
+
+			expSerialized, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResponse)
+			assert.Nil(t, err)
+			assert.Equal(t, string(expSerialized), string(result))
+		})
+	}
+}

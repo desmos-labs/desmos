@@ -261,6 +261,30 @@ func TestPost_Equals(t *testing.T) {
 			expEquals: false,
 		},
 		{
+			name: "Different external reference",
+			first: types.Post{
+				PostID:            types.PostID(19),
+				ParentID:          types.PostID(1),
+				Message:           "My post message",
+				Created:           sdk.NewInt(98),
+				LastEdited:        sdk.NewInt(105),
+				AllowsComments:    true,
+				ExternalReference: "My reference 1",
+				Owner:             owner,
+			},
+			second: types.Post{
+				PostID:            types.PostID(19),
+				ParentID:          types.PostID(1),
+				Message:           "My post message",
+				Created:           sdk.NewInt(98),
+				LastEdited:        sdk.NewInt(105),
+				AllowsComments:    true,
+				ExternalReference: "My reference 2",
+				Owner:             owner,
+			},
+			expEquals: false,
+		},
+		{
 			name: "Same data",
 			first: types.Post{
 				PostID:            types.PostID(19),
@@ -354,4 +378,18 @@ func TestPosts_Equals(t *testing.T) {
 			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
+}
+
+func TestPosts_String(t *testing.T) {
+	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	posts := types.Posts{
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", 0, owner1),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", 0, owner2),
+	}
+
+	expected := `ID - [Creator] Message
+1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+	assert.Equal(t, expected, posts.String())
 }
