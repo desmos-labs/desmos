@@ -2,10 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"

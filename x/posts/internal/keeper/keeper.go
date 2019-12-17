@@ -2,8 +2,9 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client"
 	"strings"
+
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
