@@ -1,7 +1,9 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -12,22 +14,31 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID          PostID         `json:"parent_id"`
-	Message           string         `json:"message"`
-	AllowsComments    bool           `json:"allows_comments"`
-	ExternalReference string         `json:"external_reference"`
-	Creator           sdk.AccAddress `json:"creator"`
+	ParentID       PostID            `json:"parent_id"`
+	Message        string            `json:"message"`
+	AllowsComments bool              `json:"allows_comments"`
+	Subspace       string            `json:"subspace"`
+	OptionalData   map[string]string `json:"optional_data,omitempty"`
+	Creator        sdk.AccAddress    `json:"creator"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, externalReference string, owner sdk.AccAddress) MsgCreatePost {
+func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string, optionalData map[string]string, owner sdk.AccAddress) MsgCreatePost {
 	return MsgCreatePost{
-		Message:           message,
-		ParentID:          parentID,
-		AllowsComments:    allowsComments,
-		ExternalReference: externalReference,
-		Creator:           owner,
+		Message:        message,
+		ParentID:       parentID,
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Creator:        owner,
 	}
+}
+
+// MarshalJSON implements the custom marshaling as Amino does not support
+// the JSON signature omitempty
+func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
+	type msgCreatePost MsgCreatePost
+	return json.Marshal(msgCreatePost(msg))
 }
 
 // Route should return the name of the module
@@ -41,8 +52,11 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Creator.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
-	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	if len(strings.TrimSpace(msg.Message)) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+	}
+	if len(strings.TrimSpace(msg.Subspace)) == 0 {
+		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
 	}
 	return nil
 }

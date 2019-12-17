@@ -3,7 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -94,28 +96,31 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 // --- Post
 // ---------------
 
-// Post is a struct of a Magpie post
+// Post is a struct of a post
 type Post struct {
-	PostID            PostID         `json:"id"`                 // Unique id
-	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
-	Message           string         `json:"message"`            // Message contained inside the post
-	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
-	LastEdited        sdk.Int        `json:"last_edited"`        // Block height at which the post has been edited the last time
-	AllowsComments    bool           `json:"allows_comments"`    // Tells if users can reference this PostID as the parent
-	ExternalReference string         `json:"external_reference"` // Used to know when to display this post
-	Owner             sdk.AccAddress `json:"owner"`              // Creator of the Post
+	PostID         PostID            `json:"id"`                      // Unique id
+	ParentID       PostID            `json:"parent_id"`               // Post of which this one is a comment
+	Message        string            `json:"message"`                 // Message contained inside the post
+	Created        sdk.Int           `json:"created"`                 // Block height at which the post has been created
+	LastEdited     sdk.Int           `json:"last_edited"`             // Block height at which the post has been edited the last time
+	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
+	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
+	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
+	Owner          sdk.AccAddress    `json:"owner"`                   // Creator of the Post
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, externalReference string, created int64, owner sdk.AccAddress) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
+	created int64, owner sdk.AccAddress) Post {
 	return Post{
-		PostID:            id,
-		ParentID:          parentID,
-		Message:           message,
-		Created:           sdk.NewInt(created),
-		LastEdited:        sdk.ZeroInt(),
-		AllowsComments:    allowsComments,
-		ExternalReference: externalReference,
-		Owner:             owner,
+		PostID:         id,
+		ParentID:       parentID,
+		Message:        message,
+		Created:        sdk.NewInt(created),
+		LastEdited:     sdk.ZeroInt(),
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Owner:          owner,
 	}
 }
 
@@ -139,8 +144,12 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Owner)
 	}
 
-	if p.Message == "" {
-		return fmt.Errorf("invalid post message: %s", p.Message)
+	if len(strings.TrimSpace(p.Message)) == 0 {
+		return fmt.Errorf("invalid post message: %s. Message must be non empty and non blank", p.Message)
+	}
+
+	if len(strings.TrimSpace(p.Subspace)) == 0 {
+		return fmt.Errorf("invalid post subspace: %s. Subspace must be non empty and non blank", p.Subspace)
 	}
 
 	if sdk.ZeroInt().Equal(p.Created) {
@@ -160,6 +169,8 @@ func (p Post) Equals(other Post) bool {
 		p.Message == other.Message &&
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
+		p.Subspace == other.Subspace &&
+		reflect.DeepEqual(p.OptionalData, other.OptionalData) &&
 		p.AllowsComments == other.AllowsComments &&
 		p.Owner.Equals(other.Owner)
 }

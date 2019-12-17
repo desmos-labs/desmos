@@ -38,16 +38,15 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 }
 
 var (
-	flagParentID          = "parent-id"
-	flagExternalReference = "external-reference"
+	flagParentID = "parent-id"
 )
 
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [message] [allows-comments]",
+		Use:   "create [subspace] [message] [allows-comments]",
 		Short: "Create a new post",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -59,7 +58,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			allowsComments, err := strconv.ParseBool(args[1])
+			allowsComments, err := strconv.ParseBool(args[2])
 			if err != nil {
 				return err
 			}
@@ -69,9 +68,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			externalReference := viper.GetString(flagExternalReference)
-
-			msg := types.NewMsgCreatePost(args[0], parentID, allowsComments, externalReference, from)
+			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -81,7 +78,6 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
-	cmd.Flags().String(flagExternalReference, "", "External reference to this post")
 
 	return cmd
 }

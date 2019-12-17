@@ -2,15 +2,8 @@ package posts
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
-
-type GenesisState struct {
-	Posts Posts            `json:"posts"`
-	Likes map[string]Likes `json:"likes"`
-}
 
 func convertLikesMap(likes map[PostID]Likes) map[string]Likes {
 	likesMap := make(map[string]Likes, len(likes))
@@ -23,7 +16,7 @@ func convertLikesMap(likes map[PostID]Likes) map[string]Likes {
 func convertGenesisLikes(likes map[string]Likes) map[PostID]Likes {
 	likesMap := make(map[PostID]Likes, len(likes))
 	for key, value := range likes {
-		postID, err := types.ParsePostID(key)
+		postID, err := ParsePostID(key)
 		if err != nil {
 			panic(err)
 		}
@@ -32,13 +25,8 @@ func convertGenesisLikes(likes map[string]Likes) map[PostID]Likes {
 	return likesMap
 }
 
-// DefaultGenesisState returns a default GenesisState
-func DefaultGenesisState() GenesisState {
-	return GenesisState{}
-}
-
 // ExportGenesis returns the GenesisState associated with the given context
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
+func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
 		Posts: k.GetPosts(ctx),
 		Likes: convertLikesMap(k.GetLikes(ctx)),
@@ -46,7 +34,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
-func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
+func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, post := range data.Posts {
 		keeper.SavePost(ctx, post)
 	}
@@ -62,7 +50,7 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abc
 
 	for postID, likes := range data.Likes {
 		for _, like := range likes {
-			postID, err := types.ParsePostID(postID)
+			postID, err := ParsePostID(postID)
 			if err != nil {
 				panic(err)
 			}
@@ -73,23 +61,4 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abc
 	}
 
 	return []abci.ValidatorUpdate{}
-}
-
-// ValidateGenesis validates the given genesis state and returns an error if something is invalid
-func ValidateGenesis(data GenesisState) error {
-	for _, record := range data.Posts {
-		if err := record.Validate(); err != nil {
-			return err
-		}
-	}
-
-	for _, likes := range data.Likes {
-		for _, record := range likes {
-			if err := record.Validate(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
 }

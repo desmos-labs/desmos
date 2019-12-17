@@ -13,7 +13,9 @@ import (
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var msgCreatePost = types.NewMsgCreatePost("My new post", types.PostID(53), false, "Ref#123", testOwner)
+var msgCreatePost = types.NewMsgCreatePost(
+	"My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
+)
 
 func TestMsgCreatePost_Route(t *testing.T) {
 	actual := msgCreatePost.Route()
@@ -34,17 +36,22 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "", nil),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
-			name:  "Empty post message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "", creator),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
+			name:  "Empty message returns error",
+			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+		},
+		{
+			name:  "Empty subspace returns error",
+			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
+			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message does not return any error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "", creator),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, creator),
 			error: nil,
 		},
 	}
@@ -68,13 +75,13 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	}{
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "Ref#123", testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"Ref#123","message":"My new post","parent_id":"53"}}`,
+			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "", testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","external_reference":"","message":"My post","parent_id":"15"}}`,
+			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
 		},
 	}
 

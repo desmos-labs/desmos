@@ -22,8 +22,11 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewLike = types.NewLike
-	NewPost = types.NewPost
+	NewLike             = types.NewLike
+	NewPost             = types.NewPost
+	ParsePostID         = types.ParsePostID
+	DefaultGenesisState = types.DefaultGenesisState
+	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
 	NewMsgCreatePost = types.NewMsgCreatePost
@@ -37,12 +40,13 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	PostID  = types.PostID
-	PostIDs = types.PostIDs
-	Post    = types.Post
-	Posts   = types.Posts
-	Like    = types.Like
-	Likes   = types.Likes
+	PostID       = types.PostID
+	PostIDs      = types.PostIDs
+	Post         = types.Post
+	Posts        = types.Posts
+	Like         = types.Like
+	Likes        = types.Likes
+	GenesisState = types.GenesisState
 
 	// Msgs
 	MsgCreatePost = types.MsgCreatePost
