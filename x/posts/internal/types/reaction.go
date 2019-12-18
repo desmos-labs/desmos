@@ -82,13 +82,13 @@ func (reactions Reactions) AppendIfMissing(other Reaction) (Reactions, bool) {
 
 // ContainsReactionFrom returns true if the reactions slice contain
 // a reaction from the given user having the given value, false otherwise
-func (reactions Reactions) ContainsReactionFrom(user sdk.AccAddress, value string) bool {
+func (reactions Reactions) ContainsReactionFrom(user sdk.Address, value string) bool {
 	return reactions.IndexOfByUserAndValue(user, value) != -1
 }
 
 // IndexOfByUserAndValue returns the index of the reaction from the
 // given user with the specified value inside the reactions slice.
-func (reactions Reactions) IndexOfByUserAndValue(owner sdk.AccAddress, value string) int {
+func (reactions Reactions) IndexOfByUserAndValue(owner sdk.Address, value string) int {
 	for index, reaction := range reactions {
 		if reaction.Owner.Equals(owner) && reaction.Value == value {
 			return index
@@ -101,7 +101,7 @@ func (reactions Reactions) IndexOfByUserAndValue(owner sdk.AccAddress, value str
 // reaction of the given user with the given value.
 // If the reaction was removed properly, true is also returned. Otherwise,
 // if no reaction was found, false is returned instead.
-func (reactions Reactions) RemoveReaction(user sdk.AccAddress, value string) (Reactions, bool) {
+func (reactions Reactions) RemoveReaction(user sdk.Address, value string) (Reactions, bool) {
 	index := reactions.IndexOfByUserAndValue(user, value)
 	if index == -1 {
 		return reactions, false

@@ -10,11 +10,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
+	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/types"
 )
 
-var migrationMap = map[string][]extypes.MigrationCallback{}
+// migrationMap contains the list of migrations that should be performed when migrating
+// a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
+// too if needed.
+var migrationMap = map[string][]extypes.MigrationCallback{
+	"v0.2.0": {v020.Migrate},
+}
 
 const (
 	flagGenesisTime = "genesis-time"
