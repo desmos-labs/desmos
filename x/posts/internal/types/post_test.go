@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,15 +13,142 @@ import (
 // --- PostID
 // -------------
 
+func TestPostID_Next(t *testing.T) {
+	tests := []struct {
+		id       types.PostID
+		expected types.PostID
+	}{
+		{
+			id:       types.PostID(0),
+			expected: types.PostID(1),
+		},
+		{
+			id:       types.PostID(1123123),
+			expected: types.PostID(1123124),
+		},
+	}
+
+	for index, test := range tests {
+		test := test
+		t.Run(fmt.Sprintf("Test index: %d", index), func(t *testing.T) {
+			assert.Equal(t, test.expected, test.id.Next())
+		})
+	}
+}
+
 func TestPostID_MarshalJSON(t *testing.T) {
 	json := types.ModuleCdc.MustMarshalJSON(types.PostID(10))
 	assert.Equal(t, `"10"`, string(json))
 }
 
 func TestPostID_UnmarshalJSON(t *testing.T) {
-	var id types.PostID
-	types.ModuleCdc.MustUnmarshalJSON([]byte(`"10"`), &id)
-	assert.Equal(t, types.PostID(10), id)
+	tests := []struct {
+		name     string
+		value    string
+		expID    types.PostID
+		expError string
+	}{
+		{
+			name:     "Invalid ID returns error",
+			value:    "id",
+			expID:    types.PostID(0),
+			expError: "invalid character 'i' looking for beginning of value",
+		},
+		{
+			name:     "Valid id is read properly",
+			value:    `"10"`,
+			expID:    types.PostID(10),
+			expError: "",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			var id types.PostID
+			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
+
+			if err == nil {
+				assert.Equal(t, test.expID, id)
+			} else {
+				assert.Equal(t, test.expError, err.Error())
+			}
+		})
+	}
+}
+
+func TestParsePostID(t *testing.T) {
+	tests := []struct {
+		name     string
+		value    string
+		expID    types.PostID
+		expError string
+	}{
+		{
+			name:     "Invalid id returns error",
+			value:    "id",
+			expID:    types.PostID(0),
+			expError: "strconv.ParseUint: parsing \"id\": invalid syntax",
+		},
+		{
+			name:     "Valid id returns proper value",
+			value:    "10",
+			expID:    types.PostID(10),
+			expError: "",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			id, err := types.ParsePostID(test.value)
+
+			if err == nil {
+				assert.Equal(t, test.expID, id)
+			} else {
+				assert.Equal(t, test.expError, err.Error())
+			}
+		})
+	}
+}
+
+// -------------
+// --- PostIDs
+// -------------
+
+func TestPostIDs_Equals(t *testing.T) {
+	tests := []struct {
+		name      string
+		first     types.PostIDs
+		second    types.PostIDs
+		expEquals bool
+	}{
+		{
+			name:      "Different length",
+			first:     types.PostIDs{types.PostID(1), types.PostID(0)},
+			second:    types.PostIDs{types.PostID(1)},
+			expEquals: false,
+		},
+		{
+			name:      "Different order",
+			first:     types.PostIDs{types.PostID(0), types.PostID(1)},
+			second:    types.PostIDs{types.PostID(1), types.PostID(0)},
+			expEquals: false,
+		},
+		{
+			name:      "Same length and order",
+			first:     types.PostIDs{types.PostID(0), types.PostID(1)},
+			second:    types.PostIDs{types.PostID(0), types.PostID(1)},
+			expEquals: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
 }
 
 // -----------
@@ -54,15 +182,23 @@ func TestPost_Validate(t *testing.T) {
 		expError string
 	}{
 		{
-			post:     types.Post{PostID: types.PostID(0)},
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 10, owner),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "", Subspace: "desmos"},
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, nil),
+			expError: "invalid post owner: ",
+		},
+		{
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, owner),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(0)},
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, 10, owner),
+			expError: "post message must be non empty and non blank",
+		},
+		{
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 0, owner),
 			expError: "invalid post creation block height: 0",
 		},
 		{
@@ -70,15 +206,27 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post last edit block height: 9",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, 1, owner),
 			expError: "post subspace must be non empty and non blank",
+		},
+		{
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, 1, owner),
+			expError: "post subspace must be non empty and non blank",
+		},
+		{
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 1, owner),
+			expError: "",
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.expError, func(t *testing.T) {
-			assert.Equal(t, test.expError, test.post.Validate().Error())
+			if len(test.expError) != 0 {
+				assert.Equal(t, test.expError, test.post.Validate().Error())
+			} else {
+				assert.Nil(t, test.post.Validate())
+			}
 		})
 	}
 }

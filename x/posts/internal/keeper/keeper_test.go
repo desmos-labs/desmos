@@ -244,7 +244,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 		expectedStored types.Reactions
 	}{
 		{
-			name:           "Reaction from same user already present returns error",
+			name:           "Reaction from same user already present returns expError",
 			storedLikes:    types.Reactions{types.NewReaction("like", 10, liker)},
 			postID:         types.PostID(10),
 			like:           types.NewReaction("like", 50, liker),
@@ -314,7 +314,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned error - Owner",
+			name:           "Non existing like returned expError - Owner",
 			storedLikes:    types.Reactions{},
 			postID:         types.PostID(15),
 			liker:          liker,
@@ -323,7 +323,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned error - Value",
+			name:           "Non existing like returned expError - Value",
 			storedLikes:    types.Reactions{types.NewReaction("like", 10, liker)},
 			postID:         types.PostID(15),
 			liker:          liker,

@@ -155,7 +155,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post creation block height: %s", p.Created)
 	}
 
-	if p.Created.GT(p.LastEdited) {
+	if p.LastEdited.GT(sdk.ZeroInt()) && p.Created.GT(p.LastEdited) {
 		return fmt.Errorf("invalid post last edit block height: %s", p.LastEdited)
 	}
 

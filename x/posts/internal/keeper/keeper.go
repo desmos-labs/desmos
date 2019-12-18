@@ -114,7 +114,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 
 // SaveReaction allows to save the given reaction inside the store.
 // It assumes that the given reaction is valid.
-// If another reaction from the same user for the same post and with the same value exists, returns an error.
+// If another reaction from the same user for the same post and with the same value exists, returns an expError.
 // nolint: interfacer
 func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction types.Reaction) sdk.Error {
 	store := ctx.KVStore(k.StoreKey)
@@ -139,7 +139,7 @@ func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction type
 }
 
 // RemoveReaction removes the reaction from the given user from the post having the
-// given postID. If no reaction with the same value was previously added from the given user, an error
+// given postID. If no reaction with the same value was previously added from the given user, an expError
 // is returned.
 // nolint: interfacer
 func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) sdk.Error {
