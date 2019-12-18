@@ -8,8 +8,8 @@ const (
 
 // GenesisState contains the data of a v0.2.0 genesis state for the posts module
 type GenesisState struct {
-	Posts []Post                `json:"posts"`
-	Likes map[string][]Reaction `json:"reactions"`
+	Posts     []Post                `json:"posts"`
+	Reactions map[string][]Reaction `json:"reactions"`
 }
 
 // PostID represents a unique post id
