@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
@@ -49,7 +48,7 @@ func MigrationsListCmd() *cobra.Command {
 	}
 }
 
-func MigrateGenesisCmd(_ *server.Context, cdc *codec.Codec) *cobra.Command {
+func MigrateGenesisCmd(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate [target-version] [genesis-file]",
 		Short: "Migrate genesis to a specified target version",

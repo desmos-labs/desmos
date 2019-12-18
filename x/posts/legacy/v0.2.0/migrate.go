@@ -1,6 +1,8 @@
 package v0_2_0
 
 import (
+	"strings"
+
 	v010posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.1.0"
 )
 
@@ -25,6 +27,12 @@ func migratePosts(posts []v010posts.Post) []Post {
 
 	// Migrate the posts
 	for index, oldPost := range posts {
+
+		optionalData := map[string]string{}
+		if len(strings.TrimSpace(oldPost.ExternalReference)) != 0 {
+			optionalData["external_reference"] = oldPost.ExternalReference
+		}
+
 		migratedPosts[index] = Post{
 			PostID:         PostID(oldPost.PostID),
 			ParentID:       PostID(oldPost.ParentID),
@@ -33,10 +41,8 @@ func migratePosts(posts []v010posts.Post) []Post {
 			LastEdited:     oldPost.LastEdited,
 			AllowsComments: oldPost.AllowsComments,
 			Subspace:       "",
-			OptionalData: map[string]string{
-				"external_reference": oldPost.ExternalReference,
-			},
-			Owner: oldPost.Owner,
+			OptionalData:   optionalData,
+			Owner:          oldPost.Owner,
 		}
 	}
 
