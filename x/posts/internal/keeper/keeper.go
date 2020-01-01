@@ -113,7 +113,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // GetPostsFiltered retrieves posts filtered by a given set of params which
 // include pagination parameters along with the creator address, the parent id and the creation time.
 //
-// NOTE: If no filters are provided, all proposals will be returned in paginated
+// NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
 func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
 	posts := k.GetPosts(ctx)

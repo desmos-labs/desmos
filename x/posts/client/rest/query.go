@@ -13,7 +13,7 @@ import (
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/posts", queryProposalsWithParameterHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
 }
 
 func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -33,7 +33,7 @@ func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 // HTTP request handler to query list of posts
-func queryProposalsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, page, limit, err := rest.ParseHTTPArgsWithLimit(r, 0)
 		if err != nil {
