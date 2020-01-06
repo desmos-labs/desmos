@@ -53,7 +53,9 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Set the last post id
-	store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
+	if post.LastEdited == sdk.ZeroInt() {
+		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
+	}
 
 	// Save the comments to the parent post, if it is valid
 	if post.ParentID.Valid() {
