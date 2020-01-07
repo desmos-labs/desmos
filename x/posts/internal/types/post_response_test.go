@@ -2,8 +2,9 @@ package types_test
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
