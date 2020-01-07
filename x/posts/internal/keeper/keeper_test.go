@@ -51,6 +51,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		existingPosts        types.Posts
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
+		expLastID            types.PostID
 	}{
 		{
 			name: "Post with ID already present",
