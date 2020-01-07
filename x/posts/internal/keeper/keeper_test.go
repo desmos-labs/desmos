@@ -51,6 +51,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		existingPosts        types.Posts
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
+		expLastID            types.PostID
 	}{
 		{
 			name: "Post with ID already present",
@@ -59,6 +60,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			},
 			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
 		},
 		{
 			name: "Post which ID is not already present",
@@ -67,6 +69,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			},
 			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(15),
 		},
 		{
 			name: "Post with valid parent ID",
@@ -75,6 +78,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			},
 			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
+			expLastID:            types.PostID(15),
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -83,6 +87,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			},
 			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(5),
 		},
 	}
 
@@ -107,7 +112,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			// Check the latest post id
 			var lastPostID types.PostID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIDStoreKey)), &lastPostID)
-			assert.Equal(t, test.newPost.PostID, lastPostID)
+			assert.Equal(t, test.expLastID, lastPostID)
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
