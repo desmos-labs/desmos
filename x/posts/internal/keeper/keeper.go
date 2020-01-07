@@ -62,9 +62,11 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 		var commentsIDs types.PostIDs
 		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
 
-		commentsIDs = commentsIDs.AppendIfMissing(post.PostID)
+		commentsIDs, found := commentsIDs.AppendIfMissing(post.PostID)
 
-		store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&commentsIDs))
+		if found {
+			store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&commentsIDs))
+		}
 	}
 }
 

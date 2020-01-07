@@ -24,11 +24,35 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 }
 
 func TestPostIDs_AppendIfMissing(t *testing.T) {
-	ids := types.PostIDs{types.PostID(1)}
+	tests := []struct {
+		name     string
+		id       types.PostID
+		expLen   int
+		expFound bool
+	}{
+		{
+			name:     "AppendIfMissing dont append anything",
+			id:       types.PostID(1),
+			expLen:   0,
+			expFound: false,
+		},
+		{
+			name:     "AppendIfMissing append something",
+			id:       types.PostID(2),
+			expLen:   2,
+			expFound: true,
+		},
+	}
 
-	ids.AppendIfMissing(types.PostID(1))
-
-	assert.Len(t, ids, 1)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ids := types.PostIDs{types.PostID(1)}
+			ids, found := ids.AppendIfMissing(test.id)
+			assert.Len(t, ids, test.expLen)
+			assert.Equal(t, test.expFound, found)
+		})
+	}
 }
 
 // -----------

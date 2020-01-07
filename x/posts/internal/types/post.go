@@ -92,13 +92,13 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 
 // AppendIfMissing appends the given post to the list of posts if it does not exist inside it yet,
 // returning also true if the object has been appended successfully.
-func (ids PostIDs) AppendIfMissing(id PostID) PostIDs {
+func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 	for _, ele := range ids {
 		if ele.Equals(id) {
-			return nil
+			return nil, false
 		}
 	}
-	return append(ids, id)
+	return append(ids, id), true
 }
 
 // ---------------
