@@ -11,7 +11,7 @@ import (
 const (
 	RestCreator      = "creator"
 	RestParentID     = "parent_id"
-	RestCreationTime = "creation-time"
+	RestCreationTime = "creation_time"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
