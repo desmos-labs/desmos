@@ -10,7 +10,7 @@ import (
 // nolint
 const (
 	RestCreator      = "creator"
-	RestParentID     = "parent-id"
+	RestParentID     = "parent_id"
 	RestCreationTime = "creation-time"
 )
 
