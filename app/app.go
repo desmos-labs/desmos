@@ -102,9 +102,6 @@ type DesmosApp struct {
 
 // NewDesmosApp is a constructor function for DesmosApp
 func NewDesmosApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *DesmosApp {
-	// Initialize the app overriding the various methods we want to customize
-	Init()
-
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
