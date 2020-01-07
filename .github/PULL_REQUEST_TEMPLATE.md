@@ -5,7 +5,7 @@ v    If a checkbox is n/a - please still include it but + a little note why
 ☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Description
-<-- Small description -->
+<!-- Small description -->
 
 ## Checklist
 - [ ] Targeted PR against correct branch
