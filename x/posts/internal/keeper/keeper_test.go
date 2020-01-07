@@ -76,6 +76,14 @@ func TestKeeper_SavePost(t *testing.T) {
 			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 		},
+		{
+			name: "Post with ID greater ID than Last ID stored",
+			existingPosts: types.Posts{
+				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "", 0, testPostOwner),
+			},
+			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "", 0, testPostOwner),
+			expParentCommentsIDs: []types.PostID{},
+		},
 	}
 
 	for _, test := range tests {

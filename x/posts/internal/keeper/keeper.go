@@ -52,8 +52,8 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	// Save the post
 	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
 
-	// Set the last post id
-	if post.LastEdited.IsZero() {
+	// Set the last post id only if the current post has a greater one than the last one stored
+	if post.PostID > k.GetLastPostID(ctx) {
 		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
 	}
 
