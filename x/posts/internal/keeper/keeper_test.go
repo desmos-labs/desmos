@@ -89,6 +89,15 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 		},
+		{
+			name: "Post with ID lesser ID than Last ID stored",
+			existingPosts: types.Posts{
+				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "", 0, testPostOwner),
+			},
+			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "", 0, testPostOwner),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(4),
+		},
 	}
 
 	for _, test := range tests {
@@ -99,6 +108,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
 				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(p.PostID))
 			}
 
 			// Save the post
