@@ -53,7 +53,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Set the last post id
-	if post.LastEdited == sdk.ZeroInt() {
+	if post.LastEdited.IsZero() {
 		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&post.PostID))
 	}
 
