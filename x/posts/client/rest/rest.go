@@ -19,7 +19,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
 	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/likes", unlikePostHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/posts/reactions", removeReactionFromPostHandler(cliCtx)).Methods("DELETE")
 }
 
 // --------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ type removeReactionReq struct {
 	Reaction string       `json:"reaction"`
 }
 
-func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func removeReactionFromPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req removeReactionReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
