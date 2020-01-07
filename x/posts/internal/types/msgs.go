@@ -53,11 +53,24 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Creator.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
+
 	if len(strings.TrimSpace(msg.Message)) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
 	}
+
 	if len(strings.TrimSpace(msg.Subspace)) == 0 {
 		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
+	}
+
+	if len(msg.OptionalData) > 10 {
+		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
+	}
+
+	for key, value := range msg.OptionalData {
+		if len(value) > 200 {
+			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
+			return sdk.ErrUnknownRequest(msg)
+		}
 	}
 	return nil
 }
@@ -103,12 +116,15 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
+
 	if msg.Editor.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
 	}
+
 	if len(msg.Message) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
+
 	return nil
 }
 
@@ -153,12 +169,15 @@ func (msg MsgAddPostReaction) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
+
 	if msg.User.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
+
 	if len(strings.TrimSpace(msg.Value)) == 0 {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Reaction value cannot be empty nor blank"))
 	}
+
 	return nil
 }
 
@@ -204,12 +223,15 @@ func (msg MsgRemovePostReaction) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
+
 	if msg.User.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
+
 	if len(strings.TrimSpace(msg.Reaction)) == 0 {
 		return sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank")
 	}
+
 	return nil
 }
 

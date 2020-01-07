@@ -159,6 +159,16 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post last edit block height: %s", p.LastEdited)
 	}
 
+	if len(p.OptionalData) > 10 {
+		return fmt.Errorf("post optional data cannot contain more than 10 key-value pairs")
+	}
+
+	for key, value := range p.OptionalData {
+		if len(value) > 200 {
+			return fmt.Errorf("post optional data values cannot exceed 200 characters. %s of post with id %s is longer than this", key, p.PostID)
+		}
+	}
+
 	return nil
 }
 
