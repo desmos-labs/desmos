@@ -11,7 +11,7 @@ import (
 )
 
 // GetQueryCmd adds the query commands
-func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
+func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the posts module",
@@ -20,14 +20,14 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	postQueryCmd.AddCommand(client.GetCommands(
-		GetCmdPost(storeKey, cdc),
-		GetCmdLike(storeKey, cdc),
+		GetCmdPost(cdc),
+		GetCmdLike(cdc),
 	)...)
 	return postQueryCmd
 }
 
 // GetCmdPost queries a post
-func GetCmdPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [id]",
 		Short: "Retrieve the post having the given id, if any.",
@@ -36,13 +36,13 @@ func GetCmdPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			postID := args[0]
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", queryRoute, postID), nil)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", types.QueryRoute, postID), nil)
 			if err != nil {
-				fmt.Printf("could not find post - %s \n", postID)
+				fmt.Printf("Could not find post with id %s \n", postID)
 				return nil
 			}
 
-			var out types.Post
+			var out types.PostQueryResponse
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -50,7 +50,7 @@ func GetCmdPost(queryRoute string, cdc *codec.Codec) *cobra.Command {
 }
 
 // GetCmdLike queries a like
-func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdLike(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "like [id]",
 		Short: "like id",
@@ -59,9 +59,9 @@ func GetCmdLike(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			likeID := args[0]
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/like/%s", queryRoute, likeID), nil)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/like/%s", types.QueryRoute, likeID), nil)
 			if err != nil {
-				fmt.Printf("could not find like - %s \n", likeID)
+				fmt.Printf("Could not find like with id %s \n", likeID)
 				return nil
 			}
 

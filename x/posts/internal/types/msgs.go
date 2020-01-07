@@ -62,12 +62,12 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
 	}
 
-	if len(msg.OptionalData) > 10 {
+	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
 		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
 	}
 
 	for key, value := range msg.OptionalData {
-		if len(value) > 200 {
+		if len(value) > MaxOptionalDataFieldValueLength {
 			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
 			return sdk.ErrUnknownRequest(msg)
 		}

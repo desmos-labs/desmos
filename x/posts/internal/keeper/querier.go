@@ -15,7 +15,7 @@ const (
 )
 
 // Params for queries:
-// - 'custom/magpie/post'
+// - 'custom/posts/post'
 
 // NewQuerier is the module level router for state queries
 func NewQuerier(keeper Keeper) sdk.Querier {
@@ -53,7 +53,7 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 	}
 
 	// Crete the response object
-	postResponse := NewPostResponse(post, postLikes, childrenIDs)
+	postResponse := types.NewPostResponse(post, postLikes, childrenIDs)
 
 	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &postResponse)
 	if err2 != nil {

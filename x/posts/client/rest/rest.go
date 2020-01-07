@@ -15,9 +15,9 @@ import (
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
+func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
+	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/reactions", removeReactionFromPostHandler(cliCtx)).Methods("DELETE")
 }
@@ -161,12 +161,12 @@ func removeReactionFromPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 // --------------------------------------------------------------------------------------
 // --- Query Handlers
 
-func getPostHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func getPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		postID := vars["postID"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", storeName, postID), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", types.QueryRoute, postID), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return

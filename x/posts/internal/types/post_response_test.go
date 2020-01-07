@@ -1,12 +1,11 @@
-package keeper_test
+package types_test
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +21,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	}
 	children := types.PostIDs{types.PostID(98), types.PostID(100)}
 
-	response := keeper.NewPostResponse(post, likes, children)
+	response := types.NewPostResponse(post, likes, children)
 	jsonData, err := json.Marshal(&response)
 	assert.NoError(t, err)
 	assert.Equal(t,
