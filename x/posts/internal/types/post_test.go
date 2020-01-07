@@ -23,6 +23,14 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, types.PostID(10), id)
 }
 
+func TestPostIDs_AppendIfMissing(t *testing.T) {
+	ids := types.PostIDs{types.PostID(1)}
+
+	ids.AppendIfMissing(types.PostID(1))
+
+	assert.Len(t, ids, 1)
+}
+
 // -----------
 // --- Post
 // -----------
@@ -297,7 +305,6 @@ func TestPost_Equals(t *testing.T) {
 // -----------
 // --- Posts
 // -----------
-
 func TestPosts_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
