@@ -228,6 +228,82 @@ func TestKeeper_GetPosts(t *testing.T) {
 	}
 }
 
+func TestKeeper_GetPostsFiltered(t *testing.T) {
+	boolTrue := true
+
+	var creator1, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	var creator2, _ = sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+
+	posts := types.Posts{
+		types.NewPost(types.PostID(10), types.PostID(1), "Post 1", false, "", map[string]string{}, 15, creator1),
+		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", true, "desmos", map[string]string{}, 17, creator2),
+		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "desmos", map[string]string{}, 15, creator2),
+	}
+
+	tests := []struct {
+		name     string
+		filter   types.QueryPostsParams
+		expected types.Posts
+	}{
+		{
+			name:     "Valid pagination works properly",
+			filter:   types.DefaultQueryPostsParams(1, 2),
+			expected: types.Posts{posts[0], posts[1]},
+		},
+		{
+			name:     "Non existing page returns empty list",
+			filter:   types.DefaultQueryPostsParams(10, 1),
+			expected: types.Posts{},
+		},
+		{
+			name:     "Invalid pagination returns all data",
+			filter:   types.DefaultQueryPostsParams(1, 15),
+			expected: types.Posts{posts[0], posts[1], posts[2]},
+		},
+		{
+			name:     "Parent ID matcher works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), ParentID: &posts[0].ParentID},
+			expected: types.Posts{posts[0], posts[1]},
+		},
+		{
+			name:     "Creation time matcher works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(15)},
+			expected: types.Posts{posts[0], posts[2]},
+		},
+		{
+			name:     "Allows comments matcher works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), AllowsComments: &boolTrue},
+			expected: types.Posts{posts[1]},
+		},
+		{
+			name:     "Subspace mather works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Subspace: "desmos"},
+			expected: types.Posts{posts[1], posts[2]},
+		},
+		{
+			name:     "Creator mather works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Creator: creator2},
+			expected: types.Posts{posts[1], posts[2]},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			for _, post := range posts {
+				k.SavePost(ctx, post)
+			}
+
+			result := k.GetPostsFiltered(ctx, test.filter)
+			assert.Len(t, result, len(test.expected))
+			for index, post := range result {
+				assert.True(t, test.expected[index].Equals(post))
+			}
+		})
+	}
+}
+
 // -------------
 // --- Reactions
 // -------------
