@@ -1,3 +1,7 @@
+#Version 0.1.1
+## Bug fixes
+- Fixed double children IDs insertion upon post edit (#63)
+
 # Version 0.1.0
 ## Features
 - Create a session to associate an external chain address to a Desmos address. 

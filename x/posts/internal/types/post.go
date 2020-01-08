@@ -90,6 +90,18 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	return true
 }
 
+// AppendIfMissing appends the given postID to the ids slice if it does not exist inside it yet.
+// It returns a new slice of PostIDs containing such ID and a boolean indicating whether or not the original
+// slice has been modified.
+func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
+	for _, ele := range ids {
+		if ele.Equals(id) {
+			return ids, false
+		}
+	}
+	return append(ids, id), true
+}
+
 // ---------------
 // --- Post
 // ---------------
