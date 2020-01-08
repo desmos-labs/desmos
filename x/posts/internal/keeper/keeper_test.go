@@ -391,7 +391,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned expError - Owner",
+			name:           "Non existing reaction returns error - Creator",
 			storedLikes:    types.Reactions{},
 			postID:         types.PostID(15),
 			liker:          liker,
