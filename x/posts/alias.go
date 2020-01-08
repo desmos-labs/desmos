@@ -9,7 +9,7 @@ const (
 	ModuleName   = types.ModuleName
 	RouterKey    = types.RouterKey
 	StoreKey     = types.StoreKey
-	QuerierRoute = types.QueryRoute
+	QuerierRoute = types.QuerierRoute
 )
 
 var (

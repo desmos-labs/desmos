@@ -15,12 +15,12 @@ func Test_queryPost(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	otherCreator, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 	tests := []struct {
-		name        string
-		path        []string
-		storedPosts types.Posts
-		storedLikes map[types.PostID]types.Likes
-		expResult   keeper.PostQueryResponse
-		expError    sdk.Error
+		name            string
+		path            []string
+		storedPosts     types.Posts
+		storedReactions map[types.PostID]types.Reactions
+		expResult       types.PostQueryResponse
+		expError        sdk.Error
 	}{
 		{
 			name:     "Invalid ID returns error",
@@ -35,46 +35,46 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post without likes is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			path: []string{types.QueryPost, "1"},
-			expResult: keeper.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.Likes{},
+			expResult: types.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.Reactions{},
 				types.PostIDs{types.PostID(2)},
 			),
 		},
 		{
 			name: "Post without children is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 			},
 			path: []string{types.QueryPost, "1"},
-			expResult: keeper.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.Likes{},
+			expResult: types.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.Reactions{},
 				types.PostIDs{},
 			),
 		},
 		{
 			name: "Post with all data is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
-			storedLikes: map[types.PostID]types.Likes{
+			storedReactions: map[types.PostID]types.Reactions{
 				types.PostID(1): {
-					types.NewLike(0, creator),
-					types.NewLike(10, otherCreator),
+					types.NewReaction("Like", 0, creator),
+					types.NewReaction("Like", 10, otherCreator),
 				},
 			},
 			path: []string{types.QueryPost, "1"},
-			expResult: keeper.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.Likes{
-					types.NewLike(0, creator),
-					types.NewLike(10, otherCreator),
+			expResult: types.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.Reactions{
+					types.NewReaction("Like", 0, creator),
+					types.NewReaction("Like", 10, otherCreator),
 				},
 				types.PostIDs{types.PostID(2)},
 			),
@@ -90,9 +90,9 @@ func Test_queryPost(t *testing.T) {
 				k.SavePost(ctx, p)
 			}
 
-			for postID, likes := range test.storedLikes {
-				for _, l := range likes {
-					_ = k.SaveLike(ctx, postID, l)
+			for postID, reactions := range test.storedReactions {
+				for _, reaction := range reactions {
+					_ = k.SaveReaction(ctx, postID, reaction)
 				}
 			}
 
@@ -117,24 +117,24 @@ func Test_queryPosts(t *testing.T) {
 		name        string
 		storedPosts types.Posts
 		params      types.QueryPostsParams
-		expResponse []keeper.PostQueryResponse
+		expResponse []types.PostQueryResponse
 	}{
 		{
 			name: "Empty params returns all",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			params: types.QueryPostsParams{},
-			expResponse: []keeper.PostQueryResponse{
-				keeper.NewPostResponse(
-					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-					types.Likes{},
+			expResponse: []types.PostQueryResponse{
+				types.NewPostResponse(
+					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),
-				keeper.NewPostResponse(
-					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
-					types.Likes{},
+				types.NewPostResponse(
+					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+					types.Reactions{},
 					types.PostIDs{},
 				),
 			},
@@ -142,14 +142,14 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Non empty params return proper posts",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", 0, creator),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			params: types.NewQueryPostsParams(1, 1, nil, sdk.NewInt(-1), nil),
-			expResponse: []keeper.PostQueryResponse{
-				keeper.NewPostResponse(
-					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, creator),
-					types.Likes{},
+			expResponse: []types.PostQueryResponse{
+				types.NewPostResponse(
+					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),
 			},

@@ -26,7 +26,9 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) PostQueryResponse {
+// getPostResponse allows to get a PostQueryResponse from the given post retrieving the other information
+// using the given Context and Keeper.
+func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.PostQueryResponse {
 	// Get the likes
 	postLikes := keeper.GetPostReactions(ctx, post.PostID)
 	if postLikes == nil {
@@ -40,9 +42,10 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) PostQueryR
 	}
 
 	// Crete the response object
-	return NewPostResponse(post, postLikes, childrenIDs)
+	return types.NewPostResponse(post, postLikes, childrenIDs)
 }
 
+// queryPost handles the request to get a post having a specific id
 func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	id, err := types.ParsePostID(path[0])
 	if err != nil {
@@ -63,6 +66,7 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 	return bz, nil
 }
 
+// queryPosts handles the request of listing all the posts that satisfy a specific filter
 func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	var params types.QueryPostsParams
 
@@ -73,7 +77,7 @@ func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, 
 
 	posts := keeper.GetPostsFiltered(ctx, params)
 
-	postResponses := make([]PostQueryResponse, len(posts))
+	postResponses := make([]types.PostQueryResponse, len(posts))
 	for index, post := range posts {
 		postResponses[index] = getPostResponse(ctx, keeper, post)
 	}

@@ -24,10 +24,9 @@ const (
 	flagNumLimit = "limit"
 	flagPage     = "page"
 
-	flagCreator           = "creator"
-	flagParentID          = "parent-id"
-	flagCreationTime      = "creation-time"
-	flagExternalReference = "external-reference"
+	flagCreator      = "creator"
+	flagParentID     = "parent-id"
+	flagCreationTime = "creation-time"
 )
 
 // GetTxCmd set the tx commands
@@ -49,10 +48,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 
 	return postsTxCmd
 }
-
-var (
-	flagParentID = "parent-id"
-)
 
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {

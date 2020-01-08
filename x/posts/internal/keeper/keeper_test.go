@@ -233,9 +233,9 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	var creator2, _ = sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
 
 	posts := types.Posts{
-		types.NewPost(types.PostID(10), types.PostID(1), "Post 1", false, "", 15, creator1),
-		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", false, "", 17, creator2),
-		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "", 15, creator2),
+		types.NewPost(types.PostID(10), types.PostID(1), "Post 1", false, "", map[string]string{}, 15, creator1),
+		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", false, "", map[string]string{}, 17, creator2),
+		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "", map[string]string{}, 15, creator2),
 	}
 
 	tests := []struct {
@@ -284,7 +284,10 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			}
 
 			result := k.GetPostsFiltered(ctx, test.filter)
-			assert.Equal(t, test.expected, result)
+			assert.Len(t, result, len(test.expected))
+			for index, post := range result {
+				assert.True(t, test.expected[index].Equals(post))
+			}
 		})
 	}
 }
@@ -385,7 +388,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned expError - Value",
+			name:           "Non existing like returned expError - Reaction",
 			storedLikes:    types.Reactions{types.NewReaction("like", 10, liker)},
 			postID:         types.PostID(15),
 			liker:          liker,

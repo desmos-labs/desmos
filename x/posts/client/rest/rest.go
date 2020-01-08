@@ -20,23 +20,26 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)
 }
 
-// CreatePostReq defines the properties of a post request's body.
+// CreatePostReq defines the properties of a post creation request's body.
 type CreatePostReq struct {
-	BaseReq           rest.BaseReq `json:"base_req"`
-	Message           string       `json:"message"`
-	ParentID          string       `json:"parent_id"`
-	AllowsComments    bool         `json:"allows_comments"`
-	ExternalReference string       `json:"external_reference"`
+	BaseReq        rest.BaseReq      `json:"base_req"`
+	Message        string            `json:"message"`
+	ParentID       string            `json:"parent_id"`
+	AllowsComments bool              `json:"allows_comments"`
+	Subspace       string            `json:"subspace"`
+	OptionalData   map[string]string `json:"optional_data"`
 }
 
-// CreatePostReq defines the properties of a like request's body.
-type AddLikeReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
+// AddReactionReq defines the properties of a reaction adding request's body.
+type AddReactionReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	PostID   string       `json:"post_id"`
+	Reaction string       `json:"reaction"`
 }
 
-// CreatePostReq defines the properties of a unlike request's body.
-type RemoveLikeReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
+// RemoveReactionReq defines the properties of a reaction removal request's body.
+type RemoveReactionReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	PostID   string       `json:"post_id"`
+	Reaction string       `json:"reaction"`
 }
