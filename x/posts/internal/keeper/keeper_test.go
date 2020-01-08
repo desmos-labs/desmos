@@ -164,7 +164,7 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPostOwner),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPostOwner),
 				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPostOwner),
 				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPostOwner),
