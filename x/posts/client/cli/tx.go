@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"fmt"
 	"strconv"
 
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
@@ -38,16 +40,15 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 }
 
 var (
-	flagParentID          = "parent-id"
-	flagExternalReference = "external-reference"
+	flagParentID = "parent-id"
 )
 
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [message] [allows-comments]",
+		Use:   "create [subspace] [message] [allows-comments]",
 		Short: "Create a new post",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -59,7 +60,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			allowsComments, err := strconv.ParseBool(args[1])
+			allowsComments, err := strconv.ParseBool(args[2])
 			if err != nil {
 				return err
 			}
@@ -69,9 +70,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			externalReference := viper.GetString(flagExternalReference)
-
-			msg := types.NewMsgCreatePost(args[0], parentID, allowsComments, externalReference, from)
+			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -81,7 +80,6 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
-	cmd.Flags().String(flagExternalReference, "", "External reference to this post")
 
 	return cmd
 }
@@ -121,9 +119,17 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 // GetCmdAddLike is the CLI command for adding a like to a post
 func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "like [post-id]",
-		Short: "Like a post",
-		Args:  cobra.ExactArgs(1),
+		Use:   "add-reaction [post-id] [value]",
+		Short: "Adds a reaction to a post",
+		Long: fmt.Sprintf(`
+Add a reaction to the post having the given id with the specified value. 
+The value can be anything as long as it is ASCII supported.
+
+E.g. 
+%s tx posts add-reaction 12 like --from jack
+%s tx posts add-reaction 12 👍 --from jack
+`, version.ClientName, version.ClientName),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -140,7 +146,7 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgLikePost(postID, from)
+			msg := types.NewMsgAddPostReaction(postID, args[1], from)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -153,9 +159,17 @@ func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
 // GetCmdRemoveLike is the CLI command for removing a like from a post
 func GetCmdRemoveLike(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "unlike [post-id]",
-		Short: "Unlike a post",
-		Args:  cobra.ExactArgs(1),
+		Use:   "remove-reaction [post-id] [value]",
+		Short: "Removes an existing reaction from a post",
+		Long: fmt.Sprintf(`
+Removes the reaction having the given value from the post having the given id. 
+The value can be anything as long as it is ASCII supported.
+
+E.g. 
+%s tx posts remove-reaction 12 like --from jack
+%s tx posts remove-reaction 12 👍 --from jack
+`, version.ClientName, version.ClientName),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -172,7 +186,7 @@ func GetCmdRemoveLike(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUnlikePost(postID, from)
+			msg := types.NewMsgRemovePostReaction(postID, from, args[1])
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

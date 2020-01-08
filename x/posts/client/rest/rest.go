@@ -15,22 +15,23 @@ import (
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
+func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx, storeName)).Methods("GET")
-	r.HandleFunc("/posts/likes", likePostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/likes", unlikePostHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/posts/{postID}", getPostHandler(cliCtx)).Methods("GET")
+	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/posts/reactions", removeReactionFromPostHandler(cliCtx)).Methods("DELETE")
 }
 
 // --------------------------------------------------------------------------------------
 // --- Tx Handler
 
 type createPostReq struct {
-	BaseReq           rest.BaseReq `json:"base_req"`
-	Message           string       `json:"message"`
-	ParentID          string       `json:"parent_id"`
-	AllowsComments    bool         `json:"allows_comments"`
-	ExternalReference string       `json:"external_reference"`
+	BaseReq        rest.BaseReq      `json:"base_req"`
+	Message        string            `json:"message"`
+	ParentID       string            `json:"parent_id"`
+	AllowsComments bool              `json:"allows_comments"`
+	Subspace       string            `json:"subspace"`
+	OptionalData   map[string]string `json:"optional_data"`
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -60,7 +61,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.ExternalReference, addr)
+		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -71,14 +72,15 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type addLikeReq struct {
+type addReactionReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	PostID  string       `json:"post_id"`
+	Value   string       `json:"value"`
 }
 
-func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func addReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req addLikeReq
+		var req addReactionReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -102,7 +104,7 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgLikePost(postID, addr)
+		msg := types.NewMsgAddPostReaction(postID, req.Value, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -113,14 +115,15 @@ func likePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type removeLikeReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
+type removeReactionReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	PostID   string       `json:"post_id"`
+	Reaction string       `json:"reaction"`
 }
 
-func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func removeReactionFromPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req removeLikeReq
+		var req removeReactionReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -144,7 +147,7 @@ func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgUnlikePost(postID, addr)
+		msg := types.NewMsgRemovePostReaction(postID, addr, req.Reaction)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -158,12 +161,12 @@ func unlikePostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 // --------------------------------------------------------------------------------------
 // --- Query Handlers
 
-func getPostHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func getPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		postID := vars["postID"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", storeName, postID), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/post/%s", types.QueryRoute, postID), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
