@@ -151,6 +151,40 @@ func TestPostIDs_Equals(t *testing.T) {
 	}
 }
 
+func TestPostIDs_AppendIfMissing(t *testing.T) {
+	tests := []struct {
+		name      string
+		IDs       types.PostIDs
+		newID     types.PostID
+		expIDs    types.PostIDs
+		expEdited bool
+	}{
+		{
+			name:      "AppendIfMissing dont append anything",
+			IDs:       types.PostIDs{types.PostID(1)},
+			newID:     types.PostID(1),
+			expIDs:    types.PostIDs{types.PostID(1)},
+			expEdited: false,
+		},
+		{
+			name:      "AppendIfMissing append something",
+			IDs:       types.PostIDs{types.PostID(1)},
+			newID:     types.PostID(2),
+			expIDs:    types.PostIDs{types.PostID(1), types.PostID(2)},
+			expEdited: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			newIDs, edited := test.IDs.AppendIfMissing(test.newID)
+			assert.Equal(t, test.expIDs, newIDs)
+			assert.Equal(t, test.expEdited, edited)
+		})
+	}
+}
+
 // -----------
 // --- Post
 // -----------
@@ -558,7 +592,6 @@ func TestPost_Equals(t *testing.T) {
 // -----------
 // --- Posts
 // -----------
-
 func TestPosts_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
