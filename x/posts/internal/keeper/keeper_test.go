@@ -49,6 +49,7 @@ func TestKeeper_SavePost(t *testing.T) {
 	tests := []struct {
 		name                 string
 		existingPosts        types.Posts
+		lastPostID           types.PostID
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
@@ -58,24 +59,50 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
 		},
 		{
 			name: "Post which ID is not already present",
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(15),
 		},
 		{
 			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
+			expLastID:            types.PostID(15),
+		},
+		{
+			name: "Post with ID greater ID than Last ID stored",
+			existingPosts: types.Posts{
+				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+			},
+			lastPostID:           types.PostID(4),
+			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(5),
+		},
+		{
+			name: "Post with ID lesser ID than Last ID stored",
+			existingPosts: types.Posts{
+				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+			},
+			lastPostID:           types.PostID(4),
+			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(4),
 		},
 	}
 
@@ -87,6 +114,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
 				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
 			// Save the post
@@ -100,7 +128,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			// Check the latest post id
 			var lastPostID types.PostID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIDStoreKey)), &lastPostID)
-			assert.Equal(t, test.newPost.PostID, lastPostID)
+			assert.Equal(t, test.expLastID, lastPostID)
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
@@ -391,7 +419,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned expError - Creator",
+			name:           "Non existing reaction returns error - Creator",
 			storedLikes:    types.Reactions{},
 			postID:         types.PostID(15),
 			liker:          liker,
@@ -400,7 +428,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned expError - Reaction",
+			name:           "Non existing reaction returns error - Value",
 			storedLikes:    types.Reactions{types.NewReaction("like", 10, liker)},
 			postID:         types.PostID(15),
 			liker:          liker,
