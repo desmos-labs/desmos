@@ -3,6 +3,7 @@ package types_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -191,12 +192,14 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 
 func TestPost_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	timeZone, _ := time.LoadLocation("UTC")
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	post := types.Post{
 		PostID:         types.PostID(19),
 		ParentID:       types.PostID(1),
 		Message:        "My post message",
-		Created:        sdk.NewInt(98),
-		LastEdited:     sdk.NewInt(105),
+		Created:        date,
+		LastEdited:     date.AddDate(0, 0, 1),
 		AllowsComments: true,
 		Subspace:       "desmos",
 		OptionalData:   map[string]string{},
@@ -204,47 +207,51 @@ func TestPost_String(t *testing.T) {
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
 
 func TestPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
+	timeZone, _ := time.LoadLocation("UTC")
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+
 	tests := []struct {
 		post     types.Post
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, nil),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, nil),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, owner),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, date, owner),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 0, owner),
-			expError: "invalid post creation block height: 0",
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, time.Time{}, owner),
+			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
-			expError: "invalid post last edit block height: 9",
+			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: date, LastEdited: date.AddDate(0, 0, -1)},
+			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, 1, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, 1, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
@@ -267,7 +274,7 @@ func TestPost_Validate(t *testing.T) {
 					"key10": "value",
 					"key11": "value",
 				},
-				1,
+				date,
 				owner,
 			),
 			expError: "post optional data cannot contain more than 10 key-value pairs",
@@ -280,15 +287,17 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"desmos",
 				map[string]string{
-					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam sem eget neque metus.",
+					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
+							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
+							sem eget neque metus.`,
 				},
-				1,
+				date,
 				owner,
 			),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 1, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner),
 			expError: "",
 		},
 	}
@@ -309,6 +318,9 @@ func TestPost_Equals(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
+	timeZone, _ := time.LoadLocation("UTC")
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+
 	tests := []struct {
 		name      string
 		first     types.Post
@@ -321,8 +333,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -332,8 +344,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(10),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -347,8 +359,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -358,8 +370,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(10),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -373,8 +385,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -384,8 +396,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "Another post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -399,8 +411,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -410,8 +422,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(15),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date.AddDate(0, 0, 1),
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -425,8 +437,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -436,8 +448,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(13),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 2),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -451,8 +463,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -462,8 +474,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: false,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -477,8 +489,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos-1",
 				OptionalData:   map[string]string{},
@@ -488,8 +500,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos-2",
 				OptionalData:   map[string]string{},
@@ -503,8 +515,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData: map[string]string{
@@ -516,8 +528,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData: map[string]string{
@@ -533,8 +545,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -544,8 +556,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -559,8 +571,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -570,8 +582,8 @@ func TestPost_Equals(t *testing.T) {
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
-				Created:        sdk.NewInt(98),
-				LastEdited:     sdk.NewInt(105),
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
@@ -593,6 +605,9 @@ func TestPost_Equals(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_Equals(t *testing.T) {
+	timeZone, _ := time.LoadLocation("UTC")
+	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
+
 	tests := []struct {
 		name      string
 		first     types.Posts
@@ -608,35 +623,35 @@ func TestPosts_Equals(t *testing.T) {
 		{
 			name: "List of different lengths are not equals",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists but in different orders",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists are equals",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: true,
 		},
@@ -653,9 +668,13 @@ func TestPosts_Equals(t *testing.T) {
 func TestPosts_String(t *testing.T) {
 	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+
+	timeZone, _ := time.LoadLocation("UTC")
+	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
+
 	posts := types.Posts{
-		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, 0, owner1),
-		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, 0, owner2),
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2),
 	}
 
 	expected := `ID - [Creator] Message

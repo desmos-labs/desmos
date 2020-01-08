@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -13,8 +14,16 @@ import (
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+var timeZone, _ = time.LoadLocation("UTC")
+var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
 var msgCreatePost = types.NewMsgCreatePost(
-	"My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
+	"My new post",
+	types.PostID(53),
+	false,
+	"desmos",
+	map[string]string{},
+	testOwner,
+	date,
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -36,17 +45,17 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil, date),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name:  "Empty message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
+			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator, date),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty subspace returns error",
-			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
+			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator, date),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
 		{
@@ -70,6 +79,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					"key11": "value11",
 				},
 				creator,
+				date,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
 		},
@@ -84,6 +94,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
 				},
 				creator,
+				date,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
@@ -104,6 +115,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					"array":  `["first","second"]`,
 				},
 				creator,
+				date,
 			),
 			error: nil,
 		},
@@ -128,13 +140,13 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	}{
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
+			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner, date),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
+			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner, date),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
 		},
 	}
 
@@ -156,7 +168,8 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var msgEditPost = types.NewMsgEditPost(types.PostID(94), "Edited post message", testOwner)
+var editDate = time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
+var msgEditPost = types.NewMsgEditPost(types.PostID(94), "Edited post message", testOwner, editDate)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -176,22 +189,22 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgEditPost(types.PostID(0), "Edited post message", testOwner),
+			msg:   types.NewMsgEditPost(types.PostID(0), "Edited post message", testOwner, editDate),
 			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", nil),
+			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", nil, editDate),
 			error: sdk.ErrInvalidAddress("Invalid editor address: "),
 		},
 		{
 			name:  "Invalid message returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner),
+			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner, editDate),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", testOwner),
+			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", testOwner, editDate),
 			error: nil,
 		},
 	}
@@ -206,7 +219,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2020-02-02T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
 	assert.Equal(t, expected, string(actual))
 }
 

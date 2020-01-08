@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -20,11 +21,12 @@ type MsgCreatePost struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
+	CreationDate   time.Time         `json:"creation_date"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -32,6 +34,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        owner,
+		CreationDate:   creationDate,
 	}
 }
 
@@ -72,6 +75,11 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 			return sdk.ErrUnknownRequest(msg)
 		}
 	}
+
+	if msg.CreationDate.IsZero() {
+		return sdk.ErrUnknownRequest("Invalid post creation date")
+	}
+
 	return nil
 }
 
@@ -91,17 +99,19 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID  PostID         `json:"post_id"`
-	Message string         `json:"message"`
-	Editor  sdk.AccAddress `json:"editor"`
+	PostID   PostID         `json:"post_id"`
+	Message  string         `json:"message"`
+	Editor   sdk.AccAddress `json:"editor"`
+	EditDate time.Time      `json:"edit_date"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress) MsgEditPost {
+func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress, editDate time.Time) MsgEditPost {
 	return MsgEditPost{
-		PostID:  id,
-		Message: message,
-		Editor:  owner,
+		PostID:   id,
+		Message:  message,
+		Editor:   owner,
+		EditDate: editDate,
 	}
 }
 
@@ -123,6 +133,10 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 
 	if len(msg.Message) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	}
+
+	if msg.EditDate.IsZero() {
+		return sdk.ErrUnknownRequest("Invalid edit date")
 	}
 
 	return nil

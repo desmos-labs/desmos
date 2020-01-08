@@ -128,7 +128,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		}
 
 		// match creation time if valid height
-		if params.CreationTime.GTE(sdk.ZeroInt()) {
+		if params.CreationTime != nil {
 			matchCreationTime = params.CreationTime.Equal(p.Created)
 		}
 
