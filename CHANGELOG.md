@@ -1,5 +1,5 @@
 #Version 0.1.1
-## Features
+## Bigfixes
 - Add `AppendIfMissing` method to `PostIDs` to enhance the managing of IDs in post's children
   and get rid of bugs.
 
