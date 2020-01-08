@@ -17,7 +17,6 @@ desmosd migrate v0.2.0 <path-to-genesis-file>
 - Fixed double children IDs insertion upon post edit (#63)
   and get rid of bugs.
 
-
 # Version 0.1.0
 ## Features
 - Create a session to associate an external chain address to a Desmos address. 
