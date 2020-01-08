@@ -88,7 +88,7 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			post:     types.Post{PostID: types.PostID(0)},
-			expError: "invalid post newID: 0",
+			expError: "invalid post id: 0",
 		},
 		{
 			post:     types.Post{PostID: types.PostID(19), Owner: nil},
