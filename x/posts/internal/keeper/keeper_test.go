@@ -50,6 +50,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		name                 string
 		existingPosts        types.Posts
 		newPost              types.Post
+		expLastID            types.PostID
 		expParentCommentsIDs types.PostIDs
 	}{
 		{
