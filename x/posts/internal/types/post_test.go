@@ -75,7 +75,7 @@ func TestPost_String(t *testing.T) {
 	}
 
 	assert.Equal(t,
-		`{"post_id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"external_reference":"My reference","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"external_reference":"My reference","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
