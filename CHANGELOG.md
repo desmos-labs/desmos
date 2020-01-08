@@ -4,6 +4,7 @@
 - Implemented the support for posts reactions (#47)
 - Implemented the support for posts subspaces (#46)
 - Automated the default bond denom change to `desmos` (#25)
+- Replaced the block height with timestamps inside posts' creation dates and edit dates (#62)
 
 ## Migration
 In order to migrate from version 0.1.0 to 0.2.0 of the chain, please run the following command:
