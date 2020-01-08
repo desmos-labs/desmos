@@ -49,6 +49,7 @@ func TestKeeper_SavePost(t *testing.T) {
 	tests := []struct {
 		name                 string
 		existingPosts        types.Posts
+		lastPostID           types.PostID
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
@@ -58,6 +59,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "", 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
@@ -67,6 +69,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "", 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
@@ -76,6 +79,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: []types.Post{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(1),
 			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
@@ -85,6 +89,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "", 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(4),
 			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
@@ -94,6 +99,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{
 				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "", 0, testPostOwner),
 			},
+			lastPostID:           types.PostID(4),
 			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "", 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
@@ -108,7 +114,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
 				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(p.PostID))
+				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
 			// Save the post

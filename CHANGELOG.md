@@ -1,3 +1,7 @@
+# Version 0.1.1
+## Features
+- Fixed a bug in `Post` module that made impossible to create a new post due to `Post with ID: "IDnumber" already exists`
+error.
 # Version 0.1.0
 ## Features
 - Create a session to associate an external chain address to a Desmos address. 
