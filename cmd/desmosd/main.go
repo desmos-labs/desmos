@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 
+	"github.com/desmos-labs/desmos/app"
+
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/cosmos/cosmos-sdk/server"
@@ -17,7 +19,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	app "github.com/desmos-labs/desmos"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
@@ -27,6 +28,9 @@ import (
 
 func main() {
 	cobra.EnableCommandSorting = false
+
+	// Initialize the app overriding the various methods we want to customize
+	app.Init()
 
 	cdc := app.MakeCodec()
 
