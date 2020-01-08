@@ -9,18 +9,18 @@ import (
 )
 
 // ---------------
-// --- Post id
+// --- Post newID
 // ---------------
 
-// PostID represents a unique post id
+// PostID represents a unique post newID
 type PostID uint64
 
-// Valid tells if the id can be used safely
+// Valid tells if the newID can be used safely
 func (id PostID) Valid() bool {
 	return id != 0
 }
 
-// Next returns the subsequent id to this one
+// Next returns the subsequent newID to this one
 func (id PostID) Next() PostID {
 	return id + 1
 }
@@ -57,7 +57,7 @@ func (id *PostID) UnmarshalJSON(data []byte) error {
 }
 
 // ParsePostID returns the PostID represented inside the provided
-// value, or an error if no id could be parsed properly
+// value, or an error if no newID could be parsed properly
 func ParsePostID(value string) (PostID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
@@ -90,12 +90,13 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	return true
 }
 
-// AppendIfMissing appends the given post to the list of posts if it does not exist inside it yet,
-// returning also true if the object has been appended successfully.
+// AppendIfMissing appends the given postID to the ids slice if it does not exist inside it yet.
+// It returns a new slice of PostIDs containing such ID and a boolean indicating whether or not the original
+// slice has been modified.
 func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 	for _, ele := range ids {
 		if ele.Equals(id) {
-			return nil, false
+			return ids, false
 		}
 	}
 	return append(ids, id), true
@@ -107,7 +108,7 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID            PostID         `json:"id"`                 // Unique id
+	PostID            PostID         `json:"post_id"`            // Unique postID
 	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
 	Message           string         `json:"message"`            // Message contained inside the post
 	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
@@ -143,7 +144,7 @@ func (p Post) String() string {
 // Validate implements validator
 func (p Post) Validate() error {
 	if !p.PostID.Valid() {
-		return fmt.Errorf("invalid post id: %s", p.PostID)
+		return fmt.Errorf("invalid post newID: %s", p.PostID)
 	}
 
 	if p.Owner == nil {

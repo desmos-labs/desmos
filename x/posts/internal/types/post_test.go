@@ -25,32 +25,34 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 
 func TestPostIDs_AppendIfMissing(t *testing.T) {
 	tests := []struct {
-		name     string
-		id       types.PostID
-		expLen   int
-		expFound bool
+		name      string
+		IDs       types.PostIDs
+		newID     types.PostID
+		expIDs    types.PostIDs
+		expEdited bool
 	}{
 		{
-			name:     "AppendIfMissing dont append anything",
-			id:       types.PostID(1),
-			expLen:   0,
-			expFound: false,
+			name:      "AppendIfMissing dont append anything",
+			IDs:       types.PostIDs{types.PostID(1)},
+			newID:     types.PostID(1),
+			expIDs:    types.PostIDs{types.PostID(1)},
+			expEdited: false,
 		},
 		{
-			name:     "AppendIfMissing append something",
-			id:       types.PostID(2),
-			expLen:   2,
-			expFound: true,
+			name:      "AppendIfMissing append something",
+			IDs:       types.PostIDs{types.PostID(1)},
+			newID:     types.PostID(2),
+			expIDs:    types.PostIDs{types.PostID(1), types.PostID(2)},
+			expEdited: true,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			ids := types.PostIDs{types.PostID(1)}
-			ids, found := ids.AppendIfMissing(test.id)
-			assert.Len(t, ids, test.expLen)
-			assert.Equal(t, test.expFound, found)
+			newIDs, edited := test.IDs.AppendIfMissing(test.newID)
+			assert.Equal(t, test.expIDs, newIDs)
+			assert.Equal(t, test.expEdited, edited)
 		})
 	}
 }
@@ -73,7 +75,7 @@ func TestPost_String(t *testing.T) {
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"external_reference":"My reference","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"newID":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"external_reference":"My reference","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
@@ -86,7 +88,7 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			post:     types.Post{PostID: types.PostID(0)},
-			expError: "invalid post id: 0",
+			expError: "invalid post newID: 0",
 		},
 		{
 			post:     types.Post{PostID: types.PostID(19), Owner: nil},
