@@ -47,7 +47,8 @@ var testPost = types.NewPost(
 	types.PostID(0),
 	"Post message",
 	false,
-	"",
+	"desmos",
+	map[string]string{},
 	10,
 	testPostOwner,
 )

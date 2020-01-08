@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -106,28 +107,31 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 // --- Post
 // ---------------
 
-// Post is a struct of a Magpie post
+// Post is a struct of a post
 type Post struct {
-	PostID            PostID         `json:"id"`                 // Unique id
-	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
-	Message           string         `json:"message"`            // Message contained inside the post
-	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
-	LastEdited        sdk.Int        `json:"last_edited"`        // Block height at which the post has been edited the last time
-	AllowsComments    bool           `json:"allows_comments"`    // Tells if users can reference this PostID as the parent
-	ExternalReference string         `json:"external_reference"` // Used to know when to display this post
-	Owner             sdk.AccAddress `json:"owner"`              // Creator of the Post
+	PostID         PostID            `json:"id"`                      // Unique id
+	ParentID       PostID            `json:"parent_id"`               // Post of which this one is a comment
+	Message        string            `json:"message"`                 // Message contained inside the post
+	Created        sdk.Int           `json:"created"`                 // Block height at which the post has been created
+	LastEdited     sdk.Int           `json:"last_edited"`             // Block height at which the post has been edited the last time
+	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
+	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
+	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
+	Creator        sdk.AccAddress    `json:"creator"`                 // Creator of the Post
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, externalReference string, created int64, owner sdk.AccAddress) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
+	created int64, creator sdk.AccAddress) Post {
 	return Post{
-		PostID:            id,
-		ParentID:          parentID,
-		Message:           message,
-		Created:           sdk.NewInt(created),
-		LastEdited:        sdk.ZeroInt(),
-		AllowsComments:    allowsComments,
-		ExternalReference: externalReference,
-		Owner:             owner,
+		PostID:         id,
+		ParentID:       parentID,
+		Message:        message,
+		Created:        sdk.NewInt(created),
+		LastEdited:     sdk.ZeroInt(),
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Creator:        creator,
 	}
 }
 
@@ -147,33 +151,56 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post id: %s", p.PostID)
 	}
 
-	if p.Owner == nil {
-		return fmt.Errorf("invalid post owner: %s", p.Owner)
+	if p.Creator == nil {
+		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if p.Message == "" {
-		return fmt.Errorf("invalid post message: %s", p.Message)
+	if len(strings.TrimSpace(p.Message)) == 0 {
+		return fmt.Errorf("post message must be non empty and non blank")
+	}
+
+	if len(strings.TrimSpace(p.Subspace)) == 0 {
+		return fmt.Errorf("post subspace must be non empty and non blank")
 	}
 
 	if sdk.ZeroInt().Equal(p.Created) {
 		return fmt.Errorf("invalid post creation block height: %s", p.Created)
 	}
 
-	if p.Created.GT(p.LastEdited) {
+	if p.LastEdited.GT(sdk.ZeroInt()) && p.Created.GT(p.LastEdited) {
 		return fmt.Errorf("invalid post last edit block height: %s", p.LastEdited)
+	}
+
+	if len(p.OptionalData) > MaxOptionalDataFieldsNumber {
+		return fmt.Errorf("post optional data cannot contain more than 10 key-value pairs")
+	}
+
+	for key, value := range p.OptionalData {
+		if len(value) > MaxOptionalDataFieldValueLength {
+			return fmt.Errorf("post optional data values cannot exceed 200 characters. %s of post with id %s is longer than this", key, p.PostID)
+		}
 	}
 
 	return nil
 }
 
 func (p Post) Equals(other Post) bool {
+	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
+	if equalsOptionalData {
+		for key := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		}
+	}
+
 	return p.PostID.Equals(other.PostID) &&
 		p.ParentID.Equals(other.ParentID) &&
 		p.Message == other.Message &&
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
 		p.AllowsComments == other.AllowsComments &&
-		p.Owner.Equals(other.Owner)
+		p.Subspace == other.Subspace &&
+		equalsOptionalData &&
+		p.Creator.Equals(other.Creator)
 }
 
 // -------------
@@ -197,4 +224,14 @@ func (p Posts) Equals(other Posts) bool {
 	}
 
 	return true
+}
+
+// String implements stringer interface
+func (p Posts) String() string {
+	out := "ID - [Creator] Message\n"
+	for _, post := range p {
+		out += fmt.Sprintf("%d - [%s] %s\n",
+			post.PostID, post.Creator, post.Message)
+	}
+	return strings.TrimSpace(out)
 }

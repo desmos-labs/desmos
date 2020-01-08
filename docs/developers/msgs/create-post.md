@@ -9,7 +9,8 @@ This message allows you to create a new public post.
     "parent_id": "<ID of the post for which this post should be a comment of>",
     "message": "<Post message>",
     "allows_comments": false,
-    "external_reference": "<Arbitrary external reference>",
+    "subspace": "<Subspace of a post>",
+    "optional_data": {},
     "creator": "<Desmos address that's creating the post>"
   }
 }
@@ -21,10 +22,12 @@ This message allows you to create a new public post.
 | `parent_id` | String | ID of the parent post for which this post should be a comment of (Set to `0` if you do not want to have a parent) |
 | `message` | String | Message of the post |
 | `allows_comments` | Boolean | Tells whenever the post will allow other posts to reference to it as parent or not | 
-| `external_reference` | String | Arbitrary external reference to the post |
+| `susbspace` | String | Required string that identifies the posting app |
+| `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
 
 ## Example
+### With optional data
 ```json
 {
   "type": "desmos/MsgCreatePost",
@@ -32,11 +35,28 @@ This message allows you to create a new public post.
     "parent_id": "0",
     "message": "Desmos is great!",
     "allows_comments": true,
-    "external_reference": "",
+    "subspace": "desmos",
+    "optional_data": {
+      "custom_field": "My custom value"
+    },
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
   }
 }
 ``` 
+
+### Without optional data
+```json
+{
+  "type": "desmos/MsgCreatePost",
+  "value": {
+    "parent_id": "0",
+    "message": "Desmos is great!",
+    "allows_comments": true,
+    "subspace": "desmos",
+    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
+  }
+}
+```
 
 ## Message action
 The action associated to this message is the following: 

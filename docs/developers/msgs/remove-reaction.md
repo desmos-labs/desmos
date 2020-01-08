@@ -4,8 +4,9 @@ With this message you can remove the like from a previously liked post.
 ## Structure
 ```json
 {
-  "type": "desmos/MsgUnlikePost",
+  "type": "desmos/MsgRemovePostReaction",
   "value": {
+    "reaction": "<Value of the reaction to be removed>",
     "liker": "<Desmos address of the user unliking the post>",
     "post_id": "<Id of the post to unlike>"
   }
@@ -15,14 +16,16 @@ With this message you can remove the like from a previously liked post.
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `liker` | String | Desmos address of the user unliking the post | 
-| `post_id` | String | ID of the post to be unliked |
+| `value` String | Value of the reaction to be removed | 
+| `liker` | String | Desmos address of the user that had added the reaction | 
+| `post_id` | String | ID of the post from which to remove the reaction |
 
 ## Example
 ```json
 {
-  "type": "desmos/MsgUnlikePost",
+  "type": "desmos/MsgRemovePostReaction",
   "value": {
+    "value": "like",
     "liker": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
     "post_id": "12"
   }
@@ -33,5 +36,5 @@ With this message you can remove the like from a previously liked post.
 The action associated to this message is the following: 
 
 ```
-unlike_post
+remove_post_reaction
 ```
