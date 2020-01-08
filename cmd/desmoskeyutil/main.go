@@ -5,18 +5,19 @@ import (
 	"fmt"
 	"os"
 
+	app2 "github.com/desmos-labs/desmos/app"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	app "github.com/desmos-labs/desmos"
 	"github.com/tendermint/tendermint/libs/bech32"
 )
 
 var bech32Prefixes = []string{
-	app.Bech32MainPrefix,
-	app.Bech32MainPrefix + sdk.PrefixPublic,
-	app.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixOperator,
-	app.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic,
-	app.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixConsensus,
-	app.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic,
+	app2.Bech32MainPrefix,
+	app2.Bech32MainPrefix + sdk.PrefixPublic,
+	app2.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixOperator,
+	app2.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic,
+	app2.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixConsensus,
+	app2.Bech32MainPrefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic,
 }
 
 func main() {
