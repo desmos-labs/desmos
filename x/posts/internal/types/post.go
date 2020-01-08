@@ -108,7 +108,7 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 
 // Post is a struct of a Magpie post
 type Post struct {
-	PostID            PostID         `json:"post_id"`            // Unique postID
+	PostID            PostID         `json:"id"`            // Unique id
 	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
 	Message           string         `json:"message"`            // Message contained inside the post
 	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
