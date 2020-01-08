@@ -1,3 +1,7 @@
+#Version 0.1.1
+- Add `AppendIfMissing` method to `PostIDs` to enhance the managing of IDs in post's children
+  and get rid of bugs.
+
 # Version 0.1.0
 ## Features
 - Create a session to associate an external chain address to a Desmos address. 
