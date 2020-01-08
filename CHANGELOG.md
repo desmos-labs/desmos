@@ -1,6 +1,6 @@
 # Version 0.1.1
 ## Features
-- Fixed a bug in `Post` module that made impossible to create a new post due to `Post with ID: "IDnumber" already exists`
+- Fixed a bug that made impossible to create a new post upon a post edit due to the `Post with ID X already exists` (#64)
 error.
 # Version 0.1.0
 ## Features
