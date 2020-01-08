@@ -15,7 +15,6 @@ desmosd migrate v0.2.0 <path-to-genesis-file>
 #Version 0.1.1
 ## Bug fixes
 - Fixed double children IDs insertion upon post edit (#63)
-  and get rid of bugs.
 
 # Version 0.1.0
 ## Features
