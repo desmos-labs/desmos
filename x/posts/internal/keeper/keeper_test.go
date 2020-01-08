@@ -167,7 +167,7 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPostOwner),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPostOwner),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPostOwner),
 			},
 			postID:         types.PostID(10),
