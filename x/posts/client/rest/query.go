@@ -77,7 +77,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
-			creationTime, err = time.Parse("2020-01-01T12:00:00Z", v)
+			creationTime, err = time.Parse(time.RFC3339, v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return

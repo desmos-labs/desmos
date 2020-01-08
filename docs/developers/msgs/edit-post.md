@@ -9,7 +9,7 @@ This message allows you to edit the message of a previously published public pos
     "post_id": "<ID of the post to be edited>",
     "message": "<New post message>",
     "editor": "<Desmos address of the user editing the message>",
-    "edit_date": "<ISO 8601-formatted date representing the date in which the post has been edited>"
+    "edit_date": "<RFC3339-formatted date representing the date in which the post has been edited>"
   }
 }
 ```
@@ -20,7 +20,7 @@ This message allows you to edit the message of a previously published public pos
 | `post_id` | String | ID of the post to edit |
 | `message` | String | New message that should be set as the post message |
 | `editor` | String | Desmos address of the user that is editing the post. This must be the same address of the original post creator. |
-| `edit_date` | String | Date in ISO 8601 format (e.g. `2020-01-01T12:00:00Z`) in which the post has been edited. This must be after the original post creation date and cannot be a future date. |
+| `edit_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been edited. This must be after the original post creation date and cannot be a future date. |
 
 ## Example
 ### With optional data

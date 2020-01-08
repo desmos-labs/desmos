@@ -12,7 +12,7 @@ This message allows you to create a new public post.
     "subspace": "<Subspace of a post>",
     "optional_data": {},
     "creator": "<Desmos address that's creating the post>",
-    "creation_date": "<ISO 8601-formatted date representing the creation date of the post>"
+    "creation_date": "<RFC3339-formatted date representing the creation date of the post>"
   }
 }
 ```
@@ -26,7 +26,7 @@ This message allows you to create a new public post.
 | `susbspace` | String | Required string that identifies the posting app |
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
-| `creation_date` | String | Date in ISO 8601 format (e.g. `2020-01-01T12:00:00Z`) in which the post has been created. Cannot be a future date. |
+| `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
 
 ## Example
 ### With optional data

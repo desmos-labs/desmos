@@ -95,7 +95,7 @@ $ %s query posts posts --page=2 --limit=100
 
 			// CreationTime
 			if len(creationTime) > 0 {
-				parsedTime, err := time.Parse("2020-01-01T12:00:00Z", creationTime)
+				parsedTime, err := time.Parse(time.RFC3339, creationTime)
 				if err != nil {
 					return err
 				}
