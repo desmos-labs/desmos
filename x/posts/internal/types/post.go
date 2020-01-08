@@ -9,18 +9,18 @@ import (
 )
 
 // ---------------
-// --- Post newID
+// --- Post id
 // ---------------
 
-// PostID represents a unique post newID
+// PostID represents a unique post id
 type PostID uint64
 
-// Valid tells if the newID can be used safely
+// Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
 	return id != 0
 }
 
-// Next returns the subsequent newID to this one
+// Next returns the subsequent id to this one
 func (id PostID) Next() PostID {
 	return id + 1
 }
@@ -57,7 +57,7 @@ func (id *PostID) UnmarshalJSON(data []byte) error {
 }
 
 // ParsePostID returns the PostID represented inside the provided
-// value, or an error if no newID could be parsed properly
+// value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
 	intVal, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
@@ -144,7 +144,7 @@ func (p Post) String() string {
 // Validate implements validator
 func (p Post) Validate() error {
 	if !p.PostID.Valid() {
-		return fmt.Errorf("invalid post newID: %s", p.PostID)
+		return fmt.Errorf("invalid post id: %s", p.PostID)
 	}
 
 	if p.Owner == nil {

@@ -115,9 +115,9 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 		error sdk.Error
 	}{
 		{
-			name:  "Invalid post newID returns error",
+			name:  "Invalid post id returns error",
 			msg:   types.NewMsgEditPost(types.PostID(0), "Edited post message", testOwner),
-			error: sdk.ErrUnknownRequest("Invalid post newID"),
+			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
 			name:  "Invalid editor returns error",
@@ -179,9 +179,9 @@ func TestMsgLikePost_ValidateBasic(t *testing.T) {
 		error sdk.Error
 	}{
 		{
-			name:  "Invalid post newID returns error",
+			name:  "Invalid post id returns error",
 			msg:   types.NewMsgLikePost(types.PostID(0), testOwner),
-			error: sdk.ErrUnknownRequest("Invalid post newID"),
+			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
 			name:  "Invalid liker returns error",
@@ -238,9 +238,9 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 		error sdk.Error
 	}{
 		{
-			name:  "Invalid post newID returns error",
+			name:  "Invalid post id returns error",
 			msg:   types.NewMsgUnlikePost(types.PostID(0), testOwner),
-			error: sdk.ErrUnknownRequest("Invalid post newID"),
+			error: sdk.ErrUnknownRequest("Invalid post id"),
 		},
 		{
 			name:  "Invalid liker address: ",

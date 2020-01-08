@@ -86,7 +86,7 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post newID")
+		return sdk.ErrUnknownRequest("Invalid post id")
 	}
 	if msg.Editor.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
@@ -134,7 +134,7 @@ func (msg MsgLikePost) Type() string { return ActionLikePost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLikePost) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post newID")
+		return sdk.ErrUnknownRequest("Invalid post id")
 	}
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
@@ -179,7 +179,7 @@ func (msg MsgUnlikePost) Type() string { return ActionUnlikePost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgUnlikePost) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post newID")
+		return sdk.ErrUnknownRequest("Invalid post id")
 	}
 	if msg.Liker.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
