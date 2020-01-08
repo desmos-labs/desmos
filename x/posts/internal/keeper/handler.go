@@ -63,7 +63,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
 		sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
-		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner.String()),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator.String()),
 	)
 	ctx.EventManager().EmitEvent(createEvent)
 
@@ -83,7 +83,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if !msg.Editor.Equals(existing.Owner) {
+	if !msg.Editor.Equals(existing.Creator) {
 		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 

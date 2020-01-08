@@ -19,16 +19,6 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
-// Posts flags
-const (
-	flagNumLimit = "limit"
-	flagPage     = "page"
-
-	flagCreator      = "creator"
-	flagParentID     = "parent-id"
-	flagCreationTime = "creation-time"
-)
-
 // GetTxCmd set the tx commands
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	postsTxCmd := &cobra.Command{

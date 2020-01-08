@@ -26,7 +26,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	jsonData, err := json.Marshal(&response)
 	assert.NoError(t, err)
 	assert.Equal(t,
-		`{"id":"10","parent_id":"0","message":"Post","created":"10","last_edited":"0","allows_comments":true,"subspace":"desmos","owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","reactions":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
+		`{"id":"10","parent_id":"0","message":"Post","created":"10","last_edited":"0","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","reactions":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
 		string(jsonData),
 	)
 }

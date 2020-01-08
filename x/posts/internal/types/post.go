@@ -105,11 +105,11 @@ type Post struct {
 	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
 	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
-	Owner          sdk.AccAddress    `json:"owner"`                   // Creator of the Post
+	Creator        sdk.AccAddress    `json:"creator"`                 // Creator of the Post
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created int64, owner sdk.AccAddress) Post {
+	created int64, creator sdk.AccAddress) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
@@ -119,7 +119,7 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
-		Owner:          owner,
+		Creator:        creator,
 	}
 }
 
@@ -139,8 +139,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post id: %s", p.PostID)
 	}
 
-	if p.Owner == nil {
-		return fmt.Errorf("invalid post owner: %s", p.Owner)
+	if p.Creator == nil {
+		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
 	if len(strings.TrimSpace(p.Message)) == 0 {
@@ -188,7 +188,7 @@ func (p Post) Equals(other Post) bool {
 		p.AllowsComments == other.AllowsComments &&
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
-		p.Owner.Equals(other.Owner)
+		p.Creator.Equals(other.Creator)
 }
 
 // -------------
@@ -219,7 +219,7 @@ func (p Posts) String() string {
 	out := "ID - [Creator] Message\n"
 	for _, post := range p {
 		out += fmt.Sprintf("%d - [%s] %s\n",
-			post.PostID, post.Owner, post.Message)
+			post.PostID, post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
 }

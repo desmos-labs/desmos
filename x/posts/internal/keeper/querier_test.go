@@ -145,7 +145,7 @@ func Test_queryPosts(t *testing.T) {
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
-			params: types.NewQueryPostsParams(1, 1, nil, sdk.NewInt(-1), nil),
+			params: types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),

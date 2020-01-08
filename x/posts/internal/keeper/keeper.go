@@ -120,24 +120,34 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	filteredPosts := make(types.Posts, 0, len(posts))
 
 	for _, p := range posts {
-		matchParentID, matchCreationTime, matchCreator := true, true, true
+		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
 
 		// match parent id if valid
 		if params.ParentID != nil {
 			matchParentID = params.ParentID.Equals(p.ParentID)
 		}
 
-		// match creation time is valid height
+		// match creation time if valid height
 		if params.CreationTime.GTE(sdk.ZeroInt()) {
 			matchCreationTime = params.CreationTime.Equal(p.Created)
 		}
 
-		// match creator address (if supplied)
-		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(p.Owner)
+		// match allows comments
+		if params.AllowsComments != nil {
+			matchAllowsComments = *params.AllowsComments == p.AllowsComments
 		}
 
-		if matchParentID && matchCreationTime && matchCreator {
+		// match subspace if provided
+		if len(params.Subspace) > 0 {
+			matchSubspace = params.Subspace == p.Subspace
+		}
+
+		// match creator address (if supplied)
+		if len(params.Creator) > 0 {
+			matchCreator = params.Creator.Equals(p.Creator)
+		}
+
+		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
 			filteredPosts = append(filteredPosts, p)
 		}
 	}

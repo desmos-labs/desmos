@@ -164,11 +164,11 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Owner),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Owner),
-				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPost.Owner),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Owner),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPost.Owner),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55), types.PostID(78)},
@@ -229,13 +229,15 @@ func TestKeeper_GetPosts(t *testing.T) {
 }
 
 func TestKeeper_GetPostsFiltered(t *testing.T) {
+	boolTrue := true
+
 	var creator1, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var creator2, _ = sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
 
 	posts := types.Posts{
 		types.NewPost(types.PostID(10), types.PostID(1), "Post 1", false, "", map[string]string{}, 15, creator1),
-		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", false, "", map[string]string{}, 17, creator2),
-		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "", map[string]string{}, 15, creator2),
+		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", true, "desmos", map[string]string{}, 17, creator2),
+		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "desmos", map[string]string{}, 15, creator2),
 	}
 
 	tests := []struct {
@@ -245,33 +247,43 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	}{
 		{
 			name:     "Valid pagination works properly",
-			filter:   types.NewQueryPostsParams(1, 2, nil, sdk.NewInt(-1), nil),
+			filter:   types.DefaultQueryPostsParams(1, 2),
 			expected: types.Posts{posts[0], posts[1]},
 		},
 		{
 			name:     "Non existing page returns empty list",
-			filter:   types.NewQueryPostsParams(10, 1, nil, sdk.NewInt(-1), nil),
+			filter:   types.DefaultQueryPostsParams(10, 1),
 			expected: types.Posts{},
 		},
 		{
 			name:     "Invalid pagination returns all data",
-			filter:   types.NewQueryPostsParams(1, 15, nil, sdk.NewInt(-1), nil),
+			filter:   types.DefaultQueryPostsParams(1, 15),
 			expected: types.Posts{posts[0], posts[1], posts[2]},
 		},
 		{
-			name:     "Creator mather works properly",
-			filter:   types.NewQueryPostsParams(1, 5, nil, sdk.NewInt(-1), creator2),
-			expected: types.Posts{posts[1], posts[2]},
-		},
-		{
 			name:     "Parent ID matcher works properly",
-			filter:   types.NewQueryPostsParams(1, 5, &posts[0].ParentID, sdk.NewInt(-1), nil),
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), ParentID: &posts[0].ParentID},
 			expected: types.Posts{posts[0], posts[1]},
 		},
 		{
 			name:     "Creation time matcher works properly",
-			filter:   types.NewQueryPostsParams(1, 5, nil, sdk.NewInt(15), nil),
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(15)},
 			expected: types.Posts{posts[0], posts[2]},
+		},
+		{
+			name:     "Allows comments matcher works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), AllowsComments: &boolTrue},
+			expected: types.Posts{posts[1]},
+		},
+		{
+			name:     "Subspace mather works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Subspace: "desmos"},
+			expected: types.Posts{posts[1], posts[2]},
+		},
+		{
+			name:     "Creator mather works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Creator: creator2},
+			expected: types.Posts{posts[1], posts[2]},
 		},
 	}
 
@@ -379,7 +391,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.Reactions{},
 		},
 		{
-			name:           "Non existing like returned expError - Owner",
+			name:           "Non existing like returned expError - Creator",
 			storedLikes:    types.Reactions{},
 			postID:         types.PostID(15),
 			liker:          liker,

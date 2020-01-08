@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,7 +28,6 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd.AddCommand(client.GetCommands(
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
-		GetCmdQueryLike(cdc),
 	)...)
 	return postQueryCmd
 }
@@ -56,30 +56,6 @@ func GetCmdQueryPost(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdQueryLike queries a like
-func GetCmdQueryLike(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "like [id]",
-		Short: "like id",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			likeID := args[0]
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryLike, likeID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				fmt.Printf("Could not find like with id %s \n", likeID)
-				return nil
-			}
-
-			var out types.Reaction
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
-		},
-	}
-}
-
 func GetCmdQueryPosts(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "posts",
@@ -97,22 +73,16 @@ $ %s query posts posts --page=2 --limit=100
 		RunE: func(cmd *cobra.Command, args []string) error {
 			page := viper.GetInt(flagPage)
 			limit := viper.GetInt(flagNumLimit)
-			bech32CreatorAddress := viper.GetString(flagCreator)
+
 			parentID := viper.GetString(flagParentID)
 			creationTime := viper.GetInt(flagCreationTime)
+			allowsComments := viper.GetString(flagAllowsComments)
+			subspace := viper.GetString(flagSubspace)
+			bech32CreatorAddress := viper.GetString(flagCreator)
 
-			var creatorAddr sdk.AccAddress
+			params := types.DefaultQueryPostsParams(page, limit)
 
-			params := types.NewQueryPostsParams(page, limit, nil, sdk.NewInt(-1), creatorAddr)
-
-			if len(bech32CreatorAddress) != 0 {
-				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
-				if err != nil {
-					return err
-				}
-				params.Creator = depositorAddr
-			}
-
+			// ParentID
 			if len(parentID) > 0 {
 				parentID, err := types.ParsePostID(parentID)
 				if err != nil {
@@ -122,8 +92,32 @@ $ %s query posts posts --page=2 --limit=100
 				params.ParentID = &parentID
 			}
 
+			// CreationTime
 			if creationTime >= 0 {
 				params.CreationTime = sdk.NewInt(int64(creationTime))
+			}
+
+			// AllowsComments
+			if len(allowsComments) > 0 {
+				allowsCommentsBool, err := strconv.ParseBool(allowsComments)
+				if err != nil {
+					return err
+				}
+				params.AllowsComments = &allowsCommentsBool
+			}
+
+			// Subspace
+			if len(subspace) > 0 {
+				params.Subspace = subspace
+			}
+
+			// Creator
+			if len(bech32CreatorAddress) != 0 {
+				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
+				if err != nil {
+					return err
+				}
+				params.Creator = depositorAddr
 			}
 
 			bz, err := cdc.MarshalJSON(params)
@@ -156,9 +150,12 @@ $ %s query posts posts --page=2 --limit=100
 
 	cmd.Flags().Int(flagPage, 1, "pagination page of posts to to query for")
 	cmd.Flags().Int(flagNumLimit, 100, "pagination limit of posts to query for")
-	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
+
 	cmd.Flags().String(flagParentID, "", "(optional) filter the posts with given parent id")
 	cmd.Flags().Int(flagCreationTime, -1, "(optional) filter the posts created at block height")
+	cmd.Flags().String(flagAllowsComments, "", "(optional) filter the posts allowing comments")
+	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
+	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
 
 	return cmd
 }

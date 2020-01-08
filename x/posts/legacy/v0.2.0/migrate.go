@@ -50,7 +50,7 @@ func migratePosts(posts []v010posts.Post) []Post {
 }
 
 // migrateLikes takes a map of v0.1.0 Like objects and migrates them to a v0.2.0 map of Reaction objects.
-// Each Like is migrated to a Reaction object by preserving the associated PostID, Owner and Created values
+// Each Like is migrated to a Reaction object by preserving the associated PostID, Creator and Created values
 // but setting its value to "like".
 func migrateLikes(likes map[string][]v010posts.Like) map[string][]Reaction {
 	migratedLikes := make(map[string][]Reaction, len(likes))

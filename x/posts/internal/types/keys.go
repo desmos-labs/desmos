@@ -21,5 +21,4 @@ const (
 	QuerierRoute = ModuleName
 	QueryPost    = "post"
 	QueryPosts   = "posts"
-	QueryLike    = "like"
 )

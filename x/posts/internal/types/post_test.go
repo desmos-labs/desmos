@@ -166,11 +166,11 @@ func TestPost_String(t *testing.T) {
 		AllowsComments: true,
 		Subspace:       "desmos",
 		OptionalData:   map[string]string{},
-		Owner:          owner,
+		Creator:        owner,
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"subspace":"desmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"98","last_edited":"105","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
@@ -202,7 +202,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post creation block height: 0",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Owner: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
+			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
 			expError: "invalid post last edit block height: 9",
 		},
 		{
@@ -292,7 +292,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(10),
@@ -303,7 +303,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -318,7 +318,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -329,7 +329,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -344,7 +344,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -355,7 +355,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -370,7 +370,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -381,7 +381,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -396,7 +396,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -407,7 +407,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -422,7 +422,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -433,7 +433,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: false,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -448,7 +448,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos-1",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -459,7 +459,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos-2",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: false,
 		},
@@ -476,7 +476,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData: map[string]string{
 					"field": "value",
 				},
-				Owner: owner,
+				Creator: owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -489,7 +489,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData: map[string]string{
 					"field": "other-value",
 				},
-				Owner: owner,
+				Creator: owner,
 			},
 			expEquals: false,
 		},
@@ -504,7 +504,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -515,7 +515,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          otherOwner,
+				Creator:        otherOwner,
 			},
 			expEquals: false,
 		},
@@ -530,7 +530,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -541,7 +541,7 @@ func TestPost_Equals(t *testing.T) {
 				AllowsComments: true,
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
-				Owner:          owner,
+				Creator:        owner,
 			},
 			expEquals: true,
 		},

@@ -3,12 +3,23 @@ package rest
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/gorilla/mux"
+)
+
+// REST Variable names
+// nolint
+const (
+	RestParentID       = "parent_id"
+	RestCreationTime   = "creation_time"
+	RestAllowsComments = "allows_comments"
+	RestSubspace       = "subspace"
+	RestCreator        = "creator"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
@@ -48,26 +59,12 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		var (
-			creatorAddr  sdk.AccAddress
-			creationTime sdk.Int
-			parentID     *types.PostID
+			parentID       *types.PostID
+			creationTime   sdk.Int
+			allowsComments bool
+			subspace       string
+			creatorAddr    sdk.AccAddress
 		)
-
-		if v := r.URL.Query().Get(RestCreator); len(v) != 0 {
-			creatorAddr, err = sdk.AccAddressFromBech32(v)
-			if err != nil {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			}
-		}
-
-		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
-			creationTime, ok = sdk.NewIntFromString(v)
-			if !ok {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("cannot parse int: %s", v))
-				return
-			}
-		}
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
 			parsedParentID, err := types.ParsePostID(v)
@@ -78,7 +75,35 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 			parentID = &parsedParentID
 		}
 
-		params := types.NewQueryPostsParams(page, limit, parentID, creationTime, creatorAddr)
+		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
+			creationTime, ok = sdk.NewIntFromString(v)
+			if !ok {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("cannot parse int: %s", v))
+				return
+			}
+		}
+
+		if v := r.URL.Query().Get(RestAllowsComments); len(v) != 0 {
+			allowsComments, err = strconv.ParseBool(v)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+		}
+
+		if v := r.URL.Query().Get(RestSubspace); len(v) != 0 {
+			subspace = v
+		}
+
+		if v := r.URL.Query().Get(RestCreator); len(v) != 0 {
+			creatorAddr, err = sdk.AccAddressFromBech32(v)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+		}
+
+		params := types.NewQueryPostsParams(page, limit, parentID, creationTime, allowsComments, subspace, creatorAddr)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
