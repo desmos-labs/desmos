@@ -16,7 +16,7 @@ import (
 type Reaction struct {
 	Created sdk.Int        `json:"created"` // Block height at which the reaction was created
 	Owner   sdk.AccAddress `json:"owner"`   // User that has created the reaction
-	Value   string         `json:"value"`   // Value of the reaction
+	Value   string         `json:"value"`   // Reaction of the reaction
 }
 
 // NewReaction returns a new Reaction

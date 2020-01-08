@@ -27,28 +27,28 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		{
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Owner),
+				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Creator),
 			},
 			lastPostID: types.PostID(0),
-			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Owner),
+			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator),
 			expError:   "Post with id 1 already exists",
 		},
 		{
 			name:    "Post with new id is stored properly",
-			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Owner),
-			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Owner),
+			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator),
+			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Creator),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns expError",
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
 			expError: "Parent post with id 50 not found",
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Owner),
+				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Creator),
 			},
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner),
+			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
 			expError: "Post with id 50 does not allow comments",
 		},
 	}
@@ -88,7 +88,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.Created.String()),
-					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Owner.String()),
+					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
 				)
 				assert.Len(t, ctx.EventManager().Events(), 1)
 				assert.Contains(t, ctx.EventManager().Events(), creationEvent)
@@ -130,14 +130,14 @@ func Test_handleMsgEditPost(t *testing.T) {
 			name:        "Edit date before creation date",
 			storedPost:  &testPost,
 			blockHeight: testPost.Created.Int64() - 1,
-			msg:         types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Owner),
+			msg:         types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator),
 			expError:    "Edit date cannot be before creation date",
 		},
 		{
 			name:        "Valid request is handled properly",
 			storedPost:  &testPost,
 			blockHeight: testPost.Created.Int64() + 1,
-			msg:         types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Owner),
+			msg:         types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator),
 			expPost: types.Post{
 				PostID:         testPost.PostID,
 				ParentID:       testPost.ParentID,
@@ -147,7 +147,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				AllowsComments: testPost.AllowsComments,
 				Subspace:       testPost.Subspace,
 				OptionalData:   testPost.OptionalData,
-				Owner:          testPost.Owner,
+				Creator:        testPost.Creator,
 			},
 		},
 	}

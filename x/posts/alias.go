@@ -9,7 +9,7 @@ const (
 	ModuleName   = types.ModuleName
 	RouterKey    = types.RouterKey
 	StoreKey     = types.StoreKey
-	QuerierRoute = types.QueryRoute
+	QuerierRoute = types.QuerierRoute
 )
 
 var (
@@ -34,6 +34,9 @@ var (
 	NewMsgEditPost           = types.NewMsgEditPost
 	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
+
+	// Queries
+	NewQueryPostsParams = types.NewQueryPostsParams
 )
 
 type (
@@ -54,4 +57,7 @@ type (
 	MsgEditPost           = types.MsgEditPost
 	MsgAddPostReaction    = types.MsgAddPostReaction
 	MsgRemovePostReaction = types.MsgRemovePostReaction
+
+	// Queries
+	QueryPostsParams = types.QueryPostsParams
 )

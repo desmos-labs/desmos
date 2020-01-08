@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/client"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -106,6 +108,64 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 	}
 
 	return posts
+}
+
+// GetPostsFiltered retrieves posts filtered by a given set of params which
+// include pagination parameters along with the creator address, the parent id and the creation time.
+//
+// NOTE: If no filters are provided, all posts will be returned in paginated
+// form.
+func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
+	posts := k.GetPosts(ctx)
+	filteredPosts := make(types.Posts, 0, len(posts))
+
+	for _, p := range posts {
+		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
+
+		// match parent id if valid
+		if params.ParentID != nil {
+			matchParentID = params.ParentID.Equals(p.ParentID)
+		}
+
+		// match creation time if valid height
+		if params.CreationTime.GTE(sdk.ZeroInt()) {
+			matchCreationTime = params.CreationTime.Equal(p.Created)
+		}
+
+		// match allows comments
+		if params.AllowsComments != nil {
+			matchAllowsComments = *params.AllowsComments == p.AllowsComments
+		}
+
+		// match subspace if provided
+		if len(params.Subspace) > 0 {
+			matchSubspace = params.Subspace == p.Subspace
+		}
+
+		// match creator address (if supplied)
+		if len(params.Creator) > 0 {
+			matchCreator = params.Creator.Equals(p.Creator)
+		}
+
+		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
+			filteredPosts = append(filteredPosts, p)
+		}
+	}
+
+	// Default page
+	page := params.Page
+	if page == 0 {
+		page = 1
+	}
+
+	start, end := client.Paginate(len(filteredPosts), page, params.Limit, 100)
+	if start < 0 || end < 0 {
+		filteredPosts = types.Posts{}
+	} else {
+		filteredPosts = filteredPosts[start:end]
+	}
+
+	return filteredPosts
 }
 
 // -------------

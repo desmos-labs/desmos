@@ -39,10 +39,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	return postsTxCmd
 }
 
-var (
-	flagParentID = "parent-id"
-)
-
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
