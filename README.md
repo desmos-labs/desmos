@@ -28,8 +28,6 @@ desmosd gentx --amount 1000000000desmos --name {your name}
 desmosd collect-gentxs
 ```
 
-Edit `$HOME/.desmosd/config/genesis.json` and update the `bond_denom` from `stake` to `desmos`.
-
 ``` sh
 desmosd start
 ```
