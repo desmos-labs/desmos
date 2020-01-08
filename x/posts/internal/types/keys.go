@@ -6,10 +6,12 @@ const (
 	StoreKey   = ModuleName
 	QueryRoute = ModuleName
 
-	PostStorePrefix                 = "post:"
-	LastPostIDStoreKey              = "last_post_id"
-	PostCommentsStorePrefix         = "comments:"
-	PostReactionsStorePrefix        = "reactions:"
+	PostStorePrefix          = "post:"
+	LastPostIDStoreKey       = "last_post_id"
+	PostCommentsStorePrefix  = "comments:"
+	PostReactionsStorePrefix = "reactions:"
+
+	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10
 	MaxOptionalDataFieldValueLength = 200
 

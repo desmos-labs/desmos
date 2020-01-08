@@ -45,6 +45,24 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
+			name: "Very long message returns error",
+			msg: types.NewMsgCreatePost(
+				`
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
+				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
+				eu nisi porta, eu gravida purus faucibus. Duis commodo sagittis lacus, vitae luctus enim vulputate a. 
+				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
+				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
+				`,
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+			),
+			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
+		},
+		{
 			name:  "Empty subspace returns error",
 			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
