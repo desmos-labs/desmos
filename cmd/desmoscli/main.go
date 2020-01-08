@@ -4,6 +4,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/desmos-labs/desmos/app"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
@@ -13,7 +15,6 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	app "github.com/desmos-labs/desmos"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
@@ -22,6 +23,9 @@ import (
 
 func main() {
 	cobra.EnableCommandSorting = false
+
+	// Initialize the app overriding the various methods we want to customize
+	app.Init()
 
 	cdc := app.MakeCodec()
 

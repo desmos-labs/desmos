@@ -28,9 +28,9 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) PostQueryResponse {
 	// Get the likes
-	postLikes := keeper.GetPostLikes(ctx, post.PostID)
+	postLikes := keeper.GetPostReactions(ctx, post.PostID)
 	if postLikes == nil {
-		postLikes = types.Likes{}
+		postLikes = types.Reactions{}
 	}
 
 	// Get the children

@@ -1,7 +1,9 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -12,26 +14,36 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID          PostID         `json:"parent_id"`
-	Message           string         `json:"message"`
-	AllowsComments    bool           `json:"allows_comments"`
-	ExternalReference string         `json:"external_reference"`
-	Creator           sdk.AccAddress `json:"creator"`
+	ParentID       PostID            `json:"parent_id"`
+	Message        string            `json:"message"`
+	AllowsComments bool              `json:"allows_comments"`
+	Subspace       string            `json:"subspace"`
+	OptionalData   map[string]string `json:"optional_data,omitempty"`
+	Creator        sdk.AccAddress    `json:"creator"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, externalReference string, owner sdk.AccAddress) MsgCreatePost {
+func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
+	optionalData map[string]string, owner sdk.AccAddress) MsgCreatePost {
 	return MsgCreatePost{
-		Message:           message,
-		ParentID:          parentID,
-		AllowsComments:    allowsComments,
-		ExternalReference: externalReference,
-		Creator:           owner,
+		Message:        message,
+		ParentID:       parentID,
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Creator:        owner,
 	}
 }
 
+// MarshalJSON implements the custom marshaling as Amino does not support
+// the JSON signature omitempty
+func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
+	type msgCreatePost MsgCreatePost
+	return json.Marshal(msgCreatePost(msg))
+}
+
 // Route should return the name of the module
-func (msg MsgCreatePost) Route() string { return QuerierRoute }
+func (msg MsgCreatePost) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgCreatePost) Type() string { return ActionCreatePost }
@@ -41,8 +53,24 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Creator.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
-	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty")
+
+	if len(strings.TrimSpace(msg.Message)) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+	}
+
+	if len(strings.TrimSpace(msg.Subspace)) == 0 {
+		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
+	}
+
+	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
+		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
+	}
+
+	for key, value := range msg.OptionalData {
+		if len(value) > MaxOptionalDataFieldValueLength {
+			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
+			return sdk.ErrUnknownRequest(msg)
+		}
 	}
 	return nil
 }
@@ -78,7 +106,7 @@ func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress) MsgEditPost
 }
 
 // Route should return the name of the module
-func (msg MsgEditPost) Route() string { return QuerierRoute }
+func (msg MsgEditPost) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgEditPost) Type() string { return ActionEditPost }
@@ -88,12 +116,15 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
+
 	if msg.Editor.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
 	}
+
 	if len(msg.Message) == 0 {
 		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
+
 	return nil
 }
 
@@ -108,91 +139,108 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 }
 
 // ----------------------
-// --- MsgLikePost
+// --- MsgAddPostReaction
 // ----------------------
 
-// MsgLikePost defines the MsgLikePost message
-type MsgLikePost struct {
-	PostID PostID         `json:"post_id"` // Id of the post to like
-	Liker  sdk.AccAddress `json:"liker"`   // Address of the user liking the post
+// MsgAddPostReaction defines the message to be used to add a reaction to a post
+type MsgAddPostReaction struct {
+	PostID PostID         `json:"post_id"` // Id of the post to react to
+	Value  string         `json:"value"`   // Value of the reaction
+	User   sdk.AccAddress `json:"user"`    // Address of the user reacting to the post
 }
 
-// NewMsgLikePost is a constructor function for MsgLikePost
-func NewMsgLikePost(postID PostID, liker sdk.AccAddress) MsgLikePost {
-	return MsgLikePost{
+// NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
+func NewMsgAddPostReaction(postID PostID, value string, user sdk.AccAddress) MsgAddPostReaction {
+	return MsgAddPostReaction{
 		PostID: postID,
-		Liker:  liker,
+		User:   user,
+		Value:  value,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgLikePost) Route() string { return QuerierRoute }
+func (msg MsgAddPostReaction) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgLikePost) Type() string { return ActionLikePost }
+func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgLikePost) ValidateBasic() sdk.Error {
+func (msg MsgAddPostReaction) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
-	if msg.Liker.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
+
+	if msg.User.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
+
+	if len(strings.TrimSpace(msg.Value)) == 0 {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Reaction value cannot be empty nor blank"))
+	}
+
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgLikePost) GetSignBytes() []byte {
+func (msg MsgAddPostReaction) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgLikePost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Liker}
+func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.User}
 }
 
 // ----------------------
-// --- MsgUnlikePost
+// --- MsgRemovePostReaction
 // ----------------------
 
-// MsgUnlikePost defines the MsgUnlikePost message
-type MsgUnlikePost struct {
-	PostID PostID         `json:"post_id"` // Id of the post to unlike
-	Liker  sdk.AccAddress `json:"liker"`   // Address of the user that has previously liked the post
+// MsgRemovePostReaction defines the message to be used when wanting to remove
+// an existing reaction from a specific user having a specific value
+type MsgRemovePostReaction struct {
+	PostID   PostID         `json:"post_id"`  // Id of the post to unlike
+	User     sdk.AccAddress `json:"user"`     // Address of the user that has previously liked the post
+	Reaction string         `json:"reaction"` // Value of the reaction to be removed
 }
 
-// MsgUnlikePostPost is the constructor of MsgUnlikePost
-func NewMsgUnlikePost(postID PostID, liker sdk.AccAddress) MsgUnlikePost {
-	return MsgUnlikePost{
-		PostID: postID,
-		Liker:  liker,
+// MsgUnlikePostPost is the constructor of MsgRemovePostReaction
+func NewMsgRemovePostReaction(postID PostID, user sdk.AccAddress, reaction string) MsgRemovePostReaction {
+	return MsgRemovePostReaction{
+		PostID:   postID,
+		User:     user,
+		Reaction: reaction,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgUnlikePost) Route() string { return QuerierRoute }
+func (msg MsgRemovePostReaction) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgUnlikePost) Type() string { return ActionUnlikePost }
+func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgUnlikePost) ValidateBasic() sdk.Error {
+func (msg MsgRemovePostReaction) ValidateBasic() sdk.Error {
 	if !msg.PostID.Valid() {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
-	if msg.Liker.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid liker address: %s", msg.Liker))
+
+	if msg.User.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
+
+	if len(strings.TrimSpace(msg.Reaction)) == 0 {
+		return sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank")
+	}
+
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgUnlikePost) GetSignBytes() []byte {
+func (msg MsgRemovePostReaction) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgUnlikePost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Liker}
+func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.User}
 }

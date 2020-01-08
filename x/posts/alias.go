@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	ModuleName = types.ModuleName
-	RouterKey  = types.QuerierRoute
-	StoreKey   = types.StoreKey
+	ModuleName   = types.ModuleName
+	RouterKey    = types.RouterKey
+	StoreKey     = types.StoreKey
+	QuerierRoute = types.QueryRoute
 )
 
 var (
@@ -22,14 +23,17 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewLike = types.NewLike
-	NewPost = types.NewPost
+	NewReaction         = types.NewReaction
+	NewPost             = types.NewPost
+	ParsePostID         = types.ParsePostID
+	DefaultGenesisState = types.DefaultGenesisState
+	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
-	NewMsgCreatePost = types.NewMsgCreatePost
-	NewMsgEditPost   = types.NewMsgEditPost
-	NewMsgLikePost   = types.NewMsgLikePost
-	NewMsgUnlikePost = types.NewMsgUnlikePost
+	NewMsgCreatePost         = types.NewMsgCreatePost
+	NewMsgEditPost           = types.NewMsgEditPost
+	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
+	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
 
 	// Queries
 	NewQueryPostsParams = types.NewQueryPostsParams
@@ -40,18 +44,19 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	PostID  = types.PostID
-	PostIDs = types.PostIDs
-	Post    = types.Post
-	Posts   = types.Posts
-	Like    = types.Like
-	Likes   = types.Likes
+	PostID       = types.PostID
+	PostIDs      = types.PostIDs
+	Post         = types.Post
+	Posts        = types.Posts
+	Reaction     = types.Reaction
+	Reactions    = types.Reactions
+	GenesisState = types.GenesisState
 
 	// Msgs
-	MsgCreatePost = types.MsgCreatePost
-	MsgEditPost   = types.MsgEditPost
-	MsgLikePost   = types.MsgLikePost
-	MsgUnlikePost = types.MsgUnlikePost
+	MsgCreatePost         = types.MsgCreatePost
+	MsgEditPost           = types.MsgEditPost
+	MsgAddPostReaction    = types.MsgAddPostReaction
+	MsgRemovePostReaction = types.MsgRemovePostReaction
 
 	// Queries
 	QueryPostsParams = types.QueryPostsParams

@@ -45,11 +45,11 @@ func GetCmdQueryPost(cdc *codec.Codec) *cobra.Command {
 			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPost, postID)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("could not find post - %s \n", postID)
+				fmt.Printf("Could not find post with id %s \n", postID)
 				return nil
 			}
 
-			var out types.Post
+			var out types.PostQueryResponse
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -69,11 +69,11 @@ func GetCmdQueryLike(cdc *codec.Codec) *cobra.Command {
 			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryLike, likeID)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("could not find like - %s \n", likeID)
+				fmt.Printf("Could not find like with id %s \n", likeID)
 				return nil
 			}
 
-			var out types.Like
+			var out types.Reaction
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

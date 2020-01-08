@@ -15,10 +15,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgCreatePost(ctx, keeper, msg)
 		case types.MsgEditPost:
 			return handleMsgEditPost(ctx, keeper, msg)
-		case types.MsgLikePost:
-			return handleMsgLike(ctx, keeper, msg)
-		case types.MsgUnlikePost:
-			return handleMsgUnLike(ctx, keeper, msg)
+		case types.MsgAddPostReaction:
+			return handleMsgAddPostReaction(ctx, keeper, msg)
+		case types.MsgRemovePostReaction:
+			return handleMsgRemovePostReaction(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -33,7 +33,8 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
-		msg.ExternalReference,
+		msg.Subspace,
+		msg.OptionalData,
 		ctx.BlockHeight(),
 		msg.Creator,
 	)
@@ -109,7 +110,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 }
 
-func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Result {
+func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) sdk.Result {
 
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
@@ -117,32 +118,28 @@ func handleMsgLike(ctx sdk.Context, keeper Keeper, msg types.MsgLikePost) sdk.Re
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
-	// Check the liker date to make sure it's before the post creation date.
-	if post.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
-		return sdk.ErrUnknownRequest("Like cannot have a creation time before the post itself").Result()
-	}
-
-	// Create and store the liker
-	like := types.NewLike(ctx.BlockHeight(), msg.Liker)
-	if err := keeper.SaveLike(ctx, post.PostID, like); err != nil {
+	// Create and store the reaction
+	reaction := types.NewReaction(msg.Value, ctx.BlockHeight(), msg.User)
+	if err := keeper.SaveReaction(ctx, post.PostID, reaction); err != nil {
 		return err.Result()
 	}
 
 	// Emit the event
-	likeEvent := sdk.NewEvent(
-		types.EventTypePostLiked,
+	event := sdk.NewEvent(
+		types.EventTypeReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionOwner, msg.User.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionValue, msg.Value),
 	)
-	ctx.EventManager().EmitEvent(likeEvent)
+	ctx.EventManager().EmitEvent(event)
 
 	return sdk.Result{
-		Data:   []byte("Like added properly"),
-		Events: sdk.Events{likeEvent},
+		Data:   []byte("Reaction added properly"),
+		Events: sdk.Events{event},
 	}
 }
 
-func handleMsgUnLike(ctx sdk.Context, keeper Keeper, msg types.MsgUnlikePost) sdk.Result {
+func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) sdk.Result {
 
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
@@ -150,25 +147,22 @@ func handleMsgUnLike(ctx sdk.Context, keeper Keeper, msg types.MsgUnlikePost) sd
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
-	// Check the liker date to make sure it's before the post creation date.
-	if post.Created.GT(sdk.NewInt(ctx.BlockHeight())) {
-		return sdk.ErrUnknownRequest("Cannot unlike a post before it's created").Result()
-	}
-
-	if err := keeper.RemoveLike(ctx, post.PostID, msg.Liker); err != nil {
+	// Remove the reaction
+	if err := keeper.RemoveReaction(ctx, post.PostID, msg.User, msg.Reaction); err != nil {
 		return err.Result()
 	}
 
 	// Emit the event
-	unlikeEvent := sdk.NewEvent(
-		types.EventTypePostUnliked,
+	event := sdk.NewEvent(
+		types.EventTypePostReactionRemoved,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyLikeOwner, msg.Liker.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionOwner, msg.User.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionValue, msg.Reaction),
 	)
-	ctx.EventManager().EmitEvent(unlikeEvent)
+	ctx.EventManager().EmitEvent(event)
 
 	return sdk.Result{
-		Data:   []byte("Like removed properly"),
-		Events: sdk.Events{unlikeEvent},
+		Data:   []byte("Reaction removed properly"),
+		Events: sdk.Events{event},
 	}
 }

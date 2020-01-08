@@ -2,10 +2,10 @@ package types
 
 // Magpie module event types
 const (
-	EventTypePostCreated = "post_created"
-	EventTypePostEdited  = "post_edited"
-	EventTypePostLiked   = "post_liked"
-	EventTypePostUnliked = "post_unliked"
+	EventTypePostCreated         = "post_created"
+	EventTypePostEdited          = "post_edited"
+	EventTypeReactionAdded       = "post_reaction_added"
+	EventTypePostReactionRemoved = "post_reaction_removed"
 
 	// Post attributes
 	AttributeKeyPostID       = "post_id"
@@ -13,11 +13,10 @@ const (
 	AttributeKeyPostOwner    = "post_owner"
 	AttributeKeyPostEditTime = "post_edit_time"
 
-	// Like attributes
-	AttributeKeyLikeOwner = "liker"
+	// Reaction attributes
+	AttributeKeyReactionOwner = "user"
+	AttributeKeyReactionValue = "reaction"
 
 	// Generic attributes
-	AttributeKeyCreationTime  = "creation_time"
-	AttributeKeyNamespace     = "namespace"
-	AttributeKeyExternalOwner = "external_owner"
+	AttributeKeyCreationTime = "creation_time"
 )
