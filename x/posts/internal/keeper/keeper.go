@@ -171,6 +171,136 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 }
 
 // -------------
+// --- MediaPost
+// -------------
+
+// SaveMediaProvider add the given provider to the supported providers' list.
+func (k Keeper) SaveMediaProvider(ctx sdk.Context, provider string) {
+	store := ctx.KVStore(k.StoreKey)
+
+	mediaProviders := k.GetMediaProviders(ctx)
+
+	if updatedProviders, appended := mediaProviders.AppendIfMissing(provider); appended {
+		store.Set([]byte(types.MediaProvidersStoreKey), k.Cdc.MustMarshalBinaryBare(&updatedProviders))
+	}
+}
+
+// GetMediaProviders returns the lists of all supported media providers.
+func (k Keeper) GetMediaProviders(ctx sdk.Context) (providers types.Strings) {
+	store := ctx.KVStore(k.StoreKey)
+
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.MediaProvidersStoreKey)), &providers)
+
+	if len(providers) == 0 {
+		return types.Strings{}
+	}
+
+	return providers
+}
+
+// IsSupportedProvider returns true if all the providers of medias are supported ones, false otherwise.
+func (k Keeper) IsSupportedProvider(supportedProviders types.Strings, medias types.PostMedias) bool {
+	for _, media := range medias {
+		if !supportedProviders.Contains(media.Provider) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// SaveMediaMimeType add the given mimeType to the supported mimeTypes' list.
+func (k Keeper) SaveMediaMimeType(ctx sdk.Context, mimeType string) {
+	store := ctx.KVStore(k.StoreKey)
+
+	mediaMimeTypes := k.GetMediaMimeTypes(ctx)
+
+	if updatedMimeTypes, appended := mediaMimeTypes.AppendIfMissing(mimeType); appended {
+		store.Set([]byte(types.MediaMimeTypeStoreKey), k.Cdc.MustMarshalBinaryBare(&updatedMimeTypes))
+	}
+}
+
+// GetMediaMimeTypes returns the lists of all supported media mime types.
+func (k Keeper) GetMediaMimeTypes(ctx sdk.Context) (mimeTypes types.Strings) {
+	store := ctx.KVStore(k.StoreKey)
+
+	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.MediaMimeTypeStoreKey)), &mimeTypes)
+
+	if len(mimeTypes) == 0 {
+		return types.Strings{}
+	}
+
+	return mimeTypes
+}
+
+// IsSupportedMimeType returns true if all the mime types of medias are supported ones, false otherwise.
+func (k Keeper) IsSupportedMimeType(supportedMimeTypes types.Strings, medias types.PostMedias) bool {
+	for _, media := range medias {
+		if !supportedMimeTypes.Contains(media.Provider) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// getMediaPostStoreKey returns the MediaPostStorePrefix with MediaPost ID's appended
+func (k Keeper) getMediaPostStoreKey(postID types.PostID) []byte {
+	return []byte(types.MediaPostStorePrefix + postID.String())
+}
+
+// SaveMediaPost allows to save the given media post inside the current context.
+// It assumes that the media post is already been validated
+func (k Keeper) SaveMediaPost(ctx sdk.Context, mediaPost types.MediaPost) {
+	store := ctx.KVStore(k.StoreKey)
+
+	//Save the post inside mediaPost
+	k.SavePost(ctx, mediaPost.Post)
+
+	//Save the medias associated with mediaPost.Post ID
+	store.Set(k.getMediaPostStoreKey(mediaPost.Post.PostID), k.Cdc.MustMarshalBinaryBare(&mediaPost.Medias))
+}
+
+func (k Keeper) GetPostMedias(ctx sdk.Context, id types.PostID) (medias types.PostMedias, found bool) {
+	store := ctx.KVStore(k.StoreKey)
+
+	key := k.getMediaPostStoreKey(id)
+
+	if !store.Has(key) {
+		return types.PostMedias{}, false
+	}
+
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &medias)
+
+	return medias, true
+}
+
+/*
+func (k Keeper) SavePostMedia(ctx sdk.Context, mediaPost types.MediaPost) {
+	store := ctx.KVStore(k.StoreKey)
+
+	store.Set([]byte(types.MediaPostStorePrefix+mediaPost.Post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&mediaPost))
+
+	// Set the last post id only if the current post has a greater one than the last one stored
+	if mediaPost.Post.PostID > k.GetLastPostID(ctx) {
+		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&mediaPost.Post.PostID))
+	}
+
+	// Save the comments to the parent post, if it is valid
+	if mediaPost.Post.ParentID.Valid() {
+		parentCommentsKey := []byte(types.PostCommentsStorePrefix + mediaPost.Post.ParentID.String())
+
+		var commentsIDs types.PostIDs
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
+
+		if editedIDs, appended := commentsIDs.AppendIfMissing(mediaPost.Post.PostID); appended {
+			store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&editedIDs))
+		}
+	}
+}
+*/
+
+// -------------
 // --- Reactions
 // -------------
 

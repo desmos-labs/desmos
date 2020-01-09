@@ -13,6 +13,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case types.MsgCreatePost:
 			return handleMsgCreatePost(ctx, keeper, msg)
+		case types.MsgCreateMediaPost:
+			return handleMsgCreateMediaPost(ctx, keeper, msg)
 		case types.MsgEditPost:
 			return handleMsgEditPost(ctx, keeper, msg)
 		case types.MsgAddPostReaction:
@@ -71,6 +73,11 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
 		Events: sdk.Events{createEvent},
 	}
+}
+
+// handleMsgCreateMediaPost handles MsgEditsPost messages
+func handleMsgCreateMediaPost(ctx sdk.Context, keeper Keeper, msg types.MsgCreateMediaPost) sdk.Result {
+	return sdk.Result{}
 }
 
 // handleMsgEditPost handles MsgEditsPost messages

@@ -65,6 +65,8 @@ func (mp *MediaPost) UnmarshalJSON(data []byte) error {
 // --- PostMedia
 // ---------------
 
+type PostMedias []PostMedia
+
 type PostMedia struct {
 	Provider string `json:"provider"`
 	URI      string `json:"uri"`

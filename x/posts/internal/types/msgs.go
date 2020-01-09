@@ -86,6 +86,56 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 }
 
 // ----------------------
+// --- MsgCreateMediaPost
+// ----------------------
+
+// MsgCreateMediaPost defines a CreateMediaPost message
+type MsgCreateMediaPost struct {
+	MsgCreatePost MsgCreatePost `json:"msg_create_post"`
+	Medias        PostMedias    `json:"post_medias"`
+}
+
+// NewMsgCreateMediaPost is a constructor function for MsgCreateMediaPost
+func NewMsgCreateMediaPost(message string, parentID PostID, allowsComments bool, subspace string,
+	optionalData map[string]string, owner sdk.AccAddress, medias PostMedias) MsgCreateMediaPost {
+	return MsgCreateMediaPost{
+		MsgCreatePost: NewMsgCreatePost(message, parentID, allowsComments, subspace, optionalData, owner),
+		Medias:        medias,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgCreateMediaPost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgCreateMediaPost) Type() string { return ActionCreateMediaPost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgCreateMediaPost) ValidateBasic() sdk.Error {
+	if err := msg.MsgCreatePost.ValidateBasic(); err != nil {
+		return err
+	}
+
+	for _, media := range msg.Medias {
+		if err := media.Validate(); err != nil {
+			return sdk.ErrUnknownRequest(err.Error())
+		}
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgCreateMediaPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgCreateMediaPost) GetSigners() []sdk.AccAddress {
+	return msg.MsgCreatePost.GetSigners()
+}
+
+// ----------------------
 // --- MsgEditPost
 // ----------------------
 
