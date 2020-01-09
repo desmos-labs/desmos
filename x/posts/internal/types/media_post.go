@@ -98,7 +98,7 @@ func (pm PostMedia) Equals(other PostMedia) bool {
 //todo test this properly
 func ParseURI(uri string) error {
 	rEx := regexp.MustCompile(
-		`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+		`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
 
 	if !rEx.MatchString(uri) {
 		return fmt.Errorf("invalid uri provided")
