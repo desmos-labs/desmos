@@ -99,6 +99,11 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
+			name:  "Future creation date returns error",
+			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().Add(time.Hour)),
+			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
+		},
+		{
 			name: "Valid message does not return any error",
 			msg: types.NewMsgCreatePost(
 				"Message",
@@ -168,7 +173,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var editDate = time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
+var editDate = time.Date(2010, 1, 1, 15, 0, 0, 0, timeZone)
 var msgEditPost = types.NewMsgEditPost(types.PostID(94), "Edited post message", testOwner, editDate)
 
 func TestMsgEditPost_Route(t *testing.T) {
@@ -198,9 +203,24 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			error: sdk.ErrInvalidAddress("Invalid editor address: "),
 		},
 		{
-			name:  "Invalid message returns error",
+			name:  "Blank message returns error",
+			msg:   types.NewMsgEditPost(types.PostID(10), " ", testOwner, editDate),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+		},
+		{
+			name:  "Empty message returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner, editDate),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+		},
+		{
+			name:  "Empty edit date returns error",
+			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Time{}),
+			error: sdk.ErrUnknownRequest("Invalid edit date"),
+		},
+		{
+			name:  "Future edit date returns error",
+			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Now().Add(time.Hour)),
+			error: sdk.ErrUnknownRequest("Edit date cannot be in the future"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -219,7 +239,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2020-02-02T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2010-01-01T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
 	assert.Equal(t, expected, string(actual))
 }
 

@@ -255,6 +255,33 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
+			post: types.Post{
+				PostID:         types.PostID(1),
+				ParentID:       types.PostID(0),
+				Message:        "Message",
+				AllowsComments: true,
+				Subspace:       "desmos",
+				OptionalData:   map[string]string{},
+				Created:        time.Now().Add(time.Hour),
+				Creator:        owner,
+			},
+			expError: "post creation date cannot be in the future",
+		},
+		{
+			post: types.Post{
+				PostID:         types.PostID(1),
+				ParentID:       types.PostID(0),
+				Message:        "Message",
+				AllowsComments: true,
+				Subspace:       "desmos",
+				OptionalData:   map[string]string{},
+				Created:        time.Now(),
+				LastEdited:     time.Now().Add(time.Hour),
+				Creator:        owner,
+			},
+			expError: "post last edit date cannot be in the future",
+		},
+		{
 			post: types.NewPost(
 				types.PostID(1),
 				types.PostID(0),

@@ -80,6 +80,10 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid post creation date")
 	}
 
+	if msg.CreationDate.After(time.Now()) {
+		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
+	}
+
 	return nil
 }
 
@@ -131,12 +135,16 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
 	}
 
-	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	if len(strings.TrimSpace(msg.Message)) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
 	}
 
 	if msg.EditDate.IsZero() {
 		return sdk.ErrUnknownRequest("Invalid edit date")
+	}
+
+	if msg.EditDate.After(time.Now()) {
+		return sdk.ErrUnknownRequest("Edit date cannot be in the future")
 	}
 
 	return nil
