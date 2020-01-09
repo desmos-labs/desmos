@@ -34,8 +34,8 @@ func migratePosts(posts []v010posts.Post, genesisTime time.Time, blockInterval i
 			optionalData["external_reference"] = oldPost.ExternalReference
 		}
 
+		// Get the creation and last edit times in timestamps
 		created := genesisTime.Add(time.Second * time.Duration(oldPost.Created.Int64()*int64(blockInterval)))
-
 		lastEdited := time.Time{}
 		if !oldPost.LastEdited.IsZero() {
 			lastEdited = genesisTime.Add(time.Second * time.Duration(oldPost.LastEdited.Int64()*int64(blockInterval)))

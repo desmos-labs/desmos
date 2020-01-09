@@ -1,6 +1,7 @@
 package v0_2_0
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -30,6 +31,9 @@ func Migrate(appState genutil.AppMap, args ...interface{}) genutil.AppMap {
 		// Get genesis time and block interval
 		genesisTime := args[0].(time.Time)
 		blockInterval := args[1].(int)
+		if blockInterval == 0 {
+			panic(fmt.Errorf("block interval cannot be 0 when migrating to v0.2.0, please set it using the --block-interval flag"))
+		}
 
 		appState[v020posts.ModuleName] = v020Codec.MustMarshalJSON(
 			v020posts.Migrate(genDocs, genesisTime, blockInterval),
