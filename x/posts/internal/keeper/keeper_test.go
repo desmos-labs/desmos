@@ -88,20 +88,20 @@ func TestKeeper_SavePost(t *testing.T) {
 		{
 			name: "Post with ID greater ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 			},
 			lastPostID:           types.PostID(4),
-			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 			},
 			lastPostID:           types.PostID(4),
-			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
 		},
