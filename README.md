@@ -1,7 +1,7 @@
 # Desmos
 
 [![CircleCI](https://circleci.com/gh/desmos-labs/desmos/tree/master.svg?style=shield)](https://circleci.com/gh/desmos-labs/desmos/tree/master)
-[![codecov](https://codecov.io/gh/desmos-labs/desmos/branch/develop/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/develop)
+[![codecov](https://codecov.io/gh/desmos-labs/desmos/branch/master/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/desmos-labs/desmos)](https://goreportcard.com/report/github.com/desmos-labs/desmos)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/desmos-labs/desmos.svg)
 ![GitHub](https://img.shields.io/github/license/desmos-labs/desmos.svg)
