@@ -16,6 +16,7 @@ desmosd migrate v0.2.0 <path-to-genesis-file>
 #Version 0.1.1
 ## Bug fixes
 - Fixed double children IDs insertion upon post edit (#63)
+- Fixed a bug that made impossible to create a new post upon a post edit due to the `Post with ID X already exists` (#64)
 
 # Version 0.1.0
 ## Features
