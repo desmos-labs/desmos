@@ -186,12 +186,12 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 }
 
 // -----------
-// --- Post
+// --- TextPost
 // -----------
 
 func TestPost_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	post := types.Post{
+	post := types.TextPost{
 		PostID:         types.PostID(19),
 		ParentID:       types.PostID(1),
 		Message:        "My post message",
@@ -212,43 +212,43 @@ func TestPost_String(t *testing.T) {
 func TestPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	tests := []struct {
-		post     types.Post
+		post     types.TextPost
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewTextPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 10, owner),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, nil),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, nil),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, 10, owner),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, 10, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, 10, owner),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 0, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 0, owner),
 			expError: "invalid post creation block height: 0",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
+			post:     types.TextPost{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: sdk.NewInt(10), LastEdited: sdk.NewInt(9)},
 			expError: "invalid post last edit block height: 9",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, 1, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, 1, owner),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, 1, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, 1, owner),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post: types.NewPost(
+			post: types.NewTextPost(
 				types.PostID(1),
 				types.PostID(0),
 				"Message",
@@ -273,7 +273,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
 		{
-			post: types.NewPost(
+			post: types.NewTextPost(
 				types.PostID(1),
 				types.PostID(0),
 				"Message",
@@ -288,7 +288,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 1, owner),
+			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, 1, owner),
 			expError: "",
 		},
 	}
@@ -311,13 +311,13 @@ func TestPost_Equals(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		first     types.Post
-		second    types.Post
+		first     types.TextPost
+		second    types.TextPost
 		expEquals bool
 	}{
 		{
 			name: "Different post ID",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -328,7 +328,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(10),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -343,7 +343,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different parent ID",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -354,7 +354,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(10),
 				Message:        "My post message",
@@ -369,7 +369,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different message",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -380,7 +380,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "Another post message",
@@ -395,7 +395,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different creation time",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -406,7 +406,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -421,7 +421,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different last edited",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -432,7 +432,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -447,7 +447,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different allows comments",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -458,7 +458,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -473,7 +473,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different subspace",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -484,7 +484,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -499,7 +499,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different optional data",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -512,7 +512,7 @@ func TestPost_Equals(t *testing.T) {
 				},
 				Creator: owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -529,7 +529,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different owner",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -540,7 +540,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -555,7 +555,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Same data",
-			first: types.Post{
+			first: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -566,7 +566,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			},
-			second: types.Post{
+			second: types.TextPost{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -608,35 +608,35 @@ func TestPosts_Equals(t *testing.T) {
 		{
 			name: "List of different lengths are not equals",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists but in different orders",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists are equals",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
-				types.Post{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
+				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
 			expEquals: true,
 		},
@@ -654,12 +654,12 @@ func TestPosts_String(t *testing.T) {
 	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 	posts := types.Posts{
-		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, 0, owner1),
-		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, 0, owner2),
+		types.NewTextPost(types.PostID(1), types.PostID(10), "TextPost 1", false, "external-ref-1", map[string]string{}, 0, owner1),
+		types.NewTextPost(types.PostID(2), types.PostID(10), "TextPost 2", false, "external-ref-1", map[string]string{}, 0, owner2),
 	}
 
 	expected := `ID - [Creator] Message
-1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] TextPost 1
+2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] TextPost 2`
 	assert.Equal(t, expected, posts.String())
 }

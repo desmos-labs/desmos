@@ -50,57 +50,57 @@ func TestKeeper_SavePost(t *testing.T) {
 		name                 string
 		existingPosts        types.Posts
 		lastPostID           types.PostID
-		newPost              types.Post
+		newPost              types.TextPost
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
 	}{
 		{
-			name: "Post with ID already present",
+			name: "TextPost with ID already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "TextPost", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(1),
-			newPost:              types.NewPost(types.PostID(1), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewTextPost(types.PostID(1), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 		},
 		{
-			name: "Post which ID is not already present",
+			name: "TextPost which ID is not already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "TextPost", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(1),
-			newPost:              types.NewPost(types.PostID(15), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewTextPost(types.PostID(15), types.PostID(0), "New post", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
 		},
 		{
-			name: "Post with valid parent ID",
-			existingPosts: []types.Post{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, testPostOwner),
+			name: "TextPost with valid parent ID",
+			existingPosts: []types.TextPost{
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(1),
-			newPost:              types.NewPost(types.PostID(15), types.PostID(1), "Comment", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewTextPost(types.PostID(15), types.PostID(1), "Comment", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
 		},
 		{
-			name: "Post with ID greater ID than Last ID stored",
+			name: "TextPost with ID greater ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4), types.PostID(0), "Post lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(4), types.PostID(0), "TextPost lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(4),
-			newPost:              types.NewPost(types.PostID(5), types.PostID(0), "New post greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewTextPost(types.PostID(5), types.PostID(0), "New post greater", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 		},
 		{
-			name: "Post with ID lesser ID than Last ID stored",
+			name: "TextPost with ID lesser ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4), types.PostID(0), "Post ID greater", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(4), types.PostID(0), "TextPost ID greater", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(4),
-			newPost:              types.NewPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
+			newPost:              types.NewTextPost(types.PostID(3), types.PostID(0), "New post ID lesser", false, "desmos", map[string]string{}, 0, testPostOwner),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
 		},
@@ -121,7 +121,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			k.SavePost(ctx, test.newPost)
 
 			// Check the stored post
-			var expected types.Post
+			var expected types.TextPost
 			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.PostID.String())), &expected)
 			assert.True(t, expected.Equals(test.newPost))
 
@@ -143,18 +143,18 @@ func TestKeeper_GetPost(t *testing.T) {
 		name       string
 		postExists bool
 		ID         types.PostID
-		expected   types.Post
+		expected   types.TextPost
 	}{
 		{
 			name:     "Non existent post is not found",
 			ID:       types.PostID(123),
-			expected: types.Post{},
+			expected: types.TextPost{},
 		},
 		{
 			name:       "Existing post is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
-			expected:   types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+			expected:   types.NewTextPost(types.PostID(45), types.PostID(0), "TextPost", false, "desmos", map[string]string{}, 0, testPostOwner),
 		},
 	}
 
@@ -192,11 +192,11 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
-				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewTextPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewTextPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewTextPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewTextPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewTextPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55), types.PostID(78)},
@@ -234,8 +234,8 @@ func TestKeeper_GetPosts(t *testing.T) {
 		{
 			name: "Existing list is returned properly",
 			posts: types.Posts{
-				types.NewPost(types.PostID(13), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
-				types.NewPost(types.PostID(76), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(13), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(76), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 		},
 	}
@@ -263,9 +263,9 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	var creator2, _ = sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
 
 	posts := types.Posts{
-		types.NewPost(types.PostID(10), types.PostID(1), "Post 1", false, "", map[string]string{}, 15, creator1),
-		types.NewPost(types.PostID(11), types.PostID(1), "Post 2", true, "desmos", map[string]string{}, 17, creator2),
-		types.NewPost(types.PostID(12), types.PostID(2), "Post 3", false, "desmos", map[string]string{}, 15, creator2),
+		types.NewTextPost(types.PostID(10), types.PostID(1), "TextPost 1", false, "", map[string]string{}, 15, creator1),
+		types.NewTextPost(types.PostID(11), types.PostID(1), "TextPost 2", true, "desmos", map[string]string{}, 17, creator2),
+		types.NewTextPost(types.PostID(12), types.PostID(2), "TextPost 3", false, "desmos", map[string]string{}, 15, creator2),
 	}
 
 	tests := []struct {

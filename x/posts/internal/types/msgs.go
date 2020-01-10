@@ -8,12 +8,34 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+type MsgCreatePost interface {
+	// Return the message type.
+	// Must be alphanumeric or empty.
+	Route() string
+
+	// Returns a human-readable string for the message, intended for utilization
+	// within tags
+	Type() string
+
+	// ValidateBasic does a simple validation check that
+	// doesn't require access to any other information.
+	ValidateBasic() sdk.Error
+
+	// Get the canonical byte representation of the Msg.
+	GetSignBytes() []byte
+
+	// Signers returns the addrs of signers that must sign.
+	// CONTRACT: All signatures must be present to be valid.
+	// CONTRACT: Returns addrs in some deterministic order.
+	GetSigners() []sdk.AccAddress
+}
+
 // ----------------------
-// --- MsgCreatePost
+// --- MsgCreateTextPost
 // ----------------------
 
-// MsgCreatePost defines a CreatePost message
-type MsgCreatePost struct {
+// MsgCreateTextPost defines a CreatePost message
+type MsgCreateTextPost struct {
 	ParentID       PostID            `json:"parent_id"`
 	Message        string            `json:"message"`
 	AllowsComments bool              `json:"allows_comments"`
@@ -24,8 +46,8 @@ type MsgCreatePost struct {
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress) MsgCreatePost {
-	return MsgCreatePost{
+	optionalData map[string]string, owner sdk.AccAddress) MsgCreateTextPost {
+	return MsgCreateTextPost{
 		Message:        message,
 		ParentID:       parentID,
 		AllowsComments: allowsComments,
@@ -37,38 +59,38 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 
 // MarshalJSON implements the custom marshaling as Amino does not support
 // the JSON signature omitempty
-func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
-	type msgCreatePost MsgCreatePost
+func (msg MsgCreateTextPost) MarshalJSON() ([]byte, error) {
+	type msgCreatePost MsgCreateTextPost
 	return json.Marshal(msgCreatePost(msg))
 }
 
 // Route should return the name of the module
-func (msg MsgCreatePost) Route() string { return RouterKey }
+func (msg MsgCreateTextPost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreatePost) Type() string { return ActionCreatePost }
+func (msg MsgCreateTextPost) Type() string { return ActionCreatePost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreatePost) ValidateBasic() sdk.Error {
+func (msg MsgCreateTextPost) ValidateBasic() sdk.Error {
 	if msg.Creator.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+		return sdk.ErrUnknownRequest("TextPost message cannot be empty nor blank")
 	}
 
 	if len(strings.TrimSpace(msg.Subspace)) == 0 {
-		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
+		return sdk.ErrUnknownRequest("TextPost subspace cannot be empty nor blank")
 	}
 
 	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
-		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
+		return sdk.ErrUnknownRequest("TextPost optional data cannot be longer than 10 fields")
 	}
 
 	for key, value := range msg.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
-			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
+			msg := fmt.Sprintf("TextPost optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
 			return sdk.ErrUnknownRequest(msg)
 		}
 	}
@@ -76,12 +98,12 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreatePost) GetSignBytes() []byte {
+func (msg MsgCreateTextPost) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
+func (msg MsgCreateTextPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
 
@@ -91,8 +113,8 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 
 // MsgCreateMediaPost defines a CreateMediaPost message
 type MsgCreateMediaPost struct {
-	MsgCreatePost MsgCreatePost `json:"msg_create_post"`
-	Medias        PostMedias    `json:"post_medias"`
+	MsgCreatePost MsgCreateTextPost `json:"msg_create_post"`
+	Medias        PostMedias        `json:"post_medias"`
 }
 
 // NewMsgCreateMediaPost is a constructor function for MsgCreateMediaPost
@@ -172,7 +194,7 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	}
 
 	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty")
+		return sdk.ErrUnknownRequest("TextPost message cannot be empty")
 	}
 
 	return nil

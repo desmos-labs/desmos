@@ -42,10 +42,10 @@ func testCodec() *codec.Codec {
 }
 
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var testPost = types.NewPost(
+var testPost = types.NewTextPost(
 	types.PostID(3257),
 	types.PostID(0),
-	"Post message",
+	"TextPost message",
 	false,
 	"desmos",
 	map[string]string{},

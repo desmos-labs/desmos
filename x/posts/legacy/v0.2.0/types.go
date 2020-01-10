@@ -15,17 +15,17 @@ type GenesisState struct {
 // PostID represents a unique post id
 type PostID uint64
 
-// Post is a struct of a post
+// TextPost is a struct of a post
 type Post struct {
 	PostID         PostID            `json:"id"`                      // Unique id
-	ParentID       PostID            `json:"parent_id"`               // Post of which this one is a comment
+	ParentID       PostID            `json:"parent_id"`               // TextPost of which this one is a comment
 	Message        string            `json:"message"`                 // Message contained inside the post
 	Created        sdk.Int           `json:"created"`                 // Block height at which the post has been created
 	LastEdited     sdk.Int           `json:"last_edited"`             // Block height at which the post has been edited the last time
 	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
 	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
-	Owner          sdk.AccAddress    `json:"owner"`                   // Creator of the Post
+	Owner          sdk.AccAddress    `json:"owner"`                   // Creator of the TextPost
 }
 
 // Reaction is a struct of a user reaction to a post

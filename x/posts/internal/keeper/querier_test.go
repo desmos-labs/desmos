@@ -28,40 +28,40 @@ func Test_queryPost(t *testing.T) {
 			expError: sdk.ErrUnknownRequest("Invalid post id: "),
 		},
 		{
-			name:     "Post not found returns error",
+			name:     "TextPost not found returns error",
 			path:     []string{types.QueryPost, "1"},
-			expError: sdk.ErrUnknownRequest("Post with id 1 not found"),
+			expError: sdk.ErrUnknownRequest("TextPost with id 1 not found"),
 		},
 		{
-			name: "Post without likes is returned properly",
+			name: "TextPost without likes is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.Reactions{},
 				types.PostIDs{types.PostID(2)},
 			),
 		},
 		{
-			name: "Post without children is returned properly",
+			name: "TextPost without children is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 			},
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.Reactions{},
 				types.PostIDs{},
 			),
 		},
 		{
-			name: "Post with all data is returned properly",
+			name: "TextPost with all data is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			storedReactions: map[types.PostID]types.Reactions{
 				types.PostID(1): {
@@ -71,7 +71,7 @@ func Test_queryPost(t *testing.T) {
 			},
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.Reactions{
 					types.NewReaction("Like", 0, creator),
 					types.NewReaction("Like", 10, otherCreator),
@@ -122,18 +122,18 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Empty params returns all",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			params: types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),
 				types.NewPostResponse(
-					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+					types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 					types.Reactions{},
 					types.PostIDs{},
 				),
@@ -142,13 +142,13 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Non empty params return proper posts",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
 			},
 			params: types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),

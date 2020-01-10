@@ -6,9 +6,6 @@ const (
 	StoreKey   = ModuleName
 
 	PostStorePrefix                 = "post:"
-	MediaPostStorePrefix            = "media_post:"
-	MediaProvidersStoreKey          = "media_providers"
-	MediaMimeTypeStoreKey           = "media_mime_type"
 	LastPostIDStoreKey              = "last_post_id"
 	PostCommentsStorePrefix         = "comments:"
 	PostReactionsStorePrefix        = "reactions:"

@@ -3,22 +3,77 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"regexp"
 	"strings"
 )
 
 type MediaPost struct {
-	Post   `json:"post"`
-	Medias []PostMedia `json:"medias"`
+	TextPost `json:"post"`
+	Medias   PostMedias `json:"medias"`
 }
 
+func NewMediaPost(post TextPost, medias PostMedias) MediaPost {
+	return MediaPost{
+		TextPost: post,
+		Medias:   medias,
+	}
+}
+
+// String implements fmt.Stringer
+func (mp MediaPost) String() string {
+	bytes, err := json.Marshal(&mp)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+// GetID implements Post GetID
+func (mp MediaPost) GetID() PostID {
+	return mp.PostID
+}
+
+// GetParentID implements Post GetParentID
+func (mp MediaPost) GetParentID() PostID {
+	return mp.ParentID
+}
+
+func (mp MediaPost) SetMessage(message string) Post {
+	mp.Message = message
+	return mp
+}
+
+func (mp MediaPost) GetMessage() string {
+	return mp.Message
+}
+
+func (mp MediaPost) CreationTime() sdk.Int {
+	return mp.Created
+}
+
+func (mp MediaPost) SetEditTime(time sdk.Int) Post {
+	mp.LastEdited = time
+	return mp
+}
+
+func (mp MediaPost) EditTime() sdk.Int {
+	return mp.LastEdited
+}
+
+func (mp MediaPost) CanComment() bool {
+	return mp.AllowsComments
+}
+
+// Validate implements Post Validate
 func (mp MediaPost) Validate() error {
-	if err := mp.Post.Validate(); err != nil {
+	if err := mp.TextPost.Validate(); err != nil {
 		return err
 	}
 
-	for _, post := range mp.Medias {
-		if err := post.Validate(); err != nil {
+	for _, media := range mp.Medias {
+		if err := media.Validate(); err != nil {
 			return err
 		}
 	}
@@ -26,21 +81,30 @@ func (mp MediaPost) Validate() error {
 	return nil
 }
 
-func (mp MediaPost) Equals(other MediaPost) bool {
-	if !mp.Post.Equals(other.Post) {
+func (mp MediaPost) Equals(other Post) bool {
+	// Cast and delegate
+	if otherMp, ok := other.(MediaPost); ok {
+		return checkMediaPostEquals(mp, otherMp)
+	} else {
+		return false
+	}
+}
+
+// Equals implements Post Equals
+func checkMediaPostEquals(first MediaPost, second MediaPost) bool {
+	if !first.TextPost.Equals(second.TextPost) {
 		return false
 	}
 
-	if len(mp.Medias) != len(other.Medias) {
+	if len(first.Medias) != len(second.Medias) {
 		return false
 	}
 
-	for index, media := range mp.Medias {
-		if media != other.Medias[index] {
+	for index, media := range first.Medias {
+		if media != second.Medias[index] {
 			return false
 		}
 	}
-
 	return true
 }
 

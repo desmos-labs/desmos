@@ -30,13 +30,13 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 // using the given Context and Keeper.
 func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.PostQueryResponse {
 	// Get the likes
-	postLikes := keeper.GetPostReactions(ctx, post.PostID)
+	postLikes := keeper.GetPostReactions(ctx, post.GetID())
 	if postLikes == nil {
 		postLikes = types.Reactions{}
 	}
 
 	// Get the children
-	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
+	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.GetID())
 	if childrenIDs == nil {
 		childrenIDs = types.PostIDs{}
 	}
@@ -54,7 +54,7 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 
 	post, found := keeper.GetPost(ctx, id)
 	if !found {
-		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", id))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s not found", id))
 	}
 
 	postResponse := getPostResponse(ctx, keeper, post)

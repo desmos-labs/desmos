@@ -17,11 +17,11 @@ func Migrate(oldGenState v010posts.GenesisState) GenesisState {
 	}
 }
 
-// migratePosts takes a slice of v0.1.0 Post object and migrates them to v0.2.0 Post
+// migratePosts takes a slice of v0.1.0 TextPost object and migrates them to v0.2.0 TextPost
 // The following changes are performed:
-// - Each external_reference Post value (if not empty or blank) is put inside the optional_data map using
+// - Each external_reference TextPost value (if not empty or blank) is put inside the optional_data map using
 //   external_reference as the value's associated key
-// - Post subspaces are left empty so that they can be properly set after the migration has been completed
+// - TextPost subspaces are left empty so that they can be properly set after the migration has been completed
 func migratePosts(posts []v010posts.Post) []Post {
 	migratedPosts := make([]Post, len(posts))
 

@@ -23,7 +23,7 @@ func (elements Strings) Contains(element string) bool {
 	return false
 }
 
-// Equals returns true if elements contain the same data of the other slice, in the same order.
+// checkPostsEqual returns true if elements contain the same data of the other slice, in the same order.
 func (elements Strings) Equals(other Strings) bool {
 	if len(elements) != len(other) {
 		return false

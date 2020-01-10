@@ -20,23 +20,23 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		name        string
 		storedPosts types.Posts
 		lastPostID  types.PostID
-		msg         types.MsgCreatePost
-		expPost     types.Post
+		msg         types.MsgCreateTextPost
+		expPost     types.TextPost
 		expError    string
 	}{
 		{
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Creator),
+				types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Creator),
 			},
 			lastPostID: types.PostID(0),
 			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator),
-			expError:   "Post with id 1 already exists",
+			expError:   "TextPost with id 1 already exists",
 		},
 		{
-			name:    "Post with new id is stored properly",
+			name:    "TextPost with new id is stored properly",
 			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator),
-			expPost: types.NewPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Creator),
+			expPost: types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Creator),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns expError",
@@ -46,10 +46,10 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Creator),
+				types.NewTextPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Creator),
 			},
 			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
-			expError: "Post with id 50 does not allow comments",
+			expError: "TextPost with id 50 does not allow comments",
 		},
 	}
 
@@ -75,7 +75,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				assert.True(t, res.IsOK())
 
 				// Check the post
-				var stored types.Post
+				var stored types.TextPost
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
 				assert.True(t, stored.Equals(test.expPost))
 
@@ -108,17 +108,17 @@ func Test_handleMsgEditPost(t *testing.T) {
 	editor, _ := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	testData := []struct {
 		name        string
-		storedPost  *types.Post
+		storedPost  *types.TextPost
 		msg         types.MsgEditPost
 		blockHeight int64
 		expError    string
-		expPost     types.Post
+		expPost     types.TextPost
 	}{
 		{
-			name:       "Post not found",
+			name:       "TextPost not found",
 			storedPost: nil,
 			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner),
-			expError:   "Post with id 0 not found",
+			expError:   "TextPost with id 0 not found",
 		},
 		{
 			name:       "Invalid editor",
@@ -138,7 +138,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 			storedPost:  &testPost,
 			blockHeight: testPost.Created.Int64() + 1,
 			msg:         types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator),
-			expPost: types.Post{
+			expPost: types.TextPost{
 				PostID:         testPost.PostID,
 				ParentID:       testPost.ParentID,
 				Message:        "Edited message",
@@ -180,7 +180,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyPostEditTime, strconv.FormatInt(ctx.BlockHeight(), 10)),
 				))
 
-				var stored types.Post
+				var stored types.TextPost
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &stored)
 				assert.True(t, test.expPost.Equals(stored))
 			}
@@ -200,14 +200,14 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	tests := []struct {
 		name         string
-		existingPost *types.Post
+		existingPost *types.TextPost
 		msg          types.MsgAddPostReaction
 		error        string
 	}{
 		{
-			name:  "Post not found",
+			name:  "TextPost not found",
 			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", user),
-			error: "Post with id 0 not found",
+			error: "TextPost with id 0 not found",
 		},
 		{
 			name:         "Valid message works properly",
@@ -246,7 +246,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Value),
 				))
 
-				var storedPost types.Post
+				var storedPost types.TextPost
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
@@ -269,15 +269,15 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	reaction := types.NewReaction("like", testPost.Created.Int64()+1, user)
 	tests := []struct {
 		name             string
-		existingPost     *types.Post
+		existingPost     *types.TextPost
 		existingReaction *types.Reaction
 		msg              types.MsgRemovePostReaction
 		error            string
 	}{
 		{
-			name:  "Post not found",
+			name:  "TextPost not found",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "like"),
-			error: "Post with id 0 not found",
+			error: "TextPost with id 0 not found",
 		},
 		{
 			name:         "Reaction not found",
@@ -330,7 +330,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Reaction),
 				))
 
-				var storedPost types.Post
+				var storedPost types.TextPost
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 

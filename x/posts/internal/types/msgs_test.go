@@ -9,7 +9,7 @@ import (
 )
 
 // ----------------------
-// --- MsgCreatePost
+// --- MsgCreateTextPost
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -31,7 +31,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
 	tests := []struct {
 		name  string
-		msg   types.MsgCreatePost
+		msg   types.MsgCreateTextPost
 		error sdk.Error
 	}{
 		{
@@ -42,12 +42,12 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Empty message returns error",
 			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+			error: sdk.ErrUnknownRequest("TextPost message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty subspace returns error",
 			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
-			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
+			error: sdk.ErrUnknownRequest("TextPost subspace cannot be empty nor blank"),
 		},
 		{
 			name: "More than 10 optional data returns error",
@@ -71,7 +71,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 			),
-			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
+			error: sdk.ErrUnknownRequest("TextPost optional data cannot be longer than 10 fields"),
 		},
 		{
 			name: "Optional data longer than 200 characters returns error",
@@ -85,7 +85,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 			),
-			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
+			error: sdk.ErrUnknownRequest("TextPost optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
 			name: "Valid message does not return any error",
@@ -123,18 +123,18 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	tests := []struct {
 		name        string
-		msg         types.MsgCreatePost
+		msg         types.MsgCreateTextPost
 		expSignJSON string
 	}{
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
 		},
 	}
 
@@ -187,7 +187,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid message returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
+			error: sdk.ErrUnknownRequest("TextPost message cannot be empty"),
 		},
 		{
 			name:  "Valid message returns no error",
