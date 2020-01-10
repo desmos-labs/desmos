@@ -229,9 +229,9 @@ func (p TextPost) Equals(other Post) bool {
 	// Cast and delegate
 	if otherPost, ok := other.(TextPost); ok {
 		return checkPostsEqual(p, otherPost)
-	} else {
-		return false
 	}
+
+	return false
 }
 
 func checkPostsEqual(first TextPost, second TextPost) bool {

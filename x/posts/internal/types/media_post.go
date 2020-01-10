@@ -3,9 +3,10 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"regexp"
 	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type MediaPost struct {
@@ -85,9 +86,9 @@ func (mp MediaPost) Equals(other Post) bool {
 	// Cast and delegate
 	if otherMp, ok := other.(MediaPost); ok {
 		return checkMediaPostEquals(mp, otherMp)
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // Equals implements Post Equals
