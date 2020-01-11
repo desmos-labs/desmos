@@ -285,6 +285,25 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				types.PostID(1),
 				types.PostID(0),
+				`
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
+				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
+				eu nisi porta, eu gravida purus faucibus. Duis commodo sagittis lacus, vitae luctus enim vulputate a. 
+				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
+				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
+				`,
+				true,
+				"desmos",
+				map[string]string{},
+				1,
+				owner,
+			),
+			expError: "post message cannot be longer than 500 characters",
+		},
+		{
+			post: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
 				"Message",
 				true,
 				"desmos",

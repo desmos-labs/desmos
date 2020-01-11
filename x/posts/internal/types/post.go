@@ -160,6 +160,10 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message must be non empty and non blank")
 	}
 
+	if len(p.Message) > MaxPostMessageLength {
+		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
+	}
+
 	if len(strings.TrimSpace(p.Subspace)) == 0 {
 		return fmt.Errorf("post subspace must be non empty and non blank")
 	}
@@ -181,12 +185,15 @@ func (p Post) Validate() error {
 	}
 
 	if len(p.OptionalData) > MaxOptionalDataFieldsNumber {
-		return fmt.Errorf("post optional data cannot contain more than 10 key-value pairs")
+		return fmt.Errorf("post optional data cannot contain more than %d key-value pairs", MaxOptionalDataFieldsNumber)
 	}
 
 	for key, value := range p.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
-			return fmt.Errorf("post optional data values cannot exceed 200 characters. %s of post with id %s is longer than this", key, p.PostID)
+			return fmt.Errorf(
+				"post optional data values cannot exceed %d characters. %s of post with id %s is longer than this",
+				MaxOptionalDataFieldValueLength, key, p.PostID,
+			)
 		}
 	}
 
