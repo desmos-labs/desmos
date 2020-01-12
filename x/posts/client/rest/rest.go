@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
@@ -20,6 +22,7 @@ type CreatePostReq struct {
 	AllowsComments bool              `json:"allows_comments"`
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data"`
+	CreationTime   time.Time         `json:"creation_time"`
 }
 
 // AddReactionReq defines the properties of a reaction adding request's body.

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -112,8 +113,8 @@ type Post struct {
 	PostID         PostID            `json:"id"`                      // Unique id
 	ParentID       PostID            `json:"parent_id"`               // Post of which this one is a comment
 	Message        string            `json:"message"`                 // Message contained inside the post
-	Created        sdk.Int           `json:"created"`                 // Block height at which the post has been created
-	LastEdited     sdk.Int           `json:"last_edited"`             // Block height at which the post has been edited the last time
+	Created        time.Time         `json:"created"`                 // RFC3339 date at which the post has been created
+	LastEdited     time.Time         `json:"last_edited"`             // RFC3339 date at which the post has been edited the last time
 	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
 	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
@@ -121,13 +122,13 @@ type Post struct {
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created int64, creator sdk.AccAddress) Post {
+	created time.Time, creator sdk.AccAddress) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
 		Message:        message,
-		Created:        sdk.NewInt(created),
-		LastEdited:     sdk.ZeroInt(),
+		Created:        created,
+		LastEdited:     time.Time{},
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
@@ -159,31 +160,47 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message must be non empty and non blank")
 	}
 
+	if len(p.Message) > MaxPostMessageLength {
+		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
+	}
+
 	if len(strings.TrimSpace(p.Subspace)) == 0 {
 		return fmt.Errorf("post subspace must be non empty and non blank")
 	}
 
-	if sdk.ZeroInt().Equal(p.Created) {
-		return fmt.Errorf("invalid post creation block height: %s", p.Created)
+	if p.Created.IsZero() {
+		return fmt.Errorf("invalid post creation time: %s", p.Created)
 	}
 
-	if p.LastEdited.GT(sdk.ZeroInt()) && p.Created.GT(p.LastEdited) {
-		return fmt.Errorf("invalid post last edit block height: %s", p.LastEdited)
+	if p.Created.After(time.Now()) {
+		return fmt.Errorf("post creation date cannot be in the future")
+	}
+
+	if !p.LastEdited.IsZero() && p.LastEdited.Before(p.Created) {
+		return fmt.Errorf("invalid post last edit time: %s", p.LastEdited)
+	}
+
+	if !p.LastEdited.IsZero() && p.LastEdited.After(time.Now()) {
+		return fmt.Errorf("post last edit date cannot be in the future")
 	}
 
 	if len(p.OptionalData) > MaxOptionalDataFieldsNumber {
-		return fmt.Errorf("post optional data cannot contain more than 10 key-value pairs")
+		return fmt.Errorf("post optional data cannot contain more than %d key-value pairs", MaxOptionalDataFieldsNumber)
 	}
 
 	for key, value := range p.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
-			return fmt.Errorf("post optional data values cannot exceed 200 characters. %s of post with id %s is longer than this", key, p.PostID)
+			return fmt.Errorf(
+				"post optional data values cannot exceed %d characters. %s of post with id %s is longer than this",
+				MaxOptionalDataFieldValueLength, key, p.PostID,
+			)
 		}
 	}
 
 	return nil
 }
 
+// Equals allows to check whether the contents of p are the same of other
 func (p Post) Equals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {

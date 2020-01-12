@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -20,11 +21,12 @@ type MsgCreatePost struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
+	CreationDate   time.Time         `json:"creation_date"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -32,6 +34,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        owner,
+		CreationDate:   creationDate,
 	}
 }
 
@@ -58,20 +61,35 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
 	}
 
+	if len(msg.Message) > MaxPostMessageLength {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
+	}
+
 	if len(strings.TrimSpace(msg.Subspace)) == 0 {
 		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
 	}
 
 	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
-		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
+		msg := fmt.Sprintf("Post optional data cannot be longer than %d fields", MaxOptionalDataFieldsNumber)
+		return sdk.ErrUnknownRequest(msg)
 	}
 
 	for key, value := range msg.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
-			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
+			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than %d. %s exceeds the limit",
+				MaxOptionalDataFieldValueLength, key)
 			return sdk.ErrUnknownRequest(msg)
 		}
 	}
+
+	if msg.CreationDate.IsZero() {
+		return sdk.ErrUnknownRequest("Invalid post creation date")
+	}
+
+	if msg.CreationDate.After(time.Now()) {
+		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
+	}
+
 	return nil
 }
 
@@ -91,17 +109,19 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID  PostID         `json:"post_id"`
-	Message string         `json:"message"`
-	Editor  sdk.AccAddress `json:"editor"`
+	PostID   PostID         `json:"post_id"`
+	Message  string         `json:"message"`
+	Editor   sdk.AccAddress `json:"editor"`
+	EditDate time.Time      `json:"edit_date"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress) MsgEditPost {
+func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress, editDate time.Time) MsgEditPost {
 	return MsgEditPost{
-		PostID:  id,
-		Message: message,
-		Editor:  owner,
+		PostID:   id,
+		Message:  message,
+		Editor:   owner,
+		EditDate: editDate,
 	}
 }
 
@@ -121,8 +141,16 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
 	}
 
-	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty")
+	if len(strings.TrimSpace(msg.Message)) == 0 {
+		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+	}
+
+	if msg.EditDate.IsZero() {
+		return sdk.ErrUnknownRequest("Invalid edit date")
+	}
+
+	if msg.EditDate.After(time.Now()) {
+		return sdk.ErrUnknownRequest("Edit date cannot be in the future")
 	}
 
 	return nil
