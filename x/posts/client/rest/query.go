@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -60,7 +61,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 
 		var (
 			parentID       *types.PostID
-			creationTime   sdk.Int
+			creationTime   time.Time
 			allowsComments bool
 			subspace       string
 			creatorAddr    sdk.AccAddress
@@ -76,9 +77,9 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
-			creationTime, ok = sdk.NewIntFromString(v)
-			if !ok {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("cannot parse int: %s", v))
+			creationTime, err = time.Parse(time.RFC3339, v)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 		}

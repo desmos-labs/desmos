@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -66,7 +67,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
+			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now())
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -102,7 +103,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], from)
+			msg := types.NewMsgEditPost(postID, args[1], from, time.Now())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
