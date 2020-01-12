@@ -295,7 +295,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"desmos",
 				map[string]string{},
-				1,
+				date,
 				owner,
 			),
 			expError: "post message cannot be longer than 500 characters",

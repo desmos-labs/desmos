@@ -68,6 +68,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"desmos",
 				map[string]string{},
 				creator,
+				date,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
 		},
