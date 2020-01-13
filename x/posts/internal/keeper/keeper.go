@@ -26,7 +26,7 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 }
 
 // -------------
-// --- Posts
+// --- TextPosts
 // -------------
 
 func (k Keeper) getPostStoreKey(postID types.PostID) []byte {
@@ -98,13 +98,13 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state.
-func (k Keeper) GetPosts(ctx sdk.Context) []types.TextPost {
+func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
 
-	var posts []types.TextPost
+	var posts []types.Post
 	for ; iterator.Valid(); iterator.Next() {
-		var post types.TextPost
+		var post types.Post
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
 		posts = append(posts, post)
 	}
@@ -117,36 +117,36 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.TextPost {
 //
 // NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
-func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
+func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) []types.Post {
 	posts := k.GetPosts(ctx)
-	filteredPosts := make(types.Posts, 0, len(posts))
+	filteredPosts := make([]types.Post, 0, len(posts))
 
 	for _, p := range posts {
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
 
 		// match parent id if valid
 		if params.ParentID != nil {
-			matchParentID = params.ParentID.Equals(p.ParentID)
+			matchParentID = params.ParentID.Equals(p.GetParentID())
 		}
 
 		// match creation time if valid height
 		if params.CreationTime.GTE(sdk.ZeroInt()) {
-			matchCreationTime = params.CreationTime.Equal(p.Created)
+			matchCreationTime = params.CreationTime.Equal(p.CreationTime())
 		}
 
 		// match allows comments
 		if params.AllowsComments != nil {
-			matchAllowsComments = *params.AllowsComments == p.AllowsComments
+			matchAllowsComments = *params.AllowsComments == p.CanComment()
 		}
 
 		// match subspace if provided
 		if len(params.Subspace) > 0 {
-			matchSubspace = params.Subspace == p.Subspace
+			matchSubspace = params.Subspace == p.GetSubspace()
 		}
 
 		// match creator address (if supplied)
 		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(p.Creator)
+			matchCreator = params.Creator.Equals(p.Owner())
 		}
 
 		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
@@ -162,7 +162,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 	start, end := client.Paginate(len(filteredPosts), page, params.Limit, 100)
 	if start < 0 || end < 0 {
-		filteredPosts = types.Posts{}
+		filteredPosts = []types.Post{}
 	} else {
 		filteredPosts = filteredPosts[start:end]
 	}

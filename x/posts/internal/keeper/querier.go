@@ -54,7 +54,7 @@ func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keepe
 
 	post, found := keeper.GetPost(ctx, id)
 	if !found {
-		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s not found", id))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", id))
 	}
 
 	postResponse := getPostResponse(ctx, keeper, post)

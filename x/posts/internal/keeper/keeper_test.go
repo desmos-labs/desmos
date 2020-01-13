@@ -9,7 +9,7 @@ import (
 )
 
 // -------------
-// --- Posts
+// --- TextPosts
 // -------------
 
 func TestKeeper_GetLastPostId(t *testing.T) {
@@ -50,7 +50,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		name                 string
 		existingPosts        types.Posts
 		lastPostID           types.PostID
-		newPost              types.TextPost
+		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
 	}{
@@ -76,7 +76,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		},
 		{
 			name: "TextPost with valid parent ID",
-			existingPosts: []types.TextPost{
+			existingPosts: types.Posts{
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, testPostOwner),
 			},
 			lastPostID:           types.PostID(1),
@@ -104,6 +104,24 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
 		},
+		{
+			name: "MediaPost stored, existing text posts",
+			existingPosts: types.Posts{
+				types.NewTextPost(types.PostID(1), types.PostID(0), "a text post", false, "desmos", map[string]string{}, 0, testPostOwner),
+			},
+			lastPostID: types.PostID(0),
+			newPost: types.NewMediaPost(
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.PostMedias{
+					types.PostMedia{
+						Provider: "provider",
+						URI:      "uri",
+						MimeType: "text/plain",
+					},
+				}),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(2),
+		},
 	}
 
 	for _, test := range tests {
@@ -113,7 +131,7 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.PostStorePrefix+p.GetID().String()), k.Cdc.MustMarshalBinaryBare(p))
 				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
@@ -121,8 +139,8 @@ func TestKeeper_SavePost(t *testing.T) {
 			k.SavePost(ctx, test.newPost)
 
 			// Check the stored post
-			var expected types.TextPost
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.PostID.String())), &expected)
+			var expected types.Post
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.GetID().String())), &expected)
 			assert.True(t, expected.Equals(test.newPost))
 
 			// Check the latest post id
@@ -132,7 +150,7 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.ParentID.String())), &parentCommentsIDs)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.GetParentID().String())), &parentCommentsIDs)
 			assert.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
@@ -143,18 +161,37 @@ func TestKeeper_GetPost(t *testing.T) {
 		name       string
 		postExists bool
 		ID         types.PostID
-		expected   types.TextPost
+		expected   types.Post
 	}{
 		{
-			name:     "Non existent post is not found",
+			name:     "Non existent text post is not found",
 			ID:       types.PostID(123),
 			expected: types.TextPost{},
 		},
 		{
-			name:       "Existing post is found properly",
+			name:       "Existing text post is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
 			expected:   types.NewTextPost(types.PostID(45), types.PostID(0), "TextPost", false, "desmos", map[string]string{}, 0, testPostOwner),
+		},
+		{
+			name:     "Non Existent media post is not found",
+			ID:       types.PostID(15),
+			expected: types.MediaPost{},
+		},
+		{
+			name:       "Existing media post is found properly",
+			ID:         types.PostID(15),
+			postExists: true,
+			expected: types.NewMediaPost(
+				types.NewTextPost(types.PostID(15), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.PostMedias{
+					types.PostMedia{
+						Provider: "provider",
+						URI:      "uri",
+						MimeType: "text/plain",
+					},
+				}),
 		},
 	}
 
@@ -165,7 +202,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.postExists {
-				store.Set([]byte(types.PostStorePrefix+test.expected.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set([]byte(types.PostStorePrefix+test.expected.GetID().String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
@@ -194,7 +231,16 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewTextPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewTextPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
-				types.NewTextPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, 10, testPost.Creator),
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(78), types.PostID(10), "Second Commit", false, "desmos", map[string]string{}, 0, testPostOwner),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
 				types.NewTextPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 				types.NewTextPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, 10, testPost.Creator),
 			},
@@ -235,7 +281,16 @@ func TestKeeper_GetPosts(t *testing.T) {
 			name: "Existing list is returned properly",
 			posts: types.Posts{
 				types.NewTextPost(types.PostID(13), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
-				types.NewTextPost(types.PostID(76), types.PostID(0), "", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(78), types.PostID(10), "Second Commit", false, "desmos", map[string]string{}, 0, testPostOwner),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
 			},
 		},
 	}
@@ -247,11 +302,13 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.posts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.PostStorePrefix+p.GetID().String()), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			posts := k.GetPosts(ctx)
-			assert.True(t, test.posts.Equals(posts))
+			for index, post := range test.posts {
+				assert.True(t, post.Equals(posts[index]))
+			}
 		})
 	}
 }
@@ -262,7 +319,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	var creator1, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var creator2, _ = sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
 
-	posts := types.Posts{
+	posts := types.TextPosts{
 		types.NewTextPost(types.PostID(10), types.PostID(1), "TextPost 1", false, "", map[string]string{}, 15, creator1),
 		types.NewTextPost(types.PostID(11), types.PostID(1), "TextPost 2", true, "desmos", map[string]string{}, 17, creator2),
 		types.NewTextPost(types.PostID(12), types.PostID(2), "TextPost 3", false, "desmos", map[string]string{}, 15, creator2),
@@ -271,47 +328,47 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	tests := []struct {
 		name     string
 		filter   types.QueryPostsParams
-		expected types.Posts
+		expected types.TextPosts
 	}{
 		{
 			name:     "Valid pagination works properly",
 			filter:   types.DefaultQueryPostsParams(1, 2),
-			expected: types.Posts{posts[0], posts[1]},
+			expected: types.TextPosts{posts[0], posts[1]},
 		},
 		{
 			name:     "Non existing page returns empty list",
 			filter:   types.DefaultQueryPostsParams(10, 1),
-			expected: types.Posts{},
+			expected: types.TextPosts{},
 		},
 		{
 			name:     "Invalid pagination returns all data",
 			filter:   types.DefaultQueryPostsParams(1, 15),
-			expected: types.Posts{posts[0], posts[1], posts[2]},
+			expected: types.TextPosts{posts[0], posts[1], posts[2]},
 		},
 		{
 			name:     "Parent ID matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), ParentID: &posts[0].ParentID},
-			expected: types.Posts{posts[0], posts[1]},
+			expected: types.TextPosts{posts[0], posts[1]},
 		},
 		{
 			name:     "Creation time matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(15)},
-			expected: types.Posts{posts[0], posts[2]},
+			expected: types.TextPosts{posts[0], posts[2]},
 		},
 		{
 			name:     "Allows comments matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), AllowsComments: &boolTrue},
-			expected: types.Posts{posts[1]},
+			expected: types.TextPosts{posts[1]},
 		},
 		{
 			name:     "Subspace mather works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Subspace: "desmos"},
-			expected: types.Posts{posts[1], posts[2]},
+			expected: types.TextPosts{posts[1], posts[2]},
 		},
 		{
 			name:     "Creator mather works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: sdk.NewInt(-1), Creator: creator2},
-			expected: types.Posts{posts[1], posts[2]},
+			expected: types.TextPosts{posts[1], posts[2]},
 		},
 	}
 

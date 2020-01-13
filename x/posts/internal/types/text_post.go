@@ -181,6 +181,14 @@ func (p TextPost) CanComment() bool {
 	return p.AllowsComments
 }
 
+func (p TextPost) GetSubspace() string {
+	return p.Subspace
+}
+
+func (p TextPost) GetOptionalData() map[string]string {
+	return p.OptionalData
+}
+
 func (p TextPost) Owner() sdk.AccAddress {
 	return p.Creator
 }
@@ -253,39 +261,6 @@ func checkPostsEqual(first TextPost, second TextPost) bool {
 		first.Creator.Equals(second.Creator)
 }
 
-// -------------
-// --- Posts
-// -------------
-
-// Posts represents a slice of TextPost objects
-type Posts []TextPost
-
-// checkPostsEqual returns true iff the p slice contains the same
-// data in the same order of the other slice
-func (p Posts) Equals(other Posts) bool {
-	if len(p) != len(other) {
-		return false
-	}
-
-	for index, post := range p {
-		if !post.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
-// String implements stringer interface
-func (p Posts) String() string {
-	out := "ID - [Creator] Message\n"
-	for _, post := range p {
-		out += fmt.Sprintf("%d - [%s] %s\n",
-			post.PostID, post.Creator, post.Message)
-	}
-	return strings.TrimSpace(out)
-}
-
 // MarshalJSON implements Marshaler
 func (p TextPost) MarshalJSON() ([]byte, error) {
 	type textPostJSON TextPost
@@ -301,4 +276,37 @@ func (p *TextPost) UnmarshalJSON(data []byte) error {
 	}
 	*p = TextPost(temp)
 	return nil
+}
+
+// -------------
+// --- TextPosts
+// -------------
+
+// TextPosts represents a slice of TextPost objects
+type TextPosts []TextPost
+
+// checkPostsEqual returns true iff the p slice contains the same
+// data in the same order of the other slice
+func (p TextPosts) Equals(other TextPosts) bool {
+	if len(p) != len(other) {
+		return false
+	}
+
+	for index, post := range p {
+		if !post.Equals(other[index]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// String implements stringer interface
+func (p TextPosts) String() string {
+	out := "ID - [Creator] Message\n"
+	for _, post := range p {
+		out += fmt.Sprintf("%d - [%s] %s\n",
+			post.PostID, post.Creator, post.Message)
+	}
+	return strings.TrimSpace(out)
 }

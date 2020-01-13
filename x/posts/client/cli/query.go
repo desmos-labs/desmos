@@ -133,14 +133,14 @@ $ %s query posts posts --page=2 --limit=100
 				return err
 			}
 
-			var matchingPosts types.Posts
+			var matchingPosts types.TextPosts
 			err = cdc.UnmarshalJSON(res, &matchingPosts)
 			if err != nil {
 				return err
 			}
 
 			if matchingPosts == nil {
-				matchingPosts = types.Posts{}
+				matchingPosts = types.TextPosts{}
 			}
 
 			cliCtx = cliCtx.WithHeight(height)

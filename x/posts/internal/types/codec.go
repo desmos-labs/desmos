@@ -13,6 +13,7 @@ func init() {
 
 // RegisterCodec registers concrete types on the Amino codec
 func RegisterCodec(cdc *codec.Codec) {
+	cdc.RegisterInterface((*MsgCreatePost)(nil), nil)
 	cdc.RegisterConcrete(MsgCreateTextPost{}, "desmos/MsgCreateTextPost", nil)
 	cdc.RegisterConcrete(MsgCreateMediaPost{}, "desmos/MsgCreateMediaPost", nil)
 	cdc.RegisterConcrete(MsgEditPost{}, "desmos/MsgEditPost", nil)

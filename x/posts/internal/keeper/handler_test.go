@@ -20,8 +20,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		name        string
 		storedPosts types.Posts
 		lastPostID  types.PostID
-		msg         types.MsgCreateTextPost
-		expPost     types.TextPost
+		msg         types.MsgCreatePost
+		expPost     types.Post
 		expError    string
 	}{
 		{
@@ -31,10 +31,10 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			},
 			lastPostID: types.PostID(0),
 			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator),
-			expError:   "TextPost with id 1 already exists",
+			expError:   "Post with id 1 already exists",
 		},
 		{
-			name:    "TextPost with new id is stored properly",
+			name:    "Text Post with new id is stored properly",
 			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator),
 			expPost: types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Creator),
 		},
@@ -49,7 +49,25 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				types.NewTextPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Creator),
 			},
 			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
-			expError: "TextPost with id 50 does not allow comments",
+			expError: "Post with id 50 does not allow comments",
+		},
+		{
+			name: "Media Post with new id is stored properly",
+			msg: types.NewMsgCreateMediaPost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator, types.PostMedias{types.PostMedia{
+				Provider: "provider",
+				URI:      "uri",
+				MimeType: "text/plain",
+			}}),
+			expPost: types.NewMediaPost(
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, 0, testPost.Creator),
+				types.PostMedias{
+					types.PostMedia{
+						Provider: "provider",
+						URI:      "uri",
+						MimeType: "text/plain",
+					},
+				},
+			),
 		},
 	}
 
@@ -60,7 +78,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, p := range test.storedPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.PostStorePrefix+p.GetID().String()), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			if test.lastPostID.Valid() {
@@ -75,20 +93,20 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				assert.True(t, res.IsOK())
 
 				// Check the post
-				var stored types.TextPost
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
+				var stored types.Post
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.GetID().String())), &stored)
 				assert.True(t, stored.Equals(test.expPost))
 
 				// Check the data
-				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.GetID()), res.Data)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
 					types.EventTypePostCreated,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
-					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.Created.String()),
-					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
+					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.GetID().String()),
+					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.GetParentID().String()),
+					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.CreationTime().String()),
+					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Owner().String()),
 				)
 				assert.Len(t, ctx.EventManager().Events(), 1)
 				assert.Contains(t, ctx.EventManager().Events(), creationEvent)
@@ -115,10 +133,10 @@ func Test_handleMsgEditPost(t *testing.T) {
 		expPost     types.TextPost
 	}{
 		{
-			name:       "TextPost not found",
+			name:       "Text Post not found",
 			storedPost: nil,
 			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner),
-			expError:   "TextPost with id 0 not found",
+			expError:   "Post with id 0 not found",
 		},
 		{
 			name:       "Invalid editor",
@@ -205,9 +223,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		error        string
 	}{
 		{
-			name:  "TextPost not found",
+			name:  "Text Post not found",
 			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", user),
-			error: "TextPost with id 0 not found",
+			error: "Post with id 0 not found",
 		},
 		{
 			name:         "Valid message works properly",
@@ -275,9 +293,9 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		error            string
 	}{
 		{
-			name:  "TextPost not found",
+			name:  "Text Post not found",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "like"),
-			error: "TextPost with id 0 not found",
+			error: "Post with id 0 not found",
 		},
 		{
 			name:         "Reaction not found",

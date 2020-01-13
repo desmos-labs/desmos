@@ -590,27 +590,27 @@ func TestPost_Equals(t *testing.T) {
 }
 
 // -----------
-// --- Posts
+// --- TextPosts
 // -----------
 func TestPosts_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
-		first     types.Posts
-		second    types.Posts
+		first     types.TextPosts
+		second    types.TextPosts
 		expEquals bool
 	}{
 		{
 			name:      "Empty lists are equals",
-			first:     types.Posts{},
-			second:    types.Posts{},
+			first:     types.TextPosts{},
+			second:    types.TextPosts{},
 			expEquals: true,
 		},
 		{
 			name: "List of different lengths are not equals",
-			first: types.Posts{
+			first: types.TextPosts{
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
-			second: types.Posts{
+			second: types.TextPosts{
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
@@ -618,11 +618,11 @@ func TestPosts_Equals(t *testing.T) {
 		},
 		{
 			name: "Same lists but in different orders",
-			first: types.Posts{
+			first: types.TextPosts{
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
-			second: types.Posts{
+			second: types.TextPosts{
 				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
@@ -630,11 +630,11 @@ func TestPosts_Equals(t *testing.T) {
 		},
 		{
 			name: "Same lists are equals",
-			first: types.Posts{
+			first: types.TextPosts{
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
-			second: types.Posts{
+			second: types.TextPosts{
 				types.TextPost{PostID: types.PostID(0), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 				types.TextPost{PostID: types.PostID(1), Created: sdk.ZeroInt(), LastEdited: sdk.ZeroInt()},
 			},
@@ -653,7 +653,7 @@ func TestPosts_Equals(t *testing.T) {
 func TestPosts_String(t *testing.T) {
 	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
-	posts := types.Posts{
+	posts := types.TextPosts{
 		types.NewTextPost(types.PostID(1), types.PostID(10), "TextPost 1", false, "external-ref-1", map[string]string{}, 0, owner1),
 		types.NewTextPost(types.PostID(2), types.PostID(10), "TextPost 2", false, "external-ref-1", map[string]string{}, 0, owner2),
 	}

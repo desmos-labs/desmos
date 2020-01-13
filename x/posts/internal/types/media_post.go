@@ -67,6 +67,18 @@ func (mp MediaPost) CanComment() bool {
 	return mp.AllowsComments
 }
 
+func (mp MediaPost) GetSubspace() string {
+	return mp.Subspace
+}
+
+func (mp MediaPost) GetOptionalData() map[string]string {
+	return mp.OptionalData
+}
+
+func (mp MediaPost) Owner() sdk.AccAddress {
+	return mp.Creator
+}
+
 // Validate implements Post Validate
 func (mp MediaPost) Validate() error {
 	if err := mp.TextPost.Validate(); err != nil {
@@ -124,6 +136,39 @@ func (mp *MediaPost) UnmarshalJSON(data []byte) error {
 	}
 	*mp = MediaPost(temp)
 	return nil
+}
+
+// -------------
+// --- MediaPosts
+// -------------
+
+// TextPosts represents a slice of TextPost objects
+type MediaPosts []MediaPost
+
+// checkPostsEqual returns true iff the p slice contains the same
+// data in the same order of the other slice
+func (mps MediaPosts) Equals(other MediaPosts) bool {
+	if len(mps) != len(other) {
+		return false
+	}
+
+	for index, post := range mps {
+		if !post.Equals(other[index]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// String implements stringer interface
+func (mps MediaPosts) String() string {
+	out := "ID - [Creator] Message\n"
+	for _, post := range mps {
+		out += fmt.Sprintf("%d - [%s] %s\n",
+			post.PostID, post.Creator, post.Message)
+	}
+	return strings.TrimSpace(out)
 }
 
 // ---------------

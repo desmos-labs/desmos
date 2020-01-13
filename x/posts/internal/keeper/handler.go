@@ -61,7 +61,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	// Check for double posting
 	if _, found := keeper.GetPost(ctx, post.GetID()); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s already exists", post.GetID())).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.GetID())).Result()
 	}
 
 	// If valid, check the parent post
@@ -73,7 +73,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		}
 
 		if !parentPost.CanComment() {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s does not allow comments",
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments",
 				parentPost.GetID())).Result()
 		}
 	}
@@ -101,7 +101,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	// Get the existing post
 	existing, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s not found", msg.PostID)).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
 	// Checks if the the msg sender is the same as the current owner
@@ -137,7 +137,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s not found", msg.PostID)).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
 	// Create and store the reaction
@@ -166,7 +166,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("TextPost with id %s not found", msg.PostID)).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
 	}
 
 	// Remove the reaction

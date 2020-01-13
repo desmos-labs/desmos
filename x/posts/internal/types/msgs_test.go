@@ -153,6 +153,23 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 }
 
 // ----------------------
+// --- MsgCreateMediaPost
+// ----------------------
+var msgCreateMediaPost = types.NewMsgCreateMediaPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
+	types.PostMedias{types.PostMedia{Provider: "provider", URI: "uri", MimeType: "text/plain"}},
+)
+
+func TestMsgCreateMediaPost_Route(t *testing.T) {
+	actual := msgCreateMediaPost.Route()
+	assert.Equal(t, "posts", actual)
+}
+
+func TestMsgCreateMediaPost_Type(t *testing.T) {
+	actual := msgCreateMediaPost.Type()
+	assert.Equal(t, "create_media_post", actual)
+}
+
+// ----------------------
 // --- MsgEditPost
 // ----------------------
 

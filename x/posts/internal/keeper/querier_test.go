@@ -28,25 +28,35 @@ func Test_queryPost(t *testing.T) {
 			expError: sdk.ErrUnknownRequest("Invalid post id: "),
 		},
 		{
-			name:     "TextPost not found returns error",
+			name:     "Post not found returns error",
 			path:     []string{types.QueryPost, "1"},
-			expError: sdk.ErrUnknownRequest("TextPost with id 1 not found"),
+			expError: sdk.ErrUnknownRequest("Post with id 1 not found"),
 		},
 		{
-			name: "TextPost without likes is returned properly",
+			name: "Post without likes is returned properly",
 			storedPosts: types.Posts{
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
-				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "First Child", false, "", map[string]string{}, 0, creator),
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(3), types.PostID(1), "Second Child", false, "desmos", map[string]string{}, 0, creator),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
 			},
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.Reactions{},
-				types.PostIDs{types.PostID(2)},
+				types.PostIDs{types.PostID(2), types.PostID(3)},
 			),
 		},
 		{
-			name: "TextPost without children is returned properly",
+			name: "Text Post without children is returned properly",
 			storedPosts: types.Posts{
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 			},
@@ -58,7 +68,7 @@ func Test_queryPost(t *testing.T) {
 			),
 		},
 		{
-			name: "TextPost with all data is returned properly",
+			name: "Text Post with all data is returned properly",
 			storedPosts: types.Posts{
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
 				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
@@ -72,6 +82,46 @@ func Test_queryPost(t *testing.T) {
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+				types.Reactions{
+					types.NewReaction("Like", 0, creator),
+					types.NewReaction("Like", 10, otherCreator),
+				},
+				types.PostIDs{types.PostID(2)},
+			),
+		},
+		{
+			name: "Media Post with all data is returned properly",
+			storedPosts: types.Posts{
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, creator),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+			},
+			storedReactions: map[types.PostID]types.Reactions{
+				types.PostID(1): {
+					types.NewReaction("Like", 0, creator),
+					types.NewReaction("Like", 10, otherCreator),
+				},
+			},
+			path: []string{types.QueryPost, "1"},
+			expResult: types.NewPostResponse(
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, creator),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
 				types.Reactions{
 					types.NewReaction("Like", 0, creator),
 					types.NewReaction("Like", 10, otherCreator),
@@ -129,6 +179,44 @@ func Test_queryPosts(t *testing.T) {
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, 0, creator),
+					types.Reactions{},
+					types.PostIDs{types.PostID(2)},
+				),
+				types.NewPostResponse(
+					types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+					types.Reactions{},
+					types.PostIDs{},
+				),
+			},
+		},
+		{
+			name: "Empty params returns all posts",
+			storedPosts: types.Posts{
+				types.NewMediaPost(
+					types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, creator),
+					types.PostMedias{
+						types.PostMedia{
+							Provider: "provider",
+							URI:      "uri",
+							MimeType: "text/plain",
+						},
+					},
+				),
+				types.NewTextPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, 0, creator),
+			},
+			params: types.QueryPostsParams{},
+			expResponse: []types.PostQueryResponse{
+				types.NewPostResponse(
+					types.NewMediaPost(
+						types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "desmos", map[string]string{}, 0, creator),
+						types.PostMedias{
+							types.PostMedia{
+								Provider: "provider",
+								URI:      "uri",
+								MimeType: "text/plain",
+							},
+						},
+					),
 					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),

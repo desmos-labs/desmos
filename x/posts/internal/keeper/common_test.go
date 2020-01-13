@@ -45,7 +45,7 @@ var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63
 var testPost = types.NewTextPost(
 	types.PostID(3257),
 	types.PostID(0),
-	"TextPost message",
+	"Post message",
 	false,
 	"desmos",
 	map[string]string{},

@@ -47,7 +47,7 @@ type (
 	PostID       = types.PostID
 	PostIDs      = types.PostIDs
 	Post         = types.TextPost
-	Posts        = types.Posts
+	Posts        = types.TextPosts
 	Reaction     = types.Reaction
 	Reactions    = types.Reactions
 	GenesisState = types.GenesisState

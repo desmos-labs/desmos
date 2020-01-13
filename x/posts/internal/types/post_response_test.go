@@ -22,11 +22,44 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	}
 	children := types.PostIDs{types.PostID(98), types.PostID(100)}
 
-	response := types.NewPostResponse(post, likes, children)
-	jsonData, err := json.Marshal(&response)
-	assert.NoError(t, err)
-	assert.Equal(t,
-		`{"id":"10","parent_id":"0","message":"TextPost","created":"10","last_edited":"0","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","reactions":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
-		string(jsonData),
-	)
+	textPostResponse := types.NewPostResponse(post, likes, children)
+
+	media := types.PostMedia{
+		Provider: "provider",
+		URI:      "uri",
+		MimeType: "text/plain",
+	}
+
+	mediaPost := types.NewMediaPost(post, []types.PostMedia{media})
+
+	mediaPostResponse := types.NewPostResponse(mediaPost, likes, children)
+
+	tests := []struct {
+		name        string
+		response    types.PostQueryResponse
+		expResponse string
+	}{
+		{
+			name:        "Post Query Response with TextPost",
+			response:    textPostResponse,
+			expResponse: `{"type":"TextPost","post":{"id":"10","parent_id":"0","message":"TextPost","created":"10","last_edited":"0","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},"reactions":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
+		},
+		{
+			name:        "Post Query Response with MediaPost",
+			response:    mediaPostResponse,
+			expResponse: `{"type":"MediaPost","post":{"id":"10","parent_id":"0","message":"TextPost","created":"10","last_edited":"0","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},"reactions":[{"created":"11","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"created":"12","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			jsonData, err := json.Marshal(&test.response)
+			assert.NoError(t, err)
+			assert.Equal(t,
+				test.expResponse,
+				string(jsonData),
+			)
+		})
+	}
 }

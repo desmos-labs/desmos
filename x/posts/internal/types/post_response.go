@@ -7,13 +7,34 @@ import (
 // PostQueryResponse represents the data of a post
 // that is returned to user upon a query
 type PostQueryResponse struct {
-	Post
+	Type      string    `json:"type"`
+	Post      Post      `json:"post"`
 	Reactions Reactions `json:"reactions"`
 	Children  PostIDs   `json:"children"`
 }
 
+func (response PostQueryResponse) String() string {
+	bytes, err := json.Marshal(&response)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
 func NewPostResponse(post Post, reactions Reactions, children PostIDs) PostQueryResponse {
+	var ttype string
+
+	if _, ok := post.(TextPost); ok {
+		ttype = "TextPost"
+	}
+
+	if _, ok := post.(MediaPost); ok {
+		ttype = "MediaPost"
+	}
+
 	return PostQueryResponse{
+		Type:      ttype,
 		Post:      post,
 		Reactions: reactions,
 		Children:  children,
