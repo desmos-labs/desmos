@@ -72,7 +72,7 @@ The following operations will all be done in the terminal environment under your
 
 ``` bash{2,6,9}
 # Clone the Desmos software
-git clone https://github.com/desmos-labs/desmos.git
+git clone https://github.com/desmos-labs/desmos.git && cd desmos
 
 # Checkout correct commit
 # We are using v0.2.0 for morpheus-1001 testnet
@@ -101,14 +101,15 @@ You can choose any moniker your like. It will be saved in the `config.toml` unde
 
 ## Get the genesis file
 
-To connect or start a network, a genesis file is required. The file contains all the settings how the genesis block of the network look like. To connect to the `morpheus-1001` testnet, you will need its corresponding genesis file. Download it by running the following command.
+To connect or start a network, a genesis file is required. The file contains all the settings how the genesis block of the network look like. To connect to the `Morpheus` testnets, you will need the corresponding genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct genesis file by running the following command.
 
 ``` bash
 # First, remove the newly created genesis file during the initialization
 rm $HOME/.desmosd/config/genesis.json
 
 # Download the existing genesis file for the testnet
-curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/1001/genesis.json -o $HOME/.desmosd/genesis.json
+# Assuming you are getting the genesis file for morpheus-1000
+curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/1000/genesis.json -o $HOME/.desmosd/genesis.json
 ```
 
 ## Connect to persistent peer
