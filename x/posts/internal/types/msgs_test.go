@@ -182,14 +182,6 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	}
 }
 
-func TestMsgCreatePost_ReadJson(t *testing.T) {
-	json := `{"type":"desmos/MsgCreatePost","value":{"parent_id":"0","message":"Hello!","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","creation_date":"2020-01-13T14:01:43.234441649+01:00"}}`
-
-	var msg types.MsgCreatePost
-	types.ModuleCdc.MustUnmarshalJSON([]byte(json), &msg)
-	assert.Equal(t, "Hello!", msg.Message)
-}
-
 func TestMsgCreatePost_GetSigners(t *testing.T) {
 	actual := msgCreatePost.GetSigners()
 	assert.Equal(t, 1, len(actual))
