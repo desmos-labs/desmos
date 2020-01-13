@@ -119,7 +119,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Future creation date returns error",
-			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().Add(time.Hour)),
+			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
 		{

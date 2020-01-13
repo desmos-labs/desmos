@@ -67,7 +67,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now())
+			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -103,7 +103,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], from, time.Now())
+			msg := types.NewMsgEditPost(postID, args[1], from, time.Now().UTC())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
