@@ -1,15 +1,20 @@
 # Run a Validator on Desmos
-If you plan to use a KMS (key management system), you should go through these steps first: [Using a KMS](kms/kms.md).
 
 ## What is a Validator?
+
 [Validators](overview.md) are responsible for committing new blocks to the blockchain through voting. A validator's stake is slashed if they become unavailable or sign blocks at the same height. Please read about [Sentry Node Architecture](validator-faq.md#how-can-validators-protect-themselves-from-denial-of-service-attacks) to protect your node from DDOS attacks and to ensure high-availability.
 
 ::: danger Warning
 If you want to become a validator for the `mainnet`, you should [research security](security.md).
 :::
 
+## Running a Fullnode
+
+To become a validator, you must first have `desmosd` and `desmoscli` installed and be able to run a fullnode. You can first [setup your fullnode](/fullnode/overview.html) if you haven't yet.
+
 ## Create Your Validator
-Your `desmosvalconspub` can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
+
+Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
 
 ```bash
 desmosd tendermint show-validator
@@ -116,17 +121,6 @@ View the validator's information with this command:
 desmoscli query staking validator <account_desmos>
 ```
 
-## Track Validator Signing Information
-In order to keep track of a validator's signatures in the past you can do so by using the `signing-info` command:
-
-```bash
-desmoscli query slashing signing-info <validator-pubkey>\
-  --chain-id=<chain_id>
-```
-
-## Unjail Validator
-When a validator is "jailed" for downtime, you must submit an `Unjail` transaction from the operator account in order to be able to get block proposer rewards again (depends on the zone fee distribution).
-
 ```bash
 desmoscli tx slashing unjail \
 	--from=<key_name> \
@@ -180,7 +174,7 @@ The default number of files Linux can open (per-process) is `1024`. `desmosd` is
 ```toml
 # /etc/systemd/system/desmosd.service
 [Unit]
-Description=Cosmos Gaia Node
+Description=Desmos Full Node
 After=network.target
 
 [Service]
