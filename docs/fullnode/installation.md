@@ -108,8 +108,8 @@ To connect or start a network, a genesis file is required. The file contains all
 rm $HOME/.desmosd/config/genesis.json
 
 # Download the existing genesis file for the testnet
-# Assuming you are getting the genesis file for morpheus-1000
-curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/1000/genesis.json -o $HOME/.desmosd/genesis.json
+# Assuming you are getting the genesis file for the latest testnet
+curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/genesis.json
 ```
 
 ## Connect to persistent peer
