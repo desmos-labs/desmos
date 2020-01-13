@@ -9,8 +9,7 @@ module.exports = {
         lineNumbers: true,
     },
     plugins: [
-        'latex',
-        'tabs',
+        'vuepress-plugin-element-tabs',
         '@vuepress/google-analytics',
         {
             'ga': 'UA-108489905-8' // UA-00000000-0
