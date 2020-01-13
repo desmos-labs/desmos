@@ -10,7 +10,7 @@ If you want to become a validator for the `mainnet`, you should [research securi
 
 ## Running a Fullnode
 
-To become a validator, you must first have `desmosd` and `desmoscli` installed and be able to run a fullnode. You can first [setup your fullnode](/fullnode/overview.html) if you haven't yet.
+To become a validator, you must first have `desmosd` and `desmoscli` installed and be able to run a fullnode. You can first [setup your fullnode](/fullnode/overview.md) if you haven't yet.
 
 ## Create Your Validator
 
