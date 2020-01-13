@@ -4,6 +4,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 
 ## Posts
 - [Query a post](queries/post.md)
+- [Query the stored posts](queries/posts.md)
 
 ## Sessions
 - [Query a session](queries/session.md)
