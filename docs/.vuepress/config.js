@@ -1,15 +1,20 @@
 module.exports = {
     title: "Desmos",
     description: "Documentation for the Desmos blockchain.",
-    // ga: "UA-51029217-2",
+    // ga: "UA-108489905-8",
     head: [
-        ['link', {rel: 'icon', href: '/icon.png'}]
+        ['link', {rel: 'icon', href: '/favicon.png'}]
     ],
     markdown: {
         lineNumbers: true,
     },
     plugins: [
-        'latex'
+        'latex',
+        'tabs',
+        '@vuepress/google-analytics',
+        {
+            'ga': 'UA-108489905-8' // UA-00000000-0
+        }
     ],
     themeConfig: {
         repo: "desmos-labs/desmos",
@@ -35,13 +40,20 @@ module.exports = {
                 ]
             },
             {
+                title: "Running a Fullnode",
+                collapsable: false,
+                children: [
+                    ["fullnode/overview", "Overview"],
+                    ["fullnode/installation", "Install and Running a Fullnode"],
+                ]
+            },
+            {
                 title: "Validators",
                 collapsable: false,
                 children: [
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
                     ["validators/validator-setup", "Setup"],
-                    ["validators/validator-faq", "F.A.Q."],
                 ]
             },
         ],
