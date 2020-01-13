@@ -31,7 +31,11 @@ module.exports = {
         lineNumbers: true,
     },
     plugins: [
-        'latex'
+        'vuepress-plugin-element-tabs',
+        '@vuepress/google-analytics',
+        {
+            'ga': 'UA-108489905-8' // UA-00000000-0
+        }
     ],
     themeConfig: {
         repo: "desmos-labs/desmos",
@@ -58,13 +62,20 @@ module.exports = {
                 ]
             },
             {
+                title: "Running a Fullnode",
+                collapsable: false,
+                children: [
+                    ["fullnode/overview", "Overview"],
+                    ["fullnode/installation", "Install and Running a Fullnode"],
+                ]
+            },
+            {
                 title: "Validators",
                 collapsable: false,
                 children: [
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
                     ["validators/validator-setup", "Setup"],
-                    ["validators/validator-faq", "F.A.Q."],
                 ]
             },
             {
