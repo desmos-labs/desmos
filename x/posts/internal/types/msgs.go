@@ -86,7 +86,7 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid post creation date")
 	}
 
-	if msg.CreationDate.After(time.Now()) {
+	if msg.CreationDate.After(time.Now().UTC()) {
 		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
 	}
 
@@ -149,7 +149,7 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid edit date")
 	}
 
-	if msg.EditDate.After(time.Now()) {
+	if msg.EditDate.After(time.Now().UTC()) {
 		return sdk.ErrUnknownRequest("Edit date cannot be in the future")
 	}
 

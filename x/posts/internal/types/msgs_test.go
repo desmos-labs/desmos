@@ -119,7 +119,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Future creation date returns error",
-			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().Add(time.Hour)),
+			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
 		{
@@ -180,6 +180,14 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			assert.Equal(t, test.expSignJSON, string(test.msg.GetSignBytes()))
 		})
 	}
+}
+
+func TestMsgCreatePost_ReadJson(t *testing.T) {
+	json := `{"type":"desmos/MsgCreatePost","value":{"parent_id":"0","message":"Hello!","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","creation_date":"2020-01-13T14:01:43.234441649+01:00"}}`
+
+	var msg types.MsgCreatePost
+	types.ModuleCdc.MustUnmarshalJSON([]byte(json), &msg)
+	assert.Equal(t, "Hello!", msg.Message)
 }
 
 func TestMsgCreatePost_GetSigners(t *testing.T) {

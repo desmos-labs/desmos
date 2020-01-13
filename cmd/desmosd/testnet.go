@@ -293,7 +293,7 @@ func collectGenFiles(
 	genAccIterator genutiltypes.GenesisAccountsIterator) error {
 
 	var appState json.RawMessage
-	genTime := tmtime.Now()
+	genTime := tmtime.Now().UTC()
 
 	for i := 0; i < numValidators; i++ {
 		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
