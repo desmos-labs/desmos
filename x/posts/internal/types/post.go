@@ -110,15 +110,15 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 
 // Post is a struct of a post
 type Post struct {
-	PostID         PostID            `json:"id"`                      // Unique id
-	ParentID       PostID            `json:"parent_id"`               // Post of which this one is a comment
-	Message        string            `json:"message"`                 // Message contained inside the post
-	Created        time.Time         `json:"created"`                 // RFC3339 date at which the post has been created
-	LastEdited     time.Time         `json:"last_edited"`             // RFC3339 date at which the post has been edited the last time
-	AllowsComments bool              `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
-	Subspace       string            `json:"subspace"`                // Identifies the application that has posted the message
-	OptionalData   map[string]string `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
-	Creator        sdk.AccAddress    `json:"creator"`                 // Creator of the Post
+	PostID         PostID         `json:"id"`                      // Unique id
+	ParentID       PostID         `json:"parent_id"`               // Post of which this one is a comment
+	Message        string         `json:"message"`                 // Message contained inside the post
+	Created        time.Time      `json:"created"`                 // RFC3339 date at which the post has been created
+	LastEdited     time.Time      `json:"last_edited"`             // RFC3339 date at which the post has been edited the last time
+	AllowsComments bool           `json:"allows_comments"`         // Tells if users can reference this PostID as the parent
+	Subspace       string         `json:"subspace"`                // Identifies the application that has posted the message
+	OptionalData   OptionalData   `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
+	Creator        sdk.AccAddress `json:"creator"`                 // Creator of the Post
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
@@ -129,6 +129,21 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		Message:        message,
 		Created:        created,
 		LastEdited:     time.Time{},
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Creator:        creator,
+	}
+}
+
+func NewPostComplete(id, parentID PostID, message string, created, lastEdited time.Time, allowsComments bool,
+	subspace string, optionalData map[string]string, creator sdk.AccAddress) Post {
+	return Post{
+		PostID:         id,
+		ParentID:       parentID,
+		Message:        message,
+		Created:        created,
+		LastEdited:     lastEdited,
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
