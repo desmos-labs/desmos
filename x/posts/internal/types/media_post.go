@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -23,12 +24,20 @@ func NewMediaPost(post TextPost, medias PostMedias) MediaPost {
 
 // String implements fmt.Stringer
 func (mp MediaPost) String() string {
-	bytes, err := json.Marshal(&mp)
-	if err != nil {
-		panic(err)
-	}
+	txtPostStr := mp.TextPost.String()
+	medias := mp.Medias.String()
 
-	return string(bytes)
+	mpString := map[string]string{"post": txtPostStr, "medias": medias}
+
+	return mapToString(mpString)
+}
+
+func mapToString(m map[string]string) string {
+	b := new(bytes.Buffer)
+	for key, value := range m {
+		fmt.Fprintf(b, "\"%s\":\"%s\",", key, value)
+	}
+	return b.String()
 }
 
 // GetID implements Post GetID
@@ -59,7 +68,7 @@ func (mp MediaPost) SetEditTime(time sdk.Int) Post {
 	return mp
 }
 
-func (mp MediaPost) EditTime() sdk.Int {
+func (mp MediaPost) GetEditTime() sdk.Int {
 	return mp.LastEdited
 }
 
@@ -123,8 +132,7 @@ func checkMediaPostEquals(first MediaPost, second MediaPost) bool {
 
 // MarshalJSON implements Marshaler
 func (mp MediaPost) MarshalJSON() ([]byte, error) {
-	type mediaPostJSON MediaPost
-	return json.Marshal(mediaPostJSON(mp))
+	return json.Marshal(mp.String())
 }
 
 // UnmarshalJSON implements Unmarshaler
@@ -163,24 +171,56 @@ func (mps MediaPosts) Equals(other MediaPosts) bool {
 
 // String implements stringer interface
 func (mps MediaPosts) String() string {
-	out := "ID - [Creator] Message\n"
+	var postsString string
 	for _, post := range mps {
-		out += fmt.Sprintf("%d - [%s] %s\n",
-			post.PostID, post.Creator, post.Message)
+		postsString += post.String()
 	}
-	return strings.TrimSpace(out)
+	return postsString
+}
+
+// ---------------
+// --- PostMedias
+// ---------------
+
+type PostMedias []PostMedia
+
+func (pms PostMedias) String() string {
+	bytes, err := json.Marshal(&pms)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+func (pms PostMedias) Equals(other PostMedias) bool {
+	for index, postMedia := range pms {
+		if !postMedia.Equals(other[index]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ---------------
 // --- PostMedia
 // ---------------
 
-type PostMedias []PostMedia
-
 type PostMedia struct {
 	Provider string `json:"provider"`
 	URI      string `json:"uri"`
 	MimeType string `json:"mime_Type"`
+}
+
+// String implements fmt.Stringer
+func (pm PostMedia) String() string {
+	bytes, err := json.Marshal(&pm)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
 }
 
 func (pm PostMedia) Validate() error {
@@ -197,7 +237,7 @@ func (pm PostMedia) Validate() error {
 	}
 
 	if len(strings.TrimSpace(pm.MimeType)) == 0 {
-		return fmt.Errorf("mime type must be specified and cannot be")
+		return fmt.Errorf("mime type must be specified and cannot be empty")
 	}
 
 	return nil
@@ -207,7 +247,6 @@ func (pm PostMedia) Equals(other PostMedia) bool {
 	return pm.URI == other.URI && pm.MimeType == other.MimeType && pm.Provider == other.Provider
 }
 
-//todo test this properly
 func ParseURI(uri string) error {
 	rEx := regexp.MustCompile(
 		`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)

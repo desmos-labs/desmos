@@ -77,20 +77,20 @@ func (msg MsgCreateTextPost) ValidateBasic() sdk.Error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 {
-		return sdk.ErrUnknownRequest("TextPost message cannot be empty nor blank")
+		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
 	}
 
 	if len(strings.TrimSpace(msg.Subspace)) == 0 {
-		return sdk.ErrUnknownRequest("TextPost subspace cannot be empty nor blank")
+		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
 	}
 
 	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
-		return sdk.ErrUnknownRequest("TextPost optional data cannot be longer than 10 fields")
+		return sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields")
 	}
 
 	for key, value := range msg.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
-			msg := fmt.Sprintf("TextPost optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
+			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than 200. %s exceeds the limit", key)
 			return sdk.ErrUnknownRequest(msg)
 		}
 	}
@@ -194,7 +194,7 @@ func (msg MsgEditPost) ValidateBasic() sdk.Error {
 	}
 
 	if len(msg.Message) == 0 {
-		return sdk.ErrUnknownRequest("TextPost message cannot be empty")
+		return sdk.ErrUnknownRequest("Post message cannot be empty")
 	}
 
 	return nil

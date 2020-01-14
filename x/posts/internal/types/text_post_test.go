@@ -112,10 +112,6 @@ func TestParsePostID(t *testing.T) {
 	}
 }
 
-// -------------
-// --- PostIDs
-// -------------
-
 func TestPostIDs_Equals(t *testing.T) {
 	tests := []struct {
 		name      string

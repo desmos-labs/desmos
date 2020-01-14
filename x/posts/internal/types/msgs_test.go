@@ -42,12 +42,12 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Empty message returns error",
 			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
-			error: sdk.ErrUnknownRequest("TextPost message cannot be empty nor blank"),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty subspace returns error",
 			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
-			error: sdk.ErrUnknownRequest("TextPost subspace cannot be empty nor blank"),
+			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
 		{
 			name: "More than 10 optional data returns error",
@@ -71,7 +71,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 			),
-			error: sdk.ErrUnknownRequest("TextPost optional data cannot be longer than 10 fields"),
+			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
 		},
 		{
 			name: "Optional data longer than 200 characters returns error",
@@ -85,7 +85,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 			),
-			error: sdk.ErrUnknownRequest("TextPost optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
+			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
 			name: "Valid message does not return any error",
@@ -156,7 +156,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgCreateMediaPost
 // ----------------------
 var msgCreateMediaPost = types.NewMsgCreateMediaPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
-	types.PostMedias{types.PostMedia{Provider: "provider", URI: "uri", MimeType: "text/plain"}},
+	types.PostMedias{types.PostMedia{Provider: "provider", URI: "https://uri.com", MimeType: "text/plain"}},
 )
 
 func TestMsgCreateMediaPost_Route(t *testing.T) {
@@ -167,6 +167,153 @@ func TestMsgCreateMediaPost_Route(t *testing.T) {
 func TestMsgCreateMediaPost_Type(t *testing.T) {
 	actual := msgCreateMediaPost.Type()
 	assert.Equal(t, "create_media_post", actual)
+}
+
+func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	tests := []struct {
+		name  string
+		msg   types.MsgCreateMediaPost
+		error sdk.Error
+	}{
+		{
+			name: "Empty owner returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, nil, types.PostMedias{types.PostMedia{
+				Provider: "provider",
+				URI:      "uri",
+				MimeType: "text/plain",
+			}}),
+			error: sdk.ErrInvalidAddress("Invalid creator address: "),
+		},
+		{
+			name: "Empty message returns error",
+			msg: types.NewMsgCreateMediaPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, types.PostMedias{types.PostMedia{
+				Provider: "provider",
+				URI:      "uri",
+				MimeType: "text/plain",
+			}}),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+		},
+		{
+			name: "Empty subspace returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "", map[string]string{}, creator, types.PostMedias{types.PostMedia{
+				Provider: "provider",
+				URI:      "uri",
+				MimeType: "text/plain",
+			}}),
+			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
+		},
+		{
+			name: "More than 10 optional data returns error",
+			msg: types.NewMsgCreateMediaPost(
+				"My message", types.PostID(0),
+				false,
+				"desmos", map[string]string{
+					"key1":  "value1",
+					"key2":  "value2",
+					"key3":  "value3",
+					"key4":  "value4",
+					"key5":  "value5",
+					"key6":  "value6",
+					"key7":  "value7",
+					"key8":  "value8",
+					"key9":  "value9",
+					"key10": "value10",
+					"key11": "value11",
+				},
+				creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "uri",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
+		},
+		{
+			name: "Optional data longer than 200 characters returns error",
+			msg: types.NewMsgCreateMediaPost(
+				"My message",
+				types.PostID(0),
+				false,
+				"desmos", map[string]string{
+					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
+				},
+				creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "uri",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
+		},
+		{
+			name:  "Valid message does not return any error",
+			msg:   msgCreateMediaPost,
+			error: nil,
+		},
+		{
+			name: "Empty provider in message returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "",
+					URI:      "https://example.com",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("media provider must be specified and cannot be empty"),
+		},
+		{
+			name: "Empty uri in message returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("uri must be specified and cannot be empty"),
+		},
+		{
+			name: "Invalid URI in message returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "invalid-uri",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("invalid uri provided"),
+		},
+		{
+			name: "Empty mime type in message returns error",
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "https://example.com",
+					MimeType: "",
+				}}),
+			error: sdk.ErrUnknownRequest("mime type must be specified and cannot be empty"),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.error, test.msg.ValidateBasic())
+		})
+	}
+
+	err := msgCreatePost.ValidateBasic()
+	assert.Nil(t, err)
+}
+
+func TestMsgCreateMediaPost_GetSignBytes(t *testing.T) {
+	actual := msgCreateMediaPost.GetSignBytes()
+	expected := `{"type":"desmos/MsgCreateMediaPost","value":{"msg_create_post":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53","subspace":"desmos"},"post_medias":[{"mime_Type":"text/plain","provider":"provider","uri":"https://uri.com"}]}}`
+	assert.Equal(t, expected, string(actual))
+}
+
+func TestMsgCreateMediaPost_GetSigners(t *testing.T) {
+	actual := msgCreateMediaPost.GetSigners()
+	assert.Equal(t, 1, len(actual))
+	assert.Equal(t, msgCreateMediaPost.MsgCreatePost.Creator, actual[0])
 }
 
 // ----------------------
@@ -204,7 +351,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid message returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner),
-			error: sdk.ErrUnknownRequest("TextPost message cannot be empty"),
+			error: sdk.ErrUnknownRequest("Post message cannot be empty"),
 		},
 		{
 			name:  "Valid message returns no error",
