@@ -61,8 +61,8 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 
 		var (
 			parentID       *types.PostID
-			creationTime   time.Time
-			allowsComments bool
+			creationTime   *time.Time
+			allowsComments *bool
 			subspace       string
 			creatorAddr    sdk.AccAddress
 		)
@@ -77,19 +77,23 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
-			creationTime, err = time.Parse(time.RFC3339, v)
+			parsedTime, err := time.Parse(time.RFC3339, v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+
+			creationTime = &parsedTime
 		}
 
 		if v := r.URL.Query().Get(RestAllowsComments); len(v) != 0 {
-			allowsComments, err = strconv.ParseBool(v)
+			parsedAllowsComments, err := strconv.ParseBool(v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+
+			allowsComments = &parsedAllowsComments
 		}
 
 		if v := r.URL.Query().Get(RestSubspace); len(v) != 0 {

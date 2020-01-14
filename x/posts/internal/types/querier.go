@@ -33,15 +33,15 @@ func DefaultQueryPostsParams(page, limit int) QueryPostsParams {
 
 // NewQueryPostsParams creates a new instance of QueryPostsParams
 func NewQueryPostsParams(page, limit int,
-	parentID *PostID, creationTime time.Time, allowsComments bool, subspace string, owner sdk.AccAddress,
+	parentID *PostID, creationTime *time.Time, allowsComments *bool, subspace string, owner sdk.AccAddress,
 ) QueryPostsParams {
 	return QueryPostsParams{
 		Page:  page,
 		Limit: limit,
 
 		ParentID:       parentID,
-		CreationTime:   &creationTime,
-		AllowsComments: &allowsComments,
+		CreationTime:   creationTime,
+		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		Creator:        owner,
 	}
