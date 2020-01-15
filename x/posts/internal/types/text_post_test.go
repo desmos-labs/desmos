@@ -181,6 +181,106 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	}
 }
 
+func TestPost_GetID(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.GetID()
+
+	assert.Equal(t, types.PostID(2), actual)
+}
+
+func TestPost_GetParentID(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.GetParentID()
+
+	assert.Equal(t, types.PostID(0), actual)
+}
+
+func TestPost_SetMessage(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.SetMessage("edited media post")
+
+	assert.Equal(t, "edited media post", actual.GetMessage())
+}
+
+func TestPost_GetMessage(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.GetMessage()
+
+	assert.Equal(t, "media Post", actual)
+
+}
+
+func TestPost_CreationTime(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.CreationTime()
+
+	assert.Equal(t, sdk.NewInt(0), actual)
+}
+
+func TestPost_SetEditTime(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.SetEditTime(sdk.NewInt(1))
+
+	assert.Equal(t, sdk.NewInt(1), actual.GetEditTime())
+}
+
+func TestPost_GetEditTime(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.GetEditTime()
+
+	assert.Equal(t, sdk.NewInt(0), actual)
+}
+
+func TestPost_CanComment(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.CanComment()
+
+	assert.Equal(t, false, actual)
+}
+
+func TestPost_GetSubspace(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.GetSubspace()
+
+	assert.Equal(t, "desmos", actual)
+}
+
+func TestPost_GetOptionalData(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner)
+
+	actual := post.GetOptionalData()
+
+	assert.Equal(t, map[string]string{"key1": "value1"}, actual)
+}
+
+func TestPost_Owner(t *testing.T) {
+	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+
+	actual := post.Owner()
+
+	assert.Equal(t, owner, actual)
+}
+
 // -----------
 // --- TextPost
 // -----------

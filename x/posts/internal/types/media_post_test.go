@@ -2,10 +2,12 @@ package types_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"testing"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
-	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // -----------
@@ -24,9 +26,8 @@ func TestMediaPost_String(t *testing.T) {
 			},
 		},
 	)
-
 	assert.Equal(t,
-		``,
+		`{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`,
 		mp.String(),
 	)
 }
@@ -445,7 +446,7 @@ func TestMediaPost_Equals(t *testing.T) {
 func TestMediaPost_MarshalJSON(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -454,14 +455,14 @@ func TestMediaPost_MarshalJSON(t *testing.T) {
 			},
 		},
 	)
-	json := types.ModuleCdc.MustMarshalJSON(mp)
-	assert.Equal(t, "", string(json))
+	json, _ := mp.MarshalJSON()
+	assert.Equal(t, `{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`, string(json))
 }
 
 func TestMediaPost_UnmarshalJSON(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 1, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -478,15 +479,15 @@ func TestMediaPost_UnmarshalJSON(t *testing.T) {
 	}{
 		{
 			name:         "Valid media post is ready properly",
-			value:        ``,
+			value:        `{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`,
 			expMediaPost: mp,
 			expError:     "",
 		},
 		{
 			name:         "Invalid media post returns error",
-			value:        ``,
+			value:        `{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`,
 			expMediaPost: mp,
-			expError:     "",
+			expError:     "JSON encoding of interfaces require non-empty type field.",
 		},
 	}
 
@@ -651,7 +652,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 
 func TestMediaPosts_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var mp = types.MediaPosts{types.NewMediaPost(
+	var mps = types.MediaPosts{types.NewMediaPost(
 		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
 		types.PostMedias{
 			types.PostMedia{
@@ -663,8 +664,8 @@ func TestMediaPosts_String(t *testing.T) {
 	)}
 
 	assert.Equal(t,
-		``,
-		mp.String(),
+		`[{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}]`,
+		mps.String(),
 	)
 }
 

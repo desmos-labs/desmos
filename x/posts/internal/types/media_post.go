@@ -1,7 +1,6 @@
 package types
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -24,20 +23,12 @@ func NewMediaPost(post TextPost, medias PostMedias) MediaPost {
 
 // String implements fmt.Stringer
 func (mp MediaPost) String() string {
-	txtPostStr := mp.TextPost.String()
-	medias := mp.Medias.String()
-
-	mpString := map[string]string{"post": txtPostStr, "medias": medias}
-
-	return mapToString(mpString)
-}
-
-func mapToString(m map[string]string) string {
-	b := new(bytes.Buffer)
-	for key, value := range m {
-		fmt.Fprintf(b, "\"%s\":\"%s\",", key, value)
+	bytes, err := json.Marshal(&mp)
+	if err != nil {
+		panic(err)
 	}
-	return b.String()
+
+	return string(bytes)
 }
 
 // GetID implements Post GetID
@@ -132,7 +123,8 @@ func checkMediaPostEquals(first MediaPost, second MediaPost) bool {
 
 // MarshalJSON implements Marshaler
 func (mp MediaPost) MarshalJSON() ([]byte, error) {
-	return json.Marshal(mp.String())
+	type temp MediaPost
+	return json.Marshal(temp(mp))
 }
 
 // UnmarshalJSON implements Unmarshaler
@@ -171,11 +163,12 @@ func (mps MediaPosts) Equals(other MediaPosts) bool {
 
 // String implements stringer interface
 func (mps MediaPosts) String() string {
-	var postsString string
-	for _, post := range mps {
-		postsString += post.String()
+	bytes, err := json.Marshal(&mps)
+	if err != nil {
+		panic(err)
 	}
-	return postsString
+
+	return string(bytes)
 }
 
 // ---------------
@@ -192,7 +185,6 @@ func (pms PostMedias) String() string {
 
 	return string(bytes)
 }
-
 func (pms PostMedias) Equals(other PostMedias) bool {
 	for index, postMedia := range pms {
 		if !postMedia.Equals(other[index]) {
