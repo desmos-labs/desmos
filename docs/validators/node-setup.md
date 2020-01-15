@@ -44,7 +44,7 @@ Fetch the mainnet's genesis.json file into `desmosd`'s config directory.
 
 ```shell
 mkdir -p $HOME/.desmosd/config
-curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json > $HOME/.desmosd/config/genesis.json
+curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
 ```
 
 Note we use the latest directory in the launch repo which contains details for the mainnet like the latest version and the genesis file.
