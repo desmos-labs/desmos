@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,6 +44,8 @@ func testCodec() *codec.Codec {
 }
 
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+var timeZone, _ = time.LoadLocation("UTC")
+var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 var testPost = types.NewTextPost(
 	types.PostID(3257),
 	types.PostID(0),
@@ -49,6 +53,6 @@ var testPost = types.NewTextPost(
 	false,
 	"desmos",
 	map[string]string{},
-	10,
+	testPostCreationDate,
 	testPostOwner,
 )

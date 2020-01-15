@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -75,7 +76,7 @@ $ %s query posts posts --page=2 --limit=100
 			limit := viper.GetInt(flagNumLimit)
 
 			parentID := viper.GetString(flagParentID)
-			creationTime := viper.GetInt(flagCreationTime)
+			creationTime := viper.GetString(flagCreationTime)
 			allowsComments := viper.GetString(flagAllowsComments)
 			subspace := viper.GetString(flagSubspace)
 			bech32CreatorAddress := viper.GetString(flagCreator)
@@ -93,8 +94,13 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// CreationTime
-			if creationTime >= 0 {
-				params.CreationTime = sdk.NewInt(int64(creationTime))
+			if len(creationTime) > 0 {
+				parsedTime, err := time.Parse(time.RFC3339, creationTime)
+				if err != nil {
+					return err
+				}
+
+				params.CreationTime = &parsedTime
 			}
 
 			// AllowsComments
@@ -152,7 +158,7 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().Int(flagNumLimit, 100, "pagination limit of posts to query for")
 
 	cmd.Flags().String(flagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().Int(flagCreationTime, -1, "(optional) filter the posts created at block height")
+	cmd.Flags().String(flagCreationTime, "", "(optional) filter the posts created at block height")
 	cmd.Flags().String(flagAllowsComments, "", "(optional) filter the posts allowing comments")
 	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
 	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")

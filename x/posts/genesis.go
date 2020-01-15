@@ -48,17 +48,5 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		}
 	}
 
-	for postID, reactions := range data.Reactions {
-		for _, reaction := range reactions {
-			postID, err := ParsePostID(postID)
-			if err != nil {
-				panic(err)
-			}
-			if err := keeper.SaveReaction(ctx, postID, reaction); err != nil {
-				panic(err)
-			}
-		}
-	}
-
 	return []abci.ValidatorUpdate{}
 }

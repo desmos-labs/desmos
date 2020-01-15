@@ -39,7 +39,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 			textMsg.AllowsComments,
 			textMsg.Subspace,
 			textMsg.OptionalData,
-			ctx.BlockHeight(),
+			textMsg.CreationDate,
 			textMsg.Creator,
 		)
 	}
@@ -52,7 +52,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 			mediaMsg.MsgCreatePost.AllowsComments,
 			mediaMsg.MsgCreatePost.Subspace,
 			mediaMsg.MsgCreatePost.OptionalData,
-			ctx.BlockHeight(),
+			mediaMsg.MsgCreatePost.CreationDate,
 			mediaMsg.MsgCreatePost.Creator,
 		)
 
@@ -110,13 +110,13 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if existing.CreationTime().GT(sdk.NewInt(ctx.BlockHeight())) {
+	if existing.Created.After(msg.GetEditTime()) {
 		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
 	}
 
 	// Edit the post
 	existing = existing.SetMessage(msg.Message)
-	existing = existing.SetEditTime(sdk.NewInt(ctx.BlockHeight()))
+	existing = existing.SetEditTime(msg.EditDate)
 	keeper.SavePost(ctx, existing)
 
 	editEvent := sdk.NewEvent(
@@ -141,7 +141,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	}
 
 	// Create and store the reaction
-	reaction := types.NewReaction(msg.Value, ctx.BlockHeight(), msg.User)
+	reaction := types.NewReaction(msg.Value, msg.User)
 	if err := keeper.SaveReaction(ctx, post.GetID(), reaction); err != nil {
 		return err.Result()
 	}

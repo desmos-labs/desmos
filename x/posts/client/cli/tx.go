@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -78,9 +79,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 					media := types.NewPostMedia(arg[0], arg[1], arg[2])
 					medias = append(medias, media)
 				}
-				msg = types.NewMsgCreateMediaPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, medias)
+				msg = types.NewMsgCreateMediaPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC(), medias)
 			} else {
-				msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
+				msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
 			}
 
 			if err = msg.ValidateBasic(); err != nil {
@@ -117,7 +118,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], from)
+			msg := types.NewMsgEditPost(postID, args[1], from, time.Now().UTC())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

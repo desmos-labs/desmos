@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
+labels: 'Kind:Bug'
+assignees: 'RiccardoM'
 
 ---
 <!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
@@ -12,17 +12,11 @@ v    Before smashing the submit button please review the template.
 v    Please also ensure that this is not a duplicate issue :)  
 ☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  --> 
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Bug description
+<!-- A clear and concise description of what the bug is. -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
+## Steps to reproduce
+<!-- Steps to reproduce the bug --> 
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Additional context**
-Add any other context about the problem here.
+## Expected behavior
+<!-- A clear and concise description of what you expected to happen. -->

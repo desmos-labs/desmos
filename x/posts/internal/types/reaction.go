@@ -14,17 +14,15 @@ import (
 
 // Reaction is a struct of a user reaction to a post
 type Reaction struct {
-	Created sdk.Int        `json:"created"` // Block height at which the reaction was created
-	Owner   sdk.AccAddress `json:"owner"`   // User that has created the reaction
-	Value   string         `json:"value"`   // Reaction of the reaction
+	Owner sdk.AccAddress `json:"owner"` // User that has created the reaction
+	Value string         `json:"value"` // Reaction of the reaction
 }
 
 // NewReaction returns a new Reaction
-func NewReaction(value string, created int64, owner sdk.AccAddress) Reaction {
+func NewReaction(value string, owner sdk.AccAddress) Reaction {
 	return Reaction{
-		Value:   value,
-		Created: sdk.NewInt(created),
-		Owner:   owner,
+		Value: value,
+		Owner: owner,
 	}
 }
 
@@ -43,10 +41,6 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("invalid reaction owner: %s", reaction.Owner)
 	}
 
-	if reaction.Created.Equal(sdk.ZeroInt()) {
-		return fmt.Errorf("invalid reaction creation block height: %s", reaction.Created)
-	}
-
 	if len(strings.TrimSpace(reaction.Value)) == 0 {
 		return fmt.Errorf("reaction value cannot empty or blank")
 	}
@@ -57,7 +51,6 @@ func (reaction Reaction) Validate() error {
 // checkPostsEqual returns true if reaction and other contain the same data
 func (reaction Reaction) Equals(other Reaction) bool {
 	return reaction.Value == other.Value &&
-		reaction.Created == other.Created &&
 		reaction.Owner.Equals(other.Owner)
 }
 

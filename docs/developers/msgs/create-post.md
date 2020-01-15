@@ -11,7 +11,8 @@ This message allows you to create a new public post.
     "allows_comments": false,
     "subspace": "<Subspace of a post>",
     "optional_data": {},
-    "creator": "<Desmos address that's creating the post>"
+    "creator": "<Desmos address that's creating the post>",
+    "creation_date": "<RFC3339-formatted date representing the creation date of the post>"
   }
 }
 ```
@@ -25,6 +26,7 @@ This message allows you to create a new public post.
 | `susbspace` | String | Required string that identifies the posting app |
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
+| `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
 
 ## Example
 ### With optional data
@@ -39,7 +41,8 @@ This message allows you to create a new public post.
     "optional_data": {
       "custom_field": "My custom value"
     },
-    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
+    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+    "creation_date": "2020-01-01T12:00:00Z"
   }
 }
 ``` 
@@ -53,7 +56,8 @@ This message allows you to create a new public post.
     "message": "Desmos is great!",
     "allows_comments": true,
     "subspace": "desmos",
-    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
+    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+    "creation_date": "2020-01-01T12:00:00Z"
   }
 }
 ```

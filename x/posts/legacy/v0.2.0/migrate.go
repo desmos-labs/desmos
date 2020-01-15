@@ -2,6 +2,7 @@ package v0_2_0
 
 import (
 	"strings"
+	"time"
 
 	v010posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.1.0"
 )
@@ -10,19 +11,19 @@ import (
 // genesis state. This migration changes the data that are saved for each post
 // moving the external reference into the arbitrary data map and adding the new
 // subspace field
-func Migrate(oldGenState v010posts.GenesisState) GenesisState {
+func Migrate(oldGenState v010posts.GenesisState, genesisTime time.Time, blockInterval int) GenesisState {
 	return GenesisState{
-		Posts:     migratePosts(oldGenState.Posts),
+		Posts:     migratePosts(oldGenState.Posts, genesisTime, blockInterval),
 		Reactions: migrateLikes(oldGenState.Likes),
 	}
 }
 
-// migratePosts takes a slice of v0.1.0 TextPost object and migrates them to v0.2.0 TextPost
+// migratePosts takes a slice of v0.1.0 Post object and migrates them to v0.2.0 Post
 // The following changes are performed:
-// - Each external_reference TextPost value (if not empty or blank) is put inside the optional_data map using
+// - Each external_reference Post value (if not empty or blank) is put inside the optional_data map using
 //   external_reference as the value's associated key
-// - TextPost subspaces are left empty so that they can be properly set after the migration has been completed
-func migratePosts(posts []v010posts.Post) []Post {
+// - Post subspaces are left empty so that they can be properly set after the migration has been completed
+func migratePosts(posts []v010posts.Post, genesisTime time.Time, blockInterval int) []Post {
 	migratedPosts := make([]Post, len(posts))
 
 	// Migrate the posts
@@ -33,16 +34,23 @@ func migratePosts(posts []v010posts.Post) []Post {
 			optionalData["external_reference"] = oldPost.ExternalReference
 		}
 
+		// Get the creation and last edit times in timestamps
+		created := genesisTime.Add(time.Second * time.Duration(oldPost.Created.Int64()*int64(blockInterval)))
+		lastEdited := time.Time{}
+		if !oldPost.LastEdited.IsZero() {
+			lastEdited = genesisTime.Add(time.Second * time.Duration(oldPost.LastEdited.Int64()*int64(blockInterval)))
+		}
+
 		migratedPosts[index] = Post{
 			PostID:         PostID(oldPost.PostID),
 			ParentID:       PostID(oldPost.ParentID),
 			Message:        oldPost.Message,
-			Created:        oldPost.Created,
-			LastEdited:     oldPost.LastEdited,
+			Created:        created,
+			LastEdited:     lastEdited,
 			AllowsComments: oldPost.AllowsComments,
 			Subspace:       "",
 			OptionalData:   optionalData,
-			Owner:          oldPost.Owner,
+			Creator:        oldPost.Owner,
 		}
 	}
 
@@ -61,9 +69,8 @@ func migrateLikes(likes map[string][]v010posts.Like) map[string][]Reaction {
 		reactions := make([]Reaction, len(value))
 		for index, like := range value {
 			reactions[index] = Reaction{
-				Created: like.Created,
-				Owner:   like.Owner,
-				Value:   "like",
+				Owner: like.Owner,
+				Value: "like",
 			}
 		}
 

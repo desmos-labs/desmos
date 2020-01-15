@@ -3,27 +3,30 @@ package cli
 import (
 	"fmt"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/desmos-labs/desmos/x/genutil/internal/types"
 	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
 	"github.com/spf13/cobra"
-	"github.com/tendermint/tendermint/types"
+	tm "github.com/tendermint/tendermint/types"
 )
 
 // migrationMap contains the list of migrations that should be performed when migrating
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
-var migrationMap = map[string][]extypes.MigrationCallback{
+var migrationMap = map[string][]types.MigrationCallback{
 	"v0.2.0": {v020.Migrate},
 }
 
 const (
-	flagGenesisTime = "genesis-time"
-	flagChainID     = "chain-id"
+	flagGenesisTime   = "genesis-time"
+	flagChainID       = "chain-id"
+	flagBlockInterval = "block-interval"
 )
 
 func MigrationsListCmd() *cobra.Command {
@@ -75,7 +78,7 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			target := args[0]
 			importGenesis := args[1]
 
-			genDoc, err := types.GenesisDocFromFile(importGenesis)
+			genDoc, err := tm.GenesisDocFromFile(importGenesis)
 			if err != nil {
 				return err
 			}
@@ -89,8 +92,16 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			}
 
 			newGenState := initialState
-			for _, migration := range migrations {
-				newGenState = migration(newGenState)
+			for index, migration := range migrations {
+
+				// v0.2.0 migration needs to have the previous version's genesis time and the
+				// block interval to convert the block height dates into timestamps
+				if target == "v0.2.0" && index == 0 {
+					blockInterval, _ := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
+					newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
+				} else {
+					newGenState = migration(newGenState)
+				}
 			}
 
 			genDoc.AppState = cdc.MustMarshalJSON(newGenState)
@@ -124,6 +135,7 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 
 	cmd.Flags().String(flagGenesisTime, "", "Override genesis_time with this flag")
 	cmd.Flags().String(flagChainID, "", "Override chain_id with this flag")
+	cmd.Flags().Int(flagBlockInterval, 0, "Block interval of seconds to consider while computing timestamps dates")
 
 	return cmd
 }
