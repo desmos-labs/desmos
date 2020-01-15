@@ -200,9 +200,17 @@ func (pms PostMedias) Equals(other PostMedias) bool {
 // ---------------
 
 type PostMedia struct {
-	Provider string `json:"provider"`
 	URI      string `json:"uri"`
+	Provider string `json:"provider"`
 	MimeType string `json:"mime_Type"`
+}
+
+func NewPostMedia(uri, provider, mimeType string) PostMedia {
+	return PostMedia{
+		URI:      uri,
+		Provider: provider,
+		MimeType: mimeType,
+	}
 }
 
 // String implements fmt.Stringer

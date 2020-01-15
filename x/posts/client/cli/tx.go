@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -42,9 +43,9 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace] [message] [allows-comments]",
+		Use:   "create [subspace] [message] [allows-comments] [[[uri],[provider],[mime-type]]...]",
 		Short: "Create a new post",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -66,11 +67,25 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
+			var msg types.MsgCreatePost
+
+			//if there's some medias
+			if len(args) > 3 {
+				var medias types.PostMedias
+				//read each media and add it to the medias if valid
+				for i := 3; i < len(args); i++ {
+					arg := strings.Split(args[i], ",")
+					media := types.NewPostMedia(arg[0], arg[1], arg[2])
+					medias = append(medias, media)
+				}
+				msg = types.NewMsgCreateMediaPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, medias)
+			} else {
+				msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from)
+			}
+
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

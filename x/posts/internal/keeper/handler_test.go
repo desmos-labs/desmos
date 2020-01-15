@@ -30,17 +30,17 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created.Int64(), testPost.Creator),
 			},
 			lastPostID: types.PostID(0),
-			msg:        types.NewMsgCreatePost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator),
+			msg:        types.NewMsgCreateTextPost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator),
 			expError:   "Post with id 1 already exists",
 		},
 		{
 			name:    "Text Post with new id is stored properly",
-			msg:     types.NewMsgCreatePost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator),
+			msg:     types.NewMsgCreateTextPost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator),
 			expPost: types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, 0, testPost.Creator),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns expError",
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
+			msg:      types.NewMsgCreateTextPost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
 			expError: "Parent post with id 50 not found",
 		},
 		{
@@ -48,7 +48,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewTextPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, 0, testPost.Creator),
 			},
-			msg:      types.NewMsgCreatePost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
+			msg:      types.NewMsgCreateTextPost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator),
 			expError: "Post with id 50 does not allow comments",
 		},
 		{

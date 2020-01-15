@@ -13,7 +13,7 @@ import (
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var msgCreatePost = types.NewMsgCreatePost(
+var msgCreatePost = types.NewMsgCreateTextPost(
 	"My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
 )
 
@@ -36,22 +36,22 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil),
+			msg:   types.NewMsgCreateTextPost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name:  "Empty message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
+			msg:   types.NewMsgCreateTextPost("", types.PostID(0), false, "desmos", map[string]string{}, creator),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty subspace returns error",
-			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator),
+			msg:   types.NewMsgCreateTextPost("My message", types.PostID(0), false, "", map[string]string{}, creator),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
 		{
 			name: "More than 10 optional data returns error",
-			msg: types.NewMsgCreatePost(
+			msg: types.NewMsgCreateTextPost(
 				"My message",
 				types.PostID(0),
 				false,
@@ -75,7 +75,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Optional data longer than 200 characters returns error",
-			msg: types.NewMsgCreatePost(
+			msg: types.NewMsgCreateTextPost(
 				"My message",
 				types.PostID(0),
 				false,
@@ -89,7 +89,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Valid message does not return any error",
-			msg: types.NewMsgCreatePost(
+			msg: types.NewMsgCreateTextPost(
 				"Message",
 				types.PostID(0),
 				false,
@@ -128,12 +128,12 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	}{
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner),
+			msg:         types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner),
 			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner),
+			msg:         types.NewMsgCreateTextPost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner),
 			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
 		},
 	}

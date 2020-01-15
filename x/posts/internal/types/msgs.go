@@ -44,8 +44,8 @@ type MsgCreateTextPost struct {
 	Creator        sdk.AccAddress    `json:"creator"`
 }
 
-// NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
+// NewMsgCreateTextPost is a constructor function for MsgSetName
+func NewMsgCreateTextPost(message string, parentID PostID, allowsComments bool, subspace string,
 	optionalData map[string]string, owner sdk.AccAddress) MsgCreateTextPost {
 	return MsgCreateTextPost{
 		Message:        message,
@@ -121,7 +121,7 @@ type MsgCreateMediaPost struct {
 func NewMsgCreateMediaPost(message string, parentID PostID, allowsComments bool, subspace string,
 	optionalData map[string]string, owner sdk.AccAddress, medias PostMedias) MsgCreateMediaPost {
 	return MsgCreateMediaPost{
-		MsgCreatePost: NewMsgCreatePost(message, parentID, allowsComments, subspace, optionalData, owner),
+		MsgCreatePost: NewMsgCreateTextPost(message, parentID, allowsComments, subspace, optionalData, owner),
 		Medias:        medias,
 	}
 }

@@ -30,7 +30,7 @@ var (
 	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
-	NewMsgCreatePost         = types.NewMsgCreatePost
+	NewMsgCreatePost         = types.NewMsgCreateTextPost
 	NewMsgEditPost           = types.NewMsgEditPost
 	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
