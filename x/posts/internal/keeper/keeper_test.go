@@ -188,11 +188,11 @@ func TestKeeper_SavePost(t *testing.T) {
 		{
 			name: "MediaPost stored, existing text posts",
 			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(1), types.PostID(0), "a text post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "a text post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 			},
 			lastPostID: types.PostID(0),
 			newPost: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -265,7 +265,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			ID:         types.PostID(15),
 			postExists: true,
 			expected: types.NewMediaPost(
-				types.NewTextPost(types.PostID(15), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, testPostOwner),
+				types.NewTextPost(types.PostID(15), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -403,7 +403,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
-	posts := types.Posts{
+	posts := types.TextPosts{
 		types.NewTextPost(
 			types.PostID(10),
 			types.PostID(1),
@@ -414,7 +414,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			date,
 			creator1,
 		),
-		types.NewPost(
+		types.NewTextPost(
 			types.PostID(11),
 			types.PostID(1),
 			"Post 2",
@@ -424,7 +424,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
 		),
-		types.NewPost(
+		types.NewTextPost(
 			types.PostID(12),
 			types.PostID(2),
 			"Post 3",

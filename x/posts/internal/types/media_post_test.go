@@ -3,6 +3,7 @@ package types_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
@@ -16,8 +17,10 @@ import (
 
 func TestMediaPost_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
+
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -34,8 +37,9 @@ func TestMediaPost_String(t *testing.T) {
 
 func TestMediaPost_GetID(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -52,8 +56,9 @@ func TestMediaPost_GetID(t *testing.T) {
 
 func TestMediaPost_GetParentID(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -70,8 +75,9 @@ func TestMediaPost_GetParentID(t *testing.T) {
 
 func TestMediaPost_SetMessage(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -88,8 +94,9 @@ func TestMediaPost_SetMessage(t *testing.T) {
 
 func TestMediaPost_GetMessage(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -107,8 +114,9 @@ func TestMediaPost_GetMessage(t *testing.T) {
 
 func TestMediaPost_CreationTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -120,13 +128,14 @@ func TestMediaPost_CreationTime(t *testing.T) {
 
 	actual := mp.CreationTime()
 
-	assert.Equal(t, sdk.NewInt(0), actual)
+	assert.Equal(t, testPostCreationDate, actual)
 }
 
 func TestMediaPost_SetEditTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -136,15 +145,16 @@ func TestMediaPost_SetEditTime(t *testing.T) {
 		},
 	)
 
-	actual := mp.SetEditTime(sdk.NewInt(1))
+	actual := mp.SetEditTime(time.Date(2020, 1, 2, 15, 15, 00, 000, timeZone))
 
-	assert.Equal(t, sdk.NewInt(1), actual.GetEditTime())
+	assert.Equal(t, time.Date(2020, 1, 2, 15, 15, 00, 000, timeZone), actual.GetEditTime())
 }
 
 func TestMediaPost_GetEditTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -156,13 +166,14 @@ func TestMediaPost_GetEditTime(t *testing.T) {
 
 	actual := mp.GetEditTime()
 
-	assert.Equal(t, sdk.NewInt(0), actual)
+	assert.Equal(t, testPostCreationDate, actual)
 }
 
 func TestMediaPost_CanComment(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -179,8 +190,9 @@ func TestMediaPost_CanComment(t *testing.T) {
 
 func TestMediaPost_GetSubspace(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -197,8 +209,9 @@ func TestMediaPost_GetSubspace(t *testing.T) {
 
 func TestMediaPost_GetOptionalData(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -215,8 +228,9 @@ func TestMediaPost_GetOptionalData(t *testing.T) {
 
 func TestMediaPost_Owner(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -233,13 +247,14 @@ func TestMediaPost_Owner(t *testing.T) {
 
 func TestMediaPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	tests := []struct {
 		post   types.MediaPost
 		expErr string
 	}{
 		{
 			post: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "",
@@ -252,7 +267,7 @@ func TestMediaPost_Validate(t *testing.T) {
 		},
 		{
 			post: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -265,7 +280,7 @@ func TestMediaPost_Validate(t *testing.T) {
 		},
 		{
 			post: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -278,7 +293,7 @@ func TestMediaPost_Validate(t *testing.T) {
 		},
 		{
 			post: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -306,6 +321,7 @@ func TestMediaPost_Validate(t *testing.T) {
 func TestMediaPost_Equals(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 
 	tests := []struct {
 		name      string
@@ -316,7 +332,7 @@ func TestMediaPost_Equals(t *testing.T) {
 		{
 			name: "Same data returns true",
 			first: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -326,7 +342,7 @@ func TestMediaPost_Equals(t *testing.T) {
 				},
 			),
 			second: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -340,7 +356,7 @@ func TestMediaPost_Equals(t *testing.T) {
 		{
 			name: "Different owner returns false",
 			first: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -350,7 +366,7 @@ func TestMediaPost_Equals(t *testing.T) {
 				},
 			),
 			second: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, otherOwner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, otherOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -364,7 +380,7 @@ func TestMediaPost_Equals(t *testing.T) {
 		{
 			name: "Different provider returns false",
 			first: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -374,7 +390,7 @@ func TestMediaPost_Equals(t *testing.T) {
 				},
 			),
 			second: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider2",
@@ -388,7 +404,7 @@ func TestMediaPost_Equals(t *testing.T) {
 		{
 			name: "Different URI returns false",
 			first: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -398,7 +414,7 @@ func TestMediaPost_Equals(t *testing.T) {
 				},
 			),
 			second: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, otherOwner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, otherOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -412,7 +428,7 @@ func TestMediaPost_Equals(t *testing.T) {
 		{
 			name: "Different mime type returns false",
 			first: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -422,7 +438,7 @@ func TestMediaPost_Equals(t *testing.T) {
 				},
 			),
 			second: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, otherOwner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, otherOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -445,8 +461,9 @@ func TestMediaPost_Equals(t *testing.T) {
 
 func TestMediaPost_MarshalJSON(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -461,8 +478,9 @@ func TestMediaPost_MarshalJSON(t *testing.T) {
 
 func TestMediaPost_UnmarshalJSON(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 1, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -513,6 +531,7 @@ func TestMediaPost_UnmarshalJSON(t *testing.T) {
 func TestMediaPosts_Equals(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 
 	tests := []struct {
 		name      string
@@ -523,7 +542,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 		{
 			name: "Same data returns true",
 			first: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -533,7 +552,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 				},
 			)},
 			second: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -547,7 +566,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 		{
 			name: "Different owner returns false",
 			first: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -557,7 +576,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 				},
 			)},
 			second: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, otherOwner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, otherOwner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -571,7 +590,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 		{
 			name: "Different provider returns false",
 			first: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -581,7 +600,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 				},
 			)},
 			second: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider2",
@@ -595,7 +614,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 		{
 			name: "Different URI returns false",
 			first: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -605,7 +624,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 				},
 			)},
 			second: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -619,7 +638,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 		{
 			name: "Different mime type returns false",
 			first: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -629,7 +648,7 @@ func TestMediaPosts_Equals(t *testing.T) {
 				},
 			)},
 			second: types.MediaPosts{types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 123, owner),
+				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -652,8 +671,9 @@ func TestMediaPosts_Equals(t *testing.T) {
 
 func TestMediaPosts_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mps = types.MediaPosts{types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "ipfs",
@@ -664,7 +684,7 @@ func TestMediaPosts_String(t *testing.T) {
 	)}
 
 	assert.Equal(t,
-		`[{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}]`,
+		`[{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}]`,
 		mps.String(),
 	)
 }
@@ -689,7 +709,7 @@ func TestPostMedias_String(t *testing.T) {
 
 	actual := postMedias.String()
 
-	assert.Equal(t, `[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"},{"provider":"dropbox","uri":"uri","mime_Type":"application/json"}]`, actual)
+	assert.Equal(t, `[{"uri":"uri","provider":"ipfs","mime_Type":"text/plain"},{"uri":"uri","provider":"dropbox","mime_Type":"application/json"}]`, actual)
 }
 
 func TestPostMedias_Equals(t *testing.T) {
@@ -778,7 +798,7 @@ func TestPostMedia_String(t *testing.T) {
 
 	actual := pm.String()
 
-	assert.Equal(t, `{"provider":"provider","uri":"http://example.com","mime_Type":"text/plain"}`, actual)
+	assert.Equal(t, `{"uri":"http://example.com","provider":"provider","mime_Type":"text/plain"}`, actual)
 }
 
 func TestPostMedia_Validate(t *testing.T) {

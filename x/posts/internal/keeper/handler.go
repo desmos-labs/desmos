@@ -110,7 +110,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if existing.Created.After(msg.GetEditTime()) {
+	if existing.CreationTime().After(msg.EditDate) {
 		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
 	}
 

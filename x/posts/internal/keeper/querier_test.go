@@ -83,8 +83,8 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewTextPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator),
 				types.Reactions{
-					types.NewReaction("Like", 0, creator),
-					types.NewReaction("Like", 10, otherCreator),
+					types.NewReaction("Like", creator),
+					types.NewReaction("Like", otherCreator),
 				},
 				types.PostIDs{types.PostID(2)},
 			),
@@ -106,8 +106,8 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedReactions: map[types.PostID]types.Reactions{
 				types.PostID(1): {
-					types.NewReaction("Like", 0, creator),
-					types.NewReaction("Like", 10, otherCreator),
+					types.NewReaction("Like", creator),
+					types.NewReaction("Like", otherCreator),
 				},
 			},
 			path: []string{types.QueryPost, "1"},

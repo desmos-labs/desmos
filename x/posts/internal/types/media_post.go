@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -50,16 +51,16 @@ func (mp MediaPost) GetMessage() string {
 	return mp.Message
 }
 
-func (mp MediaPost) CreationTime() sdk.Int {
+func (mp MediaPost) CreationTime() time.Time {
 	return mp.Created
 }
 
-func (mp MediaPost) SetEditTime(time sdk.Int) Post {
+func (mp MediaPost) SetEditTime(time time.Time) Post {
 	mp.LastEdited = time
 	return mp
 }
 
-func (mp MediaPost) GetEditTime() sdk.Int {
+func (mp MediaPost) GetEditTime() time.Time {
 	return mp.LastEdited
 }
 

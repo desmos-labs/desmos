@@ -55,7 +55,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Very long message returns error",
-			msg: types.NewMsgCreatePost(
+			msg: types.NewMsgCreateTextPost(
 				`
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
 				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
@@ -119,7 +119,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Future creation date returns error",
-			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
+			msg:   types.NewMsgCreateTextPost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
 		{
@@ -165,12 +165,12 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
 			msg:         types.NewMsgCreateTextPost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
 		},
 	}
 
@@ -191,7 +191,8 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // ----------------------
 // --- MsgCreateMediaPost
 // ----------------------
-var msgCreateMediaPost = types.NewMsgCreateMediaPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner,
+var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
+var msgCreateMediaPost = types.NewMsgCreateMediaPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner, testPostCreationDate,
 	types.PostMedias{types.PostMedia{Provider: "provider", URI: "https://uri.com", MimeType: "text/plain"}},
 )
 
@@ -207,6 +208,7 @@ func TestMsgCreateMediaPost_Type(t *testing.T) {
 
 func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	tests := []struct {
 		name  string
 		msg   types.MsgCreateMediaPost
@@ -214,7 +216,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, nil, types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, nil, testPostCreationDate, types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",
@@ -223,7 +225,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty message returns error",
-			msg: types.NewMsgCreateMediaPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate, types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",
@@ -232,7 +234,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty subspace returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "", map[string]string{}, creator, types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "", map[string]string{}, creator, testPostCreationDate, types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",
@@ -258,6 +260,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 					"key11": "value11",
 				},
 				creator,
+				testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "uri",
@@ -275,6 +278,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
 				},
 				creator,
+				testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "uri",
@@ -289,7 +293,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty provider in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "",
 					URI:      "https://example.com",
@@ -299,7 +303,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty uri in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "",
@@ -309,7 +313,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Invalid URI in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "invalid-uri",
@@ -319,7 +323,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty mime type in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator,
+			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "https://example.com",
@@ -342,7 +346,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 
 func TestMsgCreateMediaPost_GetSignBytes(t *testing.T) {
 	actual := msgCreateMediaPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreateMediaPost","value":{"msg_create_post":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53","subspace":"desmos"},"post_medias":[{"mime_Type":"text/plain","provider":"provider","uri":"https://uri.com"}]}}`
+	expected := `{"type":"desmos/MsgCreateMediaPost","value":{"msg_create_post":{"allows_comments":false,"creation_date":"2020-01-01T15:15:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53","subspace":"desmos"},"post_medias":[{"mime_Type":"text/plain","provider":"provider","uri":"https://uri.com"}]}}`
 	assert.Equal(t, expected, string(actual))
 }
 

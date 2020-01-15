@@ -26,39 +26,39 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		{
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
-				types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+				types.NewTextPost(types.PostID(1), testPost.GetParentID(), testPost.GetMessage(), testPost.CanComment(), "desmos", map[string]string{}, testPost.GetEditTime(), testPost.Owner()),
 			},
 			lastPostID: types.PostID(0),
-			msg:        types.NewMsgCreateTextPost(testPost.Message, testPost.ParentID, testPost.AllowsComments, "desmos", map[string]string{}, testPost.Creator, testPost.Created),
+			msg:        types.NewMsgCreateTextPost(testPost.GetMessage(), testPost.GetParentID(), testPost.CanComment(), "desmos", map[string]string{}, testPost.Owner(), testPost.GetEditTime()),
 			expError:   "Post with id 1 already exists",
 		},
 		{
 			name:    "Text Post with new id is stored properly",
-			msg:     types.NewMsgCreateTextPost(testPost.Message, testPost.ParentID, testPost.AllowsComments, testPost.Subspace, testPost.OptionalData, testPost.Creator, testPost.Created),
-			expPost: types.NewTextPost(types.PostID(1), testPost.ParentID, testPost.Message, testPost.AllowsComments, testPost.Subspace, testPost.OptionalData, testPost.Created, testPost.Creator),
+			msg:     types.NewMsgCreateTextPost(testPost.GetMessage(), testPost.GetParentID(), testPost.CanComment(), testPost.GetSubspace(), testPost.GetOptionalData(), testPost.Owner(), testPost.GetEditTime()),
+			expPost: types.NewTextPost(types.PostID(1), testPost.GetParentID(), testPost.GetMessage(), testPost.CanComment(), testPost.GetSubspace(), testPost.GetOptionalData(), testPost.GetEditTime(), testPost.Owner()),
 		},
 		{
 			name:     "Storing a valid post with missing parent id returns expError",
-			msg:      types.NewMsgCreateTextPost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator, testPost.Created),
+			msg:      types.NewMsgCreateTextPost(testPost.GetMessage(), types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner(), testPost.GetEditTime()),
 			expError: "Parent post with id 50 not found",
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
 			storedPosts: types.Posts{
-				types.NewTextPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+				types.NewTextPost(types.PostID(50), types.PostID(50), "Parent post", false, "desmos", map[string]string{}, testPost.GetEditTime(), testPost.Owner()),
 			},
-			msg:      types.NewMsgCreateTextPost(testPost.Message, types.PostID(50), false, "desmos", map[string]string{}, testPost.Creator, testPost.Created),
+			msg:      types.NewMsgCreateTextPost(testPost.GetMessage(), types.PostID(50), false, "desmos", map[string]string{}, testPost.Owner(), testPost.GetEditTime()),
 			expError: "Post with id 50 does not allow comments",
 		},
 		{
 			name: "Media Post with new id is stored properly",
-			msg: types.NewMsgCreateMediaPost(testPost.Message, testPost.ParentID, false, "desmos", map[string]string{}, testPost.Creator, types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost(testPost.GetMessage(), testPost.GetParentID(), false, "desmos", map[string]string{}, testPost.Owner(), testPost.CreationTime(), types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",
 			}}),
 			expPost: types.NewMediaPost(
-				types.NewTextPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, 0, testPost.Creator),
+				types.NewTextPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPost.CreationTime(), testPost.Owner()),
 				types.PostMedias{
 					types.PostMedia{
 						Provider: "provider",
@@ -126,7 +126,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 	testData := []struct {
 		name       string
-		storedPost *types.TextPost
+		storedPost types.Post
 		msg        types.MsgEditPost
 		expError   string
 		expPost    types.TextPost
@@ -134,35 +134,35 @@ func Test_handleMsgEditPost(t *testing.T) {
 		{
 			name:       "Text Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner, testPost.Created),
+			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner, testPost.GetEditTime()),
 			expError:   "Post with id 0 not found",
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &testPost,
-			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message", editor, testPost.Created),
+			msg:        types.NewMsgEditPost(testPost.GetID(), "Edited message", editor, testPost.GetEditTime()),
 			expError:   "Incorrect owner",
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &testPost,
-			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator, testPost.Created.AddDate(0, 0, -1)),
+			msg:        types.NewMsgEditPost(testPost.GetID(), "Edited message", testPost.Owner(), testPost.GetEditTime().AddDate(0, 0, -1)),
 			expError:   "Edit date cannot be before creation date",
 		},
 		{
 			name:       "Valid request is handled properly",
 			storedPost: &testPost,
-			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator, testPost.Created.AddDate(0, 0, 1)),
+			msg:        types.NewMsgEditPost(testPost.GetID(), "Edited message", testPost.Owner(), testPost.GetEditTime().AddDate(0, 0, 1)),
 			expPost: types.TextPost{
-				PostID:         testPost.PostID,
-				ParentID:       testPost.ParentID,
+				PostID:         testPost.GetID(),
+				ParentID:       testPost.GetParentID(),
 				Message:        "Edited message",
-				Created:        testPost.Created,
+				Created:        testPost.CreationTime(),
 				LastEdited:     testPost.Created.AddDate(0, 0, 1),
-				AllowsComments: testPost.AllowsComments,
-				Subspace:       testPost.Subspace,
-				OptionalData:   testPost.OptionalData,
-				Creator:        testPost.Creator,
+				AllowsComments: testPost.CanComment(),
+				Subspace:       testPost.GetSubspace(),
+				OptionalData:   testPost.GetOptionalData(),
+				Creator:        testPost.Owner(),
 			},
 		},
 	}
@@ -175,7 +175,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {
 				store.Set(
-					[]byte(types.PostStorePrefix+test.storedPost.PostID.String()),
+					[]byte(types.PostStorePrefix+test.storedPost.GetID().String()),
 					k.Cdc.MustMarshalBinaryBare(&test.storedPost),
 				)
 			}
@@ -193,7 +193,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				))
 
 				var stored types.TextPost
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.GetID().String())), &stored)
 				assert.True(t, test.expPost.Equals(stored))
 			}
 
@@ -212,7 +212,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	tests := []struct {
 		name         string
-		existingPost *types.TextPost
+		existingPost types.Post
 		msg          types.MsgAddPostReaction
 		error        string
 	}{
@@ -224,7 +224,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		{
 			name:         "Valid message works properly",
 			existingPost: &testPost,
-			msg:          types.NewMsgAddPostReaction(testPost.PostID, "like", user),
+			msg:          types.NewMsgAddPostReaction(testPost.GetID(), "like", user),
 			error:        "",
 		},
 	}
@@ -237,7 +237,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
+					[]byte(types.PostStorePrefix+test.existingPost.GetID().String()),
 					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
 				)
 			}
@@ -256,7 +256,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				))
 
 				var storedPost types.TextPost
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.GetID().String())), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
@@ -278,7 +278,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	reaction := types.NewReaction("like", user)
 	tests := []struct {
 		name             string
-		existingPost     *types.TextPost
+		existingPost     types.Post
 		existingReaction *types.Reaction
 		msg              types.MsgRemovePostReaction
 		error            string
@@ -291,14 +291,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		{
 			name:         "Reaction not found",
 			existingPost: &testPost,
-			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "like"),
+			msg:          types.NewMsgRemovePostReaction(testPost.GetID(), user, "like"),
 			error:        fmt.Sprintf("Cannot remove the reaction with value like from user %s as it does not exist", user),
 		},
 		{
 			name:             "Valid message works properly",
 			existingPost:     &testPost,
 			existingReaction: &reaction,
-			msg:              types.NewMsgRemovePostReaction(testPost.PostID, user, reaction.Value),
+			msg:              types.NewMsgRemovePostReaction(testPost.GetID(), user, reaction.Value),
 			error:            "",
 		},
 	}
@@ -311,14 +311,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
+					[]byte(types.PostStorePrefix+test.existingPost.GetID().String()),
 					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
 				)
 			}
 
 			if test.existingReaction != nil {
 				store.Set(
-					[]byte(types.PostReactionsStorePrefix+test.existingPost.PostID.String()),
+					[]byte(types.PostReactionsStorePrefix+test.existingPost.GetID().String()),
 					k.Cdc.MustMarshalBinaryBare(&types.Reactions{*test.existingReaction}),
 				)
 			}
@@ -337,7 +337,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				))
 
 				var storedPost types.TextPost
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.GetID().String())), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions

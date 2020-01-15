@@ -188,7 +188,8 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 
 func TestPost_GetID(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.GetID()
 
@@ -197,7 +198,7 @@ func TestPost_GetID(t *testing.T) {
 
 func TestPost_GetParentID(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.GetParentID()
 
@@ -206,7 +207,7 @@ func TestPost_GetParentID(t *testing.T) {
 
 func TestPost_SetMessage(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.SetMessage("edited media post")
 
@@ -215,7 +216,7 @@ func TestPost_SetMessage(t *testing.T) {
 
 func TestPost_GetMessage(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.GetMessage()
 
@@ -225,34 +226,35 @@ func TestPost_GetMessage(t *testing.T) {
 
 func TestPost_CreationTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.CreationTime()
 
-	assert.Equal(t, sdk.NewInt(0), actual)
+	assert.Equal(t, testPostCreationDate, actual)
 }
 
 func TestPost_SetEditTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
+	testPostNewDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 
-	actual := post.SetEditTime(sdk.NewInt(1))
+	actual := post.SetEditTime(testPostNewDate)
 
-	assert.Equal(t, sdk.NewInt(1), actual.GetEditTime())
+	assert.Equal(t, testPostNewDate, actual.GetEditTime())
 }
 
 func TestPost_GetEditTime(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.GetEditTime()
 
-	assert.Equal(t, sdk.NewInt(0), actual)
+	assert.Equal(t, time.Time{}, actual)
 }
 
 func TestPost_CanComment(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.CanComment()
 
@@ -261,7 +263,7 @@ func TestPost_CanComment(t *testing.T) {
 
 func TestPost_GetSubspace(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.GetSubspace()
 
@@ -270,7 +272,7 @@ func TestPost_GetSubspace(t *testing.T) {
 
 func TestPost_GetOptionalData(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, testPostCreationDate, owner)
 
 	actual := post.GetOptionalData()
 
@@ -279,7 +281,7 @@ func TestPost_GetOptionalData(t *testing.T) {
 
 func TestPost_Owner(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, 0, owner)
+	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
 
 	actual := post.Owner()
 
@@ -314,7 +316,6 @@ func TestPost_String(t *testing.T) {
 
 func TestPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
@@ -340,11 +341,11 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, time.Time{}, owner),
-			expError: "invalid post creation block height: 0",
+			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
 			post:     types.TextPost{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: date, LastEdited: date.AddDate(0, 0, -1)},
-			expError: "invalid post last edit block height: 9",
+			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
 			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner),
@@ -382,7 +383,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post last edit date cannot be in the future",
 		},
 		{
-			post: types.NewPost(
+			post: types.NewTextPost(
 				types.PostID(1),
 				types.PostID(0),
 				`
@@ -819,12 +820,12 @@ func TestPosts_String(t *testing.T) {
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := types.TextPosts{
-		types.TextNewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1),
-		types.TextNewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2),
+		types.NewTextPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1),
+		types.NewTextPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2),
 	}
 
 	expected := `ID - [Creator] Message
-1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] TextPost 1
-2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] TextPost 2`
+1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	assert.Equal(t, expected, posts.String())
 }
