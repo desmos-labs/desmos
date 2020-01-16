@@ -30,7 +30,7 @@ func TestMediaPost_String(t *testing.T) {
 		},
 	)
 	assert.Equal(t,
-		`{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`,
+		`{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"uri":"uri","provider":"provider","mime_Type":"text/plain"}]}`,
 		mp.String(),
 	)
 }
@@ -166,7 +166,7 @@ func TestMediaPost_GetEditTime(t *testing.T) {
 
 	actual := mp.GetEditTime()
 
-	assert.Equal(t, testPostCreationDate, actual)
+	assert.Equal(t, time.Time{}, actual)
 }
 
 func TestMediaPost_CanComment(t *testing.T) {
@@ -472,15 +472,15 @@ func TestMediaPost_MarshalJSON(t *testing.T) {
 			},
 		},
 	)
-	json, _ := mp.MarshalJSON()
-	assert.Equal(t, `{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`, string(json))
+	json := types.ModuleCdc.MustMarshalJSON(mp)
+	assert.Equal(t, `{"type":"desmos/MediaPost","value":{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"uri":"uri","provider":"provider","mime_Type":"text/plain"}]}}`, string(json))
 }
 
 func TestMediaPost_UnmarshalJSON(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 	var mp = types.NewMediaPost(
-		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner),
+		types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", nil, testPostCreationDate, owner),
 		types.PostMedias{
 			types.PostMedia{
 				Provider: "provider",
@@ -497,7 +497,7 @@ func TestMediaPost_UnmarshalJSON(t *testing.T) {
 	}{
 		{
 			name:         "Valid media post is ready properly",
-			value:        `{"post":{"id":"2","parent_id":"0","message":"media Post","created":"0","last_edited":"0","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},"medias":[{"provider":"ipfs","uri":"uri","mime_Type":"text/plain"}]}`,
+			value:        `{"type":"desmos/MediaPost","value":{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"uri":"uri","provider":"provider","mime_Type":"text/plain"}]}}`,
 			expMediaPost: mp,
 			expError:     "",
 		},
@@ -684,7 +684,7 @@ func TestMediaPosts_String(t *testing.T) {
 	)}
 
 	assert.Equal(t,
-		`[{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}]`,
+		`[{"id":"2","parent_id":"0","message":"media Post","created":"2020-01-01T15:15:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":false,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"uri":"uri","provider":"ipfs","mime_Type":"text/plain"}]}]`,
 		mps.String(),
 	)
 }

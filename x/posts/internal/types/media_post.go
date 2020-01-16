@@ -11,8 +11,8 @@ import (
 )
 
 type MediaPost struct {
-	TextPost `json:"post"`
-	Medias   PostMedias `json:"medias"`
+	TextPost
+	Medias PostMedias `json:"medias"`
 }
 
 func NewMediaPost(post TextPost, medias PostMedias) MediaPost {

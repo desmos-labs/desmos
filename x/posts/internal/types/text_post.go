@@ -292,23 +292,6 @@ func checkPostsEqual(first TextPost, second TextPost) bool {
 		first.Creator.Equals(second.Creator)
 }
 
-// MarshalJSON implements Marshaler
-func (p TextPost) MarshalJSON() ([]byte, error) {
-	type textPostJSON TextPost
-	return json.Marshal(textPostJSON(p))
-}
-
-// UnmarshalJSON implements Unmarshaler
-func (p *TextPost) UnmarshalJSON(data []byte) error {
-	type textPostJSON TextPost
-	var temp textPostJSON
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return err
-	}
-	*p = TextPost(temp)
-	return nil
-}
-
 // -------------
 // --- TextPosts
 // -------------
