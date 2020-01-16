@@ -152,7 +152,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 		{
 			name:       "Valid request is handled properly",
 			storedPost: &testPost,
-			msg:        types.NewMsgEditPost(testPost.GetID(), "Edited message", testPost.Owner(), testPost.GetEditTime().AddDate(0, 0, 1)),
+			msg:        types.NewMsgEditPost(testPost.GetID(), "Edited message", testPost.Owner(), testPost.Created.AddDate(0, 0, 1)),
 			expPost: types.TextPost{
 				PostID:         testPost.GetID(),
 				ParentID:       testPost.GetParentID(),
