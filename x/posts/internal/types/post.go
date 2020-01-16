@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"time"
@@ -25,3 +26,13 @@ type Post interface {
 }
 
 type Posts []Post
+
+// String implements fmt.Stringer
+func (posts Posts) String() string {
+	bytes, err := json.Marshal(&posts)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
