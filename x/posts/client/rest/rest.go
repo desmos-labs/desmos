@@ -1,11 +1,11 @@
 package rest
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/gorilla/mux"
 )
 
