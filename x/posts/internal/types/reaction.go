@@ -48,7 +48,7 @@ func (reaction Reaction) Validate() error {
 	return nil
 }
 
-// checkPostsEqual returns true if reaction and other contain the same data
+// Equals returns true if reaction and other contain the same data
 func (reaction Reaction) Equals(other Reaction) bool {
 	return reaction.Value == other.Value &&
 		reaction.Owner.Equals(other.Owner)

@@ -8,7 +8,7 @@ const (
 	EventTypeReactionAdded       = "post_reaction_added"
 	EventTypePostReactionRemoved = "post_reaction_removed"
 
-	// TextPost attributes
+	// Post attributes
 	AttributeKeyPostID       = "post_id"
 	AttributeKeyPostParentID = "post_parent_id"
 	AttributeKeyPostOwner    = "post_owner"

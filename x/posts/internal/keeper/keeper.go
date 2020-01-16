@@ -26,7 +26,7 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 }
 
 // -------------
-// --- TextPosts
+// --- Post
 // -------------
 
 func (k Keeper) getPostStoreKey(postID types.PostID) []byte {
@@ -117,9 +117,9 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 //
 // NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
-func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) []types.Post {
+func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
 	posts := k.GetPosts(ctx)
-	filteredPosts := make([]types.Post, 0, len(posts))
+	filteredPosts := make(types.Posts, 0, len(posts))
 
 	for _, p := range posts {
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
@@ -162,7 +162,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 	start, end := client.Paginate(len(filteredPosts), page, params.Limit, 100)
 	if start < 0 || end < 0 {
-		filteredPosts = []types.Post{}
+		filteredPosts = types.Posts{}
 	} else {
 		filteredPosts = filteredPosts[start:end]
 	}
