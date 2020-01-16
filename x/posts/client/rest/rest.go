@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -23,6 +24,7 @@ type CreatePostReq struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data"`
 	CreationTime   time.Time         `json:"creation_time"`
+	Medias         types.PostMedias  `json:"medias,omitempty"`
 }
 
 // AddReactionReq defines the properties of a reaction adding request's body.
