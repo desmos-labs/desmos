@@ -28,8 +28,8 @@ Don't use more `desmos` than you have!
 
 ```bash
 desmoscli tx staking create-validator \
-  --amount=1000000desmos \
-  --pubkey=$(desmosd tendermint show-validator) \
+  --amount=1000000udaric \
+  --pubkey=$(udaricd tendermint show-validator) \
   --moniker="choose a moniker" \
   --chain-id=<chain_id> \
   --commission-rate="0.10" \
@@ -37,7 +37,7 @@ desmoscli tx staking create-validator \
   --commission-max-change-rate="0.01" \
   --min-self-delegation="1" \
   --gas="auto" \
-  --gas-prices="0.025desmos" \
+  --gas-prices="0.025udaric" \
   --from=<key_name>
 ```
 
@@ -46,7 +46,7 @@ When specifying commission parameters, the `commission-max-change-rate` is used 
 :::
 
 ::: tip
-`Min-self-delegation` is a stritly positive integer that represents the minimum amount of self-delegated voting power your validator must always have. A `min-self-delegation` of 1 means your validator will never have a self-delegation lower than `1atom`, or `1000000desmos`
+`Min-self-delegation` is a stritly positive integer that represents the minimum amount of self-delegated voting power your validator must always have. A `min-self-delegation` of 1 means your validator will never have a self-delegation lower than `1daric`, or `1000000udaric`
 :::
 
 You can confirm that you are in the validator set by using a third party explorer.
