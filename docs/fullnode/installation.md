@@ -110,7 +110,7 @@ rm $HOME/.desmosd/config/genesis.json
 
 # Download the existing genesis file for the testnet
 # Assuming you are getting the genesis file for the latest testnet
-curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/genesis.json
+curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
 ```
 
 ## Connect to persistent peer
