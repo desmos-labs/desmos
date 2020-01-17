@@ -52,7 +52,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		},
 		{
 			name: "Media Post with new id is stored properly",
-			msg: types.NewMsgCreateMediaPost(testPost.GetMessage(), testPost.GetParentID(), false, "desmos", map[string]string{}, testPost.Owner(), testPost.CreationTime(), types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost(testPost.GetMessage(), testPost.GetParentID(), false, "desmos", map[string]string{}, testPost.Owner(), testPost.CreationTime()), types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",

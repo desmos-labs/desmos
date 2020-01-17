@@ -45,12 +45,13 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		var msg types.MsgCreatePost
+		msg = types.NewMsgCreateTextPost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
+			addr, req.CreationTime)
+
 		if req.Medias != nil && len(req.Medias) != 0 {
-			msg = types.NewMsgCreateMediaPost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-				addr, req.CreationTime, req.Medias)
-		} else {
-			msg = types.NewMsgCreateTextPost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-				addr, req.CreationTime)
+			if textMsg, ok := msg.(types.MsgCreateTextPost); ok {
+				msg = types.NewMsgCreateMediaPost(textMsg, req.Medias)
+			}
 		}
 
 		err = msg.ValidateBasic()

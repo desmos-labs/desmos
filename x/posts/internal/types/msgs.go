@@ -136,10 +136,9 @@ type MsgCreateMediaPost struct {
 }
 
 // NewMsgCreateMediaPost is a constructor function for MsgCreateMediaPost
-func NewMsgCreateMediaPost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationTime time.Time, medias PostMedias) MsgCreateMediaPost {
+func NewMsgCreateMediaPost(msg MsgCreateTextPost, medias PostMedias) MsgCreateMediaPost {
 	return MsgCreateMediaPost{
-		MsgCreatePost: NewMsgCreateTextPost(message, parentID, allowsComments, subspace, optionalData, owner, creationTime),
+		MsgCreatePost: msg,
 		Medias:        medias,
 	}
 }

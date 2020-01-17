@@ -1,9 +1,12 @@
+# Version 0.3.0
+## Changes
+- Implemented the support for media in posts (#36)
+ 
 # Version 0.2.0
 ## Changes
 - Implemented the support for arbitrary data inside a post (#52, #66)
 - Implemented the support for posts reactions (#47)
 - Implemented the support for posts subspaces (#46)
-- Implemented the support for media in posts (#36)
 - Automated the default bond denom change to `desmos` (#25)
 - Replaced the block height with timestamps inside posts' creation dates and edit dates (#62)
 - Capped the post message length to 500 characters (#67)

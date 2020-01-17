@@ -50,10 +50,6 @@ type (
 	PostIDs      = types.PostIDs
 	Post         = types.Post
 	Posts        = types.Posts
-	TextPost     = types.TextPost
-	TextPosts    = types.TextPosts
-	MediaPost    = types.MediaPost
-	MediaPosts   = types.MediaPosts
 	PostMedia    = types.PostMedia
 	PostMedias   = types.PostMedias
 	Reaction     = types.Reaction

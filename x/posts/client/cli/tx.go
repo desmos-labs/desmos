@@ -46,7 +46,15 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace] [message] [allows-comments] [[[uri],[provider],[mime-type]]...]",
 		Short: "Create a new post",
-		Args:  cobra.MinimumNArgs(3),
+		Long: fmt.Sprintf(`
+				Create a new post which can contain also medias if they are provided.
+				Medias can be added as an array inserting fields this way:
+				uri1,provider1,mime-type1 uri2,provider2,mime-type2 etc.
+				So for example you will have a message like this:
+				"tx posts create "desmos" "my media post" true https://example.com,ipfs,text/plain".
+				If you don't want to share medias with your post you can simply omit them.
+`),
+		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -69,19 +77,24 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var msg types.MsgCreatePost
+			msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
 
-			//if there's some medias
+			// If there are some medias
 			if len(args) > 3 {
 				var medias types.PostMedias
-				//read each media and add it to the medias if valid
+				// Read each media and add it to the medias if valid
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
-					media := types.NewPostMedia(arg[0], arg[1], arg[2])
-					medias = append(medias, media)
+					if len(arg) == 3 {
+						media := types.NewPostMedia(arg[0], arg[1], arg[2])
+						medias = append(medias, media)
+					} else {
+						return sdk.ErrUnknownRequest("If medias are present, you should specify uri, provider and mime type")
+					}
 				}
-				msg = types.NewMsgCreateMediaPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC(), medias)
-			} else {
-				msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
+				if textMsg, ok := msg.(types.MsgCreateTextPost); ok {
+					msg = types.NewMsgCreateMediaPost(textMsg, medias)
+				}
 			}
 
 			if err = msg.ValidateBasic(); err != nil {

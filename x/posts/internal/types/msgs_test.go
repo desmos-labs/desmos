@@ -192,7 +192,8 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgCreateMediaPost
 // ----------------------
 var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-var msgCreateMediaPost = types.NewMsgCreateMediaPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner, testPostCreationDate,
+var msgCreateTextPost = types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner, testPostCreationDate)
+var msgCreateMediaPost = types.NewMsgCreateMediaPost(msgCreateTextPost,
 	types.PostMedias{types.PostMedia{Provider: "provider", URI: "https://uri.com", MimeType: "text/plain"}},
 )
 
@@ -216,25 +217,27 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, nil, testPostCreationDate, types.PostMedias{types.PostMedia{
-				Provider: "provider",
-				URI:      "uri",
-				MimeType: "text/plain",
-			}}),
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, nil, testPostCreationDate),
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "uri",
+					MimeType: "text/plain",
+				}}),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name: "Empty message returns error",
-			msg: types.NewMsgCreateMediaPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate, types.PostMedias{types.PostMedia{
-				Provider: "provider",
-				URI:      "uri",
-				MimeType: "text/plain",
-			}}),
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
+				types.PostMedias{types.PostMedia{
+					Provider: "provider",
+					URI:      "uri",
+					MimeType: "text/plain",
+				}}),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
 			name: "Empty subspace returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "", map[string]string{}, creator, testPostCreationDate, types.PostMedias{types.PostMedia{
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "", map[string]string{}, creator, testPostCreationDate), types.PostMedias{types.PostMedia{
 				Provider: "provider",
 				URI:      "uri",
 				MimeType: "text/plain",
@@ -243,7 +246,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "More than 10 optional data returns error",
-			msg: types.NewMsgCreateMediaPost(
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost(
 				"My message", types.PostID(0),
 				false,
 				"desmos", map[string]string{
@@ -260,7 +263,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 					"key11": "value11",
 				},
 				creator,
-				testPostCreationDate,
+				testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "uri",
@@ -271,14 +274,15 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		{
 			name: "Optional data longer than 200 characters returns error",
 			msg: types.NewMsgCreateMediaPost(
-				"My message",
-				types.PostID(0),
-				false,
-				"desmos", map[string]string{
-					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
-				},
-				creator,
-				testPostCreationDate,
+				types.NewMsgCreateTextPost(
+					"My message",
+					types.PostID(0),
+					false,
+					"desmos", map[string]string{
+						"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
+					},
+					creator,
+					testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "uri",
@@ -293,7 +297,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty provider in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "",
 					URI:      "https://example.com",
@@ -303,7 +307,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty uri in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "",
@@ -313,7 +317,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Invalid URI in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "invalid-uri",
@@ -323,7 +327,7 @@ func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty mime type in message returns error",
-			msg: types.NewMsgCreateMediaPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate,
+			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
 				types.PostMedias{types.PostMedia{
 					Provider: "provider",
 					URI:      "https://example.com",

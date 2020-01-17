@@ -18,13 +18,13 @@ type PostID uint64
 // TextPost is a struct of a post
 type Post struct {
 	PostID            PostID         `json:"id"`                 // Unique id
-	ParentID          PostID         `json:"parent_id"`          // TextPost of which this one is a comment
+	ParentID          PostID         `json:"parent_id"`          // Post of which this one is a comment
 	Message           string         `json:"message"`            // Message contained inside the post
 	Created           sdk.Int        `json:"created"`            // Block height at which the post has been created
 	LastEdited        sdk.Int        `json:"last_edited"`        // Block height at which the post has been edited the last time
 	AllowsComments    bool           `json:"allows_comments"`    // Tells if users can reference this PostID as the parent
 	ExternalReference string         `json:"external_reference"` // Used to know when to display this post
-	Owner             sdk.AccAddress `json:"owner"`              // Creator of the TextPost
+	Owner             sdk.AccAddress `json:"owner"`              // Creator of the Post
 }
 
 // Reaction is a struct of a user like
