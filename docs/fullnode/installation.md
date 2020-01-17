@@ -125,7 +125,7 @@ Locate the `persistent_peers = ""` text at line 164. Update its value to a node 
 
 ```bash
 # Example
-persistent_peers = "8307c16191e249d6d3871ce764262d40d9cf249f@34.74.131.47:26656"
+persistent_peers = "89f913e84b58da594eb449fca7b0fcb540e52d05@35.240.254.97:26656,5ebcf26295e966c4d705ce5f42e78203c94ad98d@34.76.79.154:26656"
 ```
 
 Save the file and exit the text editor.
