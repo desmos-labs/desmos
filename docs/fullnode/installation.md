@@ -187,3 +187,95 @@ You should see an output like the following one:
 If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it is `true`, it means your node is still syncing. 
 
 After your node is fully synced, you can consider running your full node as a [validator node](../validators/validator-setup.md#create-your-validator).
+
+## Configure the service
+To allow your `desmosd` instance to run in the background as a service you need to execute the following command
+
+```bash
+tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
+[Unit]
+Description=Desmosd Node
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/root/go/bin/desmosd start
+Restart=always
+RestartSec=3
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+:::warning  
+If you are logged as a user which is not `root`, make sure to edit the `User` and `ExecStart` values accordingly  
+::: 
+
+Once you have successfully created the service, you need to first enable it. You can do so by running 
+
+```bash
+systemctl enable desmosd
+```
+
+After this, you can run it by executing
+
+```bash
+systemctl start desmosd
+```
+
+### Service operations 
+#### Check the service status
+If you want to see if the service is running properly, you can execute
+
+```bash
+systmctl status desmosd
+``` 
+
+If everything is running smoothly you should see something like 
+
+```bash
+$ systemctl status desmosd
+● desmosd.service - Desmosd Node
+   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: 
+   Active: active (running) since Fri 2020-01-17 10:23:12 CET; 2min 3s ago
+ Main PID: 11318 (desmosd)
+    Tasks: 10 (limit: 4419)
+   CGroup: /system.slice/desmosd.service
+           └─11318 /root/go/bin/desmosd start
+```
+
+#### Check the node status
+If you want to see the current status of the node, you can do so by running
+
+```bash
+tail -100f /var/log/syslog
+```
+
+This should return something like 
+
+```
+Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.212] Executed block                               module=state height=10183 validTxs=0 invalidTxs=0
+Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.237] Committed state                              module=state height=10183 txs=0 appHash=0D8BEBCAC81A7B8DA1FBBF93FA6E921E7815AE3EBF53B78DB66CD8437DFD70C8
+Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.252] Executed block                               module=state height=10184 validTxs=0 invalidTxs=0
+Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.261] Committed state                              module=state height=10184 txs=0 appHash=459F68E6C5BF31EA5E58FB959829A587BB09B9F4DCA9C31CB754E5F26125FCD5
+```
+
+#### Stopping the service
+If you wish to stop the service from running, you can do so by running
+
+```bash
+systemctl stop desmosd
+```
+
+To check the successful stop, execute `systemctl status desmosd`. This should return
+
+```bash
+$ systemctl status desmosd
+● desmosd.service - Desmosd Node
+   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: enabled)
+   Active: failed (Result: exit-code) since Fri 2020-01-17 10:28:04 CET; 3s ago
+  Process: 11318 ExecStart=/root/go/bin/desmosd start (code=exited, status=143)
+ Main PID: 11318 (code=exited, status=143)
+```
