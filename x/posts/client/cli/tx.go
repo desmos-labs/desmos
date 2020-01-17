@@ -47,13 +47,16 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Use:   "create [subspace] [message] [allows-comments] [[[uri],[provider],[mime-type]]...]",
 		Short: "Create a new post",
 		Long: fmt.Sprintf(`
-				Create a new post which can contain also medias if they are provided.
-				Medias can be added as an array inserting fields this way:
-				uri1,provider1,mime-type1 uri2,provider2,mime-type2 etc.
-				So for example you will have a message like this:
-				"tx posts create "desmos" "my media post" true https://example.com,ipfs,text/plain".
-				If you don't want to share medias with your post you can simply omit them.
-`),
+				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
+				Optional media attachments are also supported.
+				If you with to add one or more media attachment, you have to specify a uri, a provider and a mime type for each. 
+                You can do so by concatenating them together separated by a comma (,).
+				Usage examples:
+
+				- tx posts create "desmos" "Hello world!" true
+				- tx posts create "demos" "A post with media" true "https://example.com,text/plain"
+				- tx posts create "desmos" "A post with multiple medias" false "https://example.com/media1,text/plain" "https://example.com/media2,application/json"
+		`),
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
@@ -77,7 +80,15 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var msg types.MsgCreatePost
-			msg = types.NewMsgCreateTextPost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
+			msg = types.NewMsgCreateTextPost(
+				args[1],
+				parentID,
+				allowsComments,
+				args[0],
+				map[string]string{},
+				from,
+				time.Now().UTC(),
+			)
 
 			// If there are some medias
 			if len(args) > 3 {
@@ -89,7 +100,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 						media := types.NewPostMedia(arg[0], arg[1], arg[2])
 						medias = append(medias, media)
 					} else {
-						return sdk.ErrUnknownRequest("If medias are present, you should specify uri, provider and mime type")
+						return sdk.ErrUnknownRequest("If medias are present, you should specify uri, provider and mime type, if you are confused, please use the --help flag")
 					}
 				}
 				if textMsg, ok := msg.(types.MsgCreateTextPost); ok {
