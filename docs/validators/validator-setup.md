@@ -101,8 +101,6 @@ desmoscli tx staking edit-validator
   --identity=6A0D65E29A4CBC8E \
   --details="To infinity and beyond!" \
   --chain-id=<chain_id> \
-  --gas="auto" \
-  --gas-prices="0.025desmos" \
   --from=<key_name> \
   --commission-rate="0.10"
 ```
