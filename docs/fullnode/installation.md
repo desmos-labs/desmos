@@ -74,6 +74,9 @@ The following operations will all be done in the terminal environment under your
 # Clone the Desmos software
 git clone https://github.com/desmos-labs/desmos.git && cd desmos
 
+# If you do not have git installed, you can install it by running
+# sudo apt install git-all
+
 # Checkout the correct commit
 # We are using v0.2.0 for morpheus-1001 testnet
 git checkout v0.2.0
