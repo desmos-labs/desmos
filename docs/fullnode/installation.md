@@ -12,10 +12,10 @@ The following example is based on **Ubuntu (Debian)** and assumes you are using 
 
 ```bash
 # Install git, gcc and make
-sudo apt install build-essential
+sudo apt install build-essential --yes
 
 # Install Go with Snap
-sudo snap install go -classic
+sudo snap install go --classic
 
 # Export environment variables
 export GOPATH=$HOME/go
