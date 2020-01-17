@@ -230,7 +230,7 @@ systemctl start desmosd
 If you want to see if the service is running properly, you can execute
 
 ```bash
-systmctl status desmosd
+systemctl status desmosd
 ``` 
 
 If everything is running smoothly you should see something like 
