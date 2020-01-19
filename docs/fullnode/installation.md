@@ -194,7 +194,7 @@ To allow your `desmosd` instance to run in the background as a service you need 
 ```bash
 tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
 [Unit]
-Description=Desmosd Node
+Description=Desmosd Full Node
 After=network-online.target
 
 [Service]
@@ -202,7 +202,7 @@ User=ubuntu
 ExecStart=/home/ubuntu/go/bin/desmosd start
 Restart=always
 RestartSec=3
-LimitNOFILE=4096
+LimitNOFILE=4096 # To compensate the "Too many open files" issue.
 
 [Install]
 WantedBy=multi-user.target
