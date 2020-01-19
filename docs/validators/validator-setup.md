@@ -23,13 +23,17 @@ desmosd tendermint show-validator
 To create your validator, just use the following command:
 
 ::: warning 
-Don't use more `desmos` than you have! 
+Don't use more staking token than you have! 
+
+On Morpheus testnet, we are using `udaric` as the staking token and it will be the example below. 
+
+We are going to use `udesmos` as the staking token on Mainnet.
 :::
 
 ```bash
 desmoscli tx staking create-validator \
   --amount=1000000udaric \
-  --pubkey=$(udaricd tendermint show-validator) \
+  --pubkey=$(desmosd tendermint show-validator) \
   --moniker="choose a moniker" \
   --chain-id=<chain_id> \
   --commission-rate="0.10" \
@@ -37,6 +41,7 @@ desmoscli tx staking create-validator \
   --commission-max-change-rate="0.01" \
   --min-self-delegation="1" \
   --gas="auto" \
+  --gas-adjustment="1.2" \
   --gas-prices="0.025udaric" \
   --from=<key_name>
 ```
@@ -46,10 +51,10 @@ When specifying commission parameters, the `commission-max-change-rate` is used 
 :::
 
 ::: tip
-`Min-self-delegation` is a stritly positive integer that represents the minimum amount of self-delegated voting power your validator must always have. A `min-self-delegation` of 1 means your validator will never have a self-delegation lower than `1daric`, or `1000000udaric`
+`Min-self-delegation` is a stritly positive integer that represents the minimum amount of self-delegated staking token your validator must always have. A `min-self-delegation` of 1 means your validator will never have a self-delegation lower than `1udaric`. A valdiator self delegate lower than this number will automatically be unbonded.
 :::
 
-You can confirm that you are in the validator set by using a third party explorer.
+You can confirm that you are in the validator set by using a block explorer, e.g. [Big Dipper](https://morpheus.desmos.network).
 
 ## Participate in Genesis as a Validator
 If you want to participate in genesis as a validator, you need to justify that
@@ -85,14 +90,14 @@ desmosd gentx \
 When specifying commission parameters, the `commission-max-change-rate` is used to measure % _point_ change over the `commission-rate`. E.g. 1% to 2% is a 100% rate increase, but only 1 percentage point.
 :::
 
-You can then submit your `gentx` on the [launch repository](https://github.com/desmos/launch). These `gentx` will be used to form the final genesis file. 
+These `gentx` will be used to form the final genesis file. 
 
 ## Edit Validator Description
 You can edit your validator's public description. This info is to identify your validator, and will be relied on by delegators to decide which validators to stake to. Make sure to provide input for every flag below. If a flag is not included in the command the field will default to empty (`--moniker` defaults to the machine name) if the field has never been set or remain the same if it has been set in the past.
 
 The <key_name> specifies which validator you are editing. If you choose to not include certain flags, remember that the --from flag must be included to identify the validator to update.
 
-The `--identity` can be used as to verify identity with systems like Keybase or UPort. When using with Keybase `--identity` should be populated with a 16-digit string that is generated with a [keybase.io](https://keybase.io) account. It's a cryptographically secure method of verifying your identity across multiple online networks. The Keybase API allows us to retrieve your Keybase avatar. This is how you can add a logo to your validator profile.
+The `--identity` can be used as to verify identity with systems like Keybase or UPort. When using with Keybase `--identity` should be populated with a 16-digit string that is generated with a [keybase.io](https://keybase.io) account. It's a cryptographically secure method of verifying your identity across multiple online networks. The Keybase API allows some block explorers to retrieve your Keybase avatar. This is how you can add a logo to your validator profile.
 
 ```bash
 desmoscli tx staking edit-validator
@@ -177,12 +182,12 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu
-ExecStart=/home/ubuntu/go/bin/desmosd start
+User=ubuntu # This is the user that running the software in the background. Change it to your username if needed.
+WorkingDirectory=/home/ubuntu # This is the home directory of the user that running the software in the background. Change it to your username if needed.
+ExecStart=/home/ubuntu/go/bin/desmosd start # The path should point to the correct location of the software you have installed.
 Restart=on-failure
 RestartSec=3
-LimitNOFILE=4096
+LimitNOFILE=4096 # To compensate the "Too many open files" issue.
 
 [Install]
 WantedBy=multi-user.target
