@@ -182,9 +182,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu # This is the user that running the software in the background. Change it to your username if needed.
-WorkingDirectory=/home/ubuntu # This is the home directory of the user that running the software in the background. Change it to your username if needed.
-ExecStart=/home/ubuntu/go/bin/desmosd start # The path should point to the correct location of the software you have installed.
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/go/bin/desmosd start
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096 # To compensate the "Too many open files" issue.
