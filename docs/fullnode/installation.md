@@ -198,8 +198,8 @@ Description=Desmosd Full Node
 After=network-online.target
 
 [Service]
-User=ubuntu # This is the user that running the software in the background. Change it to your username if needed.
-ExecStart=/user/ubuntu/go/bin/desmosd start # The path should point to the correct location of the software you have installed.
+User=ubuntu
+ExecStart=/home/ubuntu/go/bin/desmosd start
 Restart=always
 RestartSec=3
 LimitNOFILE=4096 # To compensate the "Too many open files" issue.
@@ -208,6 +208,10 @@ LimitNOFILE=4096 # To compensate the "Too many open files" issue.
 WantedBy=multi-user.target
 EOF
 ```
+
+:::warning  
+If you are logged as a user which is not `ubuntu`, make sure to edit the `User` and `ExecStart` values accordingly  
+::: 
 
 Once you have successfully created the service, you need to first enable it. You can do so by running 
 
