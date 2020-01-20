@@ -37,45 +37,54 @@ func (mp MediaPost) GetID() PostID {
 	return mp.PostID
 }
 
-// GetParentID implements Post GetParentID
+// GetParentID implements Post
 func (mp MediaPost) GetParentID() PostID {
 	return mp.ParentID
 }
 
+// SetMessage implements Post
 func (mp MediaPost) SetMessage(message string) Post {
 	mp.Message = message
 	return mp
 }
 
+// GetMessage implements Post
 func (mp MediaPost) GetMessage() string {
 	return mp.Message
 }
 
+// CreationTime implements Post
 func (mp MediaPost) CreationTime() time.Time {
 	return mp.Created
 }
 
+// SetEditTime implements Post
 func (mp MediaPost) SetEditTime(time time.Time) Post {
 	mp.LastEdited = time
 	return mp
 }
 
+// GetEditTime implements Post
 func (mp MediaPost) GetEditTime() time.Time {
 	return mp.LastEdited
 }
 
+// CanComment implements Post
 func (mp MediaPost) CanComment() bool {
 	return mp.AllowsComments
 }
 
+// GetSubspace implements Post
 func (mp MediaPost) GetSubspace() string {
 	return mp.Subspace
 }
 
+// GetOptionalData implements Post
 func (mp MediaPost) GetOptionalData() map[string]string {
 	return mp.OptionalData
 }
 
+// Owner implements Post
 func (mp MediaPost) Owner() sdk.AccAddress {
 	return mp.Creator
 }
@@ -95,6 +104,7 @@ func (mp MediaPost) Validate() error {
 	return nil
 }
 
+// Equal implements Post
 func (mp MediaPost) Equals(other Post) bool {
 	// Cast and delegate
 	if otherMp, ok := other.(MediaPost); ok {
@@ -104,22 +114,9 @@ func (mp MediaPost) Equals(other Post) bool {
 	return false
 }
 
-// Equals implements Post Equals
+// checkMediaPostEquals checks if two MediaPost are equal
 func checkMediaPostEquals(first MediaPost, second MediaPost) bool {
-	if !first.TextPost.Equals(second.TextPost) {
-		return false
-	}
-
-	if len(first.Medias) != len(second.Medias) {
-		return false
-	}
-
-	for index, media := range first.Medias {
-		if media != second.Medias[index] {
-			return false
-		}
-	}
-	return true
+	return first.TextPost.Equals(second.TextPost) && first.Medias.Equals(second.Medias)
 }
 
 // MarshalJSON implements Marshaler
@@ -187,6 +184,10 @@ func (pms PostMedias) String() string {
 	return string(bytes)
 }
 func (pms PostMedias) Equals(other PostMedias) bool {
+	if len(pms) != len(other) {
+		return false
+	}
+
 	for index, postMedia := range pms {
 		if !postMedia.Equals(other[index]) {
 			return false
@@ -194,6 +195,15 @@ func (pms PostMedias) Equals(other PostMedias) bool {
 	}
 
 	return true
+}
+
+func (pms PostMedias) AppendIfMissing(otherMedia PostMedia) (PostMedias, bool) {
+	for _, media := range pms {
+		if media.Equals(otherMedia) {
+			return pms, false
+		}
+	}
+	return append(pms, otherMedia), true
 }
 
 // ---------------

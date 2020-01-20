@@ -3,7 +3,6 @@ package types
 // Magpie module event types
 const (
 	EventTypePostCreated         = "post_created"
-	EventTypeMediaPostCreated    = "media_post_created"
 	EventTypePostEdited          = "post_edited"
 	EventTypeReactionAdded       = "post_reaction_added"
 	EventTypePostReactionRemoved = "post_reaction_removed"

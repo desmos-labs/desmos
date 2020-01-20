@@ -26,15 +26,15 @@ func NewPostResponse(post Post, reactions Reactions, children PostIDs) PostQuery
 	var msgType string
 
 	if _, ok := post.(TextPost); ok {
-		ttype = "TextPost"
+		msgType = "TextPost"
 	}
 
 	if _, ok := post.(MediaPost); ok {
-		ttype = "MediaPost"
+		msgType = "MediaPost"
 	}
 
 	return PostQueryResponse{
-		Type:      ttype,
+		Type:      msgType,
 		Post:      post,
 		Reactions: reactions,
 		Children:  children,

@@ -80,7 +80,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var msg types.MsgCreatePost
-			msg = types.NewMsgCreateTextPost(
+			msgTextPost := types.NewMsgCreateTextPost(
 				args[1],
 				parentID,
 				allowsComments,
@@ -93,19 +93,23 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			// If there are some medias
 			if len(args) > 3 {
 				var medias types.PostMedias
+				var appended bool
 				// Read each media and add it to the medias if valid
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
 					if len(arg) == 3 {
 						media := types.NewPostMedia(arg[0], arg[1], arg[2])
-						medias = append(medias, media)
+						medias, appended = medias.AppendIfMissing(media)
+						if !appended {
+							return sdk.ErrUnknownRequest("You can't send the same media two times")
+						}
 					} else {
-						return sdk.ErrUnknownRequest("If medias are present, you should specify uri, provider and mime type, if you are confused, please use the --help flag")
+						return sdk.ErrUnknownRequest(
+							"If medias are present, you should specify uri, provider and mime type, " +
+								"if you are confused, please use the --help flag")
 					}
 				}
-				if textMsg, ok := msg.(types.MsgCreateTextPost); ok {
-					msg = types.NewMsgCreateMediaPost(textMsg, medias)
-				}
+				msg = types.NewMsgCreateMediaPost(msgTextPost, medias)
 			}
 
 			if err = msg.ValidateBasic(); err != nil {

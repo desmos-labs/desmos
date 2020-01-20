@@ -775,12 +775,106 @@ func TestPostMedias_Equals(t *testing.T) {
 			},
 			expEquals: false,
 		},
+		{
+			name: "different length returns false",
+			first: types.PostMedias{
+				types.PostMedia{
+					Provider: "ipfs",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					Provider: "dropbox",
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			second: types.PostMedias{
+				types.PostMedia{
+					Provider: "dropbox",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			expEquals: false,
+		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
+}
+
+func TestPostMedias_AppendIfMissing(t *testing.T) {
+	tests := []struct {
+		name        string
+		medias      types.PostMedias
+		newMedia    types.PostMedia
+		expMedias   types.PostMedias
+		expAppended bool
+	}{
+		{
+			name: "append a new media and returns true",
+			medias: types.PostMedias{
+				types.PostMedia{
+					Provider: "ipfs",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			newMedia: types.PostMedia{
+				Provider: "dropbox",
+				URI:      "uri",
+				MimeType: "application/json",
+			},
+			expMedias: types.PostMedias{
+				types.PostMedia{
+					Provider: "ipfs",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					Provider: "dropbox",
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			expAppended: true,
+		},
+		{
+			name: "not append an existing media and returns false",
+			medias: types.PostMedias{
+				types.PostMedia{
+					Provider: "ipfs",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			newMedia: types.PostMedia{
+				Provider: "ipfs",
+				URI:      "uri",
+				MimeType: "text/plain",
+			},
+			expMedias: types.PostMedias{
+				types.PostMedia{
+					Provider: "ipfs",
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			expAppended: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			medias, found := test.medias.AppendIfMissing(test.newMedia)
+			assert.Equal(t, test.expMedias, medias)
+			assert.Equal(t, test.expAppended, found)
 		})
 	}
 }
