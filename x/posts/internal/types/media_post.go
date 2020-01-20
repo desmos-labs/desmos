@@ -32,7 +32,7 @@ func (mp MediaPost) String() string {
 	return string(bytes)
 }
 
-// GetID implements Post GetID
+// GetID implements Post
 func (mp MediaPost) GetID() PostID {
 	return mp.PostID
 }
