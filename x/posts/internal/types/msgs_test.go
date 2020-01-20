@@ -10,13 +10,19 @@ import (
 )
 
 // ----------------------
-// --- MsgCreateTextPost
+// --- MsgCreatePost
 // ----------------------
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var msgCreatePost = types.NewMsgCreateTextPost(
+var medias = types.PostMedias{
+	types.PostMedia{
+		URI:      "https://uri.com",
+		MimeType: "text/plain",
+	},
+}
+var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
 	false,
@@ -24,6 +30,7 @@ var msgCreatePost = types.NewMsgCreateTextPost(
 	map[string]string{},
 	testOwner,
 	date,
+	medias,
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -40,22 +47,40 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
 	tests := []struct {
 		name  string
-		msg   types.MsgCreateTextPost
+		msg   types.MsgCreatePost
 		error sdk.Error
 	}{
 		{
-			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreateTextPost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil, date),
+			name: "Empty owner returns error",
+			msg: types.NewMsgCreatePost(
+				"Message",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				nil,
+				date,
+				medias,
+			),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
-			name:  "Empty message returns error",
-			msg:   types.NewMsgCreateTextPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, date),
+			name: "Empty message returns error",
+			msg: types.NewMsgCreatePost(
+				"",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+				date,
+				medias,
+			),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
 			name: "Very long message returns error",
-			msg: types.NewMsgCreateTextPost(
+			msg: types.NewMsgCreatePost(
 				`
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
 				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
@@ -69,17 +94,27 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
+				medias,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
 		},
 		{
-			name:  "Empty subspace returns error",
-			msg:   types.NewMsgCreateTextPost("My message", types.PostID(0), false, "", map[string]string{}, creator, date),
+			name: "Empty subspace returns error",
+			msg: types.NewMsgCreatePost(
+				"My message",
+				types.PostID(0),
+				false,
+				"",
+				map[string]string{},
+				creator,
+				date,
+				medias,
+			),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
 		{
 			name: "More than 10 optional data returns error",
-			msg: types.NewMsgCreateTextPost(
+			msg: types.NewMsgCreatePost(
 				"My message",
 				types.PostID(0),
 				false,
@@ -99,12 +134,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
+				medias,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
 		},
 		{
 			name: "Optional data longer than 200 characters returns error",
-			msg: types.NewMsgCreateTextPost(
+			msg: types.NewMsgCreatePost(
 				"My message",
 				types.PostID(0),
 				false,
@@ -114,17 +150,78 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
+				medias,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
-			name:  "Future creation date returns error",
-			msg:   types.NewMsgCreateTextPost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
+			name: "Future creation date returns error",
+			msg: types.NewMsgCreatePost(
+				"future post",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+				time.Now().UTC().Add(time.Hour),
+				medias,
+			),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
 		{
+			name: "Empty URI in medias returns error",
+			msg: types.NewMsgCreatePost(
+				"future post",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+				date,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "",
+						MimeType: "text/plain",
+					},
+				},
+			),
+			error: sdk.ErrUnknownRequest("uri must be specified and cannot be empty"),
+		},
+		{
+			name: "Invalid URI in message returns error",
+			msg: types.NewMsgCreatePost(
+				"My message",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+				date,
+				types.PostMedias{types.PostMedia{
+					URI:      "invalid-uri",
+					MimeType: "text/plain",
+				}}),
+			error: sdk.ErrUnknownRequest("invalid uri provided"),
+		},
+		{
+			name: "Empty mime type in message returns error",
+			msg: types.NewMsgCreatePost(
+				"My message",
+				types.PostID(0),
+				false,
+				"desmos",
+				map[string]string{},
+				creator,
+				date,
+				types.PostMedias{types.PostMedia{
+					URI:      "https://example.com",
+					MimeType: "",
+				}}),
+			error: sdk.ErrUnknownRequest("mime type must be specified and cannot be empty"),
+		},
+		{
 			name: "Valid message does not return any error",
-			msg: types.NewMsgCreateTextPost(
+			msg: types.NewMsgCreatePost(
 				"Message",
 				types.PostID(0),
 				false,
@@ -140,6 +237,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
+				medias,
 			),
 			error: nil,
 		},
@@ -159,18 +257,36 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	tests := []struct {
 		name        string
-		msg         types.MsgCreateTextPost
+		msg         types.MsgCreatePost
 		expSignJSON string
 	}{
 		{
-			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
+			name: "Message with non-empty external reference",
+			msg: types.NewMsgCreatePost(
+				"My new post",
+				types.PostID(53),
+				false,
+				"desmos",
+				map[string]string{"field": "value"},
+				testOwner,
+				date,
+				medias,
+			),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
 		},
 		{
-			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreateTextPost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreateTextPost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
+			name: "Message with non-empty external reference",
+			msg: types.NewMsgCreatePost(
+				"My post",
+				types.PostID(15),
+				false,
+				"desmos",
+				map[string]string{},
+				testOwner,
+				date,
+				medias,
+			),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
 		},
 	}
 
@@ -186,178 +302,6 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 	actual := msgCreatePost.GetSigners()
 	assert.Equal(t, 1, len(actual))
 	assert.Equal(t, msgCreatePost.Creator, actual[0])
-}
-
-// ----------------------
-// --- MsgCreateMediaPost
-// ----------------------
-var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-var msgCreateTextPost = types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, testOwner, testPostCreationDate)
-var msgCreateMediaPost = types.NewMsgCreateMediaPost(msgCreateTextPost,
-	types.PostMedias{types.PostMedia{Provider: "provider", URI: "https://uri.com", MimeType: "text/plain"}},
-)
-
-func TestMsgCreateMediaPost_Route(t *testing.T) {
-	actual := msgCreateMediaPost.Route()
-	assert.Equal(t, "posts", actual)
-}
-
-func TestMsgCreateMediaPost_Type(t *testing.T) {
-	actual := msgCreateMediaPost.Type()
-	assert.Equal(t, "create_media_post", actual)
-}
-
-func TestMsgCreateMediaPost_ValidateBasic(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-	tests := []struct {
-		name  string
-		msg   types.MsgCreateMediaPost
-		error sdk.Error
-	}{
-		{
-			name: "Empty owner returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My new post", types.PostID(53), false, "desmos", map[string]string{}, nil, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "uri",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrInvalidAddress("Invalid creator address: "),
-		},
-		{
-			name: "Empty message returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "uri",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
-		},
-		{
-			name: "Empty subspace returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "", map[string]string{}, creator, testPostCreationDate), types.PostMedias{types.PostMedia{
-				Provider: "provider",
-				URI:      "uri",
-				MimeType: "text/plain",
-			}}),
-			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
-		},
-		{
-			name: "More than 10 optional data returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost(
-				"My message", types.PostID(0),
-				false,
-				"desmos", map[string]string{
-					"key1":  "value1",
-					"key2":  "value2",
-					"key3":  "value3",
-					"key4":  "value4",
-					"key5":  "value5",
-					"key6":  "value6",
-					"key7":  "value7",
-					"key8":  "value8",
-					"key9":  "value9",
-					"key10": "value10",
-					"key11": "value11",
-				},
-				creator,
-				testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "uri",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
-		},
-		{
-			name: "Optional data longer than 200 characters returns error",
-			msg: types.NewMsgCreateMediaPost(
-				types.NewMsgCreateTextPost(
-					"My message",
-					types.PostID(0),
-					false,
-					"desmos", map[string]string{
-						"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
-					},
-					creator,
-					testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "uri",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
-		},
-		{
-			name:  "Valid message does not return any error",
-			msg:   msgCreateMediaPost,
-			error: nil,
-		},
-		{
-			name: "Empty provider in message returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "",
-					URI:      "https://example.com",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("media provider must be specified and cannot be empty"),
-		},
-		{
-			name: "Empty uri in message returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("uri must be specified and cannot be empty"),
-		},
-		{
-			name: "Invalid URI in message returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "invalid-uri",
-					MimeType: "text/plain",
-				}}),
-			error: sdk.ErrUnknownRequest("invalid uri provided"),
-		},
-		{
-			name: "Empty mime type in message returns error",
-			msg: types.NewMsgCreateMediaPost(types.NewMsgCreateTextPost("My message", types.PostID(0), false, "desmos", map[string]string{}, creator, testPostCreationDate),
-				types.PostMedias{types.PostMedia{
-					Provider: "provider",
-					URI:      "https://example.com",
-					MimeType: "",
-				}}),
-			error: sdk.ErrUnknownRequest("mime type must be specified and cannot be empty"),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.error, test.msg.ValidateBasic())
-		})
-	}
-
-	err := msgCreatePost.ValidateBasic()
-	assert.Nil(t, err)
-}
-
-func TestMsgCreateMediaPost_GetSignBytes(t *testing.T) {
-	actual := msgCreateMediaPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreateMediaPost","value":{"msg_create_post":{"allows_comments":false,"creation_date":"2020-01-01T15:15:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"53","subspace":"desmos"},"post_medias":[{"mime_Type":"text/plain","provider":"provider","uri":"https://uri.com"}]}}`
-	assert.Equal(t, expected, string(actual))
-}
-
-func TestMsgCreateMediaPost_GetSigners(t *testing.T) {
-	actual := msgCreateMediaPost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgCreateMediaPost.MsgCreatePost.Creator, actual[0])
 }
 
 // ----------------------

@@ -22,17 +22,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Genesis with invalid post errors",
 			genesis: types.GenesisState{
 				Posts: types.Posts{
-					types.TextPost{PostID: types.PostID(0)},
-					types.NewMediaPost(
-						types.TextPost{PostID: types.PostID(1)},
-						types.PostMedias{
-							types.PostMedia{
-								Provider: "provider",
-								URI:      "https://example.com",
-								MimeType: "text/plain",
-							},
-						},
-					),
+					types.Post{PostID: types.PostID(0)},
 				},
 				Reactions: map[string]types.Reactions{},
 			},

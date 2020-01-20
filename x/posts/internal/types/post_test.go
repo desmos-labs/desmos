@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -186,117 +187,15 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestPost_GetID(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	testPostCreationDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.GetID()
-
-	assert.Equal(t, types.PostID(2), actual)
-}
-
-func TestPost_GetParentID(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.GetParentID()
-
-	assert.Equal(t, types.PostID(0), actual)
-}
-
-func TestPost_SetMessage(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.SetMessage("edited media post")
-
-	assert.Equal(t, "edited media post", actual.GetMessage())
-}
-
-func TestPost_GetMessage(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.GetMessage()
-
-	assert.Equal(t, "media Post", actual)
-
-}
-
-func TestPost_CreationTime(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.CreationTime()
-
-	assert.Equal(t, testPostCreationDate, actual)
-}
-
-func TestPost_SetEditTime(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-	testPostNewDate := time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-
-	actual := post.SetEditTime(testPostNewDate)
-
-	assert.Equal(t, testPostNewDate, actual.GetEditTime())
-}
-
-func TestPost_GetEditTime(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.GetEditTime()
-
-	assert.Equal(t, time.Time{}, actual)
-}
-
-func TestPost_CanComment(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.CanComment()
-
-	assert.Equal(t, false, actual)
-}
-
-func TestPost_GetSubspace(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.GetSubspace()
-
-	assert.Equal(t, "desmos", actual)
-}
-
-func TestPost_GetOptionalData(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{"key1": "value1"}, testPostCreationDate, owner)
-
-	actual := post.GetOptionalData()
-
-	assert.Equal(t, map[string]string{"key1": "value1"}, actual)
-}
-
-func TestPost_Owner(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	var post = types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPostCreationDate, owner)
-
-	actual := post.Owner()
-
-	assert.Equal(t, owner, actual)
-}
-
 // -----------
-// --- TextPost
+// --- Post
 // -----------
 
 func TestPost_String(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	post := types.TextPost{
+	post := types.Post{
 		PostID:         types.PostID(19),
 		ParentID:       types.PostID(1),
 		Message:        "My post message",
@@ -309,7 +208,7 @@ func TestPost_String(t *testing.T) {
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":null}`,
 		post.String(),
 	)
 }
@@ -318,45 +217,51 @@ func TestPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	tests := []struct {
-		post     types.TextPost
+		post     types.Post
 		expError string
 	}{
 		{
-			post:     types.NewTextPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, nil),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, nil, medias),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, time.Time{}, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, time.Time{}, owner, medias),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
-			post:     types.TextPost{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: date, LastEdited: date.AddDate(0, 0, -1)},
+			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: date, LastEdited: date.AddDate(0, 0, -1)},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner, medias),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner, medias),
 			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post: types.TextPost{
+			post: types.Post{
 				PostID:         types.PostID(1),
 				ParentID:       types.PostID(0),
 				Message:        "Message",
@@ -365,11 +270,12 @@ func TestPost_Validate(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Created:        time.Now().UTC().Add(time.Hour),
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expError: "post creation date cannot be in the future",
 		},
 		{
-			post: types.TextPost{
+			post: types.Post{
 				PostID:         types.PostID(1),
 				ParentID:       types.PostID(0),
 				Message:        "Message",
@@ -379,11 +285,12 @@ func TestPost_Validate(t *testing.T) {
 				Created:        time.Now().UTC(),
 				LastEdited:     time.Now().UTC().Add(time.Hour),
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expError: "post last edit date cannot be in the future",
 		},
 		{
-			post: types.NewTextPost(
+			post: types.NewPost(
 				types.PostID(1),
 				types.PostID(0),
 				`
@@ -398,11 +305,12 @@ func TestPost_Validate(t *testing.T) {
 				map[string]string{},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post message cannot be longer than 500 characters",
 		},
 		{
-			post: types.NewTextPost(
+			post: types.NewPost(
 				types.PostID(1),
 				types.PostID(0),
 				"Message",
@@ -423,11 +331,12 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
 		{
-			post: types.NewTextPost(
+			post: types.NewPost(
 				types.PostID(1),
 				types.PostID(0),
 				"Message",
@@ -440,12 +349,47 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
 		},
 		{
-			post:     types.NewTextPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner),
-			expError: "",
+			post: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Message",
+				true,
+				"Desmos",
+				map[string]string{},
+				date,
+				owner,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "",
+						MimeType: "text/plain",
+					},
+				},
+			),
+			expError: "uri must be specified and cannot be empty",
+		},
+		{
+			post: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Message",
+				true,
+				"Desmos",
+				map[string]string{},
+				date,
+				owner,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://example.com",
+						MimeType: "",
+					},
+				},
+			),
+			expError: "mime type must be specified and cannot be empty",
 		},
 	}
 
@@ -467,16 +411,22 @@ func TestPost_Equals(t *testing.T) {
 
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	tests := []struct {
 		name      string
-		first     types.TextPost
-		second    types.TextPost
+		first     types.Post
+		second    types.Post
 		expEquals bool
 	}{
 		{
 			name: "Different post ID",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -486,8 +436,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(10),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -497,12 +448,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different parent ID",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -512,8 +464,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(10),
 				Message:        "My post message",
@@ -523,12 +476,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different message",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -538,8 +492,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "Another post message",
@@ -549,12 +504,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different creation time",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -564,8 +520,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -575,12 +532,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different last edited",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -590,8 +548,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -601,12 +560,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different allows comments",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -616,8 +576,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -627,12 +588,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different subspace",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -642,8 +604,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-1",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -653,12 +616,13 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-2",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different optional data",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -670,8 +634,9 @@ func TestPost_Equals(t *testing.T) {
 					"field": "value",
 				},
 				Creator: owner,
+				Medias:  medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -683,12 +648,13 @@ func TestPost_Equals(t *testing.T) {
 					"field": "other-value",
 				},
 				Creator: owner,
+				Medias:  medias,
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different owner",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -698,8 +664,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -709,12 +676,46 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different medias",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "desmos",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "desmos",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias: types.PostMedias{
+					types.PostMedia{
+						URI:      "uri2",
+						MimeType: "text/plain",
+					},
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same data",
-			first: types.TextPost{
+			first: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -724,8 +725,9 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
-			second: types.TextPost{
+			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
 				Message:        "My post message",
@@ -735,6 +737,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: true,
 		},
@@ -749,7 +752,7 @@ func TestPost_Equals(t *testing.T) {
 }
 
 // -----------
-// --- TextPosts
+// --- Posts
 // -----------
 func TestPosts_Equals(t *testing.T) {
 	timeZone, _ := time.LoadLocation("UTC")
@@ -757,48 +760,48 @@ func TestPosts_Equals(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		first     types.TextPosts
-		second    types.TextPosts
+		first     types.Posts
+		second    types.Posts
 		expEquals bool
 	}{
 		{
 			name:      "Empty lists are equals",
-			first:     types.TextPosts{},
-			second:    types.TextPosts{},
+			first:     types.Posts{},
+			second:    types.Posts{},
 			expEquals: true,
 		},
 		{
 			name: "List of different lengths are not equals",
-			first: types.TextPosts{
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			first: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
-			second: types.TextPosts{
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.TextPost{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			second: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists but in different orders",
-			first: types.TextPosts{
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.TextPost{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			first: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
-			second: types.TextPosts{
-				types.TextPost{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			second: types.Posts{
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Same lists are equals",
-			first: types.TextPosts{
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.TextPost{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			first: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
-			second: types.TextPosts{
-				types.TextPost{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.TextPost{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			second: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
 			},
 			expEquals: true,
 		},
@@ -815,17 +818,398 @@ func TestPosts_Equals(t *testing.T) {
 func TestPosts_String(t *testing.T) {
 	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
-	posts := types.TextPosts{
-		types.NewTextPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1),
-		types.NewTextPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2),
+	posts := types.Posts{
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1, medias),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2, medias),
 	}
 
 	expected := `ID - [Creator] Message
 1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
 2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	assert.Equal(t, expected, posts.String())
+}
+
+// -----------
+// --- PostMedias
+// -----------
+
+func TestPostMedias_String(t *testing.T) {
+	postMedias := types.PostMedias{
+		types.PostMedia{
+			URI:      "uri",
+			MimeType: "text/plain",
+		},
+		types.PostMedia{
+			URI:      "uri",
+			MimeType: "application/json",
+		},
+	}
+
+	actual := postMedias.String()
+
+	assert.Equal(t, `[{"uri":"uri","mime_Type":"text/plain"},{"uri":"uri","mime_Type":"application/json"}]`, actual)
+}
+
+func TestPostMedias_Equals(t *testing.T) {
+	tests := []struct {
+		name      string
+		first     types.PostMedias
+		second    types.PostMedias
+		expEquals bool
+	}{
+		{
+			name: "Same data returns true",
+			first: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			second: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			expEquals: true,
+		},
+		{
+			name: "different data returns false",
+			first: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			second: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			expEquals: false,
+		},
+		{
+			name: "different length returns false",
+			first: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			second: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			expEquals: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
+}
+
+func TestPostMedias_AppendIfMissing(t *testing.T) {
+	tests := []struct {
+		name        string
+		medias      types.PostMedias
+		newMedia    types.PostMedia
+		expMedias   types.PostMedias
+		expAppended bool
+	}{
+		{
+			name: "append a new media and returns true",
+			medias: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			newMedia: types.PostMedia{
+				URI:      "uri",
+				MimeType: "application/json",
+			},
+			expMedias: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+				},
+			},
+			expAppended: true,
+		},
+		{
+			name: "not append an existing media and returns false",
+			medias: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			newMedia: types.PostMedia{
+				URI:      "uri",
+				MimeType: "text/plain",
+			},
+			expMedias: types.PostMedias{
+				types.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+				},
+			},
+			expAppended: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			medias, found := test.medias.AppendIfMissing(test.newMedia)
+			assert.Equal(t, test.expMedias, medias)
+			assert.Equal(t, test.expAppended, found)
+		})
+	}
+}
+
+func TestPostMedias_Validate(t *testing.T) {
+	tests := []struct {
+		postMedia types.PostMedias
+		expErr    string
+	}{
+		{
+			postMedia: types.PostMedias{
+				types.PostMedia{
+					URI:      "",
+					MimeType: "text/plain",
+				},
+			},
+			expErr: "uri must be specified and cannot be empty",
+		},
+
+		{
+			postMedia: types.PostMedias{
+				types.PostMedia{
+					URI:      "htt://example.com",
+					MimeType: "text/plain",
+				},
+			},
+			expErr: "invalid uri provided",
+		},
+		{
+			postMedia: types.PostMedias{
+				types.PostMedia{
+					URI:      "https://example.com",
+					MimeType: "",
+				},
+			},
+			expErr: "mime type must be specified and cannot be empty",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.expErr, func(t *testing.T) {
+			if len(test.expErr) != 0 {
+				assert.Equal(t, test.expErr, test.postMedia.Validate().Error())
+			} else {
+				assert.Nil(t, test.postMedia.Validate())
+			}
+		})
+	}
+}
+
+// -----------
+// --- PostMedia
+// -----------
+
+func TestPostMedia_String(t *testing.T) {
+	pm := types.PostMedia{
+		URI:      "http://example.com",
+		MimeType: "text/plain",
+	}
+
+	actual := pm.String()
+
+	assert.Equal(t, `{"uri":"http://example.com","mime_Type":"text/plain"}`, actual)
+}
+
+func TestPostMedia_Validate(t *testing.T) {
+	tests := []struct {
+		postMedia types.PostMedia
+		expErr    string
+	}{
+		{
+			postMedia: types.PostMedia{
+				URI:      "",
+				MimeType: "text/plain",
+			},
+			expErr: "uri must be specified and cannot be empty",
+		},
+		{
+			postMedia: types.PostMedia{
+				URI:      "htt://example.com",
+				MimeType: "text/plain",
+			},
+			expErr: "invalid uri provided",
+		},
+		{
+			postMedia: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "",
+			},
+			expErr: "mime type must be specified and cannot be empty",
+		},
+		{
+			postMedia: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+			},
+			expErr: "",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.expErr, func(t *testing.T) {
+			if len(test.expErr) != 0 {
+				assert.Equal(t, test.expErr, test.postMedia.Validate().Error())
+			} else {
+				assert.Nil(t, test.postMedia.Validate())
+			}
+		})
+	}
+}
+
+func TestPostMedia_Equals(t *testing.T) {
+	tests := []struct {
+		name      string
+		first     types.PostMedia
+		second    types.PostMedia
+		expEquals bool
+	}{
+		{
+			name: "Same data returns true",
+			first: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+			},
+			second: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+			},
+			expEquals: true,
+		},
+		{
+			name: "Different URI returns false",
+			first: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+			},
+			second: types.PostMedia{
+				URI:      "https://another.com",
+				MimeType: "text/plain",
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different mime type returns false",
+			first: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+			},
+			second: types.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "application/json",
+			},
+			expEquals: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
+}
+
+func TestPostMedia_ParseURI(t *testing.T) {
+	tests := []struct {
+		uri    string
+		expErr error
+	}{
+		{
+			uri:    "http://error.com",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "http://",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "error.com",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    ".com",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "ttps://",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "ps://site.com",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "https://",
+			expErr: fmt.Errorf("invalid uri provided"),
+		},
+		{
+			uri:    "https://example.com",
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.uri, func(t *testing.T) {
+			assert.Equal(t, test.expErr, types.ParseURI(test.uri))
+		})
+	}
 }

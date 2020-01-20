@@ -9,34 +9,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-type MsgCreatePost interface {
-	// Return the message type.
-	// Must be alphanumeric or empty.
-	Route() string
-
-	// Returns a human-readable string for the message, intended for utilization
-	// within tags
-	Type() string
-
-	// ValidateBasic does a simple validation check that
-	// doesn't require access to any other information.
-	ValidateBasic() sdk.Error
-
-	// Get the canonical byte representation of the Msg.
-	GetSignBytes() []byte
-
-	// Signers returns the addrs of signers that must sign.
-	// CONTRACT: All signatures must be present to be valid.
-	// CONTRACT: Returns addrs in some deterministic order.
-	GetSigners() []sdk.AccAddress
-}
-
 // ----------------------
-// --- MsgCreateTextPost
+// --- MsgCreatePost
 // ----------------------
 
-// MsgCreateTextPost defines a CreatePost message
-type MsgCreateTextPost struct {
+// MsgCreatePost defines a CreatePost message
+type MsgCreatePost struct {
 	ParentID       PostID            `json:"parent_id"`
 	Message        string            `json:"message"`
 	AllowsComments bool              `json:"allows_comments"`
@@ -44,12 +22,13 @@ type MsgCreateTextPost struct {
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
+	Medias         PostMedias        `json:"post_medias"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
-func NewMsgCreateTextPost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time) MsgCreateTextPost {
-	return MsgCreateTextPost{
+func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias) MsgCreatePost {
+	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
 		AllowsComments: allowsComments,
@@ -57,24 +36,25 @@ func NewMsgCreateTextPost(message string, parentID PostID, allowsComments bool, 
 		OptionalData:   optionalData,
 		Creator:        owner,
 		CreationDate:   creationDate,
+		Medias:         medias,
 	}
 }
 
 // MarshalJSON implements the custom marshaling as Amino does not support
 // the JSON signature omitempty
-func (msg MsgCreateTextPost) MarshalJSON() ([]byte, error) {
-	type msgCreatePost MsgCreateTextPost
+func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
+	type msgCreatePost MsgCreatePost
 	return json.Marshal(msgCreatePost(msg))
 }
 
 // Route should return the name of the module
-func (msg MsgCreateTextPost) Route() string { return RouterKey }
+func (msg MsgCreatePost) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreateTextPost) Type() string { return ActionCreatePost }
+func (msg MsgCreatePost) Type() string { return ActionCreatePost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateTextPost) ValidateBasic() sdk.Error {
+func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	if msg.Creator.Empty() {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
@@ -112,66 +92,22 @@ func (msg MsgCreateTextPost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
 	}
 
+	err := msg.Medias.Validate()
+	if err != nil {
+		return sdk.ErrUnknownRequest(err.Error())
+	}
+
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreateTextPost) GetSignBytes() []byte {
+func (msg MsgCreatePost) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreateTextPost) GetSigners() []sdk.AccAddress {
+func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
-}
-
-// ----------------------
-// --- MsgCreateMediaPost
-// ----------------------
-
-// MsgCreateMediaPost defines a CreateMediaPost message
-type MsgCreateMediaPost struct {
-	MsgCreatePost MsgCreateTextPost `json:"msg_create_post"`
-	Medias        PostMedias        `json:"post_medias"`
-}
-
-// NewMsgCreateMediaPost is a constructor function for MsgCreateMediaPost
-func NewMsgCreateMediaPost(msg MsgCreateTextPost, medias PostMedias) MsgCreateMediaPost {
-	return MsgCreateMediaPost{
-		MsgCreatePost: msg,
-		Medias:        medias,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgCreateMediaPost) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgCreateMediaPost) Type() string { return ActionCreateMediaPost }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgCreateMediaPost) ValidateBasic() sdk.Error {
-	if err := msg.MsgCreatePost.ValidateBasic(); err != nil {
-		return err
-	}
-
-	for _, media := range msg.Medias {
-		if err := media.Validate(); err != nil {
-			return sdk.ErrUnknownRequest(err.Error())
-		}
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgCreateMediaPost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
-}
-
-// GetSigners defines whose signature is required
-func (msg MsgCreateMediaPost) GetSigners() []sdk.AccAddress {
-	return msg.MsgCreatePost.GetSigners()
 }
 
 // ----------------------

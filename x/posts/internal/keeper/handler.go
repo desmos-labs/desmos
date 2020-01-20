@@ -28,53 +28,34 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
-
-	var post types.Post
-
-	if textMsg, ok := msg.(types.MsgCreateTextPost); ok {
-		post = types.NewTextPost(
-			keeper.GetLastPostID(ctx).Next(),
-			textMsg.ParentID,
-			textMsg.Message,
-			textMsg.AllowsComments,
-			textMsg.Subspace,
-			textMsg.OptionalData,
-			textMsg.CreationDate,
-			textMsg.Creator,
-		)
-	}
-
-	if mediaMsg, ok := msg.(types.MsgCreateMediaPost); ok {
-		textPost := types.NewTextPost(
-			keeper.GetLastPostID(ctx).Next(),
-			mediaMsg.MsgCreatePost.ParentID,
-			mediaMsg.MsgCreatePost.Message,
-			mediaMsg.MsgCreatePost.AllowsComments,
-			mediaMsg.MsgCreatePost.Subspace,
-			mediaMsg.MsgCreatePost.OptionalData,
-			mediaMsg.MsgCreatePost.CreationDate,
-			mediaMsg.MsgCreatePost.Creator,
-		)
-
-		post = types.NewMediaPost(textPost, mediaMsg.Medias)
-	}
+	post := types.NewPost(
+		keeper.GetLastPostID(ctx).Next(),
+		msg.ParentID,
+		msg.Message,
+		msg.AllowsComments,
+		msg.Subspace,
+		msg.OptionalData,
+		msg.CreationDate,
+		msg.Creator,
+		msg.Medias,
+	)
 
 	// Check for double posting
-	if _, found := keeper.GetPost(ctx, post.GetID()); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.GetID())).Result()
+	if _, found := keeper.GetPost(ctx, post.PostID); found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID)).Result()
 	}
 
 	// If valid, check the parent post
-	if post.GetParentID().Valid() {
-		parentPost, found := keeper.GetPost(ctx, post.GetParentID())
+	if post.ParentID.Valid() {
+		parentPost, found := keeper.GetPost(ctx, post.ParentID)
 		if !found {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Parent post with id %s not found",
-				post.GetParentID())).Result()
+				post.ParentID)).Result()
 		}
 
-		if !parentPost.CanComment() {
+		if !parentPost.AllowsComments {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments",
-				parentPost.GetID())).Result()
+				parentPost.PostID)).Result()
 		}
 	}
 
@@ -82,15 +63,15 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	createEvent := sdk.NewEvent(
 		types.EventTypePostCreated,
-		sdk.NewAttribute(types.AttributeKeyPostID, post.GetID().String()),
-		sdk.NewAttribute(types.AttributeKeyPostParentID, post.GetParentID().String()),
-		sdk.NewAttribute(types.AttributeKeyCreationTime, post.CreationTime().String()),
-		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Owner().String()),
+		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
+		sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator.String()),
 	)
 	ctx.EventManager().EmitEvent(createEvent)
 
 	return sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.GetID()),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
 		Events: sdk.Events{createEvent},
 	}
 }
@@ -105,29 +86,29 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if !msg.Editor.Equals(existing.Owner()) {
+	if !msg.Editor.Equals(existing.Creator) {
 		return sdk.ErrUnauthorized("Incorrect owner").Result()
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if existing.CreationTime().After(msg.EditDate) {
+	if existing.Created.After(msg.EditDate) {
 		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
 	}
 
 	// Edit the post
-	existing = existing.SetMessage(msg.Message)
-	existing = existing.SetEditTime(msg.EditDate)
+	existing.Message = msg.Message
+	existing.LastEdited = msg.EditDate
 	keeper.SavePost(ctx, existing)
 
 	editEvent := sdk.NewEvent(
 		types.EventTypePostEdited,
-		sdk.NewAttribute(types.AttributeKeyPostID, existing.GetID().String()),
-		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.GetEditTime().String()),
+		sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
 	)
 	ctx.EventManager().EmitEvent(editEvent)
 
 	return sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(existing.GetID()),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(existing.PostID),
 		Events: sdk.Events{editEvent},
 	}
 }
@@ -142,7 +123,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 
 	// Create and store the reaction
 	reaction := types.NewReaction(msg.Value, msg.User)
-	if err := keeper.SaveReaction(ctx, post.GetID(), reaction); err != nil {
+	if err := keeper.SaveReaction(ctx, post.PostID, reaction); err != nil {
 		return err.Result()
 	}
 
@@ -170,7 +151,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	}
 
 	// Remove the reaction
-	if err := keeper.RemoveReaction(ctx, post.GetID(), msg.User, msg.Reaction); err != nil {
+	if err := keeper.RemoveReaction(ctx, post.PostID, msg.User, msg.Reaction); err != nil {
 		return err.Result()
 	}
 

@@ -44,7 +44,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace] [message] [allows-comments] [[[uri],[provider],[mime-type]]...]",
+		Use:   "create [subspace] [message] [allows-comments] [[[uri],[mime-type]]...]",
 		Short: "Create a new post",
 		Long: fmt.Sprintf(`
 				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
@@ -79,8 +79,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var msg types.MsgCreatePost
-			msgTextPost := types.NewMsgCreateTextPost(
+			msg := types.NewMsgCreatePost(
 				args[1],
 				parentID,
 				allowsComments,
@@ -88,6 +87,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				map[string]string{},
 				from,
 				time.Now().UTC(),
+				nil,
 			)
 
 			// If there are some medias
@@ -97,8 +97,8 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				// Read each media and add it to the medias if valid
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
-					if len(arg) == 3 {
-						media := types.NewPostMedia(arg[0], arg[1], arg[2])
+					if len(arg) == 2 {
+						media := types.NewPostMedia(arg[0], arg[1])
 						medias, appended = medias.AppendIfMissing(media)
 						if !appended {
 							return sdk.ErrUnknownRequest("You can't send the same media two times")
@@ -109,7 +109,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 								"if you are confused, please use the --help flag")
 					}
 				}
-				msg = types.NewMsgCreateMediaPost(msgTextPost, medias)
+				msg.Medias = medias
 			}
 
 			if err = msg.ValidateBasic(); err != nil {

@@ -15,7 +15,6 @@ const (
 	MaxOptionalDataFieldValueLength = 200
 
 	ActionCreatePost         = "create_post"
-	ActionCreateMediaPost    = "create_media_post"
 	ActionEditPost           = "edit_post"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"

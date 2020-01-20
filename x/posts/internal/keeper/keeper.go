@@ -52,21 +52,21 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
 	// Save the post
-	store.Set([]byte(types.PostStorePrefix+post.GetID().String()), k.Cdc.MustMarshalBinaryBare(&post))
+	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Set the last post id only if the current post has a greater one than the last one stored
-	if id := post.GetID(); id > k.GetLastPostID(ctx) {
+	if id := post.PostID; id > k.GetLastPostID(ctx) {
 		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
 	}
 
 	// Save the comments to the parent post, if it is valid
-	if post.GetParentID().Valid() {
-		parentCommentsKey := []byte(types.PostCommentsStorePrefix + post.GetParentID().String())
+	if post.ParentID.Valid() {
+		parentCommentsKey := []byte(types.PostCommentsStorePrefix + post.ParentID.String())
 
 		var commentsIDs types.PostIDs
 		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
 
-		if editedIDs, appended := commentsIDs.AppendIfMissing(post.GetID()); appended {
+		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
 			store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&editedIDs))
 		}
 	}
@@ -79,7 +79,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 
 	key := k.getPostStoreKey(id)
 	if !store.Has(key) {
-		return types.TextPost{}, false
+		return types.Post{}, false
 	}
 
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
@@ -126,27 +126,27 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 		// match parent id if valid
 		if params.ParentID != nil {
-			matchParentID = params.ParentID.Equals(p.GetParentID())
+			matchParentID = params.ParentID.Equals(p.ParentID)
 		}
 
 		// match creation time if valid height
 		if params.CreationTime != nil {
-			matchCreationTime = params.CreationTime.Equal(p.CreationTime())
+			matchCreationTime = params.CreationTime.Equal(p.Created)
 		}
 
 		// match allows comments
 		if params.AllowsComments != nil {
-			matchAllowsComments = *params.AllowsComments == p.CanComment()
+			matchAllowsComments = *params.AllowsComments == p.AllowsComments
 		}
 
 		// match subspace if provided
 		if len(params.Subspace) > 0 {
-			matchSubspace = params.Subspace == p.GetSubspace()
+			matchSubspace = params.Subspace == p.Subspace
 		}
 
 		// match creator address (if supplied)
 		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(p.Owner())
+			matchCreator = params.Creator.Equals(p.Creator)
 		}
 
 		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {

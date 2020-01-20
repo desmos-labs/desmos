@@ -10,7 +10,7 @@ import (
 )
 
 // -------------
-// --- TextPosts
+// --- Posts
 // -------------
 
 func TestKeeper_GetLastPostId(t *testing.T) {
@@ -56,9 +56,9 @@ func TestKeeper_SavePost(t *testing.T) {
 		expLastID            types.PostID
 	}{
 		{
-			name: "TextPost with ID already present",
+			name: "Post with ID already present",
 			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(1),
+				types.NewPost(types.PostID(1),
 					types.PostID(0),
 					"Post",
 					false,
@@ -66,10 +66,11 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
-			newPost: types.NewTextPost(types.PostID(1),
+			newPost: types.NewPost(types.PostID(1),
 				types.PostID(0),
 				"New post",
 				false,
@@ -77,14 +78,15 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 		},
 		{
-			name: "TextPost which ID is not already present",
+			name: "Post which ID is not already present",
 			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(1),
+				types.NewPost(types.PostID(1),
 					types.PostID(0),
 					"Post",
 					false,
@@ -92,10 +94,11 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
-			newPost: types.NewTextPost(types.PostID(15),
+			newPost: types.NewPost(types.PostID(15),
 				types.PostID(0),
 				"New post",
 				false,
@@ -103,14 +106,15 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
 		},
 		{
-			name: "TextPost with valid parent ID",
+			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
-				types.NewTextPost(types.PostID(1),
+				types.NewPost(types.PostID(1),
 					types.PostID(0),
 					"Parent",
 					false,
@@ -118,10 +122,11 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
-			newPost: types.NewTextPost(types.PostID(15),
+			newPost: types.NewPost(types.PostID(15),
 				types.PostID(1),
 				"Comment",
 				false,
@@ -129,14 +134,15 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
 		},
 		{
-			name: "TextPost with ID greater ID than Last ID stored",
+			name: "Post with ID greater ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(4),
+				types.NewPost(types.PostID(4),
 					types.PostID(0),
 					"Post lesser",
 					false,
@@ -144,10 +150,11 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(4),
-			newPost: types.NewTextPost(types.PostID(5),
+			newPost: types.NewPost(types.PostID(5),
 				types.PostID(0),
 				"New post greater",
 				false,
@@ -155,14 +162,15 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{"key": "value"},
 				testPost.Created,
 				testPostOwner,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 		},
 		{
-			name: "TextPost with ID lesser ID than Last ID stored",
+			name: "Post with ID lesser ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(4),
+				types.NewPost(types.PostID(4),
 					types.PostID(0),
 					"Post ID greater",
 					false,
@@ -170,10 +178,11 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(4),
-			newPost: types.NewTextPost(types.PostID(3),
+			newPost: types.NewPost(types.PostID(3),
 				types.PostID(0),
 				"New post ID lesser",
 				false,
@@ -181,27 +190,10 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
-		},
-		{
-			name: "MediaPost stored, existing text posts",
-			existingPosts: types.Posts{
-				types.NewTextPost(types.PostID(1), types.PostID(0), "a text post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-			},
-			lastPostID: types.PostID(0),
-			newPost: types.NewMediaPost(
-				types.NewTextPost(types.PostID(2), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-				types.PostMedias{
-					types.PostMedia{
-						Provider: "provider",
-						URI:      "uri",
-						MimeType: "text/plain",
-					},
-				}),
-			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(2),
 		},
 	}
 
@@ -212,7 +204,7 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
-				store.Set([]byte(types.PostStorePrefix+p.GetID().String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
 				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
@@ -221,7 +213,7 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			// Check the stored post
 			var expected types.Post
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.GetID().String())), &expected)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.PostID.String())), &expected)
 			assert.True(t, expected.Equals(test.newPost))
 
 			// Check the latest post id
@@ -231,7 +223,7 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.GetParentID().String())), &parentCommentsIDs)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.ParentID.String())), &parentCommentsIDs)
 			assert.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
@@ -245,34 +237,25 @@ func TestKeeper_GetPost(t *testing.T) {
 		expected   types.Post
 	}{
 		{
-			name:     "Non existent text post is not found",
+			name:     "Non existent post is not found",
 			ID:       types.PostID(123),
-			expected: types.TextPost{},
+			expected: types.Post{},
 		},
 		{
-			name:       "Existing text post is found properly",
+			name:       "Existing post is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
-			expected:   types.NewTextPost(types.PostID(45), types.PostID(0), "TextPost", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-		},
-		{
-			name:     "Non Existent media post is not found",
-			ID:       types.PostID(15),
-			expected: types.MediaPost{},
-		},
-		{
-			name:       "Existing media post is found properly",
-			ID:         types.PostID(15),
-			postExists: true,
-			expected: types.NewMediaPost(
-				types.NewTextPost(types.PostID(15), types.PostID(0), "media Post", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-				types.PostMedias{
-					types.PostMedia{
-						Provider: "provider",
-						URI:      "uri",
-						MimeType: "text/plain",
-					},
-				}),
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"desmos",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+			),
 		},
 	}
 
@@ -283,7 +266,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.postExists {
-				store.Set([]byte(types.PostStorePrefix+test.expected.GetID().String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set([]byte(types.PostStorePrefix+test.expected.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
@@ -310,23 +293,13 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewTextPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewTextPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewMediaPost(
-					types.NewTextPost(types.PostID(78), types.PostID(10), "Second Commit", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-					types.PostMedias{
-						types.PostMedia{
-							Provider: "provider",
-							URI:      "uri",
-							MimeType: "text/plain",
-						},
-					},
-				),
-				types.NewTextPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewTextPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
 			},
 			postID:         types.PostID(10),
-			expChildrenIDs: types.PostIDs{types.PostID(55), types.PostID(78)},
+			expChildrenIDs: types.PostIDs{types.PostID(55)},
 		},
 	}
 
@@ -361,16 +334,16 @@ func TestKeeper_GetPosts(t *testing.T) {
 		{
 			name: "Existing list is returned properly",
 			posts: types.Posts{
-				types.NewTextPost(types.PostID(13), types.PostID(0), "", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-				types.NewMediaPost(
-					types.NewTextPost(types.PostID(78), types.PostID(10), "Second Commit", false, "desmos", map[string]string{}, testPost.Created, testPostOwner),
-					types.PostMedias{
-						types.PostMedia{
-							Provider: "provider",
-							URI:      "uri",
-							MimeType: "text/plain",
-						},
-					},
+				types.NewPost(
+					types.PostID(13),
+					types.PostID(0),
+					"",
+					false,
+					"desmos",
+					map[string]string{},
+					testPost.Created,
+					testPostOwner,
+					testPost.Medias,
 				),
 			},
 		},
@@ -383,7 +356,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.posts {
-				store.Set([]byte(types.PostStorePrefix+p.GetID().String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			posts := k.GetPosts(ctx)
@@ -403,8 +376,8 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
-	posts := types.TextPosts{
-		types.NewTextPost(
+	posts := types.Posts{
+		types.NewPost(
 			types.PostID(10),
 			types.PostID(1),
 			"Post 1",
@@ -413,8 +386,9 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator1,
+			testPost.Medias,
 		),
-		types.NewTextPost(
+		types.NewPost(
 			types.PostID(11),
 			types.PostID(1),
 			"Post 2",
@@ -423,8 +397,9 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
+			testPost.Medias,
 		),
-		types.NewTextPost(
+		types.NewPost(
 			types.PostID(12),
 			types.PostID(2),
 			"Post 3",
@@ -433,53 +408,54 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator2,
+			testPost.Medias,
 		),
 	}
 
 	tests := []struct {
 		name     string
 		filter   types.QueryPostsParams
-		expected types.TextPosts
+		expected types.Posts
 	}{
 		{
 			name:     "Valid pagination works properly",
 			filter:   types.DefaultQueryPostsParams(1, 2),
-			expected: types.TextPosts{posts[0], posts[1]},
+			expected: types.Posts{posts[0], posts[1]},
 		},
 		{
 			name:     "Non existing page returns empty list",
 			filter:   types.DefaultQueryPostsParams(10, 1),
-			expected: types.TextPosts{},
+			expected: types.Posts{},
 		},
 		{
 			name:     "Invalid pagination returns all data",
 			filter:   types.DefaultQueryPostsParams(1, 15),
-			expected: types.TextPosts{posts[0], posts[1], posts[2]},
+			expected: types.Posts{posts[0], posts[1], posts[2]},
 		},
 		{
 			name:     "Parent ID matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: &posts[0].ParentID},
-			expected: types.TextPosts{posts[0], posts[1]},
+			expected: types.Posts{posts[0], posts[1]},
 		},
 		{
 			name:     "Creation time matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: &date},
-			expected: types.TextPosts{posts[0], posts[2]},
+			expected: types.Posts{posts[0], posts[2]},
 		},
 		{
 			name:     "Allows comments matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, AllowsComments: &boolTrue},
-			expected: types.TextPosts{posts[1]},
+			expected: types.Posts{posts[1]},
 		},
 		{
 			name:     "Subspace mather works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Subspace: "desmos"},
-			expected: types.TextPosts{posts[1], posts[2]},
+			expected: types.Posts{posts[1], posts[2]},
 		},
 		{
 			name:     "Creator mather works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Creator: creator2},
-			expected: types.TextPosts{posts[1], posts[2]},
+			expected: types.Posts{posts[1], posts[2]},
 		},
 	}
 

@@ -24,15 +24,13 @@ var (
 
 	// Types
 	NewReaction         = types.NewReaction
-	NewTextPost         = types.NewTextPost
-	NewMediaPost        = types.NewMediaPost
+	NewPost             = types.NewPost
 	ParsePostID         = types.ParsePostID
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
-	NewMsgCreateTextPost     = types.NewMsgCreateTextPost
-	NewMsgCreateMediaPost    = types.NewMsgCreateMediaPost
+	NewMsgCreatePost         = types.NewMsgCreatePost
 	NewMsgEditPost           = types.NewMsgEditPost
 	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
@@ -58,8 +56,6 @@ type (
 
 	// Msgs
 	MsgCreatePost         = types.MsgCreatePost
-	MsgCreateTextPost     = types.MsgCreateTextPost
-	MsgCreateMediaPost    = types.MsgCreateMediaPost
 	MsgEditPost           = types.MsgEditPost
 	MsgAddPostReaction    = types.MsgAddPostReaction
 	MsgRemovePostReaction = types.MsgRemovePostReaction
