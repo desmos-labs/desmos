@@ -23,7 +23,7 @@ func (response PostQueryResponse) String() string {
 }
 
 func NewPostResponse(post Post, reactions Reactions, children PostIDs) PostQueryResponse {
-	var ttype string
+	var msgType string
 
 	if _, ok := post.(TextPost); ok {
 		ttype = "TextPost"
