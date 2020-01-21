@@ -26,7 +26,7 @@ func TestPostMedias_String(t *testing.T) {
 
 	actual := postMedias.String()
 
-	expected := "medias - [URI] [Mime-Type] - [https://uri.com] text/plain \n[https://another.com] application/json"
+	expected := "medias - [URI] [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
 
 	assert.Equal(t, expected, actual)
 }
