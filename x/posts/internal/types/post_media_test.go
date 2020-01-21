@@ -26,7 +26,7 @@ func TestPostMedias_String(t *testing.T) {
 
 	actual := postMedias.String()
 
-	expected := "medias - [URI] [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
+	expected := "Medias - [URI] [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
 
 	assert.Equal(t, expected, actual)
 }
@@ -234,8 +234,9 @@ func TestPostMedia_String(t *testing.T) {
 	}
 
 	actual := pm.String()
+	expected := "Media - URI - [http://example.com] ; Mime-Type - [text/plain] \n"
 
-	assert.Equal(t, `Media -  URI - [http://example.com] ; Mime-Type - [text/plain]`, actual)
+	assert.Equal(t, expected, actual)
 }
 
 func TestPostMedia_Validate(t *testing.T) {
@@ -380,7 +381,7 @@ func TestPostMedia_ParseURI(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.uri, func(t *testing.T) {
-			assert.Equal(t, test.expErr, types.ParseURI(test.uri))
+			assert.Equal(t, test.expErr, types.ValidateURI(test.uri))
 		})
 	}
 }

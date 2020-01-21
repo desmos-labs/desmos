@@ -98,8 +98,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
 					if len(arg) != 2 {
-						return fmt.Errorf("if medias are specified, they shouldn't have empty fields, please use the " +
-							"--help flag to know more")
+						return fmt.Errorf("if medias are specified, they shouldn't have empty fields, please use the --help flag to know more")
 					}
 
 					media := types.NewPostMedia(arg[0], arg[1])

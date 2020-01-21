@@ -138,21 +138,6 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 	}
 }
 
-func NewTextPostComplete(id, parentID PostID, message string, created, lastEdited time.Time, allowsComments bool,
-	subspace string, optionalData map[string]string, creator sdk.AccAddress) Post {
-	return Post{
-		PostID:         id,
-		ParentID:       parentID,
-		Message:        message,
-		Created:        created,
-		LastEdited:     lastEdited,
-		AllowsComments: allowsComments,
-		Subspace:       subspace,
-		OptionalData:   optionalData,
-		Creator:        creator,
-	}
-}
-
 // String implements fmt.Stringer
 func (p Post) String() string {
 	bytes, err := json.Marshal(&p)

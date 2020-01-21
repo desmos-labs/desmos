@@ -15,6 +15,9 @@ type PostMedia struct {
 	MimeType string `json:"mime_Type"`
 }
 
+var rEx = regexp.MustCompile(
+	`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+
 func NewPostMedia(uri, mimeType string) PostMedia {
 	return PostMedia{
 		URI:      uri,
@@ -24,11 +27,7 @@ func NewPostMedia(uri, mimeType string) PostMedia {
 
 // String implements fmt.Stringer
 func (pm PostMedia) String() string {
-	out := "Media - "
-
-	out += fmt.Sprintf(" URI - [%s] ; Mime-Type - [%s] \n", pm.URI, pm.MimeType)
-
-	return strings.TrimSpace(out)
+	return fmt.Sprintf("Media - URI - [%s] ; Mime-Type - [%s] \n", pm.URI, pm.MimeType)
 }
 
 // Validate implements validator
@@ -37,7 +36,7 @@ func (pm PostMedia) Validate() error {
 		return fmt.Errorf("uri must be specified and cannot be empty")
 	}
 
-	if err := ParseURI(pm.URI); err != nil {
+	if err := ValidateURI(pm.URI); err != nil {
 		return err
 	}
 
@@ -53,11 +52,8 @@ func (pm PostMedia) Equals(other PostMedia) bool {
 	return pm.URI == other.URI && pm.MimeType == other.MimeType
 }
 
-// ParseURI checks if the given uri string is well-formed according to the regExp and return and error otherwise
-func ParseURI(uri string) error {
-	rEx := regexp.MustCompile(
-		`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
-
+// ValidateURI checks if the given uri string is well-formed according to the regExp and return and error otherwise
+func ValidateURI(uri string) error {
 	if !rEx.MatchString(uri) {
 		return fmt.Errorf("invalid uri provided")
 	}
@@ -71,9 +67,9 @@ func ParseURI(uri string) error {
 
 type PostMedias []PostMedia
 
-// String implements stringer interface
+// String implements fmt.Stringer
 func (pms PostMedias) String() string {
-	out := "medias - [URI] [Mime-Type]\n"
+	out := "Medias - [URI] [Mime-Type]\n"
 	for _, post := range pms {
 		out += fmt.Sprintf("[%s] %s \n", post.URI, post.MimeType)
 	}
