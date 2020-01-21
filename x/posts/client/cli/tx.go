@@ -49,7 +49,8 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Long: fmt.Sprintf(`
 				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
 				Optional media attachments are also supported.
-				If you with to add one or more media attachment, you have to specify a uri, a provider and a mime type for each. 
+				If you with to add one or more media attachment, you have to specify a uri and a mime type for each.
+				Each attachment can be added only once, otherwise and error will occur.
                 You can do so by concatenating them together separated by a comma (,).
 				Usage examples:
 
@@ -93,23 +94,20 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			// If there are some medias
 			if len(args) > 3 {
 				var medias types.PostMedias
-				var appended bool
 				// Read each media and add it to the medias if valid
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
-					if len(arg) == 2 {
-						media := types.NewPostMedia(arg[0], arg[1])
-						medias, appended = medias.AppendIfMissing(media)
-						if !appended {
-							return sdk.ErrUnknownRequest("You can't send the same media two times")
-						}
-					} else {
-						return sdk.ErrUnknownRequest(
-							"If medias are present, you should specify uri, provider and mime type, " +
-								"if you are confused, please use the --help flag")
+					if len(arg) != 2 {
+						return fmt.Errorf("if medias are specified, they shouldn't have empty fields, please use the " +
+							"--help flag to know more")
 					}
+
+					media := types.NewPostMedia(arg[0], arg[1])
+					if edited, appended := medias.AppendIfMissing(media); appended {
+						msg.Medias = edited
+					}
+
 				}
-				msg.Medias = medias
 			}
 
 			if err = msg.ValidateBasic(); err != nil {

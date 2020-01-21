@@ -54,6 +54,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
+		expMedias            types.PostMedias
 	}{
 		{
 			name: "Post with ID already present",
@@ -82,6 +83,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -110,6 +112,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -138,6 +141,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -166,6 +170,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -194,6 +199,26 @@ func TestKeeper_SavePost(t *testing.T) {
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
+			expMedias:            testPost.Medias,
+		},
+		{
+			name:          "Post without medias is saved properly",
+			existingPosts: types.Posts{},
+			lastPostID:    types.PostID(0),
+			newPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post without medias",
+				false,
+				"desmos",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				nil,
+			),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
+			expMedias:            nil,
 		},
 	}
 

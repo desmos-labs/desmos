@@ -26,7 +26,7 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 }
 
 // -------------
-// --- Post
+// --- Posts
 // -------------
 
 func (k Keeper) getPostStoreKey(postID types.PostID) []byte {

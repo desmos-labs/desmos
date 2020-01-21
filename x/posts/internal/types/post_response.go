@@ -2,23 +2,22 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 )
 
 // PostQueryResponse represents the data of a post
 // that is returned to user upon a query
 type PostQueryResponse struct {
-	Post      Post      `json:"post"`
+	Post
 	Reactions Reactions `json:"reactions"`
 	Children  PostIDs   `json:"children"`
 }
 
 func (response PostQueryResponse) String() string {
-	bytes, err := json.Marshal(&response)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(bytes)
+	out := "ID - [Reactions] [Children] \n"
+	out += fmt.Sprintf("%s - [%s] [%s] \n", response.Post.PostID, response.Reactions, response.Children)
+	return strings.TrimSpace(out)
 }
 
 func NewPostResponse(post Post, reactions Reactions, children PostIDs) PostQueryResponse {

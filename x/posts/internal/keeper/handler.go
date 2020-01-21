@@ -11,14 +11,14 @@ import (
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
+		case types.MsgCreatePost:
+			return handleMsgCreatePost(ctx, keeper, msg)
 		case types.MsgEditPost:
 			return handleMsgEditPost(ctx, keeper, msg)
 		case types.MsgAddPostReaction:
 			return handleMsgAddPostReaction(ctx, keeper, msg)
 		case types.MsgRemovePostReaction:
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
-		case types.MsgCreatePost:
-			return handleMsgCreatePost(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -49,13 +49,11 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	if post.ParentID.Valid() {
 		parentPost, found := keeper.GetPost(ctx, post.ParentID)
 		if !found {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Parent post with id %s not found",
-				post.ParentID)).Result()
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Parent post with id %s not found", post.ParentID)).Result()
 		}
 
 		if !parentPost.AllowsComments {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments",
-				parentPost.PostID)).Result()
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments", parentPost.PostID)).Result()
 		}
 	}
 

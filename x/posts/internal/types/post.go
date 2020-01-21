@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -33,7 +32,7 @@ func (id PostID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
-// checkPostsEqual compares two PostID instances
+// Equals compares two PostID instances
 func (id PostID) Equals(other PostID) bool {
 	return id == other
 }
@@ -77,7 +76,7 @@ func ParsePostID(value string) (PostID, error) {
 // PostIDs represents a slice of PostID objects
 type PostIDs []PostID
 
-// checkPostsEqual returns true iff the ids slice and the other
+// Equals returns true iff the ids slice and the other
 // one contain the same data in the same order
 func (ids PostIDs) Equals(other PostIDs) bool {
 	if len(ids) != len(other) {
@@ -120,7 +119,7 @@ type Post struct {
 	Subspace       string         `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   OptionalData   `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator"`                 // Creator of the Post
-	Medias         PostMedias     `json:"medias"`
+	Medias         PostMedias     `json:"medias,omitempty"`        // Contains all the medias that are shared with the post
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
@@ -139,6 +138,21 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 	}
 }
 
+func NewTextPostComplete(id, parentID PostID, message string, created, lastEdited time.Time, allowsComments bool,
+	subspace string, optionalData map[string]string, creator sdk.AccAddress) Post {
+	return Post{
+		PostID:         id,
+		ParentID:       parentID,
+		Message:        message,
+		Created:        created,
+		LastEdited:     lastEdited,
+		AllowsComments: allowsComments,
+		Subspace:       subspace,
+		OptionalData:   optionalData,
+		Creator:        creator,
+	}
+}
+
 // String implements fmt.Stringer
 func (p Post) String() string {
 	bytes, err := json.Marshal(&p)
@@ -149,7 +163,7 @@ func (p Post) String() string {
 	return string(bytes)
 }
 
-// Validate implements Post Validate
+// Validate implements validator
 func (p Post) Validate() error {
 	if !p.PostID.Valid() {
 		return fmt.Errorf("invalid post id: %s", p.PostID)
@@ -200,33 +214,32 @@ func (p Post) Validate() error {
 		}
 	}
 
-	err := p.Medias.Validate()
-	if err != nil {
+	if err := p.Medias.Validate(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// Equals returns true if the two post are equal false otherwise
-func (p Post) Equals(second Post) bool {
-	equalsOptionalData := len(p.OptionalData) == len(second.OptionalData)
+// Equals allows to check whether the contents of p are the same of other
+func (p Post) Equals(other Post) bool {
+	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
 		for key := range p.OptionalData {
-			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == second.OptionalData[key]
+			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
 		}
 	}
 
-	return p.PostID.Equals(second.PostID) &&
-		p.ParentID.Equals(second.ParentID) &&
-		p.Message == second.Message &&
-		p.Created.Equal(second.Created) &&
-		p.LastEdited.Equal(second.LastEdited) &&
-		p.AllowsComments == second.AllowsComments &&
-		p.Subspace == second.Subspace &&
+	return p.PostID.Equals(other.PostID) &&
+		p.ParentID.Equals(other.ParentID) &&
+		p.Message == other.Message &&
+		p.Created.Equal(other.Created) &&
+		p.LastEdited.Equal(other.LastEdited) &&
+		p.AllowsComments == other.AllowsComments &&
+		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
-		p.Creator.Equals(second.Creator) &&
-		p.Medias.Equals(second.Medias)
+		p.Creator.Equals(other.Creator) &&
+		p.Medias.Equals(other.Medias)
 }
 
 // -------------
@@ -236,7 +249,7 @@ func (p Post) Equals(second Post) bool {
 // Posts represents a slice of Post objects
 type Posts []Post
 
-// checkPostsEqual returns true iff the p slice contains the same
+// Equals returns true iff the p slice contains the same
 // data in the same order of the other slice
 func (p Posts) Equals(other Posts) bool {
 	if len(p) != len(other) {
@@ -260,107 +273,4 @@ func (p Posts) String() string {
 			post.PostID, post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
-}
-
-// ---------------
-// --- PostMedias
-// ---------------
-
-type PostMedias []PostMedia
-
-func (pms PostMedias) String() string {
-	bytes, err := json.Marshal(&pms)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(bytes)
-}
-func (pms PostMedias) Equals(other PostMedias) bool {
-	if len(pms) != len(other) {
-		return false
-	}
-
-	for index, postMedia := range pms {
-		if !postMedia.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
-func (pms PostMedias) AppendIfMissing(otherMedia PostMedia) (PostMedias, bool) {
-	for _, media := range pms {
-		if media.Equals(otherMedia) {
-			return pms, false
-		}
-	}
-	return append(pms, otherMedia), true
-}
-
-func (pms PostMedias) Validate() error {
-	for _, media := range pms {
-		if err := media.Validate(); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// ---------------
-// --- PostMedia
-// ---------------
-
-type PostMedia struct {
-	URI      string `json:"uri"`
-	MimeType string `json:"mime_Type"`
-}
-
-func NewPostMedia(uri, mimeType string) PostMedia {
-	return PostMedia{
-		URI:      uri,
-		MimeType: mimeType,
-	}
-}
-
-// String implements fmt.Stringer
-func (pm PostMedia) String() string {
-	bytes, err := json.Marshal(&pm)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(bytes)
-}
-
-func (pm PostMedia) Validate() error {
-	if len(strings.TrimSpace(pm.URI)) == 0 {
-		return fmt.Errorf("uri must be specified and cannot be empty")
-	}
-
-	if err := ParseURI(pm.URI); err != nil {
-		return err
-	}
-
-	if len(strings.TrimSpace(pm.MimeType)) == 0 {
-		return fmt.Errorf("mime type must be specified and cannot be empty")
-	}
-
-	return nil
-}
-
-func (pm PostMedia) Equals(other PostMedia) bool {
-	return pm.URI == other.URI && pm.MimeType == other.MimeType
-}
-
-func ParseURI(uri string) error {
-	rEx := regexp.MustCompile(
-		`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
-
-	if !rEx.MatchString(uri) {
-		return fmt.Errorf("invalid uri provided")
-	}
-
-	return nil
 }

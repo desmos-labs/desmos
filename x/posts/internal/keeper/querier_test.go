@@ -140,14 +140,14 @@ func Test_queryPosts(t *testing.T) {
 			},
 		},
 		{
-			name: "Empty params returns all posts",
+			name: "Empty params returns all posts without medias",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, medias),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, nil),
 			},
 			params: types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, medias),
+					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, nil),
 					types.Reactions{},
 					types.PostIDs{},
 				),
@@ -156,13 +156,13 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Non empty params return proper posts",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, medias),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, medias),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias),
 			},
 			params: types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, medias),
+					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias),
 					types.Reactions{},
 					types.PostIDs{types.PostID(2)},
 				),

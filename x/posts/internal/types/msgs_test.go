@@ -16,12 +16,6 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var medias = types.PostMedias{
-	types.PostMedia{
-		URI:      "https://uri.com",
-		MimeType: "text/plain",
-	},
-}
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
@@ -30,7 +24,12 @@ var msgCreatePost = types.NewMsgCreatePost(
 	map[string]string{},
 	testOwner,
 	date,
-	medias,
+	types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	},
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -60,7 +59,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				nil,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
@@ -74,7 +73,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
@@ -94,7 +93,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
 		},
@@ -108,7 +107,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
@@ -134,7 +133,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
 		},
@@ -150,7 +149,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
@@ -164,7 +163,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				time.Now().UTC().Add(time.Hour),
-				medias,
+				msgCreatePost.Medias,
 			),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
@@ -237,7 +236,12 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				creator,
 				date,
-				medias,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+					},
+				},
 			),
 			error: nil,
 		},
@@ -270,7 +274,12 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				map[string]string{"field": "value"},
 				testOwner,
 				date,
-				medias,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+					},
+				},
 			),
 			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
 		},
@@ -284,9 +293,28 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				map[string]string{},
 				testOwner,
 				date,
-				medias,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+					},
+				},
 			),
 			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
+		},
+		{
+			name: "Message with empty medias",
+			msg: types.NewMsgCreatePost(
+				"My Post without medias",
+				types.PostID(10),
+				false,
+				"desmos",
+				map[string]string{},
+				testOwner,
+				date,
+				types.PostMedias{},
+			),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","subspace":"desmos"}}`,
 		},
 	}
 
