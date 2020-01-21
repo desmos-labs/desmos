@@ -14,6 +14,7 @@ type PostQueryResponse struct {
 	Children  PostIDs   `json:"children"`
 }
 
+// String implements fmt.Stringer
 func (response PostQueryResponse) String() string {
 	out := "ID - [Reactions] [Children] \n"
 	out += fmt.Sprintf("%s - [%s] [%s] \n", response.Post.PostID, response.Reactions, response.Children)
