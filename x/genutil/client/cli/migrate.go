@@ -12,6 +12,7 @@ import (
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/desmos-labs/desmos/x/genutil/internal/types"
 	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
+	v030 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.3.0"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 )
@@ -21,6 +22,7 @@ import (
 // too if needed.
 var migrationMap = map[string][]types.MigrationCallback{
 	"v0.2.0": {v020.Migrate},
+	"v0.3.0": {v030.Migrate},
 }
 
 const (

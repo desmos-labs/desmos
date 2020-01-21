@@ -20,7 +20,7 @@ var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
 	false,
-	"desmos",
+	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
 	testOwner,
 	date,
@@ -45,12 +45,12 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "desmos", map[string]string{}, nil, date),
+			msg:   types.NewMsgCreatePost("Message", types.PostID(0), false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, nil, date),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
 		{
 			name:  "Empty message returns error",
-			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "desmos", map[string]string{}, creator, date),
+			msg:   types.NewMsgCreatePost("", types.PostID(0), false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, creator, date),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
 		{
@@ -65,7 +65,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				`,
 				types.PostID(0),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
 				date,
@@ -75,7 +75,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Empty subspace returns error",
 			msg:   types.NewMsgCreatePost("My message", types.PostID(0), false, "", map[string]string{}, creator, date),
-			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
+			error: sdk.ErrUnknownRequest("Post subspace must be a valid sha-256 hash"),
 		},
 		{
 			name: "More than 10 optional data returns error",
@@ -83,7 +83,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"My message",
 				types.PostID(0),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
 					"key1":  "value1",
 					"key2":  "value2",
@@ -108,7 +108,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"My message",
 				types.PostID(0),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
 					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
 				},
@@ -119,7 +119,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Future creation date returns error",
-			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "desmos", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
+			msg:   types.NewMsgCreatePost("future post", types.PostID(0), false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, creator, time.Now().UTC().Add(time.Hour)),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
 		{
@@ -128,7 +128,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"Message",
 				types.PostID(0),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
 					"lorem":  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in dapibus tortor, in iaculis nunc. Integer ac bibendum nisi. Curabitur faucibus vestibulum tincidunt. Donec interdum tincidunt cras amet.",
 					"date":   "2020-01-01T00:00.000Z",
@@ -164,13 +164,13 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	}{
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "desmos", map[string]string{"field": "value"}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"desmos"}}`,
+			msg:         types.NewMsgCreatePost("My new post", types.PostID(53), false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{"field": "value"}, testOwner, date),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name:        "Message with non-empty external reference",
-			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "desmos", map[string]string{}, testOwner, date),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"desmos"}}`,
+			msg:         types.NewMsgCreatePost("My post", types.PostID(15), false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testOwner, date),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 

@@ -1,5 +1,13 @@
 package types
 
+import (
+	"regexp"
+)
+
+var (
+	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
+)
+
 const (
 	ModuleName = "posts"
 	RouterKey  = ModuleName
