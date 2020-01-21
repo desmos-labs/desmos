@@ -142,7 +142,6 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 					MimeType: "application/json",
 				},
 			},
-			expAppended: true,
 		},
 		{
 			name: "not append an existing media and returns false",
@@ -162,16 +161,14 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 					MimeType: "text/plain",
 				},
 			},
-			expAppended: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			medias, found := test.medias.AppendIfMissing(test.newMedia)
+			medias := test.medias.AppendIfMissing(test.newMedia)
 			assert.Equal(t, test.expMedias, medias)
-			assert.Equal(t, test.expAppended, found)
 		})
 	}
 }

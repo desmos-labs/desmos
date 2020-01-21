@@ -91,9 +91,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				nil,
 			)
 
-			// If there are some medias
 			if len(args) > 3 {
-				var medias types.PostMedias
+				medias := types.PostMedias{}
+
 				// Read each media and add it to the medias if valid
 				for i := 3; i < len(args); i++ {
 					arg := strings.Split(args[i], ",")
@@ -102,11 +102,10 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 					}
 
 					media := types.NewPostMedia(arg[0], arg[1])
-					if edited, appended := medias.AppendIfMissing(media); appended {
-						msg.Medias = edited
-					}
-
+					medias = medias.AppendIfMissing(media)
 				}
+
+				msg.Medias = medias
 			}
 
 			if err = msg.ValidateBasic(); err != nil {

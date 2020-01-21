@@ -94,15 +94,14 @@ func (pms PostMedias) Equals(other PostMedias) bool {
 }
 
 // AppendIfMissing appends the given otherMedia to the pms slice if it does not exist inside it yet.
-// It returns a new slice of PostMedias containing such otherMedia and a boolean indicating whether or not the original
-// slice has been modified.
-func (pms PostMedias) AppendIfMissing(otherMedia PostMedia) (PostMedias, bool) {
+// It returns a new slice of PostMedias containing such otherMedia.
+func (pms PostMedias) AppendIfMissing(otherMedia PostMedia) PostMedias {
 	for _, media := range pms {
 		if media.Equals(otherMedia) {
-			return pms, false
+			return pms
 		}
 	}
-	return append(pms, otherMedia), true
+	return append(pms, otherMedia)
 }
 
 // Validate implements validator
