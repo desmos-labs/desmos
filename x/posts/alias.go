@@ -48,6 +48,8 @@ type (
 	PostIDs      = types.PostIDs
 	Post         = types.Post
 	Posts        = types.Posts
+	PostMedia    = types.PostMedia
+	PostMedias   = types.PostMedias
 	Reaction     = types.Reaction
 	Reactions    = types.Reactions
 	GenesisState = types.GenesisState

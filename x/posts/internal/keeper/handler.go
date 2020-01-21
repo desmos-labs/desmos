@@ -37,6 +37,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.OptionalData,
 		msg.CreationDate,
 		msg.Creator,
+		msg.Medias,
 	)
 
 	// Check for double posting

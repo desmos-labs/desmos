@@ -22,11 +22,12 @@ type MsgCreatePost struct {
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
+	Medias         PostMedias        `json:"post_medias,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -35,6 +36,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		OptionalData:   optionalData,
 		Creator:        owner,
 		CreationDate:   creationDate,
+		Medias:         medias,
 	}
 }
 
@@ -88,6 +90,10 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 
 	if msg.CreationDate.After(time.Now().UTC()) {
 		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
+	}
+
+	if err := msg.Medias.Validate(); err != nil {
+		return sdk.ErrUnknownRequest(err.Error())
 	}
 
 	return nil
