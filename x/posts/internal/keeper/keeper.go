@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -121,6 +122,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	posts := k.GetPosts(ctx)
 	filteredPosts := make(types.Posts, 0, len(posts))
 
+	// Filter the posts
 	for _, p := range posts {
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
 
@@ -153,6 +155,29 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			filteredPosts = append(filteredPosts, p)
 		}
 	}
+
+	// Sort the posts
+	sort.Slice(filteredPosts, func(i, j int) bool {
+		var result bool
+		first, second := filteredPosts[i], filteredPosts[j]
+
+		switch params.SortBy {
+		case types.PostSortByCreationDate:
+			result = first.Created.Before(second.Created)
+			if params.SortOrder == types.PostSortOrderDescending {
+				result = first.Created.After(second.Created)
+			}
+
+		default:
+			result = first.PostID < second.PostID
+			if params.SortOrder == types.PostSortOrderDescending {
+				result = first.PostID > second.PostID
+			}
+		}
+
+		// This should never be reached
+		return result
+	})
 
 	// Default page
 	page := params.Page
