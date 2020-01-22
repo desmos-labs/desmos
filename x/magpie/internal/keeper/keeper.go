@@ -21,6 +21,29 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 }
 
 // -------------
+// --- Params
+// -------------
+
+// SetDefaultSessionLength allows to set a default session length for new magpie sessions.
+// The specified length is intended to be in number of blocks.
+func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length int64) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(length))
+}
+
+// GetDefaultSessionLength returns the default session length in number of blocks.
+func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) int64 {
+	store := ctx.KVStore(k.StoreKey)
+
+	length := int64(0)
+	if store.Has([]byte(types.SessionLengthKey)) {
+		k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &length)
+	}
+
+	return length
+}
+
+// -------------
 // --- Sessions
 // -------------
 

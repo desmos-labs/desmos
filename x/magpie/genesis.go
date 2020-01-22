@@ -6,15 +6,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-type GenesisState struct {
-	Sessions Sessions `json:"sessions"`
-}
-
-// DefaultGenesisState returns a default GenesisState
-func DefaultGenesisState() GenesisState {
-	return GenesisState{}
-}
-
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 	return GenesisState{
@@ -32,9 +23,4 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abc
 	}
 
 	return []abci.ValidatorUpdate{}
-}
-
-// ValidateGenesis validates the given genesis state and returns an error if something is invalid
-func ValidateGenesis(_ GenesisState) error {
-	return nil
 }

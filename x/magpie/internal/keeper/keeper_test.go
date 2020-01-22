@@ -1,11 +1,50 @@
 package keeper_test
 
 import (
+	"fmt"
+	"math"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestKeeper_SetDefaultSessionLength(t *testing.T) {
+	tests := []int64{-1, 0, 1, math.MaxInt32}
+
+	for _, length := range tests {
+		length := length
+
+		t.Run(fmt.Sprintf("Default session length: %d", length), func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetDefaultSessionLength(ctx, length)
+
+			var stored int64
+			store := ctx.KVStore(k.StoreKey)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
+			assert.Equal(t, length, stored)
+		})
+	}
+}
+
+func TestKeeper_GetDefaultSessionLength(t *testing.T) {
+	tests := []int64{-1, -2, 0, 1, 2}
+
+	for _, length := range tests {
+		length := length
+		t.Run(fmt.Sprintf("Get default session length: %d", length), func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if length != 0 {
+				store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(&length))
+			}
+
+			recovered := k.GetDefaultSessionLength(ctx)
+			assert.Equal(t, length, recovered)
+		})
+	}
+}
 
 func TestKeeper_GetLastSessionID(t *testing.T) {
 	tests := []struct {

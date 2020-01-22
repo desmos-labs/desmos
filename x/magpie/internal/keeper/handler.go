@@ -65,7 +65,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	session := types.Session{
 		SessionID:     keeper.GetLastSessionID(ctx).Next(),
 		Created:       ctx.BlockHeight(),
-		Expiry:        ctx.BlockHeight() + 240, // 24 hours, counting a 6 secs block interval
+		Expiry:        ctx.BlockHeight() + keeper.GetDefaultSessionLength(ctx),
 		Owner:         msg.Owner,
 		Namespace:     msg.Namespace,
 		ExternalOwner: msg.ExternalOwner,
