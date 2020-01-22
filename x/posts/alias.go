@@ -34,9 +34,6 @@ var (
 	NewMsgEditPost           = types.NewMsgEditPost
 	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
-
-	// Queries
-	NewQueryPostsParams = types.NewQueryPostsParams
 )
 
 type (

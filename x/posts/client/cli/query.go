@@ -75,16 +75,21 @@ $ %s query posts posts --page=2 --limit=100
 			page := viper.GetInt(flagPage)
 			limit := viper.GetInt(flagNumLimit)
 
-			parentID := viper.GetString(flagParentID)
-			creationTime := viper.GetString(flagCreationTime)
-			allowsComments := viper.GetString(flagAllowsComments)
-			subspace := viper.GetString(flagSubspace)
-			bech32CreatorAddress := viper.GetString(flagCreator)
-
+			// Default params
 			params := types.DefaultQueryPostsParams(page, limit)
 
+			// SortBy
+			if sortBy := viper.GetString(flagSortBy); len(sortBy) > 0 {
+				params.SortBy = sortBy
+			}
+
+			// SortOrder
+			if sortOrder := viper.GetString(flagSorOrder); len(sortOrder) > 0 {
+				params.SortOrder = sortOrder
+			}
+
 			// ParentID
-			if len(parentID) > 0 {
+			if parentID := viper.GetString(flagParentID); len(parentID) > 0 {
 				parentID, err := types.ParsePostID(parentID)
 				if err != nil {
 					return err
@@ -94,7 +99,7 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// CreationTime
-			if len(creationTime) > 0 {
+			if creationTime := viper.GetString(flagCreationTime); len(creationTime) > 0 {
 				parsedTime, err := time.Parse(time.RFC3339, creationTime)
 				if err != nil {
 					return err
@@ -104,7 +109,7 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// AllowsComments
-			if len(allowsComments) > 0 {
+			if allowsComments := viper.GetString(flagAllowsComments); len(allowsComments) > 0 {
 				allowsCommentsBool, err := strconv.ParseBool(allowsComments)
 				if err != nil {
 					return err
@@ -113,12 +118,12 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// Subspace
-			if len(subspace) > 0 {
+			if subspace := viper.GetString(flagSubspace); len(subspace) > 0 {
 				params.Subspace = subspace
 			}
 
 			// Creator
-			if len(bech32CreatorAddress) != 0 {
+			if bech32CreatorAddress := viper.GetString(flagCreator); len(bech32CreatorAddress) != 0 {
 				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
 				if err != nil {
 					return err
@@ -156,6 +161,9 @@ $ %s query posts posts --page=2 --limit=100
 
 	cmd.Flags().Int(flagPage, 1, "pagination page of posts to to query for")
 	cmd.Flags().Int(flagNumLimit, 100, "pagination limit of posts to query for")
+
+	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
+	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
 
 	cmd.Flags().String(flagParentID, "", "(optional) filter the posts with given parent id")
 	cmd.Flags().String(flagCreationTime, "", "(optional) filter the posts created at block height")
