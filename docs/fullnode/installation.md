@@ -147,7 +147,7 @@ desmoscli status
 
 You should see an output like the following one:
 
-``` json{24}
+```
 {
   "node_info": {
     "protocol_version": {

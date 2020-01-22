@@ -31,7 +31,7 @@ You can edit the `~/.desmosd/config/app.toml` file in order to enable the anti s
 
 # The minimum gas prices a validator is willing to accept for processing a
 # transaction. A transaction's fees must meet the minimum of any denomination
-# specified in this config (e.g. 10uatom).
+# specified in this config (e.g. 10udaric).
 
 minimum-gas-prices = ""
 ```
