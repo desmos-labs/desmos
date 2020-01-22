@@ -9,8 +9,13 @@ If you want to become a validator for the `mainnet`, you should [research securi
 :::
 
 ## Running a Fullnode
-
 To become a validator, you must first have `desmosd` and `desmoscli` installed and be able to run a fullnode. You can first [setup your fullnode](/fullnode/overview.md) if you haven't yet.
+
+:::tip Not enough funds? Google Cloud can help you  
+Running a validator node should be done on a separate machine, not your local computer. This is due to the fact that validators need to be constantly running to avoid getting slashed (and thus loosing funds). We highly recommend setting up a local machine that can run 24/7, even a Raspberry can do the job. 
+
+If you do not have the possibility of using a local machine, even an hosted server can be perfect. If you wish to get started for free, you can use the [300$ Google Cloud bonus](https://cloud.google.com/free/docs/gcp-free-tier). This should be enough to run a validator for 5-6 months.  
+:::  
 
 ## Create Your Validator
 

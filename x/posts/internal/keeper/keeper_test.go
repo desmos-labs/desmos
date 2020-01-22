@@ -482,6 +482,26 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Creator: creator2},
 			expected: types.Posts{posts[1], posts[2]},
 		},
+		{
+			name:     "Sorting by date ascending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderAscending},
+			expected: types.Posts{posts[0], posts[2], posts[1]},
+		},
+		{
+			name:     "Sorting by date descending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
+			expected: types.Posts{posts[1], posts[0], posts[2]},
+		},
+		{
+			name:     "Sorting by ID ascending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
+			expected: types.Posts{posts[0], posts[1], posts[2]},
+		},
+		{
+			name:     "Sorting by ID descending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
+			expected: types.Posts{posts[2], posts[1], posts[0]},
+		},
 	}
 
 	for _, test := range tests {
@@ -493,10 +513,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			}
 
 			result := k.GetPostsFiltered(ctx, test.filter)
-			assert.Len(t, result, len(test.expected))
-			for index, post := range result {
-				assert.True(t, test.expected[index].Equals(post))
-			}
+			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
 		})
 	}
 }

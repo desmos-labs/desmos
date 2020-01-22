@@ -26,14 +26,6 @@ git clone https://github.com/desmos-labs/desmos && cd desmos
 make install
 ```
 
-Once all the procedure has completed properly, you should see an output similar to the following: 
-
-```shell
-$ make install
-go install -mod=readonly -tags "netgo ledger" -ldflags '-X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" -X "github.com/cosmos/cosmos-sdk/version.ServerName=desmosd" -X "github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli" -X github.com/cosmos/cosmos-sdk/version.Version=0.1.0-19-g8df3833 -X github.com/cosmos/cosmos-sdk/version.Commit=8df3833b6967b776b9378fc11872c20f563113ae -X "github.com/cosmos/cosmos-sdk/version.BuildTags=netgo ledger"' ./cmd/desmosd
-go install -mod=readonly -tags "netgo ledger" -ldflags '-X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" -X "github.com/cosmos/cosmos-sdk/version.ServerName=desmosd" -X "github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli" -X github.com/cosmos/cosmos-sdk/version.Version=0.1.0-19-g8df3833 -X github.com/cosmos/cosmos-sdk/version.Commit=8df3833b6967b776b9378fc11872c20f563113ae -X "github.com/cosmos/cosmos-sdk/version.BuildTags=netgo ledger"' ./cmd/desmoscli
-```
-
 ### Verify the installation 
 To verify you have correctly installed `desmoscli` and `desmosd`, try running: 
 
