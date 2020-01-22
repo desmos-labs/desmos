@@ -25,6 +25,7 @@ type CreatePostReq struct {
 	OptionalData   map[string]string `json:"optional_data"`
 	CreationTime   time.Time         `json:"creation_time"`
 	Medias         types.PostMedias  `json:"medias,omitempty"`
+	PollData       types.PollData    `json:"poll_data,omitempty"`
 }
 
 // AddReactionReq defines the properties of a reaction adding request's body.

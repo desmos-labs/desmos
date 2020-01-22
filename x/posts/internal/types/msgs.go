@@ -23,11 +23,12 @@ type MsgCreatePost struct {
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
 	Medias         PostMedias        `json:"post_medias,omitempty"`
+	PollData       *PollData         `json:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias, pollData *PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -37,6 +38,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		Creator:        owner,
 		CreationDate:   creationDate,
 		Medias:         medias,
+		PollData:       pollData,
 	}
 }
 
@@ -93,6 +95,13 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 	}
 
 	if err := msg.Medias.Validate(); err != nil {
+		return sdk.ErrUnknownRequest(err.Error())
+	}
+
+	if !msg.PollData.Open {
+		return sdk.ErrUnknownRequest("Poll Post cannot be created closed")
+	}
+	if err := msg.PollData.Validate(); err != nil {
 		return sdk.ErrUnknownRequest(err.Error())
 	}
 
@@ -171,6 +180,110 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Editor}
 }
+
+// ----------------------
+// --- MsgClosePollPost
+// ----------------------
+
+// MsgClosePollPost defines the ClosePollPost message
+type MsgClosePollPost struct {
+	PostID  PostID         `json:"post_id"`
+	Message string         `json:"message,omitempty"` // (Optional) Message to be displayed upon the poll closing
+	Creator sdk.AccAddress `json:"creator"`           // User that close the poll
+}
+
+// NewMsgClosePollPost is the constructor function for MsgClosePollPost
+func NewMsgClosePollPost(id PostID, message string, creator sdk.AccAddress) MsgClosePollPost {
+	return MsgClosePollPost{
+		PostID:  id,
+		Message: message,
+		Creator: creator,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgClosePollPost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgClosePollPost) Type() string { return ActionClosePollPost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgClosePollPost) ValidateBasic() sdk.Error {
+	if !msg.PostID.Valid() {
+		return sdk.ErrUnknownRequest("Invalid post id")
+	}
+
+	if len(msg.Message) > 1 && len(msg.Message) < 7 {
+		return sdk.ErrUnknownRequest("If present, the message should be at least 7 characters")
+	}
+
+	if msg.Creator.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Creator))
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgClosePollPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgClosePollPost) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Creator}
+}
+
+// ----------------------
+// --- MsgAnswerPollPost
+// ----------------------
+
+// MsgAnswerPollPost defines the AnswerPollPost message
+type MsgAnswerPollPost struct {
+	PostID          PostID         `json:"post_id"`
+	ProvidedAnswers PollAnswers    `json:"provided_answers"`
+	Answerer        sdk.AccAddress `json:"answerer"`
+}
+
+// NewMsgAnswerPollPost is the constructor function for MsgAnswerPollPost
+func NewMsgAnswerPollPost(id PostID, providedAnswers PollAnswers, answerer sdk.AccAddress) MsgAnswerPollPost {
+	return MsgAnswerPollPost{
+		PostID:          id,
+		ProvidedAnswers: providedAnswers,
+		Answerer:        answerer,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgAnswerPollPost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgAnswerPollPost) Type() string { return ActionAnswerPollPost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgAnswerPollPost) ValidateBasic() sdk.Error {
+	if !msg.PostID.Valid() {
+		return sdk.ErrUnknownRequest("Invalid post id")
+	}
+
+	if msg.Answerer.Empty() {
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Answerer))
+	}
+
+	if len(msg.ProvidedAnswers) == 0 {
+		return sdk.ErrUnknownRequest("Provided answers must contains at least one answer")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgAnswerPollPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgAnswerPollPost) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{msg.Answerer} }
 
 // ----------------------
 // --- MsgAddPostReaction

@@ -9,7 +9,7 @@ import (
 )
 
 // ---------------
-// --- PollData
+// --- PollDetails
 // ---------------
 
 // PollData contains the information of a poll that is associated to a post
