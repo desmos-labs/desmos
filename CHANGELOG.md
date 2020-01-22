@@ -1,6 +1,11 @@
 # Version 0.3.0
 ## Changes
 - Implemented the support for media in posts (#36)
+- Added the support for posts sorting (#78)
+- Added the support for magpie default session length inside genesis (#38)
+
+## Bug fixes
+- Fixed the posts REST endpoint not working properly (#77)
  
 # Version 0.2.0
 ## Changes
