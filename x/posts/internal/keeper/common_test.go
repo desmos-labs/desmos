@@ -46,6 +46,7 @@ func testCodec() *codec.Codec {
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var timeZone, _ = time.LoadLocation("UTC")
 var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
+
 var testPost = types.NewPost(
 	types.PostID(3257),
 	types.PostID(0),
@@ -55,4 +56,8 @@ var testPost = types.NewPost(
 	map[string]string{},
 	testPostCreationDate,
 	testPostOwner,
+	types.PostMedias{types.NewPostMedia(
+		"https://uri.com",
+		"text/plain"),
+	},
 )

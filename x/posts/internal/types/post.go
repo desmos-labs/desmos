@@ -119,10 +119,11 @@ type Post struct {
 	Subspace       string         `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   OptionalData   `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator"`                 // Creator of the Post
+	Medias         PostMedias     `json:"medias,omitempty"`        // Contains all the medias that are shared with the post
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created time.Time, creator sdk.AccAddress) Post {
+	created time.Time, creator sdk.AccAddress, medias PostMedias) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
@@ -133,21 +134,7 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        creator,
-	}
-}
-
-func NewPostComplete(id, parentID PostID, message string, created, lastEdited time.Time, allowsComments bool,
-	subspace string, optionalData map[string]string, creator sdk.AccAddress) Post {
-	return Post{
-		PostID:         id,
-		ParentID:       parentID,
-		Message:        message,
-		Created:        created,
-		LastEdited:     lastEdited,
-		AllowsComments: allowsComments,
-		Subspace:       subspace,
-		OptionalData:   optionalData,
-		Creator:        creator,
+		Medias:         medias,
 	}
 }
 
@@ -212,6 +199,10 @@ func (p Post) Validate() error {
 		}
 	}
 
+	if err := p.Medias.Validate(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -232,7 +223,8 @@ func (p Post) Equals(other Post) bool {
 		p.AllowsComments == other.AllowsComments &&
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
-		p.Creator.Equals(other.Creator)
+		p.Creator.Equals(other.Creator) &&
+		p.Medias.Equals(other.Medias)
 }
 
 // -------------

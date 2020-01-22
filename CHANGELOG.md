@@ -1,5 +1,6 @@
 # Version 0.3.0
 ## Changes
+- Implemented the support for media in posts (#36)
 - Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes.
 
 ## Migration

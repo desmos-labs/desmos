@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -201,58 +202,63 @@ func TestPost_String(t *testing.T) {
 		Created:        date,
 		LastEdited:     date.AddDate(0, 0, 1),
 		AllowsComments: true,
-		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		Subspace:       "desmos",
 		OptionalData:   map[string]string{},
 		Creator:        owner,
 	}
 
 	assert.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
 
 func TestPost_Validate(t *testing.T) {
 	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	tests := []struct {
 		post     types.Post
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, nil, medias),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "Desmos", map[string]string{}, date, owner, medias),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "Desmos", map[string]string{}, time.Time{}, owner, medias),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
-			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", Created: date, LastEdited: date.AddDate(0, 0, -1)},
+			post:     types.Post{PostID: types.PostID(19), Creator: owner, Message: "Message", Subspace: "desmos", Created: date, LastEdited: date.AddDate(0, 0, -1)},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner),
-			expError: "post subspace must be a valid sha-256 hash",
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner, medias),
+			expError: "post subspace must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner),
-			expError: "post subspace must be a valid sha-256 hash",
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner, medias),
+			expError: "post subspace must be non empty and non blank",
 		},
 		{
 			post: types.Post{
@@ -260,10 +266,11 @@ func TestPost_Validate(t *testing.T) {
 				ParentID:       types.PostID(0),
 				Message:        "Message",
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Created:        time.Now().UTC().Add(time.Hour),
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expError: "post creation date cannot be in the future",
 		},
@@ -273,11 +280,12 @@ func TestPost_Validate(t *testing.T) {
 				ParentID:       types.PostID(0),
 				Message:        "Message",
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Created:        time.Now().UTC(),
 				LastEdited:     time.Now().UTC().Add(time.Hour),
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expError: "post last edit date cannot be in the future",
 		},
@@ -293,10 +301,11 @@ func TestPost_Validate(t *testing.T) {
 				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
 				`,
 				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"desmos",
 				map[string]string{},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post message cannot be longer than 500 characters",
 		},
@@ -306,7 +315,7 @@ func TestPost_Validate(t *testing.T) {
 				types.PostID(0),
 				"Message",
 				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"desmos",
 				map[string]string{
 					"key1":  "value",
 					"key2":  "value",
@@ -322,6 +331,7 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
@@ -331,7 +341,7 @@ func TestPost_Validate(t *testing.T) {
 				types.PostID(0),
 				"Message",
 				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"desmos",
 				map[string]string{
 					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
 							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
@@ -339,12 +349,9 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
+				medias,
 			),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
-		},
-		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
-			expError: "",
 		},
 	}
 
@@ -366,6 +373,12 @@ func TestPost_Equals(t *testing.T) {
 
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	tests := []struct {
 		name      string
@@ -382,9 +395,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(10),
@@ -393,9 +407,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -408,9 +423,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -419,9 +435,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -434,9 +451,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -445,9 +463,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -460,9 +479,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -471,9 +491,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date.AddDate(0, 0, 1),
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -486,9 +507,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -497,9 +519,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 2),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -512,9 +535,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -523,9 +547,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: false,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -541,6 +566,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-1",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -552,6 +578,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-2",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			expEquals: false,
 		},
@@ -564,11 +591,12 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData: map[string]string{
 					"field": "value",
 				},
 				Creator: owner,
+				Medias:  medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -577,11 +605,12 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData: map[string]string{
 					"field": "other-value",
 				},
 				Creator: owner,
+				Medias:  medias,
 			},
 			expEquals: false,
 		},
@@ -594,9 +623,10 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
+				Medias:         medias,
 			},
 			second: types.Post{
 				PostID:         types.PostID(19),
@@ -605,37 +635,12 @@ func TestPost_Equals(t *testing.T) {
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Subspace:       "desmos",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
+				Medias:         medias,
 			},
 			expEquals: false,
-		},
-		{
-			name: "Same data",
-			first: types.Post{
-				PostID:         types.PostID(19),
-				ParentID:       types.PostID(1),
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
-				Creator:        owner,
-			},
-			second: types.Post{
-				PostID:         types.PostID(19),
-				ParentID:       types.PostID(1),
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
-				Creator:        owner,
-			},
-			expEquals: true,
 		},
 	}
 
@@ -714,13 +719,19 @@ func TestPosts_Equals(t *testing.T) {
 func TestPosts_String(t *testing.T) {
 	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	medias := types.PostMedias{
+		types.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
 
 	timeZone, _ := time.LoadLocation("UTC")
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := types.Posts{
-		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1),
-		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2),
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1, medias),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2, medias),
 	}
 
 	expected := `ID - [Creator] Message

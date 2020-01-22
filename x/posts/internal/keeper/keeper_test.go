@@ -54,6 +54,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
+		expMedias            types.PostMedias
 	}{
 		{
 			name: "Post with ID already present",
@@ -66,6 +67,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -77,9 +79,11 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -92,6 +96,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -103,9 +108,11 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -118,6 +125,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -129,9 +137,11 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -144,6 +154,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -155,9 +166,11 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{"key": "value"},
 				testPost.Created,
 				testPostOwner,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
+			expMedias:            testPost.Medias,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -170,6 +183,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
+					testPost.Medias,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -181,9 +195,30 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
+				testPost.Medias,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
+			expMedias:            testPost.Medias,
+		},
+		{
+			name:          "Post without medias is saved properly",
+			existingPosts: types.Posts{},
+			lastPostID:    types.PostID(0),
+			newPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post without medias",
+				false,
+				"desmos",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				nil,
+			),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
+			expMedias:            nil,
 		},
 	}
 
@@ -235,7 +270,17 @@ func TestKeeper_GetPost(t *testing.T) {
 			name:       "Existing post is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
-			expected:   types.NewPost(types.PostID(45), types.PostID(0), "Post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"desmos",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+			),
 		},
 	}
 
@@ -273,14 +318,13 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(78), types.PostID(10), "Other commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
 			},
 			postID:         types.PostID(10),
-			expChildrenIDs: types.PostIDs{types.PostID(55), types.PostID(78)},
+			expChildrenIDs: types.PostIDs{types.PostID(55)},
 		},
 	}
 
@@ -315,8 +359,17 @@ func TestKeeper_GetPosts(t *testing.T) {
 		{
 			name: "Existing list is returned properly",
 			posts: types.Posts{
-				types.NewPost(types.PostID(13), types.PostID(0), "", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(76), types.PostID(0), "", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator),
+				types.NewPost(
+					types.PostID(13),
+					types.PostID(0),
+					"",
+					false,
+					"desmos",
+					map[string]string{},
+					testPost.Created,
+					testPostOwner,
+					testPost.Medias,
+				),
 			},
 		},
 	}
@@ -332,7 +385,9 @@ func TestKeeper_GetPosts(t *testing.T) {
 			}
 
 			posts := k.GetPosts(ctx)
-			assert.True(t, test.posts.Equals(posts))
+			for index, post := range test.posts {
+				assert.True(t, post.Equals(posts[index]))
+			}
 		})
 	}
 }
@@ -356,6 +411,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator1,
+			testPost.Medias,
 		),
 		types.NewPost(
 			types.PostID(11),
@@ -366,6 +422,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
+			testPost.Medias,
 		),
 		types.NewPost(
 			types.PostID(12),
@@ -376,6 +433,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator2,
+			testPost.Medias,
 		),
 	}
 

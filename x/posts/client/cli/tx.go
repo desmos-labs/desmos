@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/version"
@@ -43,9 +44,21 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace] [message] [allows-comments]",
+		Use:   "create [subspace] [message] [allows-comments] [[[uri],[mime-type]]...]",
 		Short: "Create a new post",
-		Args:  cobra.ExactArgs(3),
+		Long: fmt.Sprintf(`
+				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
+				Optional media attachments are also supported.
+				If you with to add one or more media attachment, you have to specify a uri and a mime type for each.
+				Each attachment can be added only once, otherwise and error will occur.
+                You can do so by concatenating them together separated by a comma (,).
+				Usage examples:
+
+				- tx posts create "desmos" "Hello world!" true
+				- tx posts create "demos" "A post with media" true "https://example.com,text/plain"
+				- tx posts create "desmos" "A post with multiple medias" false "https://example.com/media1,text/plain" "https://example.com/media2,application/json"
+		`),
+		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -67,11 +80,37 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(args[1], parentID, allowsComments, args[0], map[string]string{}, from, time.Now().UTC())
+			msg := types.NewMsgCreatePost(
+				args[1],
+				parentID,
+				allowsComments,
+				args[0],
+				map[string]string{},
+				from,
+				time.Now().UTC(),
+				nil,
+			)
+
+			if len(args) > 3 {
+				medias := types.PostMedias{}
+
+				// Read each media and add it to the medias if valid
+				for i := 3; i < len(args); i++ {
+					arg := strings.Split(args[i], ",")
+					if len(arg) != 2 {
+						return fmt.Errorf("if medias are specified, they shouldn't have empty fields, please use the --help flag to know more")
+					}
+
+					media := types.NewPostMedia(arg[0], arg[1])
+					medias = medias.AppendIfMissing(media)
+				}
+
+				msg.Medias = medias
+			}
+
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
