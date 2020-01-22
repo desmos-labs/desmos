@@ -257,7 +257,7 @@ func TestSession_Equals(t *testing.T) {
 				Owner:         owner,
 				Created:       0,
 				Expiry:        0,
-				Namespace:     "desmos",
+				Namespace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				ExternalOwner: "cosmos1l5q6tzjpse5p50zg3spef83cd79drahx58f69q",
 				PubKey:        "cosmospub1addwnpepqgxp4eye98gy70lwa58uk29rjpdwn033el34wzt2x74pkkqpp5re2gcyypg",
 				Signature:     "YXNAJTQzMjUzNTRzMzRnMjQyNDR3NTI0emYyYmg0c2EzMjRyaGIuNHM1Z2I1NDFzMWc=",

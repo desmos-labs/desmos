@@ -34,26 +34,11 @@ This message allows you to edit the message of a previously published public pos
     "edit_date": "2020-02-05T01:00:00"
   }
 }
-``` 
-
-### Without optional data
-```json
-{
-  "type": "desmos/MsgCreatePost",
-  "value": {
-    "parent_id": "0",
-    "message": "Desmos is great!",
-    "allows_comments": true,
-    "subspace": "desmos",
-    "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "creation_date": "2020-01-01T12:00:00Z"
-  }
-}
 ```
 
 ## Message action
 The action associated to this message is the following: 
 
 ```
-create_post
+edit_post
 ```
