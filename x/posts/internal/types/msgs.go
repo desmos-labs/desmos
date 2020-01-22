@@ -67,8 +67,8 @@ func (msg MsgCreatePost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
 	}
 
-	if len(strings.TrimSpace(msg.Subspace)) == 0 {
-		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
+	if !SubspaceRegEx.MatchString(msg.Subspace) {
+		return sdk.ErrUnknownRequest("Post subspace must be a valid sha-256 hash")
 	}
 
 	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {

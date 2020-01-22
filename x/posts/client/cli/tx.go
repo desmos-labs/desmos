@@ -54,9 +54,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
                 You can do so by concatenating them together separated by a comma (,).
 				Usage examples:
 
-				- tx posts create "desmos" "Hello world!" true
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" true
 				- tx posts create "demos" "A post with media" true "https://example.com,text/plain"
-				- tx posts create "desmos" "A post with multiple medias" false "https://example.com/media1,text/plain" "https://example.com/media2,application/json"
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false "https://example.com/media1,text/plain" "https://example.com/media2,application/json"
 		`),
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {

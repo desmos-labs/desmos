@@ -37,7 +37,7 @@ This message allows you to create a new public post.
     "parent_id": "0",
     "message": "Desmos is great!",
     "allows_comments": true,
-    "subspace": "desmos",
+    "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
     "optional_data": {
       "custom_field": "My custom value"
     },
@@ -55,7 +55,7 @@ This message allows you to create a new public post.
     "parent_id": "0",
     "message": "Desmos is great!",
     "allows_comments": true,
-    "subspace": "desmos",
+    "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
     "creation_date": "2020-01-01T12:00:00Z"
   }

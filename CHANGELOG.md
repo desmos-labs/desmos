@@ -3,10 +3,18 @@
 - Implemented the support for media in posts (#36)
 - Added the support for posts sorting (#78)
 - Added the support for magpie default session length inside genesis (#38)
+- Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes (#82)
 
 ## Bug fixes
 - Fixed the posts REST endpoint not working properly (#77)
- 
+
+## Migration
+In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:
+
+```shell
+desmosd migrate v0.3.0 <path-to-genesis-file> 
+```
+
 # Version 0.2.0
 ## Changes
 - Implemented the support for arbitrary data inside a post (#52, #66)
