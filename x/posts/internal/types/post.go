@@ -124,7 +124,7 @@ type Post struct {
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created time.Time, creator sdk.AccAddress, medias PostMedias) Post {
+	created time.Time, creator sdk.AccAddress, medias PostMedias, pollData *PollData) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,

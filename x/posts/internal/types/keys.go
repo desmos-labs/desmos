@@ -9,6 +9,7 @@ const (
 	LastPostIDStoreKey       = "last_post_id"
 	PostCommentsStorePrefix  = "comments:"
 	PostReactionsStorePrefix = "reactions:"
+	PollAnswersStorePrefix   = "poll_answers:"
 
 	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10

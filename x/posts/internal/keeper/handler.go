@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -19,6 +20,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgAddPostReaction(ctx, keeper, msg)
 		case types.MsgRemovePostReaction:
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
+		case types.MsgClosePollPost:
+			return handleMsgClosePollPost(ctx, keeper, msg)
+		case types.MsgAnswerPollPost:
+			return handleMsgAnswerPollPost(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -38,6 +43,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.CreationDate,
 		msg.Creator,
 		msg.Medias,
+		msg.PollData,
 	)
 
 	// Check for double posting
@@ -164,6 +170,95 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 
 	return sdk.Result{
 		Data:   []byte("Reaction removed properly"),
+		Events: sdk.Events{event},
+	}
+}
+
+// handleMsgAnswerPollPost handles the answer to a poll post
+func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPollPost) sdk.Result {
+	// checks if post exists
+	post, found := keeper.GetPost(ctx, msg.PostID)
+	if !found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s doesn't exists", msg.PostID)).Result()
+	}
+
+	// checks if post has a poll
+	if post.PollData == nil {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("No poll associated with ID: %s", msg.PostID)).Result()
+	}
+
+	// checks if the poll is already closed or not
+	if time.Now().UTC().After(post.PollData.EndDate) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("The poll associated with ID %s was closed at %s",
+			post.PostID, post.PollData.EndDate)).Result()
+	}
+
+	// checks if the post's poll allows multiple answers
+	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("The poll associated with ID %s doesn't support multiple answers",
+			post.PostID)).Result()
+	}
+
+	if len(msg.UserAnswers) > len(post.PollData.ProvidedAnswers) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("User's answers are more than the available ones in Poll")).Result()
+	}
+
+	userAnswers := keeper.GetPollPostUserAnswers(ctx, post.PostID, msg.Answerer)
+
+	if len(userAnswers) > 0 {
+		if !post.PollData.AllowsAnswerEdits {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with ID %s doesn't allow answers' edits", post.PostID)).Result()
+		}
+
+	}
+
+	keeper.SavePollPostAnswers(ctx, post.PostID, msg.UserAnswers, msg.Answerer)
+
+	event := sdk.NewEvent(
+		types.EventTypeAnsweredPoll,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPollAnswerer, msg.Answerer.String()),
+	)
+
+	return sdk.Result{
+		Data:   []byte("Answered to poll correctly"),
+		Events: sdk.Events{event},
+	}
+}
+
+// handleMsgClosePollPost handles the closure of a poll post
+func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePollPost) sdk.Result {
+	// check if post exists
+	post, found := keeper.GetPost(ctx, msg.PostID)
+	if !found {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s doesn't exists", msg.PostID)).Result()
+	}
+
+	// check if the creator of message is the owner of the post
+	if post.Creator.Equals(msg.Creator) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Only the poll creator can close it, %s", post.Creator)).Result()
+	}
+
+	// check if post has a poll
+	if post.PollData == nil {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("No poll associated with this post ID: %s", msg.PostID)).Result()
+	}
+
+	// check if the post has already been closed.
+	if time.Now().UTC().After(post.PollData.EndDate) {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("The poll associated with this post ID is already closed")).Result()
+	}
+
+	keeper.ClosePollPost(ctx, msg.PostID)
+
+	event := sdk.NewEvent(
+		types.EventTypeClosePoll,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
+		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Creator.String()),
+	)
+
+	return sdk.Result{
+		Data:   []byte(fmt.Sprintf("Poll closed correctly, %s", msg.Message)),
 		Events: sdk.Events{event},
 	}
 }

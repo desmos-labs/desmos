@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 
@@ -168,6 +169,42 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	}
 
 	return filteredPosts
+}
+
+func (k Keeper) getAnswersStoreKey(postID types.PostID, answerer sdk.AccAddress) []byte {
+	return []byte(types.PollAnswersStorePrefix + postID.String() + answerer.String())
+}
+
+func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, answers []uint64, answerer sdk.AccAddress) {
+	store := ctx.KVStore(k.StoreKey)
+
+	store.Set(k.getAnswersStoreKey(postID, answerer), k.Cdc.MustMarshalBinaryBare(&answers))
+}
+
+func (k Keeper) GetPollPostUserAnswers(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) (pa []uint64) {
+	store := ctx.KVStore(k.StoreKey)
+
+	key := k.getAnswersStoreKey(postID, user)
+
+	if !store.Has(key) {
+		return []uint64{}
+	}
+
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &pa)
+
+	return pa
+}
+
+// ClosePollPost retrieves a previously opened poll post and close it.
+// It assumes that the post associated with the given ID exists and has a poll that's not already closed
+func (k Keeper) ClosePollPost(ctx sdk.Context, postID types.PostID) {
+	post, _ := k.GetPost(ctx, postID)
+
+	post.PollData.Open = false
+
+	post.LastEdited = time.Now().UTC()
+
+	k.SavePost(ctx, post)
 }
 
 // -------------

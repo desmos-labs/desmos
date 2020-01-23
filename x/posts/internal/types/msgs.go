@@ -214,7 +214,7 @@ func (msg MsgClosePollPost) ValidateBasic() sdk.Error {
 	}
 
 	if len(msg.Message) > 1 && len(msg.Message) < 7 {
-		return sdk.ErrUnknownRequest("If present, the message should be at least 7 characters")
+		return sdk.ErrUnknownRequest("If present, the message should be at least 8 characters")
 	}
 
 	if msg.Creator.Empty() {
@@ -240,17 +240,17 @@ func (msg MsgClosePollPost) GetSigners() []sdk.AccAddress {
 
 // MsgAnswerPollPost defines the AnswerPollPost message
 type MsgAnswerPollPost struct {
-	PostID          PostID         `json:"post_id"`
-	ProvidedAnswers PollAnswers    `json:"provided_answers"`
-	Answerer        sdk.AccAddress `json:"answerer"`
+	PostID      PostID         `json:"post_id"`
+	UserAnswers []uint64       `json:"provided_answers"`
+	Answerer    sdk.AccAddress `json:"answerer"`
 }
 
 // NewMsgAnswerPollPost is the constructor function for MsgAnswerPollPost
-func NewMsgAnswerPollPost(id PostID, providedAnswers PollAnswers, answerer sdk.AccAddress) MsgAnswerPollPost {
+func NewMsgAnswerPollPost(id PostID, providedAnswers []uint64, answerer sdk.AccAddress) MsgAnswerPollPost {
 	return MsgAnswerPollPost{
-		PostID:          id,
-		ProvidedAnswers: providedAnswers,
-		Answerer:        answerer,
+		PostID:      id,
+		UserAnswers: providedAnswers,
+		Answerer:    answerer,
 	}
 }
 
@@ -270,7 +270,7 @@ func (msg MsgAnswerPollPost) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Answerer))
 	}
 
-	if len(msg.ProvidedAnswers) == 0 {
+	if len(msg.UserAnswers) == 0 {
 		return sdk.ErrUnknownRequest("Provided answers must contains at least one answer")
 	}
 

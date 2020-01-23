@@ -44,31 +44,41 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "create [subspace] [message] [allows-comments] [[[uri],[mime-type]]...] [[EndDate] " +
-			"[[answer-id],[text]...] [multiple-answers] [answers-edits]]",
+		Use:   "create [subspace] [message] [allows-comments]",
 		Short: "Create a new post",
 		Long: fmt.Sprintf(`
 				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
 				Optional media attachments and polls are also supported.
-				If you want to add one or more media attachment, you have to specify a uri and a mime type for each.
+				If you want to add one or more media attachment, you have to use the --medias flag 
+				specifying after that a string containing couples of (URI,mime-type) separated by a space one from the other.
 				Each attachment can be added only once, otherwise and error will occur.
-                You can do so by concatenating them together separated by a comma (,).
 				Usage examples:
 
 				- tx posts create "desmos" "Hello world!" true
-				- tx posts create "desmos" "A post with media" true "https://example.com,text/plain"
-				- tx posts create "desmos" "A post with multiple medias" false "https://example.com/media1,text/plain" "https://example.com/media2,application/json"
-
-				If you want to add a poll to your post you have to specifiy:
-					1. The end date of your poll after which no further answers will be accepted
-					2. A slice of answers that will be provided to the users once they want to take part in poll votations.
-                       Each answer should have:
-						- an ID in form of uint64 identifying the answer 
-					    - the text of the answer itself
-					3. A boolean value that indicates the possibility of multiple answers from users
-					4. A boolean value that indicates the possibility to edit the answers in future
+                - tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with media" false \
+				  --medias "https://example.com/media1,text/plain"
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
+                  --medias "https://example.com/media1,text/plain https://example.com/media2,application/json"
+				
+				If you want to add a poll to your post you need to specify it through two flags:
+					1. --poll-details 
+                       where you specify a map of the following fields:
+						1) The title of the poll (key: title)
+						1) The end date of your poll after which no further answers will be accepted (key: date)
+						2) A boolean value that indicates the possibility of multiple answers from users (key: multiple-answers)
+						3) A boolean value that indicates the possibility to edit the answers in future (key: allows-answer-edits)
+					2. --poll-answer 
+                       where you specify a slice of answers that will be provided to the users once they want to take part in poll votations.
+						Each answer should is identified by the text of the answer itself
 				Usage examples:
-				-  tx posts create "desmos" "A post with a poll" true "2020-01-01T12:00:00Z" "1,answer1" "2,answer2" "3,answer3" false true
+				-  tx posts create "desmos" "Post" true \
+  					--poll-details title="What dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
+					--poll-answers "Snoopy,Leone,Lessie"
+				- tx posts create "desmos" "Post" true \
+  					--poll-details title="Which dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
+  					--poll-answer "Beagle" \
+  					--poll-answer "Carlino" \
+					--poll-answer "German Sheperd,Labrador"
 		`),
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -107,41 +117,50 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			pollDetailsMap := viper.GetStringMapString(flagPollDetails)
 			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
 
-			date, err := time.Parse(time.RFC3339, pollDetailsMap["end-date"])
-			if err != nil {
-				return fmt.Errorf("end date shoulb be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
+			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 ||
+				len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
+				return fmt.Errorf("poll details and poll answers must be both specified")
 			}
 
-			allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap["multiple-answers"])
-			if err != nil {
-				return fmt.Errorf("multiple-answers could be only true or false")
-			}
-
-			allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap["allows-answer-edits"])
-			if err != nil {
-				return fmt.Errorf("allows-answer-edits could be only true or false")
-			}
-
-			answers := types.PollAnswers{}
-			for index, answer := range pollAnswersSlice {
-				if strings.TrimSpace(answer) == "" {
-					return fmt.Errorf("invalid answer text at index %s", string(index))
+			var pollData types.PollData
+			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
+				date, err := time.Parse(time.RFC3339, pollDetailsMap["end-date"])
+				if err != nil {
+					return fmt.Errorf("end date shoulb be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
 				}
 
-				pollAnswer := types.PollAnswer{
-					ID:   uint64(index),
-					Text: answer,
+				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap["multiple-answers"])
+				if err != nil {
+					return fmt.Errorf("multiple-answers could be only true or false")
 				}
 
-				answers = answers.AppendIfMissing(pollAnswer)
-			}
+				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap["allows-answer-edits"])
+				if err != nil {
+					return fmt.Errorf("allows-answer-edits could be only true or false")
+				}
 
-			pollData := types.PollData{
-				Open:                  true,
-				EndDate:               date,
-				ProvidedAnswers:       answers,
-				AllowsMultipleAnswers: allowMultipleAnswers,
-				AllowsAnswerEdits:     allowsAnswerEdits,
+				answers := types.PollAnswers{}
+				for index, answer := range pollAnswersSlice {
+					if strings.TrimSpace(answer) == "" {
+						return fmt.Errorf("invalid answer text at index %s", string(index))
+					}
+
+					pollAnswer := types.PollAnswer{
+						ID:   uint64(index),
+						Text: answer,
+					}
+
+					answers = answers.AppendIfMissing(pollAnswer)
+				}
+
+				pollData = types.PollData{
+					Title:                 pollDetailsMap["title"],
+					Open:                  true,
+					EndDate:               date,
+					ProvidedAnswers:       answers,
+					AllowsMultipleAnswers: allowMultipleAnswers,
+					AllowsAnswerEdits:     allowsAnswerEdits,
+				}
 			}
 
 			msg := types.NewMsgCreatePost(
@@ -164,9 +183,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
-	cmd.Flags().StringSlice(flagMedia, nil, "Current post's media")
-	cmd.Flags().StringToString(flagPollDetails, nil, "Current post's poll details")
-	cmd.Flags().StringSlice(flagPollAnswer, nil, "Current post's poll answer")
+	cmd.Flags().StringSlice(flagMedia, []string{}, "Current post's media")
+	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
+	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
 
 	return cmd
 }

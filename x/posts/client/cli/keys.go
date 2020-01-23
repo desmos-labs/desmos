@@ -6,7 +6,7 @@ const (
 	flagPage     = "page"
 
 	flagParentID       = "parent-id"
-	flagMedia          = "media"
+	flagMedia          = "medias"
 	flagPollDetails    = "poll-details"
 	flagPollAnswer     = "poll-answer"
 	flagCreationTime   = "creation-time"

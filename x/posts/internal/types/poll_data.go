@@ -14,6 +14,7 @@ import (
 
 // PollData contains the information of a poll that is associated to a post
 type PollData struct {
+	Title                 string      `json:"title"`                   // Describes what poll is about
 	Open                  bool        `json:"open"`                    // Tells if the poll is still accepting answers
 	EndDate               time.Time   `json:"end_date"`                // RFC3339 date at which the poll will no longer accept new answers
 	ProvidedAnswers       PollAnswers `json:"provided_answers"`        // Lists of answers provided by the creator
@@ -52,6 +53,10 @@ func (pd *PollData) UnmarshalJSON(data []byte) error {
 }
 
 func (pd PollData) Validate() error {
+	if strings.TrimSpace(pd.Title) == "" {
+		return fmt.Errorf("missing poll title")
+	}
+
 	if pd.EndDate.Before(time.Now().UTC()) {
 		return fmt.Errorf("end date cannot be in the past")
 	}
@@ -64,7 +69,8 @@ func (pd PollData) Validate() error {
 }
 
 func (pd PollData) Equals(other PollData) bool {
-	return pd.Open == other.Open &&
+	return pd.Title == other.Title &&
+		pd.Open == other.Open &&
 		pd.EndDate == other.EndDate &&
 		pd.ProvidedAnswers.Equals(other.ProvidedAnswers) &&
 		pd.AllowsMultipleAnswers == other.AllowsMultipleAnswers &&
@@ -142,8 +148,8 @@ func (pa PollAnswer) String() string {
 
 // Validate implements validator
 func (pa PollAnswer) Validate() error {
-	if pa.ID == 0 {
-		return fmt.Errorf("answer ID must be greater than 0")
+	if pa.ID < 0 {
+		return fmt.Errorf("answer ID must be 0 or greater")
 	}
 	if strings.TrimSpace(pa.Text) == "" {
 		return fmt.Errorf("answer text must be specified and cannot be empty")
