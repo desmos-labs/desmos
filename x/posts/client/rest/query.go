@@ -26,6 +26,9 @@ const (
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/poll-answers/{postID}/{user-address}", queryPollPostUserAnswersHandleFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/poll-answers-amount/{postID}", queryPollPostAnswersAmountHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/poll-answer-votes/{postID}/{answerID}", queryPollAnswerVotesHandlerFn(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single post based on its ID
@@ -123,6 +126,63 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query poll post's answer made by a user
+func queryPollPostUserAnswersHandleFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		postID := vars["postID"]
+		answerer, err := sdk.AccAddressFromBech32(vars["user-address"])
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		route := fmt.Sprintf("custom/%s/%s/%s/%s", types.QuerierRoute, types.QueryPollUserAnswer, postID, answerer)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query poll post's answers amount
+func queryPollPostAnswersAmountHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		postID := vars["postID"]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryAnswersAmount, postID)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query answer's votes amount
+func queryPollAnswerVotesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		postID := vars["postID"]
+		answerID := vars["answerID"]
+
+		route := fmt.Sprintf("custom/%s/%s/%s/%s", types.QuerierRoute, types.QueryAnswerVotes, postID, answerID)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }

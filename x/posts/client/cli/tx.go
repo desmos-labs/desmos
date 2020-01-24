@@ -36,6 +36,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdEditPost(cdc),
 		GetCmdAddLike(cdc),
 		GetCmdRemoveLike(cdc),
+		GetCmdAnswerPoll(cdc),
+		GetCmdClosePoll(cdc),
 	)...)
 
 	return postsTxCmd
@@ -122,7 +124,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("poll details and poll answers must be both specified")
 			}
 
-			var pollData types.PollData
+			pollData := types.PollData{}
 			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
 				date, err := time.Parse(time.RFC3339, pollDetailsMap["end-date"])
 				if err != nil {
@@ -293,6 +295,85 @@ E.g.
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, from, args[1])
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdAnswerPoll is the CLI command for answering a post's poll
+func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "answer-poll [post-id] [answer...]",
+		Short: "Answer a post's poll'",
+		Args:  cobra.MinimumNArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+			from := cliCtx.GetFromAddress()
+			if err := accGetter.EnsureExists(from); err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[0])
+			if err != nil {
+				return err
+			}
+
+			var answers []uint64
+			for i := 1; i < len(args); i++ {
+				answer, err := strconv.ParseUint(args[i], 10, 64)
+				if err != nil {
+					return err
+				}
+
+				answers = append(answers, answer)
+			}
+
+			msg := types.NewMsgAnswerPollPost(postID, answers, from)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdAnswerPoll is the CLI command for closing a post's poll
+func GetCmdClosePoll(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "close-poll [post-id] [[message]]",
+		Short: "Close a post's poll",
+		Args:  cobra.RangeArgs(1, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			accGetter := authtypes.NewAccountRetriever(cliCtx)
+			from := cliCtx.GetFromAddress()
+			if err := accGetter.EnsureExists(from); err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[0])
+			if err != nil {
+				return err
+			}
+
+			text := ""
+			if len(args) == 2 {
+				text = args[1]
+			}
+
+			msg := types.NewMsgClosePollPost(postID, text, from)
+
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

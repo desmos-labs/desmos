@@ -1,7 +1,7 @@
 # Version 0.3.0
 ## Changes
 - Implemented the support for media in posts (#36)
- 
+- Implemented the support for poll in posts  (#14) 
 # Version 0.2.0
 ## Changes
 - Implemented the support for arbitrary data inside a post (#52, #66)

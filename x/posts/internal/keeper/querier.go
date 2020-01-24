@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,6 +20,15 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 		case types.QueryPosts:
 			return queryPosts(ctx, req, keeper)
+
+		case types.QueryPollUserAnswer:
+			return queryPollUserAnswers(ctx, path[1:], req, keeper)
+
+		case types.QueryAnswersAmount:
+			return queryPollAnswersAmount(ctx, path[1:], req, keeper)
+
+		case types.QueryAnswerVotes:
+			return queryPollAnswerVotes(ctx, path[1:], req, keeper)
 
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown magpie query endpoint")
@@ -85,6 +95,81 @@ func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &postResponses)
 	if err != nil {
 		return nil, sdk.ErrInternal(sdk.AppendMsgToErr("failed to JSON marshal result: %s", err.Error()))
+	}
+
+	return bz, nil
+}
+
+func queryPollUserAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	id, err := types.ParsePostID(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
+
+	addr, err := sdk.AccAddressFromBech32(path[1])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid bech32 addr: %s", path[1]))
+	}
+
+	userAnswers := keeper.GetPollPostUserAnswers(ctx, id, addr)
+
+	pollUserAnswersResp := types.PollUserAnswersQueryResponse{
+		PostID:  id,
+		User:    addr,
+		Answers: userAnswers,
+	}
+
+	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &pollUserAnswersResp)
+	if err2 != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+func queryPollAnswersAmount(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	id, err := types.ParsePostID(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
+
+	answersAmount := keeper.GetPollTotalAnswersAmount(ctx, id)
+
+	pollAnswerAmountResp := types.PollAnswersAmountResponse{
+		PostID:        id,
+		AnswersAmount: answersAmount,
+	}
+
+	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &pollAnswerAmountResp)
+	if err2 != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+func queryPollAnswerVotes(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	id, err := types.ParsePostID(path[0])
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
+
+	answerID, err := strconv.ParseUint(path[1], 10, 64)
+	if err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Unable to parse answer id: %s", path[1]))
+	}
+
+	answerVotes := keeper.GetAnswerTotalVotes(ctx, id, answerID)
+
+	answerVotesResp := types.PollAnswerVotesResponse{
+		PostID:      id,
+		AnswerID:    answerID,
+		VotesAmount: answerVotes,
+	}
+
+	bz, err2 := codec.MarshalJSONIndent(keeper.Cdc, &answerVotesResp)
+	if err2 != nil {
+		panic("could not marshal result to JSON")
 	}
 
 	return bz, nil
