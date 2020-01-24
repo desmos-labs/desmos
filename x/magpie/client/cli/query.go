@@ -19,9 +19,9 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	magpieQueryCmd.AddCommand(client.GetCommands(
+	magpieQueryCmd.AddCommand(
 		GetCmdSession(storeKey, cdc),
-	)...)
+	)
 	return magpieQueryCmd
 }
 

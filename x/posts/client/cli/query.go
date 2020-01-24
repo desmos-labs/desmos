@@ -26,10 +26,10 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(client.GetCommands(
+	postQueryCmd.AddCommand(
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
-	)...)
+	)
 	return postQueryCmd
 }
 

@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
@@ -20,13 +22,13 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 		name          string
 		storedSession types.Session
 		query         []string
-		expErr        string
+		expErr        error
 		expRes        types.Session
 	}{
 		{
 			name:   "Not found session returns error",
 			query:  []string{keeper.QuerySessions, types.SessionID(50).String()},
-			expErr: "Session with id 50 not found",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "session with id 50 not found"),
 		},
 		{
 			name:          "Existing session is returned",
@@ -37,12 +39,12 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 		{
 			name:   "Invalid id",
 			query:  []string{keeper.QuerySessions, "invalid-id"},
-			expErr: "Invalid session id: invalid-id",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid session id: invalid-id"),
 		},
 		{
 			name:   "Unknown endpoint",
 			query:  []string{"endpoint"},
-			expErr: "Unknown magpie query endpoint",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown magpie query endpoint"),
 		},
 	}
 
@@ -52,25 +54,22 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			if !(types.Session{}).Equals(test.storedSession) {
-				_ = k.SaveSession(ctx, test.storedSession)
+				k.SaveSession(ctx, test.storedSession)
 			}
 
 			querier := keeper.NewQuerier(k)
-			res, err := querier(ctx, test.query, request)
+			result, err := querier(ctx, test.query, request)
 
-			if len(test.expErr) != 0 {
-				assert.Error(t, err)
-				assert.Contains(t, err.Result().Log, test.expErr)
-
-				assert.Nil(t, res)
+			if result != nil {
+				assert.Nil(t, err)
+				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
+				assert.Equal(t, string(expectedIndented), string(result))
 			}
 
-			if !(types.Session{}).Equals(test.expRes) {
-				assert.NoError(t, err)
-
-				var returned types.Session
-				k.Cdc.MustUnmarshalJSON(res, &returned)
-				assert.Equal(t, test.expRes, returned)
+			if result == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expErr.Error(), err.Error())
+				assert.Nil(t, result)
 			}
 		})
 	}
