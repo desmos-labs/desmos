@@ -23,22 +23,17 @@ import (
 )
 
 func main() {
-	cobra.EnableCommandSorting = false
+	cdc := app.MakeCodec()
 
 	// Initialize the app overriding the various methods we want to customize
 	app.Init()
 
-	cdc := app.MakeCodec()
-
 	// Read in the configuration file for the sdk
 	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
-
-	// 852 is the international dialing code of Hong Kong
-	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	config.SetCoinType(852)
+	app.SetupConfig(config)
 	config.Seal()
 
+	cobra.EnableCommandSorting = false
 	rootCmd := &cobra.Command{
 		Use:   "desmoscli",
 		Short: "Desmos Command Line Interface",

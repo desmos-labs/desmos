@@ -2,7 +2,7 @@ module.exports = {
     title: "Desmos Docs",
     description: "Documentation for the Desmos blockchain.",
     head: [
-        ['link', {rel: 'icon', href: '/assets/logo.svg'}],
+        ['link', {rel: 'icon', href: '/assets/logo.png'}],
         ['link', {rel: "apple-touch-icon", sizes: "57x57", href: "/assets/pwa/apple-icon-57x57.png"}],
         ['link', {rel: "apple-touch-icon", sizes: "60x60", href: "/assets/pwa/apple-icon-60x60.png"}],
         ['link', {rel: "apple-touch-icon", sizes: "72x72", href: "/assets/pwa/apple-icon-72x72.png"}],
@@ -44,7 +44,7 @@ module.exports = {
         docsBranch: "master",
         editLinkText: 'Edit this page on Github',
         lastUpdated: true,
-        logo: "/assets/logo.svg",
+        logo: "/assets/logo.png",
         nav: [
             {text: "Website", link: "https://desmos.network", target: "_blank"},
         ],
@@ -86,6 +86,13 @@ module.exports = {
                     ["testnets/create-local", "Create a local testnet"],
                     ["testnets/join-public", "Join the public testnet"],
                 ],
+            },
+            {
+                title: "Migratios",
+                collapsable: false,
+                children: [
+                    ["migrations/v0.3.0", "Migrate to version 0.3.0"]
+                ]
             }
         ],
     }

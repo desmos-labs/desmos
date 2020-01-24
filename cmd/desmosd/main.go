@@ -39,14 +39,7 @@ func main() {
 	app.Init()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(sdk.Bech32PrefixAccAddr, sdk.Bech32PrefixAccPub)
-	config.SetBech32PrefixForValidator(sdk.Bech32PrefixValAddr, sdk.Bech32PrefixValPub)
-	config.SetBech32PrefixForConsensusNode(sdk.Bech32PrefixConsAddr, sdk.Bech32PrefixConsPub)
-	config.SetKeyringServiceName(app.AppName)
-
-	// 852 is the international dialing code of Hong Kong
-	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	config.SetCoinType(852)
+	app.SetupConfig(config)
 	config.Seal()
 
 	ctx := server.NewDefaultContext()
