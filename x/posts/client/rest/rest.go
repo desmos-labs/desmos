@@ -41,3 +41,15 @@ type RemoveReactionReq struct {
 	PostID   string       `json:"post_id"`
 	Reaction string       `json:"reaction"`
 }
+
+type AnswerPollPostReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	PostID  string       `json:"post_id"`
+	Answers []uint64     `json:"answers"`
+}
+
+type ClosePollPostReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	TextMsg string       `json:"text_msg"`
+	PostID  string       `json:"post_id"`
+}
