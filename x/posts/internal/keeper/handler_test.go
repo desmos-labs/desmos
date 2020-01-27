@@ -36,6 +36,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(0),
@@ -48,6 +49,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: "Post with id 1 already exists",
 		},
@@ -62,6 +64,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expPost: types.NewPost(
 				types.PostID(1),
@@ -73,6 +76,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 				testPost.Medias,
+				testPost.PollData,
 			),
 		},
 		{
@@ -86,6 +90,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: "Parent post with id 50 not found",
 		},
@@ -102,6 +107,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			msg: types.NewMsgCreatePost(
@@ -113,6 +119,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: "Post with id 50 does not allow comments",
 		},
@@ -212,6 +219,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				OptionalData:   testPost.OptionalData,
 				Creator:        testPost.Creator,
 				Medias:         testPost.Medias,
+				PollData:       testPost.PollData,
 			},
 		},
 	}

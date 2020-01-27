@@ -136,6 +136,7 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		OptionalData:   optionalData,
 		Creator:        creator,
 		Medias:         medias,
+		PollData:       pollData,
 	}
 }
 

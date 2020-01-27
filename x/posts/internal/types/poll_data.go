@@ -14,12 +14,23 @@ import (
 
 // PollData contains the information of a poll that is associated to a post
 type PollData struct {
-	Title                 string      `json:"title"`                   // Describes what poll is about
-	Open                  bool        `json:"open"`                    // Tells if the poll is still accepting answers
 	EndDate               time.Time   `json:"end_date"`                // RFC3339 date at which the poll will no longer accept new answers
 	ProvidedAnswers       PollAnswers `json:"provided_answers"`        // Lists of answers provided by the creator
+	Title                 string      `json:"title"`                   // Describes what poll is about
+	Open                  bool        `json:"open"`                    // Tells if the poll is still accepting answers
 	AllowsMultipleAnswers bool        `json:"allows_multiple_answers"` // Tells if the poll is a single or multiple answers one
-	AllowsAnswerEdits     bool        `json:"allows_answer_edits"`
+	AllowsAnswerEdits     bool        `json:"allows_answer_edits"`     // Tells if the poll allows answer edits
+}
+
+func NewPollData(title string, endDate time.Time, providedAnswers PollAnswers, open, allowMultipleAnswers, allowsAnswerEdits bool) *PollData {
+	return &PollData{
+		Title:                 title,
+		EndDate:               endDate,
+		ProvidedAnswers:       providedAnswers,
+		Open:                  open,
+		AllowsMultipleAnswers: allowMultipleAnswers,
+		AllowsAnswerEdits:     allowsAnswerEdits,
+	}
 }
 
 // String implements fmt.Stringer
@@ -74,7 +85,7 @@ func (pd PollData) Equals(other PollData) bool {
 		pd.EndDate == other.EndDate &&
 		pd.ProvidedAnswers.Equals(other.ProvidedAnswers) &&
 		pd.AllowsMultipleAnswers == other.AllowsMultipleAnswers &&
-		pd.AllowsAnswerEdits == pd.AllowsAnswerEdits
+		pd.AllowsAnswerEdits == other.AllowsAnswerEdits
 }
 
 // ---------------
@@ -148,7 +159,7 @@ func (pa PollAnswer) String() string {
 
 // Validate implements validator
 func (pa PollAnswer) Validate() error {
-	if pa.ID < 0 {
+	if pa.ID < uint64(0) {
 		return fmt.Errorf("answer ID must be 0 or greater")
 	}
 	if strings.TrimSpace(pa.Text) == "" {

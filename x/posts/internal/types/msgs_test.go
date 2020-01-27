@@ -16,6 +16,17 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
+var answer = types.PollAnswer{
+	ID:   uint64(1),
+	Text: "Yes",
+}
+
+var answer2 = types.PollAnswer{
+	ID:   uint64(2),
+	Text: "No",
+}
+var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
@@ -30,6 +41,7 @@ var msgCreatePost = types.NewMsgCreatePost(
 			MimeType: "text/plain",
 		},
 	},
+	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -60,6 +72,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrInvalidAddress("Invalid creator address: "),
 		},
@@ -74,6 +87,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
 		},
@@ -94,6 +108,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
 		},
@@ -108,6 +123,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank"),
 		},
@@ -134,6 +150,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
 		},
@@ -150,6 +167,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
@@ -164,6 +182,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				time.Now().UTC().Add(time.Hour),
 				msgCreatePost.Medias,
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
 		},
@@ -183,6 +202,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 						MimeType: "text/plain",
 					},
 				},
+				msgCreatePost.PollData,
 			),
 			error: sdk.ErrUnknownRequest("uri must be specified and cannot be empty"),
 		},
@@ -199,7 +219,9 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				types.PostMedias{types.PostMedia{
 					URI:      "invalid-uri",
 					MimeType: "text/plain",
-				}}),
+				}},
+				msgCreatePost.PollData,
+			),
 			error: sdk.ErrUnknownRequest("invalid uri provided"),
 		},
 		{
@@ -212,10 +234,14 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
-				types.PostMedias{types.PostMedia{
-					URI:      "https://example.com",
-					MimeType: "",
-				}}),
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://example.com",
+						MimeType: "",
+					},
+				},
+				msgCreatePost.PollData,
+			),
 			error: sdk.ErrUnknownRequest("mime type must be specified and cannot be empty"),
 		},
 		{
@@ -242,6 +268,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 						MimeType: "text/plain",
 					},
 				},
+				msgCreatePost.PollData,
 			),
 			error: nil,
 		},
@@ -280,11 +307,12 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 						MimeType: "text/plain",
 					},
 				},
+				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
 		},
 		{
-			name: "Message with non-empty external reference",
+			name: "Message with empty external reference",
 			msg: types.NewMsgCreatePost(
 				"My post",
 				types.PostID(15),
@@ -299,8 +327,9 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 						MimeType: "text/plain",
 					},
 				},
+				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
 		},
 		{
 			name: "Message with empty medias",
@@ -313,8 +342,9 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				testOwner,
 				date,
 				types.PostMedias{},
+				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"subspace":"desmos"}}`,
 		},
 	}
 
