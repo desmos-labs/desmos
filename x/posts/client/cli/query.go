@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -26,10 +27,10 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(
+	postQueryCmd.AddCommand(flags.GetCommands(
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
-	)
+	)...)
 	return postQueryCmd
 }
 

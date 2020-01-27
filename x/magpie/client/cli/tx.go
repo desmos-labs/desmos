@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -25,9 +26,9 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	magpieTxCmd.AddCommand(
+	magpieTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreateSession(cdc),
-	)
+	)...)
 
 	return magpieTxCmd
 }

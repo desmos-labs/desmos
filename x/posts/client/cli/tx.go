@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -33,12 +34,12 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	postsTxCmd.AddCommand(
+	postsTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreatePost(cdc),
 		GetCmdEditPost(cdc),
 		GetCmdAddPostReaction(cdc),
 		GetCmdRemovePostReaction(cdc),
-	)
+	)...)
 
 	return postsTxCmd
 }
