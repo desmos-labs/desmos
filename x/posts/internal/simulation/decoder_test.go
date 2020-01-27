@@ -65,10 +65,10 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s", lastPostId, lastPostId)},
-		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s", testPost, testPost)},
-		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s", comments, comments)},
-		{"Reactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s", reactions, reactions)},
+		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostId, lastPostId)},
+		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", testPost, testPost)},
+		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
+		{"Reactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactions, reactions)},
 		{"other", ""},
 	}
 

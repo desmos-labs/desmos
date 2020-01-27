@@ -79,20 +79,28 @@ go.sum: go.mod
 	@go mod verify
 	@go mod tidy
 
+clean:
+	rm -rf snapcraft-local.yaml build/
+
 lint: golangci-lint
 	$(BINDIR)/golangci-lint run
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
 	go mod verify
-.PHONY: lint
 
 ########################################
 ### Testing
 
 test: test-unit
+test-all: test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
+test-race:
+	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
+
+test-cover:
+	@go test -mod=readonly -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -tags='ledger test_ledger_mock' ./...
 
 ########################################
 ### Local validator nodes using docker and docker-compose
@@ -114,5 +122,5 @@ localnet-stop:
 include Makefile.simulations
 
 .PHONY: all build-linux install \
-	go-mod-cache build \
-	test test-unit
+	go-mod-cache clean build \
+	test test-all test-cover test-unit test-race
