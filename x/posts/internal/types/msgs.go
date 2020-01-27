@@ -213,12 +213,12 @@ func (msg MsgClosePollPost) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid post id")
 	}
 
-	if len(msg.Message) > 1 && len(msg.Message) < 7 {
+	if len(msg.Message) > 0 && len(msg.Message) < 7 {
 		return sdk.ErrUnknownRequest("If present, the message should be at least 8 characters")
 	}
 
 	if msg.Creator.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Creator))
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.Creator))
 	}
 
 	return nil
@@ -267,7 +267,7 @@ func (msg MsgAnswerPollPost) ValidateBasic() sdk.Error {
 	}
 
 	if msg.Answerer.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Answerer))
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid answerer address: %s", msg.Answerer))
 	}
 
 	if len(msg.UserAnswers) == 0 {

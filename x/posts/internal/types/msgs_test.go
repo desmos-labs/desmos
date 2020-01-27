@@ -16,17 +16,9 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var answer = types.PollAnswer{
-	ID:   uint64(1),
-	Text: "Yes",
-}
-
-var answer2 = types.PollAnswer{
-	ID:   uint64(2),
-	Text: "No",
-}
+var answer = types.PollAnswer{ID: uint64(1), Text: "Yes"}
+var answer2 = types.PollAnswer{ID: uint64(2), Text: "No"}
 var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
-
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
@@ -565,4 +557,124 @@ func TestMsgUnlikePost_GetSigners(t *testing.T) {
 	actual := msgUnlikePost.GetSigners()
 	assert.Equal(t, 1, len(actual))
 	assert.Equal(t, msgUnlikePost.User, actual[0])
+}
+
+// ----------------------
+// --- MsgClosePollPost
+// ----------------------
+
+var msgClosePollPost = types.NewMsgClosePollPost(types.PostID(10), "message", testOwner)
+
+func TestMsgClosePollPost_Route(t *testing.T) {
+	actual := msgClosePollPost.Route()
+	assert.Equal(t, "posts", actual)
+}
+
+func TestMsgClosePollPost_Type(t *testing.T) {
+	actual := msgClosePollPost.Type()
+	assert.Equal(t, "close_poll_post", actual)
+}
+
+func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   types.MsgClosePollPost
+		error sdk.Error
+	}{
+		{
+			name:  "Invalid post id",
+			msg:   types.NewMsgClosePollPost(types.PostID(0), "message", msgClosePollPost.Creator),
+			error: sdk.ErrUnknownRequest("Invalid post id"),
+		},
+		{
+			name:  "Invalid message length",
+			msg:   types.NewMsgClosePollPost(types.PostID(1), "test", msgClosePollPost.Creator),
+			error: sdk.ErrUnknownRequest("If present, the message should be at least 8 characters"),
+		},
+		{
+			name:  "Invalid user address",
+			msg:   types.NewMsgClosePollPost(types.PostID(1), "message", nil),
+			error: sdk.ErrInvalidAddress("Invalid user address: "),
+		},
+		{
+			name: "Valid message returns no error",
+			msg:  types.NewMsgClosePollPost(types.PostID(1), "message", msgClosePollPost.Creator),
+		},
+	}
+
+	for _, test := range tests {
+		assert.Equal(t, test.error, test.msg.ValidateBasic())
+	}
+}
+
+func TestMsgClosePollPost_GetSignBytes(t *testing.T) {
+	actual := msgClosePollPost.GetSignBytes()
+	expected := `{"type":"desmos/MsgClosePollPost","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"message","post_id":"10"}}`
+	assert.Equal(t, expected, string(actual))
+}
+
+func TestMsgClosePollPost_GetSigners(t *testing.T) {
+	actual := msgClosePollPost.GetSigners()
+	assert.Equal(t, 1, len(actual))
+	assert.Equal(t, msgClosePollPost.Creator, actual[0])
+}
+
+// ----------------------
+// --- MsgAnswerPollPost
+// ----------------------
+
+var msgAnswerPollPost = types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testOwner)
+
+func TestMsgAnswerPollPost_Route(t *testing.T) {
+	actual := msgClosePollPost.Route()
+	assert.Equal(t, "posts", actual)
+}
+
+func TestMsgAnswerPollPost_Type(t *testing.T) {
+	actual := msgClosePollPost.Type()
+	assert.Equal(t, "close_poll_post", actual)
+}
+
+func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   types.MsgAnswerPollPost
+		error sdk.Error
+	}{
+		{
+			name:  "Invalid post id",
+			msg:   types.NewMsgAnswerPollPost(types.PostID(0), []uint64{1, 2}, msgAnswerPollPost.Answerer),
+			error: sdk.ErrUnknownRequest("Invalid post id"),
+		},
+		{
+			name:  "Invalid answerer address",
+			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, nil),
+			error: sdk.ErrInvalidAddress("Invalid answerer address: "),
+		},
+		{
+			name:  "Returns error when no answer is provided",
+			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{}, msgAnswerPollPost.Answerer),
+			error: sdk.ErrUnknownRequest("Provided answers must contains at least one answer"),
+		},
+		{
+			name: "Valid message returns no error",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, msgAnswerPollPost.Answerer),
+		},
+	}
+
+	for _, test := range tests {
+		assert.Equal(t, test.error, test.msg.ValidateBasic())
+	}
+}
+
+func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
+	actual := msgAnswerPollPost.GetSignBytes()
+	expected := `{"type":"desmos/MsgAnswerPollPost","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"1","provided_answers":["1","2"]}}`
+	assert.Equal(t, expected, string(actual))
+}
+
+func TestMsgAnswerPollPost_GetSigners(t *testing.T) {
+	actual := msgAnswerPollPost.GetSigners()
+	assert.Equal(t, 1, len(actual))
+	assert.Equal(t, msgAnswerPollPost.Answerer, actual[0])
 }

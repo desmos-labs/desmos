@@ -9,14 +9,14 @@ import (
 )
 
 // ---------------
-// --- PollDetails
+// --- PollData
 // ---------------
 
 // PollData contains the information of a poll that is associated to a post
 type PollData struct {
-	EndDate               time.Time   `json:"end_date"`                // RFC3339 date at which the poll will no longer accept new answers
-	ProvidedAnswers       PollAnswers `json:"provided_answers"`        // Lists of answers provided by the creator
 	Title                 string      `json:"title"`                   // Describes what poll is about
+	ProvidedAnswers       PollAnswers `json:"provided_answers"`        // Lists of answers provided by the creator
+	EndDate               time.Time   `json:"end_date"`                // RFC3339 date at which the poll will no longer accept new answers
 	Open                  bool        `json:"open"`                    // Tells if the poll is still accepting answers
 	AllowsMultipleAnswers bool        `json:"allows_multiple_answers"` // Tells if the poll is a single or multiple answers one
 	AllowsAnswerEdits     bool        `json:"allows_answer_edits"`     // Tells if the poll allows answer edits
@@ -95,7 +95,7 @@ type PollAnswers []PollAnswer
 
 // Strings implements fmt.Stringer
 func (answers PollAnswers) String() string {
-	out := "Answer - [ID] [Text]\n"
+	out := "Answers\n[ID] [Text]\n"
 	for _, answer := range answers {
 		out += fmt.Sprintf("[%s] [%s]\n",
 			strconv.FormatUint(answer.ID, 10), answer.Text)
@@ -105,6 +105,9 @@ func (answers PollAnswers) String() string {
 
 // Validate implements validator
 func (answers PollAnswers) Validate() error {
+	if len(answers) == 0 {
+		return fmt.Errorf("answers cannot be empty")
+	}
 	for _, answer := range answers {
 		if err := answer.Validate(); err != nil {
 			return err
@@ -132,13 +135,13 @@ func (answers PollAnswers) Equals(other PollAnswers) bool {
 
 // AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
 // It returns a new slice of PollAnswers containing such PollAnswer.
-func (answers PollAnswers) AppendIfMissing(answer PollAnswer) PollAnswers {
+func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
 	for _, answer := range answers {
-		if answer.Equals(answer) {
+		if answer.Equals(newAnswer) {
 			return answers
 		}
 	}
-	return append(answers, answer)
+	return append(answers, newAnswer)
 }
 
 // ---------------
@@ -159,9 +162,6 @@ func (pa PollAnswer) String() string {
 
 // Validate implements validator
 func (pa PollAnswer) Validate() error {
-	if pa.ID < uint64(0) {
-		return fmt.Errorf("answer ID must be 0 or greater")
-	}
 	if strings.TrimSpace(pa.Text) == "" {
 		return fmt.Errorf("answer text must be specified and cannot be empty")
 	}
