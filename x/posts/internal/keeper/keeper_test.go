@@ -230,8 +230,8 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
 			// Save the post
@@ -239,17 +239,17 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			// Check the stored post
 			var expected types.Post
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.PostID.String())), &expected)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			assert.True(t, expected.Equals(test.newPost))
 
 			// Check the latest post id
 			var lastPostID types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIDStoreKey)), &lastPostID)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &lastPostID)
 			assert.Equal(t, test.expLastID, lastPostID)
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.ParentID.String())), &parentCommentsIDs)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
 			assert.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
@@ -292,7 +292,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.postExists {
-				store.Set([]byte(types.PostStorePrefix+test.expected.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set([]byte(types.PostStoreKey(test.expected.PostID)), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
@@ -382,7 +382,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.posts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			posts := k.GetPosts(ctx)
@@ -571,14 +571,14 @@ func TestKeeper_SaveReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if len(test.storedLikes) != 0 {
-				store.Set([]byte(types.PostReactionsStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
 			err := k.SaveReaction(ctx, test.postID, test.like)
 			assert.Equal(t, test.error, err)
 
 			var stored types.Reactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+test.postID.String())), &stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 			assert.Equal(t, test.expectedStored, stored)
 		})
 	}
@@ -632,14 +632,14 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if len(test.storedLikes) != 0 {
-				store.Set([]byte(types.PostReactionsStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
 			err := k.RemoveReaction(ctx, test.postID, test.liker, test.value)
 			assert.Equal(t, test.error, err)
 
 			var stored types.Reactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+test.postID.String())), &stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
 			assert.Len(t, stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
@@ -723,7 +723,7 @@ func TestKeeper_GetLikes(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for postID, likes := range test.likes {
-				store.Set([]byte(types.PostReactionsStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(likes))
+				store.Set(types.PostReactionsStoreKey(postID), k.Cdc.MustMarshalBinaryBare(likes))
 			}
 
 			likesData := k.GetReactions(ctx)

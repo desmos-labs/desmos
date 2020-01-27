@@ -5,8 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	"github.com/desmos-labs/desmos/x/posts"
@@ -33,7 +31,7 @@ import (
 )
 
 const (
-	AppName          = "desmos"
+	appName          = "desmos"
 	Bech32MainPrefix = "desmos"
 )
 
@@ -104,16 +102,15 @@ type DesmosApp struct {
 	subspaces map[string]params.Subspace
 
 	// Keepers
-	accountKeeper  auth.AccountKeeper
-	bankKeeper     bank.Keeper
-	supplyKeeper   supply.Keeper
+	AccountKeeper  auth.AccountKeeper
+	BankKeeper     bank.Keeper
+	SupplyKeeper   supply.Keeper
 	stakingKeeper  staking.Keeper
-	slashingKeeper slashing.Keeper
-	distrKeeper    distr.Keeper
-	govKeeper      gov.Keeper
-	upgradeKeeper  upgrade.Keeper
+	SlashingKeeper slashing.Keeper
+	DistrKeeper    distr.Keeper
+	GovKeeper      gov.Keeper
+	UpgradeKeeper  upgrade.Keeper
 	paramsKeeper   params.Keeper
-	evidenceKeeper evidence.Keeper
 
 	// Custom modules
 	magpieKeeper magpie.Keeper
@@ -121,6 +118,9 @@ type DesmosApp struct {
 
 	// Module Manager
 	mm *module.Manager
+
+	// Simulation manager
+	sm *module.SimulationManager
 }
 
 // NewDesmosApp is a constructor function for DesmosApp
@@ -129,13 +129,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	cdc := MakeCodec()
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := bam.NewBaseApp(AppName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
+	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 
 	keys := sdk.NewKVStoreKeys(
 		// Basics
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
-		gov.StoreKey, params.StoreKey, upgrade.StoreKey, evidence.StoreKey,
+		gov.StoreKey, params.StoreKey, upgrade.StoreKey,
 
 		// Custom modules
 		magpie.StoreKey, posts.StoreKey,
@@ -159,38 +159,28 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
 	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
-	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 
 	// Add keepers
-	app.accountKeeper = auth.NewAccountKeeper(
+	app.AccountKeeper = auth.NewAccountKeeper(
 		app.cdc, keys[auth.StoreKey], app.subspaces[auth.ModuleName], auth.ProtoBaseAccount,
 	)
-	app.bankKeeper = bank.NewBaseKeeper(
-		app.accountKeeper, app.subspaces[bank.ModuleName], app.BlacklistedAccAddrs(),
+	app.BankKeeper = bank.NewBaseKeeper(
+		app.AccountKeeper, app.subspaces[bank.ModuleName], app.BlacklistedAccAddrs(),
 	)
-	app.supplyKeeper = supply.NewKeeper(
-		app.cdc, keys[supply.StoreKey], app.accountKeeper, app.bankKeeper, maccPerms,
+	app.SupplyKeeper = supply.NewKeeper(
+		app.cdc, keys[supply.StoreKey], app.AccountKeeper, app.BankKeeper, maccPerms,
 	)
 	stakingKeeper := staking.NewKeeper(
-		app.cdc, keys[staking.StoreKey], app.supplyKeeper, app.subspaces[staking.ModuleName],
+		app.cdc, keys[staking.StoreKey], app.SupplyKeeper, app.subspaces[staking.ModuleName],
 	)
-	app.distrKeeper = distr.NewKeeper(
+	app.DistrKeeper = distr.NewKeeper(
 		app.cdc, keys[distr.StoreKey], app.subspaces[distr.ModuleName], &stakingKeeper,
-		app.supplyKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
+		app.SupplyKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
-	app.slashingKeeper = slashing.NewKeeper(
+	app.SlashingKeeper = slashing.NewKeeper(
 		app.cdc, keys[slashing.StoreKey], &stakingKeeper, app.subspaces[slashing.ModuleName],
 	)
-	app.upgradeKeeper = upgrade.NewKeeper(skipUpgradeHeights, keys[upgrade.StoreKey], app.cdc)
-
-	// Create evidence keeper with router
-	evidenceKeeper := evidence.NewKeeper(
-		app.cdc, keys[evidence.StoreKey], app.subspaces[evidence.ModuleName], &app.stakingKeeper, app.slashingKeeper,
-	)
-	evidenceRouter := evidence.NewRouter()
-	// TODO: Register evidence routes.
-	evidenceKeeper.SetRouter(evidenceRouter)
-	app.evidenceKeeper = *evidenceKeeper
+	app.UpgradeKeeper = upgrade.NewKeeper(skipUpgradeHeights, keys[upgrade.StoreKey], app.cdc)
 
 	// The FeeCollectionKeeper collects transaction fees and renders them to the fee distribution module
 	// app.feeCollectionKeeper = auth.NewFeeCollectionKeeper(cdc, app.keyFeeCollection)
@@ -198,16 +188,16 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	// Register the proposal types
 	govRouter := gov.NewRouter()
 	govRouter.AddRoute(gov.RouterKey, gov.ProposalHandler).
-		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
-	app.govKeeper = gov.NewKeeper(
-		app.cdc, keys[gov.StoreKey], app.subspaces[gov.ModuleName], app.supplyKeeper,
+		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper))
+	app.GovKeeper = gov.NewKeeper(
+		app.cdc, keys[gov.StoreKey], app.subspaces[gov.ModuleName], app.SupplyKeeper,
 		&stakingKeeper, govRouter,
 	)
 
 	// Register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
+		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
 	// Register custom modules
@@ -217,40 +207,57 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
-		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
-		auth.NewAppModule(app.accountKeeper),
-		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
-		gov.NewAppModule(app.govKeeper, app.accountKeeper, app.supplyKeeper),
-		slashing.NewAppModule(app.slashingKeeper, app.accountKeeper, app.stakingKeeper),
-		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
-		upgrade.NewAppModule(app.upgradeKeeper),
-		evidence.NewAppModule(app.evidenceKeeper),
+		genutil.NewAppModule(app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
+		auth.NewAppModule(app.AccountKeeper),
+		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
+		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
+		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
+		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
+		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
+		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		upgrade.NewAppModule(app.UpgradeKeeper),
 
 		// Custom modules
 		magpie.NewAppModule(app.magpieKeeper),
-		posts.NewAppModule(app.postsKeeper),
+		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
-	app.mm.SetOrderBeginBlockers(upgrade.ModuleName, distr.ModuleName, slashing.ModuleName, evidence.ModuleName)
+	app.mm.SetOrderBeginBlockers(upgrade.ModuleName, distr.ModuleName, slashing.ModuleName)
 	app.mm.SetOrderEndBlockers(gov.ModuleName, staking.ModuleName)
 
 	// NOTE: The genutils moodule must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
 	app.mm.SetOrderInitGenesis(
 		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
-		slashing.ModuleName, gov.ModuleName, supply.ModuleName,
-		crisis.ModuleName, genutil.ModuleName, evidence.ModuleName,
+		slashing.ModuleName, gov.ModuleName, supply.ModuleName, genutil.ModuleName,
 
 		// Custom modules
 		magpie.ModuleName, posts.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
+
+	// create the simulation manager and define the order of the modules for deterministic simulations
+	//
+	// NOTE: this is not required apps that don't use the simulator for fuzz testing
+	// transactions
+	app.sm = module.NewSimulationManager(
+		auth.NewAppModule(app.AccountKeeper),
+		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
+		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
+		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
+		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
+		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+
+		// Custom modules
+		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
+	)
+
+	app.sm.RegisterStoreDecoders()
 
 	// Initialize stores
 	app.MountKVStores(keys)
@@ -259,7 +266,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetAnteHandler(ante.NewAnteHandler(app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer))
+	app.SetAnteHandler(ante.NewAnteHandler(app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer))
 	app.SetEndBlocker(app.EndBlocker)
 
 	err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
@@ -321,4 +328,14 @@ func (app *DesmosApp) BlacklistedAccAddrs() map[string]bool {
 	}
 
 	return blacklistedAddrs
+}
+
+// Codec returns the application's sealed codec.
+func (app *DesmosApp) Codec() *codec.Codec {
+	return app.cdc
+}
+
+// SimulationManager implements the SimulationApp interface
+func (app *DesmosApp) SimulationManager() *module.SimulationManager {
+	return app.sm
 }

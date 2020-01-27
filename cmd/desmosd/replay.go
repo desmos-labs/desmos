@@ -82,7 +82,7 @@ func replayTxs(rootDir string) error {
 	// Application
 	fmt.Fprintln(os.Stderr, "Creating application")
 	gapp := app.NewDesmosApp(
-		ctx.Logger, appDB, map[int64]bool{},
+		ctx.Logger, appDB, map[int64]bool{}, false,
 		baseapp.SetPruning(store.PruneEverything), // nothing
 	)
 

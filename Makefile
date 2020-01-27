@@ -109,6 +109,10 @@ localnet-start: build-docker-desmosdnode build-linux localnet-stop
 localnet-stop:
 	docker-compose down
 
+
+# include simulations
+include Makefile.simulations
+
 .PHONY: all build-linux install \
 	go-mod-cache build \
 	test test-unit

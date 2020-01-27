@@ -62,21 +62,21 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 
 	// withdraw all validator commission
 	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
-		_, _ = app.distrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
+		_, _ = app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
 		return false
 	})
 
 	// withdraw all delegator rewards
 	dels := app.stakingKeeper.GetAllDelegations(ctx)
 	for _, delegation := range dels {
-		_, _ = app.distrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
+		_, _ = app.DistrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
 	}
 
 	// clear validator slash events
-	app.distrKeeper.DeleteAllValidatorSlashEvents(ctx)
+	app.DistrKeeper.DeleteAllValidatorSlashEvents(ctx)
 
 	// clear validator historical rewards
-	app.distrKeeper.DeleteAllValidatorHistoricalRewards(ctx)
+	app.DistrKeeper.DeleteAllValidatorHistoricalRewards(ctx)
 
 	// set context height to zero
 	height := ctx.BlockHeight()
@@ -86,19 +86,19 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
 
 		// donate any unwithdrawn outstanding reward fraction tokens to the community pool
-		scraps := app.distrKeeper.GetValidatorOutstandingRewards(ctx, val.GetOperator())
-		feePool := app.distrKeeper.GetFeePool(ctx)
+		scraps := app.DistrKeeper.GetValidatorOutstandingRewards(ctx, val.GetOperator())
+		feePool := app.DistrKeeper.GetFeePool(ctx)
 		feePool.CommunityPool = feePool.CommunityPool.Add(scraps...)
-		app.distrKeeper.SetFeePool(ctx, feePool)
+		app.DistrKeeper.SetFeePool(ctx, feePool)
 
-		app.distrKeeper.Hooks().AfterValidatorCreated(ctx, val.GetOperator())
+		app.DistrKeeper.Hooks().AfterValidatorCreated(ctx, val.GetOperator())
 		return false
 	})
 
 	// reinitialize all delegations
 	for _, del := range dels {
-		app.distrKeeper.Hooks().BeforeDelegationCreated(ctx, del.DelegatorAddress, del.ValidatorAddress)
-		app.distrKeeper.Hooks().AfterDelegationModified(ctx, del.DelegatorAddress, del.ValidatorAddress)
+		app.DistrKeeper.Hooks().BeforeDelegationCreated(ctx, del.DelegatorAddress, del.ValidatorAddress)
+		app.DistrKeeper.Hooks().AfterDelegationModified(ctx, del.DelegatorAddress, del.ValidatorAddress)
 	}
 
 	// reset context height
@@ -153,11 +153,11 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	/* Handle slashing state. */
 
 	// reset start height on signing infos
-	app.slashingKeeper.IterateValidatorSigningInfos(
+	app.SlashingKeeper.IterateValidatorSigningInfos(
 		ctx,
 		func(addr sdk.ConsAddress, info slashing.ValidatorSigningInfo) (stop bool) {
 			info.StartHeight = 0
-			app.slashingKeeper.SetValidatorSigningInfo(ctx, addr, info)
+			app.SlashingKeeper.SetValidatorSigningInfo(ctx, addr, info)
 			return false
 		},
 	)

@@ -2,6 +2,7 @@ package posts
 
 import (
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
+	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -23,17 +24,14 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewReaction         = types.NewReaction
-	NewPost             = types.NewPost
 	ParsePostID         = types.ParsePostID
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 
-	// Msgs
-	NewMsgCreatePost         = types.NewMsgCreatePost
-	NewMsgEditPost           = types.NewMsgEditPost
-	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
-	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
+	// Simulation
+	DecodeStore        = simulation.DecodeStore
+	RandomizedGenState = simulation.RandomizedGenState
+	WeightedOperations = simulation.WeightedOperations
 )
 
 type (

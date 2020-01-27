@@ -1,6 +1,8 @@
 package posts
 
 import (
+	"sort"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -35,6 +37,8 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+	// Sort the posts so that they are inserted based on their IDs
+	sort.Sort(data.Posts)
 	for _, post := range data.Posts {
 		keeper.SavePost(ctx, post)
 	}

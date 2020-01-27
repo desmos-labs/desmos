@@ -94,7 +94,7 @@ func newApp(logger log.Logger, db dbm.DB, _ io.Writer) abci.Application {
 	}
 
 	return app.NewDesmosApp(
-		logger, db, skipUpgradeHeights,
+		logger, db, skipUpgradeHeights, false,
 		baseapp.SetPruning(store.NewPruningOptionsFromString(viper.GetString("pruning"))),
 		baseapp.SetMinGasPrices(viper.GetString(server.FlagMinGasPrices)),
 		baseapp.SetHaltHeight(viper.GetUint64(server.FlagHaltHeight)),
@@ -108,7 +108,7 @@ func exportAppStateAndTMValidators(
 ) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 
 	if height != -1 {
-		gapp := app.NewDesmosApp(logger, db, map[int64]bool{})
+		gapp := app.NewDesmosApp(logger, db, map[int64]bool{}, false)
 		err := gapp.LoadHeight(height)
 		if err != nil {
 			return nil, nil, err
@@ -116,6 +116,6 @@ func exportAppStateAndTMValidators(
 		return gapp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	gapp := app.NewDesmosApp(logger, db, map[int64]bool{})
+	gapp := app.NewDesmosApp(logger, db, map[int64]bool{}, false)
 	return gapp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

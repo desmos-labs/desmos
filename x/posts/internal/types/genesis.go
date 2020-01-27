@@ -6,6 +6,14 @@ type GenesisState struct {
 	Reactions map[string]Reactions `json:"reactions"`
 }
 
+// NewGenesisState creates a new genesis state
+func NewGenesisState(posts Posts, reactions map[string]Reactions) GenesisState {
+	return GenesisState{
+		Posts:     posts,
+		Reactions: reactions,
+	}
+}
+
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() GenesisState {
 	return GenesisState{}

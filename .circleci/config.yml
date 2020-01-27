@@ -30,6 +30,7 @@ commands:
             make << parameters.target >>
 
 
+
 jobs:
   setup-dependencies:
     executor: golang
@@ -59,6 +60,41 @@ jobs:
           paths:
             - ".git"
 
+  test-sim-nondeterminism:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-nondeterminism
+          description: "Test Desmos non-determinism simulations"
+
+    test-sim-import-export:
+      executor: golang
+      steps:
+        - make:
+            target: test-sim-import-export
+            description: "Test Desmos import/export simulation"
+
+    test-sim-after-import:
+      executor: golang
+      steps:
+        - make:
+            target: test-sim-after-import
+            description: "Test Desmos simulation after importing state"
+
+    test-sim-multi-seed-short:
+      executor: golang
+      steps:
+        - make:
+            target: test-sim-multi-seed-short
+            description: "Test Desmos multi-seed simulation (short-lived)"
+
+    test-sim-multi-seed-long:
+      executor: golang
+      steps:
+        - make:
+            target: test-sim-multi-seed-long
+            description: "Test Desmos multi-seed simulation (long-lived)"
+
   test:
     executor: golang
     steps:
@@ -75,7 +111,7 @@ jobs:
           keys:
             - go-mod-v2-{{ checksum "go.sum" }}
       - run:
-          name: Run tests
+          name: Run tests with coverage
           command: |
             export VERSION="$(git describe --tags --long | sed 's/v\(.*\)/\1/')"
             export GO111MODULE=on
@@ -100,25 +136,51 @@ jobs:
       - run:
           name: gather
           command: |
+            set -ex
+
             echo "--> Concatenating profiles:"
             ls /tmp/workspace/profiles/
             echo "mode: atomic" > coverage.txt
             for prof in $(ls /tmp/workspace/profiles/); do
               tail -n +2 /tmp/workspace/profiles/"$prof" >> coverage.txt
             done
-# Removed for now as it is not necessary
-#      - run:
-#          name: filter out DONTCOVER
-#          command: |
-#            excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
-#            for filename in ${excludelist}; do
-#              filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
-#              echo "Excluding ${filename} from coverage report..."
-#              sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
-#            done
+      - run:
+          name: filter out DONTCOVER
+          command: |
+            excludelist="$(find . -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
+            for filename in ${excludelist}; do
+              filename=$(echo $filename | sed 's/^./github.com\/cosmos\/gaia/g')
+              echo "Excluding ${filename} from coverage report..."
+              sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
+            done
       - run:
           name: upload
           command: bash <(curl -s https://codecov.io/bash) -f coverage.txt
+
+  localnet:
+    working_directory: /home/circleci/.go_workspace/src/github.com/cosmos/gaia
+    machine:
+      image: circleci/classic:latest
+    environment:
+      GOPATH: /home/circleci/.go_workspace/
+      GOOS: linux
+      GOARCH: amd64
+      GO_VERSION: "1.13"
+    parallelism: 1
+    steps:
+      - checkout
+      - run:
+          name: Run a localnet and test liveness
+          command: |
+            pushd /tmp
+            wget https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
+            sudo tar -xvf go$GO_VERSION.linux-amd64.tar.gz
+            sudo rm -rf /usr/local/go
+            sudo mv go /usr/local
+            popd
+            set -x
+            make clean localnet-start
+            ./contrib/localnet-blocks-test.sh 40 5 10 localhost
 
 workflows:
   version: 2
@@ -132,6 +194,28 @@ workflows:
             branches:
               ignore:
                 - gh-pages
+      - test-sim-nondeterminism:
+          requires:
+            - setup-dependencies
+      - test-sim-import-export:
+          requires:
+            - setup-dependencies
+      - test-sim-after-import:
+          requires:
+            - setup-dependencies
+      - test-sim-multi-seed-short:
+          requires:
+            - setup-dependencies
+      - test-sim-multi-seed-long:
+          requires:
+            - setup-dependencies
+          # These filters ensure that the long sim only runs during release
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only:
+                - /^v.*/
       - test:
           filters:
             branches:
@@ -142,6 +226,7 @@ workflows:
       - test-cover:
           requires:
             - setup-dependencies
+      - localnet
       - upload-coverage:
           requires:
             - test-cover

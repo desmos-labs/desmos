@@ -126,11 +126,11 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, p := range test.storedPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			if test.lastPostID.Valid() {
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -140,7 +140,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
 				assert.True(t, stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
@@ -222,10 +222,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.storedPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.storedPost),
-				)
+				store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -240,7 +237,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				))
 
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
 				assert.True(t, test.expPost.Equals(stored))
 			}
 
@@ -282,10 +279,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
-				)
+				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -301,11 +295,11 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				))
 
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+storedPost.PostID.String())), &storedReactions)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				assert.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
 			}
 
@@ -355,15 +349,12 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
-				)
+				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.existingReaction != nil {
 				store.Set(
-					[]byte(types.PostReactionsStorePrefix+test.existingPost.PostID.String()),
+					types.PostReactionsStoreKey(test.existingPost.PostID),
 					k.Cdc.MustMarshalBinaryBare(&types.Reactions{*test.existingReaction}),
 				)
 			}
@@ -381,11 +372,11 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				))
 
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+storedPost.PostID.String())), &storedReactions)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				assert.NotContains(t, storedReactions, test.existingReaction)
 			}
 
