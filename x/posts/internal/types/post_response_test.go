@@ -69,12 +69,12 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		{
 			name:        "Post Query Response with Post that contains media",
 			response:    PostResponse,
-			expResponse: `{"id":"10","parent_id":"0","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_Type":"text/plain"}],"poll_data":{"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?","open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
+			expResponse: `{"id":"10","parent_id":"0","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_Type":"text/plain"}],"poll_data":{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
 		},
 		{
 			name:        "Post Query Response with Post that not contains media",
 			response:    types.NewPostResponse(postNoMedia, likes, children),
-			expResponse: `{"id":"10","parent_id":"0","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?","open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
+			expResponse: `{"id":"10","parent_id":"0","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"desmos","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["98","100"]}`,
 		},
 	}
 

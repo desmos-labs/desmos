@@ -17,7 +17,7 @@ func TestPollData_String(t *testing.T) {
 	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
 	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
-	assert.Equal(t, `{"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?","open":true,"allows_multiple_answers":false,"allows_answer_edits":true}`,
+	assert.Equal(t, `{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true}`,
 		pollData.String())
 }
 
