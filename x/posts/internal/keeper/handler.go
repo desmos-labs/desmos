@@ -179,7 +179,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	// checks if post exists
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s doesn't exists", msg.PostID)).Result()
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s doesn't exist", msg.PostID)).Result()
 	}
 
 	// checks if post has a poll
@@ -195,7 +195,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 	// checks if the post's poll allows multiple answers
 	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("The poll associated with ID %s doesn't support multiple answers",
+		return sdk.ErrUnknownRequest(fmt.Sprintf("The poll associated with ID %s doesn't allow multiple answers",
 			post.PostID)).Result()
 	}
 
@@ -213,15 +213,17 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 	keeper.SavePollPostAnswers(ctx, post.PostID, msg.UserAnswers, msg.Answerer)
 
-	event := sdk.NewEvent(
+	answerEvent := sdk.NewEvent(
 		types.EventTypeAnsweredPoll,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPollAnswerer, msg.Answerer.String()),
 	)
 
+	ctx.EventManager().EmitEvent(answerEvent)
+
 	return sdk.Result{
-		Data:   []byte("Answered to poll correctly"),
-		Events: sdk.Events{event},
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"),
+		Events: sdk.Events{answerEvent},
 	}
 }
 
@@ -234,7 +236,7 @@ func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePo
 	}
 
 	// check if the creator of message is the owner of the post
-	if post.Creator.Equals(msg.Creator) {
+	if !post.Creator.Equals(msg.Creator) {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Only the poll creator can close it, %s", post.Creator)).Result()
 	}
 
@@ -250,14 +252,16 @@ func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePo
 
 	keeper.ClosePollPost(ctx, msg.PostID)
 
-	event := sdk.NewEvent(
+	closeEvent := sdk.NewEvent(
 		types.EventTypeClosePoll,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Creator.String()),
 	)
 
+	ctx.EventManager().EmitEvent(closeEvent)
+
 	return sdk.Result{
-		Data:   []byte(fmt.Sprintf("Poll closed correctly, %s", msg.Message)),
-		Events: sdk.Events{event},
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("Poll closed correctly, %s", msg.Message)),
+		Events: sdk.Events{closeEvent},
 	}
 }

@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // ---------------------------
@@ -409,4 +410,205 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_handleMsgAnswerPollPosition(t *testing.T) {
+	tests := []struct {
+		name          string
+		msg           types.MsgAnswerPollPost
+		storedPost    types.Post
+		storedAnswers []uint64
+		expErr        string
+	}{
+		{
+			name: "Post not found",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(2), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: "Post with id 1 doesn't exist",
+		},
+		{
+			name: "No poll associated with post",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil, nil),
+			expErr: "No poll associated with ID: 1",
+		},
+		{
+			name: "Answer after poll closure",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
+			),
+			expErr: fmt.Sprintf("The poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired),
+		},
+		{
+			name: "Poll doesn't allow multiple answers",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
+			),
+			expErr: "The poll associated with ID 1 doesn't allow multiple answers",
+		},
+		{
+			name: "User provide too many answers",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2, 3}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: "User's answers are more than the available ones in Poll",
+		},
+		{
+			name: "Poll doesn't allow answers' edits",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
+			),
+			storedAnswers: []uint64{1, 2},
+			expErr:        "Post with ID 1 doesn't allow answers' edits",
+		},
+		{
+			name: "Answered correctly to post's poll",
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(test.storedPost))
+
+			if len(test.storedAnswers) != 0 {
+				store.Set([]byte(types.PollAnswersStorePrefix+test.storedPost.PostID.String()+testPostOwner.String()), k.Cdc.MustMarshalBinaryBare(&test.storedAnswers))
+			}
+
+			handler := keeper.NewHandler(k)
+			res := handler(ctx, test.msg)
+
+			// Invalid response
+			if len(test.expErr) != 0 {
+				assert.False(t, res.IsOK())
+				assert.Contains(t, res.Log, test.expErr)
+			}
+
+			// Valid response
+			if len(test.expErr) == 0 {
+				assert.True(t, res.IsOK())
+
+				// Check the data
+				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+
+				// Check the events
+				answerEvent := sdk.NewEvent(
+					types.EventTypeAnsweredPoll,
+					sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID.String()),
+					sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
+				)
+
+				assert.Len(t, ctx.EventManager().Events(), 1)
+				assert.Contains(t, ctx.EventManager().Events(), answerEvent)
+			}
+		})
+	}
+
+}
+
+func Test_handleMsgClosePoll(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	tests := []struct {
+		name       string
+		msg        types.MsgClosePollPost
+		storedPost types.Post
+		expErr     string
+	}{
+		{
+			name:   "Post not found",
+			msg:    types.NewMsgClosePollPost(types.PostID(1), "message", user),
+			expErr: "Post with id 1 doesn't exists",
+		},
+		{
+			name: "Try closing post from another user than creator",
+			msg:  types.NewMsgClosePollPost(types.PostID(10), "message", user),
+			storedPost: types.NewPost(types.PostID(10), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: fmt.Sprintf("Only the poll creator can close it, %s", testPostOwner),
+		},
+		{
+			name: "Try closing a post poll that doesn't exist",
+			msg:  types.NewMsgClosePollPost(types.PostID(10), "message", testPostOwner),
+			storedPost: types.NewPost(types.PostID(10), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil, nil),
+			expErr: "No poll associated with this post ID: 10",
+		},
+		{
+			name: "Try closing a post that is already closed",
+			msg:  types.NewMsgClosePollPost(types.PostID(10), "message", testPostOwner),
+			storedPost: types.NewPost(types.PostID(10), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: "The poll associated with this post ID is already closed",
+		},
+		{
+			name: "Closing post's poll correctly",
+			msg:  types.NewMsgClosePollPost(types.PostID(10), "message", testPostOwner),
+			storedPost: types.NewPost(types.PostID(10), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(test.storedPost))
+
+			handler := keeper.NewHandler(k)
+			res := handler(ctx, test.msg)
+
+			// Invalid response
+			if len(test.expErr) != 0 {
+				assert.False(t, res.IsOK())
+				assert.Contains(t, res.Log, test.expErr)
+			}
+
+			// Valid response
+			if len(test.expErr) == 0 {
+				assert.True(t, res.IsOK())
+
+				// Check the data
+				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("Poll closed correctly, %s", test.msg.Message)), res.Data)
+
+				// Check the events
+				closeEvent := sdk.NewEvent(
+					types.EventTypeClosePoll,
+					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostOwner, test.msg.Creator.String()),
+				)
+
+				assert.Len(t, ctx.EventManager().Events(), 1)
+				assert.Contains(t, ctx.EventManager().Events(), closeEvent)
+			}
+		})
+	}
+
 }

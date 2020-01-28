@@ -47,6 +47,7 @@ var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63
 var timeZone, _ = time.LoadLocation("UTC")
 var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+var testPostEndPollDateExpired = time.Date(2019, 1, 1, 1, 15, 00, 000, timeZone)
 var answer = types.PollAnswer{ID: uint64(1), Text: "Yes"}
 
 var answer2 = types.PollAnswer{ID: uint64(2), Text: "No"}
