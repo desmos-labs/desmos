@@ -3,7 +3,7 @@ version: '3'
 services:
   desmosdnode0:
     container_name: desmosdnode0
-    image: "desmoslabs/desmosdnode"
+    image: "desmos-labs/desmos"
     ports:
       - "26656-26657:26656-26657"
     environment:
@@ -17,7 +17,7 @@ services:
 
   desmosdnode1:
     container_name: desmosdnode1
-    image: "desmoslabs/desmosdnode"
+    image: "desmos-labs/desmos"
     ports:
       - "26659-26660:26656-26657"
     environment:
@@ -31,7 +31,7 @@ services:
 
   desmosdnode2:
     container_name: desmosdnode2
-    image: "desmoslabs/desmosdnode"
+    image: "desmos-labs/desmos"
     environment:
       - ID=2
       - LOG=${LOG:-desmosd.log}
@@ -45,7 +45,7 @@ services:
 
   desmosdnode3:
     container_name: desmosdnode3
-    image: "desmoslabs/desmosdnode"
+    image: "desmos-labs/desmos"
     environment:
       - ID=3
       - LOG=${LOG:-desmosd.log}

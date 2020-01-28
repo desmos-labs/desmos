@@ -4,6 +4,11 @@ executors:
   golang:
     docker:
       - image: circleci/golang:1.13
+  docs:
+    docker:
+      - image: tendermintdev/docker-website-deployment
+    environment:
+      AWS_REGION: us-east-1
 
 commands:
   make:
@@ -39,7 +44,7 @@ jobs:
       - restore_cache:
           name: "Restore go modules cache"
           keys:
-            - go-mod-v2-{{ checksum "go.sum" }}
+            - go-mod-v1-{{ checksum "go.sum" }}
       - run:
           name: Cache go modules
           command: make go-mod-cache
@@ -47,11 +52,15 @@ jobs:
           name: Build
           command: make build
       - run:
-          name: Git garbage collection
+          name: "Git garbage collection"
           command: git gc
+      - run:
+          name: "Build tools binaries"
+          command: |
+            make tools
       - save_cache:
           name: "Save go modules cache"
-          key: go-mod-v2-{{ checksum "go.sum" }}
+          key: go-mod-v1-{{ checksum "go.sum" }}
           paths:
             - "/go/pkg/mod"
       - save_cache:
@@ -59,6 +68,14 @@ jobs:
           key: go-src-v1-{{ .Revision }}
           paths:
             - ".git"
+      - run:
+          command: |
+            mkdir -p /tmp/bin
+            cp -r /go/bin/* /tmp/bin
+      - persist_to_workspace:
+          root: "/tmp/bin"
+          paths:
+            - "."
 
   test-sim-nondeterminism:
     executor: golang
@@ -158,7 +175,7 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) -f coverage.txt
 
   localnet:
-    working_directory: /home/circleci/.go_workspace/src/github.com/cosmos/gaia
+    working_directory: /home/circleci/.go_workspace/src/github.com/desmos-labs/desmos
     machine:
       image: circleci/classic:latest
     environment:
@@ -182,18 +199,67 @@ jobs:
             make clean localnet-start
             ./contrib/localnet-blocks-test.sh 40 5 10 localhost
 
+  docker-image:
+    executor: golang
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: |
+          DESMOSD_VERSION=''
+          if [ "${CIRCLE_BRANCH}" = "master" ]; then
+            DESMOSD_VERSION="stable"
+          elif [ "${CIRCLE_BRANCH}" = "develop" ]; then
+            DESMOSD_VERSION="develop"
+          elif [[ "${CIRCLE_BRANCH}" == release/v* ]]; then
+            DESMOSD_VERSION="${CIRCLE_BRANCH}"
+          fi
+          if [ -z "${DESMOSD_VERSION}" ]; then
+            docker build .
+          else
+            docker build -t desmos-labs/desmos:$DESMOSD_VERSION .
+            docker login --password-stdin -u $DOCKER_USER \<<<DOCKER_PASSWORD
+            docker push desmos-labs/desmos:$DESMOSD_VERSION
+          fi
+
+  docker-tagged:
+    executor: golang
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: |
+          docker build -t desmos-labs/desmos:$CIRCLE_TAG .
+          docker login --password-stdin -u $DOCKER_USER \<<DOCKER_PASSWORD
+          docker push desmos-labs/desmos:$CIRCLE_TAG
+
 workflows:
   version: 2
   test-suite:
     jobs:
-      - setup-dependencies:
+      - docker-image:
+          requires:
+            - setup-dependencies
+      - docker-tagged:
           filters:
             tags:
               only:
                 - /^v.*/
             branches:
               ignore:
-                - gh-pages
+                - /.*/
+          requires:
+            - setup-dependencies
+      - setup-dependencies:
+          # filters here are needed to enable this job also for tags
+          filters:
+            tags:
+              only:
+                - /^v.*/
       - test-sim-nondeterminism:
           requires:
             - setup-dependencies
@@ -216,13 +282,6 @@ workflows:
             tags:
               only:
                 - /^v.*/
-      - test:
-          filters:
-            branches:
-              ignore:
-                - gh-pages
-          requires:
-            - setup-dependencies
       - test-cover:
           requires:
             - setup-dependencies
