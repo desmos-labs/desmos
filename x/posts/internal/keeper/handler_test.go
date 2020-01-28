@@ -412,7 +412,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	}
 }
 
-func Test_handleMsgAnswerPollPosition(t *testing.T) {
+func Test_handleMsgAnswerPollPost(t *testing.T) {
 	tests := []struct {
 		name          string
 		msg           types.MsgAnswerPollPost

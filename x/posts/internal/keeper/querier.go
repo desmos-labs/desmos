@@ -106,9 +106,14 @@ func queryPollUserAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, k
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
 	}
 
+	//todo check length of path
 	addr, err := sdk.AccAddressFromBech32(path[1])
 	if err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid bech32 addr: %s", path[1]))
+	}
+
+	if _, found := keeper.GetPost(ctx, id); !found {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", id))
 	}
 
 	userAnswers := keeper.GetPollPostUserAnswers(ctx, id, addr)

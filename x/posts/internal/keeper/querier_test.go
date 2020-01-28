@@ -188,3 +188,71 @@ func Test_queryPosts(t *testing.T) {
 		})
 	}
 }
+
+func Test_queryPollUserAnswers(t *testing.T) {
+
+	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+
+	tests := []struct {
+		name          string
+		path          []string
+		storedAnswers []uint64
+		storedPost    types.Post
+		expResult     types.PollUserAnswersQueryResponse
+		expError      sdk.Error
+	}{
+		{
+			name:     "Invalid post id return error",
+			path:     []string{types.QueryPollUserAnswer, "", ""},
+			expError: sdk.ErrUnknownRequest("Invalid post id: "),
+		},
+		{
+			name:     "Invalid address return error",
+			path:     []string{types.QueryPollUserAnswer, "1", "invalid"},
+			expError: sdk.ErrUnknownRequest("Invalid bech32 addr: invalid"),
+		},
+		{
+			name:     "Post not found return error",
+			path:     []string{types.QueryPollUserAnswer, "1", creator.String()},
+			expError: sdk.ErrUnknownRequest("Post with id 1 not found"),
+		},
+		{
+			name:          "User's answers are returned properly",
+			path:          []string{types.QueryPollUserAnswer, "1", creator.String()},
+			storedAnswers: []uint64{1, 2},
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expResult: types.PollUserAnswersQueryResponse{
+				PostID:  types.PostID(1),
+				User:    creator,
+				Answers: []uint64{1, 2},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			k.SavePost(ctx, test.storedPost)
+			if len(test.storedAnswers) != 0 {
+				k.SavePollPostAnswers(ctx, test.storedPost.PostID, test.storedAnswers, creator)
+			}
+
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if test.expError != nil {
+				assert.Equal(t, test.expError, err)
+				assert.Nil(t, result)
+			} else {
+				assert.Nil(t, err)
+				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				assert.Equal(t, string(expectedIndented), string(result))
+			}
+		})
+	}
+}
