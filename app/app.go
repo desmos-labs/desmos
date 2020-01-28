@@ -250,7 +250,6 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
 		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
 
 		// Custom modules
