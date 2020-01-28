@@ -38,7 +38,7 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 
 			if test.existingID.Valid() {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
 			actual := k.GetLastPostID(ctx)
@@ -292,7 +292,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.postExists {
-				store.Set([]byte(types.PostStoreKey(test.expected.PostID)), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set(types.PostStoreKey(test.expected.PostID), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)

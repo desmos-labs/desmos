@@ -47,7 +47,7 @@ func makeTestCodec() (cdc *codec.Codec) {
 func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
 
-	lastPostId := types.PostID(1)
+	lastPostID := types.PostID(1)
 	comments := types.PostIDs{types.PostID(10), types.PostID(14), types.PostID(20)}
 	reactions := types.Reactions{
 		types.NewReaction("like", postCreatorAddr),
@@ -55,7 +55,7 @@ func TestDecodeStore(t *testing.T) {
 	}
 
 	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.LastPostIDStoreKey, Value: cdc.MustMarshalBinaryBare(lastPostId)},
+		kv.Pair{Key: types.LastPostIDStoreKey, Value: cdc.MustMarshalBinaryBare(lastPostID)},
 		kv.Pair{Key: types.PostStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&testPost)},
 		kv.Pair{Key: types.PostCommentsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&comments)},
 		kv.Pair{Key: types.PostReactionsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&reactions)},
@@ -65,7 +65,7 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostId, lastPostId)},
+		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostID, lastPostID)},
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", testPost, testPost)},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
 		{"Reactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactions, reactions)},
