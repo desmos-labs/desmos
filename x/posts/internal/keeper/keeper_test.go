@@ -55,6 +55,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
 		expMedias            types.PostMedias
+		expPollData          *types.PollData
 	}{
 		{
 			name: "Post with ID already present",
@@ -86,6 +87,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -117,6 +119,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -148,6 +151,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -179,6 +183,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -210,6 +215,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without medias is saved properly",
@@ -230,6 +236,27 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 			expMedias:            nil,
+			expPollData:          testPost.PollData,
+		},
+		{
+			name:          "Post without poll data is saved properly",
+			existingPosts: types.Posts{},
+			lastPostID:    types.PostID(0),
+			newPost: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"New post ID lesser",
+				false,
+				"desmos",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+				nil,
+			),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
+			expMedias:            testPost.Medias,
+			expPollData:          nil,
 		},
 	}
 
@@ -515,6 +542,201 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestKeeper_SavePollPostAnswers(t *testing.T) {
+	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+
+	tests := []struct {
+		name            string
+		postID          types.PostID
+		answerer        sdk.AccAddress
+		answers         []uint64
+		previousAnswers []uint64
+		expAnswers      []uint64
+	}{
+		{
+			name:            "Save answers with no previous answers in this context",
+			postID:          types.PostID(1),
+			answers:         []uint64{1, 2},
+			previousAnswers: nil,
+			expAnswers:      []uint64{1, 2},
+			answerer:        creator1,
+		},
+		{
+			name:            "Save answers and overridden the previous ones",
+			postID:          types.PostID(1),
+			answers:         []uint64{1},
+			previousAnswers: []uint64{2},
+			expAnswers:      []uint64{1},
+			answerer:        creator1,
+		},
+	}
+
+	for _, test := range tests {
+
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			if test.previousAnswers != nil {
+				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()+test.answerer.String()),
+					k.Cdc.MustMarshalBinaryBare(test.previousAnswers))
+			}
+
+			k.SavePollPostAnswers(ctx, test.postID, test.answers, test.answerer)
+
+			var actualAnswers []uint64
+			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String() + test.answerer.String()))
+			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualAnswers)
+			assert.Equal(t, test.expAnswers, actualAnswers)
+		})
+	}
+}
+
+func TestKeeper_GetPollPostUserAnswers(t *testing.T) {
+	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+
+	tests := []struct {
+		name       string
+		postID     types.PostID
+		user       sdk.AccAddress
+		answers    []uint64
+		expAnswers []uint64
+	}{
+		{
+			name:       "User hadn't post any answer",
+			postID:     types.PostID(1),
+			user:       creator1,
+			answers:    nil,
+			expAnswers: []uint64{},
+		},
+		{
+			name:       "User had post answers",
+			postID:     types.PostID(1),
+			user:       creator1,
+			answers:    []uint64{1, 2},
+			expAnswers: []uint64{1, 2},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			if test.answers != nil {
+				k.SavePollPostAnswers(ctx, test.postID, test.answers, test.user)
+			}
+
+			actualAnswers := k.GetPollPostUserAnswers(ctx, test.postID, test.user)
+
+			assert.Equal(t, test.expAnswers, actualAnswers)
+		})
+	}
+}
+
+func TestKeeper_GetPollTotalAnswersAmount(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+
+	tests := []struct {
+		name     string
+		postID   types.PostID
+		answers  []uint64
+		expTotal sdk.Int
+	}{
+		{
+			name:     "Get the total number of poll answers",
+			postID:   types.PostID(1),
+			answers:  []uint64{1, 2, 3, 4, 5, 6, 7, 8},
+			expTotal: sdk.NewInt(8),
+		},
+		{
+			name:     "Zero answers to poll",
+			postID:   types.PostID(1),
+			answers:  nil,
+			expTotal: sdk.NewInt(0),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			if test.answers != nil {
+				k.SavePollPostAnswers(ctx, test.postID, test.answers, creator)
+			}
+
+			total := k.GetPollTotalAnswersAmount(ctx, test.postID)
+
+			assert.Equal(t, total, test.expTotal)
+		})
+	}
+}
+
+func TestKeeper_GetAnswerTotalVotes(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	creator2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+
+	tests := []struct {
+		name     string
+		postID   types.PostID
+		answerID uint64
+		answers  [][]uint64
+		users    []sdk.AccAddress
+		expTotal sdk.Int
+	}{
+		{
+			name:     "Get the total votes for an answers",
+			postID:   types.PostID(1),
+			answerID: uint64(1),
+			answers:  [][]uint64{{1, 3}, {1, 5}},
+			users:    []sdk.AccAddress{creator, creator2},
+			expTotal: sdk.NewInt(2),
+		},
+		{
+			name:     "Answer with 0 votes",
+			postID:   types.PostID(1),
+			answerID: uint64(1),
+			answers:  [][]uint64{{2, 3}, {2, 3}},
+			users:    []sdk.AccAddress{creator, creator2},
+			expTotal: sdk.NewInt(0),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			for index, user := range test.users {
+				k.SavePollPostAnswers(ctx, test.postID, test.answers[index], user)
+			}
+
+			totalVotes := k.GetAnswerTotalVotes(ctx, test.postID, test.answerID)
+
+			assert.Equal(t, test.expTotal, totalVotes)
+		})
+	}
+
+}
+
+func TestKeeper_ClosePollPost(t *testing.T) {
+	postID := types.PostID(3257)
+
+	ctx, k := SetupTestInput()
+
+	k.SavePost(ctx, testPost)
+
+	k.ClosePollPost(ctx, postID)
+
+	expPost, _ := k.GetPost(ctx, postID)
+
+	assert.Equal(t, false, expPost.PollData.Open)
 }
 
 // -------------

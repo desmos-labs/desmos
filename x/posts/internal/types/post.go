@@ -230,7 +230,7 @@ func (p Post) Equals(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) && p.PollData.Equals(*other.PollData)
+		p.Medias.Equals(other.Medias) && p.PollData.Equals(other.PollData)
 }
 
 // -------------

@@ -143,12 +143,30 @@ func TestPollData_Equals(t *testing.T) {
 			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
 			expEquals: true,
 		},
+		{
+			name:      "First nil",
+			first:     nil,
+			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+			expEquals: false,
+		},
+		{
+			name:      "Second nil",
+			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
+			second:    nil,
+			expEquals: false,
+		},
+		{
+			name:      "Both nil",
+			first:     nil,
+			second:    nil,
+			expEquals: true,
+		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(*test.second))
+			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }

@@ -79,7 +79,15 @@ func (pd PollData) Validate() error {
 	return nil
 }
 
-func (pd PollData) Equals(other PollData) bool {
+func (pd *PollData) Equals(other *PollData) bool {
+	if pd != nil && other == nil || pd == nil && other != nil {
+		return false
+	}
+
+	if pd == nil && other == nil {
+		return true
+	}
+
 	return pd.Title == other.Title &&
 		pd.Open == other.Open &&
 		pd.EndDate == other.EndDate &&

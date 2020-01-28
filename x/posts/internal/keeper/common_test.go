@@ -64,5 +64,5 @@ var testPost = types.NewPost(
 		"https://uri.com",
 		"text/plain"),
 	},
-	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
 )

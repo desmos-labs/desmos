@@ -175,7 +175,9 @@ func (k Keeper) getAnswersStoreKey(postID types.PostID, answerer sdk.AccAddress)
 	return []byte(types.PollAnswersStorePrefix + postID.String() + answerer.String())
 }
 
-// Save the post poll answers made by the answerer into the kv store
+// Save the post poll answers made by the answerer inside the current context
+// It assumes that the post exists and has a Poll inside it.
+// If the user already answers to this poll, the old answers will be overridden.
 func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, answers []uint64, answerer sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
 
@@ -183,6 +185,7 @@ func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, answer
 }
 
 // Returns all the answers that a user made to a poll post if they exists.
+// It assumes that the post exists and has a Poll inside it.
 func (k Keeper) GetPollPostUserAnswers(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) (postAnswers []uint64) {
 	store := ctx.KVStore(k.StoreKey)
 
