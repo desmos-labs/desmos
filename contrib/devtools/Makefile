@@ -48,7 +48,7 @@ RUNSIM         = $(TOOLS_DESTDIR)/runsim
 all: tools
 
 tools: tools-stamp
-tools-stamp: $(RUNSIM)
+tools-stamp: runsim
 	touch $@
 
 $(GOLANGCI_LINT): $(mkfile_dir)/install-golangci-lint.sh
