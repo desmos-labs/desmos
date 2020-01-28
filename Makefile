@@ -109,8 +109,8 @@ build-docker-desmosdnode:
 	$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
-localnet-start: build-docker-desmosdnode build-linux localnet-stop
-	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run -e COSMOS_SDK_TEST_KEYRING=y --rm -v $(CURDIR)/build:/desmosd:Z desmos-labs/desmos testnet --v 4 -o . --starting-ip-address 192.168.10.2 ; fi
+localnet-start: build-linux localnet-stop
+	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/desmosd:Z desmoslabs/desmos desmosd testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet

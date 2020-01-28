@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  desmosdnode0:
-    container_name: desmosdnode0
-    image: "desmos-labs/desmos"
+  desmosnode0:
+    container_name: desmosnode0
+    image: "desmoslabs/desmos"
     ports:
       - "26656-26657:26656-26657"
     environment:
@@ -15,9 +15,9 @@ services:
       localnet:
         ipv4_address: 192.168.10.2
 
-  desmosdnode1:
-    container_name: desmosdnode1
-    image: "desmos-labs/desmos"
+  desmosnode1:
+    container_name: desmosnode1
+    image: "desmoslabs/desmos"
     ports:
       - "26659-26660:26656-26657"
     environment:
@@ -29,9 +29,9 @@ services:
       localnet:
         ipv4_address: 192.168.10.3
 
-  desmosdnode2:
-    container_name: desmosdnode2
-    image: "desmos-labs/desmos"
+  desmosnode2:
+    container_name: desmosnode2
+    image: "desmoslabs/desmos"
     environment:
       - ID=2
       - LOG=${LOG:-desmosd.log}
@@ -43,9 +43,9 @@ services:
       localnet:
         ipv4_address: 192.168.10.4
 
-  desmosdnode3:
-    container_name: desmosdnode3
-    image: "desmos-labs/desmos"
+  desmosnode3:
+    container_name: desmosnode3
+    image: "desmoslabs/desmos"
     environment:
       - ID=3
       - LOG=${LOG:-desmosd.log}
