@@ -106,7 +106,10 @@ func queryPollUserAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, k
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
 	}
 
-	//todo check length of path
+	if len(path[1]) == 0 {
+		return nil, sdk.ErrInvalidAddress("Address cannot be empty")
+	}
+
 	addr, err := sdk.AccAddressFromBech32(path[1])
 	if err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid bech32 addr: %s", path[1]))
@@ -138,6 +141,10 @@ func queryPollAnswersAmount(ctx sdk.Context, path []string, _ abci.RequestQuery,
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid post id: %s", path[0]))
 	}
 
+	if _, found := keeper.GetPost(ctx, id); !found {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Post with ID %s not found", path[0]))
+	}
+
 	answersAmount := keeper.GetPollTotalAnswersAmount(ctx, id)
 
 	pollAnswerAmountResp := types.PollAnswersAmountResponse{
@@ -162,6 +169,10 @@ func queryPollAnswerVotes(ctx sdk.Context, path []string, _ abci.RequestQuery, k
 	answerID, err := strconv.ParseUint(path[1], 10, 64)
 	if err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Unable to parse answer id: %s", path[1]))
+	}
+
+	if _, found := keeper.GetPost(ctx, id); !found {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Post with ID %s not found", path[0]))
 	}
 
 	answerVotes := keeper.GetAnswerTotalVotes(ctx, id, answerID)
