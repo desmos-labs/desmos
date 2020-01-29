@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -23,6 +24,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 )
+
+//___________________________________________________________________________________
+// Standard operations - copied from Gaia tests
 
 func TestDesmosCLIKeysAddMultisig(t *testing.T) {
 	t.Parallel()
@@ -67,16 +71,16 @@ func TestDesmosCLIKeysAddRecoverHDPath(t *testing.T) {
 	f := InitFixtures(t)
 
 	f.KeysAddRecoverHDPath("test-recoverHD1", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 0, 0)
-	require.Equal(t, "desmos1qcfdf69js922qrdr4yaww3ax7gjml6pdds46f4", f.KeyAddress("test-recoverHD1").String())
+	require.Equal(t, "desmos1cw97p8sg7x3qwymchsrdqplvlsxmxpxakjnfec", f.KeyAddress("test-recoverHD1").String())
 
 	f.KeysAddRecoverHDPath("test-recoverH2", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 5)
-	require.Equal(t, "desmos1pdfav2cjhry9k79nu6r8kgknnjtq6a7rykmafy", f.KeyAddress("test-recoverH2").String())
+	require.Equal(t, "desmos1mmw9kpdkjcf4n063474v9f8h8682lahw7486y5", f.KeyAddress("test-recoverH2").String())
 
 	f.KeysAddRecoverHDPath("test-recoverH3", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 17)
-	require.Equal(t, "desmos1909k354n6wl8ujzu6kmh49w4d02ax7qvlkv4sn", f.KeyAddress("test-recoverH3").String())
+	require.Equal(t, "desmos1r5es4d76zyv9alkjawmp2cfl2p0tkl875admky", f.KeyAddress("test-recoverH3").String())
 
 	f.KeysAddRecoverHDPath("test-recoverH4", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 2, 17)
-	require.Equal(t, "desmos1v9plmhvyhgxk3th9ydacm7j4z357s3nhtwsjat", f.KeyAddress("test-recoverH4").String())
+	require.Equal(t, "desmos1u3j9qaws8n3dmctmlwn2gxzmjdxvz6a7rnrapn", f.KeyAddress("test-recoverH4").String())
 
 	// Cleanup testing directories
 	f.Cleanup()
@@ -86,7 +90,7 @@ func TestDesmosCLIMinimumFees(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server with minimum fees
+	// Start Desmosd server with minimum fees
 	minGasPrice, _ := sdk.NewDecFromStr("0.000006")
 	fees := fmt.Sprintf(
 		"--minimum-gas-prices=%s,%s",
@@ -124,7 +128,7 @@ func TestDesmosCLIGasPrices(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server with minimum fees
+	// Start Desmosd server with minimum fees
 	minGasPrice, _ := sdk.NewDecFromStr("0.000006")
 	proc := f.GDStart(fmt.Sprintf("--minimum-gas-prices=%s", sdk.NewDecCoinFromDec(feeDenom, minGasPrice)))
 	defer proc.Stop(false)
@@ -158,7 +162,7 @@ func TestDesmosCLIFeesDeduction(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server with minimum fees
+	// Start Desmosd server with minimum fees
 	minGasPrice, _ := sdk.NewDecFromStr("0.000006")
 	proc := f.GDStart(fmt.Sprintf("--minimum-gas-prices=%s", sdk.NewDecCoinFromDec(feeDenom, minGasPrice)))
 	defer proc.Stop(false)
@@ -211,7 +215,7 @@ func TestDesmosCLISend(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -280,7 +284,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -340,7 +344,7 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -431,7 +435,7 @@ func TestDesmosCLIQueryRewards(t *testing.T) {
 	genDoc.AppState, err = cdc.MarshalJSON(genesisState)
 	require.NoError(t, genDoc.SaveAs(genFile))
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -446,7 +450,7 @@ func TestDesmosCLIQuerySupply(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -463,11 +467,13 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
-	f.QueryGovParamDeposit()
+	depositParams := f.QueryGovParamDeposit()
+	require.Equal(t, depositParams.MinDeposit, sdk.NewCoins(sdk.NewCoin(denom, sdk.TokensFromConsensusPower(10))))
+
 	f.QueryGovParamVoting()
 	f.QueryGovParamTallying()
 
@@ -475,7 +481,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom))
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	proposalsQuery := f.QueryGovProposals()
 	require.Empty(t, proposalsQuery)
@@ -608,7 +614,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -692,7 +698,7 @@ func TestDesmosCLIEncode(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
@@ -852,12 +858,182 @@ func TestValidateGenesis(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// start gaiad server
+	// Start Desmosd server
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
 	f.ValidateGenesis()
 
 	// Cleanup testing directories
+	f.Cleanup()
+}
+
+//___________________________________________________________________________________
+// Custom operations
+
+func TestDesmosCLIPostsCreateEdit(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// __________________________________________________________________________________
+	// create
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	message := "message"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	require.Equal(t, posts.PostID(1), storedPosts[0].PostID)
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	// TODO: Test medias
+
+	// __________________________________________________________________________________
+	// edit
+
+	// Edit the message
+	success, _, sterr = f.TxPostsEdit(1, "NewMessage", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the message is edited
+	storedPost := f.QueryPost(1)
+	require.Equal(t, posts.PostID(1), storedPost.PostID)
+	require.Equal(t, "NewMessage", storedPost.Message)
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsEdit(1, "OtherMessage", fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr = f.TxPostsEdit(1, "OtherMessage", fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg = unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsReactions(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"message", true, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// __________________________________________________________________________________
+	// add-reaction
+
+	// Add a reaction
+	success, _, sterr = f.TxPostsAddReaction(1, "👍", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the reaction is added
+	storedPost := f.QueryPost(1)
+	require.Len(t, storedPost.Reactions, 1)
+	require.Equal(t, storedPost.Reactions[0], posts.NewReaction("👍", fooAddr))
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPost = f.QueryPost(1)
+	require.Len(t, storedPost.Reactions, 1)
+
+	// __________________________________________________________________________________
+	// remove-reaction
+
+	// Remove a reaction
+	success, _, sterr = f.TxPostsRemoveReaction(1, "👍", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the reaction is added
+	storedPost = f.QueryPost(1)
+	require.Empty(t, storedPost.Reactions)
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr = f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg = unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPost = f.QueryPost(1)
+	require.Empty(t, storedPost.Reactions)
+
 	f.Cleanup()
 }

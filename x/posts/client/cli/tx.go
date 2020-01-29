@@ -20,7 +20,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -63,16 +62,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			allowsComments, err := strconv.ParseBool(args[2])
 			if err != nil {
@@ -90,7 +82,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				allowsComments,
 				args[0],
 				map[string]string{},
-				from,
+				cliCtx.GetFromAddress(),
 				time.Now().UTC(),
 				nil,
 			)
@@ -112,9 +104,6 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				msg.Medias = medias
 			}
 
-			if err = msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -131,23 +120,16 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 		Short: "Edit a post you have previously created",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], from, time.Now().UTC())
+			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -172,23 +154,16 @@ E.g.
 `, version.ClientName, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
-			msg := types.NewMsgAddPostReaction(postID, args[1], from)
+			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -213,23 +188,16 @@ E.g.
 `, version.ClientName, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
 				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, err.Error())
 			}
 
-			msg := types.NewMsgRemovePostReaction(postID, from, args[1])
+			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

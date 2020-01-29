@@ -40,10 +40,9 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 		Short: "Creates a session for an external service to post",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			from := cliCtx.GetFromAddress()
 			accGetter := authtypes.NewAccountRetriever(cliCtx)

@@ -20,6 +20,7 @@ var (
 	ModuleCdc           = types.ModuleCdc
 	RegisterCodec       = types.RegisterCodec
 	ParsePostID         = types.ParsePostID
+	NewReaction         = types.NewReaction
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 	DecodeStore         = simulation.DecodeStore
@@ -37,6 +38,7 @@ type (
 	PostMedias            = types.PostMedias
 	Reaction              = types.Reaction
 	Reactions             = types.Reactions
+	PostQueryResponse     = types.PostQueryResponse
 	GenesisState          = types.GenesisState
 	MsgCreatePost         = types.MsgCreatePost
 	MsgEditPost           = types.MsgEditPost

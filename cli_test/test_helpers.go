@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -46,7 +47,7 @@ var (
 		sdk.NewCoin(fee2Denom, sdk.TokensFromConsensusPower(2000000)),
 		sdk.NewCoin(feeDenom, sdk.TokensFromConsensusPower(2000000)),
 		sdk.NewCoin(fooDenom, sdk.TokensFromConsensusPower(2000)),
-		sdk.NewCoin(denom, sdk.TokensFromConsensusPower(300).Add(sdk.NewInt(12))), // add coins from inflation
+		sdk.NewCoin(denom, sdk.TokensFromConsensusPower(300).Add(sdk.NewInt(0))), // no inflation inside Desmos
 	)
 
 	startCoins = sdk.NewCoins(
@@ -94,8 +95,8 @@ func NewFixtures(t *testing.T) *Fixtures {
 
 	buildDir := os.Getenv("BUILDDIR")
 	if buildDir == "" {
-		buildDir, err = filepath.Abs("../build/")
-		require.NoError(t, err)
+		goPath := os.Getenv("GOPATH")
+		buildDir = filepath.Join(goPath, "bin")
 	}
 
 	return &Fixtures{
@@ -131,6 +132,10 @@ func (f Fixtures) GenesisState() simapp.GenesisState {
 // InitFixtures is called at the beginning of a test  and initializes a chain
 // with 1 validator.
 func InitFixtures(t *testing.T) (f *Fixtures) {
+	config := sdk.GetConfig()
+	app.SetupConfig(config)
+	app.Init()
+
 	f = NewFixtures(t)
 
 	// reset test state
@@ -202,9 +207,6 @@ func (f *Fixtures) UnsafeResetAll(flags ...string) {
 // DDInit is desmosd init
 // NOTE: DDInit sets the ChainID for the Fixtures instance
 func (f *Fixtures) DDInit(moniker string, flags ...string) {
-	config := sdk.GetConfig()
-	app.SetupConfig(config)
-
 	cmd := fmt.Sprintf("%s init -o --home=%s %s", f.DesmosBinary, f.DesmosdHome, moniker)
 	_, stderr := tests.ExecuteT(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 
@@ -405,31 +407,34 @@ func (f *Fixtures) TxGovVote(proposalID int, option gov.VoteOption, from string,
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-// TxGovSubmitParamChangeProposal executes a CLI parameter change proposal
-// submission.
-func (f *Fixtures) TxGovSubmitParamChangeProposal(
-	from, proposalPath string, deposit sdk.Coin, flags ...string,
-) (bool, string, string) {
+//___________________________________________________________________________________
+// desmoscli tx posts
 
-	cmd := fmt.Sprintf(
-		"%s tx gov submit-proposal param-change %s --keyring-backend=test --from=%s %v",
-		f.DesmosliBinary, proposalPath, from, f.Flags(),
-	)
-
+// TxPostsCreate is desmoscli tx posts create
+func (f *Fixtures) TxPostsCreate(subspace, message string, allowsComments bool, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts create %s %s %t --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, subspace, message, allowsComments, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-// TxGovSubmitCommunityPoolSpendProposal executes a CLI community pool spend proposal
-// submission.
-func (f *Fixtures) TxGovSubmitCommunityPoolSpendProposal(
-	from, proposalPath string, deposit sdk.Coin, flags ...string,
-) (bool, string, string) {
+// TxPostsEdit is desmoscli tx posts edit
+func (f *Fixtures) TxPostsEdit(id int, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts edit %d %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, id, message, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
 
-	cmd := fmt.Sprintf(
-		"%s tx gov submit-proposal community-pool-spend %s --keyring-backend=test --from=%s %v",
-		f.DesmosliBinary, proposalPath, from, f.Flags(),
-	)
+// TxPostsAddReaction is desmoscli tx posts add-reaction
+func (f *Fixtures) TxPostsAddReaction(id int, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts add-reaction %d %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, id, reaction, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
 
+// TxPostsRemoveReaction is desmoscli tx posts remove-reaction
+func (f *Fixtures) TxPostsRemoveReaction(id int, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts remove-reaction %d %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, id, reaction, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -703,6 +708,33 @@ func (f *Fixtures) QueryTotalSupplyOf(denom string, flags ...string) sdk.Int {
 	err := cdc.UnmarshalJSON([]byte(res), &supplyOf)
 	require.NoError(f.T, err)
 	return supplyOf
+}
+
+//___________________________________________________________________________________
+// query posts
+
+// QueryPosts returns stored posts
+func (f *Fixtures) QueryPosts(flags ...string) posts.Posts {
+	cmd := fmt.Sprintf("%s query posts posts --output=json %s", f.DesmosliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedPosts posts.Posts
+	err := cdc.UnmarshalJSON([]byte(res), &storedPosts)
+	require.NoError(f.T, err)
+	return storedPosts
+}
+
+// QueryPost returns a specific stored post
+func (f *Fixtures) QueryPost(id int, flags ...string) posts.PostQueryResponse {
+	cmd := fmt.Sprintf("%s query posts post %d --output=json %s", f.DesmosliBinary, id, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedPost posts.PostQueryResponse
+	err := cdc.UnmarshalJSON([]byte(res), &storedPost)
+	require.NoError(f.T, err)
+	return storedPost
 }
 
 //___________________________________________________________________________________
