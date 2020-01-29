@@ -74,7 +74,43 @@ jobs:
           root: "/tmp/bin"
           paths:
             - "."
-  test-build:
+
+  test-sim-nondeterminism:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-nondeterminism
+          description: "Test Desmos non-determinism simulations"
+
+  test-sim-import-export:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-import-export
+          description: "Test Desmos import/export simulation"
+
+  test-sim-after-import:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-after-import
+          description: "Test Desmos simulation after importing state"
+
+  test-sim-multi-seed-short:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-multi-seed-short
+          description: "Test Desmos multi-seed simulation (short-lived)"
+
+  test-sim-multi-seed-long:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-multi-seed-long
+          description: "Test Desmos multi-seed simulation (long-lived)"
+
+  integration-tests:
     executor: golang
     steps:
       - checkout
@@ -86,36 +122,7 @@ jobs:
           command: |
             export BUILDDIR=`pwd`/build
             make test-build
-  test-sim-nondeterminism:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-nondeterminism
-          description: "Test Desmos non-determinism simulations"
-  test-sim-import-export:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-import-export
-          description: "Test Desmos import/export simulation"
-  test-sim-after-import:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-after-import
-          description: "Test Desmos simulation after importing state"
-  test-sim-multi-seed-short:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-short
-          description: "Test Desmos multi-seed simulation (short-lived)"
-  test-sim-multi-seed-long:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-long
-          description: "Test Desmos multi-seed simulation (long-lived)"
+
   test-cover:
     executor: golang
     parallelism: 4
