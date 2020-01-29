@@ -74,12 +74,6 @@ jobs:
           root: "/tmp/bin"
           paths:
             - "."
-  test-unit:
-    executor: golang
-    steps:
-      - make:
-          target: test-unit
-          description: "Unit tests"
   test-build:
     executor: golang
     steps:
@@ -155,8 +149,6 @@ jobs:
       - run:
           name: gather
           command: |
-            set -ex
-
             echo "--> Concatenating profiles:"
             ls /tmp/workspace/profiles/
             echo "mode: atomic" > coverage.txt
@@ -166,9 +158,9 @@ jobs:
       - run:
           name: filter out DONTCOVER
           command: |
-            excludelist="$(find . -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
+            excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
             for filename in ${excludelist}; do
-              filename=$(echo $filename | sed 's/^./github.com\/cosmos\/gaia/g')
+              filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
               echo "Excluding ${filename} from coverage report..."
               sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
             done
@@ -257,9 +249,6 @@ workflows:
             branches:
               ignore:
                 - /.*/
-          requires:
-            - setup-dependencies
-      - test-unit:
           requires:
             - setup-dependencies
       - test-build:
