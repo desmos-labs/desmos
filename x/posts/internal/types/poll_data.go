@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strconv"
 	"strings"
 	"time"
@@ -94,6 +95,64 @@ func (pd *PollData) Equals(other *PollData) bool {
 		pd.ProvidedAnswers.Equals(other.ProvidedAnswers) &&
 		pd.AllowsMultipleAnswers == other.AllowsMultipleAnswers &&
 		pd.AllowsAnswerEdits == other.AllowsAnswerEdits
+}
+
+// ---------------
+// --- AnswersDetails
+// ---------------
+type AnswersDetails struct {
+	Answers []uint64       `json:"answers"`
+	User    sdk.AccAddress `json:"user"`
+}
+
+func NewAnswersDetails(answers []uint64, user sdk.AccAddress) AnswersDetails {
+	return AnswersDetails{
+		Answers: answers,
+		User:    user,
+	}
+}
+
+// Strings implements fmt.Stringer
+func (userPollAnswers AnswersDetails) String() string {
+	out := fmt.Sprintf("User: %s \nAnswers IDs:\n", userPollAnswers.User.String())
+	for _, answer := range userPollAnswers.Answers {
+		out += strconv.FormatUint(answer, 10) + " "
+	}
+
+	return strings.TrimSpace(out)
+}
+
+// Validate implements validator
+func (userPollAnswers AnswersDetails) Validate() error {
+	if userPollAnswers.User.Empty() {
+		return fmt.Errorf("user cannot be empty")
+	}
+
+	if len(userPollAnswers.Answers) == 0 {
+		return fmt.Errorf("answers cannot be empty")
+	}
+
+	return nil
+}
+
+// Equals returns true iff the userPollAnswers contains the same
+// data of the other userPollAnswers
+func (userPollAnswers AnswersDetails) Equals(other AnswersDetails) bool {
+	if !userPollAnswers.User.Equals(other.User) {
+		return false
+	}
+
+	if len(userPollAnswers.Answers) != len(other.Answers) {
+		return false
+	}
+
+	for index, answer := range userPollAnswers.Answers {
+		if answer != other.Answers[index] {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ---------------

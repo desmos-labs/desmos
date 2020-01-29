@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 
@@ -283,7 +284,7 @@ func TestPollAnswer_String(t *testing.T) {
 }
 
 func TestPollAnswer_Validate(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: ""}
+	answer := types.PollAnswer{ID: uint64(0), Text: ""}
 	assert.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
@@ -318,6 +319,93 @@ func TestPollAnswer_Equals(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert.Equal(t, test.expEquals, test.answer.Equals(test.otherAnswer))
+		})
+	}
+}
+
+// ---------------
+// --- AnswersDetails
+// ---------------
+func TestUserPollAnswers_String(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	answers := []uint64{uint64(1), uint64(2)}
+
+	userPollAnswers := types.NewAnswersDetails(answers, user)
+
+	assert.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs:\n1 2", userPollAnswers.String())
+}
+
+func TestUserPollAnswers_Validate(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	answers := []uint64{uint64(1), uint64(2)}
+
+	tests := []struct {
+		name            string
+		userPollAnswers types.AnswersDetails
+		expErr          string
+	}{
+		{
+			name:            "Empty user returns error",
+			userPollAnswers: types.NewAnswersDetails(answers, nil),
+			expErr:          "user cannot be empty",
+		},
+		{
+			name:            "Empty answers returns error",
+			userPollAnswers: types.NewAnswersDetails(nil, user),
+			expErr:          "answers cannot be empty",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if err := test.userPollAnswers.Validate(); err != nil {
+				assert.Equal(t, test.expErr, err.Error())
+			}
+		})
+	}
+}
+
+func TestUserPollAnswers_Equals(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	answers := []uint64{uint64(1), uint64(2)}
+	answers2 := []uint64{uint64(1)}
+
+	tests := []struct {
+		name      string
+		first     types.AnswersDetails
+		second    types.AnswersDetails
+		expEquals bool
+	}{
+		{
+			name:      "Different users returns false",
+			first:     types.NewAnswersDetails(answers, user),
+			second:    types.NewAnswersDetails(answers, user2),
+			expEquals: false,
+		},
+		{
+			name:      "Different answers lengths returns false",
+			first:     types.NewAnswersDetails(answers, user),
+			second:    types.NewAnswersDetails(answers2, user2),
+			expEquals: false,
+		},
+		{
+			name:      "Different answers return false",
+			first:     types.NewAnswersDetails(answers, user),
+			second:    types.NewAnswersDetails(answers2, user2),
+			expEquals: false,
+		},
+		{
+			name:      "Equals userPollAnswers returns true",
+			first:     types.NewAnswersDetails(answers, user),
+			second:    types.NewAnswersDetails(answers, user),
+			expEquals: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }

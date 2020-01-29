@@ -545,31 +545,32 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 }
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
-	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	answers := []uint64{uint64(1), uint64(2)}
+	answers2 := []uint64{uint64(1)}
+
+	userPollAnswers2 := types.NewAnswersDetails(answers2, user)
 
 	tests := []struct {
-		name            string
-		postID          types.PostID
-		answerer        sdk.AccAddress
-		answers         []uint64
-		previousAnswers []uint64
-		expAnswers      []uint64
+		name                    string
+		postID                  types.PostID
+		userPollAnswers         types.AnswersDetails
+		previousUserPollAnswers *types.AnswersDetails
+		expUserPollAnswers      types.AnswersDetails
 	}{
 		{
-			name:            "Save answers with no previous answers in this context",
-			postID:          types.PostID(1),
-			answers:         []uint64{1, 2},
-			previousAnswers: nil,
-			expAnswers:      []uint64{1, 2},
-			answerer:        creator1,
+			name:                    "Save answers with no previous answers in this context",
+			postID:                  types.PostID(1),
+			userPollAnswers:         types.NewAnswersDetails(answers, user),
+			previousUserPollAnswers: nil,
+			expUserPollAnswers:      types.NewAnswersDetails(answers, user),
 		},
 		{
-			name:            "Save answers and overridden the previous ones",
-			postID:          types.PostID(1),
-			answers:         []uint64{1},
-			previousAnswers: []uint64{2},
-			expAnswers:      []uint64{1},
-			answerer:        creator1,
+			name:                    "Save answers and overridden the previous ones",
+			postID:                  types.PostID(1),
+			userPollAnswers:         types.NewAnswersDetails(answers, user),
+			previousUserPollAnswers: &userPollAnswers2,
+			expUserPollAnswers:      types.NewAnswersDetails(answers, user),
 		},
 	}
 
@@ -580,149 +581,99 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 
-			if test.previousAnswers != nil {
-				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()+test.answerer.String()),
-					k.Cdc.MustMarshalBinaryBare(test.previousAnswers))
+			if test.previousUserPollAnswers != nil {
+				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()),
+					k.Cdc.MustMarshalBinaryBare(*test.previousUserPollAnswers))
 			}
 
-			k.SavePollPostAnswers(ctx, test.postID, test.answers, test.answerer)
+			k.SavePollPostAnswers(ctx, test.postID, test.userPollAnswers)
 
-			var actualAnswers []uint64
-			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String() + test.answerer.String()))
-			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualAnswers)
-			assert.Equal(t, test.expAnswers, actualAnswers)
+			var actualUserPollAnswers types.AnswersDetails
+			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
+			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUserPollAnswers)
+			assert.Equal(t, test.expUserPollAnswers, actualUserPollAnswers)
 		})
 	}
 }
 
-func TestKeeper_GetPollPostUserAnswers(t *testing.T) {
-	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+func TestKeeper_GetPostPollAnswers(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	answers := []uint64{uint64(1), uint64(2)}
 
 	tests := []struct {
-		name       string
-		postID     types.PostID
-		user       sdk.AccAddress
-		answers    []uint64
-		expAnswers []uint64
+		name          string
+		postID        types.PostID
+		storedAnswers []types.AnswersDetails
 	}{
 		{
-			name:       "User hadn't post any answer",
-			postID:     types.PostID(1),
-			user:       creator1,
-			answers:    nil,
-			expAnswers: []uint64{},
+			name:          "No answers returns empty list",
+			postID:        types.PostID(1),
+			storedAnswers: nil,
 		},
 		{
-			name:       "User had post answers",
-			postID:     types.PostID(1),
-			user:       creator1,
-			answers:    []uint64{1, 2},
-			expAnswers: []uint64{1, 2},
+			name:          "Answers returned correctly",
+			postID:        types.PostID(1),
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, user)},
 		},
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
-			if test.answers != nil {
-				k.SavePollPostAnswers(ctx, test.postID, test.answers, test.user)
+			if test.storedAnswers != nil {
+				k.SavePollPostAnswers(ctx, test.postID, test.storedAnswers[0])
 			}
 
-			actualAnswers := k.GetPollPostUserAnswers(ctx, test.postID, test.user)
+			actualPostPollAnswers := k.GetPostPollsAnswers(ctx, test.postID)
 
-			assert.Equal(t, test.expAnswers, actualAnswers)
+			if actualPostPollAnswers == nil {
+				assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
+			} else {
+				assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
+			}
+
 		})
 	}
 }
 
-func TestKeeper_GetPollTotalAnswersAmount(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	answers := []uint64{uint64(1), uint64(2)}
 
 	tests := []struct {
-		name     string
-		postID   types.PostID
-		answers  []uint64
-		expTotal sdk.Int
+		name          string
+		storedAnswers types.AnswersDetails
+		postID        types.PostID
+		user          sdk.AccAddress
+		expAnswers    []uint64
 	}{
 		{
-			name:     "Get the total number of poll answers",
-			postID:   types.PostID(1),
-			answers:  []uint64{1, 2, 3, 4, 5, 6, 7, 8},
-			expTotal: sdk.NewInt(8),
+			name:          "No answers for user returns nil",
+			storedAnswers: types.NewAnswersDetails(answers, user),
+			postID:        types.PostID(1),
+			user:          user2,
+			expAnswers:    nil,
 		},
 		{
-			name:     "Zero answers to poll",
-			postID:   types.PostID(1),
-			answers:  nil,
-			expTotal: sdk.NewInt(0),
+			name:          "Matching user returns answers made by him",
+			storedAnswers: types.NewAnswersDetails(answers, user),
+			postID:        types.PostID(1),
+			user:          user,
+			expAnswers:    answers,
 		},
 	}
 
 	for _, test := range tests {
-		test := test
+		ctx, k := SetupTestInput()
 
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		k.SavePollPostAnswers(ctx, test.postID, test.storedAnswers)
 
-			if test.answers != nil {
-				k.SavePollPostAnswers(ctx, test.postID, test.answers, creator)
-			}
+		actualPostPollAnswers := k.GetPostPollAnswersByUser(ctx, test.postID, test.user)
 
-			total := k.GetPollTotalAnswersAmount(ctx, test.postID)
-
-			assert.Equal(t, total, test.expTotal)
-		})
+		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
 	}
-}
-
-func TestKeeper_GetAnswerTotalVotes(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	creator2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-
-	tests := []struct {
-		name     string
-		postID   types.PostID
-		answerID uint64
-		answers  [][]uint64
-		users    []sdk.AccAddress
-		expTotal sdk.Int
-	}{
-		{
-			name:     "Get the total votes for an answers",
-			postID:   types.PostID(1),
-			answerID: uint64(1),
-			answers:  [][]uint64{{1, 3}, {1, 5}},
-			users:    []sdk.AccAddress{creator, creator2},
-			expTotal: sdk.NewInt(2),
-		},
-		{
-			name:     "Answer with 0 votes",
-			postID:   types.PostID(1),
-			answerID: uint64(1),
-			answers:  [][]uint64{{2, 3}, {2, 3}},
-			users:    []sdk.AccAddress{creator, creator2},
-			expTotal: sdk.NewInt(0),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			for index, user := range test.users {
-				k.SavePollPostAnswers(ctx, test.postID, test.answers[index], user)
-			}
-
-			totalVotes := k.GetAnswerTotalVotes(ctx, test.postID, test.answerID)
-
-			assert.Equal(t, test.expTotal, totalVotes)
-		})
-	}
-
 }
 
 func TestKeeper_ClosePollPost(t *testing.T) {

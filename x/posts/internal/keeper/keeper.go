@@ -171,69 +171,44 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	return filteredPosts
 }
 
-func (k Keeper) getAnswersStoreKey(postID types.PostID, answerer sdk.AccAddress) []byte {
-	return []byte(types.PollAnswersStorePrefix + postID.String() + answerer.String())
+func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
+	return []byte(types.PollAnswersStorePrefix + postID.String())
 }
 
-// Save the post poll answers made by the answerer inside the current context
+// Save the userPollAnswers associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
-// If the user already answers to this poll, the old answers will be overridden.
-func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, answers []uint64, answerer sdk.AccAddress) {
+// If userPollAnswers are already present, the old ones will be overridden.
+func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
 	store := ctx.KVStore(k.StoreKey)
 
-	store.Set(k.getAnswersStoreKey(postID, answerer), k.Cdc.MustMarshalBinaryBare(&answers))
+	store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&userPollAnswers))
 }
 
-// Returns all the answers that a user made to a poll post if they exists.
-// It assumes that the post exists and has a Poll inside it.
-func (k Keeper) GetPollPostUserAnswers(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) (postAnswers []uint64) {
+// GetAllPostPollsAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
+func (k Keeper) GetPostPollsAnswers(ctx sdk.Context, postID types.PostID) []types.AnswersDetails {
 	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, k.getAnswersStoreKey(postID))
 
-	key := k.getAnswersStoreKey(postID, user)
-
-	if !store.Has(key) {
-		return []uint64{}
+	var allAnswers []types.AnswersDetails
+	for ; iterator.Valid(); iterator.Next() {
+		var userPollAnswer types.AnswersDetails
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userPollAnswer)
+		allAnswers = append(allAnswers, userPollAnswer)
 	}
 
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &postAnswers)
-
-	return postAnswers
+	return allAnswers
 }
 
-// Returns the total number of answers for the poll associated to the post with the given postID
-// It assumes that the postID is related to an existing post with poll data
-func (k Keeper) GetPollTotalAnswersAmount(ctx sdk.Context, postID types.PostID) sdk.Int {
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, k.getAnswersStoreKey(postID, nil))
+// GetPostPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
+func (k Keeper) GetPostPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint64 {
+	postPollAnswers := k.GetPostPollsAnswers(ctx, postID)
 
-	totalVotes := 0
-	for ; iterator.Valid(); iterator.Next() {
-		var answers []uint64
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &answers)
-		totalVotes += len(answers)
-	}
-
-	return sdk.NewInt(int64(totalVotes))
-}
-
-// Returns the total number of votes that an answer, associated to the answerID provided, gained in the poll associated to
-// the given postID.
-func (k Keeper) GetAnswerTotalVotes(ctx sdk.Context, postID types.PostID, answerID uint64) sdk.Int {
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, k.getAnswersStoreKey(postID, nil))
-
-	answerTotalVotes := 0
-	for ; iterator.Valid(); iterator.Next() {
-		var answers []uint64
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &answers)
-		for _, answer := range answers {
-			if answer == answerID {
-				answerTotalVotes++
-			}
+	for _, postPollAnswers := range postPollAnswers {
+		if user.Equals(postPollAnswers.User) {
+			return postPollAnswers.Answers
 		}
 	}
-
-	return sdk.NewInt(int64(answerTotalVotes))
+	return nil
 }
 
 // ClosePollPost retrieves a previously opened poll post and close it.

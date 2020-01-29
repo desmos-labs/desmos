@@ -413,11 +413,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
+	answers := []uint64{uint64(1), uint64(2)}
+	userPollAnswers := types.NewAnswersDetails(answers, testPostOwner)
+
 	tests := []struct {
 		name          string
 		msg           types.MsgAnswerPollPost
 		storedPost    types.Post
-		storedAnswers []uint64
+		storedAnswers *types.AnswersDetails
 		expErr        string
 	}{
 		{
@@ -470,7 +473,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
 			),
-			storedAnswers: []uint64{1, 2},
+			storedAnswers: &userPollAnswers,
 			expErr:        "Post with ID 1 doesn't allow answers' edits",
 		},
 		{
@@ -489,10 +492,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 
-			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(test.storedPost))
+			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
 
-			if len(test.storedAnswers) != 0 {
-				store.Set([]byte(types.PollAnswersStorePrefix+test.storedPost.PostID.String()+testPostOwner.String()), k.Cdc.MustMarshalBinaryBare(&test.storedAnswers))
+			if test.storedAnswers != nil {
+				store.Set([]byte(types.PollAnswersStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedAnswers))
 			}
 
 			handler := keeper.NewHandler(k)

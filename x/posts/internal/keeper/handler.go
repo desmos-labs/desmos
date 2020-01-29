@@ -204,14 +204,16 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		return sdk.ErrUnknownRequest(fmt.Sprintf("User's answers are more than the available ones in Poll")).Result()
 	}
 
-	userAnswers := keeper.GetPollPostUserAnswers(ctx, post.PostID, msg.Answerer)
+	pollAnswers := keeper.GetPostPollAnswersByUser(ctx, post.PostID, msg.Answerer)
 
 	// check if the poll allows to edit previous answers
-	if len(userAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
+	if pollAnswers != nil && len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with ID %s doesn't allow answers' edits", post.PostID)).Result()
 	}
 
-	keeper.SavePollPostAnswers(ctx, post.PostID, msg.UserAnswers, msg.Answerer)
+	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
+
+	keeper.SavePollPostAnswers(ctx, post.PostID, userPollAnswers)
 
 	answerEvent := sdk.NewEvent(
 		types.EventTypeAnsweredPoll,
