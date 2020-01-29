@@ -618,6 +618,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
@@ -627,12 +628,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 
 			actualPostPollAnswers := k.GetPostPollsAnswers(ctx, test.postID)
 
-			if actualPostPollAnswers == nil {
-				assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
-			} else {
-				assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
-			}
-
+			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
 		})
 	}
 }

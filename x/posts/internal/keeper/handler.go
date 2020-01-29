@@ -207,7 +207,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	pollAnswers := keeper.GetPostPollAnswersByUser(ctx, post.PostID, msg.Answerer)
 
 	// check if the poll allows to edit previous answers
-	if pollAnswers != nil && len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
+	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with ID %s doesn't allow answers' edits", post.PostID)).Result()
 	}
 

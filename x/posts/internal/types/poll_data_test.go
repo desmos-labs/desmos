@@ -357,6 +357,7 @@ func TestUserPollAnswers_Validate(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if err := test.userPollAnswers.Validate(); err != nil {
 				assert.Equal(t, test.expErr, err.Error())
@@ -404,6 +405,7 @@ func TestUserPollAnswers_Equals(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
