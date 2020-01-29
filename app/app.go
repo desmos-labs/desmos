@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	"github.com/desmos-labs/desmos/x/posts"
@@ -80,11 +80,14 @@ var (
 // MakeCodec generates the necessary codecs for Amino
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
+
 	ModuleBasics.RegisterCodec(cdc)
-	vesting.RegisterCodec(cdc)
 	sdk.RegisterCodec(cdc)
 	codec.RegisterCrypto(cdc)
-	return cdc
+	codec.RegisterEvidences(cdc)
+	authvesting.RegisterCodec(cdc)
+
+	return cdc.Seal()
 }
 
 // DesmosApp extends an ABCI application, but with most of its parameters exported.
@@ -228,7 +231,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	app.mm.SetOrderBeginBlockers(upgrade.ModuleName, distr.ModuleName, slashing.ModuleName)
 	app.mm.SetOrderEndBlockers(gov.ModuleName, staking.ModuleName)
 
-	// NOTE: The genutils moodule must occur after staking so that pools are
+	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
 	app.mm.SetOrderInitGenesis(
 		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
