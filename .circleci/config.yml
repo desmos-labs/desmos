@@ -238,8 +238,14 @@ jobs:
 
 workflows:
   version: 2
-  docker:
+  test-suite:
     jobs:
+      - setup-dependencies:
+          # filters here are needed to enable this job also for tags
+          filters:
+            tags:
+              only:
+                - /^v.*/
       - docker-image:
           requires:
             - setup-dependencies
@@ -253,14 +259,6 @@ workflows:
                 - /.*/
           requires:
             - setup-dependencies
-  test-suite:
-    jobs:
-      - setup-dependencies:
-          # filters here are needed to enable this job also for tags
-          filters:
-            tags:
-              only:
-                - /^v.*/
       - test-unit:
           requires:
             - setup-dependencies
