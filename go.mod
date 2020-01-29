@@ -3,7 +3,7 @@ module github.com/desmos-labs/desmos
 go 1.13
 
 require (
-	github.com/cosmos/cosmos-sdk v0.34.4-0.20200122195256-f18005d2f18b
+	github.com/cosmos/cosmos-sdk v0.38.0
 	github.com/gorilla/mux v1.7.3
 	github.com/magiconair/properties v1.8.1
 	github.com/otiai10/copy v1.0.2
