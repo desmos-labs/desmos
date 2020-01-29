@@ -36,13 +36,13 @@ const (
 )
 
 var (
-	// Default home directories for the application CLI
+	// DefaultCLIHome represents the default home directory for the application CLI
 	DefaultCLIHome = os.ExpandEnv("$HOME/.desmoscli")
 
 	// DefaultNodeHome sets the folder where the application data and configuration will be stored
 	DefaultNodeHome = os.ExpandEnv("$HOME/.desmosd")
 
-	// ModuleBasicManager is in charge of setting up basic module elements
+	// ModuleBasics is in charge of setting up basic module elements
 	ModuleBasics = module.NewBasicManager(
 		auth.AppModuleBasic{},
 		supply.AppModuleBasic{},

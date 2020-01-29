@@ -12,11 +12,18 @@ import (
 )
 
 func TestPostQueryResponse_MarshalJSON(t *testing.T) {
-	postOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	postOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	assert.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{
@@ -87,11 +94,18 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 }
 
 func TestPostQueryResponse_String(t *testing.T) {
-	postOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	postOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	assert.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{

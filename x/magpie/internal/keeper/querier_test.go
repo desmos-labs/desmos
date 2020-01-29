@@ -62,7 +62,10 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 
 			if result != nil {
 				assert.Nil(t, err)
-				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
+
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
+				assert.NoError(t, err)
+
 				assert.Equal(t, string(expectedIndented), string(result))
 			}
 

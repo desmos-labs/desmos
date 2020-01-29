@@ -396,10 +396,15 @@ func TestKeeper_GetPosts(t *testing.T) {
 func TestKeeper_GetPostsFiltered(t *testing.T) {
 	boolTrue := true
 
-	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	creator2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	assert.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	creator2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
 	posts := types.Posts{
@@ -524,8 +529,11 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 // -------------
 
 func TestKeeper_SaveReaction(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -585,7 +593,8 @@ func TestKeeper_SaveReaction(t *testing.T) {
 }
 
 func TestKeeper_RemoveReaction(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -650,8 +659,11 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 }
 
 func TestKeeper_GetPostLikes(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name   string
@@ -678,7 +690,8 @@ func TestKeeper_GetPostLikes(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			for _, l := range test.likes {
-				_ = k.SaveReaction(ctx, test.postID, l)
+				err := k.SaveReaction(ctx, test.postID, l)
+				assert.NoError(t, err)
 			}
 
 			stored := k.GetPostReactions(ctx, test.postID)
@@ -692,8 +705,11 @@ func TestKeeper_GetPostLikes(t *testing.T) {
 }
 
 func TestKeeper_GetLikes(t *testing.T) {
-	liker1, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	liker2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	liker2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name  string

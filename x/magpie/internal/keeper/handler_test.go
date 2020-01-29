@@ -12,7 +12,8 @@ import (
 )
 
 func Test_handleMsgCreateSession(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	owner, err := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	assert.NoError(t, err)
 
 	testData := []struct {
 		name  string

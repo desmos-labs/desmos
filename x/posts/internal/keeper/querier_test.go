@@ -13,8 +13,12 @@ import (
 )
 
 func Test_queryPost(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherCreator, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherCreator, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name            string
 		path            []string
@@ -93,7 +97,8 @@ func Test_queryPost(t *testing.T) {
 
 			for postID, reactions := range test.storedReactions {
 				for _, reaction := range reactions {
-					_ = k.SaveReaction(ctx, postID, reaction)
+					err := k.SaveReaction(ctx, postID, reaction)
+					assert.NoError(t, err)
 				}
 			}
 
@@ -102,7 +107,8 @@ func Test_queryPost(t *testing.T) {
 
 			if result != nil {
 				assert.Nil(t, err)
-				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				assert.NoError(t, err)
 				assert.Equal(t, string(expectedIndented), string(result))
 			}
 
@@ -116,7 +122,9 @@ func Test_queryPost(t *testing.T) {
 }
 
 func Test_queryPosts(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
@@ -185,9 +193,10 @@ func Test_queryPosts(t *testing.T) {
 			querier := keeper.NewQuerier(k)
 			request := abci.RequestQuery{Data: k.Cdc.MustMarshalJSON(&test.params)}
 			result, err := querier(ctx, []string{types.QueryPosts}, request)
+			assert.NoError(t, err)
 
-			expSerialized, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResponse)
-			assert.Nil(t, err)
+			expSerialized, err := codec.MarshalJSONIndent(k.Cdc, &test.expResponse)
+			assert.NoError(t, err)
 			assert.Equal(t, string(expSerialized), string(result))
 		})
 	}

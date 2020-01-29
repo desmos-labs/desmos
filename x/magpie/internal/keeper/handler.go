@@ -35,7 +35,11 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	// else return error
 
 	// Get the public key used to sign the message
-	pkBytes, _ := base64.StdEncoding.DecodeString(msg.PubKey)
+	pkBytes, err := base64.StdEncoding.DecodeString(msg.PubKey)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot decode base64 private key")
+	}
+
 	var pkBytes33 = [33]byte{}
 	copy(pkBytes33[:], pkBytes)
 	pubkey := secp256k1.PubKeySecp256k1(pkBytes33)
@@ -55,7 +59,10 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	// Create the signature bytes
 	signedBytes := sdk.MustSortJSON(keeper.Cdc.MustMarshalJSON(stdSignDoc))
-	sig, _ := base64.StdEncoding.DecodeString(msg.Signature)
+	sig, err := base64.StdEncoding.DecodeString(msg.Signature)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot decode base64 signature")
+	}
 
 	// Verify the signature
 	if !pubkey.VerifyBytes(signedBytes, sig) {

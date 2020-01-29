@@ -98,7 +98,11 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			// v0.2.0 migration needs to have the previous version's genesis time and the
 			// block interval to convert the block height dates into timestamps
 			if target == "v0.2.0" {
-				blockInterval, _ := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
+				blockInterval, err := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
+				if err != nil {
+					panic(err)
+				}
+
 				newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
 			} else {
 				newGenState = migration(newGenState)

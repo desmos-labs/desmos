@@ -44,7 +44,9 @@ func TestMsgCreatePost_Type(t *testing.T) {
 }
 
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	creator, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name  string
 		msg   types.MsgCreatePost
@@ -261,7 +263,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		})
 	}
 
-	err := msgCreatePost.ValidateBasic()
+	err = msgCreatePost.ValidateBasic()
 	assert.Nil(t, err)
 }
 

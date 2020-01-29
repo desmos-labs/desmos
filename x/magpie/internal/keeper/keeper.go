@@ -75,8 +75,9 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 func (k Keeper) GetSessions(ctx sdk.Context) types.Sessions {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.SessionStorePrefix))
+	defer iterator.Close()
 
-	var sessions []types.Session
+	sessions := make(types.Sessions, 0)
 	for ; iterator.Valid(); iterator.Next() {
 		var session types.Session
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &session)

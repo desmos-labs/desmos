@@ -1,8 +1,8 @@
+//nolint
 package clitest
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -220,7 +220,7 @@ func TestDesmosCLISend(t *testing.T) {
 	barAddr := f.KeyAddress(keyBar)
 
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
+	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Send some tokens from one account to the other
@@ -288,7 +288,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	barAddr := f.KeyAddress(keyBar)
 
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
+	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Test failure with auto gas disabled and very little gas set by hand
@@ -390,7 +390,7 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	require.NotZero(t, validatorDelegations[0].Shares)
 
 	// unbond a single share
-	unbondAmt := sdk.NewCoin(sdk.DefaultBondDenom, sdk.TokensFromConsensusPower(1))
+	unbondAmt := sdk.NewCoin(denom, sdk.TokensFromConsensusPower(1))
 	success = f.TxStakingUnbond(keyBar, unbondAmt.String(), barVal, "-y")
 	require.True(t, success)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -474,7 +474,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
+	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom))
 
 	proposalsQuery := f.QueryGovProposals()
@@ -604,253 +604,6 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLISubmitParamChangeProposal(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooAddr := f.KeyAddress(keyFoo)
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom))
-
-	// write proposal to file
-	proposalTokens := sdk.TokensFromConsensusPower(5)
-	proposal := fmt.Sprintf(`{
-  "title": "Param Change",
-  "description": "Update max validators",
-  "changes": [
-    {
-      "subspace": "staking",
-      "key": "MaxValidators",
-      "value": 105
-    }
-  ],
-  "deposit": [
-    {
-      "denom": "desmos",
-      "amount": "%s"
-    }
-  ]
-}
-`, proposalTokens.String())
-
-	proposalFile := WriteToNewTempFile(t, proposal)
-
-	// create the param change proposal
-	f.TxGovSubmitParamChangeProposal(keyFoo, proposalFile.Name(), sdk.NewCoin(denom, proposalTokens), "-y")
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// ensure transaction events can be queried
-	txsPage := f.QueryTxs(1, 50, "message.action=submit_proposal", fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage.Txs, 1)
-
-	// ensure deposit was deducted
-	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(proposalTokens).String(), fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom).String())
-
-	// ensure proposal is directly queryable
-	proposal1 := f.QueryGovProposal(1)
-	require.Equal(t, uint64(1), proposal1.ProposalID)
-	require.Equal(t, gov.StatusDepositPeriod, proposal1.Status)
-
-	// ensure correct query proposals result
-	proposalsQuery := f.QueryGovProposals()
-	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
-
-	// ensure the correct deposit amount on the proposal
-	deposit := f.QueryGovDeposit(1, fooAddr)
-	require.Equal(t, proposalTokens, deposit.Amount.AmountOf(denom))
-
-	// Cleanup testing directories
-	f.Cleanup()
-}
-
-func TestDesmosCLISubmitCommunityPoolSpendProposal(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// create some inflation
-	cdc := app.MakeCodec()
-	genesisState := f.GenesisState()
-	inflationMin := sdk.MustNewDecFromStr("1.0")
-	var mintData mint.GenesisState
-	cdc.UnmarshalJSON(genesisState[mint.ModuleName], &mintData)
-	mintData.Minter.Inflation = inflationMin
-	mintData.Params.InflationMin = inflationMin
-	mintData.Params.InflationMax = sdk.MustNewDecFromStr("1.0")
-	mintDataBz, err := cdc.MarshalJSON(mintData)
-	require.NoError(t, err)
-	genesisState[mint.ModuleName] = mintDataBz
-
-	genFile := filepath.Join(f.DesmosdHome, "config", "genesis.json")
-	genDoc, err := tmtypes.GenesisDocFromFile(genFile)
-	require.NoError(t, err)
-	genDoc.AppState, err = cdc.MarshalJSON(genesisState)
-	require.NoError(t, genDoc.SaveAs(genFile))
-
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooAddr := f.KeyAddress(keyFoo)
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom))
-
-	tests.WaitForNextNBlocksTM(3, f.Port)
-
-	// write proposal to file
-	proposalTokens := sdk.TokensFromConsensusPower(5)
-	proposal := fmt.Sprintf(`{
-  "title": "Community Pool Spend",
-  "description": "Spend from community pool",
-  "recipient": "%s",
-  "amount": [
-    {
-      "denom": "%s",
-      "amount": "1"
-    }
-  ],
-  "deposit": [
-    {
-      "denom": "%s",
-      "amount": "%s"
-    }
-  ]
-}
-`, fooAddr, sdk.DefaultBondDenom, sdk.DefaultBondDenom, proposalTokens.String())
-	proposalFile := WriteToNewTempFile(t, proposal)
-
-	// create the param change proposal
-	f.TxGovSubmitCommunityPoolSpendProposal(keyFoo, proposalFile.Name(), sdk.NewCoin(denom, proposalTokens), "-y")
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// ensure transaction events can be queried
-	txsPage := f.QueryTxs(1, 50, "message.action=submit_proposal", fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage.Txs, 1)
-
-	// ensure deposit was deducted
-	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(proposalTokens).String(), fooAcc.GetCoins().AmountOf(sdk.DefaultBondDenom).String())
-
-	// ensure proposal is directly queryable
-	proposal1 := f.QueryGovProposal(1)
-	require.Equal(t, uint64(1), proposal1.ProposalID)
-	require.Equal(t, gov.StatusDepositPeriod, proposal1.Status)
-
-	// ensure correct query proposals result
-	proposalsQuery := f.QueryGovProposals()
-	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
-
-	// ensure the correct deposit amount on the proposal
-	deposit := f.QueryGovDeposit(1, fooAddr)
-	require.Equal(t, proposalTokens, deposit.Amount.AmountOf(denom))
-
-	// Cleanup testing directories
-	f.Cleanup()
-}
-
-func TestDesmosCLIQueryTxPagination(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooAddr := f.KeyAddress(keyFoo)
-	barAddr := f.KeyAddress(keyBar)
-
-	accFoo := f.QueryAccount(fooAddr)
-	seq := accFoo.GetSequence()
-
-	for i := 1; i <= 30; i++ {
-		success, _, _ := f.TxSend(keyFoo, barAddr, sdk.NewInt64Coin(fooDenom, int64(i)), fmt.Sprintf("--sequence=%d", seq), "-y")
-		require.True(t, success)
-		seq++
-	}
-
-	// perPage = 15, 2 pages
-	txsPage1 := f.QueryTxs(1, 15, fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage1.Txs, 15)
-	require.Equal(t, txsPage1.Count, 15)
-	txsPage2 := f.QueryTxs(2, 15, fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage2.Txs, 15)
-	require.NotEqual(t, txsPage1.Txs, txsPage2.Txs)
-
-	// perPage = 16, 2 pages
-	txsPage1 = f.QueryTxs(1, 16, fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage1.Txs, 16)
-	txsPage2 = f.QueryTxs(2, 16, fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPage2.Txs, 14)
-	require.NotEqual(t, txsPage1.Txs, txsPage2.Txs)
-
-	// perPage = 50
-	txsPageFull := f.QueryTxs(1, 50, fmt.Sprintf("message.sender=%s", fooAddr))
-	require.Len(t, txsPageFull.Txs, 30)
-	require.Equal(t, txsPageFull.Txs, append(txsPage1.Txs, txsPage2.Txs...))
-
-	// perPage = 0
-	f.QueryTxsInvalid(errors.New("ERROR: page must greater than 0"), 0, 50, fmt.Sprintf("message.sender=%s", fooAddr))
-
-	// limit = 0
-	f.QueryTxsInvalid(errors.New("ERROR: limit must greater than 0"), 1, 0, fmt.Sprintf("message.sender=%s", fooAddr))
-
-	// Cleanup testing directories
-	f.Cleanup()
-}
-
-func TestDesmosCLIValidateSignatures(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooAddr := f.KeyAddress(keyFoo)
-	barAddr := f.KeyAddress(keyBar)
-
-	// generate sendTx with default gas
-	success, stdout, stderr := f.TxSend(fooAddr.String(), barAddr, sdk.NewInt64Coin(denom, 10), "--generate-only")
-	require.True(t, success)
-	require.Empty(t, stderr)
-
-	// write  unsigned tx to file
-	unsignedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(unsignedTxFile.Name())
-
-	// validate we can successfully sign
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name())
-	require.True(t, success)
-	stdTx := unmarshalStdTx(t, stdout)
-	require.Equal(t, len(stdTx.Msgs), 1)
-	require.Equal(t, 1, len(stdTx.GetSignatures()))
-	require.Equal(t, fooAddr.String(), stdTx.GetSigners()[0].String())
-
-	// write signed tx to file
-	signedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(signedTxFile.Name())
-
-	// validate signatures
-	success, _, _ = f.TxSign(keyFoo, signedTxFile.Name(), "--validate-signatures")
-	require.True(t, success)
-
-	// modify the transaction
-	stdTx.Memo = "MODIFIED-ORIGINAL-TX-BAD"
-	bz := marshalStdTx(t, stdTx)
-	modSignedTxFile := WriteToNewTempFile(t, string(bz))
-	defer os.Remove(modSignedTxFile.Name())
-
-	// validate signature validation failure due to different transaction sig bytes
-	success, _, _ = f.TxSign(keyFoo, modSignedTxFile.Name(), "--validate-signatures")
-	require.False(t, success)
-
-	f.Cleanup()
-}
-
 func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
@@ -918,7 +671,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 
 	// Ensure foo has right amount of funds
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(50)
+	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Test broadcast
@@ -932,59 +685,6 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
 	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
 
-	f.Cleanup()
-}
-
-func TestDesmosCLIMultisignInsufficientCosigners(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server with minimum fees
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooBarBazAddr := f.KeyAddress(keyFooBarBaz)
-	barAddr := f.KeyAddress(keyBar)
-
-	// Send some tokens from one account to the other
-	success, _, _ := f.TxSend(keyFoo, fooBarBazAddr, sdk.NewInt64Coin(denom, 10), "-y")
-	require.True(t, success)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Test generate sendTx with multisig
-	success, stdout, _ := f.TxSend(fooBarBazAddr.String(), barAddr, sdk.NewInt64Coin(denom, 5), "--generate-only")
-	require.True(t, success)
-
-	// Write the output to disk
-	unsignedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(unsignedTxFile.Name())
-
-	// Sign with foo's key
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), "--multisig", fooBarBazAddr.String(), "-y")
-	require.True(t, success)
-
-	// Write the output to disk
-	fooSignatureFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(fooSignatureFile.Name())
-
-	// Multisign, not enough signatures
-	success, stdout, _ = f.TxMultisign(unsignedTxFile.Name(), keyFooBarBaz, []string{fooSignatureFile.Name()})
-	require.True(t, success)
-
-	// Write the output to disk
-	signedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(signedTxFile.Name())
-
-	// Validate the multisignature
-	success, _, _ = f.TxSign(keyFooBarBaz, signedTxFile.Name(), "--validate-signatures")
-	require.False(t, success)
-
-	// Broadcast the transaction
-	success, stdOut, _ := f.TxBroadcast(signedTxFile.Name())
-	require.Contains(t, stdOut, "signature verification failed")
-	require.True(t, success)
-
-	// Cleanup testing directories
 	f.Cleanup()
 }
 
@@ -1024,137 +724,6 @@ func TestDesmosCLIEncode(t *testing.T) {
 	var decodedTx auth.StdTx
 	require.Nil(t, cdc.UnmarshalBinaryLengthPrefixed(decodedBytes, &decodedTx))
 	require.Equal(t, "deadbeef", decodedTx.Memo)
-}
-
-func TestDesmosCLIMultisignSortSignatures(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server with minimum fees
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooBarBazAddr := f.KeyAddress(keyFooBarBaz)
-	barAddr := f.KeyAddress(keyBar)
-
-	// Send some tokens from one account to the other
-	success, _, _ := f.TxSend(keyFoo, fooBarBazAddr, sdk.NewInt64Coin(denom, 10), "-y")
-	require.True(t, success)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Ensure account balances match expected
-	fooBarBazAcc := f.QueryAccount(fooBarBazAddr)
-	require.Equal(t, int64(10), fooBarBazAcc.GetCoins().AmountOf(denom).Int64())
-
-	// Test generate sendTx with multisig
-	success, stdout, _ := f.TxSend(fooBarBazAddr.String(), barAddr, sdk.NewInt64Coin(denom, 5), "--generate-only")
-	require.True(t, success)
-
-	// Write the output to disk
-	unsignedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(unsignedTxFile.Name())
-
-	// Sign with foo's key
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), "--multisig", fooBarBazAddr.String())
-	require.True(t, success)
-
-	// Write the output to disk
-	fooSignatureFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(fooSignatureFile.Name())
-
-	// Sign with baz's key
-	success, stdout, _ = f.TxSign(keyBaz, unsignedTxFile.Name(), "--multisig", fooBarBazAddr.String())
-	require.True(t, success)
-
-	// Write the output to disk
-	bazSignatureFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(bazSignatureFile.Name())
-
-	// Multisign, keys in different order
-	success, stdout, _ = f.TxMultisign(unsignedTxFile.Name(), keyFooBarBaz, []string{
-		bazSignatureFile.Name(), fooSignatureFile.Name()})
-	require.True(t, success)
-
-	// Write the output to disk
-	signedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(signedTxFile.Name())
-
-	// Validate the multisignature
-	success, _, _ = f.TxSign(keyFooBarBaz, signedTxFile.Name(), "--validate-signatures")
-	require.True(t, success)
-
-	// Broadcast the transaction
-	success, _, _ = f.TxBroadcast(signedTxFile.Name())
-	require.True(t, success)
-
-	// Cleanup testing directories
-	f.Cleanup()
-}
-
-func TestDesmosCLIMultisign(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server with minimum fees
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	fooBarBazAddr := f.KeyAddress(keyFooBarBaz)
-	bazAddr := f.KeyAddress(keyBaz)
-
-	// Send some tokens from one account to the other
-	success, _, _ := f.TxSend(keyFoo, fooBarBazAddr, sdk.NewInt64Coin(denom, 10), "-y")
-	require.True(t, success)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Ensure account balances match expected
-	fooBarBazAcc := f.QueryAccount(fooBarBazAddr)
-	require.Equal(t, int64(10), fooBarBazAcc.GetCoins().AmountOf(denom).Int64())
-
-	// Test generate sendTx with multisig
-	success, stdout, stderr := f.TxSend(fooBarBazAddr.String(), bazAddr, sdk.NewInt64Coin(denom, 10), "--generate-only")
-	require.True(t, success)
-	require.Empty(t, stderr)
-
-	// Write the output to disk
-	unsignedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(unsignedTxFile.Name())
-
-	// Sign with foo's key
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), "--multisig", fooBarBazAddr.String(), "-y")
-	require.True(t, success)
-
-	// Write the output to disk
-	fooSignatureFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(fooSignatureFile.Name())
-
-	// Sign with bar's key
-	success, stdout, _ = f.TxSign(keyBar, unsignedTxFile.Name(), "--multisig", fooBarBazAddr.String(), "-y")
-	require.True(t, success)
-
-	// Write the output to disk
-	barSignatureFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(barSignatureFile.Name())
-
-	// Multisign
-	success, stdout, _ = f.TxMultisign(unsignedTxFile.Name(), keyFooBarBaz, []string{
-		fooSignatureFile.Name(), barSignatureFile.Name()})
-	require.True(t, success)
-
-	// Write the output to disk
-	signedTxFile := WriteToNewTempFile(t, stdout)
-	defer os.Remove(signedTxFile.Name())
-
-	// Validate the multisignature
-	success, _, _ = f.TxSign(keyFooBarBaz, signedTxFile.Name(), "--validate-signatures", "-y")
-	require.True(t, success)
-
-	// Broadcast the transaction
-	success, _, _ = f.TxBroadcast(signedTxFile.Name())
-	require.True(t, success)
-
-	// Cleanup testing directories
-	f.Cleanup()
 }
 
 func TestDesmosCLIConfig(t *testing.T) {
@@ -1274,26 +843,6 @@ func TestDesmosdAddGenesisAccount(t *testing.T) {
 	require.Equal(t, accounts[1].GetAddress(), f.KeyAddress(keyBar))
 	require.True(t, accounts[0].GetCoins().IsEqual(startCoins))
 	require.True(t, accounts[1].GetCoins().IsEqual(bazCoins))
-
-	// Cleanup testing directories
-	f.Cleanup()
-}
-
-func TestSlashingGetParams(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// start gaiad server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	params := f.QuerySlashingParams()
-	require.Equal(t, int64(100), params.SignedBlocksWindow)
-	require.Equal(t, sdk.NewDecWithPrec(5, 1), params.MinSignedPerWindow)
-
-	sinfo := f.QuerySigningInfo(f.GDTendermint("show-validator"))
-	require.Equal(t, int64(0), sinfo.StartHeight)
-	require.False(t, sinfo.Tombstoned)
 
 	// Cleanup testing directories
 	f.Cleanup()

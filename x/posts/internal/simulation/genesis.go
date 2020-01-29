@@ -23,7 +23,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 // RandomPosts returns randomly generated genesis accounts
 func RandomPosts(simState *module.SimulationState) (posts types.Posts) {
 	postsNumber := simState.Rand.Intn(100)
-	location, _ := time.LoadLocation("UTC")
+	location, err := time.LoadLocation("UTC")
+	if err != nil {
+		panic(err)
+	}
 
 	posts = make(types.Posts, postsNumber)
 	for index := 0; index < postsNumber; index++ {

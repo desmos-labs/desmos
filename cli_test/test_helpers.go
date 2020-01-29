@@ -59,6 +59,8 @@ var (
 	vestingCoins = sdk.NewCoins(
 		sdk.NewCoin(feeDenom, sdk.TokensFromConsensusPower(500000)),
 	)
+
+	minBondToken = sdk.TokensFromConsensusPower(10)
 )
 
 //___________________________________________________________________________________
@@ -226,7 +228,7 @@ func (f *Fixtures) AddGenesisAccount(address sdk.AccAddress, coins sdk.Coins, fl
 
 // GenTx is desmosd gentx
 func (f *Fixtures) GenTx(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s gentx --name=%s --home=%s --home-client=%s --keyring-backend=test", f.DesmosBinary, name, f.DesmosdHome, f.DesmoscliHome)
+	cmd := fmt.Sprintf("%s gentx --amount=%s%s --name=%s --home=%s --home-client=%s --keyring-backend=test", f.DesmosBinary, minBondToken, denom, name, f.DesmosdHome, f.DesmoscliHome)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags))
 }
 

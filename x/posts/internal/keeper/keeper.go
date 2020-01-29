@@ -270,7 +270,12 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.Reactions {
 		var postLikes types.Reactions
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
-		postID, _ := types.ParsePostID(string(idBytes))
+		postID, err := types.ParsePostID(string(idBytes))
+		if err != nil {
+			// This should never verify
+			panic(err)
+		}
+
 		reactionsData[postID] = postLikes
 	}
 

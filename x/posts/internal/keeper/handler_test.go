@@ -169,7 +169,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 }
 
 func Test_handleMsgEditPost(t *testing.T) {
-	editor, _ := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
+	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
+	assert.NoError(t, err)
 
 	testData := []struct {
 		name       string
@@ -252,7 +253,9 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
 
-	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name         string
 		existingPost *types.Post
@@ -313,7 +316,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 }
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	assert.NoError(t, err)
+
 	reaction := types.NewReaction("like", user)
 	tests := []struct {
 		name             string

@@ -112,6 +112,19 @@ jobs:
           target: test-sim-multi-seed-long
           description: "Test Desmos multi-seed simulation (long-lived)"
 
+  integration-tests:
+    executor: golang
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+      - run:
+          name: Test CLI integration
+          command: |
+            export BUILDDIR=`pwd`/build
+            make test-build
+
   test:
     executor: golang
     steps:

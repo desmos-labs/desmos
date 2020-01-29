@@ -12,31 +12,19 @@ const (
 )
 
 var (
-	// Keeper methods
-	NewKeeper  = keeper.NewKeeper
-	NewHandler = keeper.NewHandler
-	NewQuerier = keeper.NewQuerier
-
-	// Codec
+	NewKeeper     = keeper.NewKeeper
+	NewHandler    = keeper.NewHandler
+	NewQuerier    = keeper.NewQuerier
 	ModuleCdc     = types.ModuleCdc
 	RegisterCodec = types.RegisterCodec
-
-	// Types
-	NewSession = types.NewSession
-
-	// Msgs
+	NewSession    = types.NewSession
 	NewMsgSession = types.NewMsgCreateSession
 )
 
 type (
-	// Keeper
-	Keeper = keeper.Keeper
-
-	// Types
-	SessionID = types.SessionID
-	Session   = types.Session
-	Sessions  = types.Sessions
-
-	// Msgs
+	Keeper           = keeper.Keeper
+	SessionID        = types.SessionID
+	Session          = types.Session
+	Sessions         = types.Sessions
 	MsgCreateSession = types.MsgCreateSession
 )

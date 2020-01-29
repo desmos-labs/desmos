@@ -192,8 +192,12 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 // -----------
 
 func TestPost_String(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	timeZone, _ := time.LoadLocation("UTC")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	post := types.Post{
 		PostID:         types.PostID(19),
@@ -214,8 +218,12 @@ func TestPost_String(t *testing.T) {
 }
 
 func TestPost_Validate(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	timeZone, _ := time.LoadLocation("UTC")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{
@@ -368,10 +376,15 @@ func TestPost_Validate(t *testing.T) {
 }
 
 func TestPost_Equals(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	otherOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	assert.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{
@@ -656,7 +669,9 @@ func TestPost_Equals(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_Equals(t *testing.T) {
-	timeZone, _ := time.LoadLocation("UTC")
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	tests := []struct {
@@ -717,8 +732,12 @@ func TestPosts_Equals(t *testing.T) {
 }
 
 func TestPosts_String(t *testing.T) {
-	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
+	owner2, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	assert.NoError(t, err)
+
 	medias := types.PostMedias{
 		types.PostMedia{
 			URI:      "https://uri.com",
@@ -726,7 +745,9 @@ func TestPosts_String(t *testing.T) {
 		},
 	}
 
-	timeZone, _ := time.LoadLocation("UTC")
+	timeZone, err := time.LoadLocation("UTC")
+	assert.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := types.Posts{

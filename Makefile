@@ -77,15 +77,17 @@ go-mod-cache: go.sum
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
 	@go mod verify
-	@go mod tidy
+
+draw-deps:
+	@# requires brew install graphviz or apt-get install graphviz
+	go get github.com/RobotsAndPencils/goviz
+	@goviz -i ./cmd/gaiad -d 2 | dot -Tpng -o dependency-graph.png
 
 clean:
 	rm -rf snapcraft-local.yaml build/
 
-lint: golangci-lint
-	$(BINDIR)/golangci-lint run
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
-	go mod verify
+distclean: clean
+	rm -rf vendor/
 
 ########################################
 ### Testing
@@ -101,6 +103,23 @@ test-race:
 
 test-cover:
 	@go test -mod=readonly -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -tags='ledger test_ledger_mock' ./...
+
+test-build: build
+	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
+
+
+lint: golangci-lint
+	golangci-lint run
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
+	go mod verify
+
+format:
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs goimports -w -local github.com/desmos-labs/desmos
+
+benchmark:
+	@go test -mod=readonly -bench=. ./...
 
 ########################################
 ### Local validator nodes using docker and docker-compose

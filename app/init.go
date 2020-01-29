@@ -14,7 +14,6 @@ const (
 )
 
 var (
-	// gov
 	DefaultMinDepositTokens = sdk.TokensFromConsensusPower(10)
 	DefaultQuorum           = sdk.NewDecWithPrec(334, 3)
 	DefaultThreshold        = sdk.NewDecWithPrec(5, 1)
