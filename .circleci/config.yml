@@ -84,7 +84,7 @@ jobs:
     steps:
       - make:
           target: test-unit
-        description: "Unit tests"
+          description: "Unit tests"
   test-build:
     executor: golang
     steps:
