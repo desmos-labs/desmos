@@ -92,20 +92,20 @@ distclean: clean
 ########################################
 ### Testing
 
-test: test-unit
-test-all: test-race test-cover
+test: test-unit test-build
+test-all: test test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
+
+test-build: build
+	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
 
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
 
 test-cover:
 	@go test -mod=readonly -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -tags='ledger test_ledger_mock' ./...
-
-test-build: build
-	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
 
 
 lint: golangci-lint

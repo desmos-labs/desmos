@@ -36,6 +36,9 @@ commands:
 
 
 
+
+
+
 jobs:
   setup-dependencies:
     executor: golang
@@ -76,43 +79,13 @@ jobs:
           root: "/tmp/bin"
           paths:
             - "."
-
-  test-sim-nondeterminism:
+  test-unit:
     executor: golang
     steps:
       - make:
-          target: test-sim-nondeterminism
-          description: "Test Desmos non-determinism simulations"
-
-  test-sim-import-export:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-import-export
-          description: "Test Desmos import/export simulation"
-
-  test-sim-after-import:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-after-import
-          description: "Test Desmos simulation after importing state"
-
-  test-sim-multi-seed-short:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-short
-          description: "Test Desmos multi-seed simulation (short-lived)"
-
-  test-sim-multi-seed-long:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-long
-          description: "Test Desmos multi-seed simulation (long-lived)"
-
-  integration-tests:
+          target: test-unit
+        description: "Unit tests"
+  test-build:
     executor: golang
     steps:
       - checkout
@@ -125,13 +98,37 @@ jobs:
             export BUILDDIR=`pwd`/build
             make test-build
 
-  test:
+
+  test-sim-nondeterminism:
     executor: golang
     steps:
       - make:
-          target: test
-          description: "Test all"
-
+          target: test-sim-nondeterminism
+          description: "Test Desmos non-determinism simulations"
+  test-sim-import-export:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-import-export
+          description: "Test Desmos import/export simulation"
+  test-sim-after-import:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-after-import
+          description: "Test Desmos simulation after importing state"
+  test-sim-multi-seed-short:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-multi-seed-short
+          description: "Test Desmos multi-seed simulation (short-lived)"
+  test-sim-multi-seed-long:
+    executor: golang
+    steps:
+      - make:
+          target: test-sim-multi-seed-long
+          description: "Test Desmos multi-seed simulation (long-lived)"
   test-cover:
     executor: golang
     parallelism: 4
@@ -141,7 +138,7 @@ jobs:
           keys:
             - go-mod-v2-{{ checksum "go.sum" }}
       - run:
-          name: Run tests with coverage
+          name: Run tests
           command: |
             export VERSION="$(git describe --tags --long | sed 's/v\(.*\)/\1/')"
             export GO111MODULE=on
@@ -156,7 +153,6 @@ jobs:
             - "profiles/*"
       - store_artifacts:
           path: /tmp/logs
-
   upload-coverage:
     executor: golang
     steps:
@@ -186,7 +182,6 @@ jobs:
       - run:
           name: upload
           command: bash <(curl -s https://codecov.io/bash) -f coverage.txt
-
   localnet:
     working_directory: /home/circleci/.go_workspace/src/github.com/desmos-labs/desmos
     machine:
@@ -211,6 +206,7 @@ jobs:
             set -x
             make clean localnet-start
             ./contrib/localnet-blocks-test.sh 40 5 10 localhost
+
 
   docker-image:
     executor: golang
@@ -237,6 +233,7 @@ jobs:
             docker push desmos-labs/desmos:$DESMOSD_VERSION
           fi
 
+
   docker-tagged:
     executor: golang
     steps:
@@ -250,9 +247,13 @@ jobs:
           docker login --password-stdin -u $DOCKER_USER \<<DOCKER_PASSWORD
           docker push desmos-labs/desmos:$CIRCLE_TAG
 
+
+
+
+
 workflows:
   version: 2
-  test-suite:
+  docker:
     jobs:
       - docker-image:
           requires:
@@ -267,12 +268,20 @@ workflows:
                 - /.*/
           requires:
             - setup-dependencies
+  test-suite:
+    jobs:
       - setup-dependencies:
           # filters here are needed to enable this job also for tags
           filters:
             tags:
               only:
                 - /^v.*/
+      - test-unit:
+          requires:
+            - setup-dependencies
+      - test-build:
+          requires:
+            - setup-dependencies
       - test-sim-nondeterminism:
           requires:
             - setup-dependencies
@@ -295,10 +304,10 @@ workflows:
             tags:
               only:
                 - /^v.*/
+      - localnet
       - test-cover:
           requires:
             - setup-dependencies
-      - localnet
       - upload-coverage:
           requires:
             - test-cover
