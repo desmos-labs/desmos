@@ -4,11 +4,6 @@ executors:
   golang:
     docker:
       - image: circleci/golang:1.13
-  docs:
-    docker:
-      - image: tendermintdev/docker-website-deployment
-    environment:
-      AWS_REGION: us-east-1
 
 commands:
   make:
