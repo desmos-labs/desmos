@@ -45,7 +45,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	//Get the poll answers if poll exist
 	var answers []types.AnswersDetails
 	if post.PollData != nil {
-		answers = keeper.GetPostPollsAnswers(ctx, post.PostID)
+		answers = keeper.GetPostPollAnswersDetails(ctx, post.PostID)
 	}
 
 	// Crete the response object

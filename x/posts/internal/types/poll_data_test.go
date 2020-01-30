@@ -411,3 +411,56 @@ func TestUserPollAnswers_Equals(t *testing.T) {
 		})
 	}
 }
+
+// ---------------
+// --- UsersAnswersDetails
+// ---------------
+
+func TestUsersAnswersDetails(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	answers := []uint64{uint64(1), uint64(2)}
+	answers2 := []uint64{uint64(3)}
+
+	tests := []struct {
+		name        string
+		usersAD     types.UsersAnswersDetails
+		ansDet      types.AnswersDetails
+		expUsersAD  types.UsersAnswersDetails
+		expAppended bool
+	}{
+		{
+			name:    "Missing user answers details appended correctly",
+			usersAD: types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			ansDet:  types.NewAnswersDetails(answers, user2),
+			expUsersAD: types.UsersAnswersDetails{
+				types.NewAnswersDetails(answers, user),
+				types.NewAnswersDetails(answers, user2),
+			},
+			expAppended: true,
+		},
+		{
+			name:        "Same user with different answers replace previous ones",
+			usersAD:     types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			ansDet:      types.NewAnswersDetails(answers2, user),
+			expUsersAD:  types.UsersAnswersDetails{types.NewAnswersDetails(answers2, user)},
+			expAppended: true,
+		},
+		{
+			name:        "Equals user answers details returns the same users answers details",
+			usersAD:     types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			ansDet:      types.NewAnswersDetails(answers, user),
+			expUsersAD:  types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			expAppended: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actual, appended := test.usersAD.AppendIfMissingOrIfUsersEquals(test.ansDet)
+			assert.Equal(t, test.expUsersAD, actual)
+			assert.Equal(t, test.expAppended, appended)
+		})
+	}
+}

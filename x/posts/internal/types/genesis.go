@@ -18,7 +18,6 @@ func ValidateGenesis(data GenesisState) error {
 			return err
 		}
 	}
-
 	for _, reactions := range data.Reactions {
 		for _, record := range reactions {
 			if err := record.Validate(); err != nil {

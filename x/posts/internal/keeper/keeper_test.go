@@ -546,31 +546,33 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	answers := []uint64{uint64(1), uint64(2)}
 	answers2 := []uint64{uint64(1)}
 
-	userPollAnswers2 := types.NewAnswersDetails(answers2, user)
-
 	tests := []struct {
-		name                    string
-		postID                  types.PostID
-		userPollAnswers         types.AnswersDetails
-		previousUserPollAnswers *types.AnswersDetails
-		expUserPollAnswers      types.AnswersDetails
+		name               string
+		postID             types.PostID
+		userAnswersDetails types.AnswersDetails
+		previousUsersAD    types.UsersAnswersDetails
+		expUsersAD         types.UsersAnswersDetails
 	}{
 		{
-			name:                    "Save answers with no previous answers in this context",
-			postID:                  types.PostID(1),
-			userPollAnswers:         types.NewAnswersDetails(answers, user),
-			previousUserPollAnswers: nil,
-			expUserPollAnswers:      types.NewAnswersDetails(answers, user),
+			name:               "Save answers with no previous answers in this context",
+			postID:             types.PostID(1),
+			userAnswersDetails: types.NewAnswersDetails(answers, user),
+			previousUsersAD:    nil,
+			expUsersAD:         types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
 		},
 		{
-			name:                    "Save answers and overridden the previous ones",
-			postID:                  types.PostID(1),
-			userPollAnswers:         types.NewAnswersDetails(answers, user),
-			previousUserPollAnswers: &userPollAnswers2,
-			expUserPollAnswers:      types.NewAnswersDetails(answers, user),
+			name:               "Save new answers",
+			postID:             types.PostID(1),
+			userAnswersDetails: types.NewAnswersDetails(answers2, user2),
+			previousUsersAD:    types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			expUsersAD: types.UsersAnswersDetails{
+				types.NewAnswersDetails(answers, user),
+				types.NewAnswersDetails(answers2, user2),
+			},
 		},
 	}
 
@@ -581,17 +583,17 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 
-			if test.previousUserPollAnswers != nil {
+			if test.previousUsersAD != nil {
 				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()),
-					k.Cdc.MustMarshalBinaryBare(*test.previousUserPollAnswers))
+					k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
-			k.SavePollPostAnswers(ctx, test.postID, test.userPollAnswers)
+			k.SavePollPostAnswers(ctx, test.postID, test.userAnswersDetails)
 
-			var actualUserPollAnswers types.AnswersDetails
+			var actualUsersAnswersDetails types.UsersAnswersDetails
 			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
-			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUserPollAnswers)
-			assert.Equal(t, test.expUserPollAnswers, actualUserPollAnswers)
+			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
+			assert.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}
 }
@@ -603,7 +605,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 	tests := []struct {
 		name          string
 		postID        types.PostID
-		storedAnswers []types.AnswersDetails
+		storedAnswers types.UsersAnswersDetails
 	}{
 		{
 			name:          "No answers returns empty list",
@@ -613,7 +615,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 		{
 			name:          "Answers returned correctly",
 			postID:        types.PostID(1),
-			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, user)},
+			storedAnswers: types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
 		},
 	}
 
@@ -626,7 +628,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 				k.SavePollPostAnswers(ctx, test.postID, test.storedAnswers[0])
 			}
 
-			actualPostPollAnswers := k.GetPostPollsAnswers(ctx, test.postID)
+			actualPostPollAnswers := k.GetPostPollAnswersDetails(ctx, test.postID)
 
 			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
 		})

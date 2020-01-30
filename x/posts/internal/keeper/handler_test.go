@@ -495,7 +495,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
 
 			if test.storedAnswers != nil {
-				store.Set([]byte(types.PollAnswersStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedAnswers))
+				k.SavePollPostAnswers(ctx, test.storedPost.PostID, *test.storedAnswers)
 			}
 
 			handler := keeper.NewHandler(k)

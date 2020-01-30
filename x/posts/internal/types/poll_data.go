@@ -99,6 +99,32 @@ func (pd *PollData) Equals(other *PollData) bool {
 }
 
 // ---------------
+// --- UsersAnswersDetails
+// ---------------
+
+type UsersAnswersDetails []AnswersDetails
+
+// AppendIfMissingOrIfUserEquals appends the given answerDetails to the users answers details slice if it does not exist inside it yet
+//or if the user of the answer details is the same.
+// It returns a new slice of AnswersDetails containing such AnswersDetails and a boolean indicating if there was an append.
+func (usersAD UsersAnswersDetails) AppendIfMissingOrIfUsersEquals(ansDet AnswersDetails) (UsersAnswersDetails, bool) {
+	for index, ad := range usersAD {
+
+		if ad.Equals(ansDet) {
+			return usersAD, false
+		}
+
+		if ad.User.Equals(ansDet.User) {
+			usersAD[index] = ansDet
+			return usersAD, true
+		}
+
+	}
+
+	return append(usersAD, ansDet), true
+}
+
+// ---------------
 // --- AnswersDetails
 // ---------------
 type AnswersDetails struct {

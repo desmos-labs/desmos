@@ -27,17 +27,17 @@ func convertGenesisReactions(reactions map[string]Reactions) map[PostID]Reaction
 
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
+	posts := k.GetPosts(ctx)
+
 	return GenesisState{
-		Posts:     k.GetPosts(ctx),
+		Posts: posts,
+
 		Reactions: convertReactionsMap(k.GetReactions(ctx)),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	for _, post := range data.Posts {
-		keeper.SavePost(ctx, post)
-	}
 
 	reactionsMap := convertGenesisReactions(data.Reactions)
 	for postID, reactions := range reactionsMap {

@@ -175,33 +175,35 @@ func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
 	return []byte(types.PollAnswersStorePrefix + postID.String())
 }
 
-// Save the userPollAnswers associated with the given postID inside the current context
+// Save the userAnswersDetails associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
-// If userPollAnswers are already present, the old ones will be overridden.
+// If userAnswersDetails are already present, the old ones will be overridden.
 func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
 	store := ctx.KVStore(k.StoreKey)
 
-	store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&userPollAnswers))
+	usersAnswersDetails := k.GetPostPollAnswersDetails(ctx, postID)
+
+	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
+		store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
+	}
+
 }
 
 // GetAllPostPollsAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetPostPollsAnswers(ctx sdk.Context, postID types.PostID) []types.AnswersDetails {
+func (k Keeper) GetPostPollAnswersDetails(ctx sdk.Context, postID types.PostID) types.UsersAnswersDetails {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, k.getAnswersStoreKey(postID))
 
-	var allAnswers []types.AnswersDetails
-	for ; iterator.Valid(); iterator.Next() {
-		var userPollAnswer types.AnswersDetails
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userPollAnswer)
-		allAnswers = append(allAnswers, userPollAnswer)
-	}
+	var usersAnswersDetails types.UsersAnswersDetails
+	answersBz := store.Get([]byte(types.PollAnswersStorePrefix + postID.String()))
 
-	return allAnswers
+	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
+
+	return usersAnswersDetails
 }
 
 // GetPostPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
 func (k Keeper) GetPostPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint64 {
-	postPollAnswers := k.GetPostPollsAnswers(ctx, postID)
+	postPollAnswers := k.GetPostPollAnswersDetails(ctx, postID)
 
 	for _, postPollAnswers := range postPollAnswers {
 		if user.Equals(postPollAnswers.User) {
