@@ -5,6 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,7 +48,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
 		msg   types.MsgCreatePost
-		error sdk.Error
+		error error
 	}{
 		{
 			name: "Empty owner returns error",
@@ -61,7 +62,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrInvalidAddress("Invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
 			name: "Empty message returns error",
@@ -75,7 +76,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name: "Very long message returns error",
@@ -95,7 +96,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Post message cannot exceed 500 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot exceed 500 characters"),
 		},
 		{
 			name: "Empty subspace returns error",
@@ -109,7 +110,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Post subspace must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash"),
 		},
 		{
 			name: "More than 10 optional data returns error",
@@ -135,7 +136,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Post optional data cannot be longer than 10 fields"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post optional data cannot be longer than 10 fields"),
 		},
 		{
 			name: "Optional data longer than 200 characters returns error",
@@ -151,7 +152,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
 			name: "Future creation date returns error",
@@ -165,7 +166,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				time.Now().UTC().Add(time.Hour),
 				msgCreatePost.Medias,
 			),
-			error: sdk.ErrUnknownRequest("Creation date cannot be in the future"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future"),
 		},
 		{
 			name: "Empty URI in medias returns error",
@@ -184,7 +185,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					},
 				},
 			),
-			error: sdk.ErrUnknownRequest("uri must be specified and cannot be empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "uri must be specified and cannot be empty"),
 		},
 		{
 			name: "Invalid URI in message returns error",
@@ -200,7 +201,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					URI:      "invalid-uri",
 					MimeType: "text/plain",
 				}}),
-			error: sdk.ErrUnknownRequest("invalid uri provided"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
 		{
 			name: "Empty mime type in message returns error",
@@ -216,7 +217,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					URI:      "https://example.com",
 					MimeType: "",
 				}}),
-			error: sdk.ErrUnknownRequest("mime type must be specified and cannot be empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
 		},
 		{
 			name: "Valid message does not return any error",
@@ -250,7 +251,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.error, test.msg.ValidateBasic())
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				assert.Nil(t, returnedError)
+			} else {
+				assert.NotNil(t, returnedError)
+				assert.Equal(t, test.error.Error(), returnedError.Error())
+			}
 		})
 	}
 
@@ -353,37 +360,37 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
 		msg   types.MsgEditPost
-		error sdk.Error
+		error error
 	}{
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgEditPost(types.PostID(0), "Edited post message", testOwner, editDate),
-			error: sdk.ErrUnknownRequest("Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid editor returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", nil, editDate),
-			error: sdk.ErrInvalidAddress("Invalid editor address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
 			name:  "Blank message returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), " ", testOwner, editDate),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty message returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner, editDate),
-			error: sdk.ErrUnknownRequest("Post message cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty edit date returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Time{}),
-			error: sdk.ErrUnknownRequest("Invalid edit date"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid edit date"),
 		},
 		{
 			name:  "Future edit date returns error",
 			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Now().Add(time.Hour)),
-			error: sdk.ErrUnknownRequest("Edit date cannot be in the future"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Edit date cannot be in the future"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -395,7 +402,13 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.error, test.msg.ValidateBasic())
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				assert.Nil(t, returnedError)
+			} else {
+				assert.NotNil(t, returnedError)
+				assert.Equal(t, test.error.Error(), returnedError.Error())
+			}
 		})
 	}
 }
@@ -432,22 +445,22 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
 		msg   types.MsgAddPostReaction
-		error sdk.Error
+		error error
 	}{
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", testOwner),
-			error: sdk.ErrUnknownRequest("Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid user returns error",
 			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", nil),
-			error: sdk.ErrInvalidAddress("Invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns error",
 			msg:   types.NewMsgAddPostReaction(types.PostID(5), "", testOwner),
-			error: sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -458,9 +471,13 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.error, test.msg.ValidateBasic())
-		})
+		returnedError := test.msg.ValidateBasic()
+		if test.error == nil {
+			assert.Nil(t, returnedError)
+		} else {
+			assert.NotNil(t, returnedError)
+			assert.Equal(t, test.error.Error(), returnedError.Error())
+		}
 	}
 }
 
@@ -496,22 +513,22 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
 		msg   types.MsgRemovePostReaction
-		error sdk.Error
+		error error
 	}{
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(0), testOwner, "like"),
-			error: sdk.ErrUnknownRequest("Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid user address: ",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(10), nil, "like"),
-			error: sdk.ErrInvalidAddress("Invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns no error",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, ""),
-			error: sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -521,7 +538,13 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.error, test.msg.ValidateBasic())
+		returnedError := test.msg.ValidateBasic()
+		if test.error == nil {
+			assert.Nil(t, returnedError)
+		} else {
+			assert.NotNil(t, returnedError)
+			assert.Equal(t, test.error.Error(), returnedError.Error())
+		}
 	}
 }
 

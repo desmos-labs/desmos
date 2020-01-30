@@ -3,6 +3,7 @@ package v0_3_0
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+	cosmosv0380 "github.com/cosmos/cosmos-sdk/x/genutil/legacy/v0_38"
 	v020posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.2.0"
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
 )
@@ -11,6 +12,9 @@ import (
 // It requires args to contain an integer value representing the block interval that should be considered when
 // converting block height-based timestamps into time.Time timestamps.
 func Migrate(appState genutil.AppMap, _ ...interface{}) genutil.AppMap {
+	// Perform the Cosmos SDK migration first
+	appState = cosmosv0380.Migrate(appState)
+
 	v010Codec := codec.New()
 	codec.RegisterCrypto(v010Codec)
 

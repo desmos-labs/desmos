@@ -203,7 +203,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 // It assumes that the given reaction is valid.
 // If another reaction from the same user for the same post and with the same value exists, returns an expError.
 // nolint: interfacer
-func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction types.Reaction) sdk.Error {
+func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction types.Reaction) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := []byte(types.PostReactionsStorePrefix + postID.String())
 
@@ -213,9 +213,8 @@ func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction type
 
 	// Check for double reactions
 	if reactions.ContainsReactionFrom(reaction.Owner, reaction.Value) {
-		msg := fmt.Sprintf("%s has already reacted with %s to the post with id %s",
+		return fmt.Errorf("%s has already reacted with %s to the post with id %s",
 			reaction.Owner, reaction.Value, postID)
-		return sdk.ErrUnknownRequest(msg)
 	}
 
 	// Save the new reaction
@@ -229,7 +228,7 @@ func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction type
 // given postID. If no reaction with the same value was previously added from the given user, an expError
 // is returned.
 // nolint: interfacer
-func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) sdk.Error {
+func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := []byte(types.PostReactionsStorePrefix + postID.String())
 
@@ -239,9 +238,8 @@ func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.Ac
 
 	// Check if the user exists
 	if !reactions.ContainsReactionFrom(user, value) {
-		msg := fmt.Sprintf("Cannot remove the reaction with value %s from user %s as it does not exist",
+		return fmt.Errorf("cannot remove the reaction with value %s from user %s as it does not exist",
 			value, user)
-		return sdk.ErrUnauthorized(msg)
 	}
 
 	// Remove and save the reactions list

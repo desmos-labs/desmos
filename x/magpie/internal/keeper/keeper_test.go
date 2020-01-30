@@ -71,8 +71,7 @@ func TestKeeper_SaveSession(t *testing.T) {
 
 	session := types.Session{Owner: testOwner, SessionID: types.SessionID(1)}
 
-	err := k.SaveSession(ctx, session)
-	assert.NoError(t, err)
+	k.SaveSession(ctx, session)
 
 	var stored types.Session
 	store := ctx.KVStore(k.StoreKey)
@@ -164,7 +163,7 @@ func TestKeeper_GetSessions(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			for _, s := range test.storedSessions {
-				_ = k.SaveSession(ctx, s)
+				k.SaveSession(ctx, s)
 			}
 
 			sessions := k.GetSessions(ctx)

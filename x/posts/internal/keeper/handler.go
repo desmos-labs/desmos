@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
-	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
+	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
 		case types.MsgCreatePost:
 			return handleMsgCreatePost(ctx, keeper, msg)
@@ -21,13 +22,13 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
-			return sdk.ErrUnknownRequest(errMsg).Result()
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }
 
 // handleMsgCreatePost handles the creation of a new post
-func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) sdk.Result {
+func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
 		keeper.GetLastPostID(ctx).Next(),
 		msg.ParentID,
@@ -42,18 +43,18 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	// Check for double posting
 	if _, found := keeper.GetPost(ctx, post.PostID); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s already exists", post.PostID)).Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s already exists", post.PostID))
 	}
 
 	// If valid, check the parent post
 	if post.ParentID.Valid() {
 		parentPost, found := keeper.GetPost(ctx, post.ParentID)
 		if !found {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Parent post with id %s not found", post.ParentID)).Result()
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("parent post with id %s not found", post.ParentID))
 		}
 
 		if !parentPost.AllowsComments {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s does not allow comments", parentPost.PostID)).Result()
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s does not allow comments", parentPost.PostID))
 		}
 	}
 
@@ -68,29 +69,30 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	)
 	ctx.EventManager().EmitEvent(createEvent)
 
-	return sdk.Result{
+	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
 		Events: sdk.Events{createEvent},
 	}
+	return &result, nil
 }
 
 // handleMsgEditPost handles MsgEditsPost messages
-func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sdk.Result {
+func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*sdk.Result, error) {
 
 	// Get the existing post
 	existing, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
 	// Checks if the the msg sender is the same as the current owner
 	if !msg.Editor.Equals(existing.Creator) {
-		return sdk.ErrUnauthorized("Incorrect owner").Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
 	if existing.Created.After(msg.EditDate) {
-		return sdk.ErrUnknownRequest("Edit date cannot be before creation date").Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
 
 	// Edit the post
@@ -105,24 +107,25 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) sd
 	)
 	ctx.EventManager().EmitEvent(editEvent)
 
-	return sdk.Result{
+	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(existing.PostID),
 		Events: sdk.Events{editEvent},
 	}
+	return &result, nil
 }
 
-func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) sdk.Result {
+func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
 
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
 	// Create and store the reaction
 	reaction := types.NewReaction(msg.Value, msg.User)
 	if err := keeper.SaveReaction(ctx, post.PostID, reaction); err != nil {
-		return err.Result()
+		return nil, err
 	}
 
 	// Emit the event
@@ -134,23 +137,24 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	)
 	ctx.EventManager().EmitEvent(event)
 
-	return sdk.Result{
-		Data:   []byte("Reaction added properly"),
+	result := sdk.Result{
+		Data:   []byte("reaction added properly"),
 		Events: sdk.Events{event},
 	}
+	return &result, nil
 }
 
-func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) sdk.Result {
+func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) (*sdk.Result, error) {
 
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post with id %s not found", msg.PostID)).Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
 	// Remove the reaction
 	if err := keeper.RemoveReaction(ctx, post.PostID, msg.User, msg.Reaction); err != nil {
-		return err.Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Emit the event
@@ -162,8 +166,9 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	)
 	ctx.EventManager().EmitEvent(event)
 
-	return sdk.Result{
-		Data:   []byte("Reaction removed properly"),
+	result := sdk.Result{
+		Data:   []byte("reaction removed properly"),
 		Events: sdk.Events{event},
 	}
+	return &result, nil
 }

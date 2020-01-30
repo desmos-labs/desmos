@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -531,7 +532,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 		storedLikes    types.Reactions
 		postID         types.PostID
 		like           types.Reaction
-		error          sdk.Error
+		error          error
 		expectedStored types.Reactions
 	}{
 		{
@@ -539,7 +540,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			storedLikes:    types.Reactions{types.NewReaction("like", liker)},
 			postID:         types.PostID(10),
 			like:           types.NewReaction("like", liker),
-			error:          sdk.ErrUnknownRequest("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with like to the post with id 10"),
+			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with like to the post with id 10"),
 			expectedStored: types.Reactions{types.NewReaction("like", liker)},
 		},
 		{
@@ -592,7 +593,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 		postID         types.PostID
 		liker          sdk.AccAddress
 		value          string
-		error          sdk.Error
+		error          error
 		expectedStored types.Reactions
 	}{
 		{
@@ -610,7 +611,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "like",
-			error:          sdk.ErrUnauthorized("Cannot remove the reaction with value like from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value like from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.Reactions{},
 		},
 		{
@@ -619,7 +620,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "reaction",
-			error:          sdk.ErrUnauthorized("Cannot remove the reaction with value reaction from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value reaction from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.Reactions{types.NewReaction("like", liker)},
 		},
 	}
