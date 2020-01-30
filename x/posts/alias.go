@@ -44,15 +44,16 @@ type (
 	Keeper = keeper.Keeper
 
 	// Types
-	PostID       = types.PostID
-	PostIDs      = types.PostIDs
-	Post         = types.Post
-	Posts        = types.Posts
-	PostMedia    = types.PostMedia
-	PostMedias   = types.PostMedias
-	Reaction     = types.Reaction
-	Reactions    = types.Reactions
-	GenesisState = types.GenesisState
+	PostID              = types.PostID
+	PostIDs             = types.PostIDs
+	Post                = types.Post
+	Posts               = types.Posts
+	PostMedia           = types.PostMedia
+	PostMedias          = types.PostMedias
+	UsersAnswersDetails = types.UsersAnswersDetails
+	Reaction            = types.Reaction
+	Reactions           = types.Reactions
+	GenesisState        = types.GenesisState
 
 	// Msgs
 	MsgCreatePost         = types.MsgCreatePost

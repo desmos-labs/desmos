@@ -148,7 +148,7 @@ func Test_queryPost(t *testing.T) {
 			}
 
 			for index, ans := range test.storedAnswers {
-				k.SavePollPostAnswers(ctx, test.storedPosts[index].PostID, ans)
+				k.SavePollUserAnswers(ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for postID, reactions := range test.storedReactions {
@@ -266,7 +266,7 @@ func Test_queryPosts(t *testing.T) {
 			}
 
 			for index, ans := range test.storedAnswers {
-				k.SavePollPostAnswers(ctx, test.storedPosts[index].PostID, ans)
+				k.SavePollUserAnswers(ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			querier := keeper.NewQuerier(k)

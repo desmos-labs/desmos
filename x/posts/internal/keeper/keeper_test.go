@@ -588,7 +588,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 					k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
-			k.SavePollPostAnswers(ctx, test.postID, test.userAnswersDetails)
+			k.SavePollUserAnswers(ctx, test.postID, test.userAnswersDetails)
 
 			var actualUsersAnswersDetails types.UsersAnswersDetails
 			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
@@ -598,7 +598,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	}
 }
 
-func TestKeeper_GetPostPollAnswers(t *testing.T) {
+func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	answers := []uint64{uint64(1), uint64(2)}
 
@@ -625,7 +625,7 @@ func TestKeeper_GetPostPollAnswers(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			if test.storedAnswers != nil {
-				k.SavePollPostAnswers(ctx, test.postID, test.storedAnswers[0])
+				k.SavePollUserAnswers(ctx, test.postID, test.storedAnswers[0])
 			}
 
 			actualPostPollAnswers := k.GetPostPollAnswersDetails(ctx, test.postID)
@@ -666,11 +666,53 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	for _, test := range tests {
 		ctx, k := SetupTestInput()
 
-		k.SavePollPostAnswers(ctx, test.postID, test.storedAnswers)
+		k.SavePollUserAnswers(ctx, test.postID, test.storedAnswers)
 
 		actualPostPollAnswers := k.GetPostPollAnswersByUser(ctx, test.postID, test.user)
 
 		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
+	}
+}
+
+func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	answers := []uint64{uint64(1), uint64(2)}
+
+	tests := []struct {
+		name    string
+		usersAD map[types.PostID]types.UsersAnswersDetails
+	}{
+		{
+			name:    "Empty users answers details data are returned correctly",
+			usersAD: map[types.PostID]types.UsersAnswersDetails{},
+		},
+		{
+			name: "Non empty users answers details data are returned correcly",
+			usersAD: map[types.PostID]types.UsersAnswersDetails{
+				types.PostID(1): {
+					types.NewAnswersDetails(answers, user),
+					types.NewAnswersDetails(answers, user2),
+				},
+				types.PostID(2): {
+					types.NewAnswersDetails(answers, user2),
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+			for postID, userAD := range test.usersAD {
+				store.Set([]byte(types.PollAnswersStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(userAD))
+			}
+
+			usersADData := k.GetAnswersDetailsMap(ctx)
+			assert.Equal(t, test.usersAD, usersADData)
+		})
 	}
 }
 

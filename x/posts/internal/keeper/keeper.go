@@ -178,7 +178,7 @@ func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
 // Save the userAnswersDetails associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If userAnswersDetails are already present, the old ones will be overridden.
-func (k Keeper) SavePollPostAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
+func (k Keeper) SavePollUserAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
 	store := ctx.KVStore(k.StoreKey)
 
 	usersAnswersDetails := k.GetPostPollAnswersDetails(ctx, postID)
@@ -199,6 +199,22 @@ func (k Keeper) GetPostPollAnswersDetails(ctx sdk.Context, postID types.PostID) 
 	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
 
 	return usersAnswersDetails
+}
+
+// GetReactions allows to returns the list of reactions that have been stored inside the given context
+func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.UsersAnswersDetails {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PollAnswersStorePrefix))
+
+	usersAnswersData := map[types.PostID]types.UsersAnswersDetails{}
+	for ; iterator.Valid(); iterator.Next() {
+		var userAnswers types.UsersAnswersDetails
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
+		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PollAnswersStorePrefix))
+		usersAnswersData[postID] = userAnswers
+	}
+
+	return usersAnswersData
 }
 
 // GetPostPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user

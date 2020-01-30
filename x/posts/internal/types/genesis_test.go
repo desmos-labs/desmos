@@ -3,11 +3,15 @@ package types_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestValidateGenesis(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+
 	tests := []struct {
 		name        string
 		genesis     types.GenesisState
@@ -33,6 +37,19 @@ func TestValidateGenesis(t *testing.T) {
 				Reactions: map[string]types.Reactions{
 					"1": {types.Reaction{Owner: nil}},
 				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid poll answers errors",
+			genesis: types.GenesisState{
+				Posts: types.Posts{},
+				PollAnswers: map[string]types.UsersAnswersDetails{
+					"1": {
+						types.NewAnswersDetails([]uint64{}, user),
+					},
+				},
+				Reactions: map[string]types.Reactions{},
 			},
 			shouldError: true,
 		},

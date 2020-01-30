@@ -25,19 +25,47 @@ func convertGenesisReactions(reactions map[string]Reactions) map[PostID]Reaction
 	return reactionsMap
 }
 
+func convertPostPollAnswersMap(answers map[PostID]UsersAnswersDetails) map[string]UsersAnswersDetails {
+	answersMap := make(map[string]UsersAnswersDetails, len(answers))
+	for key, value := range answers {
+		answersMap[key.String()] = value
+	}
+	return answersMap
+}
+
+func convertGenesisPostPollAnswers(pollAnswers map[string]UsersAnswersDetails) map[PostID]UsersAnswersDetails {
+	answersMap := make(map[PostID]UsersAnswersDetails, len(pollAnswers))
+	for key, value := range pollAnswers {
+		postID, err := ParsePostID(key)
+		if err != nil {
+			panic(err)
+		}
+		answersMap[postID] = value
+	}
+	return answersMap
+}
+
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	posts := k.GetPosts(ctx)
-
 	return GenesisState{
-		Posts: posts,
-
-		Reactions: convertReactionsMap(k.GetReactions(ctx)),
+		Posts:       k.GetPosts(ctx),
+		PollAnswers: convertPostPollAnswersMap(k.GetAnswersDetailsMap(ctx)),
+		Reactions:   convertReactionsMap(k.GetReactions(ctx)),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+	for _, post := range data.Posts {
+		keeper.SavePost(ctx, post)
+	}
+
+	pollAnswersMap := convertGenesisPostPollAnswers(data.PollAnswers)
+	for postID, usersAnswersDetails := range pollAnswersMap {
+		for _, userAnswersDetails := range usersAnswersDetails {
+			keeper.SavePollUserAnswers(ctx, postID, userAnswersDetails)
+		}
+	}
 
 	reactionsMap := convertGenesisReactions(data.Reactions)
 	for postID, reactions := range reactionsMap {

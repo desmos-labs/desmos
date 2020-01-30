@@ -213,7 +213,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
 
-	keeper.SavePollPostAnswers(ctx, post.PostID, userPollAnswers)
+	keeper.SavePollUserAnswers(ctx, post.PostID, userPollAnswers)
 
 	answerEvent := sdk.NewEvent(
 		types.EventTypeAnsweredPoll,
