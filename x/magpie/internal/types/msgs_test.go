@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,7 +36,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
 		msg    types.MsgCreateSession
-		expErr sdk.Error
+		expErr error
 	}{
 		{
 			name: "Invalid owner",
@@ -46,7 +47,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs",
 				"QmZh...===",
 			),
-			expErr: sdk.ErrInvalidAddress("Invalid session owner: "),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid session owner: "),
 		},
 		{
 			name: "Invalid namespace",
@@ -57,7 +58,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs",
 				"QmZh...===",
 			),
-			expErr: sdk.ErrUnknownRequest("Session namespace cannot be empty"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session namespace cannot be empty"),
 		},
 		{
 			name: "Invalid external owner",
@@ -68,7 +69,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs",
 				"QmZh...===",
 			),
-			expErr: sdk.ErrUnknownRequest("Session external owner cannot be empty"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session external owner cannot be empty"),
 		},
 		{
 			name: "Invalid public key",
@@ -79,7 +80,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"   ",
 				"QmZh...===",
 			),
-			expErr: sdk.ErrUnknownRequest("Signer public key cannot be empty"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Signer public key cannot be empty"),
 		},
 		{
 			name: "Invalid signature",
@@ -90,14 +91,14 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs",
 				"  ",
 			),
-			expErr: sdk.ErrUnknownRequest("Session signature cannot be empty"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session signature cannot be empty"),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expErr, test.msg.ValidateBasic())
+			assert.Equal(t, test.expErr.Error(), test.msg.ValidateBasic().Error())
 		})
 	}
 }

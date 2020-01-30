@@ -71,15 +71,13 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 
 // SaveSession allows to save a session inside the given context.
 // It assumes the given session has already been validated.
-func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) sdk.Error {
+func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) {
 	// Save the session
 	store := ctx.KVStore(k.StoreKey)
 	store.Set(k.getSessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
 
 	// Update the last used session id
 	k.SetLastSessionID(ctx, session.SessionID)
-
-	return nil
 }
 
 // GetSession returns the session having the specified id

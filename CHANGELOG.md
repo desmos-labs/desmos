@@ -4,6 +4,7 @@
 - Added the support for posts sorting (#78)
 - Added the support for magpie default session length inside genesis (#38)
 - Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes (#82)
+- Bumped Cosmos to `v0.38.0` (#10)
 
 ## Bug fixes
 - Fixed the posts REST endpoint not working properly (#77)
