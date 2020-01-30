@@ -7,9 +7,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/staking/exported"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
@@ -61,9 +61,11 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	/* Handle fee distribution state. */
 
 	// withdraw all validator commission
-	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
+	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
 		_, err := app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
-		if err != nil {
+		// we don't care if the error is telling us there are no commissions, as currently we have no inflation
+		// TODO: remove this once we add inflation (if ever)
+		if err != nil && err != distr.ErrNoValidatorCommission {
 			log.Fatal(err)
 		}
 		return false
@@ -74,7 +76,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	for _, delegation := range dels {
 		_, err := app.DistrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
@@ -89,7 +91,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	ctx = ctx.WithBlockHeight(0)
 
 	// reinitialize all validators
-	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
+	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
 
 		// donate any unwithdrawn outstanding reward fraction tokens to the community pool
 		scraps := app.DistrKeeper.GetValidatorOutstandingRewards(ctx, val.GetOperator())

@@ -81,7 +81,7 @@ func main() {
 	}
 }
 
-func newApp(logger log.Logger, db dbm.DB, _ io.Writer) abci.Application {
+func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
 	var cache sdk.MultiStorePersistentCache
 
 	if viper.GetBool(server.FlagInterBlockCache) {
@@ -94,7 +94,7 @@ func newApp(logger log.Logger, db dbm.DB, _ io.Writer) abci.Application {
 	}
 
 	return app.NewDesmosApp(
-		logger, db, skipUpgradeHeights,
+		logger, db, traceStore, true, skipUpgradeHeights,
 		baseapp.SetPruning(store.NewPruningOptionsFromString(viper.GetString("pruning"))),
 		baseapp.SetMinGasPrices(viper.GetString(server.FlagMinGasPrices)),
 		baseapp.SetHaltHeight(viper.GetUint64(server.FlagHaltHeight)),
@@ -104,11 +104,11 @@ func newApp(logger log.Logger, db dbm.DB, _ io.Writer) abci.Application {
 }
 
 func exportAppStateAndTMValidators(
-	logger log.Logger, db dbm.DB, _ io.Writer, height int64, forZeroHeight bool, jailWhiteList []string,
+	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailWhiteList []string,
 ) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 
 	if height != -1 {
-		gapp := app.NewDesmosApp(logger, db, map[int64]bool{})
+		gapp := app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{})
 		err := gapp.LoadHeight(height)
 		if err != nil {
 			return nil, nil, err
@@ -116,6 +116,6 @@ func exportAppStateAndTMValidators(
 		return gapp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	gapp := app.NewDesmosApp(logger, db, map[int64]bool{})
+	gapp := app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{})
 	return gapp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

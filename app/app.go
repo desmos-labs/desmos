@@ -1,8 +1,10 @@
 package app
 
 import (
+	"io"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -127,15 +129,17 @@ type DesmosApp struct {
 }
 
 // NewDesmosApp is a constructor function for DesmosApp
-func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]bool, baseAppOptions ...func(*bam.BaseApp)) *DesmosApp {
+func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
+	skipUpgradeHeights map[int64]bool, baseAppOptions ...func(*bam.BaseApp),
+) *DesmosApp {
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
 	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
-
+	bApp.SetCommitMultiStoreTracer(traceStore)
+	bApp.SetAppVersion(version.Version)
 	keys := sdk.NewKVStoreKeys(
-		// Basics
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
 		gov.StoreKey, params.StoreKey, upgrade.StoreKey,
@@ -271,9 +275,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, skipUpgradeHeights map[int64]boo
 	app.SetAnteHandler(ante.NewAnteHandler(app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer))
 	app.SetEndBlocker(app.EndBlocker)
 
-	err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
-	if err != nil {
-		tmos.Exit(err.Error())
+	if loadLatest {
+		err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
+		if err != nil {
+			tmos.Exit(err.Error())
+		}
 	}
 
 	return app
