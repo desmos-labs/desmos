@@ -22,6 +22,7 @@ func Test_queryPost(t *testing.T) {
 		path            []string
 		storedPosts     types.Posts
 		storedReactions map[types.PostID]types.Reactions
+		storedAnswers   []types.AnswersDetails
 		expResult       types.PostQueryResponse
 		expError        sdk.Error
 	}{
@@ -39,9 +40,10 @@ func Test_queryPost(t *testing.T) {
 			name: "Post without likes is returned properly",
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 			},
-			path: []string{types.QueryPost, "1"},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			path:          []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
 				[]types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
@@ -54,7 +56,8 @@ func Test_queryPost(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
 			},
-			path: []string{types.QueryPost, "1"},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			path:          []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
 				[]types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
@@ -63,10 +66,34 @@ func Test_queryPost(t *testing.T) {
 			),
 		},
 		{
-			name: "Post without poll answers is returned properly",
+			name: "Post without medias is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, nil, testPost.PollData),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, nil, nil),
+			},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			storedReactions: map[types.PostID]types.Reactions{
+				types.PostID(1): {
+					types.NewReaction("Like", creator),
+					types.NewReaction("Like", otherCreator),
+				},
+			},
+			path: []string{types.QueryPost, "1"},
+			expResult: types.NewPostResponse(
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, nil, testPost.PollData),
+				[]types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+				types.Reactions{
+					types.NewReaction("Like", creator),
+					types.NewReaction("Like", otherCreator),
+				},
+				types.PostIDs{types.PostID(2)},
+			),
+		},
+		{
+			name: "Post without poll and poll answers is returned properly",
+			storedPosts: types.Posts{
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 			},
 			storedReactions: map[types.PostID]types.Reactions{
 				types.PostID(1): {
@@ -76,7 +103,7 @@ func Test_queryPost(t *testing.T) {
 			},
 			path: []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
-				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 				nil,
 				types.Reactions{
 					types.NewReaction("Like", creator),
@@ -89,7 +116,7 @@ func Test_queryPost(t *testing.T) {
 			name: "Post with all data is returned properly",
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 			},
 			storedReactions: map[types.PostID]types.Reactions{
 				types.PostID(1): {
@@ -97,7 +124,8 @@ func Test_queryPost(t *testing.T) {
 					types.NewReaction("Like", otherCreator),
 				},
 			},
-			path: []string{types.QueryPost, "1"},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			path:          []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
 				[]types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
@@ -117,6 +145,10 @@ func Test_queryPost(t *testing.T) {
 
 			for _, p := range test.storedPosts {
 				k.SavePost(ctx, p)
+			}
+
+			for index, ans := range test.storedAnswers {
+				k.SavePollPostAnswers(ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for postID, reactions := range test.storedReactions {
@@ -145,18 +177,20 @@ func Test_queryPosts(t *testing.T) {
 	answers := []uint64{uint64(1)}
 
 	tests := []struct {
-		name        string
-		storedPosts types.Posts
-		params      types.QueryPostsParams
-		expResponse []types.PostQueryResponse
+		name          string
+		storedPosts   types.Posts
+		storedAnswers []types.AnswersDetails
+		params        types.QueryPostsParams
+		expResponse   []types.PostQueryResponse
 	}{
 		{
 			name: "Empty params returns all",
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 			},
-			params: types.QueryPostsParams{},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			params:        types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
@@ -165,7 +199,7 @@ func Test_queryPosts(t *testing.T) {
 					types.PostIDs{types.PostID(2)},
 				),
 				types.NewPostResponse(
-					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 					nil,
 					types.Reactions{},
 					types.PostIDs{},
@@ -177,7 +211,8 @@ func Test_queryPosts(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, nil, testPost.PollData),
 			},
-			params: types.QueryPostsParams{},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			params:        types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, nil, testPost.PollData),
@@ -188,7 +223,7 @@ func Test_queryPosts(t *testing.T) {
 			},
 		},
 		{
-			name: "Empty params returns all posts without poll",
+			name: "Empty params returns all posts without poll data and poll answers",
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
@@ -207,9 +242,10 @@ func Test_queryPosts(t *testing.T) {
 			name: "Non empty params return proper posts",
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, nil),
 			},
-			params: types.DefaultQueryPostsParams(1, 1),
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			params:        types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator, testPost.Medias, testPost.PollData),
@@ -227,6 +263,10 @@ func Test_queryPosts(t *testing.T) {
 			ctx, k := SetupTestInput()
 			for _, p := range test.storedPosts {
 				k.SavePost(ctx, p)
+			}
+
+			for index, ans := range test.storedAnswers {
+				k.SavePollPostAnswers(ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			querier := keeper.NewQuerier(k)
