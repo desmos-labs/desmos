@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
@@ -26,9 +28,14 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 
 // SetDefaultSessionLength allows to set a default session length for new magpie sessions.
 // The specified length is intended to be in number of blocks.
-func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length int64) {
+func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length int64) error {
+	if length < 1 {
+		return fmt.Errorf("cannot set %d as default session length", length)
+	}
+
 	store := ctx.KVStore(k.StoreKey)
 	store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(length))
+	return nil
 }
 
 // GetDefaultSessionLength returns the default session length in number of blocks.

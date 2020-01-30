@@ -9,13 +9,18 @@ import (
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 	return GenesisState{
-		Sessions: k.GetSessions(ctx),
+		DefaultSessionLength: k.GetDefaultSessionLength(ctx),
+		Sessions:             k.GetSessions(ctx),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 // noinspection GoUnhandledErrorResult
 func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
+	if err := keeper.SetDefaultSessionLength(ctx, data.DefaultSessionLength); err != nil {
+		panic(err)
+	}
+
 	for _, session := range data.Sessions {
 		keeper.SaveSession(ctx, session)
 	}

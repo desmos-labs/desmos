@@ -10,25 +10,52 @@ import (
 )
 
 func TestKeeper_SetDefaultSessionLength(t *testing.T) {
-	tests := []int64{-1, 0, 1, math.MaxInt32}
+	tests := []struct {
+		length int64
+		expErr error
+	}{
+		{
+			length: -1,
+			expErr: fmt.Errorf("cannot set -1 as default session length"),
+		},
+		{
+			length: 0,
+			expErr: fmt.Errorf("cannot set 0 as default session length"),
+		},
+		{
+			length: 1,
+			expErr: nil,
+		},
+		{
+			length: math.MaxInt64,
+			expErr: nil,
+		},
+	}
 
-	for _, length := range tests {
-		length := length
+	for _, test := range tests {
+		test := test
 
-		t.Run(fmt.Sprintf("Default session length: %d", length), func(t *testing.T) {
+		t.Run(fmt.Sprintf("Default session length: %d", test.length), func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			k.SetDefaultSessionLength(ctx, length)
+			err := k.SetDefaultSessionLength(ctx, test.length)
 
-			var stored int64
-			store := ctx.KVStore(k.StoreKey)
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
-			assert.Equal(t, length, stored)
+			if test.expErr == nil {
+				assert.NoError(t, err)
+				var stored int64
+				store := ctx.KVStore(k.StoreKey)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
+				assert.Equal(t, test.length, stored)
+			}
+
+			if test.expErr != nil {
+				assert.Equal(t, test.expErr, err)
+			}
 		})
 	}
 }
 
 func TestKeeper_GetDefaultSessionLength(t *testing.T) {
-	tests := []int64{-1, -2, 0, 1, 2}
+	tests := []int64{0, 1, 2, math.MaxInt64}
 
 	for _, length := range tests {
 		length := length
