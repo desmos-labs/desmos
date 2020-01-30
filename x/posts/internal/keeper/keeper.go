@@ -194,7 +194,7 @@ func (k Keeper) GetPostPollAnswersDetails(ctx sdk.Context, postID types.PostID) 
 	store := ctx.KVStore(k.StoreKey)
 
 	var usersAnswersDetails types.UsersAnswersDetails
-	answersBz := store.Get([]byte(types.PollAnswersStorePrefix + postID.String()))
+	answersBz := store.Get(k.getAnswersStoreKey(postID))
 
 	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
 
