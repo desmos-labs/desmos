@@ -424,14 +424,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
 			),
-			expErr: "Post with id 1 doesn't exist",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 1 doesn't exist"),
 		},
 		{
 			name: "No poll associated with post",
 			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil, nil),
-			expErr: "No poll associated with ID: 1",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No poll associated with ID: 1"),
 		},
 		{
 			name: "Answer after poll closure",
@@ -440,7 +440,9 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
 			),
-			expErr: fmt.Sprintf("The poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired)),
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
@@ -449,7 +451,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
 			),
-			expErr: "The poll associated with ID 1 doesn't allow multiple answers",
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "The poll associated with ID 1 doesn't allow multiple answers"),
 		},
 		{
 			name: "User provide too many answers",
@@ -458,7 +461,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
 			),
-			expErr: "User's answers are more than the available ones in Poll",
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "User's answers are more than the available ones in Poll"),
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
@@ -468,7 +472,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
 			),
 			storedAnswers: &userPollAnswers,
-			expErr:        "Post with ID 1 doesn't allow answers' edits",
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "Post with ID 1 doesn't allow answers' edits"),
 		},
 		{
 			name: "Answered correctly to post's poll",
@@ -493,30 +498,30 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			}
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Invalid response
-			if len(test.expErr) != 0 {
-				assert.False(t, res.IsOK())
-				assert.Contains(t, res.Log, test.expErr)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expErr.Error(), err.Error())
 			}
 
 			// Valid response
-			if len(test.expErr) == 0 {
-				assert.True(t, res.IsOK())
+			if res != nil {
+				{
+					// Check the data
+					assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
 
-				// Check the data
-				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+					// Check the events
+					answerEvent := sdk.NewEvent(
+						types.EventTypeAnsweredPoll,
+						sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID.String()),
+						sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
+					)
 
-				// Check the events
-				answerEvent := sdk.NewEvent(
-					types.EventTypeAnsweredPoll,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
-				)
-
-				assert.Len(t, ctx.EventManager().Events(), 1)
-				assert.Contains(t, ctx.EventManager().Events(), answerEvent)
+					assert.Len(t, ctx.EventManager().Events(), 1)
+					assert.Contains(t, ctx.EventManager().Events(), answerEvent)
+				}
 			}
 		})
 	}
@@ -534,7 +539,7 @@ func Test_handleMsgClosePoll(t *testing.T) {
 		{
 			name:   "Post not found",
 			msg:    types.NewMsgClosePollPost(types.PostID(1), "message", user),
-			expErr: "Post with id 1 doesn't exists",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 1 doesn't exists"),
 		},
 		{
 			name: "Try closing post from another user than creator",
@@ -543,14 +548,14 @@ func Test_handleMsgClosePoll(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
 			),
-			expErr: fmt.Sprintf("Only the poll creator can close it, %s", testPostOwner),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Only the poll creator can close it, %s", testPostOwner)),
 		},
 		{
 			name: "Try closing a post poll that doesn't exist",
 			msg:  types.NewMsgClosePollPost(types.PostID(10), "message", testPostOwner),
 			storedPost: types.NewPost(types.PostID(10), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil, nil),
-			expErr: "No poll associated with this post ID: 10",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No poll associated with this post ID: 10"),
 		},
 		{
 			name: "Try closing a post that is already closed",
@@ -559,7 +564,7 @@ func Test_handleMsgClosePoll(t *testing.T) {
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer, answer2}, true, true, true),
 			),
-			expErr: "The poll associated with this post ID is already closed",
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The poll associated with this post ID is already closed"),
 		},
 		{
 			name: "Closing post's poll correctly",
@@ -580,30 +585,30 @@ func Test_handleMsgClosePoll(t *testing.T) {
 			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(test.storedPost))
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Invalid response
-			if len(test.expErr) != 0 {
-				assert.False(t, res.IsOK())
-				assert.Contains(t, res.Log, test.expErr)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expErr.Error(), err.Error())
 			}
 
 			// Valid response
-			if len(test.expErr) == 0 {
-				assert.True(t, res.IsOK())
+			if res != nil {
+				{
+					// Check the data
+					assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("Poll closed correctly, %s", test.msg.Message)), res.Data)
 
-				// Check the data
-				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("Poll closed correctly, %s", test.msg.Message)), res.Data)
+					// Check the events
+					closeEvent := sdk.NewEvent(
+						types.EventTypeClosePoll,
+						sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
+						sdk.NewAttribute(types.AttributeKeyPostOwner, test.msg.Creator.String()),
+					)
 
-				// Check the events
-				closeEvent := sdk.NewEvent(
-					types.EventTypeClosePoll,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostOwner, test.msg.Creator.String()),
-				)
-
-				assert.Len(t, ctx.EventManager().Events(), 1)
-				assert.Contains(t, ctx.EventManager().Events(), closeEvent)
+					assert.Len(t, ctx.EventManager().Events(), 1)
+					assert.Contains(t, ctx.EventManager().Events(), closeEvent)
+				}
 			}
 		})
 	}

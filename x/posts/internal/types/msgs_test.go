@@ -308,10 +308,10 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
-			name: "Message with non-empty external reference",
+			name: "Message with empty external reference",
 			msg: types.NewMsgCreatePost(
 				"My post",
 				types.PostID(15),
@@ -328,7 +328,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty medias",
@@ -343,7 +343,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				types.PostMedias{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"subspace":"desmos"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -607,17 +607,17 @@ func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id",
 			msg:   types.NewMsgClosePollPost(types.PostID(0), "message", msgClosePollPost.Creator),
-			error: sdk.ErrUnknownRequest("Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid message length",
 			msg:   types.NewMsgClosePollPost(types.PostID(1), "test", msgClosePollPost.Creator),
-			error: sdk.ErrUnknownRequest("If present, the message should be at least 8 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "If present, the message should be at least 8 characters"),
 		},
 		{
 			name:  "Invalid user address",
 			msg:   types.NewMsgClosePollPost(types.PostID(1), "message", nil),
-			error: sdk.ErrInvalidAddress("Invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name: "Valid message returns no error",
@@ -626,7 +626,16 @@ func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.error, test.msg.ValidateBasic())
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				assert.Nil(t, returnedError)
+			} else {
+				assert.NotNil(t, returnedError)
+				assert.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
 	}
 }
 
@@ -667,17 +676,17 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id",
 			msg:   types.NewMsgAnswerPollPost(types.PostID(0), []uint64{1, 2}, msgAnswerPollPost.Answerer),
-			error: sdk.ErrUnknownRequest("Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid answerer address",
 			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, nil),
-			error: sdk.ErrInvalidAddress("Invalid answerer address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
 			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{}, msgAnswerPollPost.Answerer),
-			error: sdk.ErrUnknownRequest("Provided answers must contains at least one answer"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
@@ -686,7 +695,16 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.error, test.msg.ValidateBasic())
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				assert.Nil(t, returnedError)
+			} else {
+				assert.NotNil(t, returnedError)
+				assert.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
 	}
 }
 

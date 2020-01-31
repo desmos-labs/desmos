@@ -100,10 +100,10 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if !msg.PollData.Open {
-		return sdk.ErrUnknownRequest("Poll Post cannot be created closed")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
 	}
 	if err := msg.PollData.Validate(); err != nil {
-		return sdk.ErrUnknownRequest(err.Error())
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -209,17 +209,17 @@ func (msg MsgClosePollPost) Route() string { return RouterKey }
 func (msg MsgClosePollPost) Type() string { return ActionClosePollPost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgClosePollPost) ValidateBasic() sdk.Error {
+func (msg MsgClosePollPost) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
 
 	if len(msg.Message) > 0 && len(msg.Message) < 7 {
-		return sdk.ErrUnknownRequest("If present, the message should be at least 8 characters")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "If present, the message should be at least 8 characters")
 	}
 
 	if msg.Creator.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.Creator))
 	}
 
 	return nil
@@ -262,17 +262,17 @@ func (msg MsgAnswerPollPost) Route() string { return RouterKey }
 func (msg MsgAnswerPollPost) Type() string { return ActionAnswerPollPost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgAnswerPollPost) ValidateBasic() sdk.Error {
+func (msg MsgAnswerPollPost) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
 
 	if msg.Answerer.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid answerer address: %s", msg.Answerer))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid answerer address: %s", msg.Answerer))
 	}
 
 	if len(msg.UserAnswers) == 0 {
-		return sdk.ErrUnknownRequest("Provided answers must contains at least one answer")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer")
 	}
 
 	return nil

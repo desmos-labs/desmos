@@ -318,8 +318,9 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 		Short: "Answer a post's poll'",
 		Args:  cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
@@ -360,8 +361,9 @@ func GetCmdClosePoll(cdc *codec.Codec) *cobra.Command {
 		Short: "Close a post's poll",
 		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
