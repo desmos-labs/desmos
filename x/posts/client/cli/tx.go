@@ -54,33 +54,31 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Long: fmt.Sprintf(`
 				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
 				Optional media attachments and polls are also supported.
-				If you want to add one or more media attachment, you have to use the --medias flag 
-				specifying after that a string containing couples of (URI,mime-type) separated by a space one from the other.
-				Each attachment can be added only once, otherwise and error will occur.
+				If you want to add one or more medias attachments, you have to use the --media flag.
 				Usage examples:
 
-				- tx posts create "desmos" "Hello world!" true
-                - tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with media" false \
-				  --medias "https://example.com/media1,text/plain"
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" true
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
-                  --medias "https://example.com/media1,text/plain https://example.com/media2,application/json"
+                  --media "https://example.com/media1,text/plain"
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
+                  --media "https://example.com/media1,text/plain https://example.com/media2,application/json"
 				
 				If you want to add a poll to your post you need to specify it through two flags:
 					1. --poll-details 
                        where you specify a map of the following fields:
-						1) The title of the poll (key: title)
-						1) The end date of your poll after which no further answers will be accepted (key: date)
-						2) A boolean value that indicates the possibility of multiple answers from users (key: multiple-answers)
-						3) A boolean value that indicates the possibility to edit the answers in future (key: allows-answer-edits)
+						* The question of the poll (key: question)
+						* The end date of your poll after which no further answers will be accepted (key: date)
+						* A boolean value that indicates the possibility of multiple answers from users (key: multiple-answers)
+						* A boolean value that indicates the possibility to edit the answers in future (key: allows-answer-edits)
 					2. --poll-answer 
                        where you specify a slice of answers that will be provided to the users once they want to take part in poll votations.
 						Each answer should is identified by the text of the answer itself
 				Usage examples:
-				-  tx posts create "desmos" "Post" true \
-  					--poll-details title="What dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
-					--poll-answers "Snoopy,Leone,Lessie"
-				- tx posts create "desmos" "Post" true \
-  					--poll-details title="Which dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
+				-  tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post" true \
+  					--poll-details question="What dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
+					--poll-answer "Snoopy,Leone,Lessie"
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post" true \
+  					--poll-details question="Which dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
   					--poll-answer "Beagle" \
   					--poll-answer "Carlino" \
 					--poll-answer "German Sheperd,Labrador"
@@ -108,7 +106,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			mediasStrings := strings.Split(viper.GetString(flagMedia), " ")
+			// medias' checks
+
+			mediasStrings := viper.GetStringSlice(flagMedia)
 			medias := types.PostMedias{}
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
@@ -120,29 +120,40 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				medias = medias.AppendIfMissing(media)
 			}
 
+			// polls' checks
+
 			pollDetailsMap := viper.GetStringMapString(flagPollDetails)
 			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
 
-			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 ||
-				len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
-				return fmt.Errorf("poll details and poll answers must be both specified")
+			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
+				return fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", flagPollDetails)
+			}
+
+			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
+				return fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
 			}
 
 			pollData := types.PollData{}
 			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
-				date, err := time.Parse(time.RFC3339, pollDetailsMap["end-date"])
+				date, err := time.Parse(time.RFC3339, pollDetailsMap[EndDate])
 				if err != nil {
-					return fmt.Errorf("end date shoulb be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
+					return fmt.Errorf("end date should be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
 				}
 
-				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap["multiple-answers"])
-				if err != nil {
-					return fmt.Errorf("multiple-answers could be only true or false")
+				if len(strings.TrimSpace(pollDetailsMap[Question])) == 0 {
+					return fmt.Errorf("question should be provided and not be empty")
 				}
 
-				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap["allows-answer-edits"])
+				question := pollDetailsMap[Question]
+
+				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap[MultipleAnswers])
 				if err != nil {
-					return fmt.Errorf("allows-answer-edits could be only true or false")
+					return fmt.Errorf("multiple-answers can only be true or false")
+				}
+
+				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap[AllowsAnswerEdits])
+				if err != nil {
+					return fmt.Errorf("allows-answer-edits can only be only true or false")
 				}
 
 				answers := types.PollAnswers{}
@@ -160,7 +171,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				}
 
 				pollData = types.PollData{
-					Title:                 pollDetailsMap["title"],
+					Question:              question,
 					Open:                  true,
 					EndDate:               date,
 					ProvidedAnswers:       answers,

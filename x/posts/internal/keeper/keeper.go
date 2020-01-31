@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -258,11 +257,7 @@ func (k Keeper) GetPostPollAnswersByUser(ctx sdk.Context, postID types.PostID, u
 // It assumes that the post associated with the given ID exists and has a poll that's not already closed
 func (k Keeper) ClosePollPost(ctx sdk.Context, postID types.PostID) {
 	post, _ := k.GetPost(ctx, postID)
-
 	post.PollData.Open = false
-
-	post.LastEdited = time.Now().UTC()
-
 	k.SavePost(ctx, post)
 }
 

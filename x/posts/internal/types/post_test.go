@@ -393,6 +393,10 @@ func TestPost_Equals(t *testing.T) {
 		},
 	}
 
+	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
+	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
+
 	tests := []struct {
 		name      string
 		first     types.Post
@@ -654,6 +658,94 @@ func TestPost_Equals(t *testing.T) {
 				Medias:         medias,
 			},
 			expEquals: false,
+		},
+		{
+			name: "Different medias",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         types.PostMedias{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different polls",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       nil,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         medias,
+				PollData:       &types.PollData{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Equals posts",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       pollData,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       pollData,
+			},
+			expEquals: true,
 		},
 	}
 

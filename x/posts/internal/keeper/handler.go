@@ -179,41 +179,63 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	return &result, nil
 }
 
-// handleMsgAnswerPollPost handles the answer to a poll post
-func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPollPost) (*sdk.Result, error) {
+// checkPostPollValid perform checks to ensure the validity of a poll
+func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types.Post, error) {
 	// checks if post exists
-	post, found := keeper.GetPost(ctx, msg.PostID)
+	post, found := keeper.GetPost(ctx, id)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s doesn't exist", msg.PostID))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s doesn't exist", id))
 	}
 
 	// checks if post has a poll
 	if post.PollData == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No poll associated with ID: %s", msg.PostID))
+		return &post, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("no poll associated with ID: %s", id))
 	}
 
 	// checks if the poll is already closed or not
 	if time.Now().UTC().After(post.PollData.EndDate) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("The poll associated with ID %s was closed at %s",
-			post.PostID, post.PollData.EndDate))
+		return &post, sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate),
+		)
+	}
+
+	return &post, nil
+}
+
+// handleMsgAnswerPollPost handles the answer to a poll post
+func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPollPost) (*sdk.Result, error) {
+
+	post, err := checkPostPollValid(ctx, msg.PostID, keeper)
+	if err != nil {
+		return nil, err
 	}
 
 	// checks if the post's poll allows multiple answers
 	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("The poll associated with ID %s doesn't allow multiple answers",
-			post.PostID))
+		return nil, sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("the poll associated with ID %s doesn't allow multiple answers",
+				post.PostID),
+		)
 	}
 
 	// check if the user answers are more than the answers provided by the poll
 	if len(msg.UserAnswers) > len(post.PollData.ProvidedAnswers) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("User's answers are more than the available ones in Poll"))
+		return nil, sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("user's answers are more than the available ones in Poll"),
+		)
 	}
 
 	pollAnswers := keeper.GetPostPollAnswersByUser(ctx, post.PostID, msg.Answerer)
 
 	// check if the poll allows to edit previous answers
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with ID %s doesn't allow answers' edits", post.PostID))
+		return nil, sdkerrors.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("post with ID %s doesn't allow answers' edits", post.PostID),
+		)
 	}
 
 	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
@@ -237,25 +259,15 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 // handleMsgClosePollPost handles the closure of a poll post
 func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePollPost) (*sdk.Result, error) {
-	// check if post exists
-	post, found := keeper.GetPost(ctx, msg.PostID)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s doesn't exists", msg.PostID))
+
+	post, err := checkPostPollValid(ctx, msg.PostID, keeper)
+	if err != nil {
+		return nil, err
 	}
 
 	// check if the creator of message is the owner of the post
 	if !post.Creator.Equals(msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Only the poll creator can close it, %s", post.Creator))
-	}
-
-	// check if post has a poll
-	if post.PollData == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No poll associated with this post ID: %s", msg.PostID))
-	}
-
-	// check if the post has already been closed.
-	if time.Now().UTC().After(post.PollData.EndDate) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("The poll associated with this post ID is already closed"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("only the poll creator can close it, %s", post.Creator))
 	}
 
 	keeper.ClosePollPost(ctx, msg.PostID)
@@ -269,7 +281,7 @@ func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePo
 	ctx.EventManager().EmitEvent(closeEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("Poll closed correctly, %s", msg.Message)),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("poll closed correctly, %s", msg.Message)),
 		Events: sdk.Events{closeEvent},
 	}
 

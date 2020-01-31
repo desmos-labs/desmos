@@ -308,7 +308,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -328,7 +328,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"post_medias":[{"mime_Type":"text/plain","uri":"https://uri.com"}],"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty medias",
@@ -343,7 +343,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				types.PostMedias{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"title":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -595,7 +595,7 @@ func TestMsgClosePollPost_Route(t *testing.T) {
 
 func TestMsgClosePollPost_Type(t *testing.T) {
 	actual := msgClosePollPost.Type()
-	assert.Equal(t, "close_poll_post", actual)
+	assert.Equal(t, "close_poll", actual)
 }
 
 func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
@@ -641,7 +641,7 @@ func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
 
 func TestMsgClosePollPost_GetSignBytes(t *testing.T) {
 	actual := msgClosePollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgClosePollPost","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"message","post_id":"10"}}`
+	expected := `{"type":"desmos/MsgClosePoll","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"message","post_id":"10"}}`
 	assert.Equal(t, expected, string(actual))
 }
 
@@ -664,7 +664,7 @@ func TestMsgAnswerPollPost_Route(t *testing.T) {
 
 func TestMsgAnswerPollPost_Type(t *testing.T) {
 	actual := msgClosePollPost.Type()
-	assert.Equal(t, "close_poll_post", actual)
+	assert.Equal(t, "close_poll", actual)
 }
 
 func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
@@ -710,7 +710,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 
 func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 	actual := msgAnswerPollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgAnswerPollPost","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"1","provided_answers":["1","2"]}}`
+	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","post_id":"1","provided_answers":["1","2"]}}`
 	assert.Equal(t, expected, string(actual))
 }
 

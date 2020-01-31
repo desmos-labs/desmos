@@ -17,8 +17,8 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/reactions", removeReactionToPostHandler(cliCtx)).Methods("DELETE")
 
-	r.HandleFunc("/posts/answer/poll", addAnswerToPostPollHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/close/poll", closePostPollHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/posts/{postID}/answers", addAnswerToPostPollHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/posts/{postID}/close", closePostPollHandler(cliCtx)).Methods("POST")
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -48,7 +48,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-			addr, req.CreationTime, req.Medias, &req.PollData)
+			addr, req.CreationTime, *req.Medias, req.PollData)
 
 		err = msg.ValidateBasic()
 		if err != nil {
@@ -134,6 +134,8 @@ func removeReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
 		var req AnswerPollPostReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -151,7 +153,7 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		postID, err := types.ParsePostID(req.PostID)
+		postID, err := types.ParsePostID(vars["postID"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -170,6 +172,8 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func closePostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
 		var req ClosePollPostReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -187,7 +191,7 @@ func closePostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		postID, err := types.ParsePostID(req.PostID)
+		postID, err := types.ParsePostID(vars["postID"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

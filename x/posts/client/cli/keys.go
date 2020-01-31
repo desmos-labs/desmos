@@ -16,4 +16,9 @@ const (
 	flagAllowsComments = "allows-comments"
 	flagSubspace       = "subspace"
 	flagCreator        = "creator"
+
+	EndDate           = "end-date"
+	MultipleAnswers   = "multiple-answers"
+	AllowsAnswerEdits = "allows-answer-edits"
+	Question          = "question"
 )

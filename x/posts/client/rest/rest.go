@@ -24,8 +24,8 @@ type CreatePostReq struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data"`
 	CreationTime   time.Time         `json:"creation_time"`
-	Medias         types.PostMedias  `json:"medias,omitempty"`
-	PollData       types.PollData    `json:"poll_data,omitempty"`
+	Medias         *types.PostMedias `json:"medias,omitempty"`
+	PollData       *types.PollData   `json:"poll_data,omitempty"`
 }
 
 // AddReactionReq defines the properties of a reaction adding request's body.
@@ -44,7 +44,6 @@ type RemoveReactionReq struct {
 
 type AnswerPollPostReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	PostID  string       `json:"post_id"`
 	Answers []uint64     `json:"answers"`
 }
 

@@ -18,55 +18,8 @@ func TestPollData_String(t *testing.T) {
 	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
 	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
-	assert.Equal(t, `{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true}`,
+	assert.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		pollData.String())
-}
-
-func TestPollData_MarshalJSON(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
-	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
-
-	json := types.ModuleCdc.MustMarshalJSON(pollData)
-	assert.Equal(t, `{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true}`, string(json))
-}
-
-func TestPollData_UnmarshalJSON(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
-	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
-
-	tests := []struct {
-		name        string
-		strPollData string
-		expPollData types.PollData
-		expErr      string
-	}{
-		{
-			name:        "Invalid poll data returns error",
-			strPollData: "invalid poll data",
-			expPollData: types.PollData{},
-			expErr:      "invalid character 'i' looking for beginning of value",
-		}, {
-			name:        "Valid poll data is read properly",
-			strPollData: `{"title":"poll?","provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"end_date":"2050-01-01T15:15:00Z","open":true,"allows_multiple_answers":false,"allows_answer_edits":true}`,
-			expPollData: *pollData,
-			expErr:      "",
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			var pollData types.PollData
-			err := types.ModuleCdc.UnmarshalJSON([]byte(test.strPollData), &pollData)
-			if err != nil {
-				assert.Equal(t, test.expErr, err.Error())
-			} else {
-				assert.Equal(t, pollData, test.expPollData)
-			}
-		})
-	}
 }
 
 func TestPollData_Validate(t *testing.T) {
@@ -181,7 +134,7 @@ func TestPollAnswers_String(t *testing.T) {
 	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
 	answers := types.PollAnswers{answer, answer2}
 
-	assert.Equal(t, "Answers\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
+	assert.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
 }
 
 func TestPollAnswers_Validate(t *testing.T) {

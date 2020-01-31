@@ -25,8 +25,8 @@ const (
 
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
-	ActionClosePollPost      = "close_poll_post"
-	ActionAnswerPollPost     = "answer_poll_post"
+	ActionClosePollPost      = "close_poll"
+	ActionAnswerPollPost     = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
 
