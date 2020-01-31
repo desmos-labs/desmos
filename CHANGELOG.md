@@ -2,6 +2,16 @@
 ## Changes
 - Implemented the support for media in posts (#36)
 - Implemented the support for poll in posts  (#14) 
+- Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes (#82)
+- Bumped Cosmos to `v0.38.0` (#10)
+
+## Migration
+In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:
+
+```shell
+desmosd migrate v0.3.0 <path-to-genesis-file> 
+```
+
 # Version 0.2.0
 ## Changes
 - Implemented the support for arbitrary data inside a post (#52, #66)

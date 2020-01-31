@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 	testData := []struct {
 		name  string
 		msg   types.MsgCreateSession
-		error string
+		error error
 	}{
 		{
 			name: "Empty signature returns error",
@@ -27,7 +28,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 				PubKey:        testSession.PubKey,
 				Signature:     "",
 			},
-			error: "The session signature is not valid",
+			error: sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "the session signature is not valid"),
 		},
 		{
 			name: "Invalid signature returns error",
@@ -36,7 +37,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 				PubKey:    "ArDhBMh0X/3Akfc58oF1zFE00L/rLpgMMVvmcj0QlaN1",
 				Signature: "3KXX5DmlsDAyO0pmgDT3pTyyuTfGr9ocJCOcaPwZDilAiwAp6U9egpHr1qOtx4dLLrtIVWE8npHK49BKKyyacg==",
 			},
-			error: "The session signature is not valid",
+			error: sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "the session signature is not valid"),
 		},
 		{
 			name: "Valid signature works properly",
@@ -56,13 +57,10 @@ func Test_handleMsgCreateSession(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
-			if len(test.error) == 0 {
-
-				// Check the response
-				assert.True(t, res.IsOK())
-
+			// Valid response
+			if res != nil {
 				// Check the stored session
 				expectedID := k.GetLastSessionID(ctx)
 				session := types.Session{
@@ -90,11 +88,14 @@ func Test_handleMsgCreateSession(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 				)
 
+				assert.NotNil(t, res)
 				assert.Contains(t, res.Events, creationEvent)
-			} else {
-				assert.False(t, res.IsOK())
-				assert.Contains(t, res.Log, test.error)
-				assert.Empty(t, res.Events)
+			}
+
+			// Invalid response
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, err.Error(), test.error.Error())
 			}
 		})
 	}

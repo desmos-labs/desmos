@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
@@ -14,18 +15,18 @@ import (
 
 // NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
-	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
+	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
 		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Magpie message type: %v", msg.Type())
-			return sdk.ErrUnknownRequest(errMsg).Result()
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }
 
-func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateSession) sdk.Result {
+func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateSession) (*sdk.Result, error) {
 
 	// query if a previous TX with the same namespace and external owner exists
 	// if a query exists,
@@ -58,7 +59,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	// Verify the signature
 	if !pubkey.VerifyBytes(signedBytes, sig) {
-		return sdk.ErrUnauthorized("The session signature is not valid").Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "the session signature is not valid")
 	}
 
 	// Create the session
@@ -75,13 +76,11 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	// Check for any previously existing session
 	if _, found := keeper.GetSession(ctx, session.SessionID); found {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Session with id %s already exists", session.SessionID)).Result()
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("session with id %s already exists", session.SessionID))
 	}
 
 	// Save the session
-	if err := keeper.SaveSession(ctx, session); err != nil {
-		return err.Result()
-	}
+	keeper.SaveSession(ctx, session)
 
 	createSessionEvent := sdk.NewEvent(
 		types.EventTypeCreateSession,
@@ -92,8 +91,9 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	)
 	ctx.EventManager().EmitEvent(createSessionEvent)
 
-	return sdk.Result{
+	result := sdk.Result{
 		Data:   types.ModuleCdc.MustMarshalBinaryLengthPrefixed(session.SessionID),
 		Events: sdk.Events{createSessionEvent},
 	}
+	return &result, nil
 }

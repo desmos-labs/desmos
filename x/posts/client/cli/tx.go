@@ -1,11 +1,14 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
 
@@ -31,11 +34,11 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	postsTxCmd.AddCommand(client.PostCommands(
+	postsTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreatePost(cdc),
 		GetCmdEditPost(cdc),
-		GetCmdAddLike(cdc),
-		GetCmdRemoveLike(cdc),
+		GetCmdAddPostReaction(cdc),
+		GetCmdRemovePostReaction(cdc),
 		GetCmdAnswerPoll(cdc),
 		GetCmdClosePoll(cdc),
 	)...)
@@ -85,8 +88,9 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
@@ -200,8 +204,9 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
@@ -211,7 +216,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
-				return err
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			msg := types.NewMsgEditPost(postID, args[1], from, time.Now().UTC())
@@ -224,8 +229,8 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdAddLike is the CLI command for adding a like to a post
-func GetCmdAddLike(cdc *codec.Codec) *cobra.Command {
+// GetCmdAddPostReaction is the CLI command for adding a like to a post
+func GetCmdAddPostReaction(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "add-reaction [post-id] [value]",
 		Short: "Adds a reaction to a post",
@@ -240,8 +245,9 @@ E.g.
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
@@ -251,7 +257,7 @@ E.g.
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
-				return err
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], from)
@@ -264,8 +270,8 @@ E.g.
 	}
 }
 
-// GetCmdRemoveLike is the CLI command for removing a like from a post
-func GetCmdRemoveLike(cdc *codec.Codec) *cobra.Command {
+// GetCmdRemovePostReaction is the CLI command for removing a like from a post
+func GetCmdRemovePostReaction(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "remove-reaction [post-id] [value]",
 		Short: "Removes an existing reaction from a post",
@@ -280,8 +286,9 @@ E.g.
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			accGetter := authtypes.NewAccountRetriever(cliCtx)
 			from := cliCtx.GetFromAddress()
@@ -291,7 +298,7 @@ E.g.
 
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
-				return err
+				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, err.Error())
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, from, args[1])

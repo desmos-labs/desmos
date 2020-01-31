@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // MsgCreateSession defines the MsgCreateSession message
@@ -34,26 +35,26 @@ func (msg MsgCreateSession) Route() string { return RouterKey }
 func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateSession) ValidateBasic() sdk.Error {
+func (msg MsgCreateSession) ValidateBasic() error {
 	if msg.Owner.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid session owner: %s", msg.Owner))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid session owner: %s", msg.Owner))
 	}
 
 	if len(strings.TrimSpace(msg.Namespace)) == 0 {
-		return sdk.ErrUnknownRequest("Session namespace cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session namespace cannot be empty")
 	}
 
 	if len(strings.TrimSpace(msg.PubKey)) == 0 {
-		return sdk.ErrUnknownRequest("Signer public key cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Signer public key cannot be empty")
 	}
 
 	// The external signer address doesn't have to exist on Desmos
 	if len(strings.TrimSpace(msg.ExternalOwner)) == 0 {
-		return sdk.ErrUnknownRequest("Session external owner cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session external owner cannot be empty")
 	}
 
 	if len(strings.TrimSpace(msg.Signature)) == 0 {
-		return sdk.ErrUnknownRequest("Session signature cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session signature cannot be empty")
 	}
 
 	return nil

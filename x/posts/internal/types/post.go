@@ -168,8 +168,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
 	}
 
-	if len(strings.TrimSpace(p.Subspace)) == 0 {
-		return fmt.Errorf("post subspace must be non empty and non blank")
+	if !SubspaceRegEx.MatchString(p.Subspace) {
+		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
 	if p.Created.IsZero() {

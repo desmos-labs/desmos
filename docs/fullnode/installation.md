@@ -78,8 +78,8 @@ git clone https://github.com/desmos-labs/desmos.git && cd desmos
 # sudo apt install git-all --yes
 
 # Checkout the correct commit
-# We are using v0.2.0 for morpheus-1001 testnet
-git checkout v0.2.0
+# We are using tag v0.2.0 for morpheus-1001 testnet
+git checkout tags/v0.2.0
 
 # Build the software
 make install
@@ -147,7 +147,7 @@ desmoscli status
 
 You should see an output like the following one:
 
-``` json{24}
+```
 {
   "node_info": {
     "protocol_version": {

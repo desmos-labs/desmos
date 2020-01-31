@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -64,7 +65,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					types.PostID(0),
 					"Post",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
@@ -77,7 +78,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"New post",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
@@ -96,7 +97,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					types.PostID(0),
 					"Post",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
@@ -109,7 +110,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"New post",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
@@ -128,7 +129,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					types.PostID(0),
 					"Parent",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
@@ -141,7 +142,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(1),
 				"Comment",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
@@ -160,7 +161,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					types.PostID(0),
 					"Post lesser",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
@@ -173,7 +174,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"New post greater",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{"key": "value"},
 				testPost.Created,
 				testPostOwner,
@@ -192,7 +193,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					types.PostID(0),
 					"Post ID greater",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
@@ -205,7 +206,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"New post ID lesser",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
@@ -226,7 +227,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"Post without medias",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
@@ -246,7 +247,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				types.PostID(0),
 				"New post ID lesser",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
@@ -313,7 +314,7 @@ func TestKeeper_GetPost(t *testing.T) {
 				types.PostID(0),
 				"Post",
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
@@ -357,10 +358,10 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "desmos", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55)},
@@ -403,7 +404,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 					types.PostID(0),
 					"",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
@@ -459,7 +460,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			types.PostID(1),
 			"Post 2",
 			true,
-			"desmos",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			map[string]string{},
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
@@ -471,7 +472,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			types.PostID(2),
 			"Post 3",
 			false,
-			"desmos",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			map[string]string{},
 			date,
 			creator2,
@@ -517,13 +518,33 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		},
 		{
 			name:     "Subspace mather works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Subspace: "desmos"},
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
 			expected: types.Posts{posts[1], posts[2]},
 		},
 		{
 			name:     "Creator mather works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Creator: creator2},
 			expected: types.Posts{posts[1], posts[2]},
+		},
+		{
+			name:     "Sorting by date ascending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderAscending},
+			expected: types.Posts{posts[0], posts[2], posts[1]},
+		},
+		{
+			name:     "Sorting by date descending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
+			expected: types.Posts{posts[1], posts[0], posts[2]},
+		},
+		{
+			name:     "Sorting by ID ascending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
+			expected: types.Posts{posts[0], posts[1], posts[2]},
+		},
+		{
+			name:     "Sorting by ID descending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
+			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
 	}
 
@@ -536,10 +557,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			}
 
 			result := k.GetPostsFiltered(ctx, test.filter)
-			assert.Len(t, result, len(test.expected))
-			for index, post := range result {
-				assert.True(t, test.expected[index].Equals(post))
-			}
+			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
 		})
 	}
 }
@@ -743,7 +761,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 		storedLikes    types.Reactions
 		postID         types.PostID
 		like           types.Reaction
-		error          sdk.Error
+		error          error
 		expectedStored types.Reactions
 	}{
 		{
@@ -751,7 +769,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			storedLikes:    types.Reactions{types.NewReaction("like", liker)},
 			postID:         types.PostID(10),
 			like:           types.NewReaction("like", liker),
-			error:          sdk.ErrUnknownRequest("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with like to the post with id 10"),
+			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with like to the post with id 10"),
 			expectedStored: types.Reactions{types.NewReaction("like", liker)},
 		},
 		{
@@ -804,7 +822,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 		postID         types.PostID
 		liker          sdk.AccAddress
 		value          string
-		error          sdk.Error
+		error          error
 		expectedStored types.Reactions
 	}{
 		{
@@ -822,7 +840,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "like",
-			error:          sdk.ErrUnauthorized("Cannot remove the reaction with value like from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value like from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.Reactions{},
 		},
 		{
@@ -831,7 +849,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "reaction",
-			error:          sdk.ErrUnauthorized("Cannot remove the reaction with value reaction from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value reaction from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.Reactions{types.NewReaction("like", liker)},
 		},
 	}

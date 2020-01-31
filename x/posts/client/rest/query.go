@@ -16,6 +16,8 @@ import (
 // REST Variable names
 // nolint
 const (
+	RestSortBy         = "sort_by"
+	RestSortOrder      = "sort_order"
 	RestParentID       = "parent_id"
 	RestCreationTime   = "creation_time"
 	RestAllowsComments = "allows_comments"
@@ -57,18 +59,21 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 			return
 		}
 
+		// Default params
+		params := types.DefaultQueryPostsParams(page, limit)
+
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
 			return
 		}
 
-		var (
-			parentID       *types.PostID
-			creationTime   *time.Time
-			allowsComments *bool
-			subspace       string
-			creatorAddr    sdk.AccAddress
-		)
+		if v := r.URL.Query().Get(RestSortBy); len(v) != 0 {
+			params.SortBy = v
+		}
+
+		if v := r.URL.Query().Get(RestSortOrder); len(v) != 0 {
+			params.SortOrder = v
+		}
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
 			parsedParentID, err := types.ParsePostID(v)
@@ -76,7 +81,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			parentID = &parsedParentID
+			params.ParentID = &parsedParentID
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
@@ -85,8 +90,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-
-			creationTime = &parsedTime
+			params.CreationTime = &parsedTime
 		}
 
 		if v := r.URL.Query().Get(RestAllowsComments); len(v) != 0 {
@@ -95,23 +99,22 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-
-			allowsComments = &parsedAllowsComments
+			params.AllowsComments = &parsedAllowsComments
 		}
 
 		if v := r.URL.Query().Get(RestSubspace); len(v) != 0 {
-			subspace = v
+			params.Subspace = v
 		}
 
 		if v := r.URL.Query().Get(RestCreator); len(v) != 0 {
-			creatorAddr, err = sdk.AccAddressFromBech32(v)
+			creatorAddr, err := sdk.AccAddressFromBech32(v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+			params.Creator = creatorAddr
 		}
 
-		params := types.NewQueryPostsParams(page, limit, parentID, creationTime, allowsComments, subspace, creatorAddr)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

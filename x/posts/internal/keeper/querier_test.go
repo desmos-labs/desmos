@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
@@ -24,17 +25,17 @@ func Test_queryPost(t *testing.T) {
 		storedReactions map[types.PostID]types.Reactions
 		storedAnswers   []types.AnswersDetails
 		expResult       types.PostQueryResponse
-		expError        sdk.Error
+		expError        error
 	}{
 		{
 			name:     "Invalid ID returns error",
 			path:     []string{types.QueryPost, ""},
-			expError: sdk.ErrUnknownRequest("Invalid post id: "),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
 		},
 		{
 			name:     "Post not found returns error",
 			path:     []string{types.QueryPost, "1"},
-			expError: sdk.ErrUnknownRequest("Post with id 1 not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
 		},
 		{
 			name: "Post without likes is returned properly",
@@ -160,13 +161,16 @@ func Test_queryPost(t *testing.T) {
 			querier := keeper.NewQuerier(k)
 			result, err := querier(ctx, test.path, abci.RequestQuery{})
 
-			if test.expError != nil {
-				assert.Equal(t, test.expError, err)
-				assert.Nil(t, result)
-			} else {
+			if result != nil {
 				assert.Nil(t, err)
 				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
 				assert.Equal(t, string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expError.Error(), err.Error())
+				assert.Nil(t, result)
 			}
 		})
 	}

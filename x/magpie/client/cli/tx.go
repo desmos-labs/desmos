@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"bufio"
+
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -23,7 +26,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	magpieTxCmd.AddCommand(client.PostCommands(
+	magpieTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreateSession(cdc),
 	)...)
 
@@ -38,8 +41,9 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			from := cliCtx.GetFromAddress()
 			accGetter := authtypes.NewAccountRetriever(cliCtx)

@@ -5,6 +5,9 @@ const (
 	flagNumLimit = "limit"
 	flagPage     = "page"
 
+	flagSortBy   = "sort-by"
+	flagSorOrder = "sort-order"
+
 	flagParentID       = "parent-id"
 	flagMedia          = "medias"
 	flagPollDetails    = "poll-details"

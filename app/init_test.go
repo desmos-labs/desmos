@@ -18,6 +18,7 @@ func TestInit(t *testing.T) {
 		defaultParams.UnbondingTime,
 		defaultParams.MaxValidators,
 		defaultParams.MaxEntries,
+		0,
 		defaultParams.BondDenom,
 	)
 	expected := staking.NewGenesisState(customParams, defaultState.Validators, defaultState.Delegations)

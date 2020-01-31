@@ -7,6 +7,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // ----------------------
@@ -56,46 +57,46 @@ func (msg MsgCreatePost) Route() string { return RouterKey }
 func (msg MsgCreatePost) Type() string { return ActionCreatePost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreatePost) ValidateBasic() sdk.Error {
+func (msg MsgCreatePost) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank")
 	}
 
 	if len(msg.Message) > MaxPostMessageLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
 	}
 
-	if len(strings.TrimSpace(msg.Subspace)) == 0 {
-		return sdk.ErrUnknownRequest("Post subspace cannot be empty nor blank")
+	if !SubspaceRegEx.MatchString(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
 	}
 
 	if len(msg.OptionalData) > MaxOptionalDataFieldsNumber {
 		msg := fmt.Sprintf("Post optional data cannot be longer than %d fields", MaxOptionalDataFieldsNumber)
-		return sdk.ErrUnknownRequest(msg)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
 	}
 
 	for key, value := range msg.OptionalData {
 		if len(value) > MaxOptionalDataFieldValueLength {
 			msg := fmt.Sprintf("Post optional data value lengths cannot be longer than %d. %s exceeds the limit",
 				MaxOptionalDataFieldValueLength, key)
-			return sdk.ErrUnknownRequest(msg)
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
 		}
 	}
 
 	if msg.CreationDate.IsZero() {
-		return sdk.ErrUnknownRequest("Invalid post creation date")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post creation date")
 	}
 
 	if msg.CreationDate.After(time.Now().UTC()) {
-		return sdk.ErrUnknownRequest("Creation date cannot be in the future")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future")
 	}
 
 	if err := msg.Medias.Validate(); err != nil {
-		return sdk.ErrUnknownRequest(err.Error())
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if !msg.PollData.Open {
@@ -147,25 +148,25 @@ func (msg MsgEditPost) Route() string { return RouterKey }
 func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgEditPost) ValidateBasic() sdk.Error {
+func (msg MsgEditPost) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
 
 	if msg.Editor.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid editor address: %s", msg.Editor))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid editor address: %s", msg.Editor))
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 {
-		return sdk.ErrUnknownRequest("Post message cannot be empty nor blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank")
 	}
 
 	if msg.EditDate.IsZero() {
-		return sdk.ErrUnknownRequest("Invalid edit date")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid edit date")
 	}
 
 	if msg.EditDate.After(time.Now().UTC()) {
-		return sdk.ErrUnknownRequest("Edit date cannot be in the future")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Edit date cannot be in the future")
 	}
 
 	return nil
@@ -312,17 +313,17 @@ func (msg MsgAddPostReaction) Route() string { return RouterKey }
 func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgAddPostReaction) ValidateBasic() sdk.Error {
+func (msg MsgAddPostReaction) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
 
 	if msg.User.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
 	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Reaction value cannot be empty nor blank"))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Reaction value cannot be empty nor blank"))
 	}
 
 	return nil
@@ -366,17 +367,17 @@ func (msg MsgRemovePostReaction) Route() string { return RouterKey }
 func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgRemovePostReaction) ValidateBasic() sdk.Error {
+func (msg MsgRemovePostReaction) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdk.ErrUnknownRequest("Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
 
 	if msg.User.Empty() {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Invalid user address: %s", msg.User))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
 	if len(strings.TrimSpace(msg.Reaction)) == 0 {
-		return sdk.ErrUnknownRequest("Reaction value cannot be empty nor blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank")
 	}
 
 	return nil

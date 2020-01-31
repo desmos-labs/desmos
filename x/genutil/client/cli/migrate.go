@@ -12,6 +12,7 @@ import (
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/desmos-labs/desmos/x/genutil/internal/types"
 	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
+	v030 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.3.0"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 )
@@ -19,8 +20,9 @@ import (
 // migrationMap contains the list of migrations that should be performed when migrating
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
-var migrationMap = map[string][]types.MigrationCallback{
-	"v0.2.0": {v020.Migrate},
+var migrationMap = map[string]types.MigrationCallback{
+	"v0.2.0": v020.Migrate,
+	"v0.3.0": v030.Migrate,
 }
 
 const (
@@ -86,22 +88,20 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			var initialState extypes.AppMap
 			cdc.MustUnmarshalJSON(genDoc.AppState, &initialState)
 
-			migrations := migrationMap[target]
-			if migrations == nil {
+			migration := migrationMap[target]
+			if migration == nil {
 				return fmt.Errorf("unknown migration function version: %s", target)
 			}
 
 			newGenState := initialState
-			for index, migration := range migrations {
 
-				// v0.2.0 migration needs to have the previous version's genesis time and the
-				// block interval to convert the block height dates into timestamps
-				if target == "v0.2.0" && index == 0 {
-					blockInterval, _ := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
-					newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
-				} else {
-					newGenState = migration(newGenState)
-				}
+			// v0.2.0 migration needs to have the previous version's genesis time and the
+			// block interval to convert the block height dates into timestamps
+			if target == "v0.2.0" {
+				blockInterval, _ := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
+				newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
+			} else {
+				newGenState = migration(newGenState)
 			}
 
 			genDoc.AppState = cdc.MustMarshalJSON(newGenState)

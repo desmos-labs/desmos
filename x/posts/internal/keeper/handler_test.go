@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/assert"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // ---------------------------
@@ -22,7 +22,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		lastPostID  types.PostID
 		msg         types.MsgCreatePost
 		expPost     types.Post
-		expError    string
+		expError    error
 	}{
 		{
 			name: "Trying to store post with same id returns expError",
@@ -32,7 +32,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.ParentID,
 					testPost.Message,
 					testPost.AllowsComments,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
@@ -45,14 +45,14 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Message,
 				testPost.ParentID,
 				testPost.AllowsComments,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: "Post with id 1 already exists",
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 already exists"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -86,14 +86,14 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Message,
 				types.PostID(50),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: "Parent post with id 50 not found",
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id 50 not found"),
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
@@ -103,7 +103,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					types.PostID(50),
 					"Parent post",
 					false,
-					"desmos",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
@@ -115,14 +115,14 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Message,
 				types.PostID(50),
 				false,
-				"desmos",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: "Post with id 50 does not allow comments",
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 50 does not allow comments"),
 		},
 	}
 
@@ -141,12 +141,10 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			}
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Valid response
-			if len(test.expError) == 0 {
-				assert.True(t, res.IsOK())
-
+			if res != nil {
 				// Check the post
 				var stored types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
@@ -168,9 +166,9 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			}
 
 			// Invalid response
-			if len(test.expError) != 0 {
-				assert.False(t, res.IsOK())
-				assert.Contains(t, res.Log, test.expError)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -184,26 +182,26 @@ func Test_handleMsgEditPost(t *testing.T) {
 		name       string
 		storedPost *types.Post
 		msg        types.MsgEditPost
-		expError   string
+		expError   error
 		expPost    types.Post
 	}{
 		{
 			name:       "Post not found",
 			storedPost: nil,
 			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner, testPost.Created),
-			expError:   "Post with id 0 not found",
+			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &testPost,
 			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message", editor, testPost.Created),
-			expError:   "Incorrect owner",
+			expError:   sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &testPost,
 			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message", testPost.Creator, testPost.Created.AddDate(0, 0, -1)),
-			expError:   "Edit date cannot be before creation date",
+			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
 			name:       "Valid request is handled properly",
@@ -239,11 +237,10 @@ func Test_handleMsgEditPost(t *testing.T) {
 			}
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Valid response
-			if len(test.expError) == 0 {
-				assert.True(t, res.IsOK())
+			if res != nil {
 				assert.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
@@ -256,10 +253,9 @@ func Test_handleMsgEditPost(t *testing.T) {
 			}
 
 			// Invalid response
-			if len(test.expError) != 0 {
-				assert.False(t, res.IsOK())
-				assert.Contains(t, res.Log, test.expError)
-				assert.Empty(t, res.Events)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -272,18 +268,18 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		name         string
 		existingPost *types.Post
 		msg          types.MsgAddPostReaction
-		error        string
+		error        error
 	}{
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", user),
-			error: "Post with id 0 not found",
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
 			name:         "Valid message works properly",
 			existingPost: &testPost,
 			msg:          types.NewMsgAddPostReaction(testPost.PostID, "like", user),
-			error:        "",
+			error:        nil,
 		},
 	}
 
@@ -301,11 +297,10 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			}
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Valid response
-			if len(test.error) == 0 {
-				assert.True(t, res.IsOK())
+			if res != nil {
 				assert.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypeReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
@@ -323,9 +318,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			}
 
 			// Invalid response
-			if len(test.error) != 0 {
-				assert.Contains(t, res.Log, test.error)
-				assert.Empty(t, res.Events)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -339,25 +334,25 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		existingPost     *types.Post
 		existingReaction *types.Reaction
 		msg              types.MsgRemovePostReaction
-		error            string
+		error            error
 	}{
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "like"),
-			error: "Post with id 0 not found",
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
 			name:         "Reaction not found",
 			existingPost: &testPost,
 			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "like"),
-			error:        fmt.Sprintf("Cannot remove the reaction with value like from user %s as it does not exist", user),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value like from user %s as it does not exist", user)),
 		},
 		{
 			name:             "Valid message works properly",
 			existingPost:     &testPost,
 			existingReaction: &reaction,
 			msg:              types.NewMsgRemovePostReaction(testPost.PostID, user, reaction.Value),
-			error:            "",
+			error:            nil,
 		},
 	}
 
@@ -382,11 +377,10 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			}
 
 			handler := keeper.NewHandler(k)
-			res := handler(ctx, test.msg)
+			res, err := handler(ctx, test.msg)
 
 			// Valid response
-			if len(test.error) == 0 {
-				assert.True(t, res.IsOK())
+			if res != nil {
 				assert.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
@@ -404,9 +398,9 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			}
 
 			// Invalid response
-			if len(test.error) != 0 {
-				assert.Contains(t, res.Log, test.error)
-				assert.Empty(t, res.Events)
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -421,7 +415,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		msg           types.MsgAnswerPollPost
 		storedPost    types.Post
 		storedAnswers *types.AnswersDetails
-		expErr        string
+		expErr        error
 	}{
 		{
 			name: "Post not found",
@@ -535,7 +529,7 @@ func Test_handleMsgClosePoll(t *testing.T) {
 		name       string
 		msg        types.MsgClosePollPost
 		storedPost types.Post
-		expErr     string
+		expErr     error
 	}{
 		{
 			name:   "Post not found",

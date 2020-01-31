@@ -26,9 +26,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) GenesisState {
 // noinspection GoUnhandledErrorResult
 func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, session := range data.Sessions {
-		if err := keeper.SaveSession(ctx, session); err != nil {
-			panic(err)
-		}
+		keeper.SaveSession(ctx, session)
 	}
 
 	return []abci.ValidatorUpdate{}

@@ -48,10 +48,26 @@ cd <installation-path>
 Now, update the `desmoscli` and `desmosd` software:
 
 ```bash
-git clone https://github.com/desmos-labs/desmos.git .
-git fetch --all && git checkout master
+git fetch --all
+git checkout tags/$(git describe --tags `git rev-list --tags --max-count=1`)
 make install
 ```
+
+:::tip Select another version  
+The above commands checks out the latest release that has been tagged on our repository. If you wish to checkout a specific version instead, use the following commands: 
+
+1. List all the tags  
+   ```bash
+   git tags --list
+   ```
+   
+2. Checkout the tag you want 
+   ```bash
+   git checkout tags/<tag>
+   # Example: git checkout tags/v0.2.0
+   ```
+   
+:::
 
 :::tip Note   
 If you have issues at this step, please check that you have the [latest stable version](https://golang.org/dl/) of Go installed.  
