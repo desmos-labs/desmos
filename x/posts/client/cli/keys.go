@@ -9,7 +9,7 @@ const (
 	flagSorOrder = "sort-order"
 
 	flagParentID       = "parent-id"
-	flagMedia          = "medias"
+	flagMedia          = "media"
 	flagPollDetails    = "poll-details"
 	flagPollAnswer     = "poll-answer"
 	flagCreationTime   = "creation-time"
