@@ -17,8 +17,8 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var answer = types.PollAnswer{ID: uint64(1), Text: "Yes"}
-var answer2 = types.PollAnswer{ID: uint64(2), Text: "No"}
+var answer = types.PollAnswer{ID: uint(1), Text: "Yes"}
+var answer2 = types.PollAnswer{ID: uint(2), Text: "No"}
 var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
@@ -655,7 +655,7 @@ func TestMsgClosePollPost_GetSigners(t *testing.T) {
 // --- MsgAnswerPollPost
 // ----------------------
 
-var msgAnswerPollPost = types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testOwner)
+var msgAnswerPollPost = types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testOwner)
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
 	actual := msgClosePollPost.Route()
@@ -675,22 +675,22 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(0), []uint64{1, 2}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPollPost(types.PostID(0), []uint{1, 2}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid answerer address",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, nil),
+			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint64{}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint{}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, msgAnswerPollPost.Answerer),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, msgAnswerPollPost.Answerer),
 		},
 	}
 

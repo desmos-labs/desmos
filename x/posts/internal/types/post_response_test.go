@@ -28,7 +28,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	testPostEndPollDate := time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
 	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
-	answers2 := []uint64{uint64(1)}
+	answers2 := []uint{uint(1)}
 
 	post := types.NewPost(
 		types.PostID(10),
@@ -118,7 +118,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
 
-	answers2 := []uint64{uint64(1)}
+	answers2 := []uint{uint(1)}
 	answersDetails := []types.AnswersDetails{types.NewAnswersDetails(answers2, liker)}
 
 	timeZone, _ := time.LoadLocation("UTC")
@@ -130,12 +130,12 @@ func TestPostQueryResponse_String(t *testing.T) {
 		},
 	}
 	answer := types.PollAnswer{
-		ID:   uint64(1),
+		ID:   uint(1),
 		Text: "Yes",
 	}
 
 	answer2 := types.PollAnswer{
-		ID:   uint64(2),
+		ID:   uint(2),
 		Text: "No",
 	}
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)

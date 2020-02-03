@@ -565,8 +565,8 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	answers := []uint64{uint64(1), uint64(2)}
-	answers2 := []uint64{uint64(1)}
+	answers := []uint{uint(1), uint(2)}
+	answers2 := []uint{uint(1)}
 
 	tests := []struct {
 		name               string
@@ -618,7 +618,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 
 func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 
 	tests := []struct {
 		name          string
@@ -656,14 +656,14 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	user2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 
 	tests := []struct {
 		name          string
 		storedAnswers types.AnswersDetails
 		postID        types.PostID
 		user          sdk.AccAddress
-		expAnswers    []uint64
+		expAnswers    []uint
 	}{
 		{
 			name:          "No answers for user returns nil",
@@ -695,7 +695,7 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	user2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 
 	tests := []struct {
 		name    string

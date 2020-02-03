@@ -44,7 +44,7 @@ type RemoveReactionReq struct {
 
 type AnswerPollPostReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Answers []uint64     `json:"answers"`
+	Answers []uint       `json:"answers"`
 }
 
 type ClosePollPostReq struct {

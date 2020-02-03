@@ -112,11 +112,11 @@ func (usersAD UsersAnswersDetails) AppendIfMissingOrIfUsersEquals(ansDet Answers
 // --- AnswersDetails
 // ---------------
 type AnswersDetails struct {
-	Answers []uint64       `json:"answers"`
+	Answers []uint         `json:"answers"`
 	User    sdk.AccAddress `json:"user"`
 }
 
-func NewAnswersDetails(answers []uint64, user sdk.AccAddress) AnswersDetails {
+func NewAnswersDetails(answers []uint, user sdk.AccAddress) AnswersDetails {
 	return AnswersDetails{
 		Answers: answers,
 		User:    user,
@@ -127,7 +127,7 @@ func NewAnswersDetails(answers []uint64, user sdk.AccAddress) AnswersDetails {
 func (userPollAnswers AnswersDetails) String() string {
 	out := fmt.Sprintf("User: %s \nAnswers IDs: ", userPollAnswers.User.String())
 	for _, answer := range userPollAnswers.Answers {
-		out += strconv.FormatUint(answer, 10) + " "
+		out += strconv.FormatUint(uint64(answer), 10) + " "
 	}
 
 	return strings.TrimSpace(out)
@@ -176,7 +176,7 @@ func (answers PollAnswers) String() string {
 	out := "Provided Answers:\n[ID] [Text]\n"
 	for _, answer := range answers {
 		out += fmt.Sprintf("[%s] [%s]\n",
-			strconv.FormatUint(answer.ID, 10), answer.Text)
+			strconv.FormatUint(uint64(answer.ID), 10), answer.Text)
 	}
 	return strings.TrimSpace(out)
 }
@@ -228,13 +228,13 @@ func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
 
 // PollAnswer contains the data of a single poll answer inserted by the creator
 type PollAnswer struct {
-	ID   uint64 `json:"id"`   // Unique id inside the post
+	ID   uint   `json:"id"`   // Unique id inside the post
 	Text string `json:"text"` // Text of the answer
 }
 
 // String implements fmt.Stringer
 func (pa PollAnswer) String() string {
-	formattedID := strconv.FormatUint(pa.ID, 10)
+	formattedID := strconv.FormatUint(uint64(pa.ID), 10)
 	return fmt.Sprintf("Answer - ID: %s ; Text: %s", formattedID, pa.Text)
 }
 

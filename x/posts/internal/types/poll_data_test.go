@@ -14,8 +14,8 @@ import (
 // ---------------
 
 func TestPollData_String(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
 	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
 	assert.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
@@ -130,8 +130,8 @@ func TestPollData_Equals(t *testing.T) {
 // ---------------
 
 func TestPollAnswers_String(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
 	answers := types.PollAnswers{answer, answer2}
 
 	assert.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
@@ -147,7 +147,7 @@ func TestPollAnswers_Validate(t *testing.T) {
 			expErr:  "answers cannot be empty",
 		},
 		{
-			answers: types.PollAnswers{types.PollAnswer{ID: uint64(0), Text: ""}},
+			answers: types.PollAnswers{types.PollAnswer{ID: uint(0), Text: ""}},
 			expErr:  "answer text must be specified and cannot be empty",
 		},
 	}
@@ -158,8 +158,8 @@ func TestPollAnswers_Validate(t *testing.T) {
 }
 
 func TestPollAnswers_Equals(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
 
 	tests := []struct {
 		name      string
@@ -196,8 +196,8 @@ func TestPollAnswers_Equals(t *testing.T) {
 }
 
 func TestPollAnswers_AppendIfMissing(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint64(2), Text: "No"}
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
 
 	tests := []struct {
 		name    string
@@ -232,12 +232,12 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 // ---------------
 
 func TestPollAnswer_String(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(1), Text: "Yes"}
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
 	assert.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
 }
 
 func TestPollAnswer_Validate(t *testing.T) {
-	answer := types.PollAnswer{ID: uint64(0), Text: ""}
+	answer := types.PollAnswer{ID: uint(0), Text: ""}
 	assert.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
@@ -250,20 +250,20 @@ func TestPollAnswer_Equals(t *testing.T) {
 	}{
 		{
 			name:        "Different answers ID",
-			answer:      types.PollAnswer{ID: uint64(1), Text: "Yes"},
-			otherAnswer: types.PollAnswer{ID: uint64(2), Text: "Yes"},
+			answer:      types.PollAnswer{ID: uint(1), Text: "Yes"},
+			otherAnswer: types.PollAnswer{ID: uint(2), Text: "Yes"},
 			expEquals:   false,
 		},
 		{
 			name:        "Different answers Text",
-			answer:      types.PollAnswer{ID: uint64(1), Text: "Yes"},
-			otherAnswer: types.PollAnswer{ID: uint64(1), Text: "No"},
+			answer:      types.PollAnswer{ID: uint(1), Text: "Yes"},
+			otherAnswer: types.PollAnswer{ID: uint(1), Text: "No"},
 			expEquals:   false,
 		},
 		{
 			name:        "Equals answers",
-			answer:      types.PollAnswer{ID: uint64(1), Text: "yes"},
-			otherAnswer: types.PollAnswer{ID: uint64(1), Text: "yes"},
+			answer:      types.PollAnswer{ID: uint(1), Text: "yes"},
+			otherAnswer: types.PollAnswer{ID: uint(1), Text: "yes"},
 			expEquals:   true,
 		},
 	}
@@ -281,7 +281,7 @@ func TestPollAnswer_Equals(t *testing.T) {
 // ---------------
 func TestUserPollAnswers_String(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 
 	userPollAnswers := types.NewAnswersDetails(answers, user)
 
@@ -290,7 +290,7 @@ func TestUserPollAnswers_String(t *testing.T) {
 
 func TestUserPollAnswers_Validate(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 
 	tests := []struct {
 		name            string
@@ -322,8 +322,8 @@ func TestUserPollAnswers_Validate(t *testing.T) {
 func TestUserPollAnswers_Equals(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	answers := []uint64{uint64(1), uint64(2)}
-	answers2 := []uint64{uint64(1)}
+	answers := []uint{uint(1), uint(2)}
+	answers2 := []uint{uint(1)}
 
 	tests := []struct {
 		name      string
@@ -372,8 +372,8 @@ func TestUserPollAnswers_Equals(t *testing.T) {
 func TestUsersAnswersDetails(t *testing.T) {
 	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	user2, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	answers := []uint64{uint64(1), uint64(2)}
-	answers2 := []uint64{uint64(3)}
+	answers := []uint{uint(1), uint(2)}
+	answers2 := []uint{uint(3)}
 
 	tests := []struct {
 		name        string

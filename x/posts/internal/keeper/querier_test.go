@@ -16,7 +16,7 @@ func Test_queryPost(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	otherCreator, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 
-	answers := []uint64{uint64(1)}
+	answers := []uint{uint(1)}
 
 	tests := []struct {
 		name            string
@@ -178,7 +178,7 @@ func Test_queryPost(t *testing.T) {
 
 func Test_queryPosts(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	answers := []uint64{uint64(1)}
+	answers := []uint{uint(1)}
 
 	tests := []struct {
 		name          string
@@ -287,7 +287,7 @@ func Test_queryPosts(t *testing.T) {
 func Test_queryPollAnswers(t *testing.T) {
 	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 
-	answers := []uint64{uint64(1)}
+	answers := []uint{uint(1)}
 
 	tests := []struct {
 		name          string

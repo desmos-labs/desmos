@@ -242,12 +242,12 @@ func (msg MsgClosePollPost) GetSigners() []sdk.AccAddress {
 // MsgAnswerPollPost defines the AnswerPollPost message
 type MsgAnswerPollPost struct {
 	PostID      PostID         `json:"post_id"`
-	UserAnswers []uint64       `json:"provided_answers"`
+	UserAnswers []uint         `json:"provided_answers"`
 	Answerer    sdk.AccAddress `json:"answerer"`
 }
 
 // NewMsgAnswerPollPost is the constructor function for MsgAnswerPollPost
-func NewMsgAnswerPollPost(id PostID, providedAnswers []uint64, answerer sdk.AccAddress) MsgAnswerPollPost {
+func NewMsgAnswerPollPost(id PostID, providedAnswers []uint, answerer sdk.AccAddress) MsgAnswerPollPost {
 	return MsgAnswerPollPost{
 		PostID:      id,
 		UserAnswers: providedAnswers,

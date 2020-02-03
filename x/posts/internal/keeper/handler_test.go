@@ -407,7 +407,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
-	answers := []uint64{uint64(1), uint64(2)}
+	answers := []uint{uint(1), uint(2)}
 	userPollAnswers := types.NewAnswersDetails(answers, testPostOwner)
 
 	tests := []struct {
@@ -419,7 +419,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 	}{
 		{
 			name: "Post not found",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(2), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -428,14 +428,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "No poll associated with post",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil, nil),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 1"),
 		},
 		{
 			name: "Answer after poll closure",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
@@ -446,7 +446,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
@@ -456,7 +456,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "User provide too many answers",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2, 3}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -466,7 +466,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
@@ -477,7 +477,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Answered correctly to post's poll",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint64{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),

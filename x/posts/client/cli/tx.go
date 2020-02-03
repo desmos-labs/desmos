@@ -160,7 +160,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 					}
 
 					pollAnswer := types.PollAnswer{
-						ID:   uint64(index),
+						ID:   uint(index),
 						Text: answer,
 					}
 
@@ -341,14 +341,14 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var answers []uint64
+			var answers []uint
 			for i := 1; i < len(args); i++ {
-				answer, err := strconv.ParseUint(args[i], 10, 64)
+				answer, err := strconv.ParseUint(args[i], 10, 32)
 				if err != nil {
 					return err
 				}
 
-				answers = append(answers, answer)
+				answers = append(answers, uint(answer))
 			}
 
 			msg := types.NewMsgAnswerPollPost(postID, answers, from)

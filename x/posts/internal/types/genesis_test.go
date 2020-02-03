@@ -46,7 +46,7 @@ func TestValidateGenesis(t *testing.T) {
 				Posts: types.Posts{},
 				PollAnswers: map[string]types.UsersAnswersDetails{
 					"1": {
-						types.NewAnswersDetails([]uint64{}, user),
+						types.NewAnswersDetails([]uint{}, user),
 					},
 				},
 				Reactions: map[string]types.Reactions{},

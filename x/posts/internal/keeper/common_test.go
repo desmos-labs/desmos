@@ -48,9 +48,9 @@ var timeZone, _ = time.LoadLocation("UTC")
 var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
 var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
 var testPostEndPollDateExpired = time.Date(2019, 1, 1, 1, 15, 00, 000, timeZone)
-var answer = types.PollAnswer{ID: uint64(1), Text: "Yes"}
+var answer = types.PollAnswer{ID: uint(1), Text: "Yes"}
 
-var answer2 = types.PollAnswer{ID: uint64(2), Text: "No"}
+var answer2 = types.PollAnswer{ID: uint(2), Text: "No"}
 
 var testPost = types.NewPost(
 	types.PostID(3257),
