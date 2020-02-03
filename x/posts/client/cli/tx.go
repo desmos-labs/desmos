@@ -105,7 +105,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 
 			// medias' checks
 
-			mediasStrings := viper.GetStringSlice(flagMedia)
+			mediasStrings, _ := cmd.Flags().GetStringArray(flagMedia)
 			medias := types.PostMedias{}
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
