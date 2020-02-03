@@ -58,6 +58,12 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		}
 	}
 
+	// Check the post does not exist yet
+	if existing, exists := keeper.DoesPostExit(ctx, post); exists {
+		errMsg := fmt.Sprintf("post with same data already exists and has ID %s", existing.PostID)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errMsg)
+	}
+
 	keeper.SavePost(ctx, post)
 
 	createEvent := sdk.NewEvent(

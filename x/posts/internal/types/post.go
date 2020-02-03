@@ -208,6 +208,12 @@ func (p Post) Validate() error {
 
 // Equals allows to check whether the contents of p are the same of other
 func (p Post) Equals(other Post) bool {
+	return p.PostID.Equals(other.PostID) &&
+		p.EqualsNoID(other)
+}
+
+// EqualsNoID returns true if and only if p and other contain the same data, without considering the ID
+func (p Post) EqualsNoID(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
 		for key := range p.OptionalData {
@@ -215,8 +221,7 @@ func (p Post) Equals(other Post) bool {
 		}
 	}
 
-	return p.PostID.Equals(other.PostID) &&
-		p.ParentID.Equals(other.ParentID) &&
+	return p.ParentID.Equals(other.ParentID) &&
 		p.Message == other.Message &&
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
@@ -258,4 +263,16 @@ func (p Posts) String() string {
 			post.PostID, post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
+}
+
+// ContainsSame tells whether p contains a post having the exact same data as
+// other not considering the id.
+// If the post exists, it is returned as a pointer reference.
+func (p Posts) ContainsSame(other Post) (*Post, bool) {
+	for _, post := range p {
+		if post.EqualsNoID(other) {
+			return &post, true
+		}
+	}
+	return nil, false
 }

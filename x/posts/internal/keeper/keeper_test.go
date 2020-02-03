@@ -393,6 +393,81 @@ func TestKeeper_GetPosts(t *testing.T) {
 	}
 }
 
+func TestKeeper_DoesPostExit(t *testing.T) {
+	tests := []struct {
+		name        string
+		posts       types.Posts
+		post        types.Post
+		expContains bool
+		expPost     types.Post
+	}{
+		{
+			name:        "Empty list returns false",
+			posts:       types.Posts{},
+			post:        testPost,
+			expContains: false,
+		},
+		{
+			name: "Existing list returns true when it does",
+			posts: types.Posts{
+				types.Post{
+					PostID:         testPost.PostID + 1,
+					ParentID:       testPost.ParentID,
+					Message:        testPost.Message,
+					Created:        testPost.Created,
+					LastEdited:     testPost.LastEdited,
+					AllowsComments: testPost.AllowsComments,
+					Subspace:       testPost.Subspace,
+					OptionalData:   testPost.OptionalData,
+					Creator:        testPost.Creator,
+					Medias:         testPost.Medias,
+				},
+			},
+			post:        testPost,
+			expContains: true,
+			expPost:     testPost,
+		},
+		{
+			name: "Existing list returns false when it does not",
+			posts: types.Posts{
+				types.Post{
+					PostID:         testPost.PostID + 1,
+					ParentID:       testPost.ParentID,
+					Message:        testPost.Message + "other",
+					Created:        testPost.Created,
+					LastEdited:     testPost.LastEdited,
+					AllowsComments: testPost.AllowsComments,
+					Subspace:       testPost.Subspace,
+					OptionalData:   testPost.OptionalData,
+					Creator:        testPost.Creator,
+					Medias:         testPost.Medias,
+				},
+			},
+			post:        testPost,
+			expContains: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			for _, post := range test.posts {
+				k.SavePost(ctx, post)
+			}
+
+			post, contains := k.DoesPostExit(ctx, test.post)
+			assert.Equal(t, test.expContains, contains)
+
+			if test.expContains {
+				assert.True(t, test.expPost.EqualsNoID(*post))
+			} else {
+				assert.Nil(t, post)
+			}
+		})
+	}
+}
+
 func TestKeeper_GetPostsFiltered(t *testing.T) {
 	boolTrue := true
 

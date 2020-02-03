@@ -99,11 +99,11 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state.
-func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
+func (k Keeper) GetPosts(ctx sdk.Context) types.Posts {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
 
-	var posts []types.Post
+	var posts types.Posts
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
@@ -111,6 +111,13 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 	}
 
 	return posts
+}
+
+// DoesPostExit returns true if another post having the same content of the
+// specified post (without considering the ID) already exists.
+// If it exists, it is returned as a pointer reference.
+func (k Keeper) DoesPostExit(ctx sdk.Context, post types.Post) (*types.Post, bool) {
+	return k.GetPosts(ctx).ContainsSame(post)
 }
 
 // GetPostsFiltered retrieves posts filtered by a given set of params which

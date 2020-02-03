@@ -739,3 +739,52 @@ func TestPosts_String(t *testing.T) {
 2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	assert.Equal(t, expected, posts.String())
 }
+
+func TestPosts_ContainsSame(t *testing.T) {
+	tests := []struct {
+		name        string
+		list        types.Posts
+		post        types.Post
+		expContains bool
+		expPost     types.Post
+	}{
+		{
+			name:        "Empty list returns false",
+			list:        types.Posts{},
+			post:        types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			expContains: false,
+		},
+		{
+			name: "Not empty list returns true when it does",
+			list: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			},
+			post:        types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			expContains: true,
+			expPost:     types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+		},
+		{
+			name: "Not empty list return false when it does not",
+			list: types.Posts{
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+			},
+			post:        types.Post{PostID: types.PostID(3), Created: date, LastEdited: date.AddDate(1, 0, 1)},
+			expContains: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			post, contains := test.list.ContainsSame(test.post)
+			assert.Equal(t, test.expContains, contains)
+
+			if test.expContains {
+				assert.True(t, test.expPost.EqualsNoID(*post))
+			} else {
+				assert.Nil(t, post)
+			}
+		})
+	}
+}

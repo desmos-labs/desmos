@@ -117,6 +117,34 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 50 does not allow comments"),
 		},
+		{
+			name: "Post with exact same data is not posted again",
+			storedPosts: []types.Post{
+				types.NewPost(
+					types.PostID(1),
+					testPost.ParentID,
+					testPost.Message,
+					testPost.AllowsComments,
+					testPost.Subspace,
+					testPost.OptionalData,
+					testPost.Created,
+					testPost.Creator,
+					testPost.Medias,
+				),
+			},
+			lastPostID: types.PostID(1),
+			msg: types.NewMsgCreatePost(
+				testPost.Message,
+				testPost.ParentID,
+				testPost.AllowsComments,
+				testPost.Subspace,
+				testPost.OptionalData,
+				testPost.Creator,
+				testPost.Created,
+				testPost.Medias,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with same data already exists and has ID 1"),
+		},
 	}
 
 	for _, test := range tests {
