@@ -1,11 +1,77 @@
 package keeper_test
 
 import (
+	"fmt"
+	"math"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestKeeper_SetDefaultSessionLength(t *testing.T) {
+	tests := []struct {
+		length int64
+		expErr error
+	}{
+		{
+			length: -1,
+			expErr: fmt.Errorf("cannot set -1 as default session length"),
+		},
+		{
+			length: 0,
+			expErr: fmt.Errorf("cannot set 0 as default session length"),
+		},
+		{
+			length: 1,
+			expErr: nil,
+		},
+		{
+			length: math.MaxInt64,
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		t.Run(fmt.Sprintf("Default session length: %d", test.length), func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			err := k.SetDefaultSessionLength(ctx, test.length)
+
+			if test.expErr == nil {
+				assert.NoError(t, err)
+				var stored int64
+				store := ctx.KVStore(k.StoreKey)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
+				assert.Equal(t, test.length, stored)
+			}
+
+			if test.expErr != nil {
+				assert.Equal(t, test.expErr, err)
+			}
+		})
+	}
+}
+
+func TestKeeper_GetDefaultSessionLength(t *testing.T) {
+	tests := []int64{0, 1, 2, math.MaxInt64}
+
+	for _, length := range tests {
+		length := length
+		t.Run(fmt.Sprintf("Get default session length: %d", length), func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if length != 0 {
+				store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(&length))
+			}
+
+			recovered := k.GetDefaultSessionLength(ctx)
+			assert.Equal(t, length, recovered)
+		})
+	}
+}
 
 func TestKeeper_GetLastSessionID(t *testing.T) {
 	tests := []struct {
