@@ -583,88 +583,19 @@ func TestMsgUnlikePost_GetSigners(t *testing.T) {
 }
 
 // ----------------------
-// --- MsgClosePollPost
-// ----------------------
-
-var msgClosePollPost = types.NewMsgClosePollPost(types.PostID(10), "message", testOwner)
-
-func TestMsgClosePollPost_Route(t *testing.T) {
-	actual := msgClosePollPost.Route()
-	assert.Equal(t, "posts", actual)
-}
-
-func TestMsgClosePollPost_Type(t *testing.T) {
-	actual := msgClosePollPost.Type()
-	assert.Equal(t, "close_poll", actual)
-}
-
-func TestMsgClosePollPost_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   types.MsgClosePollPost
-		error error
-	}{
-		{
-			name:  "Invalid post id",
-			msg:   types.NewMsgClosePollPost(types.PostID(0), "message", msgClosePollPost.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
-		},
-		{
-			name:  "Invalid message length",
-			msg:   types.NewMsgClosePollPost(types.PostID(1), "test", msgClosePollPost.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "If present, the message should be at least 8 characters"),
-		},
-		{
-			name:  "Invalid user address",
-			msg:   types.NewMsgClosePollPost(types.PostID(1), "message", nil),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
-		},
-		{
-			name: "Valid message returns no error",
-			msg:  types.NewMsgClosePollPost(types.PostID(1), "message", msgClosePollPost.Creator),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				assert.Nil(t, returnedError)
-			} else {
-				assert.NotNil(t, returnedError)
-				assert.Equal(t, test.error.Error(), returnedError.Error())
-			}
-		})
-	}
-}
-
-func TestMsgClosePollPost_GetSignBytes(t *testing.T) {
-	actual := msgClosePollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgClosePoll","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"message","post_id":"10"}}`
-	assert.Equal(t, expected, string(actual))
-}
-
-func TestMsgClosePollPost_GetSigners(t *testing.T) {
-	actual := msgClosePollPost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgClosePollPost.Creator, actual[0])
-}
-
-// ----------------------
 // --- MsgAnswerPollPost
 // ----------------------
 
 var msgAnswerPollPost = types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testOwner)
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
-	actual := msgClosePollPost.Route()
+	actual := msgAnswerPollPost.Route()
 	assert.Equal(t, "posts", actual)
 }
 
 func TestMsgAnswerPollPost_Type(t *testing.T) {
-	actual := msgClosePollPost.Type()
-	assert.Equal(t, "close_poll", actual)
+	actual := msgAnswerPollPost.Type()
+	assert.Equal(t, "answer_poll", actual)
 }
 
 func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {

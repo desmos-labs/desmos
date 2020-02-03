@@ -18,5 +18,4 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgAddPostReaction{}, "desmos/MsgAddPostReaction", nil)
 	cdc.RegisterConcrete(MsgRemovePostReaction{}, "desmos/MsgRemovePostReaction", nil)
 	cdc.RegisterConcrete(MsgAnswerPollPost{}, "desmos/MsgAnswerPoll", nil)
-	cdc.RegisterConcrete(MsgClosePollPost{}, "desmos/MsgClosePoll", nil)
 }

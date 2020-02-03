@@ -183,59 +183,6 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 }
 
 // ----------------------
-// --- MsgClosePollPost
-// ----------------------
-
-// MsgClosePollPost defines the ClosePollPost message
-type MsgClosePollPost struct {
-	PostID  PostID         `json:"post_id"`
-	Message string         `json:"message,omitempty"` // (Optional) Message to be displayed upon the poll closing
-	Creator sdk.AccAddress `json:"creator"`           // User that close the poll
-}
-
-// NewMsgClosePollPost is the constructor function for MsgClosePollPost
-func NewMsgClosePollPost(id PostID, message string, creator sdk.AccAddress) MsgClosePollPost {
-	return MsgClosePollPost{
-		PostID:  id,
-		Message: message,
-		Creator: creator,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgClosePollPost) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgClosePollPost) Type() string { return ActionClosePollPost }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgClosePollPost) ValidateBasic() error {
-	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
-	}
-
-	if len(msg.Message) > 0 && len(msg.Message) < 7 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "If present, the message should be at least 8 characters")
-	}
-
-	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.Creator))
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgClosePollPost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
-}
-
-// GetSigners defines whose signature is required
-func (msg MsgClosePollPost) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Creator}
-}
-
-// ----------------------
 // --- MsgAnswerPollPost
 // ----------------------
 
