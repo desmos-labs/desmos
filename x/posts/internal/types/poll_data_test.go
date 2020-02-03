@@ -285,7 +285,7 @@ func TestUserPollAnswers_String(t *testing.T) {
 
 	userPollAnswers := types.NewAnswersDetails(answers, user)
 
-	assert.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs:\n1 2", userPollAnswers.String())
+	assert.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
 }
 
 func TestUserPollAnswers_Validate(t *testing.T) {

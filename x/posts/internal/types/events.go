@@ -15,7 +15,7 @@ const (
 	AttributeKeyPostOwner    = "post_owner"
 	AttributeKeyPostEditTime = "post_edit_time"
 
-	//Poll attributes
+	// Poll attributes
 	AttributeKeyPollAnswerer = "poll_answerer"
 
 	// Reaction attributes

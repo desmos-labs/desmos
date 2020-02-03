@@ -40,7 +40,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAddPostReaction(cdc),
 		GetCmdRemovePostReaction(cdc),
 		GetCmdAnswerPoll(cdc),
-		GetCmdClosePoll(cdc),
 	)...)
 
 	return postsTxCmd
@@ -55,6 +54,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				Create a new post, specifying the subspace, message and whether or not it will allow for comments.
 				Optional media attachments and polls are also supported.
 				If you want to add one or more medias attachments, you have to use the --media flag.
+				You need to specify both media's URI and mime-type in this order separeted by a comma
 				Usage examples:
 
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" true
@@ -74,9 +74,6 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
                        where you specify a slice of answers that will be provided to the users once they want to take part in poll votations.
 						Each answer should is identified by the text of the answer itself
 				Usage examples:
-				-  tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post" true \
-  					--poll-details question="What dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
-					--poll-answer "Snoopy,Leone,Lessie"
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post" true \
   					--poll-details question="Which dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
   					--poll-answer "Beagle" \
@@ -113,7 +110,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
 				if len(argz) != 2 {
-					return fmt.Errorf("if medias are specified, they shouldn't have empty fields, please use the --help flag to know more")
+					return fmt.Errorf("if medias are specified, the arguments has to be exactly 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
 				}
 
 				media := types.NewPostMedia(argz[0], argz[1])
@@ -135,23 +132,23 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 
 			pollData := types.PollData{}
 			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
-				date, err := time.Parse(time.RFC3339, pollDetailsMap[EndDate])
+				date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
 				if err != nil {
 					return fmt.Errorf("end date should be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
 				}
 
-				if len(strings.TrimSpace(pollDetailsMap[Question])) == 0 {
+				if len(strings.TrimSpace(pollDetailsMap[keyQuestion])) == 0 {
 					return fmt.Errorf("question should be provided and not be empty")
 				}
 
-				question := pollDetailsMap[Question]
+				question := pollDetailsMap[keyQuestion]
 
-				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap[MultipleAnswers])
+				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap[keyMultipleAnswers])
 				if err != nil {
 					return fmt.Errorf("multiple-answers can only be true or false")
 				}
 
-				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap[AllowsAnswerEdits])
+				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap[keyAllowsAnswerEdits])
 				if err != nil {
 					return fmt.Errorf("allows-answer-edits can only be only true or false")
 				}
@@ -200,7 +197,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
-	cmd.Flags().StringSlice(flagMedia, []string{}, "Current post's media")
+	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
 
@@ -355,44 +352,6 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAnswerPollPost(postID, answers, from)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-}
-
-// GetCmdAnswerPoll is the CLI command for closing a post's poll
-func GetCmdClosePoll(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "close-poll [post-id] [[message]]",
-		Short: "Close a post's poll",
-		Args:  cobra.RangeArgs(1, 2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
-
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return err
-			}
-
-			text := ""
-			if len(args) == 2 {
-				text = args[1]
-			}
-
-			msg := types.NewMsgClosePollPost(postID, text, from)
 
 			if err := msg.ValidateBasic(); err != nil {
 				return err

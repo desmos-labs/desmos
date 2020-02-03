@@ -22,6 +22,9 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case types.QueryPosts:
 			return queryPosts(ctx, req, keeper)
 
+		case types.QueryPollAnswers:
+			return queryPollAnswers(ctx, path[1:], req, keeper)
+
 		default:
 			return nil, fmt.Errorf("unknown magpie query endpoint")
 		}
@@ -93,6 +96,34 @@ func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &postResponses)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+}
+
+//queryPollAnswers handles the request to get poll answers related to a post with given id
+func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	id, err := types.ParsePostID(path[0])
+
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
+
+	_, found := keeper.GetPost(ctx, id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Post with id %s not found", id))
+	}
+
+	pollAnswers := keeper.GetPostPollAnswersDetails(ctx, id)
+
+	pollAnswersResponse := types.PollAnswersQueryResponse{
+		PostID:         id,
+		AnswersDetails: pollAnswers,
+	}
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &pollAnswersResponse)
+
+	if err != nil {
+		panic("could not marshal result to JSON")
 	}
 
 	return bz, nil

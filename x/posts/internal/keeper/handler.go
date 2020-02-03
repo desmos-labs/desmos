@@ -2,11 +2,11 @@ package keeper
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // NewHandler returns a handler for "magpie" type messages.
@@ -21,8 +21,6 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgAddPostReaction(ctx, keeper, msg)
 		case types.MsgRemovePostReaction:
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
-		case types.MsgClosePollPost:
-			return handleMsgClosePollPost(ctx, keeper, msg)
 		case types.MsgAnswerPollPost:
 			return handleMsgAnswerPollPost(ctx, keeper, msg)
 		default:
@@ -179,7 +177,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	return &result, nil
 }
 
-// checkPostPollValid perform checks to ensure the validity of a poll
+// checkPostPollValid performs all the checks to ensure the post with the given id exists, contains a poll and such poll has not been closed
 func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types.Post, error) {
 	// checks if post exists
 	post, found := keeper.GetPost(ctx, id)
@@ -193,7 +191,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 	}
 
 	// checks if the poll is already closed or not
-	if time.Now().UTC().After(post.PollData.EndDate) {
+	if !post.PollData.Open {
 		return &post, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate),
@@ -254,36 +252,5 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"),
 		Events: sdk.Events{answerEvent},
 	}
-	return &result, nil
-}
-
-// handleMsgClosePollPost handles the closure of a poll post
-func handleMsgClosePollPost(ctx sdk.Context, keeper Keeper, msg types.MsgClosePollPost) (*sdk.Result, error) {
-
-	post, err := checkPostPollValid(ctx, msg.PostID, keeper)
-	if err != nil {
-		return nil, err
-	}
-
-	// check if the creator of message is the owner of the post
-	if !post.Creator.Equals(msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("only the poll creator can close it, %s", post.Creator))
-	}
-
-	keeper.ClosePollPost(ctx, msg.PostID)
-
-	closeEvent := sdk.NewEvent(
-		types.EventTypeClosePoll,
-		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyPostOwner, msg.Creator.String()),
-	)
-
-	ctx.EventManager().EmitEvent(closeEvent)
-
-	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(fmt.Sprintf("poll closed correctly, %s", msg.Message)),
-		Events: sdk.Events{closeEvent},
-	}
-
 	return &result, nil
 }

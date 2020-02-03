@@ -31,10 +31,8 @@ const (
 	ActionRemovePostReaction = "remove_post_reaction"
 
 	// Queries
-	QuerierRoute        = ModuleName
-	QueryPost           = "post"
-	QueryPosts          = "posts"
-	QueryPollUserAnswer = "poll-user-answers"
-	QueryAnswersAmount  = "poll-answers-amount"
-	QueryAnswerVotes    = "poll-answer-votes"
+	QuerierRoute     = ModuleName
+	QueryPost        = "post"
+	QueryPosts       = "posts"
+	QueryPollAnswers = "poll-answers"
 )

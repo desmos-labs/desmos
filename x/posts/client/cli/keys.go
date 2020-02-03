@@ -17,8 +17,8 @@ const (
 	flagSubspace       = "subspace"
 	flagCreator        = "creator"
 
-	EndDate           = "end-date"
-	MultipleAnswers   = "multiple-answers"
-	AllowsAnswerEdits = "allows-answer-edits"
-	Question          = "question"
+	keyEndDate           = "end-date"
+	keyMultipleAnswers   = "multiple-answers"
+	keyAllowsAnswerEdits = "allows-answer-edits"
+	keyQuestion          = "question"
 )

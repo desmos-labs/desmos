@@ -125,7 +125,7 @@ func NewAnswersDetails(answers []uint64, user sdk.AccAddress) AnswersDetails {
 
 // Strings implements fmt.Stringer
 func (userPollAnswers AnswersDetails) String() string {
-	out := fmt.Sprintf("User: %s \nAnswers IDs:\n", userPollAnswers.User.String())
+	out := fmt.Sprintf("User: %s \nAnswers IDs: ", userPollAnswers.User.String())
 	for _, answer := range userPollAnswers.Answers {
 		out += strconv.FormatUint(answer, 10) + " "
 	}

@@ -30,6 +30,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd.AddCommand(flags.GetCommands(
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
+		GetCmdQueryPollAnswer(cdc),
 	)...)
 	return postQueryCmd
 }
@@ -175,73 +176,24 @@ $ %s query posts posts --page=2 --limit=100
 	return cmd
 }
 
-func GetCmdQueryPollUserAnswers(cdc *codec.Codec) *cobra.Command {
+func GetCmdQueryPollAnswer(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "poll-answers [poll-post-id] [user-address]",
-		Short: "Retrieve all the answers that given user made to the poll post associated with the given post ID.",
-		Args:  cobra.ExactArgs(2),
+		Use:   "poll-answers [id]",
+		Short: "Retrieve tha poll answers of the post with given id",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			postID := args[0]
-			answerer, err := sdk.AccAddressFromBech32(args[1])
-			if err != nil {
-				fmt.Printf("Invalid Bech32 address %s", args[1])
-			}
 
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", types.QuerierRoute, types.QueryPollUserAnswer, postID, answerer)
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPollAnswers, postID)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				fmt.Printf("Could not find post with id %s \n", postID)
 				return nil
 			}
 
-			var out types.PollUserAnswersQueryResponse
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
-		},
-	}
-}
-
-func GetCmdQueryPollTotalAnswersAmount(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "poll-answers-amount [poll-post-id]",
-		Short: "Get the total amount of answers of the poll associated with the given post ID",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			postID := args[0]
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryAnswersAmount, postID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				fmt.Printf("Could not find post with id %s \n", postID)
-			}
-
-			var out types.PollAnswersAmountResponse
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
-		},
-	}
-}
-
-func GetCmdQueryPollTotalAnswerVotes(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "poll-answer-votes [poll-post-id] [answer-id]",
-		Short: "Get the total amount of votes that an answer gained in a post's poll",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			postID := args[0]
-			answerID := args[1]
-
-			route := fmt.Sprintf("custom/%s/%s/%s/%s", types.QuerierRoute, types.QueryAnswerVotes, postID, answerID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				fmt.Printf("Could not find post with id %s \n", postID)
-			}
-
-			var out types.PollAnswerVotesResponse
-			cdc.MustUnmarshalJSON(res, &out)
+			var out types.PollAnswersQueryResponse
+			cdc.MustUnmarshalBinaryBare(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
 	}

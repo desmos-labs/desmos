@@ -283,3 +283,82 @@ func Test_queryPosts(t *testing.T) {
 		})
 	}
 }
+
+func Test_queryPollAnswers(t *testing.T) {
+	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+
+	answers := []uint64{uint64(1)}
+
+	tests := []struct {
+		name          string
+		path          []string
+		storedPosts   types.Posts
+		storedAnswers []types.AnswersDetails
+		expResult     types.PollAnswersQueryResponse
+		expError      error
+	}{
+		{
+			name:     "Invalid post id returns error",
+			path:     []string{types.QueryPollAnswers, ""},
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
+		},
+		{
+			name:     "Post not found returns error",
+			path:     []string{types.QueryPollAnswers, "1"},
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
+		},
+		{
+			name: "Returns answers details of the post correctly",
+			path: []string{types.QueryPollAnswers, "1"},
+			storedPosts: types.Posts{
+				types.NewPost(
+					types.PostID(1),
+					types.PostID(0),
+					"post with poll",
+					false,
+					"",
+					map[string]string{},
+					testPost.Created,
+					testPost.Creator,
+					testPost.Medias,
+					testPost.PollData,
+				),
+			},
+			storedAnswers: []types.AnswersDetails{types.NewAnswersDetails(answers, creator)},
+			expResult: types.PollAnswersQueryResponse{
+				PostID:         types.PostID(1),
+				AnswersDetails: types.UsersAnswersDetails{types.NewAnswersDetails(answers, creator)}},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			for _, p := range test.storedPosts {
+				k.SavePost(ctx, p)
+			}
+
+			for index, ans := range test.storedAnswers {
+				k.SavePollUserAnswers(ctx, test.storedPosts[index].PostID, ans)
+			}
+
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if result != nil {
+				assert.Nil(t, err)
+				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				assert.Equal(t, string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expError.Error(), err.Error())
+				assert.Nil(t, result)
+			}
+		})
+	}
+
+}
