@@ -8,6 +8,7 @@
 
 ## Bug fixes
 - Fixed the posts REST endpoint not working properly (#77)
+- Fixed a bug that allowed to create multiple posts with the exact same contents (#92) 
 
 ## Migration
 In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:
