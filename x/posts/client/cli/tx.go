@@ -61,7 +61,8 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
                   --media "https://example.com/media1,text/plain"
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
-                  --media "https://example.com/media1,text/plain https://example.com/media2,application/json"
+                  --media "https://example.com/media1,text/plain"
+				  --media "https://example.com/media2,application/json"	
 				
 				If you want to add a poll to your post you need to specify it through two flags:
 					1. --poll-details 
