@@ -13,10 +13,8 @@ import (
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
-
 	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/reactions", removeReactionToPostHandler(cliCtx)).Methods("DELETE")
-
 	r.HandleFunc("/posts/{postID}/answers", addAnswerToPostPollHandler(cliCtx)).Methods("POST")
 }
 
@@ -47,7 +45,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-			addr, req.CreationTime, *req.Medias, req.PollData)
+			addr, req.CreationTime, req.Medias, req.PollData)
 
 		err = msg.ValidateBasic()
 		if err != nil {
@@ -158,7 +156,7 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAnswerPollPost(postID, req.Answers, addr)
+		msg := types.NewMsgAnswerPoll(postID, req.Answers, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

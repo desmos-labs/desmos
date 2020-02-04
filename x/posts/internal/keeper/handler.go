@@ -21,7 +21,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgAddPostReaction(ctx, keeper, msg)
 		case types.MsgRemovePostReaction:
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
-		case types.MsgAnswerPollPost:
+		case types.MsgAnswerPoll:
 			return handleMsgAnswerPollPost(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
@@ -202,7 +202,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 }
 
 // handleMsgAnswerPollPost handles the answer to a poll post
-func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPollPost) (*sdk.Result, error) {
+func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPoll) (*sdk.Result, error) {
 
 	post, err := checkPostPollValid(ctx, msg.PostID, keeper)
 	if err != nil {
@@ -226,7 +226,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		)
 	}
 
-	pollAnswers := keeper.GetPostPollAnswersByUser(ctx, post.PostID, msg.Answerer)
+	pollAnswers := keeper.GetPollAnswersByUser(ctx, post.PostID, msg.Answerer)
 
 	// check if the poll allows to edit previous answers
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
@@ -238,7 +238,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
 
-	keeper.SavePollUserAnswers(ctx, post.PostID, userPollAnswers)
+	keeper.SavePollAnswers(ctx, post.PostID, userPollAnswers)
 
 	answerEvent := sdk.NewEvent(
 		types.EventTypeAnsweredPoll,

@@ -640,7 +640,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 					k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
-			k.SavePollUserAnswers(ctx, test.postID, test.userAnswersDetails)
+			k.SavePollAnswers(ctx, test.postID, test.userAnswersDetails)
 
 			var actualUsersAnswersDetails types.UsersAnswersDetails
 			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
@@ -677,10 +677,10 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			if test.storedAnswers != nil {
-				k.SavePollUserAnswers(ctx, test.postID, test.storedAnswers[0])
+				k.SavePollAnswers(ctx, test.postID, test.storedAnswers[0])
 			}
 
-			actualPostPollAnswers := k.GetPostPollAnswersDetails(ctx, test.postID)
+			actualPostPollAnswers := k.GetPollAnswers(ctx, test.postID)
 
 			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
 		})
@@ -718,9 +718,9 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	for _, test := range tests {
 		ctx, k := SetupTestInput()
 
-		k.SavePollUserAnswers(ctx, test.postID, test.storedAnswers)
+		k.SavePollAnswers(ctx, test.postID, test.storedAnswers)
 
-		actualPostPollAnswers := k.GetPostPollAnswersByUser(ctx, test.postID, test.user)
+		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
 
 		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
 	}
@@ -766,20 +766,6 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 			assert.Equal(t, test.usersAD, usersADData)
 		})
 	}
-}
-
-func TestKeeper_ClosePollPost(t *testing.T) {
-	postID := types.PostID(3257)
-
-	ctx, k := SetupTestInput()
-
-	k.SavePost(ctx, testPost)
-
-	k.ClosePollPost(ctx, postID)
-
-	expPost, _ := k.GetPost(ctx, postID)
-
-	assert.Equal(t, false, expPost.PollData.Open)
 }
 
 // -------------

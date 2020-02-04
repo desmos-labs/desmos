@@ -199,13 +199,13 @@ func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
 	return []byte(types.PollAnswersStorePrefix + postID.String())
 }
 
-// Save the userAnswersDetails associated with the given postID inside the current context
+// SavePollAnswers save the poll's answers associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If userAnswersDetails are already present, the old ones will be overridden.
-func (k Keeper) SavePollUserAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
+func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
 	store := ctx.KVStore(k.StoreKey)
 
-	usersAnswersDetails := k.GetPostPollAnswersDetails(ctx, postID)
+	usersAnswersDetails := k.GetPollAnswers(ctx, postID)
 
 	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
 		store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
@@ -213,8 +213,8 @@ func (k Keeper) SavePollUserAnswers(ctx sdk.Context, postID types.PostID, userPo
 
 }
 
-// GetAllPostPollsAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetPostPollAnswersDetails(ctx sdk.Context, postID types.PostID) types.UsersAnswersDetails {
+// GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
+func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.UsersAnswersDetails {
 	store := ctx.KVStore(k.StoreKey)
 
 	var usersAnswersDetails types.UsersAnswersDetails
@@ -225,7 +225,7 @@ func (k Keeper) GetPostPollAnswersDetails(ctx sdk.Context, postID types.PostID) 
 	return usersAnswersDetails
 }
 
-// GetReactions allows to returns the list of reactions that have been stored inside the given context
+// GetAnswersDetailsMap allows to returns the list of answers that have been stored inside the given context
 func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.UsersAnswersDetails {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PollAnswersStorePrefix))
@@ -241,9 +241,9 @@ func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.Use
 	return usersAnswersData
 }
 
-// GetPostPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
-func (k Keeper) GetPostPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint {
-	postPollAnswers := k.GetPostPollAnswersDetails(ctx, postID)
+// GetPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
+func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint {
+	postPollAnswers := k.GetPollAnswers(ctx, postID)
 
 	for _, postPollAnswers := range postPollAnswers {
 		if user.Equals(postPollAnswers.User) {
@@ -251,14 +251,6 @@ func (k Keeper) GetPostPollAnswersByUser(ctx sdk.Context, postID types.PostID, u
 		}
 	}
 	return nil
-}
-
-// ClosePollPost retrieves a previously opened poll post and close it.
-// It assumes that the post associated with the given ID exists and has a poll that's not already closed
-func (k Keeper) ClosePollPost(ctx sdk.Context, postID types.PostID) {
-	post, _ := k.GetPost(ctx, postID)
-	post.PollData.Open = false
-	k.SavePost(ctx, post)
 }
 
 // -------------

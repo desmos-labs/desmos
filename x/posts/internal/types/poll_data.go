@@ -54,8 +54,8 @@ func (pd PollData) Validate() error {
 		return fmt.Errorf("missing poll title")
 	}
 
-	if pd.EndDate.Before(time.Now().UTC()) {
-		return fmt.Errorf("end date cannot be in the past")
+	if pd.EndDate.IsZero() {
+		return fmt.Errorf("invalid poll's end date")
 	}
 
 	if err := pd.ProvidedAnswers.Validate(); err != nil {

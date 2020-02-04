@@ -62,7 +62,11 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
                   --media "https://example.com/media1,text/plain"
 				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
                   --media "https://example.com/media1,text/plain"
-				  --media "https://example.com/media2,application/json"	
+				  --media "https://example.com/media2,application/json"
+ 				  --poll-details "question=Which dog do you prefer?,multiple-answers=false,allows-answer-edits=true,end-date=2020-01-01T15:00:00.000Z" \
+ 				  --poll-answer "Beagle" \
+                  --poll-answer "Pug" \
+                  --poll-answer "German Sheperd"
 				
 				If you want to add a poll to your post you need to specify it through two flags:
 					1. --poll-details 
@@ -75,11 +79,11 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
                        where you specify a slice of answers that will be provided to the users once they want to take part in poll votations.
 						Each answer should is identified by the text of the answer itself
 				Usage examples:
-				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post" true \
-  					--poll-details question="Which dog do you prefer?",multiple-answers=false,allow-answer-edits=true,date=2020-01-01T15:00:00.000Z \
+				- tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post with poll" true \
+  					--poll-details "question=Which dog do you prefer?,multiple-answers=false,allows-answer-edits=true,end-date=2020-01-01T15:00:00.000Z" \
   					--poll-answer "Beagle" \
-  					--poll-answer "Carlino" \
-					--poll-answer "German Sheperd,Labrador"
+  					--poll-answer "Pug" \
+					--poll-answer "German Sheperd"
 		`),
 		Args: cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -120,7 +124,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 
 			// polls' checks
 
-			pollDetailsMap := viper.GetStringMapString(flagPollDetails)
+			pollDetailsMap, _ := cmd.Flags().GetStringToString(flagPollDetails)
 			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
 
 			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
@@ -131,11 +135,15 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
 			}
 
-			var pollData *types.PollData = nil
+			var pollData *types.PollData
 			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
 				date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
 				if err != nil {
 					return fmt.Errorf("end date should be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z")
+				}
+
+				if date.Before(time.Now().UTC()) {
+					return fmt.Errorf("poll's end date can't be in the past")
 				}
 
 				if len(strings.TrimSpace(pollDetailsMap[keyQuestion])) == 0 {
@@ -352,7 +360,7 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 				answers = append(answers, uint(answer))
 			}
 
-			msg := types.NewMsgAnswerPollPost(postID, answers, from)
+			msg := types.NewMsgAnswerPoll(postID, answers, from)
 
 			if err := msg.ValidateBasic(); err != nil {
 				return err

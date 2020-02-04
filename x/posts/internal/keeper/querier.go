@@ -49,7 +49,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	//Get the poll answers if poll exist
 	var answers []types.AnswersDetails
 	if post.PollData != nil {
-		answers = keeper.GetPostPollAnswersDetails(ctx, post.PostID)
+		answers = keeper.GetPollAnswers(ctx, post.PostID)
 	}
 
 	// Crete the response object
@@ -109,12 +109,20 @@ func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keepe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Invalid post id: %s", path[0]))
 	}
 
-	_, found := keeper.GetPost(ctx, id)
+	post, found := keeper.GetPost(ctx, id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Post with id %s not found", id))
 	}
 
-	pollAnswers := keeper.GetPostPollAnswersDetails(ctx, id)
+	if post.PollData == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s has no poll associated", id))
+	}
+
+	pollAnswers := keeper.GetPollAnswers(ctx, id)
+
+	if pollAnswers == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s has no answers to poll", id))
+	}
 
 	pollAnswersResponse := types.PollAnswersQueryResponse{
 		PostID:         id,

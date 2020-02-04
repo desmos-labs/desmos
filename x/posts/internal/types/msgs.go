@@ -188,19 +188,19 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 }
 
 // ----------------------
-// --- MsgAnswerPollPost
+// --- MsgAnswerPoll
 // ----------------------
 
-// MsgAnswerPollPost defines the AnswerPollPost message
-type MsgAnswerPollPost struct {
+// MsgAnswerPoll defines the AnswerPoll message
+type MsgAnswerPoll struct {
 	PostID      PostID         `json:"post_id"`
 	UserAnswers []uint         `json:"provided_answers"`
 	Answerer    sdk.AccAddress `json:"answerer"`
 }
 
-// NewMsgAnswerPollPost is the constructor function for MsgAnswerPollPost
-func NewMsgAnswerPollPost(id PostID, providedAnswers []uint, answerer sdk.AccAddress) MsgAnswerPollPost {
-	return MsgAnswerPollPost{
+// NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
+func NewMsgAnswerPoll(id PostID, providedAnswers []uint, answerer sdk.AccAddress) MsgAnswerPoll {
+	return MsgAnswerPoll{
 		PostID:      id,
 		UserAnswers: providedAnswers,
 		Answerer:    answerer,
@@ -208,13 +208,13 @@ func NewMsgAnswerPollPost(id PostID, providedAnswers []uint, answerer sdk.AccAdd
 }
 
 // Route should return the name of the module
-func (msg MsgAnswerPollPost) Route() string { return RouterKey }
+func (msg MsgAnswerPoll) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAnswerPollPost) Type() string { return ActionAnswerPollPost }
+func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgAnswerPollPost) ValidateBasic() error {
+func (msg MsgAnswerPoll) ValidateBasic() error {
 	if !msg.PostID.Valid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
 	}
@@ -231,12 +231,12 @@ func (msg MsgAnswerPollPost) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgAnswerPollPost) GetSignBytes() []byte {
+func (msg MsgAnswerPoll) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgAnswerPollPost) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{msg.Answerer} }
+func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{msg.Answerer} }
 
 // ----------------------
 // --- MsgAddPostReaction

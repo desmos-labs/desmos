@@ -24,7 +24,7 @@ type CreatePostReq struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data"`
 	CreationTime   time.Time         `json:"creation_time"`
-	Medias         *types.PostMedias `json:"medias,omitempty"`
+	Medias         types.PostMedias  `json:"medias,omitempty"`
 	PollData       *types.PollData   `json:"poll_data,omitempty"`
 }
 
@@ -45,10 +45,4 @@ type RemoveReactionReq struct {
 type AnswerPollPostReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Answers []uint       `json:"answers"`
-}
-
-type ClosePollPostReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	TextMsg string       `json:"text_msg"`
-	PostID  string       `json:"post_id"`
 }

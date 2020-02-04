@@ -63,7 +63,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	pollAnswersMap := convertGenesisPostPollAnswers(data.PollAnswers)
 	for postID, usersAnswersDetails := range pollAnswersMap {
 		for _, userAnswersDetails := range usersAnswersDetails {
-			keeper.SavePollUserAnswers(ctx, postID, userAnswersDetails)
+			keeper.SavePollAnswers(ctx, postID, userAnswersDetails)
 		}
 	}
 

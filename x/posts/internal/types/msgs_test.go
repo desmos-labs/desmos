@@ -618,10 +618,10 @@ func TestMsgUnlikePost_GetSigners(t *testing.T) {
 }
 
 // ----------------------
-// --- MsgAnswerPollPost
+// --- MsgAnswerPoll
 // ----------------------
 
-var msgAnswerPollPost = types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, testOwner)
+var msgAnswerPollPost = types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testOwner)
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
 	actual := msgAnswerPollPost.Route()
@@ -636,27 +636,27 @@ func TestMsgAnswerPollPost_Type(t *testing.T) {
 func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgAnswerPollPost
+		msg   types.MsgAnswerPoll
 		error error
 	}{
 		{
 			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(0), []uint{1, 2}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPoll(types.PostID(0), []uint{1, 2}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid answerer address",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, nil),
+			msg:   types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
-			msg:   types.NewMsgAnswerPollPost(types.PostID(1), []uint{}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPoll(types.PostID(1), []uint{}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
-			msg:  types.NewMsgAnswerPollPost(types.PostID(1), []uint{1, 2}, msgAnswerPollPost.Answerer),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, msgAnswerPollPost.Answerer),
 		},
 	}
 

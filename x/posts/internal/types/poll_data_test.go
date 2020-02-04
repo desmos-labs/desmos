@@ -23,8 +23,6 @@ func TestPollData_String(t *testing.T) {
 }
 
 func TestPollData_Validate(t *testing.T) {
-	timeZone, _ := time.LoadLocation("UTC")
-
 	tests := []struct {
 		pollData *types.PollData
 		expError string
@@ -34,8 +32,8 @@ func TestPollData_Validate(t *testing.T) {
 			expError: "missing poll title",
 		},
 		{
-			pollData: types.NewPollData("title", time.Date(2019, 1, 1, 0, 0, 00, 000, timeZone), types.PollAnswers{}, true, true, true),
-			expError: "end date cannot be in the past",
+			pollData: types.NewPollData("title", time.Time{}, types.PollAnswers{}, true, true, true),
+			expError: "invalid poll's end date",
 		},
 		{
 			pollData: types.NewPollData("title", testPostEndPollDate, types.PollAnswers{}, true, true, true),
