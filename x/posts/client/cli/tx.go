@@ -130,7 +130,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
 			}
 
-			pollData := types.PollData{}
+			var pollData *types.PollData = nil
 			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
 				date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
 				if err != nil {
@@ -167,7 +167,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 					answers = answers.AppendIfMissing(pollAnswer)
 				}
 
-				pollData = types.PollData{
+				pollData = &types.PollData{
 					Question:              question,
 					Open:                  true,
 					EndDate:               date,
@@ -186,7 +186,7 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 				from,
 				time.Now().UTC(),
 				medias,
-				&pollData,
+				pollData,
 			)
 
 			if err = msg.ValidateBasic(); err != nil {

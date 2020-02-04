@@ -322,6 +322,40 @@ func TestKeeper_GetPost(t *testing.T) {
 				testPost.PollData,
 			),
 		},
+		{
+			name:       "Existing post without medias is found properly",
+			ID:         types.PostID(45),
+			postExists: true,
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				nil,
+				testPost.PollData,
+			),
+		},
+		{
+			name:       "Existing post without poll is found properly",
+			ID:         types.PostID(45),
+			postExists: true,
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+				nil,
+			),
+		},
 	}
 
 	for _, test := range tests {

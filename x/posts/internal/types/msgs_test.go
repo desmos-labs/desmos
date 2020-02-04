@@ -265,6 +265,41 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			),
 			error: nil,
 		},
+		{
+			name: "Message with empty medias returns no error",
+			msg: types.NewMsgCreatePost(
+				"My message",
+				types.PostID(0),
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				date,
+				nil,
+				msgCreatePost.PollData,
+			),
+			error: nil,
+		},
+		{
+			name: "Message with empty poll returns no error",
+			msg: types.NewMsgCreatePost(
+				"My message",
+				types.PostID(0),
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				date,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://example.com",
+						MimeType: "text/plain",
+					},
+				},
+				nil,
+			),
+			error: nil,
+		},
 	}
 
 	for _, test := range tests {
