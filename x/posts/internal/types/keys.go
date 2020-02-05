@@ -17,6 +17,7 @@ const (
 	LastPostIDStoreKey       = "last_post_id"
 	PostCommentsStorePrefix  = "comments:"
 	PostReactionsStorePrefix = "reactions:"
+	PollAnswersStorePrefix   = "poll_answers:"
 
 	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10
@@ -24,11 +25,13 @@ const (
 
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
+	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
 
 	// Queries
-	QuerierRoute = ModuleName
-	QueryPost    = "post"
-	QueryPosts   = "posts"
+	QuerierRoute     = ModuleName
+	QueryPost        = "post"
+	QueryPosts       = "posts"
+	QueryPollAnswers = "poll-answers"
 )
