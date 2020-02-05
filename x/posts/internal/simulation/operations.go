@@ -67,6 +67,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 			data.Creator.Address,
 			data.CreationDate,
 			data.Medias,
+			data.PollData,
 		)
 
 		err = sendMsgCreatePost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
@@ -120,6 +121,7 @@ type postData struct {
 	CreationDate   time.Time
 	OptionalData   map[string]string
 	Medias         types.PostMedias
+	PollData       *types.PollData
 }
 
 // randomPostFields returns the creator of the post as well as the parent id
@@ -140,6 +142,8 @@ func randomPostFields(
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
+		// TODO: Add medias
+		// TODO: Add poll data
 	}
 
 	posts := k.GetPosts(ctx)

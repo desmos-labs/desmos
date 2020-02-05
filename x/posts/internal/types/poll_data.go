@@ -241,6 +241,14 @@ type PollAnswer struct {
 	Text string `json:"text"` // Text of the answer
 }
 
+// NewPollAnswer returns a new PollAnswer object
+func NewPollAnswer(id uint, text string) PollAnswer {
+	return PollAnswer{
+		ID:   id,
+		Text: text,
+	}
+}
+
 // String implements fmt.Stringer
 func (pa PollAnswer) String() string {
 	formattedID := strconv.FormatUint(uint64(pa.ID), 10)

@@ -9,12 +9,6 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	PostStorePrefix          = "post:"
-	LastPostIDStoreKey       = "last_post_id"
-	PostCommentsStorePrefix  = "comments:"
-	PostReactionsStorePrefix = "reactions:"
-	PollAnswersStorePrefix   = "poll_answers:"
-
 	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10
 	MaxOptionalDataFieldValueLength = 200
@@ -60,8 +54,8 @@ func PostReactionsStoreKey(id PostID) []byte {
 	return append(PostReactionsStorePrefix, []byte(id.String())...)
 }
 
-// PostAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store
+// PollAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store
 // nolint: interfacer
-func PostAnswersStoreKey(id PostID) []byte {
+func PollAnswersStoreKey(id PostID) []byte {
 	return append(PollAnswersStorePrefix, []byte(id.String())...)
 }

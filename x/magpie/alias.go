@@ -12,15 +12,13 @@ const (
 )
 
 var (
-	NewKeeper     = keeper.NewKeeper
-	NewHandler    = keeper.NewHandler
-	NewQuerier    = keeper.NewQuerier
-	ModuleCdc     = types.ModuleCdc
-	RegisterCodec = types.RegisterCodec
-	NewSession    = types.NewSession
+	NewKeeper           = keeper.NewKeeper
+	NewHandler          = keeper.NewHandler
+	NewQuerier          = keeper.NewQuerier
+	ModuleCdc           = types.ModuleCdc
+	RegisterCodec       = types.RegisterCodec
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
-	NewMsgSession = types.NewMsgCreateSession
 )
 
 type (
@@ -28,5 +26,6 @@ type (
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
+	GenesisState     = types.GenesisState
 	MsgCreateSession = types.MsgCreateSession
 )

@@ -51,10 +51,6 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgCreateSession(from, args[0], args[1], args[2], args[3])
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

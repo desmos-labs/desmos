@@ -219,10 +219,6 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -253,10 +249,6 @@ E.g.
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -287,10 +279,6 @@ E.g.
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -307,12 +295,6 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			from := cliCtx.GetFromAddress()
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
-
 			postID, err := types.ParsePostID(args[0])
 			if err != nil {
 				return err
@@ -328,12 +310,7 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 				answers = append(answers, uint(answer))
 			}
 
-			msg := types.NewMsgAnswerPoll(postID, answers, from)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
+			msg := types.NewMsgAnswerPoll(postID, answers, cliCtx.FromAddress)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

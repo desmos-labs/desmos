@@ -191,10 +191,6 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	return filteredPosts
 }
 
-func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
-	return []byte(types.PollAnswersStorePrefix + postID.String())
-}
-
 // SavePollAnswers save the poll's answers associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If userAnswersDetails are already present, the old ones will be overridden.
@@ -209,7 +205,7 @@ func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAn
 	usersAnswersDetails := k.GetPollAnswers(ctx, postID)
 
 	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
-		store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
+		store.Set(types.PollAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
 	}
 
 }
@@ -219,7 +215,7 @@ func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.Users
 	store := ctx.KVStore(k.StoreKey)
 
 	var usersAnswersDetails types.UsersAnswersDetails
-	answersBz := store.Get(k.getAnswersStoreKey(postID))
+	answersBz := store.Get(types.PollAnswersStoreKey(postID))
 
 	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
 
@@ -235,7 +231,8 @@ func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.Use
 	for ; iterator.Valid(); iterator.Next() {
 		var userAnswers types.UsersAnswersDetails
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
-		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PollAnswersStorePrefix))
+		idBytes := bytes.TrimPrefix(iterator.Key(), types.PollAnswersStorePrefix)
+		postID, _ := types.ParsePostID(string(idBytes))
 		usersAnswersData[postID] = userAnswers
 	}
 

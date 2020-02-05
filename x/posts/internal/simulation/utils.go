@@ -2,6 +2,7 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
@@ -52,4 +53,14 @@ func RandomMessage(r *rand.Rand) string {
 func RandomSubspace(r *rand.Rand) string {
 	idx := r.Intn(len(subspaces))
 	return subspaces[idx]
+}
+
+// RandomDate returns a randomly generated date
+func RandomDate(r *rand.Rand) time.Time {
+	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	delta := max - min
+
+	sec := r.Int63n(delta) + min
+	return time.Unix(sec, 0)
 }
