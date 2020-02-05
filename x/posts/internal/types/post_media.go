@@ -12,7 +12,7 @@ import (
 
 type PostMedia struct {
 	URI      string `json:"uri"`
-	MimeType string `json:"mime_Type"`
+	MimeType string `json:"mime_type"`
 }
 
 var rEx = regexp.MustCompile(
