@@ -22,7 +22,9 @@ var (
 	RegisterCodec = types.RegisterCodec
 
 	// Types
-	NewSession = types.NewSession
+	NewSession          = types.NewSession
+	DefaultGenesisState = types.DefaultGenesisState
+	ValidateGenesis     = types.ValidateGenesis
 
 	// Msgs
 	NewMsgSession = types.NewMsgCreateSession
@@ -31,6 +33,9 @@ var (
 type (
 	// Keeper
 	Keeper = keeper.Keeper
+
+	// Genesis
+	GenesisState = types.GenesisState
 
 	// Types
 	SessionID = types.SessionID
