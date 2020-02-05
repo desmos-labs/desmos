@@ -327,25 +327,6 @@ func Test_queryPollAnswers(t *testing.T) {
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 1 has no poll associated"),
 		},
 		{
-			name: "Post without poll returns error",
-			path: []string{types.QueryPollAnswers, "1"},
-			storedPosts: types.Posts{
-				types.NewPost(
-					types.PostID(1),
-					types.PostID(0),
-					"post with poll",
-					false,
-					"",
-					map[string]string{},
-					testPost.Created,
-					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
-				),
-			},
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 1 has no answers to poll"),
-		},
-		{
 			name: "Returns answers details of the post correctly",
 			path: []string{types.QueryPollAnswers, "1"},
 			storedPosts: types.Posts{

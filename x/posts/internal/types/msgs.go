@@ -23,7 +23,7 @@ type MsgCreatePost struct {
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
-	Medias         PostMedias        `json:"post_medias,omitempty"`
+	Medias         PostMedias        `json:"medias,omitempty"`
 	PollData       *PollData         `json:"poll_data,omitempty"`
 }
 
@@ -194,7 +194,7 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // MsgAnswerPoll defines the AnswerPoll message
 type MsgAnswerPoll struct {
 	PostID      PostID         `json:"post_id"`
-	UserAnswers []uint         `json:"provided_answers"`
+	UserAnswers []uint         `json:"answers"`
 	Answerer    sdk.AccAddress `json:"answerer"`
 }
 

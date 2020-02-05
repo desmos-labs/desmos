@@ -120,10 +120,6 @@ func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keepe
 
 	pollAnswers := keeper.GetPollAnswers(ctx, id)
 
-	if pollAnswers == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s has no answers to poll", id))
-	}
-
 	pollAnswersResponse := types.PollAnswersQueryResponse{
 		PostID:         id,
 		AnswersDetails: pollAnswers,
