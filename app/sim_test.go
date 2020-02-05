@@ -33,11 +33,12 @@ import (
 
 func init() {
 	simapp.GetSimulatorFlags()
-}
 
-var (
-	configInitialized = false
-)
+	// Setup the config
+	sdkConfig := sdk.GetConfig()
+	SetupConfig(sdkConfig)
+	sdkConfig.Seal()
+}
 
 type StoreKeysPrefixes struct {
 	A        sdk.StoreKey
@@ -60,14 +61,6 @@ func interBlockCacheOpt() func(*baseapp.BaseApp) {
 // SetupSimulation wraps simapp.SetupSimulation in order to create any export directory if they do not exist yet
 func SetupSimulation(dirPrefix, dbName string) (simulation.Config, dbm.DB, string, log.Logger, bool, error) {
 	config, db, dir, logger, skip, err := simapp.SetupSimulation(dirPrefix, dbName)
-
-	// Setup the config
-	if !configInitialized {
-		sdkConfig := sdk.GetConfig()
-		SetupConfig(sdkConfig)
-		sdkConfig.Seal()
-		configInitialized = true
-	}
 
 	// Setup the overloads
 	Init()
