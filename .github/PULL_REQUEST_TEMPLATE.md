@@ -10,6 +10,8 @@ v    If a checkbox is n/a - please still include it but + a little note why
 ## Checklist
 - [ ] Targeted PR against correct branch.
 - [ ] Linked to Github issue with discussion and accepted design OR link to spec that describes this work.
-- [ ] Wrote tests.
+- [ ] Wrote unit tests.
+- [ ] Wrote integration tests (simulation & CLI). 
+- [ ] Updated the documentation. 
 - [ ] Added an entry to the `CHANGELOG.md` file.
 - [ ] Re-reviewed `Files changed` in the Github PR explorer.

@@ -37,6 +37,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(0),
@@ -49,6 +50,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 already exists"),
 		},
@@ -63,6 +65,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expPost: types.NewPost(
 				types.PostID(1),
@@ -74,6 +77,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 				testPost.Medias,
+				testPost.PollData,
 			),
 		},
 		{
@@ -87,6 +91,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id 50 not found"),
 		},
@@ -103,6 +108,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			msg: types.NewMsgCreatePost(
@@ -114,6 +120,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Creator,
 				testPost.Created,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 50 does not allow comments"),
 		},
@@ -212,6 +219,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				OptionalData:   testPost.OptionalData,
 				Creator:        testPost.Creator,
 				Medias:         testPost.Medias,
+				PollData:       testPost.PollData,
 			},
 		},
 	}
@@ -392,4 +400,136 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_handleMsgAnswerPollPost(t *testing.T) {
+	answers := []uint{uint(1), uint(2)}
+	userPollAnswers := types.NewAnswersDetails(answers, testPostOwner)
+
+	tests := []struct {
+		name          string
+		msg           types.MsgAnswerPoll
+		storedPost    types.Post
+		storedAnswers *types.AnswersDetails
+		expErr        error
+	}{
+		{
+			name: "Post not found",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(2), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 doesn't exist"),
+		},
+		{
+			name: "No poll associated with post",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil, nil),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 1"),
+		},
+		{
+			name: "Answer after poll closure",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
+			),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("the poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired)),
+		},
+		{
+			name: "Poll doesn't allow multiple answers",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
+			),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "the poll associated with ID 1 doesn't allow multiple answers"),
+		},
+		{
+			name: "User provide too many answers",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2, 3}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
+		},
+		{
+			name: "User provide answers that are not the ones provided by the poll",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 3}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "answer with ID 3 isn't one of the poll's provided answers"),
+		},
+		{
+			name: "Poll doesn't allow answers' edits",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
+			),
+			storedAnswers: &userPollAnswers,
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "post with ID 1 doesn't allow answers' edits"),
+		},
+		{
+			name: "Answered correctly to post's poll",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
+
+			if test.storedAnswers != nil {
+				k.SavePollAnswers(ctx, test.storedPost.PostID, *test.storedAnswers)
+			}
+
+			handler := keeper.NewHandler(k)
+			res, err := handler(ctx, test.msg)
+
+			// Invalid response
+			if res == nil {
+				assert.NotNil(t, err)
+				assert.Equal(t, test.expErr.Error(), err.Error())
+			}
+
+			// Valid response
+			if res != nil {
+				{
+					// Check the data
+					assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+
+					// Check the events
+					answerEvent := sdk.NewEvent(
+						types.EventTypeAnsweredPoll,
+						sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID.String()),
+						sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
+					)
+
+					assert.Len(t, ctx.EventManager().Events(), 1)
+					assert.Contains(t, ctx.EventManager().Events(), answerEvent)
+				}
+			}
+		})
+	}
+
 }

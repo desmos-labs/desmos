@@ -57,6 +57,9 @@ func Test_handleMsgCreateSession(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
+			sessionLength := int64(240)
+			k.SetDefaultSessionLength(ctx, sessionLength)
+
 			handler := keeper.NewHandler(k)
 			res, err := handler(ctx, test.msg)
 
@@ -67,7 +70,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 				session := types.Session{
 					SessionID:     expectedID,
 					Created:       ctx.BlockHeight(),
-					Expiry:        ctx.BlockHeight() + 240, // 24 hours, counting a 6 secs block interval
+					Expiry:        ctx.BlockHeight() + sessionLength,
 					Owner:         test.msg.Owner,
 					Namespace:     test.msg.Namespace,
 					ExternalOwner: test.msg.ExternalOwner,

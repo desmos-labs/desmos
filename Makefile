@@ -30,14 +30,14 @@ ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
 
 # Process linker flags
-ldflags = -X "github.com/cosmos/cosmos-sdk/version.Name=Desmos" \
- 	-X "github.com/cosmos/cosmos-sdk/version.ServerName=desmosd" \
- 	-X "github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli" \
- 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
-    -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
-  	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)"
+ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
+ 	-X 'github.com/cosmos/cosmos-sdk/version.ServerName=desmosd' \
+ 	-X 'github.com/cosmos/cosmos-sdk/version.ClientName=desmoscli' \
+ 	-X 'github.com/cosmos/cosmos-sdk/version.Version=$(VERSION)' \
+    -X 'github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)' \
+  	-X 'github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)'
 
-BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
+BUILD_FLAGS := -tags="$(build_tags)" -ldflags="$(ldflags)"
 
 ########################################
 ### All

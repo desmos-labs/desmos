@@ -21,11 +21,16 @@ var (
 	RegisterCodec       = types.RegisterCodec
 	ParsePostID         = types.ParsePostID
 	NewReaction         = types.NewReaction
+	NewPost             = types.NewPost
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 	DecodeStore         = simulation.DecodeStore
 	RandomizedGenState  = simulation.RandomizedGenState
 	WeightedOperations  = simulation.WeightedOperations
+	NewMsgCreatePost         = types.NewMsgCreatePost
+	NewMsgEditPost           = types.NewMsgEditPost
+	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
+	NewMsgRemovePostReaction = types.NewMsgRemovePostReaction
 )
 
 type (
@@ -36,6 +41,7 @@ type (
 	Posts                 = types.Posts
 	PostMedia             = types.PostMedia
 	PostMedias            = types.PostMedias
+	UsersAnswersDetails = types.UsersAnswersDetails
 	Reaction              = types.Reaction
 	Reactions             = types.Reactions
 	PostQueryResponse     = types.PostQueryResponse

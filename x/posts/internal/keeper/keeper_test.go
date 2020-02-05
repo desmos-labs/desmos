@@ -56,6 +56,7 @@ func TestKeeper_SavePost(t *testing.T) {
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
 		expMedias            types.PostMedias
+		expPollData          *types.PollData
 	}{
 		{
 			name: "Post with ID already present",
@@ -69,6 +70,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -81,10 +83,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -98,6 +102,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -110,10 +115,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -127,6 +134,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Created,
 					testPost.Creator,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -139,10 +147,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -156,6 +166,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Created,
 					testPostOwner,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -168,10 +179,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPostOwner,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -185,6 +198,7 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Created,
 					testPostOwner,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -197,10 +211,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPostOwner,
 				testPost.Medias,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
 			expMedias:            testPost.Medias,
+			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without medias is saved properly",
@@ -216,10 +232,32 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPostOwner,
 				nil,
+				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
 			expMedias:            nil,
+			expPollData:          testPost.PollData,
+		},
+		{
+			name:          "Post without poll data is saved properly",
+			existingPosts: types.Posts{},
+			lastPostID:    types.PostID(0),
+			newPost: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"New post ID lesser",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+				nil,
+			),
+			expParentCommentsIDs: []types.PostID{},
+			expLastID:            types.PostID(1),
+			expMedias:            testPost.Medias,
+			expPollData:          nil,
 		},
 	}
 
@@ -281,6 +319,41 @@ func TestKeeper_GetPost(t *testing.T) {
 				testPost.Created,
 				testPostOwner,
 				testPost.Medias,
+				testPost.PollData,
+			),
+		},
+		{
+			name:       "Existing post without medias is found properly",
+			ID:         types.PostID(45),
+			postExists: true,
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				nil,
+				testPost.PollData,
+			),
+		},
+		{
+			name:       "Existing post without poll is found properly",
+			ID:         types.PostID(45),
+			postExists: true,
+			expected: types.NewPost(
+				types.PostID(45),
+				types.PostID(0),
+				"Post",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPostOwner,
+				testPost.Medias,
+				nil,
 			),
 		},
 	}
@@ -319,10 +392,10 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55)},
@@ -370,6 +443,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 					testPost.Created,
 					testPostOwner,
 					testPost.Medias,
+					testPost.PollData,
 				),
 			},
 		},
@@ -418,6 +492,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			date,
 			creator1,
 			testPost.Medias,
+			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(11),
@@ -429,6 +504,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
 			testPost.Medias,
+			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(12),
@@ -440,6 +516,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			date,
 			creator2,
 			testPost.Medias,
+			testPost.PollData,
 		),
 	}
 
@@ -520,6 +597,178 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 
 			result := k.GetPostsFiltered(ctx, test.filter)
 			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
+		})
+	}
+}
+
+func TestKeeper_SavePollPostAnswers(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	answers := []uint{uint(1), uint(2)}
+	answers2 := []uint{uint(1)}
+
+	tests := []struct {
+		name               string
+		postID             types.PostID
+		userAnswersDetails types.AnswersDetails
+		previousUsersAD    types.UsersAnswersDetails
+		expUsersAD         types.UsersAnswersDetails
+	}{
+		{
+			name:               "Save answers with no previous answers in this context",
+			postID:             types.PostID(1),
+			userAnswersDetails: types.NewAnswersDetails(answers, user),
+			previousUsersAD:    nil,
+			expUsersAD:         types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+		},
+		{
+			name:               "Save new answers",
+			postID:             types.PostID(1),
+			userAnswersDetails: types.NewAnswersDetails(answers2, user2),
+			previousUsersAD:    types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			expUsersAD: types.UsersAnswersDetails{
+				types.NewAnswersDetails(answers, user),
+				types.NewAnswersDetails(answers2, user2),
+			},
+		},
+	}
+
+	for _, test := range tests {
+
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			if test.previousUsersAD != nil {
+				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()),
+					k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
+			}
+
+			k.SavePollAnswers(ctx, test.postID, test.userAnswersDetails)
+
+			var actualUsersAnswersDetails types.UsersAnswersDetails
+			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
+			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
+			assert.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
+		})
+	}
+}
+
+func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	answers := []uint{uint(1), uint(2)}
+
+	tests := []struct {
+		name          string
+		postID        types.PostID
+		storedAnswers types.UsersAnswersDetails
+	}{
+		{
+			name:          "No answers returns empty list",
+			postID:        types.PostID(1),
+			storedAnswers: nil,
+		},
+		{
+			name:          "Answers returned correctly",
+			postID:        types.PostID(1),
+			storedAnswers: types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			if test.storedAnswers != nil {
+				k.SavePollAnswers(ctx, test.postID, test.storedAnswers[0])
+			}
+
+			actualPostPollAnswers := k.GetPollAnswers(ctx, test.postID)
+
+			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
+		})
+	}
+}
+
+func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	answers := []uint{uint(1), uint(2)}
+
+	tests := []struct {
+		name          string
+		storedAnswers types.AnswersDetails
+		postID        types.PostID
+		user          sdk.AccAddress
+		expAnswers    []uint
+	}{
+		{
+			name:          "No answers for user returns nil",
+			storedAnswers: types.NewAnswersDetails(answers, user),
+			postID:        types.PostID(1),
+			user:          user2,
+			expAnswers:    nil,
+		},
+		{
+			name:          "Matching user returns answers made by him",
+			storedAnswers: types.NewAnswersDetails(answers, user),
+			postID:        types.PostID(1),
+			user:          user,
+			expAnswers:    answers,
+		},
+	}
+
+	for _, test := range tests {
+		ctx, k := SetupTestInput()
+
+		k.SavePollAnswers(ctx, test.postID, test.storedAnswers)
+
+		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
+
+		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
+	}
+}
+
+func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
+	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	answers := []uint{uint(1), uint(2)}
+
+	tests := []struct {
+		name    string
+		usersAD map[types.PostID]types.UsersAnswersDetails
+	}{
+		{
+			name:    "Empty users answers details data are returned correctly",
+			usersAD: map[types.PostID]types.UsersAnswersDetails{},
+		},
+		{
+			name: "Non empty users answers details data are returned correcly",
+			usersAD: map[types.PostID]types.UsersAnswersDetails{
+				types.PostID(1): {
+					types.NewAnswersDetails(answers, user),
+					types.NewAnswersDetails(answers, user2),
+				},
+				types.PostID(2): {
+					types.NewAnswersDetails(answers, user2),
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+			for postID, userAD := range test.usersAD {
+				store.Set([]byte(types.PollAnswersStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(userAD))
+			}
+
+			usersADData := k.GetAnswersDetailsMap(ctx)
+			assert.Equal(t, test.usersAD, usersADData)
 		})
 	}
 }

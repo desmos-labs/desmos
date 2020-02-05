@@ -231,29 +231,39 @@ func TestPost_Validate(t *testing.T) {
 			MimeType: "text/plain",
 		},
 	}
+	answer := types.PollAnswer{
+		ID:   uint(1),
+		Text: "Yes",
+	}
+
+	answer2 := types.PollAnswer{
+		ID:   uint(2),
+		Text: "No",
+	}
+	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
 
 	tests := []struct {
 		post     types.Post
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias),
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil, medias, pollData),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner, medias, pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -261,11 +271,11 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner, medias, pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner, medias),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner, medias, pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
@@ -314,6 +324,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 				medias,
+				pollData,
 			),
 			expError: "post message cannot be longer than 500 characters",
 		},
@@ -340,6 +351,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 				medias,
+				pollData,
 			),
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
@@ -358,6 +370,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 				medias,
+				pollData,
 			),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
 		},
@@ -392,6 +405,10 @@ func TestPost_Equals(t *testing.T) {
 			MimeType: "text/plain",
 		},
 	}
+
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
+	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
 	tests := []struct {
 		name      string
@@ -655,6 +672,94 @@ func TestPost_Equals(t *testing.T) {
 			},
 			expEquals: false,
 		},
+		{
+			name: "Different medias",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         types.PostMedias{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different polls",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       nil,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         medias,
+				PollData:       &types.PollData{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Equals posts",
+			first: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       pollData,
+			},
+			second: types.Post{
+				PostID:         types.PostID(19),
+				ParentID:       types.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       pollData,
+			},
+			expEquals: true,
+		},
 	}
 
 	for _, test := range tests {
@@ -712,12 +817,12 @@ func TestPosts_Equals(t *testing.T) {
 		{
 			name: "Same lists are equals",
 			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
 			},
 			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
+				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
+				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
 			},
 			expEquals: true,
 		},
@@ -744,6 +849,16 @@ func TestPosts_String(t *testing.T) {
 			MimeType: "text/plain",
 		},
 	}
+	answer := types.PollAnswer{
+		ID:   uint(1),
+		Text: "Yes",
+	}
+
+	answer2 := types.PollAnswer{
+		ID:   uint(2),
+		Text: "No",
+	}
+	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
 
 	timeZone, err := time.LoadLocation("UTC")
 	assert.NoError(t, err)
@@ -751,8 +866,8 @@ func TestPosts_String(t *testing.T) {
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := types.Posts{
-		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1, medias),
-		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2, medias),
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1, medias, pollData),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2, medias, pollData),
 	}
 
 	expected := `ID - [Creator] Message

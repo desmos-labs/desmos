@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/cosmos/cosmos-sdk/client"
-
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -189,6 +189,69 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	}
 
 	return filteredPosts
+}
+
+func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
+	return []byte(types.PollAnswersStorePrefix + postID.String())
+}
+
+// SavePollAnswers save the poll's answers associated with the given postID inside the current context
+// It assumes that the post exists and has a Poll inside it.
+// If userAnswersDetails are already present, the old ones will be overridden.
+func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
+	store := ctx.KVStore(k.StoreKey)
+
+	sort.Slice(
+		userPollAnswers.Answers,
+		func(i, j int) bool { return userPollAnswers.Answers[i] < userPollAnswers.Answers[j] },
+	)
+
+	usersAnswersDetails := k.GetPollAnswers(ctx, postID)
+
+	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
+		store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
+	}
+
+}
+
+// GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
+func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.UsersAnswersDetails {
+	store := ctx.KVStore(k.StoreKey)
+
+	var usersAnswersDetails types.UsersAnswersDetails
+	answersBz := store.Get(k.getAnswersStoreKey(postID))
+
+	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
+
+	return usersAnswersDetails
+}
+
+// GetAnswersDetailsMap allows to returns the list of answers that have been stored inside the given context
+func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.UsersAnswersDetails {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PollAnswersStorePrefix))
+
+	usersAnswersData := map[types.PostID]types.UsersAnswersDetails{}
+	for ; iterator.Valid(); iterator.Next() {
+		var userAnswers types.UsersAnswersDetails
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
+		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PollAnswersStorePrefix))
+		usersAnswersData[postID] = userAnswers
+	}
+
+	return usersAnswersData
+}
+
+// GetPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
+func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint {
+	postPollAnswers := k.GetPollAnswers(ctx, postID)
+
+	for _, postPollAnswers := range postPollAnswers {
+		if user.Equals(postPollAnswers.User) {
+			return postPollAnswers.Answers
+		}
+	}
+	return nil
 }
 
 // -------------

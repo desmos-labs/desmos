@@ -120,10 +120,11 @@ type Post struct {
 	OptionalData   OptionalData   `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator"`                 // Creator of the Post
 	Medias         PostMedias     `json:"medias,omitempty"`        // Contains all the medias that are shared with the post
+	PollData       *PollData      `json:"poll_data,omitempty"`     // Contains the poll details, if existing
 }
 
 func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created time.Time, creator sdk.AccAddress, medias PostMedias) Post {
+	created time.Time, creator sdk.AccAddress, medias PostMedias, pollData *PollData) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
@@ -135,6 +136,7 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		OptionalData:   optionalData,
 		Creator:        creator,
 		Medias:         medias,
+		PollData:       pollData,
 	}
 }
 
@@ -203,6 +205,10 @@ func (p Post) Validate() error {
 		return err
 	}
 
+	if err := p.PollData.Validate(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -224,7 +230,7 @@ func (p Post) Equals(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias)
+		p.Medias.Equals(other.Medias) && p.PollData.Equals(other.PollData)
 }
 
 // -------------

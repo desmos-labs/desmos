@@ -30,6 +30,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd.AddCommand(flags.GetCommands(
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
+		GetCmdQueryPollAnswer(cdc),
 	)...)
 	return postQueryCmd
 }
@@ -173,4 +174,27 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
 
 	return cmd
+}
+
+func GetCmdQueryPollAnswer(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "poll-answers [id]",
+		Short: "Retrieve tha poll answers of the post with given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			postID := args[0]
+
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPollAnswers, postID)
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find post with id %s \n", postID)
+				return nil
+			}
+
+			var out types.PollAnswersQueryResponse
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
 }

@@ -23,12 +23,13 @@ type MsgCreatePost struct {
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
-	Medias         PostMedias        `json:"post_medias,omitempty"`
+	Medias         PostMedias        `json:"medias,omitempty"`
+	PollData       *PollData         `json:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias, pollData *PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -38,6 +39,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		Creator:        owner,
 		CreationDate:   creationDate,
 		Medias:         medias,
+		PollData:       pollData,
 	}
 }
 
@@ -93,8 +95,20 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future")
 	}
 
-	if err := msg.Medias.Validate(); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	if msg.Medias != nil {
+		if err := msg.Medias.Validate(); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+	}
+
+	if msg.PollData != nil {
+
+		if !msg.PollData.Open {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
+		}
+		if err := msg.PollData.Validate(); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
 	}
 
 	return nil
@@ -172,6 +186,57 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Editor}
 }
+
+// ----------------------
+// --- MsgAnswerPoll
+// ----------------------
+
+// MsgAnswerPoll defines the AnswerPoll message
+type MsgAnswerPoll struct {
+	PostID      PostID         `json:"post_id"`
+	UserAnswers []uint         `json:"answers"`
+	Answerer    sdk.AccAddress `json:"answerer"`
+}
+
+// NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
+func NewMsgAnswerPoll(id PostID, providedAnswers []uint, answerer sdk.AccAddress) MsgAnswerPoll {
+	return MsgAnswerPoll{
+		PostID:      id,
+		UserAnswers: providedAnswers,
+		Answerer:    answerer,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgAnswerPoll) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgAnswerPoll) ValidateBasic() error {
+	if !msg.PostID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
+	}
+
+	if msg.Answerer.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid answerer address: %s", msg.Answerer))
+	}
+
+	if len(msg.UserAnswers) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgAnswerPoll) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{msg.Answerer} }
 
 // ----------------------
 // --- MsgAddPostReaction

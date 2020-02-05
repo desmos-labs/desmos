@@ -18,6 +18,8 @@ var (
 	ModuleCdc     = types.ModuleCdc
 	RegisterCodec = types.RegisterCodec
 	NewSession    = types.NewSession
+	DefaultGenesisState = types.DefaultGenesisState
+	ValidateGenesis     = types.ValidateGenesis
 	NewMsgSession = types.NewMsgCreateSession
 )
 

@@ -9,19 +9,27 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
+	PostStorePrefix          = "post:"
+	LastPostIDStoreKey       = "last_post_id"
+	PostCommentsStorePrefix  = "comments:"
+	PostReactionsStorePrefix = "reactions:"
+	PollAnswersStorePrefix   = "poll_answers:"
+
 	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10
 	MaxOptionalDataFieldValueLength = 200
 
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
+	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
 
 	// Queries
-	QuerierRoute = ModuleName
-	QueryPost    = "post"
-	QueryPosts   = "posts"
+	QuerierRoute     = ModuleName
+	QueryPost        = "post"
+	QueryPosts       = "posts"
+	QueryPollAnswers = "poll-answers"
 )
 
 var (
@@ -31,6 +39,7 @@ var (
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("reactions")
+	PollAnswersStorePrefix   = []byte("poll_answers")
 )
 
 // AddressStoreKey turns an id to a key used to store a post into the posts store
@@ -49,4 +58,10 @@ func PostCommentsStoreKey(id PostID) []byte {
 // nolint: interfacer
 func PostReactionsStoreKey(id PostID) []byte {
 	return append(PostReactionsStorePrefix, []byte(id.String())...)
+}
+
+// PostAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store
+// nolint: interfacer
+func PostAnswersStoreKey(id PostID) []byte {
+	return append(PollAnswersStorePrefix, []byte(id.String())...)
 }
