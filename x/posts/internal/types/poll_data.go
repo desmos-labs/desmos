@@ -222,6 +222,15 @@ func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
 	return append(answers, newAnswer)
 }
 
+// ExtractAnswersIDs appends every answer ID to a slice of IDs.
+//It returns a slice of answers IDs.
+func (answers PollAnswers) ExtractAnswersIDs() (answersIDs []uint) {
+	for _, answer := range answers {
+		answersIDs = append(answersIDs, answer.ID)
+	}
+	return answersIDs
+}
+
 // ---------------
 // --- PollAnswer
 // ---------------

@@ -465,6 +465,16 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
 		},
 		{
+			name: "User provide answers that are not the ones provided by the poll",
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 3}, testPostOwner),
+			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
+				testPostOwner, nil,
+				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest, "answer with ID 3 isn't one of the poll's provided answers"),
+		},
+		{
 			name: "Poll doesn't allow answers' edits",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,

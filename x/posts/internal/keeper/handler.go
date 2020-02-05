@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 
@@ -201,6 +202,16 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 	return &post, nil
 }
 
+// answerExist checks if the answer is contained in providedAnswers slice
+func answerExist(providedAnswers []uint, answer uint) bool {
+	for _, ans := range providedAnswers {
+		if ans == answer {
+			return true
+		}
+	}
+	return false
+}
+
 // handleMsgAnswerPollPost handles the answer to a poll post
 func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswerPoll) (*sdk.Result, error) {
 
@@ -224,6 +235,17 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 			sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("user's answers are more than the available ones in Poll"),
 		)
+	}
+
+	for _, answer := range msg.UserAnswers {
+		if found := answerExist(post.PollData.ProvidedAnswers.ExtractAnswersIDs(), answer); !found {
+			return nil, sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf(
+					"answer with ID %s isn't one of the poll's provided answers",
+					strconv.FormatUint(uint64(answer), 10)),
+			)
+		}
 	}
 
 	pollAnswers := keeper.GetPollAnswersByUser(ctx, post.PostID, msg.Answerer)

@@ -225,6 +225,18 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 	}
 }
 
+func TestPollAnswers_ExtractAnswersIDs(t *testing.T) {
+	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
+
+	expectedIDs := []uint{1, 2}
+	pollAnswers := types.PollAnswers{answer, answer2}
+
+	actual := pollAnswers.ExtractAnswersIDs()
+
+	assert.Equal(t, expectedIDs, actual)
+}
+
 // ---------------
 // --- PollAnswer
 // ---------------

@@ -205,6 +205,11 @@ func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
 func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
 	store := ctx.KVStore(k.StoreKey)
 
+	sort.Slice(
+		userPollAnswers.Answers,
+		func(i, j int) bool { return userPollAnswers.Answers[i] < userPollAnswers.Answers[j] },
+	)
+
 	usersAnswersDetails := k.GetPollAnswers(ctx, postID)
 
 	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {

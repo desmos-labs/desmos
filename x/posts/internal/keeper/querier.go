@@ -26,7 +26,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryPollAnswers(ctx, path[1:], req, keeper)
 
 		default:
-			return nil, fmt.Errorf("unknown magpie query endpoint")
+			return nil, fmt.Errorf("unknown post query endpoint")
 		}
 	}
 }

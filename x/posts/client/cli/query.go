@@ -193,7 +193,7 @@ func GetCmdQueryPollAnswer(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var out types.PollAnswersQueryResponse
-			cdc.MustUnmarshalBinaryBare(res, &out)
+			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
 	}
