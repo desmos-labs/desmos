@@ -132,7 +132,12 @@ func randomPostFields(
 	simAccount, _ := sim.RandomAcc(r, accs)
 	acc := ak.GetAccount(ctx, simAccount.Address)
 	if acc == nil {
-		return nil, true, nil // skip error
+		return nil, true, nil // skip the operation without error as the account is not valid
+	}
+
+	pollData := RandomPollData(r)
+	if pollData != nil && !pollData.Open {
+		return nil, true, nil // skip the operation as the poll is closed
 	}
 
 	postData := postData{
@@ -142,8 +147,8 @@ func randomPostFields(
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
-		// TODO: Add medias
-		// TODO: Add poll data
+		Medias:         RandomMedias(r),
+		PollData:       pollData,
 	}
 
 	posts := k.GetPosts(ctx)

@@ -2,6 +2,7 @@ package simulation
 
 import (
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -63,4 +64,41 @@ func RandomDate(r *rand.Rand) time.Time {
 
 	sec := r.Int63n(delta) + min
 	return time.Unix(sec, 0)
+}
+
+// RandomMedias returns a randomly generated list of post medias
+func RandomMedias(r *rand.Rand) types.PostMedias {
+	mediaNumber := r.Intn(20)
+
+	postMedias := make(types.PostMedias, mediaNumber)
+	for i := 0; i < mediaNumber; i++ {
+		host := RandomHosts[r.Intn(len(RandomHosts))]
+		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
+		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType)
+	}
+
+	return postMedias
+}
+
+// RandomPollData returns a randomly generated poll data
+func RandomPollData(r *rand.Rand) *types.PollData {
+	shouldBeNil := r.Intn(100) < 50
+	if shouldBeNil {
+		return nil
+	}
+
+	answersLen := r.Intn(10) + 1 // Answers should never be empty
+	answers := make(types.PollAnswers, answersLen)
+	for i := 0; i < answersLen; i++ {
+		answers[i] = types.NewPollAnswer(uint(i), RandomMessage(r))
+	}
+
+	return types.NewPollData(
+		RandomMessage(r),
+		RandomDate(r),
+		answers,
+		r.Intn(100) > 30, // 30% possibility of closed poll
+		r.Intn(100) > 50, // 50% possibility of multiple answers
+		r.Intn(100) > 50, // 50% possibility of allowing answers edits
+	)
 }
