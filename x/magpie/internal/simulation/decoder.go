@@ -16,7 +16,7 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		var idA, idB int64
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &idA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &idB)
-		return fmt.Sprintf("DefaultSessionLengthA: %s\nDefaultSessionLengthB: %s\n", idA, idB)
+		return fmt.Sprintf("DefaultSessionLengthA: %d\nDefaultSessionLengthB: %d\n", idA, idB)
 	case bytes.Equal(kvA.Key, types.LastSessionIDStoreKey):
 		var postA, postB types.SessionID
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &postA)

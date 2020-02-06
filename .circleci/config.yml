@@ -256,9 +256,6 @@ workflows:
       - integration-tests:
           requires:
             - setup-dependencies
-      - test-sim-nondeterminism:
-          requires:
-            - setup-dependencies
       - test-sim-import-export:
           requires:
             - setup-dependencies
@@ -278,10 +275,13 @@ workflows:
             tags:
               only:
                 - /^v.*/
-      - localnet
       - test-cover:
           requires:
             - setup-dependencies
       - upload-coverage:
           requires:
             - test-cover
+      - test-sim-nondeterminism:
+          requires:
+            - setup-dependencies
+      - localnet

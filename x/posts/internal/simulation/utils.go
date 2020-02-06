@@ -160,7 +160,7 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 }
 
 // GetAccount gets the account having the given address from the accs list
-func GetAccount(address sdk.AccAddress, accs []sim.Account) *sim.Account {
+func GetAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	for _, acc := range accs {
 		if acc.Address.Equals(address) {
 			return &acc

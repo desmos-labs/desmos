@@ -32,7 +32,7 @@ func RandomSessionData(simAccount simulation.Account, r *rand.Rand) SessionData 
 		panic(err) // Shouldn't happen
 	}
 
-	_, pubkeyObject := secp256k1.PrivKeyFromBytes(secp256k1.S256(), simAccount.PrivKey.Bytes()[:])
+	_, pubkeyObject := secp256k1.PrivKeyFromBytes(secp256k1.S256(), simAccount.PrivKey.Bytes())
 	bytes := pubkeyObject.SerializeCompressed()
 	extPubKey := base64.StdEncoding.EncodeToString(bytes)
 

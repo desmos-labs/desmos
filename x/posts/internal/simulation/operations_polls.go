@@ -105,9 +105,9 @@ func randomPollAnswerFields(
 		answersLength = r.Intn(len(post.PollData.ProvidedAnswers)) + 1 // At least one answer is necessary
 	}
 
-	var answers []uint
+	answers := make([]uint, answersLength)
 	for i := 0; i < answersLength; i++ {
-		answers = append(answers, providedAnswers[i].ID)
+		answers[i] = providedAnswers[i].ID
 	}
 
 	return simAccount, answers, post.PostID, false, nil
