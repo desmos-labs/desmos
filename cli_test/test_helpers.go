@@ -134,7 +134,7 @@ func (f Fixtures) GenesisState() simapp.GenesisState {
 func InitFixtures(t *testing.T) (f *Fixtures) {
 	config := sdk.GetConfig()
 	app.SetupConfig(config)
-	app.InitOverloads()
+	app.Init()
 
 	f = NewFixtures(t)
 

@@ -293,7 +293,8 @@ func Test_queryPosts(t *testing.T) {
 }
 
 func Test_queryPollAnswers(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
 
 	answers := []uint{uint(1)}
 
@@ -376,7 +377,9 @@ func Test_queryPollAnswers(t *testing.T) {
 
 			if result != nil {
 				assert.Nil(t, err)
-				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				assert.NoError(t, err)
+
 				assert.Equal(t, string(expectedIndented), string(result))
 			}
 

@@ -67,6 +67,11 @@ func ValidateURI(uri string) error {
 
 type PostMedias []PostMedia
 
+// NewPostMedias creates a new PostMedias object starting from the given medias
+func NewPostMedias(medias ...PostMedia) PostMedias {
+	return medias
+}
+
 // String implements fmt.Stringer
 func (pms PostMedias) String() string {
 	out := "Medias - [URI] [Mime-Type]\n"

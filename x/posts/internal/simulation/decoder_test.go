@@ -29,10 +29,12 @@ var (
 		map[string]string{},
 		time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone),
 		postCreatorAddr,
-		types.PostMedias{types.NewPostMedia(
-			"https://uri.com",
-			"text/plain"),
-		},
+		types.NewPostMedias(types.NewPostMedia("https://uri.com", "text/plain")),
+		types.NewPollData(
+			"title",
+			time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
+			types.NewPollAnswers(types.NewPollAnswer(0, "first"), types.NewPollAnswer(1, "second")),
+			true, true, true),
 	)
 )
 

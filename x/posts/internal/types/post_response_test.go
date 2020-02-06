@@ -136,7 +136,6 @@ func TestPostQueryResponse_String(t *testing.T) {
 	answers2 := []uint{uint(1)}
 	answersDetails := []types.AnswersDetails{types.NewAnswersDetails(answers2, liker)}
 
-
 	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{

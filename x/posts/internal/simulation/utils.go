@@ -87,7 +87,7 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		return nil
 	}
 
-	answersLen := r.Intn(10) + 1 // Answers should never be empty
+	answersLen := r.Intn(10) + 2 // Answers must be at least two
 	answers := make(types.PollAnswers, answersLen)
 	for i := 0; i < answersLen; i++ {
 		answers[i] = types.NewPollAnswer(uint(i), RandomMessage(r))

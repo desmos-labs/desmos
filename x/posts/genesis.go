@@ -51,7 +51,7 @@ func convertGenesisPostPollAnswers(pollAnswers map[string]UsersAnswersDetails) m
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
 		Posts:       k.GetPosts(ctx),
-		PollAnswers: convertPostPollAnswersMap(k.GetAnswersDetailsMap(ctx)),
+		PollAnswers: convertPostPollAnswersMap(k.GetPollAnswersMap(ctx)),
 		Reactions:   convertReactionsMap(k.GetReactions(ctx)),
 	}
 }

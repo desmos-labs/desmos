@@ -157,7 +157,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedPropos
 	return nil
 }
 
-// RandomizedParams creates randomized bank param changes for the simulator.
+// RandomizedParams creates randomized posts param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []sim.ParamChange {
 	return nil
 }
@@ -167,7 +167,7 @@ func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[ModuleName] = DecodeStore
 }
 
-// WeightedOperations returns the all the gov module operations with their respective weights.
+// WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
 	return WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak)
 }

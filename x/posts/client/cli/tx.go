@@ -102,7 +102,11 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 
 			// medias' checks
 
-			mediasStrings, _ := cmd.Flags().GetStringArray(flagMedia)
+			mediasStrings, err := cmd.Flags().GetStringArray(flagMedia)
+			if err != nil {
+				return fmt.Errorf("invalid flag value: %s", flagMedia)
+			}
+
 			medias := types.PostMedias{}
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
@@ -116,7 +120,11 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 
 			// polls' checks
 
-			pollDetailsMap, _ := cmd.Flags().GetStringToString(flagPollDetails)
+			pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
+			if err != nil {
+				return fmt.Errorf("invalid %s value", flagPollDetails)
+			}
+
 			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
 
 			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {

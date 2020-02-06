@@ -9,7 +9,9 @@ import (
 )
 
 func TestPollAnswersQueryResponse_String(t *testing.T) {
-	testOwner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	testOwner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
 	answers := types.AnswersDetails{
 		Answers: []uint{1, 2},
 		User:    testOwner,

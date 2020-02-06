@@ -290,7 +290,9 @@ func TestPollAnswer_Equals(t *testing.T) {
 // --- AnswersDetails
 // ---------------
 func TestUserPollAnswers_String(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
 	answers := []uint{uint(1), uint(2)}
 
 	userPollAnswers := types.NewAnswersDetails(answers, user)
@@ -299,7 +301,9 @@ func TestUserPollAnswers_String(t *testing.T) {
 }
 
 func TestUserPollAnswers_Validate(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
 	answers := []uint{uint(1), uint(2)}
 
 	tests := []struct {
@@ -330,8 +334,12 @@ func TestUserPollAnswers_Validate(t *testing.T) {
 }
 
 func TestUserPollAnswers_Equals(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	assert.NoError(t, err)
+
 	answers := []uint{uint(1), uint(2)}
 	answers2 := []uint{uint(1)}
 
@@ -380,8 +388,12 @@ func TestUserPollAnswers_Equals(t *testing.T) {
 // ---------------
 
 func TestUsersAnswersDetails(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	user2, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	assert.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
 	answers := []uint{uint(1), uint(2)}
 	answers2 := []uint{uint(3)}
 

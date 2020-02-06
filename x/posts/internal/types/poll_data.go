@@ -171,6 +171,11 @@ func (userPollAnswers AnswersDetails) Equals(other AnswersDetails) bool {
 // ---------------
 type PollAnswers []PollAnswer
 
+// NewPollAnswers builds a new PollAnswers object starting from the given answers
+func NewPollAnswers(answers ...PollAnswer) PollAnswers {
+	return answers
+}
+
 // Strings implements fmt.Stringer
 func (answers PollAnswers) String() string {
 	out := "Provided Answers:\n[ID] [Text]\n"
@@ -183,9 +188,10 @@ func (answers PollAnswers) String() string {
 
 // Validate implements validator
 func (answers PollAnswers) Validate() error {
-	if len(answers) == 0 {
-		return fmt.Errorf("answers cannot be empty")
+	if len(answers) < 2 {
+		return fmt.Errorf("poll answers must be at least two")
 	}
+
 	for _, answer := range answers {
 		if err := answer.Validate(); err != nil {
 			return err

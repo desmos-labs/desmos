@@ -10,7 +10,7 @@ import (
 func EndBlocker(ctx sdk.Context, keeper Keeper) {
 
 	store := ctx.KVStore(keeper.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post

@@ -14,19 +14,19 @@ const (
 )
 
 var (
-	NewKeeper           = keeper.NewKeeper
-	NewHandler          = keeper.NewHandler
-	NewQuerier          = keeper.NewQuerier
-	ModuleCdc           = types.ModuleCdc
-	RegisterCodec       = types.RegisterCodec
-	ParsePostID         = types.ParsePostID
-	NewReaction         = types.NewReaction
-	NewPost             = types.NewPost
-	DefaultGenesisState = types.DefaultGenesisState
-	ValidateGenesis     = types.ValidateGenesis
-	DecodeStore         = simulation.DecodeStore
-	RandomizedGenState  = simulation.RandomizedGenState
-	WeightedOperations  = simulation.WeightedOperations
+	NewKeeper                = keeper.NewKeeper
+	NewHandler               = keeper.NewHandler
+	NewQuerier               = keeper.NewQuerier
+	ModuleCdc                = types.ModuleCdc
+	RegisterCodec            = types.RegisterCodec
+	ParsePostID              = types.ParsePostID
+	NewReaction              = types.NewReaction
+	NewPost                  = types.NewPost
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
+	WeightedOperations       = simulation.WeightedOperations
 	NewMsgCreatePost         = types.NewMsgCreatePost
 	NewMsgEditPost           = types.NewMsgEditPost
 	NewMsgAddPostReaction    = types.NewMsgAddPostReaction
@@ -41,7 +41,7 @@ type (
 	Posts                 = types.Posts
 	PostMedia             = types.PostMedia
 	PostMedias            = types.PostMedias
-	UsersAnswersDetails = types.UsersAnswersDetails
+	UsersAnswersDetails   = types.UsersAnswersDetails
 	Reaction              = types.Reaction
 	Reactions             = types.Reactions
 	PostQueryResponse     = types.PostQueryResponse
