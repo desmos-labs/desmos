@@ -9,7 +9,7 @@ const (
 )
 
 var (
-	SessionLengthKey      = []byte("session_length")
+	SessionLengthKey      = []byte("default_session_length")
 	LastSessionIDStoreKey = []byte("last_session_id")
 	SessionStorePrefix    = []byte("session")
 )

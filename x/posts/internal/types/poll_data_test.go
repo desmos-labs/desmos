@@ -37,7 +37,7 @@ func TestPollData_Validate(t *testing.T) {
 		},
 		{
 			pollData: types.NewPollData("title", testPostEndPollDate, types.PollAnswers{}, true, true, true),
-			expError: "answers cannot be empty",
+			expError: "poll answers must be at least two",
 		},
 	}
 
@@ -142,10 +142,10 @@ func TestPollAnswers_Validate(t *testing.T) {
 	}{
 		{
 			answers: types.PollAnswers{},
-			expErr:  "answers cannot be empty",
+			expErr:  "poll answers must be at least two",
 		},
 		{
-			answers: types.PollAnswers{types.PollAnswer{ID: uint(0), Text: ""}},
+			answers: types.PollAnswers{types.NewPollAnswer(uint(0), ""), types.NewPollAnswer(uint(1), "")},
 			expErr:  "answer text must be specified and cannot be empty",
 		},
 	}
