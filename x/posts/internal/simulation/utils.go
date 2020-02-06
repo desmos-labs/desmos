@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -35,6 +37,7 @@ var (
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
+	reactsValues = []string{"💙", "⬇️", "👎", "like"}
 )
 
 // RandomAcc picks and returns a random post from an array and returns its
@@ -42,6 +45,61 @@ var (
 func RandomPost(r *rand.Rand, posts types.Posts) (types.Post, int) {
 	idx := r.Intn(len(posts))
 	return posts[idx], idx
+}
+
+// PostData contains the randomly generated data of a post
+type PostData struct {
+	Creator        sim.Account
+	ParentID       types.PostID
+	Message        string
+	AllowsComments bool
+	Subspace       string
+	CreationDate   time.Time
+	OptionalData   map[string]string
+	Medias         types.PostMedias
+	PollData       *types.PollData
+}
+
+// RandomPostData returns a randomly generated PostData based on the given random and accounts list
+func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
+	simAccount, _ := sim.RandomAcc(r, accs)
+	return PostData{
+		Creator:        simAccount,
+		ParentID:       types.PostID(0),
+		Message:        RandomMessage(r),
+		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
+		Subspace:       RandomSubspace(r),
+		CreationDate:   time.Now().UTC(),
+		Medias:         RandomMedias(r),
+		PollData:       RandomPollData(r),
+	}
+}
+
+// ReactionData contains all the data needed for a reaction to be properly added or removed from a post
+type ReactionData struct {
+	Value  string
+	User   sim.Account
+	PostID types.PostID
+}
+
+// RandomReactionData returns a randomly generated reaction data object
+func RandomReactionData(r *rand.Rand, accs []sim.Account, posts []types.Post) ReactionData {
+	return ReactionData{
+		Value:  RandomReactionValue(r),
+		User:   accs[r.Intn(len(accs))],
+		PostID: RandomPostID(r, posts),
+	}
+}
+
+// RandomReactionValue returns a random reaction value
+func RandomReactionValue(r *rand.Rand) string {
+	return reactsValues[r.Intn(len(reactsValues))]
+}
+
+// RandomPostID returns a randomly extracted post id from the list of posts given
+func RandomPostID(r *rand.Rand, posts []types.Post) types.PostID {
+	p, _ := RandomPost(r, posts)
+	return p.PostID
 }
 
 // RandomMessage returns a random post message from the above random lorem phrases
@@ -54,16 +112,6 @@ func RandomMessage(r *rand.Rand) string {
 func RandomSubspace(r *rand.Rand) string {
 	idx := r.Intn(len(subspaces))
 	return subspaces[idx]
-}
-
-// RandomDate returns a randomly generated date
-func RandomDate(r *rand.Rand) time.Time {
-	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
-	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
-	delta := max - min
-
-	sec := r.Int63n(delta) + min
-	return time.Unix(sec, 0)
 }
 
 // RandomMedias returns a randomly generated list of post medias
@@ -93,12 +141,30 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		answers[i] = types.NewPollAnswer(uint(i), RandomMessage(r))
 	}
 
+	closingDate := time.Now().UTC()
+
+	// 30% possibility of closed poll
+	open := r.Intn(100) > 70
+	if open {
+		closingDate = time.Now().UTC().AddDate(1, 0, 0)
+	}
+
 	return types.NewPollData(
 		RandomMessage(r),
-		RandomDate(r),
+		closingDate,
 		answers,
-		r.Intn(100) > 30, // 30% possibility of closed poll
+		open,
 		r.Intn(100) > 50, // 50% possibility of multiple answers
 		r.Intn(100) > 50, // 50% possibility of allowing answers edits
 	)
+}
+
+// GetAccount gets the account having the given address from the accs list
+func GetAccount(address sdk.AccAddress, accs []sim.Account) *sim.Account {
+	for _, acc := range accs {
+		if acc.Address.Equals(address) {
+			return &acc
+		}
+	}
+	return nil
 }

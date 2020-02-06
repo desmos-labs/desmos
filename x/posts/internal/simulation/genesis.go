@@ -3,9 +3,6 @@ package simulation
 // DONTCOVER
 
 import (
-	"fmt"
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -28,27 +25,23 @@ func RandomizedGenState(simState *module.SimulationState) {
 // randomPosts returns randomly generated genesis accounts
 func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	postsNumber := simState.Rand.Intn(100)
-	location, err := time.LoadLocation("UTC")
-	if err != nil {
-		panic(err)
-	}
 
 	posts = make(types.Posts, postsNumber)
 	for index := 0; index < postsNumber; index++ {
 		id := index + 1
-		privKey := ed25519.GenPrivKey().PubKey()
 
+		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
 			types.PostID(id),
 			types.PostID(simState.Rand.Intn(id)),
-			fmt.Sprintf("Post %d", id),
-			simState.Rand.Int31n(101) < 50,
-			"desmos",
-			map[string]string{},
-			time.Date(2020, 01, simState.Rand.Intn(27)+1, 12, 0, 0, 0, location),
-			sdk.AccAddress(privKey.Address()),
-			RandomMedias(simState.Rand),
-			RandomPollData(simState.Rand),
+			postData.Message,
+			postData.AllowsComments,
+			postData.Subspace,
+			postData.OptionalData,
+			postData.CreationDate,
+			postData.Creator.Address,
+			postData.Medias,
+			postData.PollData,
 		)
 	}
 
@@ -65,16 +58,10 @@ func randomReactions(simState *module.SimulationState, posts types.Posts) (react
 		reactions := make(types.Reactions, reactionsLen)
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
-			reactsValues := []string{"💙", "⬇️", "👎", "like"}
-
-			reactions[j] = types.NewReaction(
-				reactsValues[simState.Rand.Intn(len(reactsValues))],
-				sdk.AccAddress(privKey.Address()),
-			)
+			reactions[j] = types.NewReaction(RandomReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
 		}
 
-		postIndex := simState.Rand.Intn(len(posts))
-		reactionsMap[posts[postIndex].PostID.String()] = reactions
+		reactionsMap[RandomPostID(simState.Rand, posts).String()] = reactions
 	}
 
 	return reactionsMap
