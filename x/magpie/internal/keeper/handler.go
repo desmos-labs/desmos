@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -37,28 +36,19 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 	// Get the public key used to sign the message
 	pkBytes, err := base64.StdEncoding.DecodeString(msg.PubKey)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot decode base64 private key")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot decode base64 public key")
 	}
 
 	var pkBytes33 = [33]byte{}
 	copy(pkBytes33[:], pkBytes)
 	pubkey := secp256k1.PubKeySecp256k1(pkBytes33)
 
-	// Create the StdSignDoc by using the given message data, with an empty string
-	signedMsg := msg
-	signedMsg.Signature = ""
+	// Create the signature bytes using the given message  with an empty signature
+	clearMsg := msg
+	clearMsg.Signature = ""
+	signedBytes := auth.StdSignBytes(msg.Namespace, 0, 0, auth.NewStdFee(200000, nil), []sdk.Msg{clearMsg}, "")
 
-	stdSignDoc := auth.StdSignDoc{
-		AccountNumber: 0,
-		ChainID:       msg.Namespace,
-		Fee:           json.RawMessage(auth.NewStdFee(200000, nil).Bytes()),
-		Memo:          "",
-		Msgs:          []json.RawMessage{json.RawMessage(signedMsg.GetSignBytes())},
-		Sequence:      0,
-	}
-
-	// Create the signature bytes
-	signedBytes := sdk.MustSortJSON(keeper.Cdc.MustMarshalJSON(stdSignDoc))
+	// Decode the signature
 	sig, err := base64.StdEncoding.DecodeString(msg.Signature)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot decode base64 signature")

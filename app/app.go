@@ -60,7 +60,7 @@ var (
 		upgrade.AppModuleBasic{},
 
 		// Custom modules
-		magpie.AppModule{},
+		magpie.AppModuleBasic{},
 		posts.AppModuleBasic{},
 	)
 
@@ -225,7 +225,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		upgrade.NewAppModule(app.UpgradeKeeper),
 
 		// Custom modules
-		magpie.NewAppModule(app.magpieKeeper),
+		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 	)
 
@@ -261,6 +261,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
+		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

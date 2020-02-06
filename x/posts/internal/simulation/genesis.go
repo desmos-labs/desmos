@@ -19,14 +19,14 @@ var (
 
 // RandomizedGenState generates a random GenesisState for auth
 func RandomizedGenState(simState *module.SimulationState) {
-	posts := RandomPosts(simState)
+	posts := randomPosts(simState)
 	reactions := randomReactions(simState, posts)
 	postsGenesis := types.NewGenesisState(posts, reactions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
-// RandomPosts returns randomly generated genesis accounts
-func RandomPosts(simState *module.SimulationState) (posts types.Posts) {
+// randomPosts returns randomly generated genesis accounts
+func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	postsNumber := simState.Rand.Intn(100)
 	location, err := time.LoadLocation("UTC")
 	if err != nil {

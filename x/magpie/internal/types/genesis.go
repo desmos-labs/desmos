@@ -10,6 +10,14 @@ type GenesisState struct {
 	Sessions             Sessions `json:"sessions"`
 }
 
+// NewGenesisState allows to create a new genesis state containing the given default session length and sessions
+func NewGenesisState(defaultSessionLength int64, sessions Sessions) GenesisState {
+	return GenesisState{
+		DefaultSessionLength: defaultSessionLength,
+		Sessions:             sessions,
+	}
+}
+
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() GenesisState {
 	return GenesisState{

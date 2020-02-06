@@ -2,6 +2,7 @@ package magpie
 
 import (
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
+	"github.com/desmos-labs/desmos/x/magpie/internal/simulation"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
@@ -19,6 +20,9 @@ var (
 	RegisterCodec       = types.RegisterCodec
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
+	DecodeStore         = simulation.DecodeStore
+	RandomizedGenState  = simulation.RandomizedGenState
+	WeightedOperations  = simulation.WeightedOperations
 )
 
 type (
