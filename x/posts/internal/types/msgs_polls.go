@@ -14,12 +14,12 @@ import (
 // MsgAnswerPoll defines the AnswerPoll message
 type MsgAnswerPoll struct {
 	PostID      PostID         `json:"post_id"`
-	UserAnswers []uint         `json:"answers"`
+	UserAnswers []AnswerID     `json:"answers"`
 	Answerer    sdk.AccAddress `json:"answerer"`
 }
 
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
-func NewMsgAnswerPoll(id PostID, providedAnswers []uint, answerer sdk.AccAddress) MsgAnswerPoll {
+func NewMsgAnswerPoll(id PostID, providedAnswers []AnswerID, answerer sdk.AccAddress) MsgAnswerPoll {
 	return MsgAnswerPoll{
 		PostID:      id,
 		UserAnswers: providedAnswers,

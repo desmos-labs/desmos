@@ -22,6 +22,11 @@ var (
 	ParsePostID              = types.ParsePostID
 	NewReaction              = types.NewReaction
 	NewPost                  = types.NewPost
+	NewPostMedia             = types.NewPostMedia
+	NewPostMedias            = types.NewPostMedias
+	NewPollData              = types.NewPollData
+	NewPollAnswer            = types.NewPollAnswer
+	NewPollAnswers           = types.NewPollAnswers
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	DecodeStore              = simulation.DecodeStore
@@ -41,7 +46,7 @@ type (
 	Posts                 = types.Posts
 	PostMedia             = types.PostMedia
 	PostMedias            = types.PostMedias
-	UsersAnswersDetails   = types.UsersAnswersDetails
+	UsersAnswersDetails   = types.UserAnswers
 	Reaction              = types.Reaction
 	Reactions             = types.Reactions
 	PostQueryResponse     = types.PostQueryResponse

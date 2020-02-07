@@ -1,6 +1,6 @@
 // +build cli_test
 
-//nolint
+// nolint
 package clitest
 
 import (
@@ -14,7 +14,6 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -867,175 +866,5 @@ func TestValidateGenesis(t *testing.T) {
 	f.ValidateGenesis()
 
 	// Cleanup testing directories
-	f.Cleanup()
-}
-
-//___________________________________________________________________________________
-// Custom operations
-
-func TestDesmosCLIPostsCreateEdit(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// Start Desmosd server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	// Save key addresses for later use
-	fooAddr := f.KeyAddress(keyFoo)
-
-	// __________________________________________________________________________________
-	// create
-
-	// Later usage variables
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message"
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-
-	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the post is saved
-	storedPosts := f.QueryPosts()
-	require.NotEmpty(t, storedPosts)
-	require.Equal(t, posts.PostID(1), storedPosts[0].PostID)
-
-	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg := unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	// Check state didn't change
-	storedPosts = f.QueryPosts()
-	require.Len(t, storedPosts, 1)
-
-	// TODO: Test medias
-
-	// __________________________________________________________________________________
-	// edit
-
-	// Edit the message
-	success, _, sterr = f.TxPostsEdit(1, "NewMessage", fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the message is edited
-	storedPost := f.QueryPost(1)
-	require.Equal(t, posts.PostID(1), storedPost.PostID)
-	require.Equal(t, "NewMessage", storedPost.Message)
-
-	// Test --dry-run
-	success, _, _ = f.TxPostsEdit(1, "OtherMessage", fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr = f.TxPostsEdit(1, "OtherMessage", fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg = unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	// Check state didn't change
-	storedPosts = f.QueryPosts()
-	require.Len(t, storedPosts, 1)
-
-	f.Cleanup()
-}
-
-func TestDesmosCLIPostsReactions(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// Start Desmosd server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	// Save key addresses for later use
-	fooAddr := f.KeyAddress(keyFoo)
-
-	// Create a post
-	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		"message", true, fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// __________________________________________________________________________________
-	// add-reaction
-
-	// Add a reaction
-	success, _, sterr = f.TxPostsAddReaction(1, "👍", fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the reaction is added
-	storedPost := f.QueryPost(1)
-	require.Len(t, storedPost.Reactions, 1)
-	require.Equal(t, storedPost.Reactions[0], posts.NewReaction("👍", fooAddr))
-
-	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg := unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	// Check state didn't change
-	storedPost = f.QueryPost(1)
-	require.Len(t, storedPost.Reactions, 1)
-
-	// __________________________________________________________________________________
-	// remove-reaction
-
-	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(1, "👍", fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the reaction is added
-	storedPost = f.QueryPost(1)
-	require.Empty(t, storedPost.Reactions)
-
-	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr = f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg = unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	// Check state didn't change
-	storedPost = f.QueryPost(1)
-	require.Empty(t, storedPost.Reactions)
-
 	f.Cleanup()
 }

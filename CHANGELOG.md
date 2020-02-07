@@ -1,7 +1,7 @@
 # Version 0.3.0
 ## Changes
-- Implemented the support for media in posts (#36)
-- Implemented the support for poll in posts  (#14) 
+- Implemented the support for media posts (#36)
+- Implemented the support for poll posts  (#14) 
 - Added the support for posts sorting (#78)
 - Added the support for magpie default session length inside genesis (#38)
 - Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes (#82)

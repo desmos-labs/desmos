@@ -608,31 +608,31 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	assert.NoError(t, err)
 
-	answers := []uint{uint(1), uint(2)}
-	answers2 := []uint{uint(1)}
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
+	answers2 := []types.AnswerID{types.AnswerID(1)}
 
 	tests := []struct {
 		name               string
 		postID             types.PostID
-		userAnswersDetails types.AnswersDetails
-		previousUsersAD    types.UsersAnswersDetails
-		expUsersAD         types.UsersAnswersDetails
+		userAnswersDetails types.UserAnswer
+		previousUsersAD    types.UserAnswers
+		expUsersAD         types.UserAnswers
 	}{
 		{
 			name:               "Save answers with no previous answers in this context",
 			postID:             types.PostID(1),
-			userAnswersDetails: types.NewAnswersDetails(answers, user),
+			userAnswersDetails: types.NewUserAnswer(answers, user),
 			previousUsersAD:    nil,
-			expUsersAD:         types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			expUsersAD:         types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 		{
 			name:               "Save new answers",
 			postID:             types.PostID(1),
-			userAnswersDetails: types.NewAnswersDetails(answers2, user2),
-			previousUsersAD:    types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
-			expUsersAD: types.UsersAnswersDetails{
-				types.NewAnswersDetails(answers, user),
-				types.NewAnswersDetails(answers2, user2),
+			userAnswersDetails: types.NewUserAnswer(answers2, user2),
+			previousUsersAD:    types.UserAnswers{types.NewUserAnswer(answers, user)},
+			expUsersAD: types.UserAnswers{
+				types.NewUserAnswer(answers, user),
+				types.NewUserAnswer(answers2, user2),
 			},
 		},
 	}
@@ -650,7 +650,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 
 			k.SavePollAnswers(ctx, test.postID, test.userAnswersDetails)
 
-			var actualUsersAnswersDetails types.UsersAnswersDetails
+			var actualUsersAnswersDetails types.UserAnswers
 			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
 			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
 			assert.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
@@ -662,12 +662,12 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	assert.NoError(t, err)
 
-	answers := []uint{uint(1), uint(2)}
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name          string
 		postID        types.PostID
-		storedAnswers types.UsersAnswersDetails
+		storedAnswers types.UserAnswers
 	}{
 		{
 			name:          "No answers returns empty list",
@@ -677,7 +677,7 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 		{
 			name:          "Answers returned correctly",
 			postID:        types.PostID(1),
-			storedAnswers: types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			storedAnswers: types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 	}
 
@@ -704,25 +704,25 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	user2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
 	assert.NoError(t, err)
 
-	answers := []uint{uint(1), uint(2)}
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name          string
-		storedAnswers types.AnswersDetails
+		storedAnswers types.UserAnswer
 		postID        types.PostID
 		user          sdk.AccAddress
-		expAnswers    []uint
+		expAnswers    []types.AnswerID
 	}{
 		{
 			name:          "No answers for user returns nil",
-			storedAnswers: types.NewAnswersDetails(answers, user),
+			storedAnswers: types.NewUserAnswer(answers, user),
 			postID:        types.PostID(1),
 			user:          user2,
 			expAnswers:    nil,
 		},
 		{
 			name:          "Matching user returns answers made by him",
-			storedAnswers: types.NewAnswersDetails(answers, user),
+			storedAnswers: types.NewUserAnswer(answers, user),
 			postID:        types.PostID(1),
 			user:          user,
 			expAnswers:    answers,
@@ -745,25 +745,25 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 	user2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
 	assert.NoError(t, err)
 
-	answers := []uint{uint(1), uint(2)}
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name    string
-		usersAD map[types.PostID]types.UsersAnswersDetails
+		usersAD map[types.PostID]types.UserAnswers
 	}{
 		{
 			name:    "Empty users answers details data are returned correctly",
-			usersAD: map[types.PostID]types.UsersAnswersDetails{},
+			usersAD: map[types.PostID]types.UserAnswers{},
 		},
 		{
 			name: "Non empty users answers details data are returned correcly",
-			usersAD: map[types.PostID]types.UsersAnswersDetails{
+			usersAD: map[types.PostID]types.UserAnswers{
 				types.PostID(1): {
-					types.NewAnswersDetails(answers, user),
-					types.NewAnswersDetails(answers, user2),
+					types.NewUserAnswer(answers, user),
+					types.NewUserAnswer(answers, user2),
 				},
 				types.PostID(2): {
-					types.NewAnswersDetails(answers, user2),
+					types.NewUserAnswer(answers, user2),
 				},
 			},
 		},

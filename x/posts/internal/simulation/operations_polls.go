@@ -75,7 +75,7 @@ func sendMsgAnswerPoll(
 // randomPollAnswerFields returns the data used to create a MsgAnswerPoll message
 func randomPollAnswerFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, []uint, types.PostID, bool, error) {
+) (sim.Account, []types.AnswerID, types.PostID, bool, error) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 
@@ -105,7 +105,7 @@ func randomPollAnswerFields(
 		answersLength = r.Intn(len(post.PollData.ProvidedAnswers)) + 1 // At least one answer is necessary
 	}
 
-	answers := make([]uint, answersLength)
+	answers := make([]types.AnswerID, answersLength)
 	for i := 0; i < answersLength; i++ {
 		answers[i] = providedAnswers[i].ID
 	}

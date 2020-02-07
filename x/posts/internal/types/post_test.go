@@ -232,12 +232,12 @@ func TestPost_Validate(t *testing.T) {
 		},
 	}
 	answer := types.PollAnswer{
-		ID:   uint(1),
+		ID:   types.AnswerID(1),
 		Text: "Yes",
 	}
 
 	answer2 := types.PollAnswer{
-		ID:   uint(2),
+		ID:   types.AnswerID(2),
 		Text: "No",
 	}
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
@@ -406,8 +406,8 @@ func TestPost_Equals(t *testing.T) {
 		},
 	}
 
-	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
+	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
 	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
 
 	tests := []struct {
@@ -850,12 +850,12 @@ func TestPosts_String(t *testing.T) {
 		},
 	}
 	answer := types.PollAnswer{
-		ID:   uint(1),
+		ID:   types.AnswerID(1),
 		Text: "Yes",
 	}
 
 	answer2 := types.PollAnswer{
-		ID:   uint(2),
+		ID:   types.AnswerID(2),
 		Text: "No",
 	}
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)

@@ -138,7 +138,7 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 	answersLen := r.Intn(10) + 2 // Answers must be at least two
 	answers := make(types.PollAnswers, answersLen)
 	for i := 0; i < answersLen; i++ {
-		answers[i] = types.NewPollAnswer(uint(i), RandomMessage(r))
+		answers[i] = types.NewPollAnswer(types.AnswerID(i), RandomMessage(r))
 	}
 
 	closingDate := time.Now().UTC()
