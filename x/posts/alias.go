@@ -27,6 +27,7 @@ var (
 	NewPollData              = types.NewPollData
 	NewPollAnswer            = types.NewPollAnswer
 	NewPollAnswers           = types.NewPollAnswers
+	NewUserAnswer            = types.NewUserAnswer
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	DecodeStore              = simulation.DecodeStore
@@ -46,7 +47,9 @@ type (
 	Posts                 = types.Posts
 	PostMedia             = types.PostMedia
 	PostMedias            = types.PostMedias
-	UsersAnswersDetails   = types.UserAnswers
+	AnswerID              = types.AnswerID
+	UserAnswer            = types.UserAnswer
+	UserAnswers           = types.UserAnswers
 	Reaction              = types.Reaction
 	Reactions             = types.Reactions
 	PostQueryResponse     = types.PostQueryResponse

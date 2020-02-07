@@ -353,12 +353,9 @@ func (f *Fixtures) TxEncode(fileName string, flags ...string) (bool, string, str
 }
 
 // TxMultisign is desmoscli tx multisign
-func (f *Fixtures) TxMultisign(fileName, name string, signaturesFiles []string,
-	flags ...string) (bool, string, string) {
-
+func (f *Fixtures) TxMultisign(fileName, name string, signaturesFiles []string, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf("%s tx multisign --keyring-backend=test %v %s %s %s", f.DesmosliBinary, f.Flags(),
-		fileName, name, strings.Join(signaturesFiles, " "),
-	)
+		fileName, name, strings.Join(signaturesFiles, " "))
 	return executeWriteRetStdStreams(f.T, cmd)
 }
 
@@ -414,6 +411,18 @@ func (f *Fixtures) TxGovVote(proposalID int, option gov.VoteOption, from string,
 func (f *Fixtures) TxPostsCreate(subspace, message string, allowsComments bool, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts create %s %s %t --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, subspace, message, allowsComments, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+// TxPostsAnswerPoll is desmoscli tx posts answer-poll
+func (f *Fixtures) TxPostsAnswerPoll(pollID posts.PostID, answers []posts.AnswerID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	stringAnswers := make([]string, len(answers))
+	for index, a := range answers {
+		stringAnswers[index] = a.String()
+	}
+
+	cmd := fmt.Sprintf(`%s tx posts answer-poll %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, pollID, strings.Join(stringAnswers, " "), from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 

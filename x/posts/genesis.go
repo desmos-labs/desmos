@@ -27,16 +27,16 @@ func convertGenesisReactions(reactions map[string]Reactions) map[PostID]Reaction
 	return reactionsMap
 }
 
-func convertPostPollAnswersMap(answers map[PostID]UsersAnswersDetails) map[string]UsersAnswersDetails {
-	answersMap := make(map[string]UsersAnswersDetails, len(answers))
+func convertPostPollAnswersMap(answers map[PostID]UserAnswers) map[string]UserAnswers {
+	answersMap := make(map[string]UserAnswers, len(answers))
 	for key, value := range answers {
 		answersMap[key.String()] = value
 	}
 	return answersMap
 }
 
-func convertGenesisPostPollAnswers(pollAnswers map[string]UsersAnswersDetails) map[PostID]UsersAnswersDetails {
-	answersMap := make(map[PostID]UsersAnswersDetails, len(pollAnswers))
+func convertGenesisPostPollAnswers(pollAnswers map[string]UserAnswers) map[PostID]UserAnswers {
+	answersMap := make(map[PostID]UserAnswers, len(pollAnswers))
 	for key, value := range pollAnswers {
 		postID, err := ParsePostID(key)
 		if err != nil {

@@ -24,9 +24,6 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 
-	// __________________________________________________________________________________
-	// create
-
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	message := "message"
@@ -78,9 +75,6 @@ func TestDesmosCLIPostsCreateWithMedias(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-
-	// __________________________________________________________________________________
-	// create
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
@@ -142,9 +136,6 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-
-	// __________________________________________________________________________________
-	// create
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
@@ -211,6 +202,66 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	// Check state didn't change
 	storedPosts = f.QueryPosts()
 	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	message := "message"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create a poll with single answer
+	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
+		"--poll-answer Beagle",
+		"--poll-answer Pug",
+		"--poll-answer Shiba")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Insert an answer
+	success, _, sterr = f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Check that answers have been inserted
+	post := f.QueryPost(1)
+	require.NotEmpty(t, post.PollAnswers)
+	require.Equal(t, posts.NewUserAnswer([]posts.AnswerID{posts.AnswerID(1)}, fooAddr), post.PollAnswers[0])
+
+	// Test --dry-run
+	success, _, stderr := f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--dry-run")
+	require.Empty(t, sterr)
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--generate-only")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	post = f.QueryPost(1)
+	require.Len(t, post.PollAnswers, 1)
 
 	f.Cleanup()
 }
