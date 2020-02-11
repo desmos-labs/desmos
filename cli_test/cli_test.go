@@ -74,14 +74,14 @@ func TestDesmosCLIKeysAddRecoverHDPath(t *testing.T) {
 	f.KeysAddRecoverHDPath("test-recoverHD1", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 0, 0)
 	require.Equal(t, "desmos1cw97p8sg7x3qwymchsrdqplvlsxmxpxakjnfec", f.KeyAddress("test-recoverHD1").String())
 
-	f.KeysAddRecoverHDPath("test-recoverH2", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 5)
-	require.Equal(t, "desmos1mmw9kpdkjcf4n063474v9f8h8682lahw7486y5", f.KeyAddress("test-recoverH2").String())
+	f.KeysAddRecoverHDPath("test-recoverHD2", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 5)
+	require.Equal(t, "desmos1mmw9kpdkjcf4n063474v9f8h8682lahw7486y5", f.KeyAddress("test-recoverHD2").String())
 
-	f.KeysAddRecoverHDPath("test-recoverH3", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 17)
-	require.Equal(t, "desmos1r5es4d76zyv9alkjawmp2cfl2p0tkl875admky", f.KeyAddress("test-recoverH3").String())
+	f.KeysAddRecoverHDPath("test-recoverHD3", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 1, 17)
+	require.Equal(t, "desmos1r5es4d76zyv9alkjawmp2cfl2p0tkl875admky", f.KeyAddress("test-recoverHD3").String())
 
-	f.KeysAddRecoverHDPath("test-recoverH4", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 2, 17)
-	require.Equal(t, "desmos1u3j9qaws8n3dmctmlwn2gxzmjdxvz6a7rnrapn", f.KeyAddress("test-recoverH4").String())
+	f.KeysAddRecoverHDPath("test-recoverHD4", "dentist task convince chimney quality leave banana trade firm crawl eternal easily", 2, 17)
+	require.Equal(t, "desmos1u3j9qaws8n3dmctmlwn2gxzmjdxvz6a7rnrapn", f.KeyAddress("test-recoverHD4").String())
 
 	// Cleanup testing directories
 	f.Cleanup()

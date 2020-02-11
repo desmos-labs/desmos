@@ -377,11 +377,11 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Empty(t, storedPost.Reactions)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRemoveReaction(1, "😊", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr = f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
+	success, stdout, stderr = f.TxPostsRemoveReaction(1, "👎", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg = unmarshalStdTx(f.T, stdout)
