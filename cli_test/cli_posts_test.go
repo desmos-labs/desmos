@@ -372,7 +372,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	// Make sure the reaction is added
+	// Make sure the reaction has been removed
 	storedPost = f.QueryPost(1)
 	require.Empty(t, storedPost.Reactions)
 
