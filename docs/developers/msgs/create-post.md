@@ -29,8 +29,8 @@ This message allows you to create a new public post.
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
 | `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
-| `medias` | PostMedias | PostMedia's array contains all the medias related to the post |
-| `poll_data` | *PollData | Pointer to Poll Data that contains all the information related to post's poll, if exists |
+| `medias` | Array | (Optional) Array containing all the medias related to the post |
+| `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 ## Example
 ### With optional data, medias and poll data
 ```json
@@ -100,5 +100,5 @@ This message allows you to create a new public post.
 The action associated to this message is the following: 
 
 ```
-answer_poll
+create_post
 ```

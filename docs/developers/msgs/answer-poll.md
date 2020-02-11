@@ -17,7 +17,7 @@ This message allows you to answer to a post's poll.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `post_id` | String | ID of the post associated with the poll to which answer |
-| `answers` | []Uint | Array of the answers' IDs |
+| `answers` | Array | Array of the answers' IDs |
 | `answerer` | String | Desmos address of the user that is answering the poll |
 
 ## Example
@@ -37,3 +37,6 @@ This message allows you to answer to a post's poll.
 
 ## Message action
 The action associated to this message is the following: 
+```
+answer_poll
+```
