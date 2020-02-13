@@ -46,6 +46,33 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	return id
 }
 
+// SaveHashtagsAssociation allows to save the hashtags association with the given postID
+// It assumes that the given hashtags array contains only non-empty, unique hashtags and that the postID is associated
+// with an existent post
+func (k Keeper) SaveHashtagAssociation(ctx sdk.Context, hashtags []string, postID types.PostID) {
+	store := ctx.KVStore(k.StoreKey)
+
+	for _, hashtag := range hashtags {
+		store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&postID))
+	}
+}
+
+// RemoveHashtags allows to remove all the hashtags associated with a postID
+// It assumes that there's already and association between the given postID and some hashtags
+func (k Keeper) RemoveHashtags(ctx sdk.Context, postID types.PostID) {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, []byte(postID.String()))
+
+	for ; iterator.Valid(); iterator.Next() {
+		store.Delete([]byte("#" + postID.String()))
+	}
+}
+
+func (k Keeper) GetPostHashtags(ctx sdk.Context, postID types.PostID) {
+	store := ctx.KVStore(k.StoreKey)
+
+}
+
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
 // If another post has the same ID of the given post, the old post will be overridden
