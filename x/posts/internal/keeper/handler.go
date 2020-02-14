@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -29,6 +30,11 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
+}
+
+func getPostHashtags(message string) []string {
+	re := regexp.MustCompile(`#[A-Za-z0-9]*`)
+	return re.FindStringSubmatch(message)
 }
 
 // handleMsgCreatePost handles the creation of a new post
@@ -64,6 +70,12 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	}
 
 	keeper.SavePost(ctx, post)
+
+	// Handle post hashtags
+	hashtags := getPostHashtags(msg.Message)
+	if hashtags != nil {
+		keeper.SavePostHashtags(ctx, hashtags, post.PostID)
+	}
 
 	createEvent := sdk.NewEvent(
 		types.EventTypePostCreated,
@@ -104,6 +116,15 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	existing.Message = msg.Message
 	existing.LastEdited = msg.EditDate
 	keeper.SavePost(ctx, existing)
+
+	// Edit hashtags
+	if existingHashtags := getPostHashtags(existing.Message); existingHashtags != nil {
+		keeper.RemovePostHashtags(ctx, existing.PostID, existingHashtags)
+	}
+
+	if newHashtags := getPostHashtags(msg.Message); newHashtags != nil {
+		keeper.SavePostHashtags(ctx, newHashtags, existing.PostID)
+	}
 
 	editEvent := sdk.NewEvent(
 		types.EventTypePostEdited,
