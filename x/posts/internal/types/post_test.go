@@ -153,6 +153,37 @@ func TestPostIDs_Equals(t *testing.T) {
 	}
 }
 
+func TestPostIDs_Contains(t *testing.T) {
+	tests := []struct {
+		name        string
+		IDs         types.PostIDs
+		containedID types.PostID
+		expFound    bool
+	}{
+		{
+			name:        "Contains returns true when id is found inside array",
+			IDs:         types.PostIDs{types.PostID(1)},
+			containedID: types.PostID(1),
+			expFound:    true,
+		},
+		{
+			name:        "Contains returns false when id isn't found inside array",
+			IDs:         types.PostIDs{types.PostID(1)},
+			containedID: types.PostID(2),
+			expFound:    false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			found := test.IDs.Contains(test.containedID)
+			assert.Equal(t, test.expFound, found)
+		})
+	}
+
+}
+
 func TestPostIDs_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -185,6 +216,55 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 			assert.Equal(t, test.expEdited, edited)
 		})
 	}
+}
+
+func TestPostIDs_RemoveIfPresent(t *testing.T) {
+	tests := []struct {
+		name       string
+		IDs        types.PostIDs
+		removedID  types.PostID
+		expRemoved bool
+		expIDs     types.PostIDs
+	}{
+		{
+			name:       "RemoveIfPresent remove the postID correctly at the beginning",
+			IDs:        types.PostIDs{types.PostID(1), types.PostID(2)},
+			removedID:  types.PostID(1),
+			expRemoved: true,
+			expIDs:     types.PostIDs{types.PostID(2)},
+		},
+		{
+			name:       "RemoveIfPresent remove the postID correctly in the middle",
+			IDs:        types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+			removedID:  types.PostID(2),
+			expRemoved: true,
+			expIDs:     types.PostIDs{types.PostID(1), types.PostID(3)},
+		},
+		{
+			name:       "RemoveIfPresent remove the postID correctly at the end",
+			IDs:        types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+			removedID:  types.PostID(3),
+			expRemoved: true,
+			expIDs:     types.PostIDs{types.PostID(1), types.PostID(2)},
+		},
+		{
+			name:       "RemoveIfPresent don't remove the postID since it's not present",
+			IDs:        types.PostIDs{types.PostID(1), types.PostID(2)},
+			removedID:  types.PostID(3),
+			expRemoved: false,
+			expIDs:     types.PostIDs{types.PostID(1), types.PostID(2)},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actualIDs, actualRemoved := test.IDs.RemoveIfPresent(test.removedID)
+			assert.Equal(t, test.expRemoved, actualRemoved)
+			assert.Equal(t, test.expIDs, actualIDs)
+		})
+	}
+
 }
 
 // -----------

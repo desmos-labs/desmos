@@ -47,6 +47,148 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 	}
 }
 
+func TestKeeper_SavePostHashtags(t *testing.T) {
+	tests := []struct {
+		name             string
+		existingHashtags []string
+		newHashtags      []string
+		existingPostIDs  types.PostIDs
+		newPostID        types.PostID
+		expectedIDs      types.PostIDs
+	}{
+		{
+			name:             "Associate the ID to an existent hashtag correctly with non empty IDs before",
+			existingHashtags: []string{"#mooncake"},
+			newHashtags:      []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
+			newPostID:        types.PostID(3),
+			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+		},
+		{
+			name:             "Associate the ID to the hashtag correctly with empty IDs before",
+			existingHashtags: []string{},
+			newHashtags:      []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{},
+			newPostID:        types.PostID(1),
+			expectedIDs:      types.PostIDs{types.PostID(1)},
+		},
+		{
+			name:             "ID already present in the IDs",
+			existingHashtags: []string{"#mooncake"},
+			newHashtags:      []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
+			newPostID:        types.PostID(2),
+			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2)},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			for _, hashtag := range test.existingHashtags {
+				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+			}
+
+			k.SavePostHashtags(ctx, test.newHashtags, test.newPostID)
+
+			for _, newHashtag := range test.newHashtags {
+				var postIDs types.PostIDs
+				bz := store.Get([]byte(newHashtag))
+				k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
+				assert.Equal(t, test.expectedIDs, postIDs)
+			}
+
+		})
+	}
+}
+
+func TestKeeper_GetHashtagAssociatedPosts(t *testing.T) {
+	tests := []struct {
+		name             string
+		existingHashtags []string
+		existingPostIDs  types.PostIDs
+		hashtag          string
+	}{
+		{
+			name:             "Get postIDs associated with given hashtag correctly",
+			existingHashtags: []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
+			hashtag:          "#mooncake",
+		},
+		{
+			name:             "Get empty postIDs array associated with given hashtag correctly",
+			existingHashtags: nil,
+			existingPostIDs:  types.PostIDs(nil),
+			hashtag:          "#mooncake",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			for _, hashtag := range test.existingHashtags {
+				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+			}
+
+			postIDs := k.GetHashtagAssociatedPosts(ctx, test.hashtag)
+
+			assert.Equal(t, test.existingPostIDs, postIDs)
+
+		})
+	}
+}
+
+func TestKeeper_RemovePostHashtags(t *testing.T) {
+	tests := []struct {
+		name             string
+		existingHashtags []string
+		newHashtags      []string
+		existingPostIDs  types.PostIDs
+		removedID        types.PostID
+		expectedIDs      types.PostIDs
+	}{
+		{
+			name:             "Remove the postID correctly",
+			existingHashtags: []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+			removedID:        types.PostID(3),
+			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2)},
+		},
+		{
+			name:             "Removed anything when postID is not present",
+			existingHashtags: []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+			removedID:        types.PostID(4),
+			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+
+			for _, hashtag := range test.existingHashtags {
+				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+			}
+
+			k.RemovePostHashtags(ctx, test.removedID, test.existingHashtags)
+
+			postIDs := k.GetHashtagAssociatedPosts(ctx, test.existingHashtags[0])
+
+			assert.Equal(t, test.expectedIDs, postIDs)
+
+		})
+	}
+}
+
 func TestKeeper_SavePost(t *testing.T) {
 	tests := []struct {
 		name                 string
