@@ -42,7 +42,11 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.OptionalData,
 		msg.CreationDate,
 		msg.Creator,
-	).WithMedias(msg.Medias).WithPollData(*msg.PollData)
+	).WithMedias(msg.Medias)
+
+	if msg.PollData != nil {
+		post = post.WithPollData(*msg.PollData)
+	}
 
 	// Check for double posting
 	if _, found := keeper.GetPost(ctx, post.PostID); found {
