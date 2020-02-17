@@ -6,17 +6,21 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReaction_String(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
 	reaction := types.NewReaction("reaction", user)
 	assert.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
 }
 
 func TestReaction_Validate(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name     string
 		reaction types.Reaction
@@ -43,8 +47,12 @@ func TestReaction_Validate(t *testing.T) {
 }
 
 func TestReaction_Equals(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name          string
 		first         types.Reaction
@@ -74,8 +82,12 @@ func TestReaction_Equals(t *testing.T) {
 }
 
 func TestReactions_AppendIfMissing(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name      string
 		reactions types.Reactions
@@ -113,8 +125,12 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 }
 
 func TestReactions_ContainsOwnerLike(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name        string
 		reactions   types.Reactions
@@ -161,8 +177,12 @@ func TestReactions_ContainsOwnerLike(t *testing.T) {
 }
 
 func TestReactions_IndexOfByUserAndValue(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name      string
 		reactions types.Reactions
@@ -209,8 +229,12 @@ func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 }
 
 func TestReactions_RemoveReaction(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	assert.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name      string
 		reactions types.Reactions

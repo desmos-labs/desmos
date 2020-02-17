@@ -16,7 +16,7 @@ With this message you can remove the like from a previously liked post.
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `value` String | Value of the reaction to be removed | 
+| `value` | String | Value of the reaction to be removed | 
 | `liker` | String | Desmos address of the user that had added the reaction | 
 | `post_id` | String | ID of the post from which to remove the reaction |
 

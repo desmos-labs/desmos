@@ -43,7 +43,7 @@ func TestKeeper_SetDefaultSessionLength(t *testing.T) {
 				assert.NoError(t, err)
 				var stored int64
 				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &stored)
 				assert.Equal(t, test.length, stored)
 			}
 
@@ -64,7 +64,7 @@ func TestKeeper_GetDefaultSessionLength(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if length != 0 {
-				store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(&length))
+				store.Set(types.SessionLengthKey, k.Cdc.MustMarshalBinaryBare(&length))
 			}
 
 			recovered := k.GetDefaultSessionLength(ctx)
@@ -97,7 +97,7 @@ func TestKeeper_GetLastSessionID(t *testing.T) {
 
 			if test.existingID.Valid() {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
+				store.Set(types.LastSessionIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
 			assert.Equal(t, test.expID, k.GetLastSessionID(ctx))
@@ -126,7 +126,7 @@ func TestKeeper_SetLastSessionID(t *testing.T) {
 			k.SetLastSessionID(ctx, test.id)
 
 			var stored types.SessionID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
 			assert.Equal(t, test.id, stored)
 		})
 	}
@@ -141,11 +141,11 @@ func TestKeeper_SaveSession(t *testing.T) {
 
 	var stored types.Session
 	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionID)), &stored)
 	assert.Equal(t, session, stored)
 
 	var storedLastID types.SessionID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &storedLastID)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
 	assert.Equal(t, session.SessionID, storedLastID)
 }
 
@@ -179,7 +179,7 @@ func TestKeeper_GetSession(t *testing.T) {
 
 			if !(types.Session{}).Equals(test.storedSession) {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.SessionStorePrefix+test.id.String()), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
+				store.Set(types.SessionStoreKey(test.id), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
 			}
 
 			result, found := k.GetSession(ctx, types.SessionID(1))

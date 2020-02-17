@@ -23,12 +23,14 @@ type MsgCreatePost struct {
 	OptionalData   map[string]string `json:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator"`
 	CreationDate   time.Time         `json:"creation_date"`
-	Medias         PostMedias        `json:"post_medias,omitempty"`
+	Medias         PostMedias        `json:"medias,omitempty"`
+	PollData       *PollData         `json:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgSetName
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time, medias PostMedias) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time,
+	medias PostMedias, pollData *PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -38,14 +40,8 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 		Creator:        owner,
 		CreationDate:   creationDate,
 		Medias:         medias,
+		PollData:       pollData,
 	}
-}
-
-// MarshalJSON implements the custom marshaling as Amino does not support
-// the JSON signature omitempty
-func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
-	type msgCreatePost MsgCreatePost
-	return json.Marshal(msgCreatePost(msg))
 }
 
 // Route should return the name of the module
@@ -93,8 +89,20 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future")
 	}
 
-	if err := msg.Medias.Validate(); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	if msg.Medias != nil {
+		if err := msg.Medias.Validate(); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+	}
+
+	if msg.PollData != nil {
+
+		if !msg.PollData.Open {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
+		}
+		if err := msg.PollData.Validate(); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
 	}
 
 	return nil
@@ -108,6 +116,13 @@ func (msg MsgCreatePost) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
+}
+
+// MarshalJSON implements the json.Mashaler interface.
+// This is done due to the fact that Amino does not respect omitempty clauses
+func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
+	type temp MsgCreatePost
+	return json.Marshal(temp(msg))
 }
 
 // ----------------------
@@ -171,111 +186,4 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Editor}
-}
-
-// ----------------------
-// --- MsgAddPostReaction
-// ----------------------
-
-// MsgAddPostReaction defines the message to be used to add a reaction to a post
-type MsgAddPostReaction struct {
-	PostID PostID         `json:"post_id"` // Id of the post to react to
-	Value  string         `json:"value"`   // Reaction of the reaction
-	User   sdk.AccAddress `json:"user"`    // Address of the user reacting to the post
-}
-
-// NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
-func NewMsgAddPostReaction(postID PostID, value string, user sdk.AccAddress) MsgAddPostReaction {
-	return MsgAddPostReaction{
-		PostID: postID,
-		User:   user,
-		Value:  value,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgAddPostReaction) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgAddPostReaction) ValidateBasic() error {
-	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
-	}
-
-	if msg.User.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
-	}
-
-	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Reaction value cannot be empty nor blank"))
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgAddPostReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
-}
-
-// GetSigners defines whose signature is required
-func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.User}
-}
-
-// ----------------------
-// --- MsgRemovePostReaction
-// ----------------------
-
-// MsgRemovePostReaction defines the message to be used when wanting to remove
-// an existing reaction from a specific user having a specific value
-type MsgRemovePostReaction struct {
-	PostID   PostID         `json:"post_id"`  // Id of the post to unlike
-	User     sdk.AccAddress `json:"user"`     // Address of the user that has previously liked the post
-	Reaction string         `json:"reaction"` // Reaction of the reaction to be removed
-}
-
-// MsgUnlikePostPost is the constructor of MsgRemovePostReaction
-func NewMsgRemovePostReaction(postID PostID, user sdk.AccAddress, reaction string) MsgRemovePostReaction {
-	return MsgRemovePostReaction{
-		PostID:   postID,
-		User:     user,
-		Reaction: reaction,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgRemovePostReaction) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgRemovePostReaction) ValidateBasic() error {
-	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
-	}
-
-	if msg.User.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
-	}
-
-	if len(strings.TrimSpace(msg.Reaction)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank")
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgRemovePostReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
-}
-
-// GetSigners defines whose signature is required
-func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.User}
 }

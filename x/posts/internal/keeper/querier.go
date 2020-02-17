@@ -3,11 +3,12 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // NewQuerier is the module level router for state queries
@@ -21,8 +22,11 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case types.QueryPosts:
 			return queryPosts(ctx, req, keeper)
 
+		case types.QueryPollAnswers:
+			return queryPollAnswers(ctx, path[1:], req, keeper)
+
 		default:
-			return nil, fmt.Errorf("unknown magpie query endpoint")
+			return nil, fmt.Errorf("unknown post query endpoint")
 		}
 	}
 }
@@ -42,8 +46,14 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 		childrenIDs = types.PostIDs{}
 	}
 
+	//Get the poll answers if poll exist
+	var answers []types.UserAnswer
+	if post.PollData != nil {
+		answers = keeper.GetPollAnswers(ctx, post.PostID)
+	}
+
 	// Crete the response object
-	return types.NewPostResponse(post, postLikes, childrenIDs)
+	return types.NewPostResponse(post, answers, postLikes, childrenIDs)
 }
 
 // queryPost handles the request to get a post having a specific id
@@ -86,6 +96,38 @@ func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &postResponses)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+}
+
+//queryPollAnswers handles the request to get poll answers related to a post with given id
+func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	id, err := types.ParsePostID(path[0])
+
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Invalid post id: %s", path[0]))
+	}
+
+	post, found := keeper.GetPost(ctx, id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Post with id %s not found", id))
+	}
+
+	if post.PollData == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post with id %s has no poll associated", id))
+	}
+
+	pollAnswers := keeper.GetPollAnswers(ctx, id)
+
+	pollAnswersResponse := types.PollAnswersQueryResponse{
+		PostID:         id,
+		AnswersDetails: pollAnswers,
+	}
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &pollAnswersResponse)
+
+	if err != nil {
+		panic("could not marshal result to JSON")
 	}
 
 	return bz, nil

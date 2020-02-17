@@ -23,7 +23,9 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
-	_ = ms.LoadLatestVersion()
+	if err := ms.LoadLatestVersion(); err != nil {
+		panic(err)
+	}
 
 	// create a Cdc and a context
 	cdc := testCodec()
@@ -46,6 +48,11 @@ func testCodec() *codec.Codec {
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var timeZone, _ = time.LoadLocation("UTC")
 var testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
+var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+var testPostEndPollDateExpired = time.Date(2019, 1, 1, 1, 15, 00, 000, timeZone)
+var answer = types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
+
+var answer2 = types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
 
 var testPost = types.NewPost(
 	types.PostID(3257),
@@ -60,4 +67,5 @@ var testPost = types.NewPost(
 		"https://uri.com",
 		"text/plain"),
 	},
+	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
 )

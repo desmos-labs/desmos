@@ -7,14 +7,13 @@ import (
 )
 
 const (
-	DefaultBondDenom = "desmos"
+	BondDenom = "desmos"
 
 	// gov
 	DefaultStartingProposalID uint64 = 1
 )
 
 var (
-	// gov
 	DefaultMinDepositTokens = sdk.TokensFromConsensusPower(10)
 	DefaultQuorum           = sdk.NewDecWithPrec(334, 3)
 	DefaultThreshold        = sdk.NewDecWithPrec(5, 1)
@@ -36,7 +35,7 @@ func stakingGenesisState() staking.GenesisState {
 			staking.DefaultMaxValidators,
 			staking.DefaultMaxEntries,
 			0,
-			DefaultBondDenom,
+			BondDenom,
 		),
 	}
 }
@@ -45,7 +44,7 @@ func govGenesisState() gov.GenesisState {
 	return gov.NewGenesisState(
 		DefaultStartingProposalID,
 		gov.NewDepositParams(
-			sdk.NewCoins(sdk.NewCoin(DefaultBondDenom, DefaultMinDepositTokens)),
+			sdk.NewCoins(sdk.NewCoin(BondDenom, DefaultMinDepositTokens)),
 			gov.DefaultPeriod,
 		),
 		gov.NewVotingParams(gov.DefaultPeriod),

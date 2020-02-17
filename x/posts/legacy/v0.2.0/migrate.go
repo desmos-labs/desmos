@@ -1,4 +1,4 @@
-package v0_2_0
+package v020
 
 import (
 	"strings"
