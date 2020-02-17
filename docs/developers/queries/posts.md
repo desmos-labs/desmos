@@ -12,6 +12,7 @@ Available flags:
 - `--allows-comments` (e.g. `--allows-comments=true`)
 - `--subspace` (e.g. `--subspace=desmos`)
 - `--creator` (e.g. `--creator=desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax`)
+- `--hashtags` (e.g `--hashtag=#desmos`)
 - `--sort-by` (e.g. `--sort-by=created`)  
    Accepted values: 
    - `created` 
@@ -23,7 +24,7 @@ Available flags:
 
 ```shell
 # Example
-# desmoscli query posts --parent-id=1 --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
+# desmoscli query posts --parent-id=1 --allows-comments=true --subspace=desmos --hastag=#desmos --hashtag=#another --sort=created --sort-order=descending
 ```
 
 **REST**
@@ -37,10 +38,11 @@ Available parameters:
 - `allows_comments` (e.g. `allows_comments=true`)
 - `subspace` (e.g. `subspace=desmos`)
 - `creator` (e.g. `creator=desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax`)
+- `hashtags` (e.g. `#desmos,#mooncake`)
 - `sort_by` (e.g. `sort_by=created`)
 - `sort_order` (e.g. `sort_order=descending`)
 
 ```shell
 # Example
-# curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+# curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&hashtag=#desmos,#mooncake&sort_order=descending
 ```

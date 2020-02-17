@@ -46,17 +46,14 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	return id
 }
 
-// SavePostHashtags allows to save the hashtags association with the given postID.
-// It assumes that the given hashtags array contains only non-empty, unique hashtags and that the postID is associated
-// with an existent post
-func (k Keeper) SavePostHashtags(ctx sdk.Context, hashtags []string, postID types.PostID) {
+// SavePostHashtag allows to save the hashtag association with the given postID.
+// It assumes that the postID is associated with an existent post
+func (k Keeper) SavePostHashtag(ctx sdk.Context, hashtag string, postID types.PostID) {
 	store := ctx.KVStore(k.StoreKey)
-	for _, hashtag := range hashtags {
-		postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
-		postIDs, appended := postIDs.AppendIfMissing(postID)
-		if appended {
-			store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
-		}
+	postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
+	postIDs, appended := postIDs.AppendIfMissing(postID)
+	if appended {
+		store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
 	}
 }
 
@@ -81,6 +78,21 @@ func (k Keeper) GetHashtagAssociatedPosts(ctx sdk.Context, hashtag string) types
 	k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
 
 	return postIDs
+}
+
+// GetHashtags allows to returns the list of hashtags that have been stored inside the given context
+func (k Keeper) GetHashtags(ctx sdk.Context) map[string]types.PostIDs {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, []byte("#"))
+
+	hashtagsData := map[string]types.PostIDs{}
+	for ; iterator.Valid(); iterator.Next() {
+		var postIDs types.PostIDs
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postIDs)
+		hashtagsData[string(iterator.Key())] = postIDs
+	}
+
+	return hashtagsData
 }
 
 // SavePost allows to save the given post inside the current context.

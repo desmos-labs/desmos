@@ -1,3 +1,6 @@
+#Version 0.4.0
+- Implemented the support for hashtags in posts (#96)
+
 # Version 0.3.0
 ## Changes
 - Implemented the support for media in posts (#36)

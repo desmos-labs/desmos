@@ -92,7 +92,9 @@ func TestKeeper_SavePostHashtags(t *testing.T) {
 				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
-			k.SavePostHashtags(ctx, test.newHashtags, test.newPostID)
+			for _, tHashtag := range test.newHashtags {
+				k.SavePostHashtag(ctx, tHashtag, test.newPostID)
+			}
 
 			for _, newHashtag := range test.newHashtags {
 				var postIDs types.PostIDs
@@ -185,6 +187,45 @@ func TestKeeper_RemovePostHashtags(t *testing.T) {
 
 			assert.Equal(t, test.expectedIDs, postIDs)
 
+		})
+	}
+}
+
+func TestKeeper_GetHashtags(t *testing.T) {
+	tests := []struct {
+		name    string
+		hashIds map[string]types.PostIDs
+	}{
+		{
+			name:    "Empty data are returned correctly",
+			hashIds: map[string]types.PostIDs{},
+		},
+		{
+			name: "",
+			hashIds: map[string]types.PostIDs{
+				"#hastag": {
+					types.PostID(1),
+					types.PostID(2),
+				},
+				"#desmos": {
+					types.PostID(1),
+					types.PostID(2),
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+			for hashtag, ids := range test.hashIds {
+				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(ids))
+			}
+
+			likesData := k.GetHashtags(ctx)
+			assert.Equal(t, test.hashIds, likesData)
 		})
 	}
 }
@@ -722,6 +763,11 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
 			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
+		{
+			name:     "Sortin by hashtags",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"#test"}},
+			expected: types.Posts{posts[0]},
+		},
 	}
 
 	for _, test := range tests {
@@ -730,8 +776,10 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			ctx, k := SetupTestInput()
 			for _, post := range posts {
 				k.SavePost(ctx, post)
+				for _, hashtag := range test.filter.Hashtags {
+					k.SavePostHashtag(ctx, hashtag, posts[0].PostID)
+				}
 			}
-
 			result := k.GetPostsFiltered(ctx, test.filter)
 			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
 		})

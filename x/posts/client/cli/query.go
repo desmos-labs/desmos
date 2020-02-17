@@ -124,6 +124,10 @@ $ %s query posts posts --page=2 --limit=100
 				params.Subspace = subspace
 			}
 
+			if hashtags := viper.GetStringSlice(flagHashtag); len(hashtags) > 0 {
+				params.Hashtags = hashtags
+			}
+
 			// Creator
 			if bech32CreatorAddress := viper.GetString(flagCreator); len(bech32CreatorAddress) != 0 {
 				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
@@ -172,6 +176,7 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().String(flagAllowsComments, "", "(optional) filter the posts allowing comments")
 	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
 	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
+	cmd.Flags().StringSlice(flagHashtag, []string{}, "(optional) filter the posts by hashtag")
 
 	return cmd
 }

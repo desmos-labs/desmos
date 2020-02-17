@@ -32,9 +32,16 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
-func getPostHashtags(message string) []string {
-	re := regexp.MustCompile(`#[A-Za-z0-9]*`)
-	return re.FindStringSubmatch(message)
+func GetPostHashtags(message string) []string {
+	re := regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
+	hashtags := re.FindAllStringSubmatch(message, -1)
+
+	hts := []string{}
+	for _, hashtagSlice := range hashtags {
+		hts = append(hts, hashtagSlice[0])
+	}
+
+	return hts
 }
 
 // handleMsgCreatePost handles the creation of a new post
@@ -72,9 +79,9 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	keeper.SavePost(ctx, post)
 
 	// Handle post hashtags
-	hashtags := getPostHashtags(msg.Message)
-	if hashtags != nil {
-		keeper.SavePostHashtags(ctx, hashtags, post.PostID)
+	hashtags := GetPostHashtags(msg.Message)
+	for _, hashtag := range hashtags {
+		keeper.SavePostHashtag(ctx, hashtag, post.PostID)
 	}
 
 	createEvent := sdk.NewEvent(
@@ -118,12 +125,13 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	keeper.SavePost(ctx, existing)
 
 	// Edit hashtags
-	if existingHashtags := getPostHashtags(existing.Message); existingHashtags != nil {
+	if existingHashtags := GetPostHashtags(existing.Message); existingHashtags != nil {
 		keeper.RemovePostHashtags(ctx, existing.PostID, existingHashtags)
 	}
 
-	if newHashtags := getPostHashtags(msg.Message); newHashtags != nil {
-		keeper.SavePostHashtags(ctx, newHashtags, existing.PostID)
+	newHashtags := GetPostHashtags(msg.Message)
+	for _, newHashtag := range newHashtags {
+		keeper.SavePostHashtag(ctx, newHashtag, existing.PostID)
 	}
 
 	editEvent := sdk.NewEvent(
