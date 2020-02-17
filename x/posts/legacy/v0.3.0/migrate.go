@@ -1,4 +1,4 @@
-package v0_3_0
+package v030
 
 import (
 	"crypto/sha256"

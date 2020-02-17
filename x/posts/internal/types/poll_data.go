@@ -9,9 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// ---------------
+// -----------------
 // --- PollData
-// ---------------
+// -----------------
 
 // PollData contains the information of a poll that is associated to a post
 type PollData struct {
@@ -23,6 +23,7 @@ type PollData struct {
 	AllowsAnswerEdits     bool        `json:"allows_answer_edits"`     // Tells if the poll allows answer edits
 }
 
+// NewPollData returns a new PollData object pointer containing the given data
 func NewPollData(title string, endDate time.Time, providedAnswers PollAnswers, open, allowMultipleAnswers, allowsAnswerEdits bool) *PollData {
 	return &PollData{
 		Question:              title,
@@ -49,6 +50,7 @@ func (pd PollData) String() string {
 	return out
 }
 
+// Validate implements the validator interface
 func (pd PollData) Validate() error {
 	if strings.TrimSpace(pd.Question) == "" {
 		return fmt.Errorf("missing poll title")
@@ -65,6 +67,7 @@ func (pd PollData) Validate() error {
 	return nil
 }
 
+// Equals returns true if this poll data object has the same contents of the other given
 func (pd *PollData) Equals(other *PollData) bool {
 	if pd != nil && other == nil || pd == nil && other != nil {
 		return false
@@ -82,51 +85,28 @@ func (pd *PollData) Equals(other *PollData) bool {
 		pd.AllowsAnswerEdits == other.AllowsAnswerEdits
 }
 
-// ---------------
-// --- UsersAnswersDetails
-// ---------------
+// -----------------
+// --- UserAnswer
+// -----------------
 
-type UsersAnswersDetails []AnswersDetails
-
-// AppendIfMissingOrIfUserEquals appends the given answerDetails to the users answers details slice if it does not exist inside it yet
-//or if the user of the answer details is the same.
-// It returns a new slice of AnswersDetails containing such AnswersDetails and a boolean indicating if there was an append.
-func (usersAD UsersAnswersDetails) AppendIfMissingOrIfUsersEquals(ansDet AnswersDetails) (UsersAnswersDetails, bool) {
-	for index, ad := range usersAD {
-
-		if ad.Equals(ansDet) {
-			return usersAD, false
-		}
-
-		if ad.User.Equals(ansDet.User) {
-			usersAD[index] = ansDet
-			return usersAD, true
-		}
-
-	}
-
-	return append(usersAD, ansDet), true
-}
-
-// ---------------
-// --- AnswersDetails
-// ---------------
-type AnswersDetails struct {
-	Answers []uint         `json:"answers"`
+// UserAnswer contains the data of a user's answer submission
+type UserAnswer struct {
+	Answers []AnswerID     `json:"answers"`
 	User    sdk.AccAddress `json:"user"`
 }
 
-func NewAnswersDetails(answers []uint, user sdk.AccAddress) AnswersDetails {
-	return AnswersDetails{
+// NewUserAnswer returns a new AnswerDetails object containing the given data
+func NewUserAnswer(answers []AnswerID, user sdk.AccAddress) UserAnswer {
+	return UserAnswer{
 		Answers: answers,
 		User:    user,
 	}
 }
 
 // Strings implements fmt.Stringer
-func (userPollAnswers AnswersDetails) String() string {
-	out := fmt.Sprintf("User: %s \nAnswers IDs: ", userPollAnswers.User.String())
-	for _, answer := range userPollAnswers.Answers {
+func (userAnswers UserAnswer) String() string {
+	out := fmt.Sprintf("User: %s \nAnswers IDs: ", userAnswers.User.String())
+	for _, answer := range userAnswers.Answers {
 		out += strconv.FormatUint(uint64(answer), 10) + " "
 	}
 
@@ -134,12 +114,12 @@ func (userPollAnswers AnswersDetails) String() string {
 }
 
 // Validate implements validator
-func (userPollAnswers AnswersDetails) Validate() error {
-	if userPollAnswers.User.Empty() {
+func (userAnswers UserAnswer) Validate() error {
+	if userAnswers.User.Empty() {
 		return fmt.Errorf("user cannot be empty")
 	}
 
-	if len(userPollAnswers.Answers) == 0 {
+	if len(userAnswers.Answers) == 0 {
 		return fmt.Errorf("answers cannot be empty")
 	}
 
@@ -148,16 +128,16 @@ func (userPollAnswers AnswersDetails) Validate() error {
 
 // Equals returns true iff the userPollAnswers contains the same
 // data of the other userPollAnswers
-func (userPollAnswers AnswersDetails) Equals(other AnswersDetails) bool {
-	if !userPollAnswers.User.Equals(other.User) {
+func (userAnswers UserAnswer) Equals(other UserAnswer) bool {
+	if !userAnswers.User.Equals(other.User) {
 		return false
 	}
 
-	if len(userPollAnswers.Answers) != len(other.Answers) {
+	if len(userAnswers.Answers) != len(other.Answers) {
 		return false
 	}
 
-	for index, answer := range userPollAnswers.Answers {
+	for index, answer := range userAnswers.Answers {
 		if answer != other.Answers[index] {
 			return false
 		}
@@ -167,96 +147,27 @@ func (userPollAnswers AnswersDetails) Equals(other AnswersDetails) bool {
 }
 
 // ---------------
-// --- PollAnswers
-// ---------------
-type PollAnswers []PollAnswer
-
-// Strings implements fmt.Stringer
-func (answers PollAnswers) String() string {
-	out := "Provided Answers:\n[ID] [Text]\n"
-	for _, answer := range answers {
-		out += fmt.Sprintf("[%s] [%s]\n",
-			strconv.FormatUint(uint64(answer.ID), 10), answer.Text)
-	}
-	return strings.TrimSpace(out)
-}
-
-// Validate implements validator
-func (answers PollAnswers) Validate() error {
-	if len(answers) == 0 {
-		return fmt.Errorf("answers cannot be empty")
-	}
-	for _, answer := range answers {
-		if err := answer.Validate(); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// Equals returns true iff the answers slice contains the same
-// data in the same order of the other slice
-func (answers PollAnswers) Equals(other PollAnswers) bool {
-	if len(answers) != len(other) {
-		return false
-	}
-
-	for index, answer := range answers {
-		if !answer.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
-// AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
-// It returns a new slice of PollAnswers containing such PollAnswer.
-func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
-	for _, answer := range answers {
-		if answer.Equals(newAnswer) {
-			return answers
-		}
-	}
-	return append(answers, newAnswer)
-}
-
-// ExtractAnswersIDs appends every answer ID to a slice of IDs.
-//It returns a slice of answers IDs.
-func (answers PollAnswers) ExtractAnswersIDs() (answersIDs []uint) {
-	for _, answer := range answers {
-		answersIDs = append(answersIDs, answer.ID)
-	}
-	return answersIDs
-}
-
-// ---------------
-// --- PollAnswer
+// --- UserAnswers
 // ---------------
 
-// PollAnswer contains the data of a single poll answer inserted by the creator
-type PollAnswer struct {
-	ID   uint   `json:"id"`   // Unique id inside the post
-	Text string `json:"text"` // Text of the answer
-}
+type UserAnswers []UserAnswer
 
-// String implements fmt.Stringer
-func (pa PollAnswer) String() string {
-	formattedID := strconv.FormatUint(uint64(pa.ID), 10)
-	return fmt.Sprintf("Answer - ID: %s ; Text: %s", formattedID, pa.Text)
-}
+// AppendIfMissingOrIfUserEquals appends the given answer to the user's answers slice if it does not exist inside it yet
+// or if the user of the answer details is the same.
+// It returns a new slice of containing such answer and a boolean indicating if the slice has been modified or not.
+func (ua UserAnswers) AppendIfMissingOrIfUsersEquals(answer UserAnswer) (UserAnswers, bool) {
+	for index, ad := range ua {
 
-// Validate implements validator
-func (pa PollAnswer) Validate() error {
-	if strings.TrimSpace(pa.Text) == "" {
-		return fmt.Errorf("answer text must be specified and cannot be empty")
+		if ad.Equals(answer) {
+			return ua, false
+		}
+
+		if ad.User.Equals(answer.User) {
+			ua[index] = answer
+			return ua, true
+		}
+
 	}
 
-	return nil
-}
-
-// Equals allows to check whether the contents of p are the same of other
-func (pa PollAnswer) Equals(other PollAnswer) bool {
-	return pa.ID == other.ID && pa.Text == other.Text
+	return append(ua, answer), true
 }

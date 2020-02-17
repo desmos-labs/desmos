@@ -22,7 +22,9 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
-	_ = ms.LoadLatestVersion()
+	if err := ms.LoadLatestVersion(); err != nil {
+		panic(err)
+	}
 
 	// create a cdc and a context
 	cdc := testCodec()

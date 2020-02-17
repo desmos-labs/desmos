@@ -12,7 +12,8 @@ import (
 )
 
 func Test_handleMsgCreateSession(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	owner, err := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	assert.NoError(t, err)
 
 	testData := []struct {
 		name  string
@@ -57,7 +58,8 @@ func Test_handleMsgCreateSession(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			sessionLength := int64(240)
-			k.SetDefaultSessionLength(ctx, sessionLength)
+			err := k.SetDefaultSessionLength(ctx, sessionLength)
+			assert.NoError(t, err)
 
 			handler := keeper.NewHandler(k)
 			res, err := handler(ctx, test.msg)
@@ -79,7 +81,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 
 				var stored types.Session
 				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+expectedID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
 				assert.Equal(t, session, stored)
 
 				// Check the events

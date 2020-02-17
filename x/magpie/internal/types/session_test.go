@@ -135,8 +135,11 @@ func TestParseSessionID(t *testing.T) {
 // ------------------
 
 func TestSession_Equals(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
-	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1cl4kjuqz8zrgw9h32v5hrhzulmlf0jcmjaw67c")
+	owner, err := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	assert.NoError(t, err)
+
+	otherOwner, err := sdk.AccAddressFromBech32("cosmos1cl4kjuqz8zrgw9h32v5hrhzulmlf0jcmjaw67c")
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -371,7 +374,9 @@ func TestSession_Equals(t *testing.T) {
 }
 
 func TestSession_String(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	owner, err := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name      string
 		session   types.Session

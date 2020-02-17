@@ -203,7 +203,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 }
 
 // answerExist checks if the answer is contained in providedAnswers slice
-func answerExist(providedAnswers []uint, answer uint) bool {
+func answerExist(providedAnswers []types.AnswerID, answer types.AnswerID) bool {
 	for _, ans := range providedAnswers {
 		if ans == answer {
 			return true
@@ -258,7 +258,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		)
 	}
 
-	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
+	userPollAnswers := types.NewUserAnswer(msg.UserAnswers, msg.Answerer)
 
 	keeper.SavePollAnswers(ctx, post.PostID, userPollAnswers)
 

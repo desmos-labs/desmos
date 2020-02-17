@@ -156,7 +156,16 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAnswerPoll(postID, req.Answers, addr)
+		answers := make([]types.AnswerID, len(req.Answers))
+		for index, answer := range req.Answers {
+			answers[index], err = types.ParseAnswerID(answer)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+		}
+
+		msg := types.NewMsgAnswerPoll(postID, answers, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

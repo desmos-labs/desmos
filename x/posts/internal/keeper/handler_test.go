@@ -133,11 +133,11 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, p := range test.storedPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			if test.lastPostID.Valid() {
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -147,7 +147,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.expPost.PostID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
 				assert.True(t, stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
@@ -176,7 +176,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 }
 
 func Test_handleMsgEditPost(t *testing.T) {
-	editor, _ := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
+	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
+	assert.NoError(t, err)
 
 	testData := []struct {
 		name       string
@@ -230,10 +231,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.storedPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.storedPost),
-				)
+				store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -248,7 +246,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				))
 
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
 				assert.True(t, test.expPost.Equals(stored))
 			}
 
@@ -263,7 +261,9 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
 
-	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name         string
 		existingPost *types.Post
@@ -290,10 +290,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
-				)
+				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -309,11 +306,11 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				))
 
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+storedPost.PostID.String())), &storedReactions)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				assert.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
 			}
 
@@ -327,7 +324,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 }
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	assert.NoError(t, err)
+
 	reaction := types.NewReaction("like", user)
 	tests := []struct {
 		name             string
@@ -363,15 +362,12 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
-				store.Set(
-					[]byte(types.PostStorePrefix+test.existingPost.PostID.String()),
-					k.Cdc.MustMarshalBinaryBare(&test.existingPost),
-				)
+				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.existingReaction != nil {
 				store.Set(
-					[]byte(types.PostReactionsStorePrefix+test.existingPost.PostID.String()),
+					types.PostReactionsStoreKey(test.existingPost.PostID),
 					k.Cdc.MustMarshalBinaryBare(&types.Reactions{*test.existingReaction}),
 				)
 			}
@@ -389,11 +385,11 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				))
 
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+testPost.PostID.String())), &storedPost)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				assert.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+storedPost.PostID.String())), &storedReactions)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				assert.NotContains(t, storedReactions, test.existingReaction)
 			}
 
@@ -407,19 +403,19 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
-	answers := []uint{uint(1), uint(2)}
-	userPollAnswers := types.NewAnswersDetails(answers, testPostOwner)
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
+	userPollAnswers := types.NewUserAnswer(answers, testPostOwner)
 
 	tests := []struct {
 		name          string
 		msg           types.MsgAnswerPoll
 		storedPost    types.Post
-		storedAnswers *types.AnswersDetails
+		storedAnswers *types.UserAnswer
 		expErr        error
 	}{
 		{
 			name: "Post not found",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(2), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -428,14 +424,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "No poll associated with post",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil, nil),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 1"),
 		},
 		{
 			name: "Answer after poll closure",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
@@ -446,7 +442,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
@@ -456,7 +452,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "User provide too many answers",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2, 3}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -466,7 +462,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "User provide answers that are not the ones provided by the poll",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 3}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 3}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -476,7 +472,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
@@ -487,7 +483,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Answered correctly to post's poll",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
 				testPostOwner, nil,
 				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
@@ -500,8 +496,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
-
-			store.Set([]byte(types.PostStorePrefix+test.storedPost.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
+			store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
 
 			if test.storedAnswers != nil {
 				k.SavePollAnswers(ctx, test.storedPost.PostID, *test.storedAnswers)

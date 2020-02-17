@@ -17,8 +17,8 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var answer = types.PollAnswer{ID: uint(1), Text: "Yes"}
-var answer2 = types.PollAnswer{ID: uint(2), Text: "No"}
+var answer = types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
+var answer2 = types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
 var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
@@ -48,7 +48,9 @@ func TestMsgCreatePost_Type(t *testing.T) {
 }
 
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	creator, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name  string
 		msg   types.MsgCreatePost
@@ -315,7 +317,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		})
 	}
 
-	err := msgCreatePost.ValidateBasic()
+	err = msgCreatePost.ValidateBasic()
 	assert.Nil(t, err)
 }
 
@@ -343,7 +345,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My new post","optional_data":{"field":"value"},"parent_id":"53","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -363,7 +365,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My post","parent_id":"15","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty medias",
@@ -378,7 +380,27 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				types.PostMedias{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":1,"text":"Yes"},{"id":2,"text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"10","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+		},
+		{
+			name: "Message with empty poll data",
+			msg: types.NewMsgCreatePost(
+				"My Post without medias",
+				types.PostID(10),
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testOwner,
+				date,
+				types.PostMedias{
+					types.PostMedia{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+					},
+				},
+				nil,
+			),
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My Post without medias","parent_id":"10","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -480,208 +502,4 @@ func TestMsgEditPost_GetSigners(t *testing.T) {
 	actual := msgEditPost.GetSigners()
 	assert.Equal(t, 1, len(actual))
 	assert.Equal(t, msgEditPost.Editor, actual[0])
-}
-
-// ----------------------
-// --- MsgAddPostReaction
-// ----------------------
-
-var msgLike = types.NewMsgAddPostReaction(types.PostID(94), "like", testOwner)
-
-func TestMsgAddPostReaction_Route(t *testing.T) {
-	actual := msgLike.Route()
-	assert.Equal(t, "posts", actual)
-}
-
-func TestMsgAddPostReaction_Type(t *testing.T) {
-	actual := msgLike.Type()
-	assert.Equal(t, "add_post_reaction", actual)
-}
-
-func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   types.MsgAddPostReaction
-		error error
-	}{
-		{
-			name:  "Invalid post id returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
-		},
-		{
-			name:  "Invalid user returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", nil),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
-		},
-		{
-			name:  "Invalid value returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), "", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
-		},
-		{
-			name:  "Valid message returns no error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(10), "like", testOwner),
-			error: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		returnedError := test.msg.ValidateBasic()
-		if test.error == nil {
-			assert.Nil(t, returnedError)
-		} else {
-			assert.NotNil(t, returnedError)
-			assert.Equal(t, test.error.Error(), returnedError.Error())
-		}
-	}
-}
-
-func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
-	actual := msgLike.GetSignBytes()
-	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"94","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
-	assert.Equal(t, expected, string(actual))
-}
-
-func TestMsgAddPostReaction_GetSigners(t *testing.T) {
-	actual := msgLike.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgLike.User, actual[0])
-}
-
-// ----------------------
-// --- MsgRemovePostReaction
-// ----------------------
-
-var msgUnlikePost = types.NewMsgRemovePostReaction(types.PostID(94), testOwner, "like")
-
-func TestMsgUnlikePost_Route(t *testing.T) {
-	actual := msgUnlikePost.Route()
-	assert.Equal(t, "posts", actual)
-}
-
-func TestMsgUnlikePost_Type(t *testing.T) {
-	actual := msgUnlikePost.Type()
-	assert.Equal(t, "remove_post_reaction", actual)
-}
-
-func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   types.MsgRemovePostReaction
-		error error
-	}{
-		{
-			name:  "Invalid post id returns error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(0), testOwner, "like"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
-		},
-		{
-			name:  "Invalid user address: ",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), nil, "like"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
-		},
-		{
-			name:  "Invalid value returns no error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
-		},
-		{
-			name:  "Valid message returns no error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, "like"),
-			error: nil,
-		},
-	}
-
-	for _, test := range tests {
-		returnedError := test.msg.ValidateBasic()
-		if test.error == nil {
-			assert.Nil(t, returnedError)
-		} else {
-			assert.NotNil(t, returnedError)
-			assert.Equal(t, test.error.Error(), returnedError.Error())
-		}
-	}
-}
-
-func TestMsgUnlikePost_GetSignBytes(t *testing.T) {
-	actual := msgUnlikePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"94","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	assert.Equal(t, expected, string(actual))
-}
-
-func TestMsgUnlikePost_GetSigners(t *testing.T) {
-	actual := msgUnlikePost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgUnlikePost.User, actual[0])
-}
-
-// ----------------------
-// --- MsgAnswerPoll
-// ----------------------
-
-var msgAnswerPollPost = types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, testOwner)
-
-func TestMsgAnswerPollPost_Route(t *testing.T) {
-	actual := msgAnswerPollPost.Route()
-	assert.Equal(t, "posts", actual)
-}
-
-func TestMsgAnswerPollPost_Type(t *testing.T) {
-	actual := msgAnswerPollPost.Type()
-	assert.Equal(t, "answer_poll", actual)
-}
-
-func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   types.MsgAnswerPoll
-		error error
-	}{
-		{
-			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPoll(types.PostID(0), []uint{1, 2}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
-		},
-		{
-			name:  "Invalid answerer address",
-			msg:   types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, nil),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
-		},
-		{
-			name:  "Returns error when no answer is provided",
-			msg:   types.NewMsgAnswerPoll(types.PostID(1), []uint{}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
-		},
-		{
-			name: "Valid message returns no error",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []uint{1, 2}, msgAnswerPollPost.Answerer),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				assert.Nil(t, returnedError)
-			} else {
-				assert.NotNil(t, returnedError)
-				assert.Equal(t, test.error.Error(), returnedError.Error())
-			}
-		})
-	}
-}
-
-func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
-	actual := msgAnswerPollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"1"}}`
-	assert.Equal(t, expected, string(actual))
-}
-
-func TestMsgAnswerPollPost_GetSigners(t *testing.T) {
-	actual := msgAnswerPollPost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgAnswerPollPost.Answerer, actual[0])
 }

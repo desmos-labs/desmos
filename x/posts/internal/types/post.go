@@ -265,3 +265,18 @@ func (p Posts) String() string {
 	}
 	return strings.TrimSpace(out)
 }
+
+// Len implements sort.Interface
+func (p Posts) Len() int {
+	return len(p)
+}
+
+// Swap implements sort.Interface
+func (p Posts) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+// Less implements sort.Interface
+func (p Posts) Less(i, j int) bool {
+	return p[i].PostID < p[j].PostID
+}
