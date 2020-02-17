@@ -343,7 +343,7 @@ func TestPostMedia_ParseURI(t *testing.T) {
 	}{
 		{
 			uri:    "http://error.com",
-			expErr: fmt.Errorf("invalid uri provided"),
+			expErr: nil,
 		},
 		{
 			uri:    "http://",

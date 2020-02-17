@@ -12,11 +12,11 @@ import (
 
 type PostMedia struct {
 	URI      string `json:"uri"`
-	MimeType string `json:"mime_Type"`
+	MimeType string `json:"mime_type"`
 }
 
 var rEx = regexp.MustCompile(
-	`^(?:https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+	`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
 func NewPostMedia(uri, mimeType string) PostMedia {
 	return PostMedia{
