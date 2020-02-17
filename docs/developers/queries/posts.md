@@ -44,5 +44,5 @@ Available parameters:
 
 ```shell
 # Example
-# curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&hashtag=#desmos,#mooncake&sort_order=descending
+# curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&hashtags=#desmos,#mooncake&sort_order=descending
 ```

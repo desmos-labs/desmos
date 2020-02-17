@@ -116,7 +116,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestHashtags); len(v) != 0 {
-			params.Hashtags = strings.SplitAfter(v, ",")
+			params.Hashtags = strings.Split(v, ",")
 		}
 
 		bz, err := cliCtx.Codec.MarshalJSON(params)
