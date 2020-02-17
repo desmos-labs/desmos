@@ -12,7 +12,9 @@ This message allows you to create a new public post.
     "subspace": "<Subspace of a post>",
     "optional_data": {},
     "creator": "<Desmos address that's creating the post>",
-    "creation_date": "<RFC3339-formatted date representing the creation date of the post>"
+    "creation_date": "<RFC3339-formatted date representing the creation date of the post>",
+    "medias": "<Media's array that contains all the medias associated with the post",
+    "poll_data": "<Poll data contains all useful data of the poll's post>"
   }
 }
 ```
@@ -27,9 +29,10 @@ This message allows you to create a new public post.
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
 | `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
-
+| `medias` | Array | (Optional) Array containing all the medias related to the post |
+| `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 ## Example
-### With optional data
+### With optional data, medias and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",
@@ -42,12 +45,43 @@ This message allows you to create a new public post.
       "custom_field": "My custom value"
     },
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "creation_date": "2020-01-01T12:00:00Z"
+    "creation_date": "2020-01-01T12:00:00Z",
+    "medias": [
+      {
+        "uri": "https://example.com/media1",
+        "mime_type": "text/plain"
+      },
+      {
+        "uri": "https://example.com/media2",
+        "mime_type": "application/json"
+      }
+    ],
+    "poll_data": {
+      "question": "Which dog do you prefer?",
+      "provided_answers": [
+        {
+          "id": 0,
+          "text": "Beagle"
+        },
+        {
+          "id": 1,
+          "text": "Pug"
+        },
+        {
+          "id": 2,
+          "text": "German Sheperd"
+        }
+      ],
+      "end_date": "2020-02-10T15:00:00Z",
+      "is_open": true,
+      "allows_multiple_answers": true,
+      "allows_answer_edits": true
+    }
   }
 }
 ``` 
 
-### Without optional data
+### Without optional data, medias and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",
