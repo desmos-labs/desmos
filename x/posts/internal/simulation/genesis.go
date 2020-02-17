@@ -40,9 +40,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 			postData.OptionalData,
 			postData.CreationDate,
 			postData.Creator.Address,
-			postData.Medias,
-			postData.PollData,
-		)
+		).WithMedias(postData.Medias).WithPollData(*postData.PollData)
 	}
 
 	return posts

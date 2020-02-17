@@ -5,7 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -16,12 +16,12 @@ var msgAnswerPollPost = types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
 	actual := msgAnswerPollPost.Route()
-	assert.Equal(t, "posts", actual)
+	require.Equal(t, "posts", actual)
 }
 
 func TestMsgAnswerPollPost_Type(t *testing.T) {
 	actual := msgAnswerPollPost.Type()
-	assert.Equal(t, "answer_poll", actual)
+	require.Equal(t, "answer_poll", actual)
 }
 
 func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
@@ -56,10 +56,10 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			returnedError := test.msg.ValidateBasic()
 			if test.error == nil {
-				assert.Nil(t, returnedError)
+				require.Nil(t, returnedError)
 			} else {
-				assert.NotNil(t, returnedError)
-				assert.Equal(t, test.error.Error(), returnedError.Error())
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
 			}
 		})
 	}
@@ -68,11 +68,11 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 	actual := msgAnswerPollPost.GetSignBytes()
 	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"1"}}`
-	assert.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgAnswerPollPost_GetSigners(t *testing.T) {
 	actual := msgAnswerPollPost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgAnswerPollPost.Answerer, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgAnswerPollPost.Answerer, actual[0])
 }

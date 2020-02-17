@@ -5,7 +5,7 @@ import (
 
 	v020posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.2.0"
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMigrate(t *testing.T) {
@@ -27,8 +27,8 @@ func TestMigrate(t *testing.T) {
 	}
 
 	// Check for posts
-	assert.Len(t, migrated.Posts, len(expected.Posts))
+	require.Len(t, migrated.Posts, len(expected.Posts))
 	for index, post := range migrated.Posts {
-		assert.Equal(t, expected.Posts[index].Subspace, post.Subspace)
+		require.Equal(t, expected.Posts[index].Subspace, post.Subspace)
 	}
 }

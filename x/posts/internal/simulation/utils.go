@@ -149,7 +149,7 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		closingDate = time.Now().UTC().AddDate(1, 0, 0)
 	}
 
-	return types.NewPollData(
+	poll := types.NewPollData(
 		RandomMessage(r),
 		closingDate,
 		answers,
@@ -157,6 +157,7 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		r.Intn(100) > 50, // 50% possibility of multiple answers
 		r.Intn(100) > 50, // 50% possibility of allowing answers edits
 	)
+	return &poll
 }
 
 // GetAccount gets the account having the given address from the accs list

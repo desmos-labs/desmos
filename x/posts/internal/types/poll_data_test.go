@@ -3,7 +3,7 @@ package types_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"testing"
 	"time"
@@ -13,22 +13,30 @@ import (
 // --- PollData
 // ---------------
 
+var pollEndDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+var answer = types.NewPollAnswer(types.AnswerID(1), "Yes")
+var answer2 = types.NewPollAnswer(types.AnswerID(2), "No")
+
+func pollDataPointer(data types.PollData) *types.PollData {
+	return &data
+}
+
 func TestPollData_String(t *testing.T) {
 	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
 	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
-	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
+	pollData := types.NewPollData("poll?", pollEndDate, types.PollAnswers{answer, answer2}, true, false, true)
 
-	assert.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+	require.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		pollData.String())
 }
 
 func TestPollData_Validate(t *testing.T) {
 	tests := []struct {
-		pollData *types.PollData
+		pollData types.PollData
 		expError string
 	}{
 		{
-			pollData: types.NewPollData("", testPostEndPollDate, types.PollAnswers{}, true, true, true),
+			pollData: types.NewPollData("", pollEndDate, types.PollAnswers{}, true, true, true),
 			expError: "missing poll title",
 		},
 		{
@@ -36,17 +44,17 @@ func TestPollData_Validate(t *testing.T) {
 			expError: "invalid poll's end date",
 		},
 		{
-			pollData: types.NewPollData("title", testPostEndPollDate, types.PollAnswers{}, true, true, true),
+			pollData: types.NewPollData("title", pollEndDate, types.PollAnswers{}, true, true, true),
 			expError: "poll answers must be at least two",
 		},
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.expError, test.pollData.Validate().Error())
+		require.Equal(t, test.expError, test.pollData.Validate().Error())
 	}
 }
 
-func TestPollData_Equals(t *testing.T) {
+func TestArePollDataEquals(t *testing.T) {
 	tests := []struct {
 		name      string
 		first     *types.PollData
@@ -55,55 +63,55 @@ func TestPollData_Equals(t *testing.T) {
 	}{
 		{
 			name:      "Different titles",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different open",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, false, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), false, false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different end date",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll?", time.Now().UTC(), types.PollAnswers{answer, answer2}, true, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", time.Now().UTC(), types.NewPollAnswers(answer, answer2), true, false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different provided answers",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different edits answer option",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, false),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, false)),
 			expEquals: false,
 		},
 		{
 			name:      "Different multiple answers option",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, true, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Equals poll data",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
 			expEquals: true,
 		},
 		{
 			name:      "First nil",
 			first:     nil,
-			second:    types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+			second:    pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer, answer2), true, false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Second nil",
-			first:     types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
+			first:     pollDataPointer(types.NewPollData("poll?", pollEndDate, types.NewPollAnswers(answer), true, false, true)),
 			second:    nil,
 			expEquals: false,
 		},
@@ -118,7 +126,7 @@ func TestPollData_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, types.ArePollDataEquals(test.first, test.second))
 		})
 	}
 }
@@ -129,18 +137,18 @@ func TestPollData_Equals(t *testing.T) {
 
 func TestUserAnswer_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	userPollAnswers := types.NewUserAnswer(answers, user)
 
-	assert.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
+	require.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
 }
 
 func TestUserAnswer_Validate(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -165,7 +173,7 @@ func TestUserAnswer_Validate(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if err := test.userPollAnswers.Validate(); err != nil {
-				assert.Equal(t, test.expErr, err.Error())
+				require.Equal(t, test.expErr, err.Error())
 			}
 		})
 	}
@@ -173,10 +181,10 @@ func TestUserAnswer_Validate(t *testing.T) {
 
 func TestUserAnswer_Equals(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	answers2 := []types.AnswerID{types.AnswerID(1)}
@@ -216,7 +224,7 @@ func TestUserAnswer_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
@@ -227,10 +235,10 @@ func TestUserAnswer_Equals(t *testing.T) {
 
 func TestUserAnswers_AppendIfMissingOrIfUsersEquals(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	answers2 := []types.AnswerID{types.AnswerID(3)}
@@ -272,8 +280,8 @@ func TestUserAnswers_AppendIfMissingOrIfUsersEquals(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			actual, appended := test.usersAD.AppendIfMissingOrIfUsersEquals(test.ansDet)
-			assert.Equal(t, test.expUsersAD, actual)
-			assert.Equal(t, test.expAppended, appended)
+			require.Equal(t, test.expUsersAD, actual)
+			require.Equal(t, test.expAppended, appended)
 		})
 	}
 }

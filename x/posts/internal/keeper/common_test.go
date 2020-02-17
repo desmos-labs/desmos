@@ -63,9 +63,13 @@ var testPost = types.NewPost(
 	map[string]string{},
 	testPostCreationDate,
 	testPostOwner,
-	types.PostMedias{types.NewPostMedia(
-		"https://uri.com",
-		"text/plain"),
-	},
-	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
-)
+).WithMedias(types.NewPostMedias(
+	types.NewPostMedia("https://uri.com", "text/plain"),
+)).WithPollData(types.NewPollData(
+	"poll?",
+	testPostEndPollDate,
+	types.NewPollAnswers(answer, answer2),
+	true,
+	true,
+	true,
+))

@@ -123,8 +123,8 @@ type Post struct {
 	PollData       *PollData      `json:"poll_data,omitempty"`     // Contains the poll details, if existing
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created time.Time, creator sdk.AccAddress, medias PostMedias, pollData *PollData) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string,
+	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
@@ -135,9 +135,19 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        creator,
-		Medias:         medias,
-		PollData:       pollData,
 	}
+}
+
+// WithMedias allows to easily set the given medias as the multimedia files associated with the p Post
+func (p Post) WithMedias(medias PostMedias) Post {
+	p.Medias = medias
+	return p
+}
+
+// WithMedias allows to easily set the given data as the poll data files associated with the p Post
+func (p Post) WithPollData(data PollData) Post {
+	p.PollData = &data
+	return p
 }
 
 // String implements fmt.Stringer
@@ -235,7 +245,8 @@ func (p Post) EqualsNoID(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) && p.PollData.Equals(other.PollData)
+		p.Medias.Equals(other.Medias) &&
+		ArePollDataEquals(p.PollData, other.PollData)
 }
 
 // -------------

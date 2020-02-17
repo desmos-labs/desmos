@@ -2,7 +2,7 @@ package types_test
 
 import (
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"testing"
 )
@@ -13,12 +13,12 @@ import (
 
 func TestPollAnswer_String(t *testing.T) {
 	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-	assert.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
+	require.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
 }
 
 func TestPollAnswer_Validate(t *testing.T) {
 	answer := types.PollAnswer{ID: types.AnswerID(0), Text: ""}
-	assert.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
+	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
 func TestPollAnswer_Equals(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPollAnswer_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.answer.Equals(test.otherAnswer))
+			require.Equal(t, test.expEquals, test.answer.Equals(test.otherAnswer))
 		})
 	}
 }
@@ -65,7 +65,7 @@ func TestPollAnswers_String(t *testing.T) {
 	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
 	answers := types.PollAnswers{answer, answer2}
 
-	assert.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
+	require.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
 }
 
 func TestPollAnswers_Validate(t *testing.T) {
@@ -84,7 +84,7 @@ func TestPollAnswers_Validate(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.expErr, test.answers.Validate().Error())
+		require.Equal(t, test.expErr, test.answers.Validate().Error())
 	}
 }
 
@@ -121,7 +121,7 @@ func TestPollAnswers_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.answers.Equals(test.others))
+			require.Equal(t, test.expEquals, test.answers.Equals(test.others))
 		})
 	}
 }
@@ -153,7 +153,7 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expLen, len(test.answers.AppendIfMissing(test.answer)))
+			require.Equal(t, test.expLen, len(test.answers.AppendIfMissing(test.answer)))
 		})
 	}
 }
@@ -167,5 +167,5 @@ func TestPollAnswers_ExtractAnswersIDs(t *testing.T) {
 
 	actual := pollAnswers.ExtractAnswersIDs()
 
-	assert.Equal(t, expectedIDs, actual)
+	require.Equal(t, expectedIDs, actual)
 }

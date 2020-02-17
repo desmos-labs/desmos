@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // -------------
@@ -42,7 +42,7 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 			}
 
 			actual := k.GetLastPostID(ctx)
-			assert.Equal(t, test.expected, actual)
+			require.Equal(t, test.expected, actual)
 		})
 	}
 }
@@ -55,8 +55,6 @@ func TestKeeper_SavePost(t *testing.T) {
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
-		expMedias            types.PostMedias
-		expPollData          *types.PollData
 	}{
 		{
 			name: "Post with ID already present",
@@ -69,8 +67,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -82,13 +78,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -101,8 +93,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -114,13 +104,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -133,8 +119,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -146,13 +130,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -165,8 +145,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -178,13 +156,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{"key": "value"},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -197,8 +171,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -210,13 +182,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without medias is saved properly",
@@ -231,13 +199,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				nil,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            nil,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without poll data is saved properly",
@@ -251,13 +215,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				nil,
-			),
+			).WithPollData(*testPost.PollData),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            testPost.Medias,
-			expPollData:          nil,
 		},
 	}
 
@@ -278,17 +238,17 @@ func TestKeeper_SavePost(t *testing.T) {
 			// Check the stored post
 			var expected types.Post
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
-			assert.True(t, expected.Equals(test.newPost))
+			require.True(t, expected.Equals(test.newPost))
 
 			// Check the latest post id
 			var lastPostID types.PostID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &lastPostID)
-			assert.Equal(t, test.expLastID, lastPostID)
+			require.Equal(t, test.expLastID, lastPostID)
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
-			assert.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
+			require.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
 }
@@ -318,12 +278,10 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 		},
 		{
-			name:       "Existing post without medias is found properly",
+			name:       "Existing post with medias is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
 			expected: types.NewPost(
@@ -335,12 +293,10 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				nil,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias),
 		},
 		{
-			name:       "Existing post without poll is found properly",
+			name:       "Existing post with poll is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
 			expected: types.NewPost(
@@ -352,9 +308,7 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				nil,
-			),
+			).WithPollData(*testPost.PollData),
 		},
 	}
 
@@ -369,9 +323,9 @@ func TestKeeper_GetPost(t *testing.T) {
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
-			assert.Equal(t, test.postExists, found)
+			require.Equal(t, test.postExists, found)
 			if test.postExists {
-				assert.True(t, expected.Equals(test.expected))
+				require.True(t, expected.Equals(test.expected))
 			}
 		})
 	}
@@ -392,10 +346,18 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55)},
@@ -412,10 +374,10 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 			}
 
 			storedChildrenIDs := k.GetPostChildrenIDs(ctx, test.postID)
-			assert.Len(t, storedChildrenIDs, len(test.expChildrenIDs))
+			require.Len(t, storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
-				assert.Contains(t, storedChildrenIDs, id)
+				require.Contains(t, storedChildrenIDs, id)
 			}
 		})
 	}
@@ -442,8 +404,6 @@ func TestKeeper_GetPosts(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 		},
@@ -461,13 +421,19 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			posts := k.GetPosts(ctx)
 			for index, post := range test.posts {
-				assert.True(t, post.Equals(posts[index]))
+				require.True(t, post.Equals(posts[index]))
 			}
 		})
 	}
 }
 
 func TestKeeper_DoesPostExit(t *testing.T) {
+	firstUser, err := sdk.AccAddressFromBech32("cosmos10vu52vwmv5gn8k4xp9gcuz2an4my73lct9fnms")
+	require.NoError(t, err)
+
+	secondUser, err := sdk.AccAddressFromBech32("cosmos18438yx7re4hrdxxc64rcfdthl5qkfdejq24lta")
+	require.NoError(t, err)
+
 	tests := []struct {
 		name        string
 		posts       types.Posts
@@ -495,6 +461,7 @@ func TestKeeper_DoesPostExit(t *testing.T) {
 					OptionalData:   testPost.OptionalData,
 					Creator:        testPost.Creator,
 					Medias:         testPost.Medias,
+					PollData:       testPost.PollData,
 				},
 			},
 			post:        testPost,
@@ -505,7 +472,7 @@ func TestKeeper_DoesPostExit(t *testing.T) {
 			name: "Existing list returns false when it does not",
 			posts: types.Posts{
 				types.Post{
-					PostID:         testPost.PostID + 1,
+					PostID:         testPost.PostID,
 					ParentID:       testPost.ParentID,
 					Message:        testPost.Message + "other",
 					Created:        testPost.Created,
@@ -515,9 +482,42 @@ func TestKeeper_DoesPostExit(t *testing.T) {
 					OptionalData:   testPost.OptionalData,
 					Creator:        testPost.Creator,
 					Medias:         testPost.Medias,
+					PollData:       testPost.PollData,
 				},
 			},
 			post:        testPost,
+			expContains: false,
+		},
+		{
+			name: "Same post but from different users give no problem",
+			posts: types.Posts{
+				types.Post{
+					PostID:         testPost.PostID,
+					ParentID:       testPost.ParentID,
+					Message:        testPost.Message + "other",
+					Created:        testPost.Created,
+					LastEdited:     testPost.LastEdited,
+					AllowsComments: testPost.AllowsComments,
+					Subspace:       testPost.Subspace,
+					OptionalData:   testPost.OptionalData,
+					Creator:        firstUser,
+					Medias:         testPost.Medias,
+					PollData:       testPost.PollData,
+				},
+			},
+			post: types.Post{
+				PostID:         testPost.PostID + 1,
+				ParentID:       testPost.ParentID,
+				Message:        testPost.Message + "other",
+				Created:        testPost.Created,
+				LastEdited:     testPost.LastEdited,
+				AllowsComments: testPost.AllowsComments,
+				Subspace:       testPost.Subspace,
+				OptionalData:   testPost.OptionalData,
+				Creator:        secondUser,
+				Medias:         testPost.Medias,
+				PollData:       testPost.PollData,
+			},
 			expContains: false,
 		},
 	}
@@ -531,12 +531,12 @@ func TestKeeper_DoesPostExit(t *testing.T) {
 			}
 
 			post, contains := k.DoesPostExit(ctx, test.post)
-			assert.Equal(t, test.expContains, contains)
+			require.Equal(t, test.expContains, contains)
 
 			if test.expContains {
-				assert.True(t, test.expPost.EqualsNoID(*post))
+				require.True(t, test.expPost.EqualsNoID(*post))
 			} else {
-				assert.Nil(t, post)
+				require.Nil(t, post)
 			}
 		})
 	}
@@ -546,13 +546,13 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	creator2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
@@ -566,8 +566,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator1,
-			testPost.Medias,
-			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(11),
@@ -578,8 +576,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
-			testPost.Medias,
-			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(12),
@@ -590,8 +586,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator2,
-			testPost.Medias,
-			testPost.PollData,
 		),
 	}
 
@@ -671,17 +665,17 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			}
 
 			result := k.GetPostsFiltered(ctx, test.filter)
-			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
+			require.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
 		})
 	}
 }
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	answers2 := []types.AnswerID{types.AnswerID(1)}
@@ -728,14 +722,14 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 			var actualUsersAnswersDetails types.UserAnswers
 			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
 			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
-			assert.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
+			require.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}
 }
 
 func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -767,17 +761,17 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 
 			actualPostPollAnswers := k.GetPollAnswers(ctx, test.postID)
 
-			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
+			require.Equal(t, test.storedAnswers, actualPostPollAnswers)
 		})
 	}
 }
 
 func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -809,16 +803,16 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 		k.SavePollAnswers(ctx, test.postID, test.storedAnswers)
 
 		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
-		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
+		require.Equal(t, test.expAnswers, actualPostPollAnswers)
 	}
 }
 
 func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -854,7 +848,7 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 			}
 
 			usersADData := k.GetPollAnswersMap(ctx)
-			assert.Equal(t, test.usersAD, usersADData)
+			require.Equal(t, test.usersAD, usersADData)
 		})
 	}
 }
@@ -865,10 +859,10 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 
 func TestKeeper_SaveReaction(t *testing.T) {
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -918,18 +912,18 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			}
 
 			err := k.SaveReaction(ctx, test.postID, test.like)
-			assert.Equal(t, test.error, err)
+			require.Equal(t, test.error, err)
 
 			var stored types.Reactions
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
-			assert.Equal(t, test.expectedStored, stored)
+			require.Equal(t, test.expectedStored, stored)
 		})
 	}
 }
 
 func TestKeeper_RemoveReaction(t *testing.T) {
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -980,14 +974,14 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			}
 
 			err := k.RemoveReaction(ctx, test.postID, test.liker, test.value)
-			assert.Equal(t, test.error, err)
+			require.Equal(t, test.error, err)
 
 			var stored types.Reactions
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
-			assert.Len(t, stored, len(test.expectedStored))
+			require.Len(t, stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
-				assert.Equal(t, like, stored[index])
+				require.Equal(t, like, stored[index])
 			}
 		})
 	}
@@ -995,10 +989,10 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 
 func TestKeeper_GetPostLikes(t *testing.T) {
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name   string
@@ -1026,14 +1020,14 @@ func TestKeeper_GetPostLikes(t *testing.T) {
 
 			for _, l := range test.likes {
 				err := k.SaveReaction(ctx, test.postID, l)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			stored := k.GetPostReactions(ctx, test.postID)
 
-			assert.Len(t, stored, len(test.likes))
+			require.Len(t, stored, len(test.likes))
 			for _, l := range test.likes {
-				assert.Contains(t, stored, l)
+				require.Contains(t, stored, l)
 			}
 		})
 	}
@@ -1041,10 +1035,10 @@ func TestKeeper_GetPostLikes(t *testing.T) {
 
 func TestKeeper_GetLikes(t *testing.T) {
 	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	liker2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name  string
@@ -1078,7 +1072,7 @@ func TestKeeper_GetLikes(t *testing.T) {
 			}
 
 			likesData := k.GetReactions(ctx)
-			assert.Equal(t, test.likes, likesData)
+			require.Equal(t, test.likes, likesData)
 		})
 	}
 }
