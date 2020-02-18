@@ -69,7 +69,7 @@ func sendMsgCreatePost(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		1500000,
+		2000000,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
