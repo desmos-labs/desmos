@@ -281,7 +281,7 @@ workflows:
       - upload-coverage:
           requires:
             - test-cover
-      #- test-sim-nondeterminism:
-      #    requires:
-      #      - setup-dependencies
+      - test-sim-nondeterminism:
+          requires:
+            - setup-dependencies
       - localnet

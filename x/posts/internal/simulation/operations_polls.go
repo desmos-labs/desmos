@@ -57,7 +57,7 @@ func sendMsgAnswerPoll(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		helpers.DefaultGenTxGas,
+		2000000,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
