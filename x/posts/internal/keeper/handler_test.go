@@ -50,7 +50,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 already exists"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -144,7 +144,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with same data already exists and has ID 1"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
 		},
 	}
 

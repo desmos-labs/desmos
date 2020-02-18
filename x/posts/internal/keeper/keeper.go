@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"sort"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -96,24 +95,13 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 
 // GetPosts returns the list of all the posts that are stored into the current state.
 func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
-
 	posts = types.Posts{}
-	for ; iterator.Valid(); iterator.Next() {
-		var post types.Post
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
+	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 		posts = append(posts, post)
-	}
+		return false
+	})
 
 	return posts
-}
-
-// DoesPostExit returns true if another post having the same content of the
-// specified post (without considering the ID) already exists.
-// If it exists, it is returned as a pointer reference.
-func (k Keeper) DoesPostExit(ctx sdk.Context, post types.Post) (*types.Post, bool) {
-	return k.GetPosts(ctx).ContainsSame(post)
 }
 
 // GetPostsFiltered retrieves posts filtered by a given set of params which
@@ -122,42 +110,41 @@ func (k Keeper) DoesPostExit(ctx sdk.Context, post types.Post) (*types.Post, boo
 // NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
 func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
-	posts := k.GetPosts(ctx)
-	filteredPosts := make(types.Posts, 0, len(posts))
-
-	// Filter the posts
-	for _, p := range posts {
+	filteredPosts := types.Posts{}
+	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
 
 		// match parent id if valid
 		if params.ParentID != nil {
-			matchParentID = params.ParentID.Equals(p.ParentID)
+			matchParentID = params.ParentID.Equals(post.ParentID)
 		}
 
 		// match creation time if valid height
 		if params.CreationTime != nil {
-			matchCreationTime = params.CreationTime.Equal(p.Created)
+			matchCreationTime = params.CreationTime.Equal(post.Created)
 		}
 
 		// match allows comments
 		if params.AllowsComments != nil {
-			matchAllowsComments = *params.AllowsComments == p.AllowsComments
+			matchAllowsComments = *params.AllowsComments == post.AllowsComments
 		}
 
 		// match subspace if provided
 		if len(params.Subspace) > 0 {
-			matchSubspace = params.Subspace == p.Subspace
+			matchSubspace = params.Subspace == post.Subspace
 		}
 
 		// match creator address (if supplied)
 		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(p.Creator)
+			matchCreator = params.Creator.Equals(post.Creator)
 		}
 
 		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
-			filteredPosts = append(filteredPosts, p)
+			filteredPosts = append(filteredPosts, post)
 		}
-	}
+
+		return false
+	})
 
 	// Sort the posts
 	sort.Slice(filteredPosts, func(i, j int) bool {

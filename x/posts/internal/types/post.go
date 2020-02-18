@@ -224,12 +224,16 @@ func (p Post) Validate() error {
 
 // Equals allows to check whether the contents of p are the same of other
 func (p Post) Equals(other Post) bool {
-	return p.PostID.Equals(other.PostID) &&
-		p.EqualsNoID(other)
+	return p.PostID.Equals(other.PostID) && p.ContentsEquals(other)
 }
 
-// EqualsNoID returns true if and only if p and other contain the same data, without considering the ID
-func (p Post) EqualsNoID(other Post) bool {
+// IsDuplicate returns true if other is a duplicate of p either for its ID or its content
+func (p Post) IsDuplicate(other Post) bool {
+	return p.PostID.Equals(other.PostID) || p.ContentsEquals(other)
+}
+
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
 		for key := range p.OptionalData {
@@ -256,22 +260,6 @@ func (p Post) EqualsNoID(other Post) bool {
 // Posts represents a slice of Post objects
 type Posts []Post
 
-// Equals returns true iff the p slice contains the same
-// data in the same order of the other slice
-func (p Posts) Equals(other Posts) bool {
-	if len(p) != len(other) {
-		return false
-	}
-
-	for index, post := range p {
-		if !post.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
 // String implements stringer interface
 func (p Posts) String() string {
 	out := "ID - [Creator] Message\n"
@@ -295,16 +283,4 @@ func (p Posts) Swap(i, j int) {
 // Less implements sort.Interface
 func (p Posts) Less(i, j int) bool {
 	return p[i].PostID < p[j].PostID
-}
-
-// ContainsSame tells whether p contains a post having the exact same data as
-// other not considering the id.
-// If the post exists, it is returned as a pointer reference.
-func (p Posts) ContainsSame(other Post) (*Post, bool) {
-	for _, post := range p {
-		if post.EqualsNoID(other) {
-			return &post, true
-		}
-	}
-	return nil, false
 }

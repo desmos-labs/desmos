@@ -49,8 +49,8 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	}
 
 	// Check for double posting
-	if _, found := keeper.GetPost(ctx, post.PostID); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s already exists", post.PostID))
+	if existing, found := keeper.IsPostDuplicate(ctx, post); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the provided post is a duplicate of the one having id %s", existing.PostID))
 	}
 
 	// If valid, check the parent post
@@ -63,12 +63,6 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		if !parentPost.AllowsComments {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s does not allow comments", parentPost.PostID))
 		}
-	}
-
-	// Check the post does not exist yet
-	if existing, exists := keeper.DoesPostExit(ctx, post); exists {
-		errMsg := fmt.Sprintf("post with same data already exists and has ID %s", existing.PostID)
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errMsg)
 	}
 
 	keeper.SavePost(ctx, post)
@@ -89,7 +83,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	return &result, nil
 }
 
-// handleMsgEditPost handles MsgEditsPost messages
+// handleMsgEditPost handles the edit of posts
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*sdk.Result, error) {
 
 	// Get the existing post
@@ -127,6 +121,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
+// handleMsgAddPostReaction handles the adding of a reaction to a post
 func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
 
 	// Get the post
@@ -157,6 +152,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	return &result, nil
 }
 
+// handleMsgRemovePostReaction handles the removal of a reaction from a post
 func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) (*sdk.Result, error) {
 
 	// Get the post
