@@ -8,21 +8,21 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	postOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
 	medias := types.PostMedias{
@@ -46,9 +46,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		map[string]string{},
 		date,
 		postOwner,
-		medias,
-		pollData,
-	)
+	).WithMedias(medias).WithPollData(pollData)
+
 	postNoMedia := types.NewPost(
 		types.PostID(10),
 		types.PostID(0),
@@ -58,9 +57,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		map[string]string{},
 		date,
 		postOwner,
-		types.PostMedias{},
-		pollData,
-	)
+	).WithPollData(pollData)
 
 	postNoPoll := types.NewPost(
 		types.PostID(10),
@@ -71,9 +68,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		map[string]string{},
 		date,
 		postOwner,
-		medias,
-		nil,
-	)
+	).WithMedias(medias)
 
 	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
 
@@ -111,24 +106,24 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			jsonData, err := json.Marshal(&test.response)
-			assert.NoError(t, err)
-			assert.Equal(t, test.expResponse, string(jsonData))
+			require.NoError(t, err)
+			require.Equal(t, test.expResponse, string(jsonData))
 		})
 	}
 }
 
 func TestPostQueryResponse_String(t *testing.T) {
 	postOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers2 := []types.AnswerID{types.AnswerID(1)}
 	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
@@ -160,9 +155,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		map[string]string{},
 		date,
 		postOwner,
-		medias,
-		pollData,
-	)
+	).WithMedias(medias).WithPollData(pollData)
 
 	likes := types.Reactions{
 		types.NewReaction("like", liker),
@@ -188,7 +181,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			stringResponse := test.response.String()
-			assert.Equal(t, test.expResponse, stringResponse)
+			require.Equal(t, test.expResponse, stringResponse)
 		})
 	}
 }

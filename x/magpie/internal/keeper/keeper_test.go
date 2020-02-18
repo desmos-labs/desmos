@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestKeeper_SetDefaultSessionLength(t *testing.T) {
@@ -40,15 +40,15 @@ func TestKeeper_SetDefaultSessionLength(t *testing.T) {
 			err := k.SetDefaultSessionLength(ctx, test.length)
 
 			if test.expErr == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				var stored int64
 				store := ctx.KVStore(k.StoreKey)
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &stored)
-				assert.Equal(t, test.length, stored)
+				require.Equal(t, test.length, stored)
 			}
 
 			if test.expErr != nil {
-				assert.Equal(t, test.expErr, err)
+				require.Equal(t, test.expErr, err)
 			}
 		})
 	}
@@ -68,7 +68,7 @@ func TestKeeper_GetDefaultSessionLength(t *testing.T) {
 			}
 
 			recovered := k.GetDefaultSessionLength(ctx)
-			assert.Equal(t, length, recovered)
+			require.Equal(t, length, recovered)
 		})
 	}
 }
@@ -100,12 +100,12 @@ func TestKeeper_GetLastSessionID(t *testing.T) {
 				store.Set(types.LastSessionIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
-			assert.Equal(t, test.expID, k.GetLastSessionID(ctx))
+			require.Equal(t, test.expID, k.GetLastSessionID(ctx))
 		})
 	}
 
 	ctx, k := SetupTestInput()
-	assert.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
+	require.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
 }
 
 func TestKeeper_SetLastSessionID(t *testing.T) {
@@ -127,7 +127,7 @@ func TestKeeper_SetLastSessionID(t *testing.T) {
 
 			var stored types.SessionID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
-			assert.Equal(t, test.id, stored)
+			require.Equal(t, test.id, stored)
 		})
 	}
 }
@@ -142,11 +142,11 @@ func TestKeeper_SaveSession(t *testing.T) {
 	var stored types.Session
 	store := ctx.KVStore(k.StoreKey)
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionID)), &stored)
-	assert.Equal(t, session, stored)
+	require.Equal(t, session, stored)
 
 	var storedLastID types.SessionID
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
-	assert.Equal(t, session.SessionID, storedLastID)
+	require.Equal(t, session.SessionID, storedLastID)
 }
 
 func TestKeeper_GetSession(t *testing.T) {
@@ -183,8 +183,8 @@ func TestKeeper_GetSession(t *testing.T) {
 			}
 
 			result, found := k.GetSession(ctx, types.SessionID(1))
-			assert.Equal(t, test.expSession, result)
-			assert.Equal(t, test.expFound, found)
+			require.Equal(t, test.expSession, result)
+			require.Equal(t, test.expFound, found)
 		})
 	}
 }
@@ -233,7 +233,7 @@ func TestKeeper_GetSessions(t *testing.T) {
 			}
 
 			sessions := k.GetSessions(ctx)
-			assert.True(t, test.expSessions.Equals(sessions))
+			require.True(t, test.expSessions.Equals(sessions))
 		})
 	}
 }

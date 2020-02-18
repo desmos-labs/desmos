@@ -31,6 +31,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 		id := index + 1
 
 		postData := RandomPostData(simState.Rand, simState.Accounts)
+
 		posts[index] = types.NewPost(
 			types.PostID(id),
 			types.PostID(simState.Rand.Intn(id)),
@@ -40,9 +41,11 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 			postData.OptionalData,
 			postData.CreationDate,
 			postData.Creator.Address,
-			postData.Medias,
-			postData.PollData,
-		)
+		).WithMedias(postData.Medias)
+
+		if postData.PollData != nil {
+			posts[index] = posts[index].WithPollData(*postData.PollData)
+		}
 	}
 
 	return posts

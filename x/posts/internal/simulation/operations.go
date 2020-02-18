@@ -17,6 +17,8 @@ const (
 	OpWeightMsgAddReaction    = "op_weight_msg_add_reaction"
 	OpWeightMsgRemoveReaction = "op_weight_msg_remove_reaction"
 	OpWeightMsgAnswerPoll     = "op_weight_msg_answer_poll"
+
+	DefaultGasValue = 5000000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights

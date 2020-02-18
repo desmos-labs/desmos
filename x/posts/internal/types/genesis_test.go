@@ -6,12 +6,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name        string
@@ -60,9 +60,9 @@ func TestValidateGenesis(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if test.shouldError {
-				assert.Error(t, types.ValidateGenesis(test.genesis))
+				require.Error(t, types.ValidateGenesis(test.genesis))
 			} else {
-				assert.NoError(t, types.ValidateGenesis(test.genesis))
+				require.NoError(t, types.ValidateGenesis(test.genesis))
 			}
 		})
 	}

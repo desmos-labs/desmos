@@ -24,9 +24,10 @@ type PollData struct {
 }
 
 // NewPollData returns a new PollData object pointer containing the given data
-func NewPollData(title string, endDate time.Time, providedAnswers PollAnswers, open, allowMultipleAnswers, allowsAnswerEdits bool) *PollData {
-	return &PollData{
-		Question:              title,
+func NewPollData(question string, endDate time.Time, providedAnswers PollAnswers,
+	open, allowMultipleAnswers, allowsAnswerEdits bool) PollData {
+	return PollData{
+		Question:              question,
 		EndDate:               endDate,
 		ProvidedAnswers:       providedAnswers,
 		Open:                  open,
@@ -67,16 +68,20 @@ func (pd PollData) Validate() error {
 	return nil
 }
 
-// Equals returns true if this poll data object has the same contents of the other given
-func (pd *PollData) Equals(other *PollData) bool {
-	if pd != nil && other == nil || pd == nil && other != nil {
-		return false
+// ArePollDataEquals check whether the first and second pointers
+// to a PollData object represents the same poll or not.
+func ArePollDataEquals(first, second *PollData) bool {
+	if first != nil && second != nil {
+		return first.Equals(*second)
 	}
 
-	if pd == nil && other == nil {
-		return true
-	}
+	return first == second
+}
 
+// Equals returns true if this poll data object has the same contents of the other given.
+// It assumes neither pd or other are null.
+// To check the equality between possibly null values use ArePollDataEquals instead.
+func (pd PollData) Equals(other PollData) bool {
 	return pd.Question == other.Question &&
 		pd.Open == other.Open &&
 		pd.EndDate == other.EndDate &&

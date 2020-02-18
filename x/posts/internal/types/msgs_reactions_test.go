@@ -5,7 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -16,12 +16,12 @@ var msgLike = types.NewMsgAddPostReaction(types.PostID(94), "like", testOwner)
 
 func TestMsgAddPostReaction_Route(t *testing.T) {
 	actual := msgLike.Route()
-	assert.Equal(t, "posts", actual)
+	require.Equal(t, "posts", actual)
 }
 
 func TestMsgAddPostReaction_Type(t *testing.T) {
 	actual := msgLike.Type()
-	assert.Equal(t, "add_post_reaction", actual)
+	require.Equal(t, "add_post_reaction", actual)
 }
 
 func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
@@ -56,10 +56,10 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		test := test
 		returnedError := test.msg.ValidateBasic()
 		if test.error == nil {
-			assert.Nil(t, returnedError)
+			require.Nil(t, returnedError)
 		} else {
-			assert.NotNil(t, returnedError)
-			assert.Equal(t, test.error.Error(), returnedError.Error())
+			require.NotNil(t, returnedError)
+			require.Equal(t, test.error.Error(), returnedError.Error())
 		}
 	}
 }
@@ -67,13 +67,13 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
 	actual := msgLike.GetSignBytes()
 	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"94","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
-	assert.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgAddPostReaction_GetSigners(t *testing.T) {
 	actual := msgLike.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgLike.User, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgLike.User, actual[0])
 }
 
 // ----------------------
@@ -84,12 +84,12 @@ var msgUnlikePost = types.NewMsgRemovePostReaction(types.PostID(94), testOwner, 
 
 func TestMsgUnlikePost_Route(t *testing.T) {
 	actual := msgUnlikePost.Route()
-	assert.Equal(t, "posts", actual)
+	require.Equal(t, "posts", actual)
 }
 
 func TestMsgUnlikePost_Type(t *testing.T) {
 	actual := msgUnlikePost.Type()
-	assert.Equal(t, "remove_post_reaction", actual)
+	require.Equal(t, "remove_post_reaction", actual)
 }
 
 func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
@@ -123,10 +123,10 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 	for _, test := range tests {
 		returnedError := test.msg.ValidateBasic()
 		if test.error == nil {
-			assert.Nil(t, returnedError)
+			require.Nil(t, returnedError)
 		} else {
-			assert.NotNil(t, returnedError)
-			assert.Equal(t, test.error.Error(), returnedError.Error())
+			require.NotNil(t, returnedError)
+			require.Equal(t, test.error.Error(), returnedError.Error())
 		}
 	}
 }
@@ -134,11 +134,11 @@ func TestMsgUnlikePost_ValidateBasic(t *testing.T) {
 func TestMsgUnlikePost_GetSignBytes(t *testing.T) {
 	actual := msgUnlikePost.GetSignBytes()
 	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"94","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	assert.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgUnlikePost_GetSigners(t *testing.T) {
 	actual := msgUnlikePost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgUnlikePost.User, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgUnlikePost.User, actual[0])
 }

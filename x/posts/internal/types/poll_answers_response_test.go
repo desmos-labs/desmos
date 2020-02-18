@@ -3,14 +3,14 @@ package types_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"testing"
 )
 
 func TestPollAnswersQueryResponse_String(t *testing.T) {
 	testOwner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	answers := types.UserAnswer{
 		Answers: []types.AnswerID{1, 2},
@@ -22,5 +22,5 @@ func TestPollAnswersQueryResponse_String(t *testing.T) {
 		AnswersDetails: types.UserAnswers{answers},
 	}
 
-	assert.Equal(t, "Post ID [0] - Answers Details:\nUser: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", pollResponse.String())
+	require.Equal(t, "Post ID [0] - Answers Details:\nUser: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", pollResponse.String())
 }

@@ -8,7 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ---------------------------
@@ -36,8 +36,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(0),
@@ -52,7 +50,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 already exists"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -76,9 +74,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.OptionalData,
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 		},
 		{
 			name: "Storing a valid post with missing parent id returns expError",
@@ -107,8 +103,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			msg: types.NewMsgCreatePost(
@@ -123,6 +117,34 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 50 does not allow comments"),
+		},
+		{
+			name: "Post with exact same data is not posted again",
+			storedPosts: []types.Post{
+				types.NewPost(
+					types.PostID(1),
+					testPost.ParentID,
+					testPost.Message,
+					testPost.AllowsComments,
+					testPost.Subspace,
+					testPost.OptionalData,
+					testPost.Created,
+					testPost.Creator,
+				).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+			},
+			lastPostID: types.PostID(1),
+			msg: types.NewMsgCreatePost(
+				testPost.Message,
+				testPost.ParentID,
+				testPost.AllowsComments,
+				testPost.Subspace,
+				testPost.OptionalData,
+				testPost.Creator,
+				testPost.Created,
+				testPost.Medias,
+				testPost.PollData,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
 		},
 	}
 
@@ -148,10 +170,10 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				// Check the post
 				var stored types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
-				assert.True(t, stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
+				require.True(t, stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
-				assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -161,14 +183,14 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyCreationTime, test.expPost.Created.String()),
 					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
 				)
-				assert.Len(t, ctx.EventManager().Events(), 1)
-				assert.Contains(t, ctx.EventManager().Events(), creationEvent)
+				require.Len(t, ctx.EventManager().Events(), 1)
+				require.Contains(t, ctx.EventManager().Events(), creationEvent)
 			}
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.expError.Error(), err.Error())
+				require.NotNil(t, err)
+				require.Equal(t, test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -177,7 +199,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 
 func Test_handleMsgEditPost(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	testData := []struct {
 		name       string
@@ -239,7 +261,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 			// Valid response
 			if res != nil {
-				assert.Contains(t, res.Events, sdk.NewEvent(
+				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.String()),
@@ -247,13 +269,13 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 				var stored types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
-				assert.True(t, test.expPost.Equals(stored))
+				require.True(t, test.expPost.Equals(stored))
 			}
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.expError.Error(), err.Error())
+				require.NotNil(t, err)
+				require.Equal(t, test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -262,7 +284,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 func Test_handleMsgAddPostReaction(t *testing.T) {
 
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name         string
@@ -298,7 +320,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 			// Valid response
 			if res != nil {
-				assert.Contains(t, res.Events, sdk.NewEvent(
+				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypeReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
@@ -307,17 +329,17 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
-				assert.True(t, test.existingPost.Equals(storedPost))
+				require.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				assert.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
+				require.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
 			}
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.error.Error(), err.Error())
+				require.NotNil(t, err)
+				require.Equal(t, test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -325,7 +347,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	reaction := types.NewReaction("like", user)
 	tests := []struct {
@@ -377,7 +399,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 			// Valid response
 			if res != nil {
-				assert.Contains(t, res.Events, sdk.NewEvent(
+				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
@@ -386,17 +408,17 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
-				assert.True(t, test.existingPost.Equals(storedPost))
+				require.True(t, test.existingPost.Equals(storedPost))
 
 				var storedReactions types.Reactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				assert.NotContains(t, storedReactions, test.existingReaction)
+				require.NotContains(t, storedReactions, test.existingReaction)
 			}
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.error.Error(), err.Error())
+				require.NotNil(t, err)
+				require.Equal(t, test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -416,26 +438,60 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		{
 			name: "Post not found",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(2), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
-			),
+			storedPost: types.NewPost(
+				types.PostID(2),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer, answer2},
+				true,
+				true,
+				true,
+			)),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 doesn't exist"),
 		},
 		{
 			name: "No poll associated with post",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil, nil),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 1"),
 		},
 		{
 			name: "Answer after poll closure",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDateExpired, types.PollAnswers{answer}, true, false, true),
-			),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDateExpired,
+				types.PollAnswers{answer},
+				true,
+				false,
+				true,
+			)),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("the poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired)),
@@ -443,9 +499,23 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		{
 			name: "Poll doesn't allow multiple answers",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer}, true, false, true),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer},
+				true,
+				false,
+				true,
+			),
 			),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest, "the poll associated with ID 1 doesn't allow multiple answers"),
@@ -453,9 +523,23 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		{
 			name: "User provide too many answers",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2, 3}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer, answer2},
+				true,
+				true,
+				true,
+			),
 			),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
@@ -463,20 +547,46 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		{
 			name: "User provide answers that are not the ones provided by the poll",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 3}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
-			),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer, answer2},
+				true,
+				true,
+				true,
+			)),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest, "answer with ID 3 isn't one of the poll's provided answers"),
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, false),
-			),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer, answer2},
+				true,
+				true,
+				false,
+			)),
 			storedAnswers: &userPollAnswers,
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest, "post with ID 1 doesn't allow answers' edits"),
@@ -484,10 +594,23 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		{
 			name: "Answered correctly to post's poll",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
-			storedPost: types.NewPost(types.PostID(1), types.PostID(0), "Post message", false, "desmos", map[string]string{}, testPostCreationDate,
-				testPostOwner, nil,
-				types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
-			),
+			storedPost: types.NewPost(
+				types.PostID(1),
+				types.PostID(0),
+				"Post message",
+				false,
+				"desmos",
+				map[string]string{},
+				testPostCreationDate,
+				testPostOwner,
+			).WithPollData(types.NewPollData(
+				"poll?",
+				testPostEndPollDate,
+				types.PollAnswers{answer, answer2},
+				true,
+				true,
+				true,
+			)),
 		},
 	}
 
@@ -507,15 +630,15 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.expErr.Error(), err.Error())
+				require.NotNil(t, err)
+				require.Equal(t, test.expErr.Error(), err.Error())
 			}
 
 			// Valid response
 			if res != nil {
 				{
 					// Check the data
-					assert.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+					require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
 
 					// Check the events
 					answerEvent := sdk.NewEvent(
@@ -524,8 +647,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 						sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
 					)
 
-					assert.Len(t, ctx.EventManager().Events(), 1)
-					assert.Contains(t, ctx.EventManager().Events(), answerEvent)
+					require.Len(t, ctx.EventManager().Events(), 1)
+					require.Contains(t, ctx.EventManager().Events(), answerEvent)
 				}
 			}
 		})

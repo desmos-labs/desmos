@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -17,9 +17,17 @@ import (
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
 var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
-var answer = types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-var answer2 = types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
-var testPostEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+var pollData = types.NewPollData(
+	"poll?",
+	time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+	types.NewPollAnswers(
+		types.NewPollAnswer(types.AnswerID(1), "Yes"),
+		types.NewPollAnswer(types.AnswerID(2), "No"),
+	),
+	true,
+	false,
+	true,
+)
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	types.PostID(53),
@@ -28,28 +36,23 @@ var msgCreatePost = types.NewMsgCreatePost(
 	map[string]string{},
 	testOwner,
 	date,
-	types.PostMedias{
-		types.PostMedia{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	},
-	types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true),
+	types.NewPostMedias(types.NewPostMedia("https://uri.com", "text/plain")),
+	&pollData,
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
 	actual := msgCreatePost.Route()
-	assert.Equal(t, "posts", actual)
+	require.Equal(t, "posts", actual)
 }
 
 func TestMsgCreatePost_Type(t *testing.T) {
 	actual := msgCreatePost.Type()
-	assert.Equal(t, "create_post", actual)
+	require.Equal(t, "create_post", actual)
 }
 
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name  string
@@ -309,16 +312,16 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			returnedError := test.msg.ValidateBasic()
 			if test.error == nil {
-				assert.Nil(t, returnedError)
+				require.Nil(t, returnedError)
 			} else {
-				assert.NotNil(t, returnedError)
-				assert.Equal(t, test.error.Error(), returnedError.Error())
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
 			}
 		})
 	}
 
 	err = msgCreatePost.ValidateBasic()
-	assert.Nil(t, err)
+	require.Nil(t, err)
 }
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
@@ -407,15 +410,15 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expSignJSON, string(test.msg.GetSignBytes()))
+			require.Equal(t, test.expSignJSON, string(test.msg.GetSignBytes()))
 		})
 	}
 }
 
 func TestMsgCreatePost_GetSigners(t *testing.T) {
 	actual := msgCreatePost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgCreatePost.Creator, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgCreatePost.Creator, actual[0])
 }
 
 // ----------------------
@@ -427,12 +430,12 @@ var msgEditPost = types.NewMsgEditPost(types.PostID(94), "Edited post message", 
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
-	assert.Equal(t, "posts", actual)
+	require.Equal(t, "posts", actual)
 }
 
 func TestMsgEditPost_Type(t *testing.T) {
 	actual := msgEditPost.Type()
-	assert.Equal(t, "edit_post", actual)
+	require.Equal(t, "edit_post", actual)
 }
 
 func TestMsgEditPost_ValidateBasic(t *testing.T) {
@@ -483,10 +486,10 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			returnedError := test.msg.ValidateBasic()
 			if test.error == nil {
-				assert.Nil(t, returnedError)
+				require.Nil(t, returnedError)
 			} else {
-				assert.NotNil(t, returnedError)
-				assert.Equal(t, test.error.Error(), returnedError.Error())
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
 			}
 		})
 	}
@@ -495,11 +498,11 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
 	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2010-01-01T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"94"}}`
-	assert.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgEditPost_GetSigners(t *testing.T) {
 	actual := msgEditPost.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgEditPost.Editor, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgEditPost.Editor, actual[0])
 }

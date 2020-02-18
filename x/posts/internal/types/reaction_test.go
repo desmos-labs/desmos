@@ -6,20 +6,20 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	reaction := types.NewReaction("reaction", user)
-	assert.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
+	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
 }
 
 func TestReaction_Validate(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -41,17 +41,17 @@ func TestReaction_Validate(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.error, test.reaction.Validate())
+			require.Equal(t, test.error, test.reaction.Validate())
 		})
 	}
 }
 
 func TestReaction_Equals(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name          string
@@ -76,17 +76,17 @@ func TestReaction_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.shouldBeEqual, test.first.Equals(test.second))
+			require.Equal(t, test.shouldBeEqual, test.first.Equals(test.second))
 		})
 	}
 }
 
 func TestReactions_AppendIfMissing(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -118,18 +118,18 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			actual, appended := test.reactions.AppendIfMissing(test.newLike)
-			assert.Equal(t, test.expLikes, actual)
-			assert.Equal(t, test.expAppend, appended)
+			require.Equal(t, test.expLikes, actual)
+			require.Equal(t, test.expAppend, appended)
 		})
 	}
 }
 
 func TestReactions_ContainsOwnerLike(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name        string
@@ -171,17 +171,17 @@ func TestReactions_ContainsOwnerLike(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expContains, test.reactions.ContainsReactionFrom(test.owner, test.value))
+			require.Equal(t, test.expContains, test.reactions.ContainsReactionFrom(test.owner, test.value))
 		})
 	}
 }
 
 func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -223,17 +223,17 @@ func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expIndex, test.reactions.IndexOfByUserAndValue(test.owner, test.value))
+			require.Equal(t, test.expIndex, test.reactions.IndexOfByUserAndValue(test.owner, test.value))
 		})
 	}
 }
 
 func TestReactions_RemoveReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -281,8 +281,8 @@ func TestReactions_RemoveReaction(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			result, edited := test.reactions.RemoveReaction(test.owner, test.value)
-			assert.Equal(t, test.expEdited, edited)
-			assert.Equal(t, test.expResult, result)
+			require.Equal(t, test.expEdited, edited)
+			require.Equal(t, test.expResult, result)
 		})
 	}
 }

@@ -57,7 +57,7 @@ func sendMsgAddReaction(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		helpers.DefaultGenTxGas,
+		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
@@ -138,7 +138,7 @@ func sendMsgRemoveReaction(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		helpers.DefaultGenTxGas,
+		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},

@@ -69,7 +69,7 @@ func sendMsgCreatePost(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		helpers.DefaultGenTxGas,
+		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
@@ -157,7 +157,7 @@ func sendMsgEditPost(
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
 		fees,
-		helpers.DefaultGenTxGas,
+		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
