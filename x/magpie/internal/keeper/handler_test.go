@@ -8,11 +8,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_handleMsgCreateSession(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	owner, err := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
+	require.NoError(t, err)
 
 	testData := []struct {
 		name  string
@@ -57,7 +58,8 @@ func Test_handleMsgCreateSession(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			sessionLength := int64(240)
-			k.SetDefaultSessionLength(ctx, sessionLength)
+			err := k.SetDefaultSessionLength(ctx, sessionLength)
+			require.NoError(t, err)
 
 			handler := keeper.NewHandler(k)
 			res, err := handler(ctx, test.msg)
@@ -79,8 +81,8 @@ func Test_handleMsgCreateSession(t *testing.T) {
 
 				var stored types.Session
 				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+expectedID.String())), &stored)
-				assert.Equal(t, session, stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
+				require.Equal(t, session, stored)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -91,14 +93,14 @@ func Test_handleMsgCreateSession(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 				)
 
-				assert.NotNil(t, res)
-				assert.Contains(t, res.Events, creationEvent)
+				require.NotNil(t, res)
+				require.Contains(t, res.Events, creationEvent)
 			}
 
 			// Invalid response
 			if res == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, err.Error(), test.error.Error())
+				require.NotNil(t, err)
+				require.Equal(t, err.Error(), test.error.Error())
 			}
 		})
 	}

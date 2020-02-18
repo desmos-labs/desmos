@@ -1,14 +1,13 @@
 package keeper
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
-	"strings"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -30,19 +29,15 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 // --- Posts
 // -------------
 
-func (k Keeper) getPostStoreKey(postID types.PostID) []byte {
-	return []byte(types.PostStorePrefix + postID.String())
-}
-
 // GetLastPostID returns the last post id that has been used
 func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	store := ctx.KVStore(k.StoreKey)
-	if !store.Has([]byte(types.LastPostIDStoreKey)) {
+	if !store.Has(types.LastPostIDStoreKey) {
 		return types.PostID(0)
 	}
 
 	var id types.PostID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIDStoreKey)), &id)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &id)
 	return id
 }
 
@@ -107,16 +102,16 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
 	// Save the post
-	store.Set([]byte(types.PostStorePrefix+post.PostID.String()), k.Cdc.MustMarshalBinaryBare(&post))
+	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Set the last post id only if the current post has a greater one than the last one stored
 	if id := post.PostID; id > k.GetLastPostID(ctx) {
-		store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
+		store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(&id))
 	}
 
 	// Save the comments to the parent post, if it is valid
 	if post.ParentID.Valid() {
-		parentCommentsKey := []byte(types.PostCommentsStorePrefix + post.ParentID.String())
+		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
 		var commentsIDs types.PostIDs
 		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
@@ -132,7 +127,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := k.getPostStoreKey(id)
+	key := types.PostStoreKey(id)
 	if !store.Has(key) {
 		return types.Post{}, false
 	}
@@ -148,21 +143,17 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 	store := ctx.KVStore(k.StoreKey)
 
 	var postIDs types.PostIDs
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+postID.String())), &postIDs)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &postIDs)
 	return postIDs
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state.
-func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostStorePrefix))
-
-	var posts []types.Post
-	for ; iterator.Valid(); iterator.Next() {
-		var post types.Post
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
+func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
+	posts = types.Posts{}
+	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 		posts = append(posts, post)
-	}
+		return false
+	})
 
 	return posts
 }
@@ -173,53 +164,51 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
 func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
-	posts := k.GetPosts(ctx)
-	filteredPosts := make(types.Posts, 0, len(posts))
-
-	// Filter the posts
-	for _, p := range posts {
-		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags :=
-			true, true, true, true, true, true
+	filteredPosts := types.Posts{}
+	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
+		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
 
 		// match parent id if valid
 		if params.ParentID != nil {
-			matchParentID = params.ParentID.Equals(p.ParentID)
+			matchParentID = params.ParentID.Equals(post.ParentID)
 		}
 
 		// match creation time if valid height
 		if params.CreationTime != nil {
-			matchCreationTime = params.CreationTime.Equal(p.Created)
+			matchCreationTime = params.CreationTime.Equal(post.Created)
 		}
 
 		// match allows comments
 		if params.AllowsComments != nil {
-			matchAllowsComments = *params.AllowsComments == p.AllowsComments
+			matchAllowsComments = *params.AllowsComments == post.AllowsComments
 		}
 
 		// match subspace if provided
 		if len(params.Subspace) > 0 {
-			matchSubspace = params.Subspace == p.Subspace
+			matchSubspace = params.Subspace == post.Subspace
 		}
 
 		// match creator address (if supplied)
 		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(p.Creator)
+			matchCreator = params.Creator.Equals(post.Creator)
 		}
 
 		// match hashtags if provided
 		if len(params.Hashtags) > 0 {
 			for _, hashtag := range params.Hashtags {
 				postsIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
-				if matchHashtags = postsIDs.Contains(p.PostID); !matchHashtags {
+				if matchHashtags = postsIDs.Contains(post.PostID); !matchHashtags {
 					break
 				}
 			}
 		}
 
-		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator && matchHashtags {
-			filteredPosts = append(filteredPosts, p)
+		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
+			filteredPosts = append(filteredPosts, post)
 		}
-	}
+
+		return false
+	})
 
 	// Sort the posts
 	sort.Slice(filteredPosts, func(i, j int) bool {
@@ -260,14 +249,10 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	return filteredPosts
 }
 
-func (k Keeper) getAnswersStoreKey(postID types.PostID) []byte {
-	return []byte(types.PollAnswersStorePrefix + postID.String())
-}
-
 // SavePollAnswers save the poll's answers associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If userAnswersDetails are already present, the old ones will be overridden.
-func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.AnswersDetails) {
+func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAnswers types.UserAnswer) {
 	store := ctx.KVStore(k.StoreKey)
 
 	sort.Slice(
@@ -278,33 +263,39 @@ func (k Keeper) SavePollAnswers(ctx sdk.Context, postID types.PostID, userPollAn
 	usersAnswersDetails := k.GetPollAnswers(ctx, postID)
 
 	if usersAnswersDetails, appended := usersAnswersDetails.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
-		store.Set(k.getAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
+		store.Set(types.PollAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&usersAnswersDetails))
 	}
 
 }
 
 // GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.UsersAnswersDetails {
+func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.UserAnswers {
 	store := ctx.KVStore(k.StoreKey)
 
-	var usersAnswersDetails types.UsersAnswersDetails
-	answersBz := store.Get(k.getAnswersStoreKey(postID))
+	var usersAnswersDetails types.UserAnswers
+	answersBz := store.Get(types.PollAnswersStoreKey(postID))
 
 	k.Cdc.MustUnmarshalBinaryBare(answersBz, &usersAnswersDetails)
 
 	return usersAnswersDetails
 }
 
-// GetAnswersDetailsMap allows to returns the list of answers that have been stored inside the given context
-func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.UsersAnswersDetails {
+// GetPollAnswersMap allows to returns the list of answers that have been stored inside the given context
+func (k Keeper) GetPollAnswersMap(ctx sdk.Context) map[types.PostID]types.UserAnswers {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PollAnswersStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
 
-	usersAnswersData := map[types.PostID]types.UsersAnswersDetails{}
+	usersAnswersData := map[types.PostID]types.UserAnswers{}
 	for ; iterator.Valid(); iterator.Next() {
-		var userAnswers types.UsersAnswersDetails
+		var userAnswers types.UserAnswers
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
-		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PollAnswersStorePrefix))
+		idBytes := bytes.TrimPrefix(iterator.Key(), types.PollAnswersStorePrefix)
+		postID, err := types.ParsePostID(string(idBytes))
+		if err != nil {
+			// This should never happen
+			panic(err)
+		}
+
 		usersAnswersData[postID] = userAnswers
 	}
 
@@ -312,7 +303,7 @@ func (k Keeper) GetAnswersDetailsMap(ctx sdk.Context) map[types.PostID]types.Use
 }
 
 // GetPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
-func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []uint {
+func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []types.AnswerID {
 	postPollAnswers := k.GetPollAnswers(ctx, postID)
 
 	for _, postPollAnswers := range postPollAnswers {
@@ -333,7 +324,7 @@ func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user 
 // nolint: interfacer
 func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction types.Reaction) error {
 	store := ctx.KVStore(k.StoreKey)
-	key := []byte(types.PostReactionsStorePrefix + postID.String())
+	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existent reactions
 	var reactions types.Reactions
@@ -358,7 +349,7 @@ func (k Keeper) SaveReaction(ctx sdk.Context, postID types.PostID, reaction type
 // nolint: interfacer
 func (k Keeper) RemoveReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) error {
 	store := ctx.KVStore(k.StoreKey)
-	key := []byte(types.PostReactionsStorePrefix + postID.String())
+	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existing reactions
 	var reactions types.Reactions
@@ -388,20 +379,26 @@ func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Rea
 	store := ctx.KVStore(k.StoreKey)
 
 	var reactions types.Reactions
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+postID.String())), &reactions)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
 	return reactions
 }
 
 // GetReactions allows to returns the list of reactions that have been stored inside the given context
 func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.Reactions {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.PostReactionsStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 
 	reactionsData := map[types.PostID]types.Reactions{}
 	for ; iterator.Valid(); iterator.Next() {
 		var postLikes types.Reactions
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
-		postID, _ := types.ParsePostID(strings.TrimPrefix(string(iterator.Key()), types.PostReactionsStorePrefix))
+		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
+		postID, err := types.ParsePostID(string(idBytes))
+		if err != nil {
+			// This should never verify
+			panic(err)
+		}
+
 		reactionsData[postID] = postLikes
 	}
 

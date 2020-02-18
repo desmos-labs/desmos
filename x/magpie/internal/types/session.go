@@ -57,9 +57,19 @@ type Session struct {
 	Signature     string         `json:"signature"`              // Session signature
 }
 
-// NewSession return an empty Session
-func NewSession() Session {
-	return Session{}
+// NewSession return a new session containing the given parameters
+func NewSession(id SessionID, owner sdk.AccAddress, created, expiry int64,
+	namespace, externalOwner, pubKey, signature string) Session {
+	return Session{
+		SessionID:     id,
+		Owner:         owner,
+		Created:       created,
+		Expiry:        expiry,
+		Namespace:     namespace,
+		ExternalOwner: externalOwner,
+		PubKey:        pubKey,
+		Signature:     signature,
+	}
 }
 
 // Equals returns true iff s and other contain the same data

@@ -146,8 +146,8 @@ type Post struct {
 	PollData       *PollData      `json:"poll_data,omitempty"`     // Contains the poll details, if existing
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string, optionalData map[string]string,
-	created time.Time, creator sdk.AccAddress, medias PostMedias, pollData *PollData) Post {
+func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string,
+	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
 	return Post{
 		PostID:         id,
 		ParentID:       parentID,
@@ -158,9 +158,19 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        creator,
-		Medias:         medias,
-		PollData:       pollData,
 	}
+}
+
+// WithMedias allows to easily set the given medias as the multimedia files associated with the p Post
+func (p Post) WithMedias(medias PostMedias) Post {
+	p.Medias = medias
+	return p
+}
+
+// WithMedias allows to easily set the given data as the poll data files associated with the p Post
+func (p Post) WithPollData(data PollData) Post {
+	p.PollData = &data
+	return p
 }
 
 // String implements fmt.Stringer
@@ -237,6 +247,16 @@ func (p Post) Validate() error {
 
 // Equals allows to check whether the contents of p are the same of other
 func (p Post) Equals(other Post) bool {
+	return p.PostID.Equals(other.PostID) && p.ContentsEquals(other)
+}
+
+// IsDuplicate returns true if other is a duplicate of p either for its ID or its content
+func (p Post) IsDuplicate(other Post) bool {
+	return p.PostID.Equals(other.PostID) || p.ContentsEquals(other)
+}
+
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
 		for key := range p.OptionalData {
@@ -244,8 +264,7 @@ func (p Post) Equals(other Post) bool {
 		}
 	}
 
-	return p.PostID.Equals(other.PostID) &&
-		p.ParentID.Equals(other.ParentID) &&
+	return p.ParentID.Equals(other.ParentID) &&
 		p.Message == other.Message &&
 		p.Created.Equal(other.Created) &&
 		p.LastEdited.Equal(other.LastEdited) &&
@@ -253,7 +272,8 @@ func (p Post) Equals(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) && p.PollData.Equals(other.PollData)
+		p.Medias.Equals(other.Medias) &&
+		ArePollDataEquals(p.PollData, other.PollData)
 }
 
 // -------------
@@ -263,22 +283,6 @@ func (p Post) Equals(other Post) bool {
 // Posts represents a slice of Post objects
 type Posts []Post
 
-// Equals returns true iff the p slice contains the same
-// data in the same order of the other slice
-func (p Posts) Equals(other Posts) bool {
-	if len(p) != len(other) {
-		return false
-	}
-
-	for index, post := range p {
-		if !post.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
 // String implements stringer interface
 func (p Posts) String() string {
 	out := "ID - [Creator] Message\n"
@@ -287,4 +291,19 @@ func (p Posts) String() string {
 			post.PostID, post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
+}
+
+// Len implements sort.Interface
+func (p Posts) Len() int {
+	return len(p)
+}
+
+// Swap implements sort.Interface
+func (p Posts) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+// Less implements sort.Interface
+func (p Posts) Less(i, j int) bool {
+	return p[i].PostID < p[j].PostID
 }

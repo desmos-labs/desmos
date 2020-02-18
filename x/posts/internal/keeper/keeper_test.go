@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // -------------
@@ -39,11 +39,11 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 
 			if test.existingID.Valid() {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
 			actual := k.GetLastPostID(ctx)
-			assert.Equal(t, test.expected, actual)
+			require.Equal(t, test.expected, actual)
 		})
 	}
 }
@@ -244,8 +244,6 @@ func TestKeeper_SavePost(t *testing.T) {
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
-		expMedias            types.PostMedias
-		expPollData          *types.PollData
 	}{
 		{
 			name: "Post with ID already present",
@@ -258,8 +256,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -271,13 +267,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post which ID is not already present",
@@ -290,8 +282,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -303,13 +293,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(15),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with valid parent ID",
@@ -322,8 +308,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPost.Creator,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(1),
@@ -335,13 +319,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{types.PostID(15)},
 			expLastID:            types.PostID(15),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
@@ -354,8 +334,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -367,13 +345,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{"key": "value"},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(5),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -386,8 +360,6 @@ func TestKeeper_SavePost(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 			lastPostID: types.PostID(4),
@@ -399,13 +371,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(4),
-			expMedias:            testPost.Medias,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without medias is saved properly",
@@ -420,13 +388,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				nil,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            nil,
-			expPollData:          testPost.PollData,
 		},
 		{
 			name:          "Post without poll data is saved properly",
@@ -440,13 +404,9 @@ func TestKeeper_SavePost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				nil,
-			),
+			).WithPollData(*testPost.PollData),
 			expParentCommentsIDs: []types.PostID{},
 			expLastID:            types.PostID(1),
-			expMedias:            testPost.Medias,
-			expPollData:          nil,
 		},
 	}
 
@@ -457,8 +417,8 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
-				store.Set([]byte(types.LastPostIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.lastPostID))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
 			// Save the post
@@ -466,18 +426,18 @@ func TestKeeper_SavePost(t *testing.T) {
 
 			// Check the stored post
 			var expected types.Post
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostStorePrefix+test.newPost.PostID.String())), &expected)
-			assert.True(t, expected.Equals(test.newPost))
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
+			require.True(t, expected.Equals(test.newPost))
 
 			// Check the latest post id
 			var lastPostID types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastPostIDStoreKey)), &lastPostID)
-			assert.Equal(t, test.expLastID, lastPostID)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &lastPostID)
+			require.Equal(t, test.expLastID, lastPostID)
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostCommentsStorePrefix+test.newPost.ParentID.String())), &parentCommentsIDs)
-			assert.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
+			require.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
 }
@@ -507,12 +467,10 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				testPost.PollData,
 			),
 		},
 		{
-			name:       "Existing post without medias is found properly",
+			name:       "Existing post with medias is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
 			expected: types.NewPost(
@@ -524,12 +482,10 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				nil,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias),
 		},
 		{
-			name:       "Existing post without poll is found properly",
+			name:       "Existing post with poll is found properly",
 			ID:         types.PostID(45),
 			postExists: true,
 			expected: types.NewPost(
@@ -541,9 +497,7 @@ func TestKeeper_GetPost(t *testing.T) {
 				map[string]string{},
 				testPost.Created,
 				testPostOwner,
-				testPost.Medias,
-				nil,
-			),
+			).WithPollData(*testPost.PollData),
 		},
 	}
 
@@ -554,13 +508,13 @@ func TestKeeper_GetPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.postExists {
-				store.Set([]byte(types.PostStorePrefix+test.expected.PostID.String()), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set(types.PostStoreKey(test.expected.PostID), k.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := k.GetPost(ctx, test.ID)
-			assert.Equal(t, test.postExists, found)
+			require.Equal(t, test.postExists, found)
 			if test.postExists {
-				assert.True(t, expected.Equals(test.expected))
+				require.True(t, expected.Equals(test.expected))
 			}
 		})
 	}
@@ -581,10 +535,18 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, testPost.Created, testPost.Creator, testPost.Medias, testPost.PollData),
+				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
+				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
+					testPost.Created, testPost.Creator),
 			},
 			postID:         types.PostID(10),
 			expChildrenIDs: types.PostIDs{types.PostID(55)},
@@ -601,10 +563,10 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 			}
 
 			storedChildrenIDs := k.GetPostChildrenIDs(ctx, test.postID)
-			assert.Len(t, storedChildrenIDs, len(test.expChildrenIDs))
+			require.Len(t, storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
-				assert.Contains(t, storedChildrenIDs, id)
+				require.Contains(t, storedChildrenIDs, id)
 			}
 		})
 	}
@@ -631,8 +593,6 @@ func TestKeeper_GetPosts(t *testing.T) {
 					map[string]string{},
 					testPost.Created,
 					testPostOwner,
-					testPost.Medias,
-					testPost.PollData,
 				),
 			},
 		},
@@ -645,12 +605,12 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.posts {
-				store.Set([]byte(types.PostStorePrefix+p.PostID.String()), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			posts := k.GetPosts(ctx)
 			for index, post := range test.posts {
-				assert.True(t, post.Equals(posts[index]))
+				require.True(t, post.Equals(posts[index]))
 			}
 		})
 	}
@@ -659,10 +619,15 @@ func TestKeeper_GetPosts(t *testing.T) {
 func TestKeeper_GetPostsFiltered(t *testing.T) {
 	boolTrue := true
 
-	creator1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	creator2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	creator2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
 	posts := types.Posts{
@@ -675,8 +640,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator1,
-			testPost.Medias,
-			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(11),
@@ -687,8 +650,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			time.Date(2020, 2, 1, 1, 1, 0, 0, timeZone),
 			creator2,
-			testPost.Medias,
-			testPost.PollData,
 		),
 		types.NewPost(
 			types.PostID(12),
@@ -699,8 +660,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			map[string]string{},
 			date,
 			creator2,
-			testPost.Medias,
-			testPost.PollData,
 		),
 	}
 
@@ -787,39 +746,47 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 				}
 			}
 			result := k.GetPostsFiltered(ctx, test.filter)
-			assert.True(t, test.expected.Equals(result), "Expected\n%s\nbut got\n%s", test.expected, result)
+
+			require.Len(t, result, len(test.expected))
+			for index, post := range result {
+				require.True(t, test.expected[index].Equals(post))
+			}
 		})
 	}
 }
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	user2, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	answers := []uint{uint(1), uint(2)}
-	answers2 := []uint{uint(1)}
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
+	answers2 := []types.AnswerID{types.AnswerID(1)}
 
 	tests := []struct {
 		name               string
 		postID             types.PostID
-		userAnswersDetails types.AnswersDetails
-		previousUsersAD    types.UsersAnswersDetails
-		expUsersAD         types.UsersAnswersDetails
+		userAnswersDetails types.UserAnswer
+		previousUsersAD    types.UserAnswers
+		expUsersAD         types.UserAnswers
 	}{
 		{
 			name:               "Save answers with no previous answers in this context",
 			postID:             types.PostID(1),
-			userAnswersDetails: types.NewAnswersDetails(answers, user),
+			userAnswersDetails: types.NewUserAnswer(answers, user),
 			previousUsersAD:    nil,
-			expUsersAD:         types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			expUsersAD:         types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 		{
 			name:               "Save new answers",
 			postID:             types.PostID(1),
-			userAnswersDetails: types.NewAnswersDetails(answers2, user2),
-			previousUsersAD:    types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
-			expUsersAD: types.UsersAnswersDetails{
-				types.NewAnswersDetails(answers, user),
-				types.NewAnswersDetails(answers2, user2),
+			userAnswersDetails: types.NewUserAnswer(answers2, user2),
+			previousUsersAD:    types.UserAnswers{types.NewUserAnswer(answers, user)},
+			expUsersAD: types.UserAnswers{
+				types.NewUserAnswer(answers, user),
+				types.NewUserAnswer(answers2, user2),
 			},
 		},
 	}
@@ -832,28 +799,29 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.previousUsersAD != nil {
-				store.Set([]byte(types.PollAnswersStorePrefix+test.postID.String()),
-					k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
+				store.Set(types.PollAnswersStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
 			k.SavePollAnswers(ctx, test.postID, test.userAnswersDetails)
 
-			var actualUsersAnswersDetails types.UsersAnswersDetails
-			answersBz := store.Get([]byte(types.PollAnswersStorePrefix + test.postID.String()))
+			var actualUsersAnswersDetails types.UserAnswers
+			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
 			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
-			assert.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
+			require.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}
 }
 
 func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	answers := []uint{uint(1), uint(2)}
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name          string
 		postID        types.PostID
-		storedAnswers types.UsersAnswersDetails
+		storedAnswers types.UserAnswers
 	}{
 		{
 			name:          "No answers returns empty list",
@@ -863,7 +831,7 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 		{
 			name:          "Answers returned correctly",
 			postID:        types.PostID(1),
-			storedAnswers: types.UsersAnswersDetails{types.NewAnswersDetails(answers, user)},
+			storedAnswers: types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 	}
 
@@ -878,33 +846,37 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 
 			actualPostPollAnswers := k.GetPollAnswers(ctx, test.postID)
 
-			assert.Equal(t, test.storedAnswers, actualPostPollAnswers)
+			require.Equal(t, test.storedAnswers, actualPostPollAnswers)
 		})
 	}
 }
 
 func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	user2, _ := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	answers := []uint{uint(1), uint(2)}
+	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
+	require.NoError(t, err)
+
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name          string
-		storedAnswers types.AnswersDetails
+		storedAnswers types.UserAnswer
 		postID        types.PostID
 		user          sdk.AccAddress
-		expAnswers    []uint
+		expAnswers    []types.AnswerID
 	}{
 		{
 			name:          "No answers for user returns nil",
-			storedAnswers: types.NewAnswersDetails(answers, user),
+			storedAnswers: types.NewUserAnswer(answers, user),
 			postID:        types.PostID(1),
 			user:          user2,
 			expAnswers:    nil,
 		},
 		{
 			name:          "Matching user returns answers made by him",
-			storedAnswers: types.NewAnswersDetails(answers, user),
+			storedAnswers: types.NewUserAnswer(answers, user),
 			postID:        types.PostID(1),
 			user:          user,
 			expAnswers:    answers,
@@ -913,37 +885,39 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 
 	for _, test := range tests {
 		ctx, k := SetupTestInput()
-
 		k.SavePollAnswers(ctx, test.postID, test.storedAnswers)
 
 		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
-
-		assert.Equal(t, test.expAnswers, actualPostPollAnswers)
+		require.Equal(t, test.expAnswers, actualPostPollAnswers)
 	}
 }
 
 func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	user2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	answers := []uint{uint(1), uint(2)}
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	require.NoError(t, err)
+
+	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	tests := []struct {
 		name    string
-		usersAD map[types.PostID]types.UsersAnswersDetails
+		usersAD map[types.PostID]types.UserAnswers
 	}{
 		{
 			name:    "Empty users answers details data are returned correctly",
-			usersAD: map[types.PostID]types.UsersAnswersDetails{},
+			usersAD: map[types.PostID]types.UserAnswers{},
 		},
 		{
 			name: "Non empty users answers details data are returned correcly",
-			usersAD: map[types.PostID]types.UsersAnswersDetails{
+			usersAD: map[types.PostID]types.UserAnswers{
 				types.PostID(1): {
-					types.NewAnswersDetails(answers, user),
-					types.NewAnswersDetails(answers, user2),
+					types.NewUserAnswer(answers, user),
+					types.NewUserAnswer(answers, user2),
 				},
 				types.PostID(2): {
-					types.NewAnswersDetails(answers, user2),
+					types.NewUserAnswer(answers, user2),
 				},
 			},
 		},
@@ -955,11 +929,11 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for postID, userAD := range test.usersAD {
-				store.Set([]byte(types.PollAnswersStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(userAD))
+				store.Set(types.PollAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(userAD))
 			}
 
-			usersADData := k.GetAnswersDetailsMap(ctx)
-			assert.Equal(t, test.usersAD, usersADData)
+			usersADData := k.GetPollAnswersMap(ctx)
+			require.Equal(t, test.usersAD, usersADData)
 		})
 	}
 }
@@ -969,8 +943,11 @@ func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
 // -------------
 
 func TestKeeper_SaveReaction(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -1016,21 +993,22 @@ func TestKeeper_SaveReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if len(test.storedLikes) != 0 {
-				store.Set([]byte(types.PostReactionsStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
 			err := k.SaveReaction(ctx, test.postID, test.like)
-			assert.Equal(t, test.error, err)
+			require.Equal(t, test.error, err)
 
 			var stored types.Reactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+test.postID.String())), &stored)
-			assert.Equal(t, test.expectedStored, stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
+			require.Equal(t, test.expectedStored, stored)
 		})
 	}
 }
 
 func TestKeeper_RemoveReaction(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -1077,26 +1055,29 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if len(test.storedLikes) != 0 {
-				store.Set([]byte(types.PostReactionsStorePrefix+test.postID.String()), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
 			err := k.RemoveReaction(ctx, test.postID, test.liker, test.value)
-			assert.Equal(t, test.error, err)
+			require.Equal(t, test.error, err)
 
 			var stored types.Reactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.PostReactionsStorePrefix+test.postID.String())), &stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
-			assert.Len(t, stored, len(test.expectedStored))
+			require.Len(t, stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
-				assert.Equal(t, like, stored[index])
+				require.Equal(t, like, stored[index])
 			}
 		})
 	}
 }
 
 func TestKeeper_GetPostLikes(t *testing.T) {
-	liker, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	otherLiker, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
+
+	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name   string
@@ -1123,22 +1104,26 @@ func TestKeeper_GetPostLikes(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			for _, l := range test.likes {
-				_ = k.SaveReaction(ctx, test.postID, l)
+				err := k.SaveReaction(ctx, test.postID, l)
+				require.NoError(t, err)
 			}
 
 			stored := k.GetPostReactions(ctx, test.postID)
 
-			assert.Len(t, stored, len(test.likes))
+			require.Len(t, stored, len(test.likes))
 			for _, l := range test.likes {
-				assert.Contains(t, stored, l)
+				require.Contains(t, stored, l)
 			}
 		})
 	}
 }
 
 func TestKeeper_GetLikes(t *testing.T) {
-	liker1, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	liker2, _ := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
+
+	liker2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name  string
@@ -1168,11 +1153,11 @@ func TestKeeper_GetLikes(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for postID, likes := range test.likes {
-				store.Set([]byte(types.PostReactionsStorePrefix+postID.String()), k.Cdc.MustMarshalBinaryBare(likes))
+				store.Set(types.PostReactionsStoreKey(postID), k.Cdc.MustMarshalBinaryBare(likes))
 			}
 
 			likesData := k.GetReactions(ctx)
-			assert.Equal(t, test.likes, likesData)
+			require.Equal(t, test.likes, likesData)
 		})
 	}
 }

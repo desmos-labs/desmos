@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // -------------
@@ -33,14 +33,14 @@ func TestPostID_Next(t *testing.T) {
 	for index, test := range tests {
 		test := test
 		t.Run(fmt.Sprintf("Test index: %d", index), func(t *testing.T) {
-			assert.Equal(t, test.expected, test.id.Next())
+			require.Equal(t, test.expected, test.id.Next())
 		})
 	}
 }
 
 func TestPostID_MarshalJSON(t *testing.T) {
 	json := types.ModuleCdc.MustMarshalJSON(types.PostID(10))
-	assert.Equal(t, `"10"`, string(json))
+	require.Equal(t, `"10"`, string(json))
 }
 
 func TestPostID_UnmarshalJSON(t *testing.T) {
@@ -71,9 +71,9 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
 
 			if err == nil {
-				assert.Equal(t, test.expID, id)
+				require.Equal(t, test.expID, id)
 			} else {
-				assert.Equal(t, test.expError, err.Error())
+				require.Equal(t, test.expError, err.Error())
 			}
 		})
 	}
@@ -106,9 +106,9 @@ func TestParsePostID(t *testing.T) {
 			id, err := types.ParsePostID(test.value)
 
 			if err == nil {
-				assert.Equal(t, test.expID, id)
+				require.Equal(t, test.expID, id)
 			} else {
-				assert.Equal(t, test.expError, err.Error())
+				require.Equal(t, test.expError, err.Error())
 			}
 		})
 	}
@@ -148,7 +148,7 @@ func TestPostIDs_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
@@ -212,8 +212,8 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			newIDs, edited := test.IDs.AppendIfMissing(test.newID)
-			assert.Equal(t, test.expIDs, newIDs)
-			assert.Equal(t, test.expEdited, edited)
+			require.Equal(t, test.expIDs, newIDs)
+			require.Equal(t, test.expEdited, edited)
 		})
 	}
 }
@@ -272,8 +272,12 @@ func TestPostIDs_RemoveIfPresent(t *testing.T) {
 // -----------
 
 func TestPost_String(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	timeZone, _ := time.LoadLocation("UTC")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	post := types.Post{
 		PostID:         types.PostID(19),
@@ -287,15 +291,19 @@ func TestPost_String(t *testing.T) {
 		Creator:        owner,
 	}
 
-	assert.Equal(t,
+	require.Equal(t,
 		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
 
 func TestPost_Validate(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	timeZone, _ := time.LoadLocation("UTC")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{
@@ -304,12 +312,12 @@ func TestPost_Validate(t *testing.T) {
 		},
 	}
 	answer := types.PollAnswer{
-		ID:   uint(1),
+		ID:   types.AnswerID(1),
 		Text: "Yes",
 	}
 
 	answer2 := types.PollAnswer{
-		ID:   uint(2),
+		ID:   types.AnswerID(2),
 		Text: "No",
 	}
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
@@ -319,23 +327,23 @@ func TestPost_Validate(t *testing.T) {
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(0), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post id: 0",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post message must be non empty and non blank",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -343,11 +351,11 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner, medias, pollData),
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, " ", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
@@ -395,9 +403,7 @@ func TestPost_Validate(t *testing.T) {
 				map[string]string{},
 				date,
 				owner,
-				medias,
-				pollData,
-			),
+			).WithMedias(medias).WithPollData(pollData),
 			expError: "post message cannot be longer than 500 characters",
 		},
 		{
@@ -422,9 +428,7 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
-				medias,
-				pollData,
-			),
+			).WithMedias(medias).WithPollData(pollData),
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
 		{
@@ -441,9 +445,7 @@ func TestPost_Validate(t *testing.T) {
 				},
 				date,
 				owner,
-				medias,
-				pollData,
-			),
+			).WithMedias(medias).WithPollData(pollData),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
 		},
 	}
@@ -452,19 +454,24 @@ func TestPost_Validate(t *testing.T) {
 		test := test
 		t.Run(test.expError, func(t *testing.T) {
 			if len(test.expError) != 0 {
-				assert.Equal(t, test.expError, test.post.Validate().Error())
+				require.Equal(t, test.expError, test.post.Validate().Error())
 			} else {
-				assert.Nil(t, test.post.Validate())
+				require.Nil(t, test.post.Validate())
 			}
 		})
 	}
 }
 
 func TestPost_Equals(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	otherOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	medias := types.PostMedias{
 		types.PostMedia{
@@ -473,9 +480,9 @@ func TestPost_Equals(t *testing.T) {
 		},
 	}
 
-	answer := types.PollAnswer{ID: uint(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: uint(2), Text: "No"}
-	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
+	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
+	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
+	pollData := types.NewPollData("poll?", pollEndDate, types.PollAnswers{answer, answer2}, true, false, true)
 
 	tests := []struct {
 		name      string
@@ -809,9 +816,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
-				PollData:       pollData,
-			},
+			}.WithMedias(medias).WithPollData(pollData),
 			second: types.Post{
 				PostID:         types.PostID(19),
 				ParentID:       types.PostID(1),
@@ -822,9 +827,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
-				PollData:       pollData,
-			},
+			}.WithMedias(medias).WithPollData(pollData),
 			expEquals: true,
 		},
 	}
@@ -832,7 +835,7 @@ func TestPost_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
@@ -840,70 +843,13 @@ func TestPost_Equals(t *testing.T) {
 // -----------
 // --- Posts
 // -----------
-func TestPosts_Equals(t *testing.T) {
-	timeZone, _ := time.LoadLocation("UTC")
-	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
-
-	tests := []struct {
-		name      string
-		first     types.Posts
-		second    types.Posts
-		expEquals bool
-	}{
-		{
-			name:      "Empty lists are equals",
-			first:     types.Posts{},
-			second:    types.Posts{},
-			expEquals: true,
-		},
-		{
-			name: "List of different lengths are not equals",
-			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-			},
-			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Same lists but in different orders",
-			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-			},
-			second: types.Posts{
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1)},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Same lists are equals",
-			first: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
-			},
-			second: types.Posts{
-				types.Post{PostID: types.PostID(0), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
-				types.Post{PostID: types.PostID(1), Created: date, LastEdited: date.AddDate(0, 0, 1), PollData: &types.PollData{}},
-			},
-			expEquals: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
-		})
-	}
-}
-
 func TestPosts_String(t *testing.T) {
-	owner1, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	owner2, _ := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	owner2, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
+	require.NoError(t, err)
+
 	medias := types.PostMedias{
 		types.PostMedia{
 			URI:      "https://uri.com",
@@ -911,26 +857,28 @@ func TestPosts_String(t *testing.T) {
 		},
 	}
 	answer := types.PollAnswer{
-		ID:   uint(1),
+		ID:   types.AnswerID(1),
 		Text: "Yes",
 	}
 
 	answer2 := types.PollAnswer{
-		ID:   uint(2),
+		ID:   types.AnswerID(2),
 		Text: "No",
 	}
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
 
-	timeZone, _ := time.LoadLocation("UTC")
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := types.Posts{
-		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1, medias, pollData),
-		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2, medias, pollData),
+		types.NewPost(types.PostID(1), types.PostID(10), "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithMedias(medias).WithPollData(pollData),
+		types.NewPost(types.PostID(2), types.PostID(10), "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithMedias(medias).WithPollData(pollData),
 	}
 
 	expected := `ID - [Creator] Message
 1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
 2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
-	assert.Equal(t, expected, posts.String())
+	require.Equal(t, expected, posts.String())
 }

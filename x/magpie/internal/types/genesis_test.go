@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -34,7 +34,7 @@ func TestValidateGenesis(t *testing.T) {
 	for index, test := range tests {
 		test := test
 		t.Run(fmt.Sprintf("Test %d", index), func(t *testing.T) {
-			assert.Equal(t, test.ExpError, types.ValidateGenesis(test.Genesis))
+			require.Equal(t, test.ExpError, types.ValidateGenesis(test.Genesis))
 		})
 	}
 }

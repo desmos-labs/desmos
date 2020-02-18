@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"time"
@@ -79,10 +80,22 @@ func replayTxs(rootDir string) error {
 		return err
 	}
 
+	// TraceStore
+	var traceStoreWriter io.Writer
+	var traceStoreDir = filepath.Join(dataDir, "trace.log")
+	traceStoreWriter, err = os.OpenFile(
+		traceStoreDir,
+		os.O_WRONLY|os.O_APPEND|os.O_CREATE,
+		0666,
+	)
+	if err != nil {
+		return err
+	}
+
 	// Application
 	fmt.Fprintln(os.Stderr, "Creating application")
 	gapp := app.NewDesmosApp(
-		ctx.Logger, appDB, map[int64]bool{},
+		ctx.Logger, appDB, traceStoreWriter, true, map[int64]bool{},
 		baseapp.SetPruning(store.PruneEverything), // nothing
 	)
 

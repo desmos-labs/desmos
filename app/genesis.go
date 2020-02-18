@@ -12,3 +12,8 @@ import (
 // the ModuleBasicManager which populates json from each BasicModule
 // object provided to it during init.
 type GenesisState map[string]json.RawMessage
+
+// NewDefaultGenesisState generates the default state for the application.
+func NewDefaultGenesisState() GenesisState {
+	return ModuleBasics.DefaultGenesis()
+}

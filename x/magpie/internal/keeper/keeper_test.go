@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestKeeper_SetDefaultSessionLength(t *testing.T) {
@@ -40,15 +40,15 @@ func TestKeeper_SetDefaultSessionLength(t *testing.T) {
 			err := k.SetDefaultSessionLength(ctx, test.length)
 
 			if test.expErr == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				var stored int64
 				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &stored)
-				assert.Equal(t, test.length, stored)
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &stored)
+				require.Equal(t, test.length, stored)
 			}
 
 			if test.expErr != nil {
-				assert.Equal(t, test.expErr, err)
+				require.Equal(t, test.expErr, err)
 			}
 		})
 	}
@@ -64,11 +64,11 @@ func TestKeeper_GetDefaultSessionLength(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			if length != 0 {
-				store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(&length))
+				store.Set(types.SessionLengthKey, k.Cdc.MustMarshalBinaryBare(&length))
 			}
 
 			recovered := k.GetDefaultSessionLength(ctx)
-			assert.Equal(t, length, recovered)
+			require.Equal(t, length, recovered)
 		})
 	}
 }
@@ -97,15 +97,15 @@ func TestKeeper_GetLastSessionID(t *testing.T) {
 
 			if test.existingID.Valid() {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(test.existingID))
+				store.Set(types.LastSessionIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
-			assert.Equal(t, test.expID, k.GetLastSessionID(ctx))
+			require.Equal(t, test.expID, k.GetLastSessionID(ctx))
 		})
 	}
 
 	ctx, k := SetupTestInput()
-	assert.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
+	require.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
 }
 
 func TestKeeper_SetLastSessionID(t *testing.T) {
@@ -126,8 +126,8 @@ func TestKeeper_SetLastSessionID(t *testing.T) {
 			k.SetLastSessionID(ctx, test.id)
 
 			var stored types.SessionID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &stored)
-			assert.Equal(t, test.id, stored)
+			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
+			require.Equal(t, test.id, stored)
 		})
 	}
 }
@@ -141,12 +141,12 @@ func TestKeeper_SaveSession(t *testing.T) {
 
 	var stored types.Session
 	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionStorePrefix+session.SessionID.String())), &stored)
-	assert.Equal(t, session, stored)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionID)), &stored)
+	require.Equal(t, session, stored)
 
 	var storedLastID types.SessionID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &storedLastID)
-	assert.Equal(t, session.SessionID, storedLastID)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
+	require.Equal(t, session.SessionID, storedLastID)
 }
 
 func TestKeeper_GetSession(t *testing.T) {
@@ -179,12 +179,12 @@ func TestKeeper_GetSession(t *testing.T) {
 
 			if !(types.Session{}).Equals(test.storedSession) {
 				store := ctx.KVStore(k.StoreKey)
-				store.Set([]byte(types.SessionStorePrefix+test.id.String()), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
+				store.Set(types.SessionStoreKey(test.id), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
 			}
 
 			result, found := k.GetSession(ctx, types.SessionID(1))
-			assert.Equal(t, test.expSession, result)
-			assert.Equal(t, test.expFound, found)
+			require.Equal(t, test.expSession, result)
+			require.Equal(t, test.expFound, found)
 		})
 	}
 }
@@ -233,7 +233,7 @@ func TestKeeper_GetSessions(t *testing.T) {
 			}
 
 			sessions := k.GetSessions(ctx)
-			assert.True(t, test.expSessions.Equals(sessions))
+			require.True(t, test.expSessions.Equals(sessions))
 		})
 	}
 }

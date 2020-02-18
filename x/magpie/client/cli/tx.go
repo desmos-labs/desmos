@@ -12,7 +12,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
@@ -40,22 +39,11 @@ func GetCmdCreateSession(cdc *codec.Codec) *cobra.Command {
 		Short: "Creates a session for an external service to post",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			from := cliCtx.GetFromAddress()
-			accGetter := authtypes.NewAccountRetriever(cliCtx)
-			if err := accGetter.EnsureExists(from); err != nil {
-				return err
-			}
-
-			msg := types.NewMsgCreateSession(from, args[0], args[1], args[2], args[3])
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
+			msg := types.NewMsgCreateSession(cliCtx.FromAddress, args[0], args[1], args[2], args[3])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

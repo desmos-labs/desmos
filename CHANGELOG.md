@@ -3,8 +3,8 @@
 
 # Version 0.3.0
 ## Changes
-- Implemented the support for media in posts (#36)
-- Implemented the support for poll in posts  (#14) 
+- Implemented the support for media posts (#36)
+- Implemented the support for poll posts  (#14) 
 - Added the support for posts sorting (#78)
 - Added the support for magpie default session length inside genesis (#38)
 - Posts now only supports `subspace` values in form of hex-encoded SHA-256 hashes (#82)
@@ -12,6 +12,7 @@
 
 ## Bug fixes
 - Fixed the posts REST endpoint not working properly (#77)
+- Fixed a bug that allowed to create multiple posts with the exact same contents (#92) 
 
 ## Migration
 In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:

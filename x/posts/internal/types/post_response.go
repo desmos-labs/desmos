@@ -10,9 +10,9 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []AnswersDetails `json:"poll_answers,omitempty"`
-	Reactions   Reactions        `json:"reactions"`
-	Children    PostIDs          `json:"children"`
+	PollAnswers []UserAnswer `json:"poll_answers,omitempty"`
+	Reactions   Reactions    `json:"reactions"`
+	Children    PostIDs      `json:"children"`
 }
 
 // String implements fmt.Stringer
@@ -22,7 +22,7 @@ func (response PostQueryResponse) String() string {
 	return strings.TrimSpace(out)
 }
 
-func NewPostResponse(post Post, pollAnswers []AnswersDetails, reactions Reactions, children PostIDs) PostQueryResponse {
+func NewPostResponse(post Post, pollAnswers []UserAnswer, reactions Reactions, children PostIDs) PostQueryResponse {
 	return PostQueryResponse{
 		Post:        post,
 		PollAnswers: pollAnswers,

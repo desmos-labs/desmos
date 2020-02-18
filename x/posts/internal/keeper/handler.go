@@ -55,13 +55,15 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.OptionalData,
 		msg.CreationDate,
 		msg.Creator,
-		msg.Medias,
-		msg.PollData,
-	)
+	).WithMedias(msg.Medias)
+
+	if msg.PollData != nil {
+		post = post.WithPollData(*msg.PollData)
+	}
 
 	// Check for double posting
-	if _, found := keeper.GetPost(ctx, post.PostID); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s already exists", post.PostID))
+	if existing, found := keeper.IsPostDuplicate(ctx, post); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the provided post is a duplicate of the one having id %s", existing.PostID))
 	}
 
 	// If valid, check the parent post
@@ -100,7 +102,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	return &result, nil
 }
 
-// handleMsgEditPost handles MsgEditsPost messages
+// handleMsgEditPost handles the edit of posts
 func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*sdk.Result, error) {
 
 	// Get the existing post
@@ -148,6 +150,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
+// handleMsgAddPostReaction handles the adding of a reaction to a post
 func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
 
 	// Get the post
@@ -178,6 +181,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	return &result, nil
 }
 
+// handleMsgRemovePostReaction handles the removal of a reaction from a post
 func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) (*sdk.Result, error) {
 
 	// Get the post
@@ -232,7 +236,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 }
 
 // answerExist checks if the answer is contained in providedAnswers slice
-func answerExist(providedAnswers []uint, answer uint) bool {
+func answerExist(providedAnswers []types.AnswerID, answer types.AnswerID) bool {
 	for _, ans := range providedAnswers {
 		if ans == answer {
 			return true
@@ -287,7 +291,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		)
 	}
 
-	userPollAnswers := types.NewAnswersDetails(msg.UserAnswers, msg.Answerer)
+	userPollAnswers := types.NewUserAnswer(msg.UserAnswers, msg.Answerer)
 
 	keeper.SavePollAnswers(ctx, post.PostID, userPollAnswers)
 
