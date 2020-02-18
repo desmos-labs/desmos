@@ -4,10 +4,10 @@ import "fmt"
 
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
-	Posts       Posts                          `json:"posts"`
-	PollAnswers map[string]UsersAnswersDetails `json:"poll_answers_details"`
-	Reactions   map[string]Reactions           `json:"reactions"`
-	Hashtags    map[string]PostIDs             `json:"hashtags"`
+	Posts       Posts                  `json:"posts"`
+	PollAnswers map[string]UserAnswers `json:"poll_answers_details"`
+	Reactions   map[string]Reactions   `json:"reactions"`
+	Hashtags    map[string]PostIDs     `json:"hashtags"`
 }
 
 // NewGenesisState creates a new genesis state

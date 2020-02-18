@@ -178,7 +178,7 @@ func TestPostIDs_Contains(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			found := test.IDs.Contains(test.containedID)
-			assert.Equal(t, test.expFound, found)
+			require.Equal(t, test.expFound, found)
 		})
 	}
 
@@ -260,8 +260,8 @@ func TestPostIDs_RemoveIfPresent(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			actualIDs, actualRemoved := test.IDs.RemoveIfPresent(test.removedID)
-			assert.Equal(t, test.expRemoved, actualRemoved)
-			assert.Equal(t, test.expIDs, actualIDs)
+			require.Equal(t, test.expRemoved, actualRemoved)
+			require.Equal(t, test.expIDs, actualIDs)
 		})
 	}
 

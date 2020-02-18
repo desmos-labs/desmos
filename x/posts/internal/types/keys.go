@@ -2,6 +2,7 @@ package types
 
 import (
 	"regexp"
+	"strings"
 )
 
 const (
@@ -34,13 +35,20 @@ var (
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
-	HashtagPrefix = []byte("hashtag:")
+	HashtagPrefix            = []byte("hashtag:")
 )
 
-// AddressStoreKey turns an id to a key used to store a post into the posts store
+// PostStoreKey turns an id to a key used to store a post into the posts store
 // nolint: interfacer
 func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id.String())...)
+}
+
+// HashtagStoreKey turn an hashtag to a key used to store a post into the posts store
+// nolint: interfacer
+func HashtagStoreKey(hashtag string) []byte {
+	keyword := strings.TrimPrefix(hashtag, "#")
+	return append(HashtagPrefix, []byte(keyword)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

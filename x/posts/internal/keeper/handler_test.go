@@ -134,9 +134,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.OptionalData,
 				testPost.Created,
 				testPost.Creator,
-				testPost.Medias,
-				testPost.PollData,
-			),
+			).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 		},
 		{
 			name: "Storing a valid post with missing parent id returns expError",
@@ -272,12 +270,10 @@ func Test_handleMsgEditPost(t *testing.T) {
 		map[string]string{},
 		testPostCreationDate,
 		testPostOwner,
-		types.PostMedias{types.NewPostMedia(
-			"https://uri.com",
-			"text/plain"),
-		},
-		types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true),
-	)
+	).WithMedias(types.PostMedias{types.NewPostMedia(
+		"https://uri.com",
+		"text/plain"),
+	}).WithPollData(types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true))
 
 	testData := []struct {
 		name       string

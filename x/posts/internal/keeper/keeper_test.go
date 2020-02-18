@@ -2,11 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
@@ -90,8 +90,7 @@ func TestKeeper_SavePostHashtags(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				keyword := strings.TrimPrefix(hashtag, "#")
-				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			for _, tHashtag := range test.newHashtags {
@@ -100,10 +99,9 @@ func TestKeeper_SavePostHashtags(t *testing.T) {
 
 			for _, newHashtag := range test.newHashtags {
 				var postIDs types.PostIDs
-				keyword := strings.TrimPrefix(newHashtag, "#")
-				bz := store.Get([]byte(types.HashtagPrefix + keyword))
+				bz := store.Get(types.HashtagStoreKey(newHashtag))
 				k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
-				assert.Equal(t, test.expectedIDs, postIDs)
+				require.Equal(t, test.expectedIDs, postIDs)
 			}
 
 		})
@@ -138,13 +136,12 @@ func TestKeeper_GetHashtagAssociatedPosts(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				keyword := strings.TrimPrefix(hashtag, "#")
-				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			postIDs := k.GetHashtagAssociatedPosts(ctx, test.hashtag)
 
-			assert.Equal(t, test.existingPostIDs, postIDs)
+			require.Equal(t, test.existingPostIDs, postIDs)
 
 		})
 	}
@@ -182,15 +179,14 @@ func TestKeeper_RemovePostHashtags(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				keyword := strings.TrimPrefix(hashtag, "#")
-				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			k.RemovePostHashtags(ctx, test.removedID, test.existingHashtags)
 
 			postIDs := k.GetHashtagAssociatedPosts(ctx, test.existingHashtags[0])
 
-			assert.Equal(t, test.expectedIDs, postIDs)
+			require.Equal(t, test.expectedIDs, postIDs)
 
 		})
 	}
@@ -226,12 +222,11 @@ func TestKeeper_GetHashtags(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for hashtag, ids := range test.hashIds {
-				keyword := strings.TrimPrefix(hashtag, "#")
-				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(ids))
+				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(ids))
 			}
 
 			likesData := k.GetHashtags(ctx)
-			assert.Equal(t, test.hashIds, likesData)
+			require.Equal(t, test.hashIds, likesData)
 		})
 	}
 }
@@ -634,7 +629,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		types.NewPost(
 			types.PostID(10),
 			types.PostID(1),
-			"Post 1",
+			"Post 1 #test",
 			false,
 			"",
 			map[string]string{},
@@ -741,8 +736,9 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			ctx, k := SetupTestInput()
 			for _, post := range posts {
 				k.SavePost(ctx, post)
-				for _, hashtag := range test.filter.Hashtags {
-					k.SavePostHashtag(ctx, hashtag, posts[0].PostID)
+				postHashtags := keeper.GetPostHashtags(post.Message)
+				if len(postHashtags) != 0 {
+					k.SavePostHashtag(ctx, postHashtags[0], post.PostID)
 				}
 			}
 			result := k.GetPostsFiltered(ctx, test.filter)

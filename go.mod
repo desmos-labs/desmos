@@ -6,7 +6,6 @@ require (
 	github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d
 	github.com/cosmos/cosmos-sdk v0.38.1
 	github.com/gorilla/mux v1.7.3
-	github.com/magiconair/properties v1.8.1
 	github.com/otiai10/copy v1.0.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.6.2
