@@ -18,6 +18,7 @@ const (
 	PostCommentsStorePrefix  = "comments:"
 	PostReactionsStorePrefix = "reactions:"
 	PollAnswersStorePrefix   = "poll_answers:"
+	HashtagPrefix            = "hashtag:"
 
 	MaxPostMessageLength            = 500
 	MaxOptionalDataFieldsNumber     = 10

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -89,7 +90,8 @@ func TestKeeper_SavePostHashtags(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				keyword := strings.TrimPrefix(hashtag, "#")
+				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			for _, tHashtag := range test.newHashtags {
@@ -98,7 +100,8 @@ func TestKeeper_SavePostHashtags(t *testing.T) {
 
 			for _, newHashtag := range test.newHashtags {
 				var postIDs types.PostIDs
-				bz := store.Get([]byte(newHashtag))
+				keyword := strings.TrimPrefix(newHashtag, "#")
+				bz := store.Get([]byte(types.HashtagPrefix + keyword))
 				k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
 				assert.Equal(t, test.expectedIDs, postIDs)
 			}
@@ -135,7 +138,8 @@ func TestKeeper_GetHashtagAssociatedPosts(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				keyword := strings.TrimPrefix(hashtag, "#")
+				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			postIDs := k.GetHashtagAssociatedPosts(ctx, test.hashtag)
@@ -178,7 +182,8 @@ func TestKeeper_RemovePostHashtags(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, hashtag := range test.existingHashtags {
-				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
+				keyword := strings.TrimPrefix(hashtag, "#")
+				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
 			}
 
 			k.RemovePostHashtags(ctx, test.removedID, test.existingHashtags)
@@ -203,11 +208,11 @@ func TestKeeper_GetHashtags(t *testing.T) {
 		{
 			name: "",
 			hashIds: map[string]types.PostIDs{
-				"#hastag": {
+				"hastag": {
 					types.PostID(1),
 					types.PostID(2),
 				},
-				"#desmos": {
+				"desmos": {
 					types.PostID(1),
 					types.PostID(2),
 				},
@@ -221,7 +226,8 @@ func TestKeeper_GetHashtags(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for hashtag, ids := range test.hashIds {
-				store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(ids))
+				keyword := strings.TrimPrefix(hashtag, "#")
+				store.Set([]byte(types.HashtagPrefix+keyword), k.Cdc.MustMarshalBinaryBare(ids))
 			}
 
 			likesData := k.GetHashtags(ctx)

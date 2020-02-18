@@ -46,6 +46,11 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	return id
 }
 
+func (k Keeper) getHashtagStoreKey(hashtag string) []byte {
+	keyword := strings.TrimPrefix(hashtag, "#")
+	return []byte(types.HashtagPrefix + keyword)
+}
+
 // SavePostHashtag allows to save the hashtag association with the given postID.
 // It assumes that the postID is associated with an existent post
 func (k Keeper) SavePostHashtag(ctx sdk.Context, hashtag string, postID types.PostID) {
@@ -53,7 +58,7 @@ func (k Keeper) SavePostHashtag(ctx sdk.Context, hashtag string, postID types.Po
 	postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
 	postIDs, appended := postIDs.AppendIfMissing(postID)
 	if appended {
-		store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
+		store.Set(k.getHashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
 	}
 }
 
@@ -65,7 +70,7 @@ func (k Keeper) RemovePostHashtags(ctx sdk.Context, postID types.PostID, hashtag
 		postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
 		postIDs, removed := postIDs.RemoveIfPresent(postID)
 		if removed {
-			store.Set([]byte(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
+			store.Set(k.getHashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
 		}
 	}
 }
@@ -74,7 +79,7 @@ func (k Keeper) RemovePostHashtags(ctx sdk.Context, postID types.PostID, hashtag
 func (k Keeper) GetHashtagAssociatedPosts(ctx sdk.Context, hashtag string) types.PostIDs {
 	store := ctx.KVStore(k.StoreKey)
 	var postIDs types.PostIDs
-	bz := store.Get([]byte(hashtag))
+	bz := store.Get(k.getHashtagStoreKey(hashtag))
 	k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
 
 	return postIDs
@@ -83,13 +88,13 @@ func (k Keeper) GetHashtagAssociatedPosts(ctx sdk.Context, hashtag string) types
 // GetHashtags allows to returns the list of hashtags that have been stored inside the given context
 func (k Keeper) GetHashtags(ctx sdk.Context) map[string]types.PostIDs {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte("#"))
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.HashtagPrefix))
 
 	hashtagsData := map[string]types.PostIDs{}
 	for ; iterator.Valid(); iterator.Next() {
 		var postIDs types.PostIDs
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postIDs)
-		hashtagsData[string(iterator.Key())] = postIDs
+		hashtagsData[strings.TrimPrefix(string(iterator.Key()), types.HashtagPrefix)] = postIDs
 	}
 
 	return hashtagsData
