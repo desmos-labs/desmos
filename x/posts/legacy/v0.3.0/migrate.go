@@ -14,7 +14,7 @@ import (
 // string to a sha-256 hash
 func Migrate(oldGenState v020posts.GenesisState) GenesisState {
 	posts, reactions := RemoveDoublePosts(oldGenState.Posts, oldGenState.Reactions)
-	posts, reactions = SquashPostIDs(oldGenState.Posts, oldGenState.Reactions)
+	posts, reactions = SquashPostIDs(posts, reactions)
 
 	return GenesisState{
 		Posts:     migratePosts(posts),
