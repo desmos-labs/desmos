@@ -1,6 +1,7 @@
 package v020
 
 import (
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,6 +20,11 @@ type GenesisState struct {
 // PostID represents a unique post id
 type PostID uint64
 
+// String implements fmt.Stringer
+func (id PostID) String() string {
+	return strconv.FormatUint(uint64(id), 10)
+}
+
 type OptionalData map[string]string
 
 // Post is a struct of a post
@@ -32,6 +38,31 @@ type Post struct {
 	Subspace       string         `json:"subspace"`                // Identifies the application that has posted the message
 	OptionalData   OptionalData   `json:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator"`                 // Creator of the Post
+}
+
+func (p Post) ConflictsWith(other Post) bool {
+	return p.Created.Equal(other.Created) &&
+		p.Subspace == other.Subspace &&
+		p.Creator.Equals(other.Creator)
+}
+
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+func (p Post) ContentsEquals(other Post) bool {
+	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
+	if equalsOptionalData {
+		for key := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		}
+	}
+
+	return p.ParentID == other.ParentID &&
+		p.Message == other.Message &&
+		p.Created.Equal(other.Created) &&
+		p.LastEdited.Equal(other.LastEdited) &&
+		p.AllowsComments == other.AllowsComments &&
+		p.Subspace == other.Subspace &&
+		equalsOptionalData &&
+		p.Creator.Equals(other.Creator)
 }
 
 // Reaction is a struct of a user reaction to a post
