@@ -120,16 +120,15 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	if existing.Created.After(msg.EditDate) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
+	// Edit hashtags
+	if existingHashtags := GetPostHashtags(existing.Message); len(existingHashtags) != 0 {
+		keeper.RemovePostHashtags(ctx, existing.PostID, existingHashtags)
+	}
 
 	// Edit the post
 	existing.Message = msg.Message
 	existing.LastEdited = msg.EditDate
 	keeper.SavePost(ctx, existing)
-
-	// Edit hashtags
-	if existingHashtags := GetPostHashtags(existing.Message); existingHashtags != nil {
-		keeper.RemovePostHashtags(ctx, existing.PostID, existingHashtags)
-	}
 
 	newHashtags := GetPostHashtags(msg.Message)
 	for _, newHashtag := range newHashtags {

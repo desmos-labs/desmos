@@ -264,7 +264,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 	postWithHashtags := types.NewPost(
 		types.PostID(3257),
 		types.PostID(0),
-		"Post message #desmos #test",
+		"Post message #test",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
@@ -364,6 +364,9 @@ func Test_handleMsgEditPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {
 				store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
+				if hashtags := keeper.GetPostHashtags(test.storedPost.Message); len(hashtags) != 0 {
+					k.SavePostHashtag(ctx, hashtags[0], test.storedPost.PostID)
+				}
 			}
 
 			handler := keeper.NewHandler(k)

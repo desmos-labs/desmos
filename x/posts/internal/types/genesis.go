@@ -11,10 +11,11 @@ type GenesisState struct {
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(posts Posts, reactions map[string]Reactions) GenesisState {
+func NewGenesisState(posts Posts, reactions map[string]Reactions, hashtags map[string]PostIDs) GenesisState {
 	return GenesisState{
 		Posts:     posts,
 		Reactions: reactions,
+		Hashtags:  hashtags,
 	}
 }
 

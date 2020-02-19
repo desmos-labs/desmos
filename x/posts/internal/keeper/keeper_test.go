@@ -157,14 +157,21 @@ func TestKeeper_RemovePostHashtags(t *testing.T) {
 		expectedIDs      types.PostIDs
 	}{
 		{
-			name:             "Remove the postID correctly",
+			name:             "Remove the postID correctly with more then 1 postID inside postIDs",
 			existingHashtags: []string{"#mooncake"},
 			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
 			removedID:        types.PostID(3),
 			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2)},
 		},
 		{
-			name:             "Removed anything when postID is not present",
+			name:             "Remove the postID correctly with only 1 postID inside postIDs",
+			existingHashtags: []string{"#mooncake"},
+			existingPostIDs:  types.PostIDs{types.PostID(1)},
+			removedID:        types.PostID(1),
+			expectedIDs:      types.PostIDs(nil),
+		},
+		{
+			name:             "Removed nothing when postID is not present",
 			existingHashtags: []string{"#mooncake"},
 			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
 			removedID:        types.PostID(4),
@@ -225,8 +232,8 @@ func TestKeeper_GetHashtags(t *testing.T) {
 				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(ids))
 			}
 
-			likesData := k.GetHashtags(ctx)
-			require.Equal(t, test.hashIds, likesData)
+			hashtagsData := k.GetHashtags(ctx)
+			require.Equal(t, test.hashIds, hashtagsData)
 		})
 	}
 }

@@ -57,10 +57,15 @@ func (k Keeper) SavePostHashtag(ctx sdk.Context, hashtag string, postID types.Po
 func (k Keeper) RemovePostHashtags(ctx sdk.Context, postID types.PostID, hashtags []string) {
 	store := ctx.KVStore(k.StoreKey)
 	for _, hashtag := range hashtags {
-		postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
-		postIDs, removed := postIDs.RemoveIfPresent(postID)
-		if removed {
-			store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
+		if postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag); len(postIDs) != 0 {
+			postIDs, removed := postIDs.RemoveIfPresent(postID)
+			if removed {
+				if len(postIDs) == 0 {
+					store.Delete(types.HashtagStoreKey(hashtag))
+				} else {
+					store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
+				}
+			}
 		}
 	}
 }
