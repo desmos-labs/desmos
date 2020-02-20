@@ -66,7 +66,8 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    ["fullnode/installation", "Install and Running a Fullnode"],
+                    ["fullnode/installation", "Setup"],
+                    ["fullnode/update", "Update"],
                 ]
             },
             {
@@ -75,7 +76,10 @@ module.exports = {
                 children: [
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
-                    ["validators/validator-setup", "Setup"],
+                    ["validators/setup", "Setup"],
+                    ["validators/update", "Update"],
+                    ["validators/halting", "Halting"],
+                    ["validators/common-problems", "Common problems"],
                 ]
             },
             {
