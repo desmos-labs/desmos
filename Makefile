@@ -124,7 +124,7 @@ benchmark:
 ########################################
 ### Local validator nodes using docker and docker-compose
 
-build-docker-desmosdnode:
+build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
