@@ -52,7 +52,7 @@ module.exports = {
         sidebar: [
             {
                 title: "Developers",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["developers/overview", "Overview"],
                     ["developers/perform-transactions", "Performing transactions"],
@@ -63,7 +63,7 @@ module.exports = {
             },
             {
                 title: "Running a Fullnode",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
                     ["fullnode/installation", "Setup"],
@@ -72,7 +72,7 @@ module.exports = {
             },
             {
                 title: "Validators",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
@@ -84,7 +84,7 @@ module.exports = {
             },
             {
                 title: "Testnets",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["testnets/overview", "Overview"],
                     ["testnets/create-local", "Create a local testnet"],
@@ -93,7 +93,7 @@ module.exports = {
             },
             {
                 title: "Migrations",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["migrations/v0.3.0", "Migrate to version 0.3.0"]
                 ]
