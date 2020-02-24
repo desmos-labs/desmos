@@ -92,7 +92,7 @@ module.exports = {
                 ],
             },
             {
-                title: "Migratios",
+                title: "Migrations",
                 collapsable: false,
                 children: [
                     ["migrations/v0.3.0", "Migrate to version 0.3.0"]
