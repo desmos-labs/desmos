@@ -10,10 +10,12 @@ services:
       - ID=0
       - LOG=${LOG:-desmosd.log}
     volumes:
+      - ./build/node0:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.2
+    command: ["desmosd", "start"]
 
   desmosnode1:
     container_name: desmosnode1
@@ -24,10 +26,12 @@ services:
       - ID=1
       - LOG=${LOG:-desmosd.log}
     volumes:
+      - ./build/node1:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.3
+    command: ["desmosd", "start"]
 
   desmosnode2:
     container_name: desmosnode2
@@ -38,10 +42,12 @@ services:
     ports:
       - "26661-26662:26656-26657"
     volumes:
+      - ./build/node2:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.4
+    command: ["desmosd", "start"]
 
   desmosnode3:
     container_name: desmosnode3
@@ -52,10 +58,12 @@ services:
     ports:
       - "26663-26664:26656-26657"
     volumes:
+      - ./build/node3:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.5
+    command: ["desmosd", "start"]
 
 networks:
   localnet:

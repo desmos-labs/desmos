@@ -8,10 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_IsPostDuplicate(t *testing.T) {
-	firstUser, err := sdk.AccAddressFromBech32("cosmos10vu52vwmv5gn8k4xp9gcuz2an4my73lct9fnms")
-	require.NoError(t, err)
-
+func TestKeeper_IsPostConflicting(t *testing.T) {
 	secondUser, err := sdk.AccAddressFromBech32("cosmos18438yx7re4hrdxxc64rcfdthl5qkfdejq24lta")
 	require.NoError(t, err)
 
@@ -29,7 +26,7 @@ func TestKeeper_IsPostDuplicate(t *testing.T) {
 			expContains: false,
 		},
 		{
-			name: "Existing list returns true when it does (content)",
+			name: "Same exact post returns true",
 			posts: types.Posts{
 				types.Post{
 					PostID:         testPost.PostID + 1,
@@ -50,34 +47,13 @@ func TestKeeper_IsPostDuplicate(t *testing.T) {
 			expPost:     testPost,
 		},
 		{
-			name: "Existing list returns true when it does (ID)",
-			posts: types.Posts{
-				types.Post{
-					PostID:         testPost.PostID,
-					ParentID:       testPost.ParentID,
-					Message:        testPost.Message + "other",
-					Created:        testPost.Created,
-					LastEdited:     testPost.LastEdited,
-					AllowsComments: testPost.AllowsComments,
-					Subspace:       testPost.Subspace,
-					OptionalData:   testPost.OptionalData,
-					Creator:        testPost.Creator,
-					Medias:         testPost.Medias,
-					PollData:       testPost.PollData,
-				},
-			},
-			post:        testPost,
-			expContains: true,
-			expPost:     testPost,
-		},
-		{
-			name: "Existing list returns false when it does not",
+			name: "Post with different creation date returns false",
 			posts: types.Posts{
 				types.Post{
 					PostID:         testPost.PostID + 1,
 					ParentID:       testPost.ParentID,
-					Message:        testPost.Message + "other",
-					Created:        testPost.Created,
+					Message:        testPost.Message,
+					Created:        testPost.Created.AddDate(0, 0, 1),
 					LastEdited:     testPost.LastEdited,
 					AllowsComments: testPost.AllowsComments,
 					Subspace:       testPost.Subspace,
@@ -89,37 +65,47 @@ func TestKeeper_IsPostDuplicate(t *testing.T) {
 			},
 			post:        testPost,
 			expContains: false,
+			expPost:     testPost,
 		},
 		{
-			name: "Same post but from different users give no problem",
+			name: "Post with different subspace returns false",
 			posts: types.Posts{
 				types.Post{
-					PostID:         testPost.PostID,
+					PostID:         testPost.PostID + 1,
 					ParentID:       testPost.ParentID,
-					Message:        testPost.Message + "other",
+					Message:        testPost.Message,
+					Created:        testPost.Created,
+					LastEdited:     testPost.LastEdited,
+					AllowsComments: testPost.AllowsComments,
+					Subspace:       testPost.Subspace + "other",
+					OptionalData:   testPost.OptionalData,
+					Creator:        testPost.Creator,
+					Medias:         testPost.Medias,
+					PollData:       testPost.PollData,
+				},
+			},
+			post:        testPost,
+			expContains: false,
+			expPost:     testPost,
+		},
+		{
+			name: "Post with different creator returns false",
+			posts: types.Posts{
+				types.Post{
+					PostID:         testPost.PostID + 1,
+					ParentID:       testPost.ParentID,
+					Message:        testPost.Message,
 					Created:        testPost.Created,
 					LastEdited:     testPost.LastEdited,
 					AllowsComments: testPost.AllowsComments,
 					Subspace:       testPost.Subspace,
 					OptionalData:   testPost.OptionalData,
-					Creator:        firstUser,
+					Creator:        secondUser,
 					Medias:         testPost.Medias,
 					PollData:       testPost.PollData,
 				},
 			},
-			post: types.Post{
-				PostID:         testPost.PostID + 1,
-				ParentID:       testPost.ParentID,
-				Message:        testPost.Message + "other",
-				Created:        testPost.Created,
-				LastEdited:     testPost.LastEdited,
-				AllowsComments: testPost.AllowsComments,
-				Subspace:       testPost.Subspace,
-				OptionalData:   testPost.OptionalData,
-				Creator:        secondUser,
-				Medias:         testPost.Medias,
-				PollData:       testPost.PollData,
-			},
+			post:        testPost,
 			expContains: false,
 		},
 	}
@@ -132,11 +118,11 @@ func TestKeeper_IsPostDuplicate(t *testing.T) {
 				k.SavePost(ctx, post)
 			}
 
-			post, contains := k.IsPostDuplicate(ctx, test.post)
+			post, contains := k.IsPostConflicting(ctx, test.post)
 			require.Equal(t, test.expContains, contains)
 
 			if test.expContains {
-				require.True(t, test.expPost.IsDuplicate(*post))
+				require.True(t, test.expPost.IsConflictingWith(*post))
 			} else {
 				require.Nil(t, post)
 			}
