@@ -52,7 +52,7 @@ module.exports = {
         sidebar: [
             {
                 title: "Developers",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["developers/overview", "Overview"],
                     ["developers/perform-transactions", "Performing transactions"],
@@ -63,24 +63,28 @@ module.exports = {
             },
             {
                 title: "Running a Fullnode",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    ["fullnode/installation", "Install and Running a Fullnode"],
+                    ["fullnode/installation", "Setup"],
+                    ["fullnode/update", "Update"],
                 ]
             },
             {
                 title: "Validators",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
-                    ["validators/validator-setup", "Setup"],
+                    ["validators/setup", "Setup"],
+                    ["validators/update", "Update"],
+                    ["validators/halting", "Halting"],
+                    ["validators/common-problems", "Common problems"],
                 ]
             },
             {
                 title: "Testnets",
-                collapsable: false,
+                collapsable: true,
                 children: [
                     ["testnets/overview", "Overview"],
                     ["testnets/create-local", "Create a local testnet"],
@@ -88,8 +92,8 @@ module.exports = {
                 ],
             },
             {
-                title: "Migratios",
-                collapsable: false,
+                title: "Migrations",
+                collapsable: true,
                 children: [
                     ["migrations/v0.3.0", "Migrate to version 0.3.0"]
                 ]

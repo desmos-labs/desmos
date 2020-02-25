@@ -86,7 +86,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"the provided post conflicts with the one having id 1. Please check that either their creation date, subspace or creator are different"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -172,7 +173,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testPost.Creator,
-				testPost.Created,
+				testPost.Created.AddDate(0, 0, 1),
 				testPost.Medias,
 				testPost.PollData,
 			),
@@ -204,7 +205,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the provided post is a duplicate of the one having id 1"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"the provided post conflicts with the one having id 1. Please check that either their creation date, subspace or creator are different"),
 		},
 	}
 

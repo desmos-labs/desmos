@@ -307,7 +307,7 @@ func (app *DesmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci
 	return app.mm.EndBlock(ctx, req)
 }
 
-// InitChainer application update at chain initialization
+// InitChainer application update.md at chain initialization
 func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)

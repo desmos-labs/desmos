@@ -124,12 +124,12 @@ benchmark:
 ########################################
 ### Local validator nodes using docker and docker-compose
 
-build-docker-desmosdnode:
+build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
-	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/desmosd:Z desmoslabs/desmos desmosd testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then $(CURDIR)/build/desmosd testnet --v 4 -o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet

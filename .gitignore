@@ -10,6 +10,7 @@ vendor/
 build/
 node_modules/
 coverage.txt
+node*/
 
 # IDE
 .idea/

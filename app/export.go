@@ -133,7 +133,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	})
 
 	// Iterate through validators by power descending, reset bond heights, and
-	// update bond intra-tx counters.
+	// update.md bond intra-tx counters.
 	store := ctx.KVStore(app.keys[staking.StoreKey])
 	iter := sdk.KVStoreReversePrefixIterator(store, staking.ValidatorsKey)
 	counter := int16(0)

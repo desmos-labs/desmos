@@ -250,9 +250,16 @@ func (p Post) Equals(other Post) bool {
 	return p.PostID.Equals(other.PostID) && p.ContentsEquals(other)
 }
 
-// IsDuplicate returns true if other is a duplicate of p either for its ID or its content
-func (p Post) IsDuplicate(other Post) bool {
-	return p.PostID.Equals(other.PostID) || p.ContentsEquals(other)
+// IsConflictingWith returns true if other is somehow conflicting with this post.
+// In order to not be conflicting, two posts should have a different ID and also either:
+// - a different creation date
+// - a different subspace
+// - a different creator
+//
+// If they have the same creation date, subspace and creator they are considered conflicting.
+func (p Post) IsConflictingWith(other Post) bool {
+	return p.PostID.Equals(other.PostID) ||
+		(p.Created.Equal(other.Created) && p.Subspace == other.Subspace && p.Creator.Equals(other.Creator))
 }
 
 // ContentsEquals returns true if and only if p and other contain the same data, without considering the ID

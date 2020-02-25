@@ -214,7 +214,7 @@ jobs:
             docker build .
           else
             docker build -t desmoslabs/desmos:$DESMOSD_VERSION .
-            docker login --password-stdin -u $DOCKER_USER \<<<$DOCKER_PASSWORD
+            echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USER --password-stdin
             docker push desmoslabs/desmos:$DESMOSD_VERSION
           fi
   docker-tagged:
@@ -227,7 +227,7 @@ jobs:
           docker_layer_caching: true
       - run: |
           docker build -t desmoslabs/desmos:$CIRCLE_TAG .
-          docker login --password-stdin -u $DOCKER_USER \<<DOCKER_PASSWORD
+          echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USER --password-stdin
           docker push desmoslabs/desmos:$CIRCLE_TAG
 
 workflows:
