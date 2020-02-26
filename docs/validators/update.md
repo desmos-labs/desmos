@@ -12,7 +12,7 @@ First of all we need to stop the currently running validator node. To do so you 
 If you have also setup a [background service](../fullnode/installation.md#optional-configure-the-service), please stop that too by executing the following command: 
 
 ```bash
-systemctly stop desmosd
+systemctl stop desmosd
 ``` 
 
 ## 2. Export the current state
