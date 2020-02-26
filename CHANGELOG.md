@@ -1,3 +1,7 @@
+# Version 0.4.0
+## Changes
+- Improved `alias.go` files (#103)
+
 # Version 0.3.0
 ## Changes
 - Implemented the support for media posts (#36)
