@@ -57,6 +57,7 @@ type (
 	MsgEditPost           = types.MsgEditPost
 	MsgAddPostReaction    = types.MsgAddPostReaction
 	MsgRemovePostReaction = types.MsgRemovePostReaction
+	MsgAnswerPoll         = types.MsgAnswerPoll
 
 	// Queries
 	QueryPostsParams = types.QueryPostsParams
