@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // -----------
@@ -28,7 +28,7 @@ func TestPostMedias_String(t *testing.T) {
 
 	expected := "Medias - [URI] [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
 
-	assert.Equal(t, expected, actual)
+	require.Equal(t, expected, actual)
 }
 
 func TestPostMedias_Equals(t *testing.T) {
@@ -107,7 +107,7 @@ func TestPostMedias_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
@@ -168,7 +168,7 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			medias := test.medias.AppendIfMissing(test.newMedia)
-			assert.Equal(t, test.expMedias, medias)
+			require.Equal(t, test.expMedias, medias)
 		})
 	}
 }
@@ -212,9 +212,9 @@ func TestPostMedias_Validate(t *testing.T) {
 		test := test
 		t.Run(test.expErr, func(t *testing.T) {
 			if len(test.expErr) != 0 {
-				assert.Equal(t, test.expErr, test.postMedia.Validate().Error())
+				require.Equal(t, test.expErr, test.postMedia.Validate().Error())
 			} else {
-				assert.Nil(t, test.postMedia.Validate())
+				require.Nil(t, test.postMedia.Validate())
 			}
 		})
 	}
@@ -233,7 +233,7 @@ func TestPostMedia_String(t *testing.T) {
 	actual := pm.String()
 	expected := "Media - URI - [http://example.com] ; Mime-Type - [text/plain] \n"
 
-	assert.Equal(t, expected, actual)
+	require.Equal(t, expected, actual)
 }
 
 func TestPostMedia_Validate(t *testing.T) {
@@ -275,9 +275,9 @@ func TestPostMedia_Validate(t *testing.T) {
 		test := test
 		t.Run(test.expErr, func(t *testing.T) {
 			if len(test.expErr) != 0 {
-				assert.Equal(t, test.expErr, test.postMedia.Validate().Error())
+				require.Equal(t, test.expErr, test.postMedia.Validate().Error())
 			} else {
-				assert.Nil(t, test.postMedia.Validate())
+				require.Nil(t, test.postMedia.Validate())
 			}
 		})
 	}
@@ -331,7 +331,7 @@ func TestPostMedia_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
@@ -343,7 +343,7 @@ func TestPostMedia_ParseURI(t *testing.T) {
 	}{
 		{
 			uri:    "http://error.com",
-			expErr: fmt.Errorf("invalid uri provided"),
+			expErr: nil,
 		},
 		{
 			uri:    "http://",
@@ -378,7 +378,7 @@ func TestPostMedia_ParseURI(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.uri, func(t *testing.T) {
-			assert.Equal(t, test.expErr, types.ValidateURI(test.uri))
+			require.Equal(t, test.expErr, types.ValidateURI(test.uri))
 		})
 	}
 }

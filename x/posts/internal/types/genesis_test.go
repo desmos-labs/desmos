@@ -6,11 +6,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
-	user, _ := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name        string
@@ -44,9 +45,9 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Genesis with invalid poll answers errors",
 			genesis: types.GenesisState{
 				Posts: types.Posts{},
-				PollAnswers: map[string]types.UsersAnswersDetails{
+				PollAnswers: map[string]types.UserAnswers{
 					"1": {
-						types.NewAnswersDetails([]uint{}, user),
+						types.NewUserAnswer([]types.AnswerID{}, user),
 					},
 				},
 				Reactions: map[string]types.Reactions{},
@@ -59,9 +60,9 @@ func TestValidateGenesis(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if test.shouldError {
-				assert.Error(t, types.ValidateGenesis(test.genesis))
+				require.Error(t, types.ValidateGenesis(test.genesis))
 			} else {
-				assert.NoError(t, types.ValidateGenesis(test.genesis))
+				require.NoError(t, types.ValidateGenesis(test.genesis))
 			}
 		})
 	}

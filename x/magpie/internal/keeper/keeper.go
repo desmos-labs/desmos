@@ -34,7 +34,7 @@ func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length int64) error {
 	}
 
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.SessionLengthKey), k.Cdc.MustMarshalBinaryBare(length))
+	store.Set(types.SessionLengthKey, k.Cdc.MustMarshalBinaryBare(length))
 	return nil
 }
 
@@ -43,8 +43,8 @@ func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) int64 {
 	store := ctx.KVStore(k.StoreKey)
 
 	length := int64(0)
-	if store.Has([]byte(types.SessionLengthKey)) {
-		k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.SessionLengthKey)), &length)
+	if store.Has(types.SessionLengthKey) {
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &length)
 	}
 
 	return length
@@ -54,26 +54,22 @@ func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) int64 {
 // --- Sessions
 // -------------
 
-func (k Keeper) getSessionStoreKey(id types.SessionID) []byte {
-	return []byte(types.SessionStorePrefix + id.String())
-}
-
 // GetLastLikeId returns the last like id that has been used
 func (k Keeper) GetLastSessionID(ctx sdk.Context) types.SessionID {
 	store := ctx.KVStore(k.StoreKey)
-	if !store.Has([]byte(types.LastSessionIDStoreKey)) {
+	if !store.Has(types.LastSessionIDStoreKey) {
 		return types.SessionID(0)
 	}
 
 	var id types.SessionID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get([]byte(types.LastSessionIDStoreKey)), &id)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &id)
 	return id
 }
 
 // SetLastSessionID allows to set the last used like id
 func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(types.LastSessionIDStoreKey), k.Cdc.MustMarshalBinaryBare(&id))
+	store.Set(types.LastSessionIDStoreKey, k.Cdc.MustMarshalBinaryBare(&id))
 }
 
 // SaveSession allows to save a session inside the given context.
@@ -81,7 +77,7 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) {
 	// Save the session
 	store := ctx.KVStore(k.StoreKey)
-	store.Set(k.getSessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
+	store.Set(types.SessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
 
 	// Update the last used session id
 	k.SetLastSessionID(ctx, session.SessionID)
@@ -91,7 +87,7 @@ func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) {
 func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.Session, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := k.getSessionStoreKey(id)
+	key := types.SessionStoreKey(id)
 	if !store.Has(key) {
 		return types.Session{}, false
 	}
@@ -104,9 +100,10 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 // GetSessions returns the list of all the sessions present inside the current context
 func (k Keeper) GetSessions(ctx sdk.Context) types.Sessions {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.SessionStorePrefix))
+	iterator := sdk.KVStorePrefixIterator(store, types.SessionStorePrefix)
+	defer iterator.Close()
 
-	var sessions []types.Session
+	sessions := make(types.Sessions, 0)
 	for ; iterator.Valid(); iterator.Next() {
 		var session types.Session
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &session)

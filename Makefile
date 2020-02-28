@@ -77,38 +77,69 @@ go-mod-cache: go.sum
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
 	@go mod verify
-	@go mod tidy
 
-lint: golangci-lint
-	$(BINDIR)/golangci-lint run
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
-	go mod verify
-.PHONY: lint
+draw-deps:
+	@# requires brew install graphviz or apt-get install graphviz
+	go get github.com/RobotsAndPencils/goviz
+	@goviz -i ./cmd/gaiad -d 2 | dot -Tpng -o dependency-graph.png
+
+clean:
+	rm -rf snapcraft-local.yaml build/
+
+distclean: clean
+	rm -rf vendor/
 
 ########################################
 ### Testing
 
-test: test-unit
+test: test-unit test-build
+test-all: test test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
+test-build: build
+	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
+
+test-race:
+	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
+
+test-cover:
+	@go test -mod=readonly -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -tags='ledger test_ledger_mock' ./...
+
+
+lint: golangci-lint
+	golangci-lint run
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
+	go mod verify
+
+format:
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs goimports -w -local github.com/desmos-labs/desmos
+
+benchmark:
+	@go test -mod=readonly -bench=. ./...
 
 ########################################
 ### Local validator nodes using docker and docker-compose
 
-build-docker-desmosdnode:
+build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
-localnet-start: build-docker-desmosdnode build-linux localnet-stop
-	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run -e COSMOS_SDK_TEST_KEYRING=y --rm -v $(CURDIR)/build:/desmosd:Z desmos-labs/desmosdnode testnet --v 4 -o . --starting-ip-address 192.168.10.2 ; fi
+localnet-start: build-linux localnet-stop
+	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then $(CURDIR)/build/desmosd testnet --v 4 -o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet
 localnet-stop:
 	docker-compose down
 
+
+# include simulations
+include Makefile.simulations
+
 .PHONY: all build-linux install \
-	go-mod-cache build \
-	test test-unit
+	go-mod-cache clean build \
+	test test-all test-cover test-unit test-race

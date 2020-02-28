@@ -9,6 +9,8 @@ vendor/
 .vendor-new/
 build/
 node_modules/
+coverage.txt
+node*/
 
 # IDE
 .idea/

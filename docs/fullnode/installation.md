@@ -1,6 +1,11 @@
-# Install and Running Desmos Fullnode
+# Installing and running a Desmos fullnode
 
-## Setup Your Environment
+:::warning This guide is for new fullnodes only  
+If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](update.md).   
+:::
+
+
+## 1. Setup your environment
 In order to run a fullnode, you need to build `desmosd` and `desmoscli` which require `Go`, `git`, `gcc` and `make` installed.
 
 This process depends on your working environment.
@@ -67,7 +72,7 @@ Note that is still possible to build and run the software on __Windows__ but it 
 
 ::::
 
-## Build the software
+## 2. Build the software
 The following operations will all be done in the terminal environment under your home directory.
 
 ```bash
@@ -91,7 +96,7 @@ If the software is built successfully, `desmosd` and `desmoscli` will be located
 desmosd version --long
 ```
 
-## Initialize the Desmos working directory
+## 3. Initialize the Desmos working directory
 Configuration files and chain data will be stored inside the `.desmosd` directory under your home directory by default. It will be created when you initialize the environment.
 
 ```bash
@@ -101,7 +106,7 @@ desmosd init <your_moniker>
 
 You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmosd` working directory.
 
-## Get the genesis file
+## 4. Get the genesis file
 To connect to or start a new network, a genesis file is required. The file contains all the settings telling how the genesis block of the network should look like. To connect to the `morpheus` testnets, you will need the corresponding genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct genesis file by running the following command.
 
 ```bash
@@ -113,7 +118,7 @@ rm $HOME/.desmosd/config/genesis.json
 curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
 ```
 
-## Connect to persistent peer
+## 5. Connect to persistent peer
 To properly run your node, you will need to connect it to other full nodes running with the same software and genesis file. This can be done configuring the `persisten_peers` value inside the `config.toml` file localed under the `.desmosd` working directory.
 
 ```bash
@@ -130,7 +135,7 @@ persistent_peers = "89f913e84b58da594eb449fca7b0fcb540e52d05@35.240.254.97:26656
 
 Save the file and exit the text editor.
 
-## Start the Desmos node
+## 6. Start the Desmos node
 Now you are good to run the full node. To do so, run:
 
 ```bash
@@ -186,9 +191,9 @@ You should see an output like the following one:
 
 If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it is `true`, it means your node is still syncing. 
 
-After your node is fully synced, you can consider running your full node as a [validator node](../validators/validator-setup.md#create-your-validator).
+After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
 
-## Configure the service
+## (Optional) Configure the service
 To allow your `desmosd` instance to run in the background as a service you need to execute the following command
 
 ```bash

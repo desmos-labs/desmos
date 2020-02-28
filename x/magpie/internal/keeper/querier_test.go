@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -61,15 +61,18 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 			result, err := querier(ctx, test.query, request)
 
 			if result != nil {
-				assert.Nil(t, err)
-				expectedIndented, _ := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
-				assert.Equal(t, string(expectedIndented), string(result))
+				require.Nil(t, err)
+
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
+				require.NoError(t, err)
+
+				require.Equal(t, string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				assert.NotNil(t, err)
-				assert.Equal(t, test.expErr.Error(), err.Error())
-				assert.Nil(t, result)
+				require.NotNil(t, err)
+				require.Equal(t, test.expErr.Error(), err.Error())
+				require.Nil(t, result)
 			}
 		})
 	}

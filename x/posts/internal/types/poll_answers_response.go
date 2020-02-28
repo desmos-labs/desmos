@@ -8,8 +8,8 @@ import (
 // PollAnswersQueryResponse represents the answers made to a post's poll
 // that is returned to user upon a query
 type PollAnswersQueryResponse struct {
-	PostID         PostID              `json:"post_id"`
-	AnswersDetails UsersAnswersDetails `json:"answers_details"`
+	PostID         PostID      `json:"post_id"`
+	AnswersDetails UserAnswers `json:"answers_details"`
 }
 
 // String implements fmt.Stringer

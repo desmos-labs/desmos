@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ------------------
@@ -31,7 +31,7 @@ func TestSessionID_Valid(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(fmt.Sprintf("%s id valid: %t", test.id, test.shouldBeValid), func(t *testing.T) {
-			assert.Equal(t, test.shouldBeValid, test.id.Valid())
+			require.Equal(t, test.shouldBeValid, test.id.Valid())
 		})
 	}
 }
@@ -54,7 +54,7 @@ func TestSessionID_Next(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(fmt.Sprintf("%s next is %s", test.id, test.nextID), func(t *testing.T) {
-			assert.Equal(t, test.nextID, test.id.Next())
+			require.Equal(t, test.nextID, test.id.Next())
 		})
 	}
 }
@@ -77,7 +77,7 @@ func TestSessionID_String(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(fmt.Sprintf("String representation of %s is %s", test.id, test.expString), func(t *testing.T) {
-			assert.Equal(t, test.expString, test.id.String())
+			require.Equal(t, test.expString, test.id.String())
 		})
 	}
 }
@@ -124,8 +124,8 @@ func TestParseSessionID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			id, err := types.ParseSessionID(test.string)
 
-			assert.Equal(t, test.expID, id)
-			assert.Equal(t, test.expErr, err != nil)
+			require.Equal(t, test.expID, id)
+			require.Equal(t, test.expErr, err != nil)
 		})
 	}
 }
@@ -135,8 +135,11 @@ func TestParseSessionID(t *testing.T) {
 // ------------------
 
 func TestSession_Equals(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
-	otherOwner, _ := sdk.AccAddressFromBech32("cosmos1cl4kjuqz8zrgw9h32v5hrhzulmlf0jcmjaw67c")
+	owner, err := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	require.NoError(t, err)
+
+	otherOwner, err := sdk.AccAddressFromBech32("cosmos1cl4kjuqz8zrgw9h32v5hrhzulmlf0jcmjaw67c")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -365,13 +368,15 @@ func TestSession_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }
 
 func TestSession_String(t *testing.T) {
-	owner, _ := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	owner, err := sdk.AccAddressFromBech32("cosmos1htw7gatueyhl9at24m62wl3j3kar3q3ass2pkj")
+	require.NoError(t, err)
+
 	tests := []struct {
 		name      string
 		session   types.Session
@@ -401,7 +406,7 @@ func TestSession_String(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expString, test.session.String())
+			require.Equal(t, test.expString, test.session.String())
 		})
 	}
 }
@@ -464,7 +469,7 @@ func TestSessions_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equals(test.second))
 		})
 	}
 }

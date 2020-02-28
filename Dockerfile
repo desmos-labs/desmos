@@ -25,6 +25,7 @@ WORKDIR /go/src/github.com/cosmos/desmos
 COPY . .
 
 # Install minimum necessary dependencies, build Cosmos SDK, remove packages
+RUN apk update
 RUN apk add --no-cache $PACKAGES && \
     make tools && \
     make install

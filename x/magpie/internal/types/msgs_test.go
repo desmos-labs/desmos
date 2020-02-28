@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -24,12 +24,12 @@ var msgShareDocumentSchema = types.NewMsgCreateSession(
 
 func TestMsgCreateSession_Route(t *testing.T) {
 	actual := msgShareDocumentSchema.Route()
-	assert.Equal(t, "magpie", actual)
+	require.Equal(t, "magpie", actual)
 }
 
 func TestMsgCreateSession_Type(t *testing.T) {
 	actual := msgShareDocumentSchema.Type()
-	assert.Equal(t, "create_session", actual)
+	require.Equal(t, "create_session", actual)
 }
 
 func TestMsgCreateSession_ValidateBasic(t *testing.T) {
@@ -98,7 +98,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expErr.Error(), test.msg.ValidateBasic().Error())
+			require.Equal(t, test.expErr.Error(), test.msg.ValidateBasic().Error())
 		})
 	}
 }
@@ -106,11 +106,11 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 func TestMsgCreateSession_GetSignBytes(t *testing.T) {
 	actual := msgShareDocumentSchema.GetSignBytes()
 	expected := `{"type":"desmos/MsgCreateSession","value":{"external_owner":"cosmos1njrqah832yfdv8yhxnrskerzxhj5zj9e563uge","namespace":"cosmos","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","pub_key":"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs","signature":"QmZh...==="}}`
-	assert.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgCreateSession_GetSigners(t *testing.T) {
 	actual := msgShareDocumentSchema.GetSigners()
-	assert.Equal(t, 1, len(actual))
-	assert.Equal(t, msgShareDocumentSchema.Owner, actual[0])
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgShareDocumentSchema.Owner, actual[0])
 }
