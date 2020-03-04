@@ -2,7 +2,7 @@
 This query endpoint allows you to retrieve the details of a single post having its id. 
 
 **CLI**
- ```shell
+ ```bash
 desmoscli query posts post [id]
 
 # Example

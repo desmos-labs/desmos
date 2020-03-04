@@ -2,7 +2,7 @@
 This query allows you to retrieve the details of a session having its id. 
 
 **CLI**
-```shell
+```bash
 desmoscli query sessions session [id]
 
 # Example
