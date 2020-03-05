@@ -1,4 +1,4 @@
-package v0_3_0
+package v030
 
 import (
 	v020magpie "github.com/desmos-labs/desmos/x/magpie/legacy/v0.2.0"
