@@ -80,10 +80,10 @@ If your validator is jailed it probably means that it have been inactive for a l
 Once you have fixed the problems, you can unjail your validator by executing the following command: 
 
 ```bash
-desmoscli tx staking unjail --chain-id <chain_id> --from <your_key>
+desmoscli tx slashing unjail --chain-id <chain_id> --from <your_key>
 
 # Example
-# desmoscli tx staking unjail --chain-id morpheus-1001 --from validator
+# desmoscli tx slashing unjail --chain-id morpheus-1001 --from validator
 ```
 
 This will perform an unjail transaction that will set your validator as active again from the next block. 
