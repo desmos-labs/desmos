@@ -1,4 +1,4 @@
-# Migrate your validator node to a new version
+# Migrate your validator node to a new network
 
 :::warning Upgrade-only guide
 The following guide is intended for all validators that are currently operating on a Desmos chain version and would like to upgrade to a new version.
@@ -19,7 +19,7 @@ systemctl stop desmosd
 Once the fullnode has been properly stopped, you can export the current chain state. To do so execute the following command: 
 
 ```bash
-desmosd export > old-state.json
+desmosd export --for-zero-height > old-state.json
 ```
 
 This will allow you to write the current chain state to the `old-state.json` file inside the current directory. 
@@ -37,7 +37,7 @@ Once you have stopped your validator, it is now time to update the Desmos binari
 After updating the fullnode software **do not** start it yet. If you have mistakenly started it, please shut it down before continuing.  
 :::
 
-## 4. Migrate to a new version   
+## 4. Migrate to a new network   
 After updating the fullnode, it is now time to migrate the old chain state to a new genesis state. To do so, you need to execute the following command: 
 
 ```bash
@@ -50,9 +50,27 @@ desmosd migrate <version> ./old-state.json \
 
 Please note that the `version`, `new-chain-id` and the `new-genesis-time` will be communicated to you in advance and will also be available inside the proper folder [on the testnets repo](https://github.com/desmos-labs/morpheus). 
 
-Once you have migrated the 
+Once you have migrated the genesis file, you need to reset the status of your node.
 
-## 5. Start the fullnode again
+## 5. Reset your node
+:::danger Make sure you understand what you are doing
+Please be cautious when you reset your node. Unintended mistakes may lead to missing validator key or double sign.
+:::
+
+Resetting the node will have the followings happen.
+1. **Reset validating state**
+2. **Remove chain data**
+3. **Remove address book**
+
+To reset the node, you need to execute the following command:
+
+```bash
+desmosd unsafe-reset-all
+```
+
+Please make sure your validator key located at `~/.desmosd/config/priv_validator_key.json` is intact.
+
+## 6. Start the fullnode again
 After you have properly migrated the genesis state, you can start again the fullnode and the validator by running 
 
 ```bash

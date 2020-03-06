@@ -2,7 +2,7 @@
 This query endpoint allows you to get all the stored posts that match one or more filters. 
 
 **CLI**
-```shell
+```bash
 desmoscli query posts [--flags]
 ```
 
@@ -21,13 +21,13 @@ Available flags:
    - `ascending`
    - `descending`
 
-```shell
+```bash
 # Example
 # desmoscli query posts --parent-id=1 --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
 ```
 
 **REST**
-```shell
+```bash
 /posts
 ```
 
@@ -40,7 +40,7 @@ Available parameters:
 - `sort_by` (e.g. `sort_by=created`)
 - `sort_order` (e.g. `sort_order=descending`)
 
-```shell
+```bash
 # Example
 # curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
 ```
