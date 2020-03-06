@@ -56,7 +56,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Medias) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank")
 	}
 

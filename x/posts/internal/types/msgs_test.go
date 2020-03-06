@@ -75,7 +75,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
-			name: "Empty message returns error",
+			name: "Empty message returns error if medias are empty",
 			msg: types.NewMsgCreatePost(
 				"",
 				types.PostID(0),
@@ -84,7 +84,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				map[string]string{},
 				creator,
 				date,
-				msgCreatePost.Medias,
+				nil,
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
