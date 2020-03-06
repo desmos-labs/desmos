@@ -63,8 +63,9 @@ You need to firstly specify the media URI and then its mime-type separeted by a 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single media" false \
   --media "https://example.com/media1,text/plain"
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
-  --media "https://example.com/media1,text/plain"
+  --media "https://example.com/media1,text/plain" \
   --media "https://example.com/media2,application/json"
+
 
 
 === Polls ===

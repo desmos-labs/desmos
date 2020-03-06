@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"sort"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -41,58 +42,16 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	return id
 }
 
-// SavePostHashtag allows to save the hashtag association with the given postID.
-// It assumes that the postID is associated with an existent post
-func (k Keeper) SavePostHashtag(ctx sdk.Context, hashtag string, postID types.PostID) {
-	store := ctx.KVStore(k.StoreKey)
-	postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
-	postIDs, appended := postIDs.AppendIfMissing(postID)
-	if appended {
-		store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
-	}
-}
+func (k Keeper) GetPostHashtags(post types.Post) []string {
+	re := regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
+	hashtags := re.FindAllStringSubmatch(post.Message, -1)
 
-// RemovePostHashtags allows to remove all the hashtags associated with a postID.
-// It assumes that there's already and association between the given postID and hashtags
-func (k Keeper) RemovePostHashtags(ctx sdk.Context, postID types.PostID, hashtags []string) {
-	store := ctx.KVStore(k.StoreKey)
-	for _, hashtag := range hashtags {
-		if postIDs := k.GetHashtagAssociatedPosts(ctx, hashtag); len(postIDs) != 0 {
-			postIDs, removed := postIDs.RemoveIfPresent(postID)
-			if removed {
-				if len(postIDs) == 0 {
-					store.Delete(types.HashtagStoreKey(hashtag))
-				} else {
-					store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&postIDs))
-				}
-			}
-		}
-	}
-}
-
-// GetHashtagAssociatedPosts returns the posts IDs associated with the given hashtag
-func (k Keeper) GetHashtagAssociatedPosts(ctx sdk.Context, hashtag string) types.PostIDs {
-	store := ctx.KVStore(k.StoreKey)
-	var postIDs types.PostIDs
-	bz := store.Get(types.HashtagStoreKey(hashtag))
-	k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
-
-	return postIDs
-}
-
-// GetHashtags allows to returns the list of hashtags that have been stored inside the given context
-func (k Keeper) GetHashtags(ctx sdk.Context) map[string]types.PostIDs {
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.HashtagPrefix)
-
-	hashtagsData := map[string]types.PostIDs{}
-	for ; iterator.Valid(); iterator.Next() {
-		var postIDs types.PostIDs
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postIDs)
-		hashtagsData[string(bytes.TrimPrefix(iterator.Key(), types.HashtagPrefix))] = postIDs
+	var hts = []string{}
+	for _, hashtagSlice := range hashtags {
+		hts = append(hts, hashtagSlice[0])
 	}
 
-	return hashtagsData
+	return hts
 }
 
 // SavePost allows to save the given post inside the current context.
@@ -195,11 +154,17 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 		// match hashtags if provided
 		if len(params.Hashtags) > 0 {
-			for _, hashtag := range params.Hashtags {
-				postsIDs := k.GetHashtagAssociatedPosts(ctx, hashtag)
-				if matchHashtags = postsIDs.Contains(post.PostID); !matchHashtags {
-					break
+			postHashtags := k.GetPostHashtags(post)
+			if len(postHashtags) == len(params.Hashtags) {
+				sort.Strings(postHashtags)
+				sort.Strings(params.Hashtags)
+				for index, hashtag := range params.Hashtags {
+					if matchHashtags = postHashtags[index] == hashtag; !matchHashtags {
+						break
+					}
 				}
+			} else {
+				matchHashtags = false
 			}
 		}
 

@@ -8,44 +8,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func TestKeeper_GetPostHashtags(t *testing.T) {
-	tests := []struct {
-		name        string
-		message     string
-		expHashtags []string
-	}{
-		{
-			name:        "Hashtags in message extracted correctly",
-			message:     "this is a #test at #desmos",
-			expHashtags: []string{"#test", "#desmos"},
-		},
-		{
-			name:        "No hashtags in message",
-			message:     "this post contain no hashtags #",
-			expHashtags: []string{},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			hashtags := keeper.GetPostHashtags(test.message)
-			assert.Equal(t, test.expHashtags, hashtags)
-		})
-	}
-}
-
-func TestKeeper_testPost(t *testing.T) {
-
-	hashtags := viper.GetStringSlice("#one,#two")
-
-	println(hashtags)
-}
 
 // ---------------------------
 // --- handleMsgCreatePost
@@ -106,30 +70,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				types.PostID(1),
 				testPost.ParentID,
 				testPost.Message,
-				testPost.AllowsComments,
-				testPost.Subspace,
-				testPost.OptionalData,
-				testPost.Created,
-				testPost.Creator,
-			).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
-		},
-		{
-			name: "Post with hashtag is stored properly",
-			msg: types.NewMsgCreatePost(
-				"A message with #hashtag",
-				testPost.ParentID,
-				testPost.AllowsComments,
-				testPost.Subspace,
-				testPost.OptionalData,
-				testPost.Creator,
-				testPost.Created,
-				testPost.Medias,
-				testPost.PollData,
-			),
-			expPost: types.NewPost(
-				types.PostID(1),
-				testPost.ParentID,
-				"A message with #hashtag",
 				testPost.AllowsComments,
 				testPost.Subspace,
 				testPost.OptionalData,
@@ -263,20 +203,6 @@ func Test_handleMsgEditPost(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	require.NoError(t, err)
 
-	postWithHashtags := types.NewPost(
-		types.PostID(3257),
-		types.PostID(0),
-		"Post message #test",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		testPostCreationDate,
-		testPostOwner,
-	).WithMedias(types.PostMedias{types.NewPostMedia(
-		"https://uri.com",
-		"text/plain"),
-	}).WithPollData(types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, true, true))
-
 	testData := []struct {
 		name       string
 		storedPost *types.Post
@@ -320,42 +246,6 @@ func Test_handleMsgEditPost(t *testing.T) {
 				PollData:       testPost.PollData,
 			},
 		},
-		{
-			name:       "Editing post without previous hashtags",
-			storedPost: &testPost,
-			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message #hashtag", testPost.Creator, testPost.Created.AddDate(0, 0, 1)),
-			expPost: types.Post{
-				PostID:         testPost.PostID,
-				ParentID:       testPost.ParentID,
-				Message:        "Edited message #hashtag",
-				Created:        testPost.Created,
-				LastEdited:     testPost.Created.AddDate(0, 0, 1),
-				AllowsComments: testPost.AllowsComments,
-				Subspace:       testPost.Subspace,
-				OptionalData:   testPost.OptionalData,
-				Creator:        testPost.Creator,
-				Medias:         testPost.Medias,
-				PollData:       testPost.PollData,
-			},
-		},
-		{
-			name:       "Editing post with previous hashtags",
-			storedPost: &postWithHashtags,
-			msg:        types.NewMsgEditPost(testPost.PostID, "Edited message #hashtag", testPost.Creator, testPost.Created.AddDate(0, 0, 1)),
-			expPost: types.Post{
-				PostID:         testPost.PostID,
-				ParentID:       testPost.ParentID,
-				Message:        "Edited message #hashtag",
-				Created:        testPost.Created,
-				LastEdited:     testPost.Created.AddDate(0, 0, 1),
-				AllowsComments: testPost.AllowsComments,
-				Subspace:       testPost.Subspace,
-				OptionalData:   testPost.OptionalData,
-				Creator:        testPost.Creator,
-				Medias:         testPost.Medias,
-				PollData:       testPost.PollData,
-			},
-		},
 	}
 
 	for _, test := range testData {
@@ -366,9 +256,6 @@ func Test_handleMsgEditPost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {
 				store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
-				if hashtags := keeper.GetPostHashtags(test.storedPost.Message); len(hashtags) != 0 {
-					k.SavePostHashtag(ctx, hashtags[0], test.storedPost.PostID)
-				}
 			}
 
 			handler := keeper.NewHandler(k)

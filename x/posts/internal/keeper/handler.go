@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -30,18 +29,6 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
-}
-
-func GetPostHashtags(message string) []string {
-	re := regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
-	hashtags := re.FindAllStringSubmatch(message, -1)
-
-	hts := []string{}
-	for _, hashtagSlice := range hashtags {
-		hts = append(hts, hashtagSlice[0])
-	}
-
-	return hts
 }
 
 // handleMsgCreatePost handles the creation of a new post
@@ -81,12 +68,6 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	keeper.SavePost(ctx, post)
 
-	// Handle post hashtags
-	hashtags := GetPostHashtags(msg.Message)
-	for _, hashtag := range hashtags {
-		keeper.SavePostHashtag(ctx, hashtag, post.PostID)
-	}
-
 	createEvent := sdk.NewEvent(
 		types.EventTypePostCreated,
 		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
@@ -121,20 +102,11 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	if existing.Created.After(msg.EditDate) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
-	// Edit hashtags
-	if existingHashtags := GetPostHashtags(existing.Message); len(existingHashtags) != 0 {
-		keeper.RemovePostHashtags(ctx, existing.PostID, existingHashtags)
-	}
 
 	// Edit the post
 	existing.Message = msg.Message
 	existing.LastEdited = msg.EditDate
 	keeper.SavePost(ctx, existing)
-
-	newHashtags := GetPostHashtags(msg.Message)
-	for _, newHashtag := range newHashtags {
-		keeper.SavePostHashtag(ctx, newHashtag, existing.PostID)
-	}
 
 	editEvent := sdk.NewEvent(
 		types.EventTypePostEdited,

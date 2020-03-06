@@ -53,7 +53,6 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		Posts:       k.GetPosts(ctx),
 		PollAnswers: convertPostPollAnswersMap(k.GetPollAnswersMap(ctx)),
 		Reactions:   convertReactionsMap(k.GetReactions(ctx)),
-		Hashtags:    k.GetHashtags(ctx),
 	}
 }
 
@@ -78,12 +77,6 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 			if err := keeper.SaveReaction(ctx, postID, reaction); err != nil {
 				panic(err)
 			}
-		}
-	}
-
-	for hashtag, ids := range data.Hashtags {
-		for _, id := range ids {
-			keeper.SavePostHashtag(ctx, hashtag, id)
 		}
 	}
 

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
@@ -48,192 +47,46 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 	}
 }
 
-func TestKeeper_SavePostHashtags(t *testing.T) {
+func TestKeeper_GetPostHashtags(t *testing.T) {
 	tests := []struct {
-		name             string
-		existingHashtags []string
-		newHashtags      []string
-		existingPostIDs  types.PostIDs
-		newPostID        types.PostID
-		expectedIDs      types.PostIDs
+		name        string
+		post        types.Post
+		expHashtags []string
 	}{
 		{
-			name:             "Associate the ID to an existent hashtag correctly with non empty IDs before",
-			existingHashtags: []string{"#mooncake"},
-			newHashtags:      []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
-			newPostID:        types.PostID(3),
-			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
+			name: "Hashtags in message extracted correctly",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #test #desmos",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPost.Creator,
+			),
+			expHashtags: []string{"#test", "#desmos"},
 		},
 		{
-			name:             "Associate the ID to the hashtag correctly with empty IDs before",
-			existingHashtags: []string{},
-			newHashtags:      []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{},
-			newPostID:        types.PostID(1),
-			expectedIDs:      types.PostIDs{types.PostID(1)},
-		},
-		{
-			name:             "ID already present in the IDs",
-			existingHashtags: []string{"#mooncake"},
-			newHashtags:      []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
-			newPostID:        types.PostID(2),
-			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2)},
+			name: "No hashtags in message",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with no hashtag",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				testPost.Created,
+				testPost.Creator,
+			),
+			expHashtags: []string{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-
-			for _, hashtag := range test.existingHashtags {
-				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
-			}
-
-			for _, tHashtag := range test.newHashtags {
-				k.SavePostHashtag(ctx, tHashtag, test.newPostID)
-			}
-
-			for _, newHashtag := range test.newHashtags {
-				var postIDs types.PostIDs
-				bz := store.Get(types.HashtagStoreKey(newHashtag))
-				k.Cdc.MustUnmarshalBinaryBare(bz, &postIDs)
-				require.Equal(t, test.expectedIDs, postIDs)
-			}
-
-		})
-	}
-}
-
-func TestKeeper_GetHashtagAssociatedPosts(t *testing.T) {
-	tests := []struct {
-		name             string
-		existingHashtags []string
-		existingPostIDs  types.PostIDs
-		hashtag          string
-	}{
-		{
-			name:             "Get postIDs associated with given hashtag correctly",
-			existingHashtags: []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2)},
-			hashtag:          "#mooncake",
-		},
-		{
-			name:             "Get empty postIDs array associated with given hashtag correctly",
-			existingHashtags: nil,
-			existingPostIDs:  types.PostIDs(nil),
-			hashtag:          "#mooncake",
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-
-			for _, hashtag := range test.existingHashtags {
-				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
-			}
-
-			postIDs := k.GetHashtagAssociatedPosts(ctx, test.hashtag)
-
-			require.Equal(t, test.existingPostIDs, postIDs)
-
-		})
-	}
-}
-
-func TestKeeper_RemovePostHashtags(t *testing.T) {
-	tests := []struct {
-		name             string
-		existingHashtags []string
-		newHashtags      []string
-		existingPostIDs  types.PostIDs
-		removedID        types.PostID
-		expectedIDs      types.PostIDs
-	}{
-		{
-			name:             "Remove the postID correctly with more then 1 postID inside postIDs",
-			existingHashtags: []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
-			removedID:        types.PostID(3),
-			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2)},
-		},
-		{
-			name:             "Remove the postID correctly with only 1 postID inside postIDs",
-			existingHashtags: []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1)},
-			removedID:        types.PostID(1),
-			expectedIDs:      types.PostIDs(nil),
-		},
-		{
-			name:             "Removed nothing when postID is not present",
-			existingHashtags: []string{"#mooncake"},
-			existingPostIDs:  types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
-			removedID:        types.PostID(4),
-			expectedIDs:      types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-
-			for _, hashtag := range test.existingHashtags {
-				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(&test.existingPostIDs))
-			}
-
-			k.RemovePostHashtags(ctx, test.removedID, test.existingHashtags)
-
-			postIDs := k.GetHashtagAssociatedPosts(ctx, test.existingHashtags[0])
-
-			require.Equal(t, test.expectedIDs, postIDs)
-
-		})
-	}
-}
-
-func TestKeeper_GetHashtags(t *testing.T) {
-	tests := []struct {
-		name    string
-		hashIds map[string]types.PostIDs
-	}{
-		{
-			name:    "Empty data are returned correctly",
-			hashIds: map[string]types.PostIDs{},
-		},
-		{
-			name: "",
-			hashIds: map[string]types.PostIDs{
-				"hastag": {
-					types.PostID(1),
-					types.PostID(2),
-				},
-				"desmos": {
-					types.PostID(1),
-					types.PostID(2),
-				},
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-			for hashtag, ids := range test.hashIds {
-				store.Set(types.HashtagStoreKey(hashtag), k.Cdc.MustMarshalBinaryBare(ids))
-			}
-
-			hashtagsData := k.GetHashtags(ctx)
-			require.Equal(t, test.hashIds, hashtagsData)
+			_, k := SetupTestInput()
+			hashtags := k.GetPostHashtags(test.post)
+			require.Equal(t, test.expHashtags, hashtags)
 		})
 	}
 }
@@ -636,7 +489,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		types.NewPost(
 			types.PostID(10),
 			types.PostID(1),
-			"Post 1 #test",
+			"Post 1 #test #desmos",
 			false,
 			"",
 			map[string]string{},
@@ -732,7 +585,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		},
 		{
 			name:     "Sortin by hashtags",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"#test"}},
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"#desmos", "#test"}},
 			expected: types.Posts{posts[0]},
 		},
 	}
@@ -743,10 +596,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			ctx, k := SetupTestInput()
 			for _, post := range posts {
 				k.SavePost(ctx, post)
-				postHashtags := keeper.GetPostHashtags(post.Message)
-				if len(postHashtags) != 0 {
-					k.SavePostHashtag(ctx, postHashtags[0], post.PostID)
-				}
 			}
 			result := k.GetPostsFiltered(ctx, test.filter)
 
