@@ -44,7 +44,7 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 	}
 }
 
-// Route should return the name of the modul
+// Route should return the name of the module
 func (msg MsgCreatePost) Route() string { return RouterKey }
 
 // Type should return the action
