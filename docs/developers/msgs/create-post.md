@@ -1,5 +1,5 @@
 # `MsgCreatePost`
-This message allows you to create a new public post. 
+This message allows you to create a new public post. If you want to know more about the `Post` type, you can do so inside the [`Post` type documentation page](../../types/post.md).
 
 ## Structure
 ```json
@@ -31,6 +31,7 @@ This message allows you to create a new public post.
 | `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
 | `medias` | Array | (Optional) Array containing all the medias related to the post |
 | `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
+
 ## Example
 ### With optional data, medias and poll data
 ```json

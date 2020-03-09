@@ -2,7 +2,7 @@
 This query endpoint allows you to retrieve the details of answers made to a post's poll'. 
 
 **CLI**
- ```shell
+ ```bash
 desmoscli query posts poll-answers [id]
 
 # Example

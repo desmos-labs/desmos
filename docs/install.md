@@ -20,7 +20,7 @@ The requirements you must satisfy before attempting to install Desmos CLI and Da
 ### Installation procedure 
 To install `desmoscli` and `desmosd` execute the following commands: 
 
-```shell
+```bash
 cd /home/$USER
 git clone https://github.com/desmos-labs/desmos && cd desmos
 make install
@@ -29,7 +29,7 @@ make install
 ### Verify the installation 
 To verify you have correctly installed `desmoscli` and `desmosd`, try running: 
 
-```shell
+```bash
 desmoscli version
 desmosd version
 ``` 
