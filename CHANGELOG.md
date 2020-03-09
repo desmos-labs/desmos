@@ -1,4 +1,6 @@
-#Version 0.4.0
+# Version 0.4.0
+## Changes
+- Improved `alias.go` files (#103)
 - Implemented the support for hashtags in posts (#96)
 
 # Version 0.3.0
