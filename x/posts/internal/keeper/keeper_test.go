@@ -47,50 +47,6 @@ func TestKeeper_GetLastPostId(t *testing.T) {
 	}
 }
 
-func TestKeeper_GetPostHashtags(t *testing.T) {
-	tests := []struct {
-		name        string
-		post        types.Post
-		expHashtags []string
-	}{
-		{
-			name: "Hashtags in message extracted correctly",
-			post: types.NewPost(types.PostID(1),
-				types.PostID(0),
-				"Post with #test #desmos",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
-			),
-			expHashtags: []string{"#test", "#desmos"},
-		},
-		{
-			name: "No hashtags in message",
-			post: types.NewPost(types.PostID(1),
-				types.PostID(0),
-				"Post with no hashtag",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
-			),
-			expHashtags: []string{},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			_, k := SetupTestInput()
-			hashtags := k.GetPostHashtags(test.post)
-			require.Equal(t, test.expHashtags, hashtags)
-		})
-	}
-}
-
 func TestKeeper_SavePost(t *testing.T) {
 	tests := []struct {
 		name                 string

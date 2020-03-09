@@ -2,7 +2,6 @@ package types
 
 import (
 	"regexp"
-	"strings"
 )
 
 const (
@@ -29,26 +28,19 @@ const (
 
 var (
 	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
+	HashtagRegEx  = regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
 
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
-	HashtagPrefix            = []byte("hashtag:")
 )
 
 // PostStoreKey turns an id to a key used to store a post into the posts store
 // nolint: interfacer
 func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id.String())...)
-}
-
-// HashtagStoreKey turn an hashtag to a key used to store a post into the posts store
-// nolint: interfacer
-func HashtagStoreKey(hashtag string) []byte {
-	keyword := strings.TrimPrefix(hashtag, "#")
-	return append(HashtagPrefix, []byte(keyword)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

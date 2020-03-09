@@ -176,7 +176,7 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().String(flagAllowsComments, "", "(optional) filter the posts allowing comments")
 	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
 	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(flagHashtag, []string{}, "(optional) filter the posts by hashtag")
+	cmd.Flags().StringSlice(flagHashtag, []string{}, "(optional) filter the posts that contains the specified hashtags")
 
 	return cmd
 }

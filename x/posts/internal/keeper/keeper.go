@@ -3,7 +3,6 @@ package keeper
 import (
 	"bytes"
 	"fmt"
-	"regexp"
 	"sort"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -40,18 +39,6 @@ func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
 	var id types.PostID
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &id)
 	return id
-}
-
-func (k Keeper) GetPostHashtags(post types.Post) []string {
-	re := regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
-	hashtags := re.FindAllStringSubmatch(post.Message, -1)
-
-	var hts = []string{}
-	for _, hashtagSlice := range hashtags {
-		hts = append(hts, hashtagSlice[0])
-	}
-
-	return hts
 }
 
 // SavePost allows to save the given post inside the current context.
@@ -154,17 +141,14 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 		// match hashtags if provided
 		if len(params.Hashtags) > 0 {
-			postHashtags := k.GetPostHashtags(post)
-			if len(postHashtags) == len(params.Hashtags) {
-				sort.Strings(postHashtags)
-				sort.Strings(params.Hashtags)
+			postHashtags := post.GetPostHashtags()
+			matchHashtags = len(postHashtags) == len(params.Hashtags)
+			sort.Strings(postHashtags)
+			sort.Strings(params.Hashtags)
+			if matchHashtags {
 				for index, hashtag := range params.Hashtags {
-					if matchHashtags = postHashtags[index] == hashtag; !matchHashtags {
-						break
-					}
+					matchHashtags = postHashtags[index] == hashtag
 				}
-			} else {
-				matchHashtags = false
 			}
 		}
 

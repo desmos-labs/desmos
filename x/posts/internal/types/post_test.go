@@ -153,37 +153,6 @@ func TestPostIDs_Equals(t *testing.T) {
 	}
 }
 
-func TestPostIDs_Contains(t *testing.T) {
-	tests := []struct {
-		name        string
-		IDs         types.PostIDs
-		containedID types.PostID
-		expFound    bool
-	}{
-		{
-			name:        "Contains returns true when id is found inside array",
-			IDs:         types.PostIDs{types.PostID(1)},
-			containedID: types.PostID(1),
-			expFound:    true,
-		},
-		{
-			name:        "Contains returns false when id isn't found inside array",
-			IDs:         types.PostIDs{types.PostID(1)},
-			containedID: types.PostID(2),
-			expFound:    false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			found := test.IDs.Contains(test.containedID)
-			require.Equal(t, test.expFound, found)
-		})
-	}
-
-}
-
 func TestPostIDs_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -216,55 +185,6 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 			require.Equal(t, test.expEdited, edited)
 		})
 	}
-}
-
-func TestPostIDs_RemoveIfPresent(t *testing.T) {
-	tests := []struct {
-		name       string
-		IDs        types.PostIDs
-		removedID  types.PostID
-		expRemoved bool
-		expIDs     types.PostIDs
-	}{
-		{
-			name:       "RemoveIfPresent remove the postID correctly at the beginning",
-			IDs:        types.PostIDs{types.PostID(1), types.PostID(2)},
-			removedID:  types.PostID(1),
-			expRemoved: true,
-			expIDs:     types.PostIDs{types.PostID(2)},
-		},
-		{
-			name:       "RemoveIfPresent remove the postID correctly in the middle",
-			IDs:        types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
-			removedID:  types.PostID(2),
-			expRemoved: true,
-			expIDs:     types.PostIDs{types.PostID(1), types.PostID(3)},
-		},
-		{
-			name:       "RemoveIfPresent remove the postID correctly at the end",
-			IDs:        types.PostIDs{types.PostID(1), types.PostID(2), types.PostID(3)},
-			removedID:  types.PostID(3),
-			expRemoved: true,
-			expIDs:     types.PostIDs{types.PostID(1), types.PostID(2)},
-		},
-		{
-			name:       "RemoveIfPresent don't remove the postID since it's not present",
-			IDs:        types.PostIDs{types.PostID(1), types.PostID(2)},
-			removedID:  types.PostID(3),
-			expRemoved: false,
-			expIDs:     types.PostIDs{types.PostID(1), types.PostID(2)},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualIDs, actualRemoved := test.IDs.RemoveIfPresent(test.removedID)
-			require.Equal(t, test.expRemoved, actualRemoved)
-			require.Equal(t, test.expIDs, actualIDs)
-		})
-	}
-
 }
 
 // -----------
@@ -836,6 +756,93 @@ func TestPost_Equals(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
+}
+
+func TestPost_Unique(t *testing.T) {
+
+	tests := []struct {
+		name       string
+		input      []string
+		expectedIn []string
+	}{
+		{
+			name:       "Unique returns unique strings slice",
+			input:      []string{"hello", "hello", "world", "world"},
+			expectedIn: []string{"hello", "world"},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actualIn := types.Unique(test.input)
+			require.Equal(t, test.expectedIn, actualIn)
+		})
+	}
+}
+
+func TestPost_GetPostHashtags(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+
+	tests := []struct {
+		name        string
+		post        types.Post
+		expHashtags []string
+	}{
+		{
+			name: "Hashtags in message extracted correctly",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #test #desmos",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{"#test", "#desmos"},
+		},
+		{
+			name: "No hashtags in message",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with no hashtag",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{},
+		},
+		{
+			name: "No same hashtags inside string array",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with double #hashtag #hashtag",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{"#hashtag"},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			hashtags := test.post.GetPostHashtags()
+			require.Equal(t, test.expHashtags, hashtags)
 		})
 	}
 }

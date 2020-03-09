@@ -92,16 +92,6 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	return true
 }
 
-// Contains returns true if ids contains the given postID, false otherwise.
-func (ids PostIDs) Contains(id PostID) bool {
-	for _, ele := range ids {
-		if ele.Equals(id) {
-			return true
-		}
-	}
-	return false
-}
-
 // AppendIfMissing appends the given postID to the ids slice if it does not exist inside it yet.
 // It returns a new slice of PostIDs containing such ID and a boolean indicating whether or not the original
 // slice has been modified.
@@ -112,19 +102,6 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 		}
 	}
 	return append(ids, id), true
-}
-
-// RemoveIfPresent remove the given postID from the ids slice if it already exist inside it
-func (ids PostIDs) RemoveIfPresent(id PostID) (PostIDs, bool) {
-	for index, ele := range ids {
-		if ele.Equals(id) {
-			ids[index] = ids[len(ids)-1] // Copy last element to index i.
-			ids[len(ids)-1] = PostID(0)  // Erase last element (write zero value).
-			ids = ids[:len(ids)-1]       // Truncate slice.
-			return ids, true
-		}
-	}
-	return ids, false
 }
 
 // ---------------
@@ -281,6 +258,26 @@ func (p Post) ContentsEquals(other Post) bool {
 		p.Creator.Equals(other.Creator) &&
 		p.Medias.Equals(other.Medias) &&
 		ArePollDataEquals(p.PollData, other.PollData)
+}
+
+// GetPostHashtags returns all the post's hashtags without duplicates
+func (p Post) GetPostHashtags() []string {
+	hashtags := HashtagRegEx.FindAllString(p.Message, -1)
+	return Unique(hashtags)
+}
+
+// Unique returns the given input slice without any duplicated value inside it
+func Unique(input []string) []string {
+	unique := make([]string, 0, len(input))
+	m := make(map[string]bool)
+
+	for _, val := range input {
+		if _, ok := m[val]; !ok {
+			m[val] = true
+			unique = append(unique, val)
+		}
+	}
+	return unique
 }
 
 // -------------
