@@ -808,7 +808,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				date,
 				owner,
 			),
-			expHashtags: []string{"#test", "#desmos"},
+			expHashtags: []string{"test", "desmos"},
 		},
 		{
 			name: "No hashtags in message",
@@ -834,7 +834,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				date,
 				owner,
 			),
-			expHashtags: []string{"#hashtag"},
+			expHashtags: []string{"hashtag"},
 		},
 	}
 
