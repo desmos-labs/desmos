@@ -760,7 +760,7 @@ func TestPost_Equals(t *testing.T) {
 	}
 }
 
-func TestPost_Unique(t *testing.T) {
+func TestPost_UniqueHashgtags(t *testing.T) {
 
 	tests := []struct {
 		name       string
@@ -768,7 +768,7 @@ func TestPost_Unique(t *testing.T) {
 		expectedIn []string
 	}{
 		{
-			name:       "Unique returns unique strings slice",
+			name:       "UniqueHashtags returns unique strings slice",
 			input:      []string{"hello", "hello", "world", "world"},
 			expectedIn: []string{"hello", "world"},
 		},
@@ -777,7 +777,7 @@ func TestPost_Unique(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actualIn := types.Unique(test.input)
+			actualIn := types.UniqueHashtags(test.input)
 			require.Equal(t, test.expectedIn, actualIn)
 		})
 	}

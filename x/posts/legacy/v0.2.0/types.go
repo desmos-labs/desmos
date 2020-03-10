@@ -29,7 +29,7 @@ type OptionalData map[string]string
 
 // Post is a struct of a post
 type Post struct {
-	PostID         PostID         `json:"id"`                      // Unique id
+	PostID         PostID         `json:"id"`                      // UniqueHashtags id
 	ParentID       PostID         `json:"parent_id"`               // Post of which this one is a comment
 	Message        string         `json:"message"`                 // Message contained inside the post
 	Created        time.Time      `json:"created"`                 // RFC3339 date at which the post has been created

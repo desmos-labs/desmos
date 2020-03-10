@@ -110,7 +110,7 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 
 // Post is a struct of a post
 type Post struct {
-	PostID         PostID         `json:"id"`                      // Unique id
+	PostID         PostID         `json:"id"`                      // UniqueHashtags id
 	ParentID       PostID         `json:"parent_id"`               // Post of which this one is a comment
 	Message        string         `json:"message"`                 // Message contained inside the post
 	Created        time.Time      `json:"created"`                 // RFC3339 date at which the post has been created
@@ -263,18 +263,18 @@ func (p Post) ContentsEquals(other Post) bool {
 // GetPostHashtags returns all the post's hashtags without duplicates
 func (p Post) GetPostHashtags() []string {
 	hashtags := HashtagRegEx.FindAllString(p.Message, -1)
-	return Unique(hashtags)
+	return UniqueHashtags(hashtags)
 }
 
-// Unique returns the given input slice without any duplicated value inside it
-func Unique(input []string) []string {
+// UniqueHashtags returns the given input slice without any duplicated hashtag value inside it
+func UniqueHashtags(input []string) []string {
 	unique := make([]string, 0, len(input))
 	m := make(map[string]bool)
 
 	for _, val := range input {
 		if _, ok := m[val]; !ok {
 			m[val] = true
-			unique = append(unique, val)
+			unique = append(unique, strings.Trim(val, "#"))
 		}
 	}
 	return unique

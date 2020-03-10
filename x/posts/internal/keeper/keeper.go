@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -147,7 +148,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			sort.Strings(params.Hashtags)
 			if matchHashtags {
 				for index, hashtag := range params.Hashtags {
-					matchHashtags = postHashtags[index] == hashtag
+					matchHashtags = postHashtags[index] == strings.Trim(hashtag, "#")
 				}
 			}
 		}
