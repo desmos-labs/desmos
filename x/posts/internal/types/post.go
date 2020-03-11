@@ -171,7 +171,7 @@ func (p Post) Validate() error {
 	}
 
 	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 {
-		return fmt.Errorf("post message cannot be empty nor blank when there are no medias")
+		return fmt.Errorf("post message or medias required, they cannot be both empty")
 	}
 
 	if len(p.Message) > MaxPostMessageLength {

@@ -256,11 +256,11 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message cannot be empty nor blank when there are no medias",
+			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
 			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message cannot be empty nor blank when there are no medias",
+			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
 			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),

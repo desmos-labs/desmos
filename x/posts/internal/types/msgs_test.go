@@ -87,10 +87,10 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank when there are no medias"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message or medias are required and cannot be both blank or empty"),
 		},
 		{
-			name: "Non-empty message returns nil if medias are empty",
+			name: "Non-empty message returns no error if medias are empty",
 			msg: types.NewMsgCreatePost(
 				"message",
 				types.PostID(0),
@@ -105,7 +105,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Non-empty message returns nil if medias aren't empty",
+			name: "Non-empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"message",
 				types.PostID(0),
@@ -120,7 +120,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Empty message returns nil if medias aren't empty",
+			name: "Empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"",
 				types.PostID(0),
