@@ -1,4 +1,7 @@
 # Version 0.4.0
+## Changes
+- Improved `alias.go` files (#103)
+
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)
 
