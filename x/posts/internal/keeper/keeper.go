@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
@@ -146,10 +146,8 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			matchHashtags = len(postHashtags) == len(params.Hashtags)
 			sort.Strings(postHashtags)
 			sort.Strings(params.Hashtags)
-			if matchHashtags {
-				for index, hashtag := range params.Hashtags {
-					matchHashtags &= postHashtags[index] == hashtag
-				}
+			for index := 0; index < len(params.Hashtags) && matchHashtags; index++ {
+				matchHashtags = postHashtags[index] == params.Hashtags[index]
 			}
 		}
 

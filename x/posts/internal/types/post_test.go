@@ -760,29 +760,6 @@ func TestPost_Equals(t *testing.T) {
 	}
 }
 
-func TestPost_UniqueHashgtags(t *testing.T) {
-
-	tests := []struct {
-		name       string
-		input      []string
-		expectedIn []string
-	}{
-		{
-			name:       "UniqueHashtags returns unique strings slice",
-			input:      []string{"hello", "hello", "world", "world"},
-			expectedIn: []string{"hello", "world"},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualIn := types.UniqueHashtags(test.input)
-			require.Equal(t, test.expectedIn, actualIn)
-		})
-	}
-}
-
 func TestPost_GetPostHashtags(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)

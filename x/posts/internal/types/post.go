@@ -8,6 +8,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commons "github.com/desmos-labs/desmos/x"
 )
 
 // ---------------
@@ -110,7 +111,7 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 
 // Post is a struct of a post
 type Post struct {
-	PostID         PostID         `json:"id"`                      // UniqueHashtags id
+	PostID         PostID         `json:"id"`                      // Unique id
 	ParentID       PostID         `json:"parent_id"`               // Post of which this one is a comment
 	Message        string         `json:"message"`                 // Message contained inside the post
 	Created        time.Time      `json:"created"`                 // RFC3339 date at which the post has been created
@@ -263,21 +264,13 @@ func (p Post) ContentsEquals(other Post) bool {
 // GetPostHashtags returns all the post's hashtags without duplicates
 func (p Post) GetPostHashtags() []string {
 	hashtags := HashtagRegEx.FindAllString(p.Message, -1)
-	return UniqueHashtags(hashtags)
-}
+	uniqueHashtags := commons.Unique(hashtags)
+	withoutHashtag := make([]string, len(uniqueHashtags))
 
-// UniqueHashtags returns the given input slice without any duplicated hashtag value inside it
-func UniqueHashtags(input []string) []string {
-	unique := make([]string, 0, len(input))
-	m := make(map[string]bool)
-
-	for _, val := range input {
-		if _, ok := m[val]; !ok {
-			m[val] = true
-			unique = append(unique, strings.Trim(val, "#"))
-		}
+	for index, hashtag := range uniqueHashtags {
+		withoutHashtag[index] = strings.TrimLeft(hashtag, "#")
 	}
-	return unique
+	return withoutHashtag
 }
 
 // -------------

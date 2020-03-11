@@ -57,7 +57,7 @@ func ParseAnswerID(value string) (AnswerID, error) {
 
 // PollAnswer contains the data of a single poll answer inserted by the creator
 type PollAnswer struct {
-	ID   AnswerID `json:"id"`   // UniqueHashtags id inside the post, serialized as a string for Javascript compatibility
+	ID   AnswerID `json:"id"`   // Unique id inside the post, serialized as a string for Javascript compatibility
 	Text string   `json:"text"` // Text of the answer
 }
 
