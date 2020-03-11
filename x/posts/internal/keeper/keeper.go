@@ -148,7 +148,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			sort.Strings(params.Hashtags)
 			if matchHashtags {
 				for index, hashtag := range params.Hashtags {
-					matchHashtags = postHashtags[index] == strings.Trim(hashtag, "#")
+					matchHashtags &= postHashtags[index] == hashtag
 				}
 			}
 		}
