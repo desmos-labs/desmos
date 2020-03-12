@@ -170,8 +170,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 {
-		return fmt.Errorf("post message must be non empty and non blank")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 {
+		return fmt.Errorf("post message or medias required, they cannot be both empty")
 	}
 
 	if len(p.Message) > MaxPostMessageLength {

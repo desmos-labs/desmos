@@ -1,6 +1,7 @@
 # Version 0.4.0
 ## Changes
 - Improved `alias.go` files (#103)
+- Added the support for posting empty-message posts with medias (#110)
 
 # Version 0.3.0
 ## Changes
