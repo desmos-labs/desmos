@@ -3,6 +3,9 @@
 - Improved `alias.go` files (#103)
 - Added the support for posting empty-message posts with medias (#110)
 
+## Bug fixes
+- Fixed a bug inside the migration procedure of the `magpie` module (#106)
+
 # Version 0.3.0
 ## Changes
 - Implemented the support for media posts (#36)
