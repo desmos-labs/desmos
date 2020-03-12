@@ -373,7 +373,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message and medias can't be both empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message or medias are required and cannot be both blank or empty"),
 		},
 		{
 			name: "Message with empty poll returns no error",
