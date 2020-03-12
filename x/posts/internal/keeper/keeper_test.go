@@ -540,7 +540,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
 		{
-			name:     "Sortin by hashtags works properly",
+			name:     "Filtering by hashtags works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"desmos", "test"}},
 			expected: types.Posts{posts[0]},
 		},
