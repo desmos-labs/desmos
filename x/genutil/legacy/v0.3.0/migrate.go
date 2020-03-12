@@ -4,6 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	cosmosv0380 "github.com/cosmos/cosmos-sdk/x/genutil/legacy/v0_38"
+	v020magpie "github.com/desmos-labs/desmos/x/magpie/legacy/v0.2.0"
+	v030magpie "github.com/desmos-labs/desmos/x/magpie/legacy/v0.3.0"
 	v020posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.2.0"
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
 )
@@ -15,19 +17,30 @@ func Migrate(appState genutil.AppMap, _ ...interface{}) genutil.AppMap {
 	// Perform the Cosmos SDK migration first
 	appState = cosmosv0380.Migrate(appState)
 
-	v010Codec := codec.New()
-	codec.RegisterCrypto(v010Codec)
-
 	v020Codec := codec.New()
 	codec.RegisterCrypto(v020Codec)
+
+	v030Codec := codec.New()
+	codec.RegisterCrypto(v030Codec)
+
+	// Migrate magpie state
+	if appState[v020magpie.ModuleName] != nil {
+		var genDocs v020magpie.GenesisState
+		v020Codec.MustUnmarshalJSON(appState[v020magpie.ModuleName], &genDocs)
+
+		delete(appState, v020magpie.ModuleName) // delete old key in case the name changed
+		appState[v030magpie.ModuleName] = v030Codec.MustMarshalJSON(
+			v030magpie.Migrate(genDocs),
+		)
+	}
 
 	// Migrate posts state
 	if appState[v020posts.ModuleName] != nil {
 		var genDocs v020posts.GenesisState
-		v010Codec.MustUnmarshalJSON(appState[v020posts.ModuleName], &genDocs)
+		v020Codec.MustUnmarshalJSON(appState[v020posts.ModuleName], &genDocs)
 
 		delete(appState, v020posts.ModuleName) // delete old key in case the name changed
-		appState[v030posts.ModuleName] = v020Codec.MustMarshalJSON(
+		appState[v030posts.ModuleName] = v030Codec.MustMarshalJSON(
 			v030posts.Migrate(genDocs),
 		)
 	}

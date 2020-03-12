@@ -57,7 +57,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Medias) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message and medias can't be both empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message or medias are required and cannot be both blank or empty")
 	}
 
 	if len(msg.Message) > MaxPostMessageLength {
