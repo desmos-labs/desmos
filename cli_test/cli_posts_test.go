@@ -38,7 +38,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the post is saved
-	storedPosts := f.QueryPosts("--hashtag=#hashtag")
+	storedPosts := f.QueryPosts("--hashtag=hashtag")
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
 	require.Equal(t, posts.PostID(1), post.PostID)
