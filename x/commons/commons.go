@@ -1,4 +1,4 @@
-package x
+package commons
 
 // Unique returns the given input slice without any duplicated value inside it
 func Unique(input []string) []string {

@@ -28,7 +28,7 @@ const (
 
 var (
 	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
-	HashtagRegEx  = regexp.MustCompile(`(?:|^)#[A-Za-z0-9]+(?:|$)`)
+	HashtagRegEx  = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
 
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")
