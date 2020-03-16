@@ -7,8 +7,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
@@ -112,7 +113,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
 	filteredPosts := types.Posts{}
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator := true, true, true, true, true
+		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
 
 		// match parent id if valid
 		if params.ParentID != nil {
@@ -139,7 +140,18 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			matchCreator = params.Creator.Equals(post.Creator)
 		}
 
-		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator {
+		// match hashtags if provided
+		if len(params.Hashtags) > 0 {
+			postHashtags := post.GetPostHashtags()
+			matchHashtags = len(postHashtags) == len(params.Hashtags)
+			sort.Strings(postHashtags)
+			sort.Strings(params.Hashtags)
+			for index := 0; index < len(params.Hashtags) && matchHashtags; index++ {
+				matchHashtags = postHashtags[index] == params.Hashtags[index]
+			}
+		}
+
+		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator && matchHashtags {
 			filteredPosts = append(filteredPosts, post)
 		}
 

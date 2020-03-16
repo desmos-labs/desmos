@@ -38,6 +38,7 @@ var (
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
 	reactsValues = []string{"💙", "⬇️", "👎", "like"}
+	Hashtags     = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 )
 
 // RandomAcc picks and returns a random post from an array and returns its
@@ -66,7 +67,7 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 	return PostData{
 		Creator:        simAccount,
 		ParentID:       types.PostID(0),
-		Message:        RandomMessage(r),
+		Message:        RandomMessage(r) + RandomHashtag(r),
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
@@ -112,6 +113,12 @@ func RandomMessage(r *rand.Rand) string {
 func RandomSubspace(r *rand.Rand) string {
 	idx := r.Intn(len(subspaces))
 	return subspaces[idx]
+}
+
+// RandomHashtag returns a random hashtag from the above random hashtags
+func RandomHashtag(r *rand.Rand) string {
+	idx := r.Intn(len(Hashtags))
+	return Hashtags[idx]
 }
 
 // RandomMedias returns a randomly generated list of post medias

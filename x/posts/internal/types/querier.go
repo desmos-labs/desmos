@@ -19,6 +19,7 @@ type QueryPostsParams struct {
 	AllowsComments *bool
 	Subspace       string
 	Creator        sdk.AccAddress
+	Hashtags       []string
 }
 
 func DefaultQueryPostsParams(page, limit int) QueryPostsParams {
@@ -34,5 +35,6 @@ func DefaultQueryPostsParams(page, limit int) QueryPostsParams {
 		AllowsComments: nil,
 		Subspace:       "",
 		Creator:        nil,
+		Hashtags:       nil,
 	}
 }
