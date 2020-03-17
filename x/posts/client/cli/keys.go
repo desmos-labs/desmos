@@ -15,6 +15,7 @@ const (
 	flagCreationTime   = "creation-time"
 	flagAllowsComments = "allows-comments"
 	flagSubspace       = "subspace"
+	flagHashtag        = "hashtag"
 	flagCreator        = "creator"
 
 	keyEndDate           = "end-date"

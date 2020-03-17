@@ -28,6 +28,7 @@ const (
 
 var (
 	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
+	HashtagRegEx  = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
 
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")
@@ -36,7 +37,7 @@ var (
 	PollAnswersStorePrefix   = []byte("poll_answers")
 )
 
-// AddressStoreKey turns an id to a key used to store a post into the posts store
+// PostStoreKey turns an id to a key used to store a post into the posts store
 // nolint: interfacer
 func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id.String())...)

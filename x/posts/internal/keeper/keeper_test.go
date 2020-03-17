@@ -444,7 +444,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		types.NewPost(
 			types.PostID(10),
 			types.PostID(1),
-			"Post 1",
+			"Post 1 #test #desmos",
 			false,
 			"",
 			map[string]string{},
@@ -538,6 +538,11 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
 			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
+		{
+			name:     "Filtering by hashtags works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"desmos", "test"}},
+			expected: types.Posts{posts[0]},
+		},
 	}
 
 	for _, test := range tests {
@@ -547,7 +552,6 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			for _, post := range posts {
 				k.SavePost(ctx, post)
 			}
-
 			result := k.GetPostsFiltered(ctx, test.filter)
 
 			require.Len(t, result, len(test.expected))

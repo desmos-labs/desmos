@@ -18,7 +18,8 @@ var (
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	reactions := randomReactions(simState, posts)
-	postsGenesis := types.NewGenesisState(posts, reactions)
+	hashtags := randomHashtags(simState, posts)
+	postsGenesis := types.NewGenesisState(posts, reactions, hashtags)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
@@ -68,4 +69,21 @@ func randomReactions(simState *module.SimulationState, posts types.Posts) (react
 	}
 
 	return reactionsMap
+}
+
+// randomHashtags returns a randomly generated list of hashtags
+func randomHashtags(simState *module.SimulationState, posts types.Posts) (hashtagMap map[string]types.PostIDs) {
+	hashtagNumber := simState.Rand.Intn(len(Hashtags))
+
+	hashtagMap = make(map[string]types.PostIDs, hashtagNumber)
+	for i := 0; i < hashtagNumber; i++ {
+		postIDsLen := simState.Rand.Intn(10)
+		postIDs := make(types.PostIDs, postIDsLen)
+		for j := 0; j < postIDsLen; j++ {
+			postIDs[j] = RandomPostID(simState.Rand, posts)
+		}
+		hashtagMap[Hashtags[i]] = postIDs
+	}
+
+	return hashtagMap
 }

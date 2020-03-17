@@ -26,7 +26,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message"
+	message := "message#test"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -65,7 +65,68 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIPostsCreateWithMedias(t *testing.T) {
+func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	message := ""
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+	require.Equal(t, posts.PostID(1), post.PostID)
+	require.Nil(t, post.PollData)
+	require.Len(t, post.Medias, 2)
+	require.Equal(t, post.Medias, posts.NewPostMedias(
+		posts.NewPostMedia("https://example.com/media1", "text/plain"),
+		posts.NewPostMedia("https://example.com/media2", "application/json")))
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run",
+		"--media https://second.example.com/media1,text/plain",
+		"--media https://second.example.com/media2,application/json")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only",
+		"--media https://third.example.com/media1,text/plain",
+		"--media https://third.example.com/media2,application/json")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -112,6 +173,58 @@ func TestDesmosCLIPostsCreateWithMedias(t *testing.T) {
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only",
 		"--media https://third.example.com/media1,text/plain",
 		"--media https://third.example.com/media2,application/json")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	message := "message"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+	require.Equal(t, posts.PostID(1), post.PostID)
+	require.Nil(t, post.PollData)
+	require.Len(t, post.Medias, 0)
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)

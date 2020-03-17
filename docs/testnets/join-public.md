@@ -12,7 +12,7 @@ To join the public testnet you **must** have [`desmoscli` and `desmosd` installe
 To become a testnet validators, the mainnet instructions apply: 
 
 1. [Create a full node](../fullnode/installation.md).
-2. [Become a validator](docs/validators/setup.md)
+2. [Become a validator](../validators/setup.md)
 
 The only difference is the Desmos software version and genesis file. See the [testnet repo](https://github.com/desmos-labs/morpheus) for information on testnets, including the correct version of Desmos to use and details about the genesis file.
 

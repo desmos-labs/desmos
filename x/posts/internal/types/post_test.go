@@ -255,12 +255,12 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post owner: ",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
-			expError: "post message must be non empty and non blank",
+			post:     types.NewPost(types.PostID(1), types.PostID(0), "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
-			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
-			expError: "post message must be non empty and non blank",
+			post:     types.NewPost(types.PostID(1), types.PostID(0), " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
 			post:     types.NewPost(types.PostID(1), types.PostID(0), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
@@ -756,6 +756,109 @@ func TestPost_Equals(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.expEquals, test.first.Equals(test.second))
+		})
+	}
+}
+
+func TestPost_GetPostHashtags(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+
+	tests := []struct {
+		name        string
+		post        types.Post
+		expHashtags []string
+	}{
+		{
+			name: "Hashtags in message extracted correctly (spaced hashtags)",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #test #desmos",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{"test", "desmos"},
+		},
+		{
+			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #test#desmos",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{},
+		},
+		{
+			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #test_#desmos",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{},
+		},
+		{
+			name: "Hashtags in message extracted correctly (only number hashtag)",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with #101112",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{},
+		},
+		{
+			name: "No hashtags in message",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with no hashtag",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{},
+		},
+		{
+			name: "No same hashtags inside string array",
+			post: types.NewPost(types.PostID(1),
+				types.PostID(0),
+				"Post with double #hashtag #hashtag",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expHashtags: []string{"hashtag"},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			hashtags := test.post.GetPostHashtags()
+			require.Equal(t, test.expHashtags, hashtags)
 		})
 	}
 }

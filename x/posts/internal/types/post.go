@@ -6,6 +6,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
+
+	"github.com/desmos-labs/desmos/x/commons"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -170,8 +173,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 {
-		return fmt.Errorf("post message must be non empty and non blank")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 {
+		return fmt.Errorf("post message or medias required, they cannot be both empty")
 	}
 
 	if len(p.Message) > MaxPostMessageLength {
@@ -258,6 +261,66 @@ func (p Post) ContentsEquals(other Post) bool {
 		p.Creator.Equals(other.Creator) &&
 		p.Medias.Equals(other.Medias) &&
 		ArePollDataEquals(p.PollData, other.PollData)
+}
+
+// tagsSplitter returns true if the current rune is a tag ending
+// Tags MUST end with whitespace, '.' ',' '!' or ')'
+func tagsSplitter(c rune) bool {
+	if unicode.IsSpace(c) {
+		return true
+	}
+	switch c {
+	case '.', ',', '!', ')':
+		return true
+	}
+	return false
+}
+
+// getTags matches tags and returns them as an array of strings
+//
+// The hashtag itself is NOT included as part of the tag string
+//
+// The function should match the javascript regex: '/([^\S]|^)#([^\s#.,!)]+)(?![^\s.,!)])/g'.
+// Since golang re2 engine does not have positive lookahead, the end of the tag is matched by splitting the input string.
+// The 'tagsSplitter' function defines the end of a tag, and the 'matchTags' regex has a requirement that it must match the end of a string.
+func getTags(s string) []string {
+	res := make([]string, 0)
+	fields := strings.FieldsFunc(s, tagsSplitter)
+	for _, v := range fields {
+		sub := HashtagRegEx.FindStringSubmatch(v)
+		if len(sub) > 1 {
+			res = append(res, sub[1])
+		}
+	}
+	return res
+}
+
+func isNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
+
+// GetPostHashtags returns all the post's hashtags without duplicates
+func (p Post) GetPostHashtags() []string {
+	hashtags := getTags(p.Message)
+
+	uniqueHashtags := commons.Unique(hashtags)
+	withoutHashtag := make([]string, len(uniqueHashtags))
+
+	for index, hashtag := range uniqueHashtags {
+		trimmed := strings.TrimLeft(strings.TrimSpace(hashtag), "#")
+		if !isNumeric(trimmed) {
+			withoutHashtag[index] = trimmed
+		} else {
+			withoutHashtag = []string{}
+		}
+	}
+
+	if len(withoutHashtag) == 0 {
+		return []string{}
+	}
+
+	return withoutHashtag
 }
 
 // -------------

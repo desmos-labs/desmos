@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -23,6 +24,7 @@ const (
 	RestAllowsComments = "allows_comments"
 	RestSubspace       = "subspace"
 	RestCreator        = "creator"
+	RestHashtags       = "hashtags"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
@@ -111,6 +113,10 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				return
 			}
 			params.Creator = creatorAddr
+		}
+
+		if v := r.URL.Query().Get(RestHashtags); len(v) != 0 {
+			params.Hashtags = strings.Split(v, ",")
 		}
 
 		bz, err := cliCtx.Codec.MarshalJSON(params)

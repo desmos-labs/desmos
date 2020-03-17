@@ -51,6 +51,15 @@ module.exports = {
         sidebarDepth: 2,
         sidebar: [
             {
+                title: "Types",
+                collapsable: true,
+                children: [
+                    ["types/post", "Post"],
+                    ["types/post-media", "PostMedia"],
+                    ["types/post-poll-data", "PollData"],
+                ]
+            },
+            {
                 title: "Developers",
                 collapsable: true,
                 children: [

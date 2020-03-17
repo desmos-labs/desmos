@@ -1,3 +1,12 @@
+# Version 0.4.0
+## Changes
+- Improved `alias.go` files (#103)
+- Added the support for posting empty-message posts with medias (#110)
+- Implemented the support for hashtags in posts (#96)
+
+## Bug fixes
+- Fixed a bug inside the migration procedure of the `magpie` module (#106)
+
 # Version 0.3.0
 ## Changes
 - Implemented the support for media posts (#36)
@@ -14,7 +23,7 @@
 ## Migration
 In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:
 
-```shell
+```bash
 desmosd migrate v0.3.0 <path-to-genesis-file> 
 ```
 
@@ -30,7 +39,7 @@ desmosd migrate v0.3.0 <path-to-genesis-file>
 ## Migration
 In order to migrate the chain state from version `v0.1.0` or `v0.1.1` to `v0.2.0`, please run the following command:
 
-```shell
+```bash
 desmosd migrate v0.2.0 <path-to-genesis-file> 
 ```
 

@@ -67,6 +67,10 @@ endif
 build-linux: go.sum
 	LEDGER_ENABLED=false GOOS=linux GOARCH=amd64 $(MAKE) build
 
+build-armv8: go.sum
+	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmosd ./cmd/desmosd
+	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmoscli ./cmd/desmoscli
+
 ########################################
 ### Tools & dependencies
 
