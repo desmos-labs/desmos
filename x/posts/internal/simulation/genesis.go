@@ -61,7 +61,7 @@ func randomReactions(simState *module.SimulationState, posts types.Posts) (react
 		reactions := make(types.Reactions, reactionsLen)
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
-			reactions[j] = types.NewReaction(RandomReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
+			reactions[j] = types.NewPostReaction(RandomReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
 		}
 
 		reactionsMap[RandomPostID(simState.Rand, posts).String()] = reactions

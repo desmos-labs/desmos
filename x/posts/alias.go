@@ -20,8 +20,8 @@ var (
 	ModuleCdc                = types.ModuleCdc
 	RegisterCodec            = types.RegisterCodec
 	ParsePostID              = types.ParsePostID
-	NewReaction              = types.NewReaction
 	NewPost                  = types.NewPost
+	NewPostReaction          = types.NewPostReaction
 	NewPostMedia             = types.NewPostMedia
 	NewPostMedias            = types.NewPostMedias
 	NewPollData              = types.NewPollData
@@ -50,8 +50,8 @@ type (
 	AnswerID              = types.AnswerID
 	UserAnswer            = types.UserAnswer
 	UserAnswers           = types.UserAnswers
-	Reaction              = types.Reaction
-	Reactions             = types.Reactions
+	PostReaction          = types.PostReaction
+	PostReactions         = types.Reactions
 	PostQueryResponse     = types.PostQueryResponse
 	GenesisState          = types.GenesisState
 	MsgCreatePost         = types.MsgCreatePost

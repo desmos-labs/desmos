@@ -18,7 +18,7 @@ const (
 	// Poll attributes
 	AttributeKeyPollAnswerer = "poll_answerer"
 
-	// Reaction attributes
+	// PostReaction attributes
 	AttributeKeyReactionOwner = "user"
 	AttributeKeyReactionValue = "reaction"
 

@@ -36,7 +36,7 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Posts: types.Posts{},
 				Reactions: map[string]types.Reactions{
-					"1": {types.Reaction{Owner: nil}},
+					"1": {types.PostReaction{Owner: nil}},
 				},
 			},
 			shouldError: true,

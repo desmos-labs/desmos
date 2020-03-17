@@ -16,7 +16,7 @@ import (
 
 func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
-	// define store store keys
+	// define store keys
 	magpieKey := sdk.NewKVStoreKey("magpie")
 
 	// create an in-memory db

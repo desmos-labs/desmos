@@ -335,7 +335,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 				var storedReactions types.Reactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
+				require.Contains(t, storedReactions, types.NewPostReaction(test.msg.Value, test.msg.User))
 			}
 
 			// Invalid response
@@ -351,11 +351,11 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	reaction := types.NewReaction("like", user)
+	reaction := types.NewPostReaction("like", user)
 	tests := []struct {
 		name             string
 		existingPost     *types.Post
-		existingReaction *types.Reaction
+		existingReaction *types.PostReaction
 		msg              types.MsgRemovePostReaction
 		error            error
 	}{
@@ -365,7 +365,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
-			name:         "Reaction not found",
+			name:         "PostReaction not found",
 			existingPost: &testPost,
 			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "like"),
 			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value like from user %s as it does not exist", user)),

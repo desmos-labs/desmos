@@ -7,16 +7,16 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func convertReactionsMap(reactions map[PostID]Reactions) map[string]Reactions {
-	reactionsMap := make(map[string]Reactions, len(reactions))
+func convertReactionsMap(reactions map[PostID]PostReactions) map[string]PostReactions {
+	reactionsMap := make(map[string]PostReactions, len(reactions))
 	for key, value := range reactions {
 		reactionsMap[key.String()] = value
 	}
 	return reactionsMap
 }
 
-func convertGenesisReactions(reactions map[string]Reactions) map[PostID]Reactions {
-	reactionsMap := make(map[PostID]Reactions, len(reactions))
+func convertGenesisReactions(reactions map[string]PostReactions) map[PostID]PostReactions {
+	reactionsMap := make(map[PostID]PostReactions, len(reactions))
 	for key, value := range reactions {
 		postID, err := ParsePostID(key)
 		if err != nil {
@@ -74,7 +74,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	reactionsMap := convertGenesisReactions(data.Reactions)
 	for postID, reactions := range reactionsMap {
 		for _, reaction := range reactions {
-			if err := keeper.SaveReaction(ctx, postID, reaction); err != nil {
+			if err := keeper.SavePostReaction(ctx, postID, reaction); err != nil {
 				panic(err)
 			}
 		}

@@ -73,8 +73,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
 
 	likes := types.Reactions{
-		types.NewReaction("like", liker),
-		types.NewReaction("like", otherLiker),
+		types.NewPostReaction("like", liker),
+		types.NewPostReaction("like", otherLiker),
 	}
 	children := types.PostIDs{types.PostID(98), types.PostID(100)}
 
@@ -158,8 +158,8 @@ func TestPostQueryResponse_String(t *testing.T) {
 	).WithMedias(medias).WithPollData(pollData)
 
 	likes := types.Reactions{
-		types.NewReaction("like", liker),
-		types.NewReaction("like", otherLiker),
+		types.NewPostReaction("like", liker),
+		types.NewPostReaction("like", otherLiker),
 	}
 	children := types.PostIDs{types.PostID(98), types.PostID(100)}
 

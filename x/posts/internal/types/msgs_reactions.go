@@ -15,7 +15,7 @@ import (
 // MsgAddPostReaction defines the message to be used to add a reaction to a post
 type MsgAddPostReaction struct {
 	PostID PostID         `json:"post_id"` // Id of the post to react to
-	Value  string         `json:"value"`   // Reaction of the reaction
+	Value  string         `json:"value"`   // PostReaction of the reaction
 	User   sdk.AccAddress `json:"user"`    // Address of the user reacting to the post
 }
 
@@ -45,7 +45,7 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Reaction value cannot be empty nor blank"))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("PostReaction value cannot be empty nor blank"))
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 type MsgRemovePostReaction struct {
 	PostID   PostID         `json:"post_id"`  // Id of the post to unlike
 	User     sdk.AccAddress `json:"user"`     // Address of the user that has previously liked the post
-	Reaction string         `json:"reaction"` // Reaction of the reaction to be removed
+	Reaction string         `json:"reaction"` // PostReaction of the reaction to be removed
 }
 
 // MsgUnlikePostPost is the constructor of MsgRemovePostReaction
@@ -99,7 +99,7 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Reaction)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "PostReaction value cannot be empty nor blank")
 	}
 
 	return nil

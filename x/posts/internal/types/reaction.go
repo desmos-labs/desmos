@@ -9,25 +9,25 @@ import (
 )
 
 // ---------------
-// --- Reaction
+// --- PostReaction
 // ---------------
 
-// Reaction is a struct of a user reaction to a post
-type Reaction struct {
+// PostReaction is a struct of a user reaction to a post
+type PostReaction struct {
 	Owner sdk.AccAddress `json:"owner"` // User that has created the reaction
-	Value string         `json:"value"` // Reaction of the reaction
+	Value string         `json:"value"` // PostReaction of the reaction
 }
 
-// NewReaction returns a new Reaction
-func NewReaction(value string, owner sdk.AccAddress) Reaction {
-	return Reaction{
+// NewPostReaction returns a new PostReaction
+func NewPostReaction(value string, owner sdk.AccAddress) PostReaction {
+	return PostReaction{
 		Value: value,
 		Owner: owner,
 	}
 }
 
 // String implements fmt.Stringer
-func (reaction Reaction) String() string {
+func (reaction PostReaction) String() string {
 	bytes, err := json.Marshal(&reaction)
 	if err != nil {
 		panic(err)
@@ -36,7 +36,7 @@ func (reaction Reaction) String() string {
 }
 
 // Validate implements validator
-func (reaction Reaction) Validate() error {
+func (reaction PostReaction) Validate() error {
 	if reaction.Owner.Empty() {
 		return fmt.Errorf("invalid reaction owner: %s", reaction.Owner)
 	}
@@ -49,7 +49,7 @@ func (reaction Reaction) Validate() error {
 }
 
 // Equals returns true if reaction and other contain the same data
-func (reaction Reaction) Equals(other Reaction) bool {
+func (reaction PostReaction) Equals(other PostReaction) bool {
 	return reaction.Value == other.Value &&
 		reaction.Owner.Equals(other.Owner)
 }
@@ -58,13 +58,13 @@ func (reaction Reaction) Equals(other Reaction) bool {
 // --- Reactions
 // ------------
 
-// Reactions represents a slice of Reaction objects
-type Reactions []Reaction
+// Reactions represents a slice of PostReaction objects
+type Reactions []PostReaction
 
-// AppendIfMissing returns a new slice of Reaction objects containing
+// AppendIfMissing returns a new slice of PostReaction objects containing
 // the given reaction if it wasn't already present.
 // It also returns the result of the append.
-func (reactions Reactions) AppendIfMissing(other Reaction) (Reactions, bool) {
+func (reactions Reactions) AppendIfMissing(other PostReaction) (Reactions, bool) {
 	for _, reaction := range reactions {
 		if reaction.Equals(other) {
 			return reactions, false
@@ -90,7 +90,7 @@ func (reactions Reactions) IndexOfByUserAndValue(owner sdk.Address, value string
 	return -1
 }
 
-// RemoveReaction returns a new Reactions slice not containing the
+// RemovePostReaction returns a new Reactions slice not containing the
 // reaction of the given user with the given value.
 // If the reaction was removed properly, true is also returned. Otherwise,
 // if no reaction was found, false is returned instead.

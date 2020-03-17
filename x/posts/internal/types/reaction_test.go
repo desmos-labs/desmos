@@ -13,7 +13,7 @@ func TestReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	reaction := types.NewReaction("reaction", user)
+	reaction := types.NewPostReaction("reaction", user)
 	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
 }
 
@@ -23,17 +23,17 @@ func TestReaction_Validate(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		reaction types.Reaction
+		reaction types.PostReaction
 		error    error
 	}{
 		{
 			name:     "Valid reaction returns no error",
-			reaction: types.NewReaction("reaction", user),
+			reaction: types.NewPostReaction("reaction", user),
 			error:    nil,
 		},
 		{
 			name:     "Missing owner returns error",
-			reaction: types.NewReaction("reaction", nil),
+			reaction: types.NewPostReaction("reaction", nil),
 			error:    errors.New("invalid reaction owner: "),
 		},
 	}
@@ -55,20 +55,20 @@ func TestReaction_Equals(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		first         types.Reaction
-		second        types.Reaction
+		first         types.PostReaction
+		second        types.PostReaction
 		shouldBeEqual bool
 	}{
 		{
 			name:          "Returns false with different user",
-			first:         types.NewReaction("reaction", user),
-			second:        types.NewReaction("reaction", otherLiker),
+			first:         types.NewPostReaction("reaction", user),
+			second:        types.NewPostReaction("reaction", otherLiker),
 			shouldBeEqual: false,
 		},
 		{
 			name:          "Returns true with the same data",
-			first:         types.NewReaction("reaction", user),
-			second:        types.NewReaction("reaction", user),
+			first:         types.NewPostReaction("reaction", user),
+			second:        types.NewPostReaction("reaction", user),
 			shouldBeEqual: true,
 		},
 	}
@@ -91,25 +91,25 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name      string
 		reactions types.Reactions
-		newLike   types.Reaction
+		newLike   types.PostReaction
 		expLikes  types.Reactions
 		expAppend bool
 	}{
 		{
 			name:      "New reaction is appended properly to empty list",
 			reactions: types.Reactions{},
-			newLike:   types.NewReaction("reaction", user),
-			expLikes:  types.Reactions{types.NewReaction("reaction", user)},
+			newLike:   types.NewPostReaction("reaction", user),
+			expLikes:  types.Reactions{types.NewPostReaction("reaction", user)},
 			expAppend: true,
 		},
 		{
 			name:      "New reaction is appended properly to existing list",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			newLike:   types.NewReaction("reaction", otherLiker),
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
+			newLike:   types.NewPostReaction("reaction", otherLiker),
 			expAppend: true,
 			expLikes: types.Reactions{
-				types.NewReaction("reaction", user),
-				types.NewReaction("reaction", otherLiker),
+				types.NewPostReaction("reaction", user),
+				types.NewPostReaction("reaction", otherLiker),
 			},
 		},
 	}
@@ -140,7 +140,7 @@ func TestReactions_ContainsOwnerLike(t *testing.T) {
 	}{
 		{
 			name:        "Non-empty list returns true with valid address",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
+			reactions:   types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:       user,
 			value:       "reaction",
 			expContains: true,
@@ -154,14 +154,14 @@ func TestReactions_ContainsOwnerLike(t *testing.T) {
 		},
 		{
 			name:        "Non-empty list returns false with not found address",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
+			reactions:   types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:       otherLiker,
 			value:       "reaction",
 			expContains: false,
 		},
 		{
 			name:        "Non-empty list returns false with not found value",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
+			reactions:   types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:       user,
 			value:       "reaction-2",
 			expContains: false,
@@ -192,7 +192,7 @@ func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 	}{
 		{
 			name:      "Non-empty list returns proper index with valid value",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     user,
 			value:     "reaction",
 			expIndex:  0,
@@ -206,14 +206,14 @@ func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 		},
 		{
 			name:      "Non-empty list returns -1 with not found address",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction",
 			expIndex:  -1,
 		},
 		{
 			name:      "Non-empty list returns -1 with not found value",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction-2",
 			expIndex:  -1,
@@ -244,8 +244,8 @@ func TestReactions_RemoveReaction(t *testing.T) {
 		expEdited bool
 	}{
 		{
-			name:      "Reaction is removed from non-empty list",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			name:      "PostReaction is removed from non-empty list",
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     user,
 			value:     "reaction",
 			expResult: types.Reactions{},
@@ -261,18 +261,18 @@ func TestReactions_RemoveReaction(t *testing.T) {
 		},
 		{
 			name:      "Non-empty list with not found address is not edited",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction",
-			expResult: types.Reactions{types.NewReaction("reaction", user)},
+			expResult: types.Reactions{types.NewPostReaction("reaction", user)},
 			expEdited: false,
 		},
 		{
 			name:      "Non-empty list with not found value is not edited",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
+			reactions: types.Reactions{types.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction-2",
-			expResult: types.Reactions{types.NewReaction("reaction", user)},
+			expResult: types.Reactions{types.NewPostReaction("reaction", user)},
 			expEdited: false,
 		},
 	}
