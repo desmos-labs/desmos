@@ -51,7 +51,7 @@ type (
 	UserAnswer            = types.UserAnswer
 	UserAnswers           = types.UserAnswers
 	PostReaction          = types.PostReaction
-	PostReactions         = types.Reactions
+	PostReactions         = types.PostReactions
 	PostQueryResponse     = types.PostQueryResponse
 	GenesisState          = types.GenesisState
 	MsgCreatePost         = types.MsgCreatePost

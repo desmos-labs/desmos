@@ -27,7 +27,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Genesis with invalid post errors",
 			genesis: types.GenesisState{
 				Posts:     types.Posts{types.Post{PostID: types.PostID(0)}},
-				Reactions: map[string]types.Reactions{},
+				Reactions: map[string]types.PostReactions{},
 			},
 			shouldError: true,
 		},
@@ -35,7 +35,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Genesis with invalid reaction errors",
 			genesis: types.GenesisState{
 				Posts: types.Posts{},
-				Reactions: map[string]types.Reactions{
+				Reactions: map[string]types.PostReactions{
 					"1": {types.PostReaction{Owner: nil}},
 				},
 			},
@@ -50,7 +50,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewUserAnswer([]types.AnswerID{}, user),
 					},
 				},
-				Reactions: map[string]types.Reactions{},
+				Reactions: map[string]types.PostReactions{},
 			},
 			shouldError: true,
 		},

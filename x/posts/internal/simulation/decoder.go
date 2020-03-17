@@ -28,7 +28,7 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &commentsB)
 		return fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", commentsA, commentsB)
 	case bytes.HasPrefix(kvA.Key, types.PostReactionsStorePrefix):
-		var reactionsA, reactionB types.Reactions
+		var reactionsA, reactionB types.PostReactions
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionsA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
 		return fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactionsA, reactionB)

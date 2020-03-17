@@ -52,13 +52,13 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 }
 
 // randomReactions returns a randomly generated list of reactions
-func randomReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.Reactions) {
+func randomReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.PostReactions) {
 	reactionsNumber := simState.Rand.Intn(len(posts))
 
-	reactionsMap = make(map[string]types.Reactions, reactionsNumber)
+	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {
 		reactionsLen := simState.Rand.Intn(20)
-		reactions := make(types.Reactions, reactionsLen)
+		reactions := make(types.PostReactions, reactionsLen)
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
 			reactions[j] = types.NewPostReaction(RandomReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))

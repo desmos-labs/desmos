@@ -72,7 +72,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 
 	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
 
-	likes := types.Reactions{
+	likes := types.PostReactions{
 		types.NewPostReaction("like", liker),
 		types.NewPostReaction("like", otherLiker),
 	}
@@ -157,7 +157,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		postOwner,
 	).WithMedias(medias).WithPollData(pollData)
 
-	likes := types.Reactions{
+	likes := types.PostReactions{
 		types.NewPostReaction("like", liker),
 		types.NewPostReaction("like", otherLiker),
 	}
@@ -173,7 +173,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		{
 			name:        "Post query response string",
 			response:    PostResponse,
-			expResponse: "ID - [Reactions] [Children] \n10 - [[{\"owner\":\"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4\",\"value\":\"like\"} {\"owner\":\"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae\",\"value\":\"like\"}]] [[98 100]]",
+			expResponse: "ID - [PostReactions] [Children] \n10 - [[{\"owner\":\"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4\",\"value\":\"like\"} {\"owner\":\"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae\",\"value\":\"like\"}]] [[98 100]]",
 		},
 	}
 

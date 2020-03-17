@@ -22,7 +22,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existent reactions
-	var reactions types.Reactions
+	var reactions types.PostReactions
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
 	// Check for double reactions
@@ -47,7 +47,7 @@ func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, user sd
 	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existing reactions
-	var reactions types.Reactions
+	var reactions types.PostReactions
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
 	// Check if the user exists
@@ -70,22 +70,22 @@ func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, user sd
 
 // GetPostReactions returns the list of reactions that has been associated to the post having the given id
 // nolint: interfacer
-func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Reactions {
+func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
 
-	var reactions types.Reactions
+	var reactions types.PostReactions
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
 	return reactions
 }
 
 // GetReactions allows to returns the list of reactions that have been stored inside the given context
-func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.Reactions {
+func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 
-	reactionsData := map[types.PostID]types.Reactions{}
+	reactionsData := map[types.PostID]types.PostReactions{}
 	for ; iterator.Valid(); iterator.Next() {
-		var postLikes types.Reactions
+		var postLikes types.PostReactions
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
 		postID, err := types.ParsePostID(string(idBytes))

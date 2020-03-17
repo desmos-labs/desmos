@@ -2,13 +2,13 @@ package types
 
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
-	Posts       Posts                  `json:"posts"`
-	PollAnswers map[string]UserAnswers `json:"poll_answers_details"`
-	Reactions   map[string]Reactions   `json:"reactions"`
+	Posts       Posts                    `json:"posts"`
+	PollAnswers map[string]UserAnswers   `json:"poll_answers_details"`
+	Reactions   map[string]PostReactions `json:"reactions"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(posts Posts, reactions map[string]Reactions) GenesisState {
+func NewGenesisState(posts Posts, reactions map[string]PostReactions) GenesisState {
 	return GenesisState{
 		Posts:     posts,
 		Reactions: reactions,

@@ -37,7 +37,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	// Get the likes
 	postLikes := keeper.GetPostReactions(ctx, post.PostID)
 	if postLikes == nil {
-		postLikes = types.Reactions{}
+		postLikes = types.PostReactions{}
 	}
 
 	// Get the children

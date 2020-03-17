@@ -57,7 +57,7 @@ func TestDecodeStore(t *testing.T) {
 
 	lastPostID := types.PostID(1)
 	comments := types.PostIDs{types.PostID(10), types.PostID(14), types.PostID(20)}
-	reactions := types.Reactions{
+	reactions := types.PostReactions{
 		types.NewPostReaction("like", postCreatorAddr),
 		types.NewPostReaction("💙", postCreatorAddr),
 	}
@@ -76,7 +76,7 @@ func TestDecodeStore(t *testing.T) {
 		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostID, lastPostID)},
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", testPost, testPost)},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
-		{"Reactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactions, reactions)},
+		{"PostReactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactions, reactions)},
 		{"other", ""},
 	}
 

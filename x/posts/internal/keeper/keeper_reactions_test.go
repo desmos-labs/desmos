@@ -19,35 +19,35 @@ func TestKeeper_SaveReaction(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		storedLikes    types.Reactions
+		storedLikes    types.PostReactions
 		postID         types.PostID
 		like           types.PostReaction
 		error          error
-		expectedStored types.Reactions
+		expectedStored types.PostReactions
 	}{
 		{
 			name:           "PostReaction from same user already present returns expError",
-			storedLikes:    types.Reactions{types.NewPostReaction("like", liker)},
+			storedLikes:    types.PostReactions{types.NewPostReaction("like", liker)},
 			postID:         types.PostID(10),
 			like:           types.NewPostReaction("like", liker),
 			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with like to the post with id 10"),
-			expectedStored: types.Reactions{types.NewPostReaction("like", liker)},
+			expectedStored: types.PostReactions{types.NewPostReaction("like", liker)},
 		},
 		{
 			name:           "First liker is stored properly",
-			storedLikes:    types.Reactions{},
+			storedLikes:    types.PostReactions{},
 			postID:         types.PostID(15),
 			like:           types.NewPostReaction("like", liker),
 			error:          nil,
-			expectedStored: types.Reactions{types.NewPostReaction("like", liker)},
+			expectedStored: types.PostReactions{types.NewPostReaction("like", liker)},
 		},
 		{
 			name:        "Second liker is stored properly",
-			storedLikes: types.Reactions{types.NewPostReaction("like", liker)},
+			storedLikes: types.PostReactions{types.NewPostReaction("like", liker)},
 			postID:      types.PostID(87),
 			like:        types.NewPostReaction("like", otherLiker),
 			error:       nil,
-			expectedStored: types.Reactions{
+			expectedStored: types.PostReactions{
 				types.NewPostReaction("like", liker),
 				types.NewPostReaction("like", otherLiker),
 			},
@@ -67,7 +67,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			err := k.SavePostReaction(ctx, test.postID, test.like)
 			require.Equal(t, test.error, err)
 
-			var stored types.Reactions
+			var stored types.PostReactions
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 			require.Equal(t, test.expectedStored, stored)
 		})
@@ -80,39 +80,39 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		storedLikes    types.Reactions
+		storedLikes    types.PostReactions
 		postID         types.PostID
 		liker          sdk.AccAddress
 		value          string
 		error          error
-		expectedStored types.Reactions
+		expectedStored types.PostReactions
 	}{
 		{
 			name:           "PostReaction from same liker is removed properly",
-			storedLikes:    types.Reactions{types.NewPostReaction("like", liker)},
+			storedLikes:    types.PostReactions{types.NewPostReaction("like", liker)},
 			postID:         types.PostID(10),
 			liker:          liker,
 			value:          "like",
 			error:          nil,
-			expectedStored: types.Reactions{},
+			expectedStored: types.PostReactions{},
 		},
 		{
 			name:           "Non existing reaction returns error - Creator",
-			storedLikes:    types.Reactions{},
+			storedLikes:    types.PostReactions{},
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "like",
 			error:          fmt.Errorf("cannot remove the reaction with value like from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
-			expectedStored: types.Reactions{},
+			expectedStored: types.PostReactions{},
 		},
 		{
 			name:           "Non existing reaction returns error - Value",
-			storedLikes:    types.Reactions{types.NewPostReaction("like", liker)},
+			storedLikes:    types.PostReactions{types.NewPostReaction("like", liker)},
 			postID:         types.PostID(15),
 			liker:          liker,
 			value:          "reaction",
 			error:          fmt.Errorf("cannot remove the reaction with value reaction from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
-			expectedStored: types.Reactions{types.NewPostReaction("like", liker)},
+			expectedStored: types.PostReactions{types.NewPostReaction("like", liker)},
 		},
 	}
 
@@ -129,7 +129,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			err := k.RemovePostReaction(ctx, test.postID, test.liker, test.value)
 			require.Equal(t, test.error, err)
 
-			var stored types.Reactions
+			var stored types.PostReactions
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
 			require.Len(t, stored, len(test.expectedStored))
@@ -149,17 +149,17 @@ func TestKeeper_GetPostReactions(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		likes  types.Reactions
+		likes  types.PostReactions
 		postID types.PostID
 	}{
 		{
 			name:   "Empty list are returned properly",
-			likes:  types.Reactions{},
+			likes:  types.PostReactions{},
 			postID: types.PostID(10),
 		},
 		{
 			name: "Valid list of likes is returned properly",
-			likes: types.Reactions{
+			likes: types.PostReactions{
 				types.NewPostReaction("like", otherLiker),
 				types.NewPostReaction("like", liker),
 			},
@@ -195,15 +195,15 @@ func TestKeeper_GetReactions(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		likes map[types.PostID]types.Reactions
+		likes map[types.PostID]types.PostReactions
 	}{
 		{
 			name:  "Empty likes data are returned correctly",
-			likes: map[types.PostID]types.Reactions{},
+			likes: map[types.PostID]types.PostReactions{},
 		},
 		{
 			name: "Non empty likes data are returned correcly",
-			likes: map[types.PostID]types.Reactions{
+			likes: map[types.PostID]types.PostReactions{
 				types.PostID(5): {
 					types.NewPostReaction("like", liker1),
 					types.NewPostReaction("like", liker2),

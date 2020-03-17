@@ -333,7 +333,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
 
-				var storedReactions types.Reactions
+				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				require.Contains(t, storedReactions, types.NewPostReaction(test.msg.Value, test.msg.User))
 			}
@@ -392,7 +392,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			if test.existingReaction != nil {
 				store.Set(
 					types.PostReactionsStoreKey(test.existingPost.PostID),
-					k.Cdc.MustMarshalBinaryBare(&types.Reactions{*test.existingReaction}),
+					k.Cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
 				)
 			}
 
@@ -412,7 +412,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
 
-				var storedReactions types.Reactions
+				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				require.NotContains(t, storedReactions, test.existingReaction)
 			}
