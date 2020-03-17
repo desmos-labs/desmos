@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -14,9 +13,6 @@ type PostMedia struct {
 	URI      string `json:"uri"`
 	MimeType string `json:"mime_type"`
 }
-
-var rEx = regexp.MustCompile(
-	`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
 func NewPostMedia(uri, mimeType string) PostMedia {
 	return PostMedia{
@@ -54,7 +50,7 @@ func (pm PostMedia) Equals(other PostMedia) bool {
 
 // ValidateURI checks if the given uri string is well-formed according to the regExp and return and error otherwise
 func ValidateURI(uri string) error {
-	if !rEx.MatchString(uri) {
+	if !URIRegEx.MatchString(uri) {
 		return fmt.Errorf("invalid uri provided")
 	}
 

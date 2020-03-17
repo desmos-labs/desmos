@@ -1,21 +1,17 @@
 package types
 
-import "fmt"
-
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
-	Posts       Posts                  `json:"posts"`
-	PollAnswers map[string]UserAnswers `json:"poll_answers_details"`
-	Reactions   map[string]Reactions   `json:"reactions"`
-	Hashtags    map[string]PostIDs     `json:"hashtags"`
+	Posts       Posts                    `json:"posts"`
+	PollAnswers map[string]UserAnswers   `json:"poll_answers_details"`
+	Reactions   map[string]PostReactions `json:"reactions"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(posts Posts, reactions map[string]Reactions, hashtags map[string]PostIDs) GenesisState {
+func NewGenesisState(posts Posts, reactions map[string]PostReactions) GenesisState {
 	return GenesisState{
 		Posts:     posts,
 		Reactions: reactions,
-		Hashtags:  hashtags,
 	}
 }
 
@@ -44,14 +40,6 @@ func ValidateGenesis(data GenesisState) error {
 		for _, record := range reactions {
 			if err := record.Validate(); err != nil {
 				return err
-			}
-		}
-	}
-
-	for _, IDs := range data.Hashtags {
-		for _, id := range IDs {
-			if !id.Valid() {
-				return fmt.Errorf("invalid post ID, %s", id)
 			}
 		}
 	}

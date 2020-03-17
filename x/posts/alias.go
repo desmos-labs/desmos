@@ -85,6 +85,7 @@ var (
 	DefaultQueryPostsParams   = types.DefaultQueryPostsParams
 	NewMsgAddPostReaction     = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction  = types.NewMsgRemovePostReaction
+	NewMsgRegisterReaction    = types.NewMsgRegisterReaction
 	ParsePostID               = types.ParsePostID
 	NewPost                   = types.NewPost
 	NewPostResponse           = types.NewPostResponse
@@ -135,6 +136,8 @@ type (
 	OptionalData             = types.OptionalData
 	KeyValue                 = types.KeyValue
 	PostQueryResponse        = types.PostQueryResponse
+	PostReaction             = types.PostReaction
+	PostReactions            = types.PostReactions
 	Reaction                 = types.Reaction
 	Reactions                = types.Reactions
 	MsgCreatePost            = types.MsgCreatePost

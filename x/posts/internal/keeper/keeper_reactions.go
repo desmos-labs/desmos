@@ -99,3 +99,45 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactio
 
 	return reactionsData
 }
+
+// -------------
+// --- Reactions
+// -------------
+
+// RegisterReaction allows to register a new reaction for later reference
+func (k Keeper) RegisterReaction(ctx sdk.Context, reaction types.Reaction) {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reaction))
+}
+
+// DoesReactionForShortcodeExist checks whether a reaction already exists for the given shortcode, returning it if it does.
+func (k Keeper) DoesReactionForShortcodeExist(ctx sdk.Context, shortcode string, subspace string) (reaction *types.Reaction, exist bool) {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.ReactionsStoreKey(shortcode, subspace)
+
+	bz := store.Get(key)
+
+	if bz != nil {
+		k.Cdc.MustUnmarshalBinaryBare(bz, &reaction)
+		return reaction, true
+	}
+
+	return nil, false
+}
+
+// ListReactions returns all the registered reactions
+func (k Keeper) ListReactions(ctx sdk.Context) types.Reactions {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
+
+	reactions := make(types.Reactions, 0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var reaction types.Reaction
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &reaction)
+		reactions = append(reactions, reaction)
+	}
+
+	return reactions
+}

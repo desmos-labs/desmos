@@ -10,6 +10,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// -------------
+// --- PostReactions
+// -------------
+
 func TestKeeper_SaveReaction(t *testing.T) {
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
@@ -228,4 +232,111 @@ func TestKeeper_GetReactions(t *testing.T) {
 			require.Equal(t, test.likes, likesData)
 		})
 	}
+}
+
+// -------------
+// --- Reactions
+// -------------
+
+func TestKeeper_RegisterReaction(t *testing.T) {
+	ctx, k := SetupTestInput()
+	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	reaction := types.NewReaction(
+		testOwner,
+		":smile:",
+		"https://smile.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+
+	store := ctx.KVStore(k.StoreKey)
+	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
+
+	k.RegisterReaction(ctx, reaction)
+
+	var actualReaction types.Reaction
+
+	bz := store.Get(key)
+	k.Cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
+
+	require.Equal(t, reaction, actualReaction)
+}
+
+func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
+	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
+	reaction := types.NewReaction(
+		testOwner,
+		":smile:",
+		"https://smile.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+
+	tests := []struct {
+		name           string
+		storedReaction *types.Reaction
+		shortCode      string
+		expBool        bool
+	}{
+		{
+			name:           "reaction for given short code exists",
+			storedReaction: &reaction,
+			shortCode:      ":smile:",
+			expBool:        true,
+		},
+		{
+			name:           "reaction for the given short code doesn't exist",
+			storedReaction: &reaction,
+			shortCode:      ":test:",
+			expBool:        false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			store := ctx.KVStore(k.StoreKey)
+			key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
+			store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.storedReaction))
+
+			actualReaction, exist := k.DoesReactionForShortcodeExist(ctx, test.shortCode, reaction.Subspace)
+			if test.shortCode == reaction.ShortCode {
+				require.True(t, exist)
+				require.Equal(t, test.storedReaction, actualReaction)
+			} else {
+				require.False(t, exist)
+				require.Nil(t, actualReaction)
+			}
+		})
+	}
+}
+
+func TestKeeper_ListReactions(t *testing.T) {
+	ctx, k := SetupTestInput()
+	store := ctx.KVStore(k.StoreKey)
+
+	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	reaction := types.NewReaction(
+		testOwner,
+		":smile:",
+		"https://smile.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+	reaction2 := types.NewReaction(
+		testOwner,
+		":thumbs_up:",
+		"https://thumbs_up.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+	reactions := types.Reactions{reaction, reaction2}
+
+	for _, reaction := range reactions {
+		key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
+		store.Set(key, k.Cdc.MustMarshalBinaryBare(reaction))
+	}
+
+	actualReactions := k.ListReactions(ctx)
+
+	require.Equal(t, reactions, actualReactions)
+
 }
