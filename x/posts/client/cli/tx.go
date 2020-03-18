@@ -39,6 +39,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAddPostReaction(cdc),
 		GetCmdRemovePostReaction(cdc),
 		GetCmdAnswerPoll(cdc),
+		GetCmdRegisterReaction(cdc),
 	)...)
 
 	return postsTxCmd
@@ -323,6 +324,22 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAnswerPoll(postID, answers, cliCtx.FromAddress)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "register-reaction [short-code] [value] [subspace]",
+		Short: "Register a new reaction",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			msg := types.NewMsgRegisterReaction(cliCtx.FromAddress, args[0], args[1], args[2])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

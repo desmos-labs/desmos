@@ -39,15 +39,15 @@ func (reaction Reaction) String() string {
 // Validate implements validator
 func (reaction Reaction) Validate() error {
 	if reaction.Creator.Empty() {
-		return fmt.Errorf("invalid creator address: %s", reaction.Creator)
+		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
 	if len(strings.TrimSpace(reaction.ShortCode)) == 0 {
-		return fmt.Errorf("reaction short code cannot empty or blank")
+		return fmt.Errorf("reaction short code cannot be empty or blank")
 	}
 
 	if len(strings.TrimSpace(reaction.Value)) == 0 {
-		return fmt.Errorf("reaction value cannot empty or blank")
+		return fmt.Errorf("reaction value cannot be empty or blank")
 	}
 
 	if !ShortCodeRegEx.MatchString(reaction.ShortCode) {

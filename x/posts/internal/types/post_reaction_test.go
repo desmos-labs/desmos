@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestReaction_String(t *testing.T) {
+func TestPostReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -17,7 +17,7 @@ func TestReaction_String(t *testing.T) {
 	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
 }
 
-func TestReaction_Validate(t *testing.T) {
+func TestPostReaction_Validate(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -36,6 +36,11 @@ func TestReaction_Validate(t *testing.T) {
 			reaction: types.NewPostReaction("reaction", nil),
 			error:    errors.New("invalid reaction owner: "),
 		},
+		{
+			name:     "Missing value returns error",
+			reaction: types.NewPostReaction("", user),
+			error:    errors.New("reaction value cannot be empty or blank"),
+		},
 	}
 
 	for _, test := range tests {
@@ -46,7 +51,7 @@ func TestReaction_Validate(t *testing.T) {
 	}
 }
 
-func TestReaction_Equals(t *testing.T) {
+func TestPostReaction_Equals(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -81,7 +86,7 @@ func TestReaction_Equals(t *testing.T) {
 	}
 }
 
-func TestReactions_AppendIfMissing(t *testing.T) {
+func TestPostReactions_AppendIfMissing(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -124,7 +129,7 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestReactions_ContainsOwnerLike(t *testing.T) {
+func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -176,7 +181,7 @@ func TestReactions_ContainsOwnerLike(t *testing.T) {
 	}
 }
 
-func TestReactions_IndexOfByUserAndValue(t *testing.T) {
+func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -228,7 +233,7 @@ func TestReactions_IndexOfByUserAndValue(t *testing.T) {
 	}
 }
 
-func TestReactions_RemoveReaction(t *testing.T) {
+func TestPostReactions_RemoveReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 

@@ -4,10 +4,11 @@ package types
 const (
 	EventTypePostCreated         = "post_created"
 	EventTypePostEdited          = "post_edited"
-	EventTypeReactionAdded       = "post_reaction_added"
+	EventTypePostReactionAdded   = "post_reaction_added"
 	EventTypePostReactionRemoved = "post_reaction_removed"
 	EventTypeAnsweredPoll        = "post_poll_answered"
 	EventTypeClosePoll           = "post_poll_closed"
+	EventTypeRegisterReaction    = "register_reaction"
 
 	// Post attributes
 	AttributeKeyPostID       = "post_id"
@@ -19,8 +20,13 @@ const (
 	AttributeKeyPollAnswerer = "poll_answerer"
 
 	// PostReaction attributes
-	AttributeKeyReactionOwner = "user"
-	AttributeKeyReactionValue = "reaction"
+	AttributeKeyPostReactionOwner = "user"
+	AttributeKeyPostReactionValue = "reaction"
+
+	// Reaction attributes
+	AttributeKeyReactionCreator   = "creator"
+	AttributeKeyReactionShortCode = "short_code"
+	AttributeKeyReactionSubSpace  = "subspace"
 
 	// Generic attributes
 	AttributeKeyCreationTime = "creation_time"

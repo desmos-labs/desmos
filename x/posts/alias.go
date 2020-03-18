@@ -13,7 +13,7 @@ import (
 const (
 	EventTypePostCreated            = types.EventTypePostCreated
 	EventTypePostEdited             = types.EventTypePostEdited
-	EventTypeReactionAdded          = types.EventTypeReactionAdded
+	EventTypeReactionAdded          = types.EventTypePostReactionAdded
 	EventTypePostReactionRemoved    = types.EventTypePostReactionRemoved
 	EventTypeAnsweredPoll           = types.EventTypeAnsweredPoll
 	EventTypeClosePoll              = types.EventTypeClosePoll
@@ -22,8 +22,8 @@ const (
 	AttributeKeyPostOwner           = types.AttributeKeyPostOwner
 	AttributeKeyPostEditTime        = types.AttributeKeyPostEditTime
 	AttributeKeyPollAnswerer        = types.AttributeKeyPollAnswerer
-	AttributeKeyReactionOwner       = types.AttributeKeyReactionOwner
-	AttributeKeyReactionValue       = types.AttributeKeyReactionValue
+	AttributeKeyReactionOwner       = types.AttributeKeyPostReactionOwner
+	AttributeKeyReactionValue       = types.AttributeKeyPostReactionValue
 	AttributeKeyCreationTime        = types.AttributeKeyCreationTime
 	PostSortByID                    = types.PostSortByID
 	PostSortByCreationDate          = types.PostSortByCreationDate
@@ -90,6 +90,7 @@ var (
 	NewPost                   = types.NewPost
 	NewPostResponse           = types.NewPostResponse
 	NewReaction               = types.NewReaction
+	NewPostReaction           = types.NewPostReaction
 	PostStoreKey              = types.PostStoreKey
 	PostCommentsStoreKey      = types.PostCommentsStoreKey
 	PostReactionsStoreKey     = types.PostReactionsStoreKey

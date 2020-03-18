@@ -21,10 +21,11 @@ const (
 	ActionRegisterReaction   = "register_reaction"
 
 	// Queries
-	QuerierRoute     = ModuleName
-	QueryPost        = "post"
-	QueryPosts       = "posts"
-	QueryPollAnswers = "poll-answers"
+	QuerierRoute             = ModuleName
+	QueryPost                = "post"
+	QueryPosts               = "posts"
+	QueryPollAnswers         = "poll-answers"
+	QueryRegisteredReactions = "registered-reactions"
 )
 
 var (
@@ -38,7 +39,7 @@ var (
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
-	PostReactionsStorePrefix = []byte("post_reactions")
+	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
 )

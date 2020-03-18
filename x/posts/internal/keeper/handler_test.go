@@ -323,10 +323,10 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			// Valid response
 			if res != nil {
 				require.Contains(t, res.Events, sdk.NewEvent(
-					types.EventTypeReactionAdded,
+					types.EventTypePostReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Value),
+					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
 				))
 
 				var storedPost types.Post
@@ -404,8 +404,8 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Reaction),
+					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Reaction),
 				))
 
 				var storedPost types.Post
@@ -656,4 +656,73 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		})
 	}
 
+}
+
+func Test_handleMsgRegisterReaction(t *testing.T) {
+
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	require.NoError(t, err)
+
+	shortCode := ":smile:"
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	value := "https://smile.jpg"
+	reaction := types.NewReaction(user, shortCode, value, subspace)
+
+	tests := []struct {
+		name             string
+		existingReaction *types.Reaction
+		msg              types.MsgRegisterReaction
+		error            error
+	}{
+		{
+			name:             "Reaction registered without error",
+			existingReaction: nil,
+			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
+			error:            nil,
+		},
+		{
+			name:             "Already registered reaction returns error",
+			existingReaction: &reaction,
+			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
+				"reaction with shortcode %s and subspace %s has already been registered", shortCode, subspace)),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if test.existingReaction != nil {
+				store.Set(types.ReactionsStoreKey(test.existingReaction.ShortCode, test.existingReaction.Subspace),
+					k.Cdc.MustMarshalBinaryBare(&test.existingReaction))
+			}
+
+			handler := keeper.NewHandler(k)
+			res, err := handler(ctx, test.msg)
+
+			// Valid response
+			if res != nil {
+				require.Contains(t, res.Events, sdk.NewEvent(
+					types.EventTypeRegisterReaction,
+					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
+					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
+					sdk.NewAttribute(types.AttributeKeyReactionSubSpace, test.msg.Subspace),
+				))
+
+				var storedReaction types.Reaction
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReactionsStoreKey(shortCode,
+					subspace)), &storedReaction)
+				require.True(t, reaction.Equals(storedReaction))
+			}
+
+			// Invalid response
+			if res == nil {
+				require.NotNil(t, err)
+				require.Equal(t, test.error.Error(), err.Error())
+			}
+		})
+	}
 }

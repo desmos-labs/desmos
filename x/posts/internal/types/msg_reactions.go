@@ -40,23 +40,23 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.ShortCode)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "reaction short code cannot empty or blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code cannot be empty or blank")
 	}
 
 	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "reaction value cannot empty or blank")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value cannot be empty or blank")
 	}
 
 	if !ShortCodeRegEx.MatchString(msg.ShortCode) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "reaction short code must be an emoji short code")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
 	if !URIRegEx.MatchString(msg.Value) || !UnicodeRegEx.MatchString(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "reaction value should be a URL or an emoji unicode")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode")
 	}
 
 	if !SubspaceRegEx.MatchString(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "reaction subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash")
 	}
 
 	return nil

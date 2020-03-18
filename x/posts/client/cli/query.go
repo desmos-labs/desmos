@@ -31,6 +31,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdQueryPost(cdc),
 		GetCmdQueryPosts(cdc),
 		GetCmdQueryPollAnswer(cdc),
+		GetCmdQueryRegisteredReactions(cdc),
 	)...)
 	return postQueryCmd
 }
@@ -198,6 +199,28 @@ func GetCmdQueryPollAnswer(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var out types.PollAnswersQueryResponse
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+func GetCmdQueryRegisteredReactions(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "registered-reactions",
+		Short: "Retrieve tha poll answers of the post with given id",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRegisteredReactions)
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find any registered reaction \n")
+				return nil
+			}
+
+			var out types.Reactions
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

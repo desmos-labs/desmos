@@ -42,7 +42,7 @@ func (reaction PostReaction) Validate() error {
 	}
 
 	if len(strings.TrimSpace(reaction.Value)) == 0 {
-		return fmt.Errorf("reaction value cannot empty or blank")
+		return fmt.Errorf("reaction value cannot be empty or blank")
 	}
 
 	return nil

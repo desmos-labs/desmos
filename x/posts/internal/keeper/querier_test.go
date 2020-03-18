@@ -388,3 +388,62 @@ func Test_queryPollAnswers(t *testing.T) {
 	}
 
 }
+
+func Test_queryRegisteredReactions(t *testing.T) {
+	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
+
+	tests := []struct {
+		name            string
+		path            []string
+		storedReactions types.Reactions
+		expError        error
+		expResult       types.Reactions
+	}{
+		{
+			name: "Reactions returned properly",
+			path: []string{types.QueryRegisteredReactions},
+			storedReactions: types.Reactions{
+				types.NewReaction(creator, ":smile:", "http://smile.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewReaction(creator, ":sad:", "http://sad.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+			expError: nil,
+			expResult: types.Reactions{
+				types.NewReaction(creator, ":sad:", "http://sad.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewReaction(creator, ":smile:", "http://smile.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			for _, r := range test.storedReactions {
+				k.RegisterReaction(ctx, r)
+			}
+
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if result != nil {
+				require.Nil(t, err)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				require.NoError(t, err)
+
+				require.Equal(t, string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				require.NotNil(t, err)
+				require.Equal(t, test.expError.Error(), err.Error())
+				require.Nil(t, result)
+			}
+		})
+	}
+}

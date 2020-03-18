@@ -24,6 +24,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgRemovePostReaction(ctx, keeper, msg)
 		case types.MsgAnswerPoll:
 			return handleMsgAnswerPollPost(ctx, keeper, msg)
+		case types.MsgRegisterReaction:
+			return handleMsgRegisterReaction(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -139,10 +141,10 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 
 	// Emit the event
 	event := sdk.NewEvent(
-		types.EventTypeReactionAdded,
+		types.EventTypePostReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionValue, msg.Value),
+		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Value),
 	)
 	ctx.EventManager().EmitEvent(event)
 
@@ -171,8 +173,8 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	event := sdk.NewEvent(
 		types.EventTypePostReactionRemoved,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionValue, msg.Reaction),
+		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Reaction),
 	)
 	ctx.EventManager().EmitEvent(event)
 
@@ -279,5 +281,33 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"),
 		Events: sdk.Events{answerEvent},
 	}
+	return &result, nil
+}
+
+func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegisterReaction) (*sdk.Result, error) {
+	_, isAlreadyRegistered := keeper.DoesReactionForShortcodeExist(ctx, msg.ShortCode, msg.Subspace)
+
+	if isAlreadyRegistered {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
+			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace))
+	}
+
+	reaction := types.NewReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
+
+	keeper.RegisterReaction(ctx, reaction)
+
+	event := sdk.NewEvent(
+		types.EventTypeRegisterReaction,
+		sdk.NewAttribute(types.AttributeKeyReactionCreator, msg.Creator.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionShortCode, msg.ShortCode),
+		sdk.NewAttribute(types.AttributeKeyReactionSubSpace, msg.Subspace),
+	)
+	ctx.EventManager().EmitEvent(event)
+
+	result := sdk.Result{
+		Data:   []byte("reaction registered properly"),
+		Events: sdk.Events{event},
+	}
+
 	return &result, nil
 }
