@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -96,7 +95,6 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if msg.PollData != nil {
-
 		if !msg.PollData.Open {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
 		}
@@ -116,13 +114,6 @@ func (msg MsgCreatePost) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
-}
-
-// MarshalJSON implements the json.Mashaler interface.
-// This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
-	type temp MsgCreatePost
-	return json.Marshal(temp(msg))
 }
 
 // ----------------------
