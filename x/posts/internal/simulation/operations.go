@@ -12,11 +12,12 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgCreatePost     = "op_weight_msg_create_post"
-	OpWeightMsgEditPost       = "op_weight_msg_edit_post"
-	OpWeightMsgAddReaction    = "op_weight_msg_add_reaction"
-	OpWeightMsgRemoveReaction = "op_weight_msg_remove_reaction"
-	OpWeightMsgAnswerPoll     = "op_weight_msg_answer_poll"
+	OpWeightMsgCreatePost       = "op_weight_msg_create_post"
+	OpWeightMsgEditPost         = "op_weight_msg_edit_post"
+	OpWeightMsgAddReaction      = "op_weight_msg_add_reaction"
+	OpWeightMsgRemoveReaction   = "op_weight_msg_remove_reaction"
+	OpWeightMsgAnswerPoll       = "op_weight_msg_answer_poll"
+	OpWeightMsgRegisterReaction = "op_weight_msg_register_reaction"
 
 	DefaultGasValue = 5000000
 )
@@ -59,6 +60,13 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
+	var weightMsgRegisterReaction int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRegisterReaction, &weightMsgRegisterReaction, nil,
+		func(_ *rand.Rand) {
+			weightMsgRegisterReaction = params.DefaultWeightMsgRegisterReaction
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
@@ -70,15 +78,19 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddReaction(k, ak),
+			SimulateMsgAddPostReaction(k, ak),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemoveReaction(k, ak),
+			SimulateMsgRemovePostReaction(k, ak),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
 			SimulateMsgAnswerToPoll(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRegisterReaction,
+			SimulateMsgRegisterReaction(k, ak),
 		),
 	}
 }

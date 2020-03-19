@@ -3,6 +3,7 @@
 - Improved `alias.go` files (#103)
 - Added the support for posting empty-message posts with medias (#110)
 - Implemented the support for hashtags in posts (#96)
+- Implemented the support for registering new emojis (#94)
 
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)

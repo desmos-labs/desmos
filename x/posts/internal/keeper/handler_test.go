@@ -523,7 +523,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				sdkerrors.ErrInvalidRequest, "the poll associated with ID 1 doesn't allow multiple answers"),
 		},
 		{
-			name: "User provide too many answers",
+			name: "Creator provide too many answers",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				types.PostID(1),
@@ -547,7 +547,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
 		},
 		{
-			name: "User provide answers that are not the ones provided by the poll",
+			name: "Creator provide answers that are not the ones provided by the poll",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				types.PostID(1),

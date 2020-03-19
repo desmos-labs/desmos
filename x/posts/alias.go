@@ -60,12 +60,12 @@ var (
 	SimulateMsgAnswerToPoll   = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgCreatePost     = simulation.SimulateMsgCreatePost
 	SimulateMsgEditPost       = simulation.SimulateMsgEditPost
-	SimulateMsgAddReaction    = simulation.SimulateMsgAddReaction
-	SimulateMsgRemoveReaction = simulation.SimulateMsgRemoveReaction
+	SimulateMsgAddReaction    = simulation.SimulateMsgAddPostReaction
+	SimulateMsgRemoveReaction = simulation.SimulateMsgRemovePostReaction
 	RandomPost                = simulation.RandomPost
 	RandomPostData            = simulation.RandomPostData
-	RandomReactionData        = simulation.RandomReactionData
-	RandomReactionValue       = simulation.RandomReactionValue
+	RandomReactionData        = simulation.RandomPostReactionData
+	RandomReactionValue       = simulation.RandomPostReactionValue
 	RandomPostID              = simulation.RandomPostID
 	RandomMessage             = simulation.RandomMessage
 	RandomSubspace            = simulation.RandomSubspace
@@ -120,7 +120,7 @@ var (
 type (
 	Keeper                   = keeper.Keeper
 	PostData                 = simulation.PostData
-	ReactionData             = simulation.ReactionData
+	ReactionData             = simulation.PostReactionData
 	GenesisState             = types.GenesisState
 	PollData                 = types.PollData
 	UserAnswer               = types.UserAnswer

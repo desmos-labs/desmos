@@ -13,15 +13,17 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 )
 
-// SimulateMsgAddReaction tests and runs a single msg add reaction where the reacting user account already exists
+////////////
+
+// SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
 // nolint: funlen
-func SimulateMsgAddReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomAddReactionFields(r, ctx, accs, k, ak)
+		data, skip, err := randomAddPostReactionFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -31,7 +33,7 @@ func SimulateMsgAddReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgAddPostReaction(data.PostID, data.Value, data.User.Address)
-		err = sendMsgAddReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err = sendMsgAddPostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -40,8 +42,8 @@ func SimulateMsgAddReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 	}
 }
 
-// sendMsgAddReaction sends a transaction with a MsgAddReaction from a provided random account.
-func sendMsgAddReaction(
+// sendMsgAddPostReaction sends a transaction with a MsgAddReaction from a provided random account.
+func sendMsgAddPostReaction(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
@@ -72,12 +74,12 @@ func sendMsgAddReaction(
 	return nil
 }
 
-// randomAddReactionFields returns the data used to create a MsgAddReaction message
-func randomAddReactionFields(
+// randomAddPostReactionFields returns the data used to create a MsgAddReaction message
+func randomAddPostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*ReactionData, bool, error) {
+) (*PostReactionData, bool, error) {
 
-	reactionData := RandomReactionData(r, accs, k.GetPosts(ctx))
+	reactionData := RandomPostReactionData(r, accs, k.GetPosts(ctx))
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid
@@ -94,15 +96,15 @@ func randomAddReactionFields(
 	return &reactionData, false, nil
 }
 
-// SimulateMsgRemoveReaction tests and runs a single msg remove reaction where the reacting user account already exists
+// SimulateMsgRemovePostReaction tests and runs a single msg remove reaction where the reacting user account already exists
 // nolint: funlen
-func SimulateMsgRemoveReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomRemoveReactionFields(r, ctx, accs, k, ak)
+		data, skip, err := randomRemovePostReactionFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -112,7 +114,7 @@ func SimulateMsgRemoveReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Opera
 		}
 
 		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address, data.Value)
-		err = sendMsgRemoveReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err = sendMsgRemovePostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -121,8 +123,8 @@ func SimulateMsgRemoveReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Opera
 	}
 }
 
-// sendMsgRemoveReaction sends a transaction with a MsgRemoveReaction from a provided random account.
-func sendMsgRemoveReaction(
+// sendMsgRemovePostReaction sends a transaction with a MsgRemoveReaction from a provided random account.
+func sendMsgRemovePostReaction(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
@@ -154,9 +156,9 @@ func sendMsgRemoveReaction(
 }
 
 // randomReactionFields returns the data used to create a MsgAddReaction message
-func randomRemoveReactionFields(
+func randomRemovePostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*ReactionData, bool, error) {
+) (*PostReactionData, bool, error) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 
@@ -177,6 +179,63 @@ func randomRemoveReactionFields(
 	}
 
 	user := GetAccount(reaction.Owner, accs)
-	data := ReactionData{Value: reaction.Value, User: *user, PostID: post.PostID}
+	data := PostReactionData{Value: reaction.Value, User: *user, PostID: post.PostID}
 	return &data, false, nil
+}
+
+func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []sim.Account, chainID string,
+	) (sim.OperationMsg, []sim.FutureOperation, error) {
+
+	}
+}
+
+func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	msg types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+) error {
+	account := ak.GetAccount(ctx, msg.Creator)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	tx := helpers.GenTx(
+		[]sdk.Msg{msg},
+		fees,
+		DefaultGasValue,
+		chainID,
+		[]uint64{account.GetAccountNumber()},
+		[]uint64{account.GetSequence()},
+		privkeys...,
+	)
+
+	_, _, err = app.Deliver(tx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func randomRegisteredReactions(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+) (*ReactionData, bool, error) {
+	reactionData := RandomReactionData(r, accs)
+	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
+
+	// Skip the operation without error as the account is not valid
+	if acc == nil {
+		return nil, true, nil
+	}
+
+	// Skip if the reaction already exists
+	_, registered := k.DoesReactionForShortcodeExist(ctx, reactionData.ShortCode, reactionData.Subspace)
+	if registered {
+		return nil, true, nil
+	}
+
+	return &reactionData, false, nil
 }

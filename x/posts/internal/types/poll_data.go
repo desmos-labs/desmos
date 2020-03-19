@@ -110,7 +110,7 @@ func NewUserAnswer(answers []AnswerID, user sdk.AccAddress) UserAnswer {
 
 // Strings implements fmt.Stringer
 func (userAnswers UserAnswer) String() string {
-	out := fmt.Sprintf("User: %s \nAnswers IDs: ", userAnswers.User.String())
+	out := fmt.Sprintf("Creator: %s \nAnswers IDs: ", userAnswers.User.String())
 	for _, answer := range userAnswers.Answers {
 		out += strconv.FormatUint(uint64(answer), 10) + " "
 	}
