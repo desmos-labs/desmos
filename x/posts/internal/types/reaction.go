@@ -74,7 +74,7 @@ func (reaction Reaction) Equals(other Reaction) bool {
 }
 
 // ------------
-// --- Reactions
+// --- PostReactions
 // ------------
 
 // PostReactions represents a slice of Reaction objects

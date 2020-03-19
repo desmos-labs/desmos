@@ -447,6 +447,13 @@ func (f *Fixtures) TxPostsRemoveReaction(id int, reaction string, from sdk.AccAd
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+// TxPostsRegisterReaction is desmoscli tx posts register-reaction
+func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts register-reaction %s %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, shortCode, value, subspace, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli query account
 
@@ -744,6 +751,18 @@ func (f *Fixtures) QueryPost(id int, flags ...string) posts.PostQueryResponse {
 	err := cdc.UnmarshalJSON([]byte(res), &storedPost)
 	require.NoError(f.T, err)
 	return storedPost
+}
+
+// QueryReactions returns registered reactions
+func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
+	cmd := fmt.Sprintf("%s query posts registered-reactions --output=json %s", f.DesmosliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var registeredReactions posts.Reactions
+	err := cdc.UnmarshalJSON([]byte(res), &registeredReactions)
+	require.NoError(f.T, err)
+	return registeredReactions
 }
 
 //___________________________________________________________________________________

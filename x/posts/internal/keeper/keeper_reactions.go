@@ -101,7 +101,7 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactio
 }
 
 // -------------
-// --- Reactions
+// --- PostReactions
 // -------------
 
 // RegisterReaction allows to register a new reaction for later reference

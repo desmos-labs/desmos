@@ -235,7 +235,7 @@ func TestKeeper_GetReactions(t *testing.T) {
 }
 
 // -------------
-// --- Reactions
+// --- PostReactions
 // -------------
 
 func TestKeeper_RegisterReaction(t *testing.T) {

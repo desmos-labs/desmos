@@ -17,8 +17,9 @@ var (
 // RandomizedGenState generates a random GenesisState for auth
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
-	reactions := randomReactions(simState, posts)
-	postsGenesis := types.NewGenesisState(posts, reactions)
+	postReactions := randomPostReactions(simState, posts)
+	registeredReactions := randomRegisteredReactions(simState)
+	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
@@ -51,8 +52,8 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	return posts
 }
 
-// randomReactions returns a randomly generated list of reactions
-func randomReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.PostReactions) {
+// randomPostReactions returns a randomly generated list of reactions
+func randomPostReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.PostReactions) {
 	reactionsNumber := simState.Rand.Intn(len(posts))
 
 	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
@@ -68,4 +69,22 @@ func randomReactions(simState *module.SimulationState, posts types.Posts) (react
 	}
 
 	return reactionsMap
+}
+
+func randomRegisteredReactions(simState *module.SimulationState) (reactions types.Reactions) {
+	reactionsNumber := simState.Rand.Intn(50)
+
+	reactions = make(types.Reactions, reactionsNumber)
+
+	for index := 0; index < reactionsNumber; index++ {
+		reactionsData := RandomReactionData(simState.Rand, simState.Accounts)
+		reactions[index] = types.NewReaction(
+			reactionsData.Creator.Address,
+			reactionsData.ShortCode,
+			reactionsData.Value,
+			reactionsData.Subspace,
+		)
+	}
+
+	return reactions
 }

@@ -50,9 +50,10 @@ func convertGenesisPostPollAnswers(pollAnswers map[string]UserAnswers) map[PostI
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
-		Posts:       k.GetPosts(ctx),
-		PollAnswers: convertPostPollAnswersMap(k.GetPollAnswersMap(ctx)),
-		Reactions:   convertReactionsMap(k.GetReactions(ctx)),
+		Posts:               k.GetPosts(ctx),
+		PollAnswers:         convertPostPollAnswersMap(k.GetPollAnswersMap(ctx)),
+		PostReactions:       convertReactionsMap(k.GetReactions(ctx)),
+		RegisteredReactions: k.ListReactions(ctx),
 	}
 }
 
@@ -71,12 +72,18 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		}
 	}
 
-	reactionsMap := convertGenesisReactions(data.Reactions)
-	for postID, reactions := range reactionsMap {
-		for _, reaction := range reactions {
-			if err := keeper.SavePostReaction(ctx, postID, reaction); err != nil {
+	postReactionsMap := convertGenesisReactions(data.PostReactions)
+	for postID, postReactions := range postReactionsMap {
+		for _, postReaction := range postReactions {
+			if err := keeper.SavePostReaction(ctx, postID, postReaction); err != nil {
 				panic(err)
 			}
+		}
+	}
+
+	for _, reaction := range data.RegisteredReactions {
+		if _, found := keeper.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
+			keeper.RegisterReaction(ctx, reaction)
 		}
 	}
 

@@ -401,7 +401,7 @@ func Test_queryRegisteredReactions(t *testing.T) {
 		expResult       types.Reactions
 	}{
 		{
-			name: "Reactions returned properly",
+			name: "PostReactions returned properly",
 			path: []string{types.QueryRegisteredReactions},
 			storedReactions: types.Reactions{
 				types.NewReaction(creator, ":smile:", "http://smile.jpg",

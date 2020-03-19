@@ -508,3 +508,54 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 
 	f.Cleanup()
 }
+
+func TestDesmosCLIRegisterReaction(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	shortCode := ":like:"
+	value := "https://like.jpg"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Register a reaction
+	success, _, sterr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the reaction is registered
+	registeredReactions := f.QueryReactions()
+	require.NotEmpty(t, registeredReactions)
+	require.Equal(t, registeredReactions, posts.Reactions{posts.NewReaction(fooAddr, shortCode, value, subspace)})
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--generate-only")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	registeredReactions = f.QueryReactions()
+	require.Len(t, registeredReactions, 1)
+
+	f.Cleanup()
+
+}

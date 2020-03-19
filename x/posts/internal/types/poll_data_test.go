@@ -143,7 +143,7 @@ func TestUserAnswer_String(t *testing.T) {
 
 	userPollAnswers := types.NewUserAnswer(answers, user)
 
-	require.Equal(t, "Creator: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
+	require.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
 }
 
 func TestUserAnswer_Validate(t *testing.T) {

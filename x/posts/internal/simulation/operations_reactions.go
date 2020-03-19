@@ -13,7 +13,9 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 )
 
-////////////
+// ---------------
+// --- PostReaction
+// ---------------
 
 // SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
 // nolint: funlen
@@ -183,12 +185,33 @@ func randomRemovePostReactionFields(
 	return &data, false, nil
 }
 
+// ---------------
+// --- Reaction
+// ---------------
+
 func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
+		reactionData, skip, err := randomRegisteredReaction(r, ctx, accs, k, ak)
+		if err != nil {
+			return sim.NoOpMsg(types.ModuleName), nil, err
+		}
 
+		if skip {
+			return sim.NoOpMsg(types.ModuleName), nil, nil
+		}
+
+		msg := types.NewMsgRegisterReaction(reactionData.Creator.Address,
+			reactionData.ShortCode, reactionData.Value, reactionData.Subspace)
+
+		err = sendMsgRegisterReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
+		if err != nil {
+			return sim.NoOpMsg(types.ModuleName), nil, err
+		}
+
+		return sim.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 
@@ -221,7 +244,7 @@ func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.Account
 	return nil
 }
 
-func randomRegisteredReactions(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+func randomRegisteredReaction(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*ReactionData, bool, error) {
 	reactionData := RandomReactionData(r, accs)
 	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
