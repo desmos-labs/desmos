@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,19 +43,11 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
-	if len(strings.TrimSpace(reaction.ShortCode)) == 0 {
-		return fmt.Errorf("reaction short code cannot be empty or blank")
-	}
-
-	if len(strings.TrimSpace(reaction.Value)) == 0 {
-		return fmt.Errorf("reaction value cannot be empty or blank")
-	}
-
 	if !ShortCodeRegEx.MatchString(reaction.ShortCode) {
 		return fmt.Errorf("reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(reaction.Value) || !UnicodeRegEx.MatchString(reaction.Value) {
+	if !URIRegEx.MatchString(reaction.Value) && !IsEmojiUnicode(reaction.Value) {
 		return fmt.Errorf("reaction value should be a URL or an emoji unicode")
 	}
 
@@ -63,6 +56,15 @@ func (reaction Reaction) Validate() error {
 	}
 
 	return nil
+}
+
+func IsEmojiUnicode(value string) bool {
+	trimmed := strings.TrimPrefix(value, "U+")
+	emo := emoji.Emojis[trimmed]
+	if len(emo.Key) == 0 {
+		return false
+	}
+	return true
 }
 
 // Equals returns true if reaction and other contain the same data

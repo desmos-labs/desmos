@@ -13,4 +13,5 @@ require (
 	github.com/tendermint/go-amino v0.15.1
 	github.com/tendermint/tendermint v0.33.0
 	github.com/tendermint/tm-db v0.4.0
+	github.com/tmdvs/Go-Emoji-Utils v1.1.0
 )

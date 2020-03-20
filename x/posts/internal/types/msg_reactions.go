@@ -2,8 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -11,7 +9,7 @@ import (
 // MsgRegisterReaction represents the message that must be used when wanting
 // to register a new reaction shortCode and the associated value
 type MsgRegisterReaction struct {
-	ShortCode string         `json:"shortcode"`
+	ShortCode string         `json:"short_code"`
 	Value     string         `json:"value"`
 	Subspace  string         `json:"subspace"`
 	Creator   sdk.AccAddress `json:"creator"`
@@ -39,19 +37,11 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(strings.TrimSpace(msg.ShortCode)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code cannot be empty or blank")
-	}
-
-	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value cannot be empty or blank")
-	}
-
 	if !ShortCodeRegEx.MatchString(msg.ShortCode) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(msg.Value) || !UnicodeRegEx.MatchString(msg.Value) {
+	if !URIRegEx.MatchString(msg.Value) && !IsEmojiUnicode(msg.Value) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode")
 	}
 

@@ -34,7 +34,6 @@ var (
 	ShortCodeRegEx = regexp.MustCompile(`:[a-z]([a-z\d_])*:`)
 	URIRegEx       = regexp.MustCompile(
 		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
-	UnicodeRegEx = regexp.MustCompile(`[\\p{L}\\d_]+`)
 
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")

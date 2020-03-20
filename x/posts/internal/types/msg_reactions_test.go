@@ -39,7 +39,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 			name: "Empty short code returns error",
 			msg: types.NewMsgRegisterReaction(testOwner, "", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code cannot be empty or blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code"),
 		},
 		{
 			name: "Invalid short code returns error",
@@ -51,11 +51,17 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 			name: "Empty value returns error",
 			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value cannot be empty or blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode"),
 		},
 		{
-			name: "Invalid value returns error",
+			name: "Invalid value returns error (url)",
 			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "htp://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode"),
+		},
+		{
+			name: "Invalid value returns error (unicode)",
+			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode"),
 		},

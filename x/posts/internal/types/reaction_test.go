@@ -40,7 +40,7 @@ func TestReaction_Validate(t *testing.T) {
 			),
 			error: nil,
 		},
-		/*{
+		{
 			name: "Valid reaction returns no error (unicode on value)",
 			reaction: types.NewReaction(
 				testOwner,
@@ -49,7 +49,7 @@ func TestReaction_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
-		},*/
+		},
 		{
 			name: "Missing creator returns error",
 			reaction: types.NewReaction(
@@ -68,7 +68,7 @@ func TestReaction_Validate(t *testing.T) {
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction short code cannot be empty or blank"),
+			error: errors.New("reaction short code must be an emoji short code"),
 		},
 		{
 			name: "Invalid short code returns error",
@@ -88,14 +88,24 @@ func TestReaction_Validate(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value cannot be empty or blank"),
+			error: errors.New("reaction value should be a URL or an emoji unicode"),
 		},
 		{
-			name: "invalid value returns error",
+			name: "invalid value returns error (url)",
 			reaction: types.NewReaction(
 				testOwner,
 				":smile:",
 				"smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction value should be a URL or an emoji unicode"),
+		},
+		{
+			name: "invalid value returns error (unicode)",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: errors.New("reaction value should be a URL or an emoji unicode"),

@@ -1,4 +1,4 @@
-# `MsgUnlikePost`
+# `MsgRemovePostReaction`
 With this message you can remove the like from a previously liked post. 
 
 ## Structure
