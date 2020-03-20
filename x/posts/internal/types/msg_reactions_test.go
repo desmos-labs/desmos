@@ -87,7 +87,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 
 func TestMsgRegisterReaction_GetSignBytes(t *testing.T) {
 	actual := msgRegisterReaction.GetSignBytes()
-	expected := `{"type":"desmos/MsgRegisterReaction","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","shortcode":":smile:","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","value":"https://smile.jpg"}}`
+	expected := `{"type":"desmos/MsgRegisterReaction","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","short_code":":smile:","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","value":"https://smile.jpg"}}`
 	require.Equal(t, expected, string(actual))
 }
 

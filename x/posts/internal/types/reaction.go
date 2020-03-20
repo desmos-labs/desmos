@@ -61,7 +61,7 @@ func (reaction Reaction) Validate() error {
 func IsEmojiUnicode(value string) bool {
 	trimmed := strings.TrimPrefix(value, "U+")
 	emo := emoji.Emojis[trimmed]
-	return len(emo.Key) == 0
+	return !(len(emo.Key) == 0)
 }
 
 // Equals returns true if reaction and other contain the same data
