@@ -32,22 +32,22 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", testOwner),
+			msg:   types.NewMsgAddPostReaction(types.PostID(0), ":like:", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid user returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", nil),
+			msg:   types.NewMsgAddPostReaction(types.PostID(5), ":like:", nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), "", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "PostReaction value cannot be empty nor blank"),
+			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", testOwner),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(10), "like", testOwner),
+			msg:   types.NewMsgAddPostReaction(types.PostID(10), ":like:", testOwner),
 			error: nil,
 		},
 	}

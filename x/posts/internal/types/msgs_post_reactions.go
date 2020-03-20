@@ -44,8 +44,8 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
-	if len(strings.TrimSpace(msg.Value)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("PostReaction value cannot be empty nor blank"))
+	if !ShortCodeRegEx.MatchString(msg.Value) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
 	return nil

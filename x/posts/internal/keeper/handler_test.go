@@ -289,21 +289,23 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		name         string
-		existingPost *types.Post
-		msg          types.MsgAddPostReaction
-		error        error
+		name               string
+		existingPost       *types.Post
+		msg                types.MsgAddPostReaction
+		registeredReaction *types.Reaction
+		error              error
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", user),
+			msg:   types.NewMsgAddPostReaction(types.PostID(0), ":smile:", user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
-			name:         "Valid message works properly",
-			existingPost: &testPost,
-			msg:          types.NewMsgAddPostReaction(testPost.PostID, "like", user),
-			error:        nil,
+			name:               "Valid message works properly",
+			existingPost:       &testPost,
+			msg:                types.NewMsgAddPostReaction(testPost.PostID, ":smile:", user),
+			registeredReaction: &testRegisteredReaction,
+			error:              nil,
 		},
 	}
 
@@ -315,6 +317,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				k.RegisterReaction(ctx, testRegisteredReaction)
 			}
 
 			handler := keeper.NewHandler(k)
@@ -351,7 +354,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	reaction := types.NewPostReaction("like", user)
+	reaction := types.NewPostReaction("reaction", user)
 	tests := []struct {
 		name             string
 		existingPost     *types.Post
@@ -361,14 +364,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "like"),
+			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "reaction"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
 			name:         "PostReaction not found",
 			existingPost: &testPost,
-			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "like"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value like from user %s as it does not exist", user)),
+			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "reaction"),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value reaction from user %s as it does not exist", user)),
 		},
 		{
 			name:             "Valid message works properly",

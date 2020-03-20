@@ -21,24 +21,30 @@ func Test_queryPost(t *testing.T) {
 
 	answers := []types.AnswerID{types.AnswerID(1)}
 
+	reaction := types.NewReaction(testPostOwner, ":like:", "https://smile.jpg",
+		"")
+
 	tests := []struct {
-		name            string
-		path            []string
-		storedPosts     types.Posts
-		storedReactions map[types.PostID]types.PostReactions
-		storedAnswers   []types.UserAnswer
-		expResult       types.PostQueryResponse
-		expError        error
+		name               string
+		path               []string
+		storedPosts        types.Posts
+		storedReactions    map[types.PostID]types.PostReactions
+		registeredReaction *types.Reaction
+		storedAnswers      []types.UserAnswer
+		expResult          types.PostQueryResponse
+		expError           error
 	}{
 		{
-			name:     "Invalid ID returns error",
-			path:     []string{types.QueryPost, ""},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
+			name:               "Invalid ID returns error",
+			path:               []string{types.QueryPost, ""},
+			registeredReaction: nil,
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
 		},
 		{
-			name:     "Post not found returns error",
-			path:     []string{types.QueryPost, "1"},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
+			name:               "Post not found returns error",
+			path:               []string{types.QueryPost, "1"},
+			registeredReaction: nil,
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
 		},
 		{
 			name: "Post without likes is returned properly",
@@ -46,8 +52,9 @@ func Test_queryPost(t *testing.T) {
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(types.PostID(2), types.PostID(1), "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
-			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
-			path:          []string{types.QueryPost, "1"},
+			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
+			registeredReaction: nil,
+			path:               []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -60,8 +67,9 @@ func Test_queryPost(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 			},
-			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
-			path:          []string{types.QueryPost, "1"},
+			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
+			registeredReaction: nil,
+			path:               []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -78,17 +86,18 @@ func Test_queryPost(t *testing.T) {
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			storedReactions: map[types.PostID]types.PostReactions{
 				types.PostID(1): {
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 			},
-			path: []string{types.QueryPost, "1"},
+			registeredReaction: &reaction,
+			path:               []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 				types.PostIDs{types.PostID(2)},
 			),
@@ -101,17 +110,18 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedReactions: map[types.PostID]types.PostReactions{
 				types.PostID(1): {
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 			},
-			path: []string{types.QueryPost, "1"},
+			registeredReaction: &reaction,
+			path:               []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				nil,
 				types.PostReactions{
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 				types.PostIDs{types.PostID(2)},
 			),
@@ -124,18 +134,19 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedReactions: map[types.PostID]types.PostReactions{
 				types.PostID(1): {
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 			},
-			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
-			path:          []string{types.QueryPost, "1"},
+			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
+			registeredReaction: &reaction,
+			path:               []string{types.QueryPost, "1"},
 			expResult: types.NewPostResponse(
 				types.NewPost(types.PostID(1), types.PostID(0), "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{
-					types.NewPostReaction("Like", creator),
-					types.NewPostReaction("Like", otherCreator),
+					types.NewPostReaction(":like:", creator),
+					types.NewPostReaction(":like:", otherCreator),
 				},
 				types.PostIDs{types.PostID(2)},
 			),
@@ -149,6 +160,10 @@ func Test_queryPost(t *testing.T) {
 
 			for _, p := range test.storedPosts {
 				k.SavePost(ctx, p)
+			}
+
+			if test.registeredReaction != nil {
+				k.RegisterReaction(ctx, *test.registeredReaction)
 			}
 
 			for index, ans := range test.storedAnswers {
