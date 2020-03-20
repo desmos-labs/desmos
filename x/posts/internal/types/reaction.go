@@ -3,10 +3,10 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // Reaction represents a registered reaction that can be referenced
@@ -61,10 +61,7 @@ func (reaction Reaction) Validate() error {
 func IsEmojiUnicode(value string) bool {
 	trimmed := strings.TrimPrefix(value, "U+")
 	emo := emoji.Emojis[trimmed]
-	if len(emo.Key) == 0 {
-		return false
-	}
-	return true
+	return len(emo.Key) == 0
 }
 
 // Equals returns true if reaction and other contain the same data
