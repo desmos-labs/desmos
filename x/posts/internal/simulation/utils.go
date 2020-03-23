@@ -37,12 +37,11 @@ var (
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
-	postReactsValues = []string{":blue_heart", ":arrow_down:", ":thumbsdown:", "like"}
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
-	reactsShortCodes = []string{":smile:", ":thumbs_up:", ":shit:", ":grin:", ":dog:", ":cat:"}
-	reactValues      = []string{"http://earth.jpg", "U+1F600", "U+1F700", "https://covid.png"}
+	reactsShortCodes = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
+	reactValues      = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
 )
 
 // RandomAcc picks and returns a random post from an array and returns its
@@ -88,17 +87,17 @@ type PostReactionData struct {
 }
 
 // RandomPostReactionData returns a randomly generated reaction data object
-func RandomPostReactionData(r *rand.Rand, accs []sim.Account, posts []types.Post) PostReactionData {
+func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode string) PostReactionData {
 	return PostReactionData{
-		Value:  RandomPostReactionValue(r),
+		Value:  shortCode,
 		User:   accs[r.Intn(len(accs))],
-		PostID: RandomPostID(r, posts),
+		PostID: postID,
 	}
 }
 
 // RandomPostReactionValue returns a random reaction value
 func RandomPostReactionValue(r *rand.Rand) string {
-	return postReactsValues[r.Intn(len(postReactsValues))]
+	return reactsShortCodes[r.Intn(len(reactsShortCodes))]
 }
 
 // RandomPostID returns a randomly extracted post id from the list of posts given

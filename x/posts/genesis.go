@@ -72,18 +72,18 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		}
 	}
 
+	for _, reaction := range data.RegisteredReactions {
+		if _, found := keeper.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
+			keeper.RegisterReaction(ctx, reaction)
+		}
+	}
+
 	postReactionsMap := convertGenesisReactions(data.PostReactions)
 	for postID, postReactions := range postReactionsMap {
 		for _, postReaction := range postReactions {
 			if err := keeper.SavePostReaction(ctx, postID, postReaction); err != nil {
 				panic(err)
 			}
-		}
-	}
-
-	for _, reaction := range data.RegisteredReactions {
-		if _, found := keeper.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
-			keeper.RegisterReaction(ctx, reaction)
 		}
 	}
 

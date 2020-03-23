@@ -18,7 +18,7 @@ var (
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	postReactions := randomPostReactions(simState, posts)
-	registeredReactions := randomRegisteredReactions(simState)
+	registeredReactions := randomRegisteredReactions(simState, postReactions, posts)
 	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
@@ -71,20 +71,35 @@ func randomPostReactions(simState *module.SimulationState, posts types.Posts) (r
 	return reactionsMap
 }
 
-func randomRegisteredReactions(simState *module.SimulationState) (reactions types.Reactions) {
-	reactionsNumber := simState.Rand.Intn(50)
+func randomRegisteredReactions(simState *module.SimulationState, postReactionsMap map[string]types.PostReactions, posts types.Posts) types.Reactions {
 
-	reactions = make(types.Reactions, reactionsNumber)
+	regReactions := types.Reactions{}
 
-	for index := 0; index < reactionsNumber; index++ {
-		reactionsData := RandomReactionData(simState.Rand, simState.Accounts)
-		reactions[index] = types.NewReaction(
-			reactionsData.Creator.Address,
-			reactionsData.ShortCode,
-			reactionsData.Value,
-			reactionsData.Subspace,
-		)
+	for index, postReactions := range postReactionsMap {
+		postID, err := types.ParsePostID(index)
+		if err != nil {
+			panic(err)
+		}
+		subspace := getPostSubspace(postID, posts)
+		for _, postReaction := range postReactions {
+			reaction := types.NewReaction(
+				postReaction.Owner,
+				postReaction.Value,
+				RandomReactionValue(simState.Rand),
+				subspace,
+			)
+			regReactions, _ = regReactions.AppendIfMissing(reaction)
+		}
 	}
 
-	return reactions
+	return regReactions
+}
+
+func getPostSubspace(id types.PostID, posts types.Posts) string {
+	for _, post := range posts {
+		if post.PostID == id {
+			return post.Subspace
+		}
+	}
+	return ""
 }

@@ -244,12 +244,11 @@ func GetCmdAddPostReaction(cdc *codec.Codec) *cobra.Command {
 		Short: "Adds a reaction to a post",
 		Long: fmt.Sprintf(`
 Add a reaction to the post having the given id with the specified value. 
-The value can be anything as long as it is ASCII supported.
+The value has to be a reaction short code.
 
 E.g. 
-%s tx posts add-reaction 12 like --from jack
-%s tx posts add-reaction 12 👍 --from jack
-`, version.ClientName, version.ClientName),
+%s tx posts add-reaction 12 :thumbsup: --from jack
+`, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -274,12 +273,11 @@ func GetCmdRemovePostReaction(cdc *codec.Codec) *cobra.Command {
 		Short: "Removes an existing reaction from a post",
 		Long: fmt.Sprintf(`
 Removes the reaction having the given value from the post having the given id. 
-The value can be anything as long as it is ASCII supported.
+The value has to be a reaction short code.
 
 E.g. 
-%s tx posts remove-reaction 12 like --from jack
-%s tx posts remove-reaction 12 👍 --from jack
-`, version.ClientName, version.ClientName),
+%s tx posts remove-reaction 12 :thumbsup: --from jack
+`, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())

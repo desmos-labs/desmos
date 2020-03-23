@@ -77,6 +77,10 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 			SimulateMsgEditPost(k, ak),
 		),
 		sim.NewWeightedOperation(
+			weightMsgRegisterReaction,
+			SimulateMsgRegisterReaction(k, ak),
+		),
+		sim.NewWeightedOperation(
 			weightMsgAddReaction,
 			SimulateMsgAddPostReaction(k, ak),
 		),
@@ -87,10 +91,6 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
 			SimulateMsgAnswerToPoll(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgRegisterReaction,
-			SimulateMsgRegisterReaction(k, ak),
 		),
 	}
 }

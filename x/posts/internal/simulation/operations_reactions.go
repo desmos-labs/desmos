@@ -81,7 +81,20 @@ func randomAddPostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*PostReactionData, bool, error) {
 
-	reactionData := RandomPostReactionData(r, accs, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	registeredReactions := k.ListReactions(ctx)
+
+	postID := RandomPostID(r, posts)
+	post, _ := k.GetPost(ctx, postID)
+	reaction := registeredReactions[r.Intn(len(registeredReactions))]
+	reaction.Subspace = post.Subspace
+
+	_, registered := k.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace)
+	if !registered {
+		k.RegisterReaction(ctx, reaction)
+	}
+
+	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid
