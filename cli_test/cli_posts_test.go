@@ -438,18 +438,32 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	reactions := posts.Reactions{
+		posts.Reaction{":thumbsup:", "U+1F44D", subspace, fooAddr},
+		posts.Reaction{":blush:", "U+1F60A", subspace, fooAddr},
+		posts.Reaction{":thumbsdown:", "U+1F44E", subspace, fooAddr},
+	}
+
 	// Create a post
-	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		"message", true, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate(subspace, "message", true, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Register reactions
+	for _, reaction := range reactions {
+		success, _, sterr = f.TxPostsRegisterReaction(reaction.ShortCode, reaction.Value, reaction.Subspace, reaction.Creator, "-y")
+		require.True(t, success)
+		require.Empty(t, sterr)
+		tests.WaitForNextNBlocksTM(1, f.Port)
+	}
 
 	// __________________________________________________________________________________
 	// add-reaction
 
 	// Add a reaction
-	success, _, sterr = f.TxPostsAddReaction(1, "👍", fooAddr, "-y")
+	success, _, sterr = f.TxPostsAddReaction(1, ":thumbsup:", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -457,14 +471,14 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// Make sure the reaction is added
 	storedPost := f.QueryPost(1)
 	require.Len(t, storedPost.Reactions, 1)
-	require.Equal(t, storedPost.Reactions[0], posts.NewPostReaction("👍", fooAddr))
+	require.Equal(t, storedPost.Reactions[0], posts.NewPostReaction(":thumbsup:", fooAddr))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(1, "😊", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsAddReaction(1, ":blush:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAddReaction(1, "👎", fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsAddReaction(1, ":thumbsdown:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -480,7 +494,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// remove-reaction
 
 	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(1, "👍", fooAddr, "-y")
+	success, _, sterr = f.TxPostsRemoveReaction(1, ":thumbsup:", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -490,11 +504,11 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Empty(t, storedPost.Reactions)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRemoveReaction(1, "😊", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRemoveReaction(1, ":blush:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr = f.TxPostsRemoveReaction(1, "👎", fooAddr, "--generate-only=true")
+	success, stdout, stderr = f.TxPostsRemoveReaction(1, ":thumbsdown:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg = unmarshalStdTx(f.T, stdout)

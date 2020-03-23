@@ -58,8 +58,8 @@ func TestDecodeStore(t *testing.T) {
 	lastPostID := types.PostID(1)
 	comments := types.PostIDs{types.PostID(10), types.PostID(14), types.PostID(20)}
 	postReactions := types.PostReactions{
-		types.NewPostReaction("like", postCreatorAddr),
-		types.NewPostReaction("💙", postCreatorAddr),
+		types.NewPostReaction(":thumbsup:", postCreatorAddr),
+		types.NewPostReaction("blue_heart:", postCreatorAddr),
 	}
 
 	reaction := types.NewReaction(

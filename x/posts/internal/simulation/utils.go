@@ -37,7 +37,7 @@ var (
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
-	postReactsValues = []string{"💙", "⬇️", "👎", "like"}
+	postReactsValues = []string{":blue_heart", ":arrow_down:", ":thumbsdown:", "like"}
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
