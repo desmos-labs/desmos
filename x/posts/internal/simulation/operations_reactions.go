@@ -81,18 +81,27 @@ func randomAddPostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*PostReactionData, bool, error) {
 
-	posts := k.GetPosts(ctx)
-	registeredReactions := k.ListReactions(ctx)
+	postData := RandomPostData(r, accs)
+	postID := types.PostID(1)
 
-	postID := RandomPostID(r, posts)
-	post, _ := k.GetPost(ctx, postID)
-	reaction := registeredReactions[r.Intn(len(registeredReactions))]
-	reaction.Subspace = post.Subspace
+	post := types.NewPost(
+		postID,
+		postData.ParentID,
+		postData.Message,
+		postData.AllowsComments,
+		postData.Subspace,
+		postData.OptionalData,
+		postData.CreationDate,
+		postData.Creator.Address,
+	)
 
-	_, registered := k.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace)
-	if !registered {
-		k.RegisterReaction(ctx, reaction)
-	}
+	k.SavePost(ctx, post)
+
+	var reaction types.Reaction
+	data := RandomReactionData(r, accs)
+	reaction = types.NewReaction(data.Creator.Address, data.ShortCode, data.Value, post.Subspace)
+
+	k.RegisterReaction(ctx, reaction)
 
 	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)

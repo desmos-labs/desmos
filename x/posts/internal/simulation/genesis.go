@@ -71,6 +71,7 @@ func randomPostReactions(simState *module.SimulationState, posts types.Posts) (r
 	return reactionsMap
 }
 
+// randomRegisteredReactions returns all the possible registered reactions based on given postReactions
 func randomRegisteredReactions(simState *module.SimulationState, postReactionsMap map[string]types.PostReactions, posts types.Posts) types.Reactions {
 
 	regReactions := types.Reactions{}
@@ -95,6 +96,7 @@ func randomRegisteredReactions(simState *module.SimulationState, postReactionsMa
 	return regReactions
 }
 
+// getPostSubspace returns the post subspace from the given postID
 func getPostSubspace(id types.PostID, posts types.Posts) string {
 	for _, post := range posts {
 		if post.PostID == id {
