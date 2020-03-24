@@ -47,26 +47,38 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreatePost is the CLI command for creating a post
 func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace] [message] [allows-comments]",
+		Use:   "create [subspace] [[message]]",
 		Short: "Create a new post",
 		Long: fmt.Sprintf(`
-Create a new post specifying the subspace, message and whether or not it will allow for comments.
+Create a new post specifying the subspace and the message (optional if any kind of media is provided).
 Optional media attachments and polls are also supported. See the below sections to know how to include them.
 
 E.g.
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" true
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
+
+Comments to the post could be locked by including the --allows-comments flag.
+By default this field is set to true.
+
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
+   --allows-comments false
 
 === Medias ===
 If you want to add one or more media(s) attachment(s), you have to use the --media flag.
 You need to firstly specify the media URI and then its mime-type separeted by a comma.
 
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single media" false \
-  --media "https://example.com/media1,text/plain"
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" false \
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single media" \
+  --media "https://example.com/media1,text/plain" \
+  --allows-comments false
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" \
   --media "https://example.com/media1,text/plain" \
   --media "https://example.com/media2,application/json"
 
+If medias are provided, the post could be created even without any message as following:
 
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" \
+  --media "https://example.com/media1,text/plain" \
+  --media "https://example.com/media2,application/json" \
+  --allows-comments false
 
 === Polls ===
 If you want to add a poll to your post you need to specify it through two flags:
@@ -84,17 +96,14 @@ E.g.
 	--poll-answer "Beagle" \
 	--poll-answer "Pug" \
 	--poll-answer "German Sheperd"
-`, version.ClientName, version.ClientName, version.ClientName, version.ClientName),
-		Args: cobra.MinimumNArgs(3),
+`, version.ClientName, version.ClientName, version.ClientName, version.ClientName, version.ClientName, version.ClientName),
+		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			allowsComments, err := strconv.ParseBool(args[2])
-			if err != nil {
-				return err
-			}
+			allowsComments := viper.GetBool(flagAllowsComments)
 
 			parentID, err := types.ParsePostID(viper.GetString(flagParentID))
 			if err != nil {
@@ -190,8 +199,13 @@ E.g.
 				}
 			}
 
+			text := ""
+			if len(args) > 1 {
+				text = args[1]
+			}
+
 			msg := types.NewMsgCreatePost(
-				args[1],
+				text,
 				parentID,
 				allowsComments,
 				args[0],
@@ -206,6 +220,7 @@ E.g.
 		},
 	}
 
+	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment post or not")
 	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")

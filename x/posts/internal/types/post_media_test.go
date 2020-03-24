@@ -26,7 +26,7 @@ func TestPostMedias_String(t *testing.T) {
 
 	actual := postMedias.String()
 
-	expected := "Medias - [URI] [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
+	expected := "URI [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
 
 	require.Equal(t, expected, actual)
 }
@@ -185,7 +185,7 @@ func TestPostMedias_Validate(t *testing.T) {
 					MimeType: "text/plain",
 				},
 			},
-			expErr: "uri must be specified and cannot be empty",
+			expErr: "invalid uri provided",
 		},
 
 		{
@@ -224,18 +224,6 @@ func TestPostMedias_Validate(t *testing.T) {
 // --- PostMedia
 // -----------
 
-func TestPostMedia_String(t *testing.T) {
-	pm := types.PostMedia{
-		URI:      "http://example.com",
-		MimeType: "text/plain",
-	}
-
-	actual := pm.String()
-	expected := "Media - URI - [http://example.com] ; Mime-Type - [text/plain] \n"
-
-	require.Equal(t, expected, actual)
-}
-
 func TestPostMedia_Validate(t *testing.T) {
 	tests := []struct {
 		postMedia types.PostMedia
@@ -246,7 +234,7 @@ func TestPostMedia_Validate(t *testing.T) {
 				URI:      "",
 				MimeType: "text/plain",
 			},
-			expErr: "uri must be specified and cannot be empty",
+			expErr: "invalid uri provided",
 		},
 		{
 			postMedia: types.PostMedia{

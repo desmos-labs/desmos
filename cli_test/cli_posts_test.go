@@ -32,7 +32,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -46,11 +46,11 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	require.Nil(t, post.Medias)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -84,7 +84,7 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--media https://example.com/media1,text/plain",
 		"--media https://example.com/media2,application/json")
 	require.True(t, success)
@@ -103,13 +103,13 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 		posts.NewPostMedia("https://example.com/media2", "application/json")))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
 		"--media https://second.example.com/media1,text/plain",
 		"--media https://second.example.com/media2,application/json")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only",
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
 		"--media https://third.example.com/media1,text/plain",
 		"--media https://third.example.com/media2,application/json")
 	require.Empty(t, stderr)
@@ -145,7 +145,7 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--media https://example.com/media1,text/plain",
 		"--media https://example.com/media2,application/json")
 	require.True(t, success)
@@ -164,13 +164,13 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 		posts.NewPostMedia("https://example.com/media2", "application/json")))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
 		"--media https://second.example.com/media1,text/plain",
 		"--media https://second.example.com/media2,application/json")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only",
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
 		"--media https://third.example.com/media1,text/plain",
 		"--media https://third.example.com/media2,application/json")
 	require.Empty(t, stderr)
@@ -206,7 +206,7 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -220,11 +220,11 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	require.Len(t, post.Medias, 0)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -258,7 +258,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -291,7 +291,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	require.Equal(t, posts.NewPollAnswer(2, "Shiba"), pollData.ProvidedAnswers[2])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--dry-run",
+	success, _, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -300,7 +300,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, true, fooAddr, "--generate-only",
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -338,7 +338,7 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a poll with single answer
-	success, _, sterr := f.TxPostsCreate(subspace, message, true, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -391,7 +391,7 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "message", true, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "message", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -440,7 +440,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		"message", true, fooAddr, "-y")
+		"message", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
