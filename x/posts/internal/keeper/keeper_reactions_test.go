@@ -68,7 +68,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 10, please register it before use"),
+			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 10 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
 		},
 		{
 			name:           "First liker is stored properly",
@@ -366,7 +366,7 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 			key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
 			store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.storedReaction))
 
-			actualReaction, exist := k.DoesReactionForShortcodeExist(ctx, test.shortCode, reaction.Subspace)
+			actualReaction, exist := k.DoesReactionForShortCodeExist(ctx, test.shortCode, reaction.Subspace)
 			if test.shortCode == reaction.ShortCode {
 				require.True(t, exist)
 				require.Equal(t, test.storedReaction, actualReaction)

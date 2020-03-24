@@ -18,7 +18,7 @@ var (
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	postReactions := randomPostReactions(simState, posts)
-	registeredReactions := randomRegisteredReactions(simState, postReactions, posts)
+	registeredReactions := registeredReactions(simState)
 	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
@@ -71,37 +71,20 @@ func randomPostReactions(simState *module.SimulationState, posts types.Posts) (r
 	return reactionsMap
 }
 
-// randomRegisteredReactions returns all the possible registered reactions based on given postReactions
-func randomRegisteredReactions(simState *module.SimulationState, postReactionsMap map[string]types.PostReactions, posts types.Posts) types.Reactions {
+// registeredReactions returns all the possible registered reactions
+func registeredReactions(simState *module.SimulationState) types.Reactions {
+	reactionsData := RegisteredReactionsData(simState.Rand, simState.Accounts)
 
 	regReactions := types.Reactions{}
 
-	for index, postReactions := range postReactionsMap {
-		postID, err := types.ParsePostID(index)
-		if err != nil {
-			panic(err)
-		}
-		subspace := getPostSubspace(postID, posts)
-		for _, postReaction := range postReactions {
-			reaction := types.NewReaction(
-				postReaction.Owner,
-				postReaction.Value,
-				RandomReactionValue(simState.Rand),
-				subspace,
-			)
-			regReactions, _ = regReactions.AppendIfMissing(reaction)
-		}
+	for _, reactionData := range reactionsData {
+		reaction := types.NewReaction(
+			reactionData.Creator.Address,
+			reactionData.ShortCode,
+			reactionData.Value,
+			reactionData.Subspace,
+		)
+		regReactions = append(regReactions, reaction)
 	}
-
 	return regReactions
-}
-
-// getPostSubspace returns the post subspace from the given postID
-func getPostSubspace(id types.PostID, posts types.Posts) string {
-	for _, post := range posts {
-		if post.PostID == id {
-			return post.Subspace
-		}
-	}
-	return ""
 }

@@ -33,9 +33,9 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 
 	// Check if the reaction is a registered one
 	post, _ := k.GetPost(ctx, postID)
-	if _, exist := k.DoesReactionForShortcodeExist(ctx, reaction.Value, post.Subspace); !exist {
-		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s, please register it before use",
-			reaction.Value, postID)
+	if _, exist := k.DoesReactionForShortCodeExist(ctx, reaction.Value, post.Subspace); !exist {
+		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and sub %s, please register it before use",
+			reaction.Value, postID, post.Subspace)
 	}
 
 	// Save the new reaction
@@ -108,7 +108,7 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactio
 }
 
 // -------------
-// --- PostReactions
+// --- Reactions
 // -------------
 
 // RegisterReaction allows to register a new reaction for later reference
@@ -118,8 +118,8 @@ func (k Keeper) RegisterReaction(ctx sdk.Context, reaction types.Reaction) {
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reaction))
 }
 
-// DoesReactionForShortcodeExist checks whether a reaction already exists for the given shortcode, returning it if it does.
-func (k Keeper) DoesReactionForShortcodeExist(ctx sdk.Context, shortcode string, subspace string) (reaction *types.Reaction, exist bool) {
+// DoesReactionForShortCodeExist checks whether a reaction already exists for the given shortCode, returning it if it does.
+func (k Keeper) DoesReactionForShortCodeExist(ctx sdk.Context, shortcode string, subspace string) (reaction *types.Reaction, exist bool) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ReactionsStoreKey(shortcode, subspace)
 

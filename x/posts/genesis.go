@@ -73,7 +73,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	}
 
 	for _, reaction := range data.RegisteredReactions {
-		if _, found := keeper.DoesReactionForShortcodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
+		if _, found := keeper.DoesReactionForShortCodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
 			keeper.RegisterReaction(ctx, reaction)
 		}
 	}

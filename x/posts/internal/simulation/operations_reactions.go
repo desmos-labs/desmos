@@ -211,12 +211,14 @@ func randomRemovePostReactionFields(
 // --- Reaction
 // ---------------
 
+// SimulateMsgRegisterReaction tests and runs a single msg register reaction where the registering user account already exist
+// nolint: funlen
 func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
-		reactionData, skip, err := randomRegisteredReaction(r, ctx, accs, k, ak)
+		reactionData, skip, err := randomRegisteredReactionFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -237,6 +239,7 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 	}
 }
 
+// sendMsgRegisterReaction sends a transaction with a MsgRegisterReaction from a provided random account.
 func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
@@ -266,7 +269,8 @@ func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.Account
 	return nil
 }
 
-func randomRegisteredReaction(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+// randomRegisteredReactionFields returns the data used to create a MsgRegisterReaction message
+func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*ReactionData, bool, error) {
 	reactionData := RandomReactionData(r, accs)
 	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
@@ -277,7 +281,7 @@ func randomRegisteredReaction(r *rand.Rand, ctx sdk.Context, accs []sim.Account,
 	}
 
 	// Skip if the reaction already exists
-	_, registered := k.DoesReactionForShortcodeExist(ctx, reactionData.ShortCode, reactionData.Subspace)
+	_, registered := k.DoesReactionForShortCodeExist(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {
 		return nil, true, nil
 	}

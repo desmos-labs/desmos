@@ -285,7 +285,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 }
 
 func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegisterReaction) (*sdk.Result, error) {
-	_, isAlreadyRegistered := keeper.DoesReactionForShortcodeExist(ctx, msg.ShortCode, msg.Subspace)
+	_, isAlreadyRegistered := keeper.DoesReactionForShortCodeExist(ctx, msg.ShortCode, msg.Subspace)
 
 	if isAlreadyRegistered {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
