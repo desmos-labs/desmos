@@ -2,6 +2,7 @@ package profile
 
 import (
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
+	"github.com/desmos-labs/desmos/x/profile/internal/simulation"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
