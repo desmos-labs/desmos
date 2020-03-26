@@ -84,7 +84,6 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactio
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 	defer iterator.Close()
 
-
 	reactionsData := map[types.PostID]types.PostReactions{}
 	for ; iterator.Valid(); iterator.Next() {
 		var postLikes types.PostReactions
