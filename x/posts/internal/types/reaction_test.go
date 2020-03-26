@@ -88,7 +88,7 @@ func TestReaction_Validate(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji unicode"),
+			error: errors.New("reaction value should be a URL or an emoji"),
 		},
 		{
 			name: "invalid value returns error (url)",
@@ -98,7 +98,7 @@ func TestReaction_Validate(t *testing.T) {
 				"smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji unicode"),
+			error: errors.New("reaction value should be a URL or an emoji"),
 		},
 		{
 			name: "invalid value returns error (unicode)",
@@ -108,7 +108,7 @@ func TestReaction_Validate(t *testing.T) {
 				"U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji unicode"),
+			error: errors.New("reaction value should be a URL or an emoji"),
 		},
 		{
 			name: "invalid subspace returns no error",

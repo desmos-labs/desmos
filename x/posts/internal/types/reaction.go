@@ -47,8 +47,8 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(reaction.Value) && !IsEmojiUnicode(reaction.Value) {
-		return fmt.Errorf("reaction value should be a URL or an emoji unicode")
+	if !URIRegEx.MatchString(reaction.Value) && !IsEmoji(reaction.Value) {
+		return fmt.Errorf("reaction value should be a URL or an emoji")
 	}
 
 	if !SubspaceRegEx.MatchString(reaction.Subspace) {
@@ -58,10 +58,17 @@ func (reaction Reaction) Validate() error {
 	return nil
 }
 
-func IsEmojiUnicode(value string) bool {
+// IsEmoji checks whether the value is an emoji or an emoji unicode
+func IsEmoji(value string) bool {
+
+	_, err := emoji.LookupEmoji(value)
+	if err == nil {
+		return true
+	}
+
 	trimmed := strings.TrimPrefix(value, "U+")
 	emo := emoji.Emojis[trimmed]
-	return !(len(emo.Key) == 0)
+	return len(emo.Key) != 0
 }
 
 // Equals returns true if reaction and other contain the same data

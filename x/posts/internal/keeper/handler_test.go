@@ -301,14 +301,6 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
-			name:         "Reaction not registered",
-			existingPost: &testPost,
-			msg:          types.NewMsgAddPostReaction(testPost.PostID, ":smile:", user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"reaction with short code :smile: isn't registered yet and can't be used to react to the post with ID 3257 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use",
-			),
-		},
-		{
 			name:               "Valid message works properly",
 			existingPost:       &testPost,
 			msg:                types.NewMsgAddPostReaction(testPost.PostID, ":smile:", user),

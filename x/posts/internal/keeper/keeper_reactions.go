@@ -31,6 +31,13 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 			reaction.Owner, reaction.Value, postID)
 	}
 
+	// Check if the reaction is a registered one
+	post, _ := k.GetPost(ctx, postID)
+	if _, exist := k.DoesReactionForShortCodeExist(ctx, reaction.Value, post.Subspace); !exist {
+		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and sub %s, please register it before use",
+			reaction.Value, postID, post.Subspace)
+	}
+
 	// Save the new reaction
 	reactions = append(reactions, reaction)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reactions))
