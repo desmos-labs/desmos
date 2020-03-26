@@ -11,7 +11,7 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 ### Posts
 * [`MsgCreatePost`](msgs/create-post.md): allows you to create a new post or a comment for an existing post. 
 * [`MsgEditPost`](msgs/edit-post.md): allows you to edit a previously created post message.
-* [`MsgAddPostReaction`](docs/developers/msgs/add-post-reaction.md): allows you to add a reaction to an existing post. 
-* [`MsgRemovePostReaction`](docs/developers/msgs/remove-post-reaction.md): allows you to remove a reaction from a post.
+* [`MsgAddPostReaction`](msgs/add-post-reaction.md): allows you to add a reaction to an existing post. 
+* [`MsgRemovePostReaction`](msgs/remove-post-reaction.md): allows you to remove a reaction from a post.
 * [`MsgAnswerPoll`](msgs/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/register-reaction.md): allows you to register a reaction.

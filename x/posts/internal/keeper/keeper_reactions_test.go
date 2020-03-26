@@ -52,25 +52,6 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", liker)},
 		},
 		{
-			name:           "PostReaction is not a registered reaction and returns error",
-			storedReaction: types.PostReactions{},
-			postID:         types.PostID(10),
-			reaction:       types.NewPostReaction(":like:", liker),
-			storedPost: types.NewPost(
-				types.PostID(10),
-				testPost.ParentID,
-				testPost.Message,
-				testPost.AllowsComments,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
-			),
-			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 10 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
-		},
-		{
 			name:           "First liker is stored properly",
 			storedReaction: types.PostReactions{},
 			postID:         types.PostID(10),
@@ -340,19 +321,19 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		storedReaction *types.Reaction
+		storedReaction types.Reaction
 		shortCode      string
 		expBool        bool
 	}{
 		{
 			name:           "reaction for given short code exists",
-			storedReaction: &reaction,
+			storedReaction: reaction,
 			shortCode:      ":smile:",
 			expBool:        true,
 		},
 		{
 			name:           "reaction for the given short code doesn't exist",
-			storedReaction: &reaction,
+			storedReaction: reaction,
 			shortCode:      ":test:",
 			expBool:        false,
 		},
@@ -372,7 +353,7 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 				require.Equal(t, test.storedReaction, actualReaction)
 			} else {
 				require.False(t, exist)
-				require.Nil(t, actualReaction)
+				require.Equal(t, types.Reaction{}, actualReaction)
 			}
 		})
 	}

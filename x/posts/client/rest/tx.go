@@ -16,7 +16,7 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/posts/reactions", removeReactionToPostHandler(cliCtx)).Methods("DELETE")
 	r.HandleFunc("/posts/{postID}/answers", addAnswerToPostPollHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/reaction", registerReactionHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/registeredReactions", registerReactionHandler(cliCtx)).Methods("POST")
 }
 
 func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {

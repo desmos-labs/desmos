@@ -18,7 +18,7 @@ type Reaction struct {
 	Creator   sdk.AccAddress
 }
 
-// NewPostReaction returns a new PostReaction
+// NewReaction returns a new Reaction
 func NewReaction(creator sdk.AccAddress, shortCode, value, subspace string) Reaction {
 	return Reaction{
 		ShortCode: shortCode,
@@ -73,10 +73,10 @@ func (reaction Reaction) Equals(other Reaction) bool {
 }
 
 // ------------
-// --- PostReactions
+// --- Reactions
 // ------------
 
-// PostReactions represents a slice of Reaction objects
+// Reactions represents a slice of Reaction objects
 type Reactions []Reaction
 
 // AppendIfMissing returns a new slice of Reaction objects containing

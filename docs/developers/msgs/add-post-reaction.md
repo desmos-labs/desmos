@@ -1,5 +1,5 @@
 # `MsgAddPostReaction`
-This message allows you to like a post that is already existing on the chain. 
+This message allows you to add a reaction to a post that is already existing on the chain. 
 
 ## Structure
 ```json

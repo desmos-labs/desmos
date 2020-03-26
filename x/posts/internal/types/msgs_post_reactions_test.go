@@ -43,7 +43,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid value returns error",
 			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -111,7 +111,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid value returns no error",
 			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "PostReaction value cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",

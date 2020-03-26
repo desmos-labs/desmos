@@ -135,6 +135,14 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 
 	// Create and store the reaction
 	reaction := types.NewPostReaction(msg.Value, msg.User)
+
+	// Check if the reaction is a registered one
+	if _, exist := keeper.DoesReactionForShortCodeExist(ctx, reaction.Value, post.Subspace); !exist {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and sub %s, please register it before use",
+				reaction.Value, post.PostID, post.Subspace))
+	}
+
 	if err := keeper.SavePostReaction(ctx, post.PostID, reaction); err != nil {
 		return nil, err
 	}
@@ -285,9 +293,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 }
 
 func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegisterReaction) (*sdk.Result, error) {
-	_, isAlreadyRegistered := keeper.DoesReactionForShortCodeExist(ctx, msg.ShortCode, msg.Subspace)
-
-	if isAlreadyRegistered {
+	if _, isAlreadyRegistered := keeper.DoesReactionForShortCodeExist(ctx, msg.ShortCode, msg.Subspace); isAlreadyRegistered {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
 			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace))
 	}

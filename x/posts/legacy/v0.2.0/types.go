@@ -65,8 +65,8 @@ func (p Post) ContentsEquals(other Post) bool {
 		p.Creator.Equals(other.Creator)
 }
 
-// PostReaction is a struct of a user reaction to a post
+// Reaction is a struct of a user reaction to a post
 type Reaction struct {
 	Owner sdk.AccAddress `json:"owner"` // Creator that has created the reaction
-	Value string         `json:"value"` // PostReaction of the reaction
+	Value string         `json:"value"` // Value of the reaction
 }

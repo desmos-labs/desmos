@@ -31,7 +31,7 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/reactions", queryRegisteredReactions(cliCtx)).Methods("GET")
+	r.HandleFunc("/registeredReactions", queryRegisteredReactions(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single post based on its ID
