@@ -65,6 +65,62 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	f.Cleanup()
 }
 
+func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	message := "message#test"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
+		"--allows-comments=false")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+	require.Equal(t, posts.PostID(1), post.PostID)
+	require.False(t, post.AllowsComments)
+	require.Nil(t, post.PollData)
+	require.Nil(t, post.Medias)
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
+		"--allows-comments=false")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only=true",
+		"--allows-comments=false")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
 func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
