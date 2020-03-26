@@ -247,7 +247,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "uri must be specified and cannot be empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
 		{
 			name: "Invalid URI in message returns error",
