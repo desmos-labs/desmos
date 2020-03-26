@@ -408,9 +408,9 @@ func (f *Fixtures) TxGovVote(proposalID int, option gov.VoteOption, from string,
 // desmoscli tx posts
 
 // TxPostsCreate is desmoscli tx posts create
-func (f *Fixtures) TxPostsCreate(subspace, message string, allowsComments bool, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx posts create %s %s %t --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, subspace, message, allowsComments, from, f.Flags())
+func (f *Fixtures) TxPostsCreate(subspace, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts create %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, subspace, message, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 

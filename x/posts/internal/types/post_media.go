@@ -21,17 +21,8 @@ func NewPostMedia(uri, mimeType string) PostMedia {
 	}
 }
 
-// String implements fmt.Stringer
-func (pm PostMedia) String() string {
-	return fmt.Sprintf("Media - URI - [%s] ; Mime-Type - [%s] \n", pm.URI, pm.MimeType)
-}
-
 // Validate implements validator
 func (pm PostMedia) Validate() error {
-	if len(strings.TrimSpace(pm.URI)) == 0 {
-		return fmt.Errorf("uri must be specified and cannot be empty")
-	}
-
 	if err := ValidateURI(pm.URI); err != nil {
 		return err
 	}
@@ -70,9 +61,9 @@ func NewPostMedias(medias ...PostMedia) PostMedias {
 
 // String implements fmt.Stringer
 func (pms PostMedias) String() string {
-	out := "Medias - [URI] [Mime-Type]\n"
-	for _, post := range pms {
-		out += fmt.Sprintf("[%s] %s \n", post.URI, post.MimeType)
+	out := "URI [Mime-Type]\n"
+	for _, media := range pms {
+		out += fmt.Sprintf("[%s] %s \n", media.URI, media.MimeType)
 	}
 
 	return strings.TrimSpace(out)

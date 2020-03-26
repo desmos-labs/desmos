@@ -96,7 +96,6 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if msg.PollData != nil {
-
 		if !msg.PollData.Open {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
 		}

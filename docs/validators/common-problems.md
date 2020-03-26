@@ -75,7 +75,15 @@ To solve this, what you can do is getting more tokens delegated to it by followi
    ```
 
 ## Problem #4: My validator is jailed
-If your validator is jailed it probably means that it have been inactive for a log period of time missing a consistent number of blocks. We suggest you checking the Desmos deamon status to make sure it hasn't been interrupted by some error. 
+If your validator is jailed it probably means that it have been inactive for a log period of time missing a consistent number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some error.
+
+If your service is running properly, you can also try and reset your `desmoscli` configuration by running the following command: 
+
+```bash
+rm $HOME/.desmoscli/config/config.toml
+``` 
+
+After doing so, remember to restart your validator service to apply the changes.
 
 Once you have fixed the problems, you can unjail your validator by executing the following command: 
 
