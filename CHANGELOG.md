@@ -4,7 +4,7 @@
 - Added the support for posting empty-message posts with medias (#110)
 - Implemented the support for hashtags in posts (#96)
 - Updated the post create CLI command in posts (#117)
-- Implemented the support for registering new emojis (#94)
+- Implemented the support for registering new reactions (#94)
 
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)
