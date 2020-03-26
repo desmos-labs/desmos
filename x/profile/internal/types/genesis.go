@@ -17,5 +17,10 @@ func DefaultGenesisState() GenesisState {
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(data GenesisState) error {
+	for _, account := range data.Accounts {
+		if err := account.Validate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }

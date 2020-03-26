@@ -1,14 +1,17 @@
 package types
 
+import sdk "github.com/cosmos/cosmos-sdk/types"
+
 // Account represents a generic account on Desmos, containing the information of a single user
 type Account struct {
-	Name             string        `json:"name,omitempty"`
-	Surname          string        `json:"surname,omitempty"`
-	Moniker          string        `json:"moniker,omitempty"`
-	Bio              string        `json:"bio,omitempty"`
-	Pictures         *Pictures     `json:"pictures,omitempty"`
-	VerifiedServices []ServiceLink `json:"verified_services,omitempty"` // List of all the trusted services linked to this profile
-	ChainLinks       []ChainLink   `json:"chain_links,omitempty"`       // List of all the other chain accounts linked to this profile
+	Name             string         `json:"name,omitempty"`
+	Surname          string         `json:"surname,omitempty"`
+	Moniker          string         `json:"moniker,omitempty"`
+	Bio              string         `json:"bio,omitempty"`
+	Pictures         *Pictures      `json:"pictures,omitempty"`
+	VerifiedServices []ServiceLink  `json:"verified_services,omitempty"` // List of all the trusted services linked to this profile
+	ChainLinks       []ChainLink    `json:"chain_links,omitempty"`       // List of all the other chain accounts linked to this profile
+	Creator          sdk.AccAddress `json:"creator,omitempty" `
 }
 
 // Equals allows to check whether the contents of acc are the same of other
@@ -38,5 +41,12 @@ func (acc Account) Equals(other Account) bool {
 		acc.Surname == other.Surname &&
 		acc.Moniker == other.Surname &&
 		acc.Bio == other.Bio &&
-		acc.Pictures.Equals(other.Pictures)
+		acc.Pictures.Equals(other.Pictures) &&
+		acc.Creator.Equals(other.Creator)
 }
+
+func (acc Account) Validate() error {
+	return
+}
+
+type Accounts []Account

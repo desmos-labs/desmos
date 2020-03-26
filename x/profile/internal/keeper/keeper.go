@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
@@ -22,10 +23,59 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 
 // SaveAccount allows to save the given account inside the current context.
 // It assumes that the given account has already been validated.
-// It assumes that the given account wasn't already been inserted.
-func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Account) {
+func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Account) error {
 	store := ctx.KVStore(k.StoreKey)
 
-	store.Set(types.AccountStoreKey(acc.Moniker), k.Cdc.MustMarshalBinaryBare(&acc))
+	key := types.AccountStoreKey(acc.Moniker)
 
+	if store.Has(key) {
+		bz := store.Get(key)
+		var savedAcc types.Account
+		k.Cdc.MustUnmarshalBinaryBare(bz, &savedAcc)
+		if !savedAcc.Creator.Equals(acc.Creator) {
+			return fmt.Errorf("the account with moniker: %s has already been created", acc.Moniker)
+		}
+	}
+
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&acc))
+	return nil
+}
+
+// DeleteAccount allows to delete an account with the given moniker inside the current context.
+// It assumes that the moniker-related account exists.
+func (k Keeper) DeleteAccount(ctx sdk.Context, moniker string) {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.AccountStoreKey(moniker)
+	store.Delete(key)
+}
+
+// GetAccounts returns all the created accounts inside the current context.
+func (k Keeper) GetAccounts(ctx sdk.Context) (accounts types.Accounts) {
+	store := ctx.KVStore(k.StoreKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.AccountStorePrefix)
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var acc types.Account
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &acc)
+		accounts = append(accounts, acc)
+	}
+
+	return accounts
+}
+
+// GetAccount returns the account corresponding to the given moniker inside the current context.
+func (k Keeper) GetAccount(ctx sdk.Context, moniker string) (account types.Account, found bool) {
+	store := ctx.KVStore(k.StoreKey)
+
+	key := types.AccountStoreKey(moniker)
+
+	if bz := store.Get(key); bz != nil {
+		k.Cdc.MustUnmarshalBinaryBare(bz, &account)
+		return account, true
+	}
+
+	return types.Account{}, false
 }

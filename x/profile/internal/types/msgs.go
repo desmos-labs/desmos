@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,27 +8,23 @@ import (
 )
 
 type MsgCreateAccount struct {
-	Name             string         `json:"name,omitempty"`
-	Surname          string         `json:"surname,omitempty"`
-	Moniker          string         `json:"moniker"`
-	Bio              string         `json:"bio,omitempty"`
-	Pictures         *Pictures      `json:"pictures,omitempty"`
-	VerifiedServices []ServiceLink  `json:"verified_services"`
-	ChainLinks       []ChainLink    `json:"chain_links"`
-	Creator          sdk.AccAddress `json:"creator"`
+	Name     string         `json:"name,omitempty"`
+	Surname  string         `json:"surname,omitempty"`
+	Moniker  string         `json:"moniker"`
+	Bio      string         `json:"bio,omitempty"`
+	Pictures *Pictures      `json:"pictures,omitempty"`
+	Creator  sdk.AccAddress `json:"creator"`
 }
 
 func NewMsgCreateAccount(name string, surname string, moniker string, bio string, pictures *Pictures,
-	verifiedServices []ServiceLink, chainLinks []ChainLink, creator sdk.AccAddress) MsgCreateAccount {
+	creator sdk.AccAddress) MsgCreateAccount {
 	return MsgCreateAccount{
-		Name:             name,
-		Surname:          surname,
-		Moniker:          moniker,
-		Bio:              bio,
-		Pictures:         pictures,
-		VerifiedServices: verifiedServices,
-		ChainLinks:       chainLinks,
-		Creator:          creator,
+		Name:     name,
+		Surname:  surname,
+		Moniker:  moniker,
+		Bio:      bio,
+		Pictures: pictures,
+		Creator:  creator,
 	}
 }
 
@@ -48,18 +43,6 @@ func (msg MsgCreateAccount) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty")
 	}
 
-	for _, serviceLink := range msg.VerifiedServices {
-		if err := serviceLink.Validate(); err != nil {
-			return err
-		}
-	}
-
-	for _, chainLink := range msg.ChainLinks {
-		if err := chainLink.Validate(); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -71,11 +54,4 @@ func (msg MsgCreateAccount) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgCreateAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
-}
-
-// MarshalJSON implements the json.Mashaler interface.
-// This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgCreateAccount) MarshalJSON() ([]byte, error) {
-	type temp MsgCreateAccount
-	return json.Marshal(temp(msg))
 }
