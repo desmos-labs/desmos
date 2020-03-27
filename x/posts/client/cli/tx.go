@@ -39,6 +39,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAddPostReaction(cdc),
 		GetCmdRemovePostReaction(cdc),
 		GetCmdAnswerPoll(cdc),
+		GetCmdRegisterReaction(cdc),
 	)...)
 
 	return postsTxCmd
@@ -258,12 +259,11 @@ func GetCmdAddPostReaction(cdc *codec.Codec) *cobra.Command {
 		Short: "Adds a reaction to a post",
 		Long: fmt.Sprintf(`
 Add a reaction to the post having the given id with the specified value. 
-The value can be anything as long as it is ASCII supported.
+The value has to be a reaction short code.
 
 E.g. 
-%s tx posts add-reaction 12 like --from jack
-%s tx posts add-reaction 12 👍 --from jack
-`, version.ClientName, version.ClientName),
+%s tx posts add-reaction 12 :thumbsup: --from jack
+`, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -288,12 +288,11 @@ func GetCmdRemovePostReaction(cdc *codec.Codec) *cobra.Command {
 		Short: "Removes an existing reaction from a post",
 		Long: fmt.Sprintf(`
 Removes the reaction having the given value from the post having the given id. 
-The value can be anything as long as it is ASCII supported.
+The value has to be a reaction short code.
 
 E.g. 
-%s tx posts remove-reaction 12 like --from jack
-%s tx posts remove-reaction 12 👍 --from jack
-`, version.ClientName, version.ClientName),
+%s tx posts remove-reaction 12 :thumbsup: --from jack
+`, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -338,6 +337,22 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAnswerPoll(postID, answers, cliCtx.FromAddress)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "register-reaction [short-code] [value] [subspace]",
+		Short: "Register a new reaction",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			msg := types.NewMsgRegisterReaction(cliCtx.FromAddress, args[0], args[1], args[2])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

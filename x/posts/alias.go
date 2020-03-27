@@ -13,7 +13,7 @@ import (
 const (
 	EventTypePostCreated            = types.EventTypePostCreated
 	EventTypePostEdited             = types.EventTypePostEdited
-	EventTypeReactionAdded          = types.EventTypeReactionAdded
+	EventTypeReactionAdded          = types.EventTypePostReactionAdded
 	EventTypePostReactionRemoved    = types.EventTypePostReactionRemoved
 	EventTypeAnsweredPoll           = types.EventTypeAnsweredPoll
 	EventTypeClosePoll              = types.EventTypeClosePoll
@@ -22,8 +22,8 @@ const (
 	AttributeKeyPostOwner           = types.AttributeKeyPostOwner
 	AttributeKeyPostEditTime        = types.AttributeKeyPostEditTime
 	AttributeKeyPollAnswerer        = types.AttributeKeyPollAnswerer
-	AttributeKeyReactionOwner       = types.AttributeKeyReactionOwner
-	AttributeKeyReactionValue       = types.AttributeKeyReactionValue
+	AttributeKeyReactionOwner       = types.AttributeKeyPostReactionOwner
+	AttributeKeyReactionValue       = types.AttributeKeyPostReactionValue
 	AttributeKeyCreationTime        = types.AttributeKeyCreationTime
 	PostSortByID                    = types.PostSortByID
 	PostSortByCreationDate          = types.PostSortByCreationDate
@@ -60,12 +60,12 @@ var (
 	SimulateMsgAnswerToPoll   = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgCreatePost     = simulation.SimulateMsgCreatePost
 	SimulateMsgEditPost       = simulation.SimulateMsgEditPost
-	SimulateMsgAddReaction    = simulation.SimulateMsgAddReaction
-	SimulateMsgRemoveReaction = simulation.SimulateMsgRemoveReaction
+	SimulateMsgAddReaction    = simulation.SimulateMsgAddPostReaction
+	SimulateMsgRemoveReaction = simulation.SimulateMsgRemovePostReaction
 	RandomPost                = simulation.RandomPost
 	RandomPostData            = simulation.RandomPostData
-	RandomReactionData        = simulation.RandomReactionData
-	RandomReactionValue       = simulation.RandomReactionValue
+	RandomReactionData        = simulation.RandomPostReactionData
+	RandomReactionValue       = simulation.RandomPostReactionValue
 	RandomPostID              = simulation.RandomPostID
 	RandomMessage             = simulation.RandomMessage
 	RandomSubspace            = simulation.RandomSubspace
@@ -85,10 +85,12 @@ var (
 	DefaultQueryPostsParams   = types.DefaultQueryPostsParams
 	NewMsgAddPostReaction     = types.NewMsgAddPostReaction
 	NewMsgRemovePostReaction  = types.NewMsgRemovePostReaction
+	NewMsgRegisterReaction    = types.NewMsgRegisterReaction
 	ParsePostID               = types.ParsePostID
 	NewPost                   = types.NewPost
 	NewPostResponse           = types.NewPostResponse
 	NewReaction               = types.NewReaction
+	NewPostReaction           = types.NewPostReaction
 	PostStoreKey              = types.PostStoreKey
 	PostCommentsStoreKey      = types.PostCommentsStoreKey
 	PostReactionsStoreKey     = types.PostReactionsStoreKey
@@ -118,7 +120,7 @@ var (
 type (
 	Keeper                   = keeper.Keeper
 	PostData                 = simulation.PostData
-	ReactionData             = simulation.ReactionData
+	ReactionData             = simulation.PostReactionData
 	GenesisState             = types.GenesisState
 	PollData                 = types.PollData
 	UserAnswer               = types.UserAnswer
@@ -135,6 +137,8 @@ type (
 	OptionalData             = types.OptionalData
 	KeyValue                 = types.KeyValue
 	PostQueryResponse        = types.PostQueryResponse
+	PostReaction             = types.PostReaction
+	PostReactions            = types.PostReactions
 	Reaction                 = types.Reaction
 	Reactions                = types.Reactions
 	MsgCreatePost            = types.MsgCreatePost

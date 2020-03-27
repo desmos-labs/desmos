@@ -6,6 +6,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 - [Query a post](queries/post.md)
 - [Query the stored posts](queries/posts.md)
 - [Query the post's poll answers](queries/poll-answers.md)
+- [Query registered reactions](queries/reactions.md)
 
 ## Sessions
 - [Query a session](queries/session.md)

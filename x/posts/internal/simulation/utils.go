@@ -37,8 +37,11 @@ var (
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
-	reactsValues = []string{"💙", "⬇️", "👎", "like"}
-	Hashtags     = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
+
+	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
+
+	shortCodes  = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
+	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
 )
 
 // RandomAcc picks and returns a random post from an array and returns its
@@ -76,25 +79,25 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 	}
 }
 
-// ReactionData contains all the data needed for a reaction to be properly added or removed from a post
-type ReactionData struct {
+// PostReactionData contains all the data needed for a post reaction to be properly added or removed from a post
+type PostReactionData struct {
 	Value  string
 	User   sim.Account
 	PostID types.PostID
 }
 
-// RandomReactionData returns a randomly generated reaction data object
-func RandomReactionData(r *rand.Rand, accs []sim.Account, posts []types.Post) ReactionData {
-	return ReactionData{
-		Value:  RandomReactionValue(r),
+// RandomPostReactionData returns a randomly generated post reaction data object
+func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode string) PostReactionData {
+	return PostReactionData{
+		Value:  shortCode,
 		User:   accs[r.Intn(len(accs))],
-		PostID: RandomPostID(r, posts),
+		PostID: postID,
 	}
 }
 
-// RandomReactionValue returns a random reaction value
-func RandomReactionValue(r *rand.Rand) string {
-	return reactsValues[r.Intn(len(reactsValues))]
+// RandomPostReactionValue returns a random reaction value
+func RandomPostReactionValue(r *rand.Rand) string {
+	return shortCodes[r.Intn(len(shortCodes))]
 }
 
 // RandomPostID returns a randomly extracted post id from the list of posts given
@@ -117,8 +120,8 @@ func RandomSubspace(r *rand.Rand) string {
 
 // RandomHashtag returns a random hashtag from the above random hashtags
 func RandomHashtag(r *rand.Rand) string {
-	idx := r.Intn(len(Hashtags))
-	return Hashtags[idx]
+	idx := r.Intn(len(hashtags))
+	return hashtags[idx]
 }
 
 // RandomMedias returns a randomly generated list of post medias
@@ -175,4 +178,51 @@ func GetAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 		}
 	}
 	return nil
+}
+
+// RegisteredReactionData contains all the data needed for a registered reaction to be properly registered
+type ReactionData struct {
+	Creator   sim.Account
+	ShortCode string
+	Value     string
+	Subspace  string
+}
+
+// RandomReactionValue returns a random reaction value
+func RandomReactionValue(r *rand.Rand) string {
+	return reactValues[r.Intn(len(reactValues))]
+}
+
+// RandomReactionShortCode return a random reaction shortCode
+func RandomReactionShortCode(r *rand.Rand) string {
+	return shortCodes[r.Intn(len(reactValues))]
+}
+
+// RandomReactionData returns a randomly generated reaction data object
+func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
+	return ReactionData{
+		Creator:   accs[r.Intn(len(accs))],
+		ShortCode: RandomReactionShortCode(r),
+		Value:     RandomReactionValue(r),
+		Subspace:  RandomSubspace(r),
+	}
+}
+
+// RegisteredReactionsData returns all the possible registered reactions with given data
+func RegisteredReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
+	reactionsData := []ReactionData{}
+
+	for _, subspace := range subspaces {
+		for _, shortCode := range shortCodes {
+			reactionData := ReactionData{
+				Creator:   accs[r.Intn(len(accs))],
+				ShortCode: shortCode,
+				Value:     RandomReactionValue(r),
+				Subspace:  subspace,
+			}
+			reactionsData = append(reactionsData, reactionData)
+		}
+	}
+
+	return reactionsData
 }

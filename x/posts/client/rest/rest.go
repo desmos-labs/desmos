@@ -46,3 +46,10 @@ type AnswerPollPostReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Answers []string     `json:"answers"`
 }
+
+type RegisterReactionReq struct {
+	BaseReq   rest.BaseReq `json:"base_req"`
+	ShortCode string       `json:"short_code"`
+	Value     string       `json:"value"`
+	Subspace  string       `json:"subspace"`
+}

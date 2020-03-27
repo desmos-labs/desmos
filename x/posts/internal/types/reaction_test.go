@@ -4,22 +4,26 @@ import (
 	"errors"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	reaction := types.NewReaction("reaction", user)
-	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
+	reaction := types.NewReaction(
+		user,
+		":smile:",
+		"https://smile.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+	require.Equal(t, `{"ShortCode":":smile:","Value":"https://smile.jpg","Subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","Creator":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}`, reaction.String())
 }
 
 func TestReaction_Validate(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -27,14 +31,94 @@ func TestReaction_Validate(t *testing.T) {
 		error    error
 	}{
 		{
-			name:     "Valid reaction returns no error",
-			reaction: types.NewReaction("reaction", user),
-			error:    nil,
+			name: "Valid reaction returns no error (url on value)",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: nil,
 		},
 		{
-			name:     "Missing owner returns error",
-			reaction: types.NewReaction("reaction", nil),
-			error:    errors.New("invalid reaction owner: "),
+			name: "Valid reaction returns no error (unicode on value)",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"U+1F600",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: nil,
+		},
+		{
+			name: "Missing creator returns error",
+			reaction: types.NewReaction(
+				nil,
+				":smile:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("invalid reaction creator: "),
+		},
+		{
+			name: "Empty short code returns error",
+			reaction: types.NewReaction(
+				testOwner,
+				"",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction short code must be an emoji short code"),
+		},
+		{
+			name: "Invalid short code returns error",
+			reaction: types.NewReaction(
+				testOwner,
+				"smile:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction short code must be an emoji short code"),
+		},
+		{
+			name: "Empty value returns error",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction value should be a URL or an emoji"),
+		},
+		{
+			name: "invalid value returns error (url)",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction value should be a URL or an emoji"),
+		},
+		{
+			name: "invalid value returns error (unicode)",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"U+1",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: errors.New("reaction value should be a URL or an emoji"),
+		},
+		{
+			name: "invalid subspace returns no error",
+			reaction: types.NewReaction(
+				testOwner,
+				":smile:",
+				"https://smile.jpg",
+				"1234",
+			),
+			error: errors.New("reaction subspace must be a valid sha-256 hash"),
 		},
 	}
 
@@ -60,15 +144,19 @@ func TestReaction_Equals(t *testing.T) {
 		shouldBeEqual bool
 	}{
 		{
-			name:          "Returns false with different user",
-			first:         types.NewReaction("reaction", user),
-			second:        types.NewReaction("reaction", otherLiker),
+			name: "Returns false with different user",
+			first: types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			second: types.NewReaction(otherLiker, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldBeEqual: false,
 		},
 		{
-			name:          "Returns true with the same data",
-			first:         types.NewReaction("reaction", user),
-			second:        types.NewReaction("reaction", user),
+			name: "Returns true with the same data",
+			first: types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			second: types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldBeEqual: true,
 		},
 	}
@@ -85,31 +173,34 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
-
 	tests := []struct {
-		name      string
-		reactions types.Reactions
-		newLike   types.Reaction
-		expLikes  types.Reactions
-		expAppend bool
+		name        string
+		reactions   types.Reactions
+		newReaction types.Reaction
+		expReaction types.Reactions
+		expAppend   bool
 	}{
 		{
 			name:      "New reaction is appended properly to empty list",
 			reactions: types.Reactions{},
-			newLike:   types.NewReaction("reaction", user),
-			expLikes:  types.Reactions{types.NewReaction("reaction", user)},
+			newReaction: types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			expReaction: types.Reactions{types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 			expAppend: true,
 		},
 		{
-			name:      "New reaction is appended properly to existing list",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			newLike:   types.NewReaction("reaction", otherLiker),
+			name: "New reaction is appended properly to existing list",
+			reactions: types.Reactions{types.NewReaction(user, ":smile:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
+			newReaction: types.NewReaction(user, ":sad:", "smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			expAppend: true,
-			expLikes: types.Reactions{
-				types.NewReaction("reaction", user),
-				types.NewReaction("reaction", otherLiker),
+			expReaction: types.Reactions{
+				types.NewReaction(user, ":smile:", "smile.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewReaction(user, ":sad:", "smile.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 		},
 	}
@@ -117,172 +208,9 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual, appended := test.reactions.AppendIfMissing(test.newLike)
-			require.Equal(t, test.expLikes, actual)
+			actual, appended := test.reactions.AppendIfMissing(test.newReaction)
+			require.Equal(t, test.expReaction, actual)
 			require.Equal(t, test.expAppend, appended)
-		})
-	}
-}
-
-func TestReactions_ContainsOwnerLike(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
-
-	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
-
-	tests := []struct {
-		name        string
-		reactions   types.Reactions
-		owner       sdk.AccAddress
-		value       string
-		expContains bool
-	}{
-		{
-			name:        "Non-empty list returns true with valid address",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
-			owner:       user,
-			value:       "reaction",
-			expContains: true,
-		},
-		{
-			name:        "Empty list returns false",
-			reactions:   types.Reactions{},
-			owner:       user,
-			value:       "reaction",
-			expContains: false,
-		},
-		{
-			name:        "Non-empty list returns false with not found address",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
-			owner:       otherLiker,
-			value:       "reaction",
-			expContains: false,
-		},
-		{
-			name:        "Non-empty list returns false with not found value",
-			reactions:   types.Reactions{types.NewReaction("reaction", user)},
-			owner:       user,
-			value:       "reaction-2",
-			expContains: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expContains, test.reactions.ContainsReactionFrom(test.owner, test.value))
-		})
-	}
-}
-
-func TestReactions_IndexOfByUserAndValue(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
-
-	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
-
-	tests := []struct {
-		name      string
-		reactions types.Reactions
-		owner     sdk.AccAddress
-		value     string
-		expIndex  int
-	}{
-		{
-			name:      "Non-empty list returns proper index with valid value",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     user,
-			value:     "reaction",
-			expIndex:  0,
-		},
-		{
-			name:      "Empty list returns -1",
-			reactions: types.Reactions{},
-			owner:     user,
-			value:     "reaction",
-			expIndex:  -1,
-		},
-		{
-			name:      "Non-empty list returns -1 with not found address",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     otherLiker,
-			value:     "reaction",
-			expIndex:  -1,
-		},
-		{
-			name:      "Non-empty list returns -1 with not found value",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     otherLiker,
-			value:     "reaction-2",
-			expIndex:  -1,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expIndex, test.reactions.IndexOfByUserAndValue(test.owner, test.value))
-		})
-	}
-}
-
-func TestReactions_RemoveReaction(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
-
-	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
-
-	tests := []struct {
-		name      string
-		reactions types.Reactions
-		owner     sdk.AccAddress
-		value     string
-		expResult types.Reactions
-		expEdited bool
-	}{
-		{
-			name:      "Reaction is removed from non-empty list",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     user,
-			value:     "reaction",
-			expResult: types.Reactions{},
-			expEdited: true,
-		},
-		{
-			name:      "Empty list is not edited",
-			reactions: types.Reactions{},
-			owner:     user,
-			value:     "reaction",
-			expResult: types.Reactions{},
-			expEdited: false,
-		},
-		{
-			name:      "Non-empty list with not found address is not edited",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     otherLiker,
-			value:     "reaction",
-			expResult: types.Reactions{types.NewReaction("reaction", user)},
-			expEdited: false,
-		},
-		{
-			name:      "Non-empty list with not found value is not edited",
-			reactions: types.Reactions{types.NewReaction("reaction", user)},
-			owner:     otherLiker,
-			value:     "reaction-2",
-			expResult: types.Reactions{types.NewReaction("reaction", user)},
-			expEdited: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			result, edited := test.reactions.RemoveReaction(test.owner, test.value)
-			require.Equal(t, test.expEdited, edited)
-			require.Equal(t, test.expResult, result)
 		})
 	}
 }

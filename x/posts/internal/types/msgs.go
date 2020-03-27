@@ -27,7 +27,7 @@ type MsgCreatePost struct {
 	PollData       *PollData         `json:"poll_data,omitempty"`
 }
 
-// NewMsgCreatePost is a constructor function for MsgSetName
+// NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
 	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time,
 	medias PostMedias, pollData *PollData) MsgCreatePost {

@@ -25,6 +25,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case types.QueryPollAnswers:
 			return queryPollAnswers(ctx, path[1:], req, keeper)
 
+		case types.QueryRegisteredReactions:
+			return queryRegisteredReactions(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")
 		}
@@ -37,7 +39,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	// Get the likes
 	postLikes := keeper.GetPostReactions(ctx, post.PostID)
 	if postLikes == nil {
-		postLikes = types.Reactions{}
+		postLikes = types.PostReactions{}
 	}
 
 	// Get the children
@@ -125,6 +127,18 @@ func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keepe
 		AnswersDetails: pollAnswers,
 	}
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &pollAnswersResponse)
+
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+func queryRegisteredReactions(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	reactions := keeper.ListReactions(ctx)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &reactions)
 
 	if err != nil {
 		panic("could not marshal result to JSON")

@@ -57,16 +57,24 @@ func TestDecodeStore(t *testing.T) {
 
 	lastPostID := types.PostID(1)
 	comments := types.PostIDs{types.PostID(10), types.PostID(14), types.PostID(20)}
-	reactions := types.Reactions{
-		types.NewReaction("like", postCreatorAddr),
-		types.NewReaction("💙", postCreatorAddr),
+	postReactions := types.PostReactions{
+		types.NewPostReaction(":thumbsup:", postCreatorAddr),
+		types.NewPostReaction("blue_heart:", postCreatorAddr),
 	}
+
+	reaction := types.NewReaction(
+		postCreatorAddr,
+		":smile:",
+		"https://smile.jpg",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
 
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.LastPostIDStoreKey, Value: cdc.MustMarshalBinaryBare(lastPostID)},
 		kv.Pair{Key: types.PostStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&testPost)},
 		kv.Pair{Key: types.PostCommentsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&comments)},
-		kv.Pair{Key: types.PostReactionsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&reactions)},
+		kv.Pair{Key: types.PostReactionsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&postReactions)},
+		kv.Pair{Key: types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), Value: cdc.MustMarshalBinaryBare(&reaction)},
 	}
 
 	tests := []struct {
@@ -76,7 +84,8 @@ func TestDecodeStore(t *testing.T) {
 		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostID, lastPostID)},
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", testPost, testPost)},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
-		{"Reactions", fmt.Sprintf("ReactionsA: %s\nReactionsB: %s\n", reactions, reactions)},
+		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
+		{"PostReactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reaction, reaction)},
 		{"other", ""},
 	}
 
