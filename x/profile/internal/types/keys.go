@@ -9,9 +9,12 @@ const (
 
 	ActionCreateAccount = "create_account"
 	ActionEditAccount   = "edit_account"
+	ActionDeleteAccount = "delete_account"
 
 	//Queries
-	QuerierRoute = ModuleName
+	QuerierRoute  = ModuleName
+	QueryAccount  = "account"
+	QueryAccounts = "accounts"
 )
 
 var (

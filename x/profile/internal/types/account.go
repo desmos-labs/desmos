@@ -1,6 +1,10 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"strings"
+)
 
 // Account represents a generic account on Desmos, containing the information of a single user
 type Account struct {
@@ -46,7 +50,27 @@ func (acc Account) Equals(other Account) bool {
 }
 
 func (acc Account) Validate() error {
-	return
+	if acc.Creator.Empty() {
+		return fmt.Errorf("account creator cannot be empty or blank")
+	}
+
+	if len(strings.TrimSpace(acc.Moniker)) == 0 {
+		return fmt.Errorf("account moniker cannot be empty or blank")
+	}
+
+	for _, verifiedService := range acc.VerifiedServices {
+		if err := verifiedService.Validate(); err != nil {
+			return err
+		}
+	}
+
+	for _, chainLink := range acc.ChainLinks {
+		if err := chainLink.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 type Accounts []Account

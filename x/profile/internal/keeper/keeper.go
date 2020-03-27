@@ -23,6 +23,7 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 
 // SaveAccount allows to save the given account inside the current context.
 // It assumes that the given account has already been validated.
+// It returns an error if an account with the same moniker from a different creator already exists
 func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Account) error {
 	store := ctx.KVStore(k.StoreKey)
 
@@ -33,7 +34,7 @@ func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Account) error {
 		var savedAcc types.Account
 		k.Cdc.MustUnmarshalBinaryBare(bz, &savedAcc)
 		if !savedAcc.Creator.Equals(acc.Creator) {
-			return fmt.Errorf("the account with moniker: %s has already been created", acc.Moniker)
+			return fmt.Errorf("an account with moniker: %s has already been created", acc.Moniker)
 		}
 	}
 

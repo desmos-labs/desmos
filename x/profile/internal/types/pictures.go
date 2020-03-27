@@ -6,6 +6,14 @@ type Pictures struct {
 	Cover   string `json:"cover,omitempty"`
 }
 
+// NewPictures is a constructor function for Pictures
+func NewPictures(profile, cover string) Pictures {
+	return Pictures{
+		Profile: profile,
+		Cover:   cover,
+	}
+}
+
 // Equals allows to check whether the contents of pic are the same of otherPic
 func (pic Pictures) Equals(otherPic *Pictures) bool {
 	return pic.Profile == otherPic.Profile &&

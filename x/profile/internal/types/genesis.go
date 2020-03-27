@@ -7,7 +7,9 @@ type GenesisState struct {
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(accounts []Account) GenesisState {
-	return GenesisState{Accounts: accounts}
+	return GenesisState{
+		Accounts: accounts,
+	}
 }
 
 // DefaultGenesisState returns a default GenesisState
