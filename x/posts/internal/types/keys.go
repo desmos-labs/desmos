@@ -18,22 +18,28 @@ const (
 	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
+	ActionRegisterReaction   = "register_reaction"
 
 	// Queries
-	QuerierRoute     = ModuleName
-	QueryPost        = "post"
-	QueryPosts       = "posts"
-	QueryPollAnswers = "poll-answers"
+	QuerierRoute             = ModuleName
+	QueryPost                = "post"
+	QueryPosts               = "posts"
+	QueryPollAnswers         = "poll-answers"
+	QueryRegisteredReactions = "registered-reactions"
 )
 
 var (
-	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
-	HashtagRegEx  = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
+	SubspaceRegEx  = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
+	HashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
+	ShortCodeRegEx = regexp.MustCompile(`:[a-z]([a-z\d_])*:`)
+	URIRegEx       = regexp.MustCompile(
+		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
 	LastPostIDStoreKey       = []byte("last_post_id")
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
-	PostReactionsStorePrefix = []byte("reactions")
+	PostReactionsStorePrefix = []byte("p_reactions")
+	ReactionsStorePrefix     = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
 )
 
@@ -53,6 +59,12 @@ func PostCommentsStoreKey(id PostID) []byte {
 // nolint: interfacer
 func PostReactionsStoreKey(id PostID) []byte {
 	return append(PostReactionsStorePrefix, []byte(id.String())...)
+}
+
+// ReactionsStoreKey turns the combination of shortCode and subspace to a key used to store a reaction into the reaction's store
+// nolint: interfacer
+func ReactionsStoreKey(shortCode, subspace string) []byte {
+	return append(ReactionsStorePrefix, []byte(shortCode+subspace)...)
 }
 
 // PollAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store

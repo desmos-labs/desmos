@@ -10,19 +10,19 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer `json:"poll_answers,omitempty"`
-	Reactions   Reactions    `json:"reactions"`
-	Children    PostIDs      `json:"children"`
+	PollAnswers []UserAnswer  `json:"poll_answers,omitempty"`
+	Reactions   PostReactions `json:"reactions"`
+	Children    PostIDs       `json:"children"`
 }
 
 // String implements fmt.Stringer
 func (response PostQueryResponse) String() string {
-	out := "ID - [Reactions] [Children] \n"
+	out := "ID - [PostReactions] [Children] \n"
 	out += fmt.Sprintf("%s - [%s] [%s] \n", response.Post.PostID, response.Reactions, response.Children)
 	return strings.TrimSpace(out)
 }
 
-func NewPostResponse(post Post, pollAnswers []UserAnswer, reactions Reactions, children PostIDs) PostQueryResponse {
+func NewPostResponse(post Post, pollAnswers []UserAnswer, reactions PostReactions, children PostIDs) PostQueryResponse {
 	return PostQueryResponse{
 		Post:        post,
 		PollAnswers: pollAnswers,

@@ -289,21 +289,23 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		name         string
-		existingPost *types.Post
-		msg          types.MsgAddPostReaction
-		error        error
+		name               string
+		existingPost       *types.Post
+		msg                types.MsgAddPostReaction
+		registeredReaction *types.Reaction
+		error              error
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), "like", user),
+			msg:   types.NewMsgAddPostReaction(types.PostID(0), ":smile:", user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
-			name:         "Valid message works properly",
-			existingPost: &testPost,
-			msg:          types.NewMsgAddPostReaction(testPost.PostID, "like", user),
-			error:        nil,
+			name:               "Valid message works properly",
+			existingPost:       &testPost,
+			msg:                types.NewMsgAddPostReaction(testPost.PostID, ":smile:", user),
+			registeredReaction: &testRegisteredReaction,
+			error:              nil,
 		},
 	}
 
@@ -315,6 +317,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				if test.registeredReaction != nil {
+					k.RegisterReaction(ctx, testRegisteredReaction)
+				}
 			}
 
 			handler := keeper.NewHandler(k)
@@ -323,19 +328,19 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			// Valid response
 			if res != nil {
 				require.Contains(t, res.Events, sdk.NewEvent(
-					types.EventTypeReactionAdded,
+					types.EventTypePostReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Value),
+					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
 				))
 
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
 
-				var storedReactions types.Reactions
+				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.Contains(t, storedReactions, types.NewReaction(test.msg.Value, test.msg.User))
+				require.Contains(t, storedReactions, types.NewPostReaction(test.msg.Value, test.msg.User))
 			}
 
 			// Invalid response
@@ -351,24 +356,24 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	reaction := types.NewReaction("like", user)
+	reaction := types.NewPostReaction("reaction", user)
 	tests := []struct {
 		name             string
 		existingPost     *types.Post
-		existingReaction *types.Reaction
+		existingReaction *types.PostReaction
 		msg              types.MsgRemovePostReaction
 		error            error
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "like"),
+			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "reaction"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
-			name:         "Reaction not found",
+			name:         "PostReaction not found",
 			existingPost: &testPost,
-			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "like"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value like from user %s as it does not exist", user)),
+			msg:          types.NewMsgRemovePostReaction(testPost.PostID, user, "reaction"),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value reaction from user %s as it does not exist", user)),
 		},
 		{
 			name:             "Valid message works properly",
@@ -392,7 +397,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			if test.existingReaction != nil {
 				store.Set(
 					types.PostReactionsStoreKey(test.existingPost.PostID),
-					k.Cdc.MustMarshalBinaryBare(&types.Reactions{*test.existingReaction}),
+					k.Cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
 				)
 			}
 
@@ -404,15 +409,15 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyReactionValue, test.msg.Reaction),
+					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Reaction),
 				))
 
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
 
-				var storedReactions types.Reactions
+				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				require.NotContains(t, storedReactions, test.existingReaction)
 			}
@@ -523,7 +528,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				sdkerrors.ErrInvalidRequest, "the poll associated with ID 1 doesn't allow multiple answers"),
 		},
 		{
-			name: "User provide too many answers",
+			name: "Creator provide too many answers",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				types.PostID(1),
@@ -547,7 +552,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
 		},
 		{
-			name: "User provide answers that are not the ones provided by the poll",
+			name: "Creator provide answers that are not the ones provided by the poll",
 			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				types.PostID(1),
@@ -656,4 +661,73 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		})
 	}
 
+}
+
+func Test_handleMsgRegisterReaction(t *testing.T) {
+
+	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
+	require.NoError(t, err)
+
+	shortCode := ":smile:"
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	value := "https://smile.jpg"
+	reaction := types.NewReaction(user, shortCode, value, subspace)
+
+	tests := []struct {
+		name             string
+		existingReaction *types.Reaction
+		msg              types.MsgRegisterReaction
+		error            error
+	}{
+		{
+			name:             "Reaction registered without error",
+			existingReaction: nil,
+			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
+			error:            nil,
+		},
+		{
+			name:             "Already registered reaction returns error",
+			existingReaction: &reaction,
+			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
+				"reaction with shortcode %s and subspace %s has already been registered", shortCode, subspace)),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+
+			store := ctx.KVStore(k.StoreKey)
+			if test.existingReaction != nil {
+				store.Set(types.ReactionsStoreKey(test.existingReaction.ShortCode, test.existingReaction.Subspace),
+					k.Cdc.MustMarshalBinaryBare(&test.existingReaction))
+			}
+
+			handler := keeper.NewHandler(k)
+			res, err := handler(ctx, test.msg)
+
+			// Valid response
+			if res != nil {
+				require.Contains(t, res.Events, sdk.NewEvent(
+					types.EventTypeRegisterReaction,
+					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
+					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
+					sdk.NewAttribute(types.AttributeKeyReactionSubSpace, test.msg.Subspace),
+				))
+
+				var storedReaction types.Reaction
+				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReactionsStoreKey(shortCode,
+					subspace)), &storedReaction)
+				require.True(t, reaction.Equals(storedReaction))
+			}
+
+			// Invalid response
+			if res == nil {
+				require.NotNil(t, err)
+				require.Equal(t, test.error.Error(), err.Error())
+			}
+		})
+	}
 }

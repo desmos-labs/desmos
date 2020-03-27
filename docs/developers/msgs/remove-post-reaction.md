@@ -1,5 +1,5 @@
-# `MsgUnlikePost`
-With this message you can remove the like from a previously liked post. 
+# `MsgRemovePostReaction`
+With this message you can remove a reaction from a post you have previously reacted to.
 
 ## Structure
 ```json

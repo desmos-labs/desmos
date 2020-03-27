@@ -14,6 +14,14 @@ Running a validator node should be done on a separate machine, not your local co
 If you do not have the possibility of using a local machine, even an hosted server can be perfect. If you wish to get started for free, you can use the [300$ Google Cloud bonus](https://cloud.google.com/free/docs/gcp-free-tier). This should be enough to run a validator for 5-6 months.  
 :::  
 
+:::tip Previously gone thought a Primer challenge? Reset your `desmoscli`
+If you've previously gone through a Primer challenge, you need to make sure your `demoscli` is properly setup to communicate with your node. In order to do so, please execute the following command: 
+
+```bash
+rm $HOME/.desmoscli/config/config.toml
+```
+:::
+
 ## 2. Create your validator
 Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
 

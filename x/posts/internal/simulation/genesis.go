@@ -17,9 +17,9 @@ var (
 // RandomizedGenState generates a random GenesisState for auth
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
-	reactions := randomReactions(simState, posts)
-	hashtags := randomHashtags(simState, posts)
-	postsGenesis := types.NewGenesisState(posts, reactions, hashtags)
+	postReactions := randomPostReactions(simState, posts)
+	registeredReactions := registeredReactions(simState)
+	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
@@ -52,17 +52,17 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	return posts
 }
 
-// randomReactions returns a randomly generated list of reactions
-func randomReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.Reactions) {
+// randomPostReactions returns a randomly generated list of reactions
+func randomPostReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.PostReactions) {
 	reactionsNumber := simState.Rand.Intn(len(posts))
 
-	reactionsMap = make(map[string]types.Reactions, reactionsNumber)
+	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {
 		reactionsLen := simState.Rand.Intn(20)
-		reactions := make(types.Reactions, reactionsLen)
+		reactions := make(types.PostReactions, reactionsLen)
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
-			reactions[j] = types.NewReaction(RandomReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
+			reactions[j] = types.NewPostReaction(RandomPostReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
 		}
 
 		reactionsMap[RandomPostID(simState.Rand, posts).String()] = reactions
@@ -71,19 +71,20 @@ func randomReactions(simState *module.SimulationState, posts types.Posts) (react
 	return reactionsMap
 }
 
-// randomHashtags returns a randomly generated list of hashtags
-func randomHashtags(simState *module.SimulationState, posts types.Posts) (hashtagMap map[string]types.PostIDs) {
-	hashtagNumber := simState.Rand.Intn(len(Hashtags))
+// registeredReactions returns all the possible registered reactions
+func registeredReactions(simState *module.SimulationState) types.Reactions {
+	reactionsData := RegisteredReactionsData(simState.Rand, simState.Accounts)
 
-	hashtagMap = make(map[string]types.PostIDs, hashtagNumber)
-	for i := 0; i < hashtagNumber; i++ {
-		postIDsLen := simState.Rand.Intn(10)
-		postIDs := make(types.PostIDs, postIDsLen)
-		for j := 0; j < postIDsLen; j++ {
-			postIDs[j] = RandomPostID(simState.Rand, posts)
-		}
-		hashtagMap[Hashtags[i]] = postIDs
+	regReactions := types.Reactions{}
+
+	for _, reactionData := range reactionsData {
+		reaction := types.NewReaction(
+			reactionData.Creator.Address,
+			reactionData.ShortCode,
+			reactionData.Value,
+			reactionData.Subspace,
+		)
+		regReactions = append(regReactions, reaction)
 	}
-
-	return hashtagMap
+	return regReactions
 }

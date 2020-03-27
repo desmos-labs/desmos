@@ -6,23 +6,25 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
-// ---------------
-// --- Reaction
-// ---------------
-
-// Reaction is a struct of a user reaction to a post
+// Reaction represents a registered reaction that can be referenced
+// by its shortCode inside post reactions
 type Reaction struct {
-	Owner sdk.AccAddress `json:"owner"` // User that has created the reaction
-	Value string         `json:"value"` // Reaction of the reaction
+	ShortCode string
+	Value     string
+	Subspace  string
+	Creator   sdk.AccAddress
 }
 
 // NewReaction returns a new Reaction
-func NewReaction(value string, owner sdk.AccAddress) Reaction {
+func NewReaction(creator sdk.AccAddress, shortCode, value, subspace string) Reaction {
 	return Reaction{
-		Value: value,
-		Owner: owner,
+		ShortCode: shortCode,
+		Value:     value,
+		Subspace:  subspace,
+		Creator:   creator,
 	}
 }
 
@@ -37,21 +39,44 @@ func (reaction Reaction) String() string {
 
 // Validate implements validator
 func (reaction Reaction) Validate() error {
-	if reaction.Owner.Empty() {
-		return fmt.Errorf("invalid reaction owner: %s", reaction.Owner)
+	if reaction.Creator.Empty() {
+		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
-	if len(strings.TrimSpace(reaction.Value)) == 0 {
-		return fmt.Errorf("reaction value cannot empty or blank")
+	if !ShortCodeRegEx.MatchString(reaction.ShortCode) {
+		return fmt.Errorf("reaction short code must be an emoji short code")
+	}
+
+	if !URIRegEx.MatchString(reaction.Value) && !IsEmoji(reaction.Value) {
+		return fmt.Errorf("reaction value should be a URL or an emoji")
+	}
+
+	if !SubspaceRegEx.MatchString(reaction.Subspace) {
+		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 
 	return nil
 }
 
+// IsEmoji checks whether the value is an emoji or an emoji unicode
+func IsEmoji(value string) bool {
+
+	_, err := emoji.LookupEmoji(value)
+	if err == nil {
+		return true
+	}
+
+	trimmed := strings.TrimPrefix(value, "U+")
+	emo := emoji.Emojis[trimmed]
+	return len(emo.Key) != 0
+}
+
 // Equals returns true if reaction and other contain the same data
 func (reaction Reaction) Equals(other Reaction) bool {
 	return reaction.Value == other.Value &&
-		reaction.Owner.Equals(other.Owner)
+		reaction.ShortCode == other.ShortCode &&
+		reaction.Subspace == other.Subspace &&
+		reaction.Creator.Equals(other.Creator)
 }
 
 // ------------
@@ -71,34 +96,4 @@ func (reactions Reactions) AppendIfMissing(other Reaction) (Reactions, bool) {
 		}
 	}
 	return append(reactions, other), true
-}
-
-// ContainsReactionFrom returns true if the reactions slice contain
-// a reaction from the given user having the given value, false otherwise
-func (reactions Reactions) ContainsReactionFrom(user sdk.Address, value string) bool {
-	return reactions.IndexOfByUserAndValue(user, value) != -1
-}
-
-// IndexOfByUserAndValue returns the index of the reaction from the
-// given user with the specified value inside the reactions slice.
-func (reactions Reactions) IndexOfByUserAndValue(owner sdk.Address, value string) int {
-	for index, reaction := range reactions {
-		if reaction.Owner.Equals(owner) && reaction.Value == value {
-			return index
-		}
-	}
-	return -1
-}
-
-// RemoveReaction returns a new Reactions slice not containing the
-// reaction of the given user with the given value.
-// If the reaction was removed properly, true is also returned. Otherwise,
-// if no reaction was found, false is returned instead.
-func (reactions Reactions) RemoveReaction(user sdk.Address, value string) (Reactions, bool) {
-	index := reactions.IndexOfByUserAndValue(user, value)
-	if index == -1 {
-		return reactions, false
-	}
-
-	return append(reactions[:index], reactions[index+1:]...), true
 }
