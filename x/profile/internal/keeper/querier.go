@@ -15,7 +15,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
 		case types.QueryAccount:
-			return queryAccount(ctx, path[:1], req, keeper)
+			return queryAccount(ctx, path[1:], req, keeper)
 		case types.QueryAccounts:
 			return queryAccounts(ctx, req, keeper)
 		default:

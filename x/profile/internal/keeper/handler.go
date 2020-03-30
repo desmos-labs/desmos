@@ -79,7 +79,7 @@ func handleMsgEditAccount(ctx sdk.Context, keeper Keeper, msg types.MsgEditAccou
 	// returns error when the editor is different from the account creator
 	err := keeper.SaveAccount(ctx, account)
 	if err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	createEvent := sdk.NewEvent(
@@ -110,7 +110,7 @@ func handleMsgDeleteAccount(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteA
 
 	// check if the creator of the message match the account creator
 	if !acc.Creator.Equals(msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("You cannot delete an account that you dont own"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("You cannot delete an account that is not yours"))
 	}
 
 	keeper.DeleteAccount(ctx, msg.Moniker)

@@ -7,6 +7,10 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
+	MaxNameSurnameLength = 500
+	MaxMonikerLength     = 20
+	MaxBioLength         = 1000
+
 	ActionCreateAccount = "create_account"
 	ActionEditAccount   = "edit_account"
 	ActionDeleteAccount = "delete_account"

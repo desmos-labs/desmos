@@ -7,7 +7,28 @@ import (
 
 // RandomizedGenState generates a random GenesisState for auth
 func RandomizedGenState(simsState *module.SimulationState) {
-
+	accs := randomAccounts(simsState)
 	profileGenesis := types.NewGenesisState(accs)
 	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
+}
+
+// randomAccounts returns randomly generated genesis accounts
+func randomAccounts(simState *module.SimulationState) (accounts types.Accounts) {
+	accountsNumber := simState.Rand.Intn(50)
+
+	accounts = make(types.Accounts, accountsNumber)
+	for i := 0; i < accountsNumber; i++ {
+		accountData := RandomAccountData(simState.Rand, simState.Accounts)
+		account := types.Account{
+			Moniker: accountData.Moniker,
+			Name:    accountData.Name,
+			Surname: accountData.Surname,
+			Bio:     accountData.Bio,
+			Creator: accountData.Creator.Address,
+		}
+
+		accounts[i] = account
+	}
+
+	return accounts
 }

@@ -46,6 +46,26 @@ func (msg MsgCreateAccount) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
+	if len(msg.Name) > MaxNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account name cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(msg.Surname) > MaxNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account surname cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(strings.TrimSpace(msg.Moniker)) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Account moniker cannot be blank or empty")
+	}
+
+	if len(msg.Moniker) > MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account moniker cannot exceed %d characters", MaxMonikerLength))
+	}
+
+	if len(msg.Bio) > MaxBioLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account biography cannot exceed %d characters", MaxBioLength))
+	}
+
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty")
 	}
@@ -102,8 +122,24 @@ func (msg MsgEditAccount) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
+	if len(msg.Name) > MaxNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account name cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(msg.Surname) > MaxNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account surname cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(msg.Bio) > MaxBioLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account biography cannot exceed %d characters", MaxBioLength))
+	}
+
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Account moniker cannot be blank or empty")
+	}
+
+	if len(msg.Moniker) > MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	return nil

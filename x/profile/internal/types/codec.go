@@ -11,4 +11,6 @@ func init() {
 
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgCreateAccount{}, "desmos/MsgCreateAccount", nil)
+	cdc.RegisterConcrete(MsgEditAccount{}, "desmos/MsgEditAccount", nil)
+	cdc.RegisterConcrete(MsgDeleteAccount{}, "desmos/MsgDeleteAccount", nil)
 }

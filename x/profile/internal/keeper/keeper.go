@@ -52,6 +52,8 @@ func (k Keeper) DeleteAccount(ctx sdk.Context, moniker string) {
 
 // GetAccounts returns all the created accounts inside the current context.
 func (k Keeper) GetAccounts(ctx sdk.Context) (accounts types.Accounts) {
+	accounts = make(types.Accounts, 0)
+
 	store := ctx.KVStore(k.StoreKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.AccountStorePrefix)
