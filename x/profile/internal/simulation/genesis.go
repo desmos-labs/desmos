@@ -13,13 +13,13 @@ func RandomizedGenState(simsState *module.SimulationState) {
 }
 
 // randomAccounts returns randomly generated genesis accounts
-func randomAccounts(simState *module.SimulationState) (accounts types.Accounts) {
+func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) {
 	accountsNumber := simState.Rand.Intn(50)
 
-	accounts = make(types.Accounts, accountsNumber)
+	accounts = make(types.Profiles, accountsNumber)
 	for i := 0; i < accountsNumber; i++ {
 		accountData := RandomAccountData(simState.Rand, simState.Accounts)
-		account := types.Account{
+		account := types.Profile{
 			Moniker: accountData.Moniker,
 			Name:    accountData.Name,
 			Surname: accountData.Surname,

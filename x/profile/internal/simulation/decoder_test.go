@@ -2,20 +2,21 @@ package simulation
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/kv"
-	"testing"
 )
 
 var (
 	privKey            = ed25519.GenPrivKey().PubKey()
 	accountCreatorAddr = sdk.AccAddress(privKey.Address())
 
-	account = types.Account{
+	profile = types.Profile{
 		Name:    "leo",
 		Surname: "Di Caprio",
 		Moniker: "leoDiCap",
@@ -36,14 +37,14 @@ func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
 
 	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.AccountStoreKey(account.Moniker), Value: cdc.MustMarshalBinaryBare(account)},
+		kv.Pair{Key: types.ProfileStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile)},
 	}
 
 	tests := []struct {
 		name        string
 		expectedLog string
 	}{
-		{"Account", fmt.Sprintf("AccountA: %s\nAccountB: %s\n", account, account)},
+		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"other", ""},
 	}
 

@@ -2,10 +2,12 @@ package keeper_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"testing"
+
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestKeeper_SaveAccount(t *testing.T) {
@@ -14,19 +16,19 @@ func TestKeeper_SaveAccount(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		account         types.Account
-		existentAccount *types.Account
+		account         types.Profile
+		existentAccount *types.Profile
 		expError        error
 	}{
 		{
-			name:            "Non existent Account saved correctly",
+			name:            "Non existent Profile saved correctly",
 			account:         testAccount,
 			existentAccount: nil,
 			expError:        nil,
 		},
 		{
 			name: "Existent account with different creator returns error",
-			account: types.Account{
+			account: types.Profile{
 				Name:     testAccount.Name,
 				Surname:  testAccount.Surname,
 				Moniker:  testAccount.Moniker,
@@ -46,7 +48,7 @@ func TestKeeper_SaveAccount(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.AccountStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
@@ -73,7 +75,7 @@ func TestKeeper_DeleteAccount(t *testing.T) {
 
 	res, found = k.GetAccount(ctx, testAccount.Moniker)
 
-	require.Equal(t, types.Account{}, res)
+	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
 }
 
@@ -81,15 +83,15 @@ func TestKeeper_GetAccount(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		existentAccount *types.Account
+		existentAccount *types.Profile
 		expFound        bool
 	}{
 		{
-			name:            "Account founded",
+			name:            "Profile founded",
 			existentAccount: &testAccount,
 		},
 		{
-			name:            "Account not found",
+			name:            "Profile not found",
 			existentAccount: nil,
 		},
 	}
@@ -101,7 +103,7 @@ func TestKeeper_GetAccount(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.AccountStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
@@ -111,7 +113,7 @@ func TestKeeper_GetAccount(t *testing.T) {
 				require.Equal(t, *test.existentAccount, res)
 				require.True(t, found)
 			} else {
-				require.Equal(t, types.Account{}, res)
+				require.Equal(t, types.Profile{}, res)
 				require.False(t, found)
 			}
 
@@ -122,15 +124,15 @@ func TestKeeper_GetAccount(t *testing.T) {
 func TestKeeper_GetAccounts(t *testing.T) {
 	tests := []struct {
 		name             string
-		existentAccounts types.Accounts
+		existentAccounts types.Profiles
 	}{
 		{
-			name:             "Non empty Accounts list returned",
-			existentAccounts: types.Accounts{testAccount},
+			name:             "Non empty Profiles list returned",
+			existentAccounts: types.Profiles{testAccount},
 		},
 		{
-			name:             "Account not found",
-			existentAccounts: types.Accounts{},
+			name:             "Profile not found",
+			existentAccounts: types.Profiles{},
 		},
 	}
 
@@ -141,7 +143,7 @@ func TestKeeper_GetAccounts(t *testing.T) {
 
 			if len(test.existentAccounts) != 0 {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.AccountStoreKey(test.existentAccounts[0].Moniker)
+				key := types.ProfileStoreKey(test.existentAccounts[0].Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
@@ -150,7 +152,7 @@ func TestKeeper_GetAccounts(t *testing.T) {
 			if len(test.existentAccounts) != 0 {
 				require.Equal(t, test.existentAccounts, res)
 			} else {
-				require.Equal(t, types.Accounts{}, res)
+				require.Equal(t, types.Profiles{}, res)
 			}
 
 		})

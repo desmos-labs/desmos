@@ -11,6 +11,14 @@ type ChainLink struct {
 	TxHash string `json:"tx_hash"`    // Hex representation of the tx hash used to verify the ownership
 }
 
+// NewChainLink is a constructor for a new ChainLink
+func NewChainLink(name, txHash string) ChainLink {
+	return ChainLink{
+		Name:   name,
+		TxHash: txHash,
+	}
+}
+
 // Validate implements validator
 func (cl ChainLink) Validate() error {
 	if len(strings.TrimSpace(cl.Name)) == 0 {

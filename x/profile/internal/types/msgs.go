@@ -2,17 +2,18 @@ package types
 
 import (
 	"fmt"
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"strings"
 )
 
 // ----------------------
-// --- MsgCreateAccount
+// --- MsgCreateProfile
 // ----------------------
 
-// MsgCreateAccount defines a CreateAccount message
-type MsgCreateAccount struct {
+// MsgCreateProfile defines a CreateProfile message
+type MsgCreateProfile struct {
 	Name     string         `json:"name,omitempty"`
 	Surname  string         `json:"surname,omitempty"`
 	Moniker  string         `json:"moniker"`
@@ -21,10 +22,10 @@ type MsgCreateAccount struct {
 	Creator  sdk.AccAddress `json:"creator"`
 }
 
-// NewMsgCreateAccount is a constructor function for MsgCreateAccount
-func NewMsgCreateAccount(name string, surname string, moniker string, bio string, pictures *Pictures,
-	creator sdk.AccAddress) MsgCreateAccount {
-	return MsgCreateAccount{
+// NewMsgCreateProfile is a constructor function for MsgCreateProfile
+func NewMsgCreateProfile(name string, surname string, moniker string, bio string, pictures *Pictures,
+	creator sdk.AccAddress) MsgCreateProfile {
+	return MsgCreateProfile{
 		Name:     name,
 		Surname:  surname,
 		Moniker:  moniker,
@@ -35,35 +36,35 @@ func NewMsgCreateAccount(name string, surname string, moniker string, bio string
 }
 
 // Route should return the name of the module
-func (msg MsgCreateAccount) Route() string { return RouterKey }
+func (msg MsgCreateProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreateAccount) Type() string { return ActionCreateAccount }
+func (msg MsgCreateProfile) Type() string { return ActionCreateProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateAccount) ValidateBasic() error {
+func (msg MsgCreateProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
 	if len(msg.Name) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account name cannot exceed %d characters", MaxNameSurnameLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
 	}
 
 	if len(msg.Surname) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account surname cannot exceed %d characters", MaxNameSurnameLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Account moniker cannot be blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be blank or empty")
 	}
 
 	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account moniker cannot exceed %d characters", MaxMonikerLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	if len(msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account biography cannot exceed %d characters", MaxBioLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
@@ -74,21 +75,21 @@ func (msg MsgCreateAccount) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreateAccount) GetSignBytes() []byte {
+func (msg MsgCreateProfile) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreateAccount) GetSigners() []sdk.AccAddress {
+func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
 
 // ----------------------
-// --- MsgEditPost
+// --- MsgEditProfile
 // ----------------------
 
-// MsgEditPost defines a EditPost message
-type MsgEditAccount struct {
+// MsgEditProfile defines a EditProfile message
+type MsgEditProfile struct {
 	Name     string         `json:"name,omitempty"`
 	Surname  string         `json:"surname,omitempty"`
 	Moniker  string         `json:"moniker"`
@@ -97,10 +98,10 @@ type MsgEditAccount struct {
 	Creator  sdk.AccAddress `json:"creator"`
 }
 
-// NewMsgEditAccount is a constructor function for MsgEditAccount
-func NewMsgEditAccount(name string, surname string, moniker string, bio string, pictures *Pictures,
-	creator sdk.AccAddress) MsgEditAccount {
-	return MsgEditAccount{
+// NewMsgEditProfile is a constructor function for MsgEditProfile
+func NewMsgEditProfile(name string, surname string, moniker string, bio string, pictures *Pictures,
+	creator sdk.AccAddress) MsgEditProfile {
+	return MsgEditProfile{
 		Name:     name,
 		Surname:  surname,
 		Moniker:  moniker,
@@ -111,76 +112,76 @@ func NewMsgEditAccount(name string, surname string, moniker string, bio string, 
 }
 
 // Route should return the name of the module
-func (msg MsgEditAccount) Route() string { return RouterKey }
+func (msg MsgEditProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgEditAccount) Type() string { return ActionEditAccount }
+func (msg MsgEditProfile) Type() string { return ActionEditProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgEditAccount) ValidateBasic() error {
+func (msg MsgEditProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
 	if len(msg.Name) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account name cannot exceed %d characters", MaxNameSurnameLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
 	}
 
 	if len(msg.Surname) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account surname cannot exceed %d characters", MaxNameSurnameLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
 	}
 
 	if len(msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account biography cannot exceed %d characters", MaxBioLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Account moniker cannot be blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be blank or empty")
 	}
 
 	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Account moniker cannot exceed %d characters", MaxMonikerLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgEditAccount) GetSignBytes() []byte {
+func (msg MsgEditProfile) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgEditAccount) GetSigners() []sdk.AccAddress {
+func (msg MsgEditProfile) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
 
 // ----------------------
-// --- MsgDeleteAccount
+// --- MsgDeleteProfile
 // ----------------------
 
-// MsgDeleteAccount defines a DeletePost message
-type MsgDeleteAccount struct {
+// MsgDeleteProfile defines a DeleteProfile message
+type MsgDeleteProfile struct {
 	Moniker string         `json:"moniker"`
 	Creator sdk.AccAddress `json:"creator"`
 }
 
-// NewMsgDeleteAccount is a constructor function for MsgDeleteAccount
-func NewMsgDeleteAccount(moniker string, creator sdk.AccAddress) MsgDeleteAccount {
-	return MsgDeleteAccount{
+// NewMsgDeleteProfile is a constructor function for MsgDeleteProfile
+func NewMsgDeleteProfile(moniker string, creator sdk.AccAddress) MsgDeleteProfile {
+	return MsgDeleteProfile{
 		Moniker: moniker,
 		Creator: creator,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteAccount) Route() string { return RouterKey }
+func (msg MsgDeleteProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteAccount) Type() string { return ActionDeleteAccount }
+func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDeleteAccount) ValidateBasic() error {
+func (msg MsgDeleteProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
@@ -193,11 +194,11 @@ func (msg MsgDeleteAccount) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDeleteAccount) GetSignBytes() []byte {
+func (msg MsgDeleteProfile) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgDeleteAccount) GetSigners() []sdk.AccAddress {
+func (msg MsgDeleteProfile) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }

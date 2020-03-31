@@ -46,7 +46,7 @@ func testCodec() *codec.Codec {
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var testPictures = types.NewPictures("profile", "cover")
 
-var testAccount = types.Account{
+var testAccount = types.Profile{
 	Name:     "name",
 	Surname:  "surname",
 	Moniker:  "moniker",

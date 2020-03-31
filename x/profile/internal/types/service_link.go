@@ -12,6 +12,15 @@ type ServiceLink struct {
 	Proof      string `json:"service_proof"`      // Proof to verify the user (e.g. the
 }
 
+// NewServiceLink is a constructor function for ServiceLink
+func NewServiceLink(name, credential, proof string) ServiceLink {
+	return ServiceLink{
+		Name:       name,
+		Credential: credential,
+		Proof:      proof,
+	}
+}
+
 // Validate implements validator
 func (sl ServiceLink) Validate() error {
 	if len(strings.TrimSpace(sl.Name)) == 0 {

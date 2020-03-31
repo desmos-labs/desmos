@@ -2,25 +2,27 @@ package keeper_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"testing"
+
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func Test_handleMsgCreateAccount(t *testing.T) {
 	tests := []struct {
 		name            string
-		existentAccount *types.Account
-		msg             types.MsgCreateAccount
+		existentAccount *types.Profile
+		msg             types.MsgCreateProfile
 		expErr          error
 	}{
 		{
-			name:            "Account already exists",
+			name:            "Profile already exists",
 			existentAccount: &testAccount,
-			msg: types.NewMsgCreateAccount(
+			msg: types.NewMsgCreateProfile(
 				testAccount.Name,
 				testAccount.Surname,
 				testAccount.Moniker,
@@ -31,9 +33,9 @@ func Test_handleMsgCreateAccount(t *testing.T) {
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker moniker already exist"),
 		},
 		{
-			name:            "Account doesnt exists",
+			name:            "Profile doesnt exists",
 			existentAccount: nil,
-			msg: types.NewMsgCreateAccount(
+			msg: types.NewMsgCreateProfile(
 				testAccount.Name,
 				testAccount.Surname,
 				testAccount.Moniker,
@@ -52,7 +54,7 @@ func Test_handleMsgCreateAccount(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.AccountStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
@@ -88,14 +90,14 @@ func Test_handleMsgEditAccount(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		existentAccount *types.Account
-		msg             types.MsgEditAccount
+		existentAccount *types.Profile
+		msg             types.MsgEditProfile
 		expErr          error
 	}{
 		{
-			name:            "Account edited",
+			name:            "Profile edited",
 			existentAccount: &testAccount,
-			msg: types.NewMsgEditAccount(
+			msg: types.NewMsgEditProfile(
 				testAccount.Name,
 				testAccount.Surname,
 				testAccount.Moniker,
@@ -106,9 +108,9 @@ func Test_handleMsgEditAccount(t *testing.T) {
 			expErr: nil,
 		},
 		{
-			name:            "Account not edited because the new moniker already exists",
+			name:            "Profile not edited because the new moniker already exists",
 			existentAccount: &testAccount,
-			msg: types.NewMsgEditAccount(
+			msg: types.NewMsgEditProfile(
 				testAccount.Name,
 				testAccount.Surname,
 				testAccount.Moniker,
@@ -127,7 +129,7 @@ func Test_handleMsgEditAccount(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.AccountStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
@@ -163,27 +165,27 @@ func Test_handleMsgDeleteAccount(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		existentAccount *types.Account
-		msg             types.MsgDeleteAccount
+		existentAccount *types.Profile
+		msg             types.MsgDeleteProfile
 		expErr          error
 	}{
 		{
-			name:            "Account doesnt exists",
+			name:            "Profile doesnt exists",
 			existentAccount: nil,
-			msg:             types.NewMsgDeleteAccount("moniker", testAccount.Creator),
+			msg:             types.NewMsgDeleteProfile("moniker", testAccount.Creator),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("An account with %s moniker doesn't exist", "moniker")),
 		},
 		{
-			name:            "Account not owned by user",
+			name:            "Profile not owned by user",
 			existentAccount: &testAccount,
-			msg:             types.NewMsgDeleteAccount("moniker", user),
+			msg:             types.NewMsgDeleteProfile("moniker", user),
 			expErr:          sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("You cannot delete an account that is not yours")),
 		},
 		{
-			name:            "Account deleted successfully",
+			name:            "Profile deleted successfully",
 			existentAccount: &testAccount,
-			msg:             types.NewMsgDeleteAccount("moniker", testAccount.Creator),
+			msg:             types.NewMsgDeleteProfile("moniker", testAccount.Creator),
 			expErr:          nil,
 		},
 	}
@@ -195,7 +197,7 @@ func Test_handleMsgDeleteAccount(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.AccountStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 

@@ -2,13 +2,15 @@ package keeper_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func Test_queryAccount(t *testing.T) {
@@ -16,20 +18,20 @@ func Test_queryAccount(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount types.Account
+		storedAccount types.Profile
 		expErr        error
 	}{
 		{
-			name:          "Account doesnt exist",
-			path:          []string{types.QueryAccount, "monk"},
+			name:          "Profile doesnt exist",
+			path:          []string{types.QueryProfile, "monk"},
 			storedAccount: testAccount,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("Account with moniker %s doesn't exists", "monk"),
+				fmt.Sprintf("Profile with moniker %s doesn't exists", "monk"),
 			),
 		},
 		{
-			name:          "Account returned correctly",
-			path:          []string{types.QueryAccount, "moniker"},
+			name:          "Profile returned correctly",
+			path:          []string{types.QueryProfile, "moniker"},
 			storedAccount: testAccount,
 			expErr:        nil,
 		},
@@ -69,20 +71,20 @@ func Test_queryAccounts(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount *types.Account
-		expResult     types.Accounts
+		storedAccount *types.Profile
+		expResult     types.Profiles
 	}{
 		{
-			name:          "Empty Accounts",
-			path:          []string{types.QueryAccounts},
+			name:          "Empty Profiles",
+			path:          []string{types.QueryProfiles},
 			storedAccount: nil,
-			expResult:     types.Accounts{},
+			expResult:     types.Profiles{},
 		},
 		{
-			name:          "Account returned correctly",
-			path:          []string{types.QueryAccounts},
+			name:          "Profile returned correctly",
+			path:          []string{types.QueryProfiles},
 			storedAccount: &testAccount,
-			expResult:     types.Accounts{testAccount},
+			expResult:     types.Profiles{testAccount},
 		},
 	}
 

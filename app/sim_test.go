@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	"github.com/desmos-labs/desmos/x/magpie"
 	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/profile"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -189,6 +190,7 @@ func TestAppImportExport(t *testing.T) {
 
 		{app.keys[magpie.StoreKey], newApp.keys[magpie.StoreKey], [][]byte{}},
 		{app.keys[posts.StoreKey], newApp.keys[posts.StoreKey], [][]byte{}},
+		{app.keys[profile.StoreKey], newApp.keys[profile.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

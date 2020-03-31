@@ -2,16 +2,19 @@ package profile
 
 import (
 	"encoding/json"
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/profile/client/cli"
+	"github.com/desmos-labs/desmos/x/profile/client/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"math/rand"
 )
 
 // type check to ensure the interface is properly implemented

@@ -13,14 +13,14 @@ const (
 	QuerierRoute = types.QuerierRoute
 )
 
+// Functions aliases
 var (
-	// functions aliases
 	DecodeStore         = simulation.DecodeStore
 	RandomizedGenState  = simulation.RandomizedGenState
 	WeightedOperations  = simulation.WeightedOperations
 	RegisterCodec       = types.RegisterCodec
 	NewGenesisState     = types.NewGenesisState
-	NewMsgCreateAccount = types.NewMsgCreateAccount
+	NewMsgCreateAccount = types.NewMsgCreateProfile
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
 	NewHandler          = keeper.NewHandler
@@ -31,6 +31,13 @@ var (
 )
 
 type (
-	Keeper       = keeper.Keeper
-	GenesisState = types.GenesisState
+	Keeper           = keeper.Keeper
+	GenesisState     = types.GenesisState
+	Profile          = types.Profile
+	Profiles         = types.Profiles
+	Pictures         = types.Pictures
+	ServiceLink      = types.ServiceLink
+	VerifiedServices = []types.ServiceLink
+	ChainLink        = types.ChainLink
+	ChainLinks       = []types.ChainLink
 )

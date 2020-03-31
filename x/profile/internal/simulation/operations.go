@@ -1,12 +1,13 @@
 package simulation
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
-	"math/rand"
 )
 
 // Simulation operation weights constants

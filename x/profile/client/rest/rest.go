@@ -13,8 +13,8 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)
 }
 
-// SaveAccountReq defines the properties of an account creation or edit request's body
-type SaveAccountReq struct {
+// SaveProfileReq defines the properties of a profile creation or edit request's body
+type SaveProfileReq struct {
 	BaseReq  rest.BaseReq    `json:"base_req"`
 	Moniker  string          `json:"moniker"`
 	Name     string          `json:"name,omitempty"`
@@ -23,8 +23,8 @@ type SaveAccountReq struct {
 	Pictures *types.Pictures `json:"pictures,omitempty"`
 }
 
-// Delete defines the properties of an account deletion request's body
-type DeleteAccountReq struct {
+// Delete defines the properties of a profile deletion request's body
+type DeleteProfileReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Moniker string       `json:"moniker"`
 }

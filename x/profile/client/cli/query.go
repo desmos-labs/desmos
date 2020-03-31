@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -29,20 +30,20 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryAccount queries an account
 func GetCmdQueryAccount(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "account [moniker]",
-		Short: "Retrieve the account having the moniker, if any.",
+		Use:   "profile [moniker]",
+		Short: "Retrieve the profile having the moniker, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryAccount, args[0])
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, args[0])
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("Could not find account with moniker %s \n", args[0])
+				fmt.Printf("Could not find a profile with moniker %s \n", args[0])
 				return nil
 			}
 
-			var out types.Account
+			var out types.Profile
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -52,20 +53,20 @@ func GetCmdQueryAccount(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryAccounts queries all the accounts
 func GetCmdQueryAccounts(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "accounts",
-		Short: "Retrieve all the accounts.",
+		Use:   "profiles",
+		Short: "Retrieve all the profiles.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryAccounts)
+			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryProfiles)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("Could not find any account")
+				fmt.Printf("Could not find any profile")
 				return nil
 			}
 
-			var out types.Accounts
+			var out types.Profiles
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

@@ -3,11 +3,13 @@ package cli
 import (
 	"bufio"
 	"fmt"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
@@ -27,21 +29,21 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	postsTxCmd.AddCommand(flags.PostCommands(
-		GetCmdCreateAccount(cdc),
-		GetCmdEditAccount(cdc),
-		GetCmdDeleteAccount(cdc),
+		GetCmdCreateProfile(cdc),
+		GetCmdEditProfile(cdc),
+		GetCmdDeleteProfile(cdc),
 	)...)
 
 	return postsTxCmd
 }
 
-// GetCmdCreateAccount is the CLI command for creating an account
-func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
+// GetCmdCreateProfile is the CLI command for creating a profile
+func GetCmdCreateProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [moniker]",
-		Short: "Create a new account",
+		Short: "Create a new profile",
 		Long: fmt.Sprintf(`
-Create a new account specifying the moniker, name, surname, bio, a profile picture and cover.
+Create a new profile specifying the moniker, name, surname, bio, a profile picture and cover.
 Every data except moniker are optional, let be free to specify only what you want to.
 
 E.g (only with moniker)
@@ -61,36 +63,55 @@ E.g (with all the other optional fields)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			picture := viper.GetString(flagProfilePic)
-			cover := viper.GetString(flagProfileCover)
+			picture, err := cmd.Flags().GetString(flagProfilePic)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
+
+			cover, err := cmd.Flags().GetString(flagProfileCover)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
+
 			pictures := types.NewPictures(picture, cover)
 
-			name := viper.GetString(flagName)
-			surname := viper.GetString(flagSurname)
-			bio := viper.GetString(flagBio)
+			name, err := cmd.Flags().GetString(flagName)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
 
-			msg := types.NewMsgCreateAccount(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
+			surname, err := cmd.Flags().GetString(flagSurname)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
+
+			bio, err := cmd.Flags().GetString(flagBio)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
+
+			msg := types.NewMsgCreateProfile(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagName, "", "Name of the account")
-	cmd.Flags().String(flagSurname, "", "Surname of the account")
-	cmd.Flags().String(flagBio, "", "Biography of the account")
-	cmd.Flags().String(flagProfilePic, "", "Account related profile picture")
-	cmd.Flags().String(flagProfileCover, "", "Account related profile cover")
+	cmd.Flags().String(flagName, "", "Name of the profile")
+	cmd.Flags().String(flagSurname, "", "Surname of the profile")
+	cmd.Flags().String(flagBio, "", "Biography of the profile")
+	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
+	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")
 
 	return cmd
 }
 
-// GetCmdEditAccount is the CLI command for editing an account
-func GetCmdEditAccount(cdc *codec.Codec) *cobra.Command {
+// GetCmdEditProfile is the CLI command for editing an profile
+func GetCmdEditProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit [moniker]",
-		Short: "Edit an existent account",
+		Short: "Edit an existent profile",
 		Long: fmt.Sprintf(`
-Edit an existing account specifying the moniker, name, surname, bio, a profile picture and cover.
+Edit an existing profile specifying the moniker, name, surname, bio, a profile picture and cover.
 Every data except moniker are optional.
 
 E.g (with all the other optional fields)
@@ -99,6 +120,7 @@ E.g (with all the other optional fields)
 	--surname "Di Cap" \
 	--bio "Hollywood actor. Proud environmentalist" \
 	--picture "https://profilePic.jpg"
+	--cover "https://profileCover.jpg"
 `, version.ClientName),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -114,33 +136,33 @@ E.g (with all the other optional fields)
 			surname := viper.GetString(flagSurname)
 			bio := viper.GetString(flagBio)
 
-			msg := types.NewMsgEditAccount(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
+			msg := types.NewMsgEditProfile(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagName, "", "Name of the account")
-	cmd.Flags().String(flagSurname, "", "Surname of the account")
-	cmd.Flags().String(flagBio, "", "Biography of the account")
-	cmd.Flags().String(flagProfilePic, "", "Account related profile picture")
-	cmd.Flags().String(flagProfileCover, "", "Account related profile cover")
+	cmd.Flags().String(flagName, "", "Name of the profile")
+	cmd.Flags().String(flagSurname, "", "Surname of the profile")
+	cmd.Flags().String(flagBio, "", "Biography of the profile")
+	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
+	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")
 
 	return cmd
 }
 
-// GetCmdDeleteAccount is the CLI command for deleting an account
-func GetCmdDeleteAccount(cdc *codec.Codec) *cobra.Command {
+// GetCmdDeleteProfile is the CLI command for deleting an profile
+func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete [moniker]",
-		Short: "Delete an existent account",
+		Short: "Delete an existent profile",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			msg := types.NewMsgDeleteAccount(args[0], cliCtx.FromAddress)
+			msg := types.NewMsgDeleteProfile(args[0], cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

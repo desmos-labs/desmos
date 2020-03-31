@@ -5,7 +5,7 @@ const (
 	EventTypeAccountEdited  = "account_edited"
 	EventTypeAccountDeleted = "account_deleted"
 
-	// Account attributes
+	// Profile attributes
 	AttributeAccountMoniker = "account_moniker"
 	AttributeAccountCreator = "account_creator"
 )

@@ -11,23 +11,23 @@ const (
 	MaxMonikerLength     = 20
 	MaxBioLength         = 1000
 
-	ActionCreateAccount = "create_account"
-	ActionEditAccount   = "edit_account"
-	ActionDeleteAccount = "delete_account"
+	ActionCreateProfile = "create_profile"
+	ActionEditProfile   = "edit_profile"
+	ActionDeleteProfile = "delete_profile"
 
 	//Queries
 	QuerierRoute  = ModuleName
-	QueryAccount  = "account"
-	QueryAccounts = "accounts"
+	QueryProfile  = "profile"
+	QueryProfiles = "profiles"
 )
 
 var (
 	TxHashRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
 
-	AccountStorePrefix = []byte("accounts")
+	ProfileStorePrefix = []byte("profile")
 )
 
-// AccountStoreKey turns a moniker to a key used to store an account into the accounts store
-func AccountStoreKey(moniker string) []byte {
-	return append(AccountStorePrefix, []byte(moniker)...)
+// ProfileStoreKey turns a moniker to a key used to store a profile into the profiles store
+func ProfileStoreKey(moniker string) []byte {
+	return append(ProfileStorePrefix, []byte(moniker)...)
 }

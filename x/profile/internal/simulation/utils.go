@@ -1,27 +1,15 @@
 package simulation
 
 import (
+	"math/rand"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
-	"math/rand"
 )
 
 var (
-	randomMonikers = []string{
-		"Guppy",
-		"Flappy",
-		"Angry",
-		"Moody",
-		"Flot",
-		"Sbot",
-		"Notch",
-		"Blob",
-		"Nok",
-		"Tok",
-		"Ski",
-		"Wok",
-	}
+	monikersLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
 	randomNames = []string{
 		"Drake",
@@ -95,7 +83,7 @@ var (
 	}
 )
 
-// AccountData contains the randomly generated data of an account
+// AccountData contains the randomly generated data of an profile
 type AccountData struct {
 	Moniker string
 	Name    string
@@ -123,16 +111,19 @@ func RandomAccountData(r *rand.Rand, accs []sim.Account) AccountData {
 	}
 }
 
-// RandomAccount picks and returns a random account from an array
-func RandomAccount(r *rand.Rand, accounts types.Accounts) types.Account {
+// RandomAccount picks and returns a random profile from an array
+func RandomAccount(r *rand.Rand, accounts types.Profiles) types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }
 
 // RandomMoniker return a random moniker from the randomMonikers list given
 func RandomMoniker(r *rand.Rand) string {
-	idx := r.Intn(len(randomMonikers))
-	return randomMonikers[idx]
+	b := make([]byte, 20)
+	for i := range b {
+		b[i] = monikersLetters[rand.Intn(len(monikersLetters))]
+	}
+	return string(b)
 }
 
 // RandomName return a random name value from the list of randomNames given
@@ -165,7 +156,7 @@ func RandomProfileCover(r *rand.Rand) string {
 	return randomProfileCovers[idx]
 }
 
-// GetAccount gets the account having the given address from the accs list
+// GetAccount gets the profile having the given address from the accs list
 func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	for _, acc := range accs {
 		if acc.Address.Equals(address) {
