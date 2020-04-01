@@ -8,7 +8,7 @@ import (
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
-		Profiles: k.GetAccounts(ctx),
+		Profiles: k.GetProfiles(ctx),
 	}
 }
 
@@ -16,7 +16,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 
 	for _, account := range data.Profiles {
-		if err := keeper.SaveAccount(ctx, account); err != nil {
+		if err := keeper.SaveProfile(ctx, account); err != nil {
 			panic(err)
 		}
 	}

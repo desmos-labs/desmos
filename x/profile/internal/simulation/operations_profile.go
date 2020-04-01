@@ -168,7 +168,7 @@ func randomAccountEditFields(
 	if len(accs) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
-	account := RandomAccount(r, k.GetAccounts(ctx))
+	account := RandomAccount(r, k.GetProfiles(ctx))
 	acc := GetSimAccount(account.Creator, accs)
 
 	// Skip the operation without error as the profile is not valid
@@ -241,7 +241,7 @@ func sendMsgDeleteAccount(
 func randomAccountDeleteFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (sim.Account, string, bool, error) {
-	account := RandomAccount(r, k.GetAccounts(ctx))
+	account := RandomAccount(r, k.GetProfiles(ctx))
 
 	acc := GetSimAccount(account.Creator, accs)
 

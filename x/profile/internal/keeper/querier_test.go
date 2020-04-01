@@ -42,7 +42,7 @@ func Test_queryAccount(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
-			err := k.SaveAccount(ctx, test.storedAccount)
+			err := k.SaveProfile(ctx, test.storedAccount)
 			require.Nil(t, err)
 
 			querier := keeper.NewQuerier(k)
@@ -94,7 +94,7 @@ func Test_queryAccounts(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			if test.storedAccount != nil {
-				err := k.SaveAccount(ctx, *test.storedAccount)
+				err := k.SaveProfile(ctx, *test.storedAccount)
 				require.Nil(t, err)
 			}
 

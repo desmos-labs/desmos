@@ -156,7 +156,7 @@ func RandomProfileCover(r *rand.Rand) string {
 	return randomProfileCovers[idx]
 }
 
-// GetAccount gets the profile having the given address from the accs list
+// GetProfile gets the profile having the given address from the accs list
 func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	for _, acc := range accs {
 		if acc.Address.Equals(address) {

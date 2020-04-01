@@ -26,7 +26,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 // queryAccount handles the request to get an account having a moniker
 func queryAccount(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	account, found := keeper.GetAccount(ctx, path[0])
+	account, found := keeper.GetProfile(ctx, path[0])
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -43,7 +43,7 @@ func queryAccount(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Ke
 
 // queryPosts handles the request of listing all the accounts
 func queryAccounts(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	accounts := keeper.GetAccounts(ctx)
+	accounts := keeper.GetProfiles(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &accounts)
 	if err != nil {

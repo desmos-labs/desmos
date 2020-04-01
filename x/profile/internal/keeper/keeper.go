@@ -22,10 +22,10 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	}
 }
 
-// SaveAccount allows to save the given account inside the current context.
+// SaveProfile allows to save the given account inside the current context.
 // It assumes that the given account has already been validated.
 // It returns an error if an account with the same moniker from a different creator already exists
-func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Profile) error {
+func (k Keeper) SaveProfile(ctx sdk.Context, acc types.Profile) error {
 	store := ctx.KVStore(k.StoreKey)
 
 	key := types.ProfileStoreKey(acc.Moniker)
@@ -43,16 +43,16 @@ func (k Keeper) SaveAccount(ctx sdk.Context, acc types.Profile) error {
 	return nil
 }
 
-// DeleteAccount allows to delete an account with the given moniker inside the current context.
+// DeleteProfile allows to delete an account with the given moniker inside the current context.
 // It assumes that the moniker-related account exists.
-func (k Keeper) DeleteAccount(ctx sdk.Context, moniker string) {
+func (k Keeper) DeleteProfile(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ProfileStoreKey(moniker)
 	store.Delete(key)
 }
 
-// GetAccounts returns all the created accounts inside the current context.
-func (k Keeper) GetAccounts(ctx sdk.Context) (accounts types.Profiles) {
+// GetProfiles returns all the created accounts inside the current context.
+func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 	accounts = make(types.Profiles, 0)
 
 	store := ctx.KVStore(k.StoreKey)
@@ -70,8 +70,8 @@ func (k Keeper) GetAccounts(ctx sdk.Context) (accounts types.Profiles) {
 	return accounts
 }
 
-// GetAccount returns the account corresponding to the given moniker inside the current context.
-func (k Keeper) GetAccount(ctx sdk.Context, moniker string) (account types.Profile, found bool) {
+// GetProfile returns the account corresponding to the given moniker inside the current context.
+func (k Keeper) GetProfile(ctx sdk.Context, moniker string) (account types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
 	key := types.ProfileStoreKey(moniker)

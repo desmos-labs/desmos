@@ -14,11 +14,11 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
 		case types.MsgCreateProfile:
-			return handleMsgCreateAccount(ctx, keeper, msg)
+			return handleMsgCreateProfile(ctx, keeper, msg)
 		case types.MsgEditProfile:
-			return handleMsgEditAccount(ctx, keeper, msg)
+			return handleMsgEditProfile(ctx, keeper, msg)
 		case types.MsgDeleteProfile:
-			return handleMsgDeleteAccount(ctx, keeper, msg)
+			return handleMsgDeleteProfile(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -26,12 +26,11 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
-// handleMsgCreateAccount handles the creation of an account
-func handleMsgCreateAccount(ctx sdk.Context, keeper Keeper, msg types.MsgCreateProfile) (*sdk.Result, error) {
-
+// handleMsgCreateProfile handles the creation of a profile
+func handleMsgCreateProfile(ctx sdk.Context, keeper Keeper, msg types.MsgCreateProfile) (*sdk.Result, error) {
 	// check if an account with the same moniker already exists
 	// this check prevent the same user to create the same account multiple times
-	if _, found := keeper.GetAccount(ctx, msg.Moniker); found {
+	if _, found := keeper.GetProfile(ctx, msg.Moniker); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("An account with %s moniker already exist", msg.Moniker))
 	}
@@ -46,7 +45,7 @@ func handleMsgCreateAccount(ctx sdk.Context, keeper Keeper, msg types.MsgCreateP
 	}
 
 	// Before saving this method checks if an account with the same moniker exist
-	err := keeper.SaveAccount(ctx, account)
+	err := keeper.SaveProfile(ctx, account)
 	if err != nil {
 		return nil, err
 	}
@@ -88,32 +87,37 @@ func getEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Pro
 		account.Bio = msg.Bio
 	}
 
-	if msg.Pictures.Profile != defaultValue {
-		account.Pictures.Profile = msg.Pictures.Profile
-	}
+	if msg.Pictures != nil {
+		if msg.Pictures.Profile != defaultValue {
+			account.Pictures.Profile = msg.Pictures.Profile
+		}
 
-	if msg.Pictures.Cover != defaultValue {
-		account.Pictures.Cover = msg.Pictures.Cover
+		if msg.Pictures.Cover != defaultValue {
+			account.Pictures.Cover = msg.Pictures.Cover
+		}
 	}
-
 	return account
 }
 
-// handleMsgEditAccount handles the edit of an account
-func handleMsgEditAccount(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
-
-	account, found := keeper.GetAccount(ctx, msg.PreviousMoniker)
+// handleMsgEditProfile handles the edit of a profile
+func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
+	account, found := keeper.GetProfile(ctx, msg.PreviousMoniker)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("No existent profile with moniker: %s", msg.PreviousMoniker))
 	}
-
+	previousMoniker := account.Moniker
 	account = getEditedProfile(account, msg)
 
 	// New moniker already taken
-	err := keeper.SaveAccount(ctx, account)
+	err := keeper.SaveProfile(ctx, account)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	// delete previous profile
+	if account.Moniker != previousMoniker {
+		keeper.DeleteProfile(ctx, previousMoniker)
 	}
 
 	createEvent := sdk.NewEvent(
@@ -132,22 +136,22 @@ func handleMsgEditAccount(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 	return &result, nil
 }
 
-// handleMsgDeleteAccount handles the deletion of an account
-func handleMsgDeleteAccount(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteProfile) (*sdk.Result, error) {
+// handleMsgDeleteProfile handles the deletion of a profile
+func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteProfile) (*sdk.Result, error) {
 
-	// check if an account with the same moniker exists
-	acc, found := keeper.GetAccount(ctx, msg.Moniker)
+	// check if a profile with the same moniker exists
+	acc, found := keeper.GetProfile(ctx, msg.Moniker)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("An account with %s moniker doesn't exist", msg.Moniker))
 	}
 
-	// check if the creator of the message match the account creator
+	// check if the creator of the message match the profile creator
 	if !acc.Creator.Equals(msg.Creator) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("You cannot delete an account that is not yours"))
 	}
 
-	keeper.DeleteAccount(ctx, msg.Moniker)
+	keeper.DeleteProfile(ctx, msg.Moniker)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeAccountDeleted,

@@ -170,6 +170,10 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				require.Equal(t, test.expErr.Error(), err.Error())
 			}
 			if res != nil {
+
+				profiles := k.GetProfiles(ctx)
+				require.Len(t, profiles, 1)
+
 				//Check the data
 				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.NewMoniker), res.Data)
 

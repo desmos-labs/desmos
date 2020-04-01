@@ -52,7 +52,7 @@ func TestKeeper_SaveAccount(t *testing.T) {
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
-			err := k.SaveAccount(ctx, test.account)
+			err := k.SaveProfile(ctx, test.account)
 
 			require.Equal(t, test.expError, err)
 
@@ -63,17 +63,17 @@ func TestKeeper_SaveAccount(t *testing.T) {
 func TestKeeper_DeleteAccount(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	err := k.SaveAccount(ctx, testAccount)
+	err := k.SaveProfile(ctx, testAccount)
 	require.Nil(t, err)
 
-	res, found := k.GetAccount(ctx, testAccount.Moniker)
+	res, found := k.GetProfile(ctx, testAccount.Moniker)
 
 	require.Equal(t, testAccount, res)
 	require.True(t, found)
 
-	k.DeleteAccount(ctx, testAccount.Moniker)
+	k.DeleteProfile(ctx, testAccount.Moniker)
 
-	res, found = k.GetAccount(ctx, testAccount.Moniker)
+	res, found = k.GetProfile(ctx, testAccount.Moniker)
 
 	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
@@ -107,7 +107,7 @@ func TestKeeper_GetAccount(t *testing.T) {
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 			}
 
-			res, found := k.GetAccount(ctx, "moniker")
+			res, found := k.GetProfile(ctx, "moniker")
 
 			if test.existentAccount != nil {
 				require.Equal(t, *test.existentAccount, res)
@@ -147,7 +147,7 @@ func TestKeeper_GetAccounts(t *testing.T) {
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
-			res := k.GetAccounts(ctx)
+			res := k.GetProfiles(ctx)
 
 			if len(test.existentAccounts) != 0 {
 				require.Equal(t, test.existentAccounts, res)
