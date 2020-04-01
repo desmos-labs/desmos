@@ -168,7 +168,11 @@ func randomAccountEditFields(
 	if len(accs) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
-	account := RandomAccount(r, k.GetProfiles(ctx))
+	accounts := k.GetProfiles(ctx)
+	if len(accounts) == 0 {
+		return sim.Account{}, types.Profile{}, "", true, nil
+	}
+	account := RandomAccount(r, accounts)
 	acc := GetSimAccount(account.Creator, accs)
 
 	// Skip the operation without error as the profile is not valid
