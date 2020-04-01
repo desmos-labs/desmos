@@ -19,7 +19,7 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 
 func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req SaveProfileReq
+		var req CreateProfileReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -51,7 +51,7 @@ func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req SaveProfileReq
+		var req EditProfileReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -69,7 +69,7 @@ func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgEditProfile(req.Name, req.Surname, req.Moniker, req.Bio, req.Pictures, addr)
+		msg := types.NewMsgEditProfile(req.PreviousMoniker, req.NewMoniker, req.Name, req.Surname, req.Bio, req.Pictures, addr)
 
 		err = msg.ValidateBasic()
 		if err != nil {

@@ -36,9 +36,10 @@ var msgCreateAcc = types.NewMsgCreateProfile(
 )
 
 var msgEditAcc = types.NewMsgEditProfile(
+	testAccount.Moniker,
+	"monk",
 	testAccount.Name,
 	testAccount.Surname,
-	testAccount.Moniker,
 	testAccount.Bio,
 	testAccount.Pictures,
 	testAccount.Creator,
@@ -220,9 +221,10 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty owner returns error",
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				testAccount.Moniker,
 				testAccount.Name,
 				testAccount.Surname,
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
 				nil,
@@ -232,6 +234,8 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 		{
 			name: "Max name length exceeded",
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				testAccount.Moniker,
 				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
 					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
 					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
@@ -239,7 +243,6 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
 					"6ou0LSnJMCTq",
 				testAccount.Surname,
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
@@ -249,6 +252,8 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 		{
 			name: "Max surname length exceeded",
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				testAccount.Moniker,
 				testAccount.Name,
 				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
 					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
@@ -256,7 +261,6 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
 					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
 					"6ou0LSnJMCTq",
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
@@ -266,9 +270,10 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				testAccount.Moniker,
 				testAccount.Name,
 				testAccount.Surname,
-				testAccount.Moniker,
 				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
 					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
 					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
@@ -288,33 +293,49 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty moniker error",
 			msg: types.NewMsgEditProfile(
+				"",
+				testAccount.Moniker,
 				testAccount.Name,
 				testAccount.Surname,
-				"",
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be blank or empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot be blank or empty"),
 		},
 		{
-			name: "Max moniker length exceeded",
+			name: "Max previous moniker length exceeded",
 			msg: types.NewMsgEditProfile(
+				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
+				testAccount.Moniker,
 				testAccount.Name,
 				testAccount.Surname,
-				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 30 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot exceed 30 characters"),
+		},
+		{
+			name: "Max new moniker length exceeded",
+			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
+				testAccount.Name,
+				testAccount.Surname,
+				testAccount.Bio,
+				testAccount.Pictures,
+				testAccount.Creator,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile new moniker cannot exceed 30 characters"),
 		},
 		{
 			name: "No error message",
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				testAccount.Moniker,
 				testAccount.Name,
 				testAccount.Surname,
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
@@ -339,7 +360,7 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 
 func TestMsgEditAccount_GetSignBytes(t *testing.T) {
 	actual := msgEditAcc.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"moniker","name":"name","pictures":{"cover":"cover","profile":"profile"},"surname":"surname"}}`
+	expected := `{"type":"desmos/MsgEditProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"name","new_moniker":"monk","pictures":{"cover":"cover","profile":"profile"},"previous_moniker":"moniker","surname":"surname"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -383,7 +404,7 @@ func TestMsgDeleteAccount_ValidateBasic(t *testing.T) {
 				"",
 				testAccount.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NewMoniker cannot be blank or empty"),
 		},
 		{
 			name: "Valid message returns no error",

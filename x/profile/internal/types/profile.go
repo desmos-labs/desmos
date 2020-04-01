@@ -12,7 +12,7 @@ import (
 type Profile struct {
 	Name             string         `json:"name,omitempty"`
 	Surname          string         `json:"surname,omitempty"`
-	Moniker          string         `json:"moniker,omitempty"`
+	Moniker          string         `json:"moniker"`
 	Bio              string         `json:"bio,omitempty"`
 	Pictures         *Pictures      `json:"pictures,omitempty"`
 	VerifiedServices []ServiceLink  `json:"verified_services,omitempty"` // List of all the trusted services linked to this profile

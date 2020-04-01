@@ -67,18 +67,50 @@ func handleMsgCreateAccount(ctx sdk.Context, keeper Keeper, msg types.MsgCreateP
 	return &result, nil
 }
 
-// handleMsgEditAccount handles the edit of an account
-func handleMsgEditAccount(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
-	account := types.Profile{
-		Name:     msg.Name,
-		Surname:  msg.Surname,
-		Moniker:  msg.Moniker,
-		Bio:      msg.Bio,
-		Pictures: msg.Pictures,
-		Creator:  msg.Creator,
+const (
+	defaultValue = "default"
+)
+
+// returns the profile with the proper edited fields
+// default string is used to let user replace previous inserted values with blank or empty ones
+func getEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Profile {
+	account.Moniker = msg.NewMoniker
+
+	if msg.Name != defaultValue {
+		account.Name = msg.Name
 	}
 
-	// returns error when the editor is different from the account creator
+	if msg.Surname != defaultValue {
+		account.Surname = msg.Surname
+	}
+
+	if msg.Bio != defaultValue {
+		account.Bio = msg.Bio
+	}
+
+	if msg.Pictures.Profile != defaultValue {
+		account.Pictures.Profile = msg.Pictures.Profile
+	}
+
+	if msg.Pictures.Cover != defaultValue {
+		account.Pictures.Cover = msg.Pictures.Cover
+	}
+
+	return account
+}
+
+// handleMsgEditAccount handles the edit of an account
+func handleMsgEditAccount(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
+
+	account, found := keeper.GetAccount(ctx, msg.PreviousMoniker)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("No existent profile with moniker: %s", msg.PreviousMoniker))
+	}
+
+	account = getEditedProfile(account, msg)
+
+	// New moniker already taken
 	err := keeper.SaveAccount(ctx, account)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())

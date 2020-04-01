@@ -101,7 +101,7 @@ func SimulateMsgEditAccount(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, data, skip, err := randomAccountEditFields(r, ctx, accs, k, ak)
+		acc, data, newMoniker, skip, err := randomAccountEditFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -111,9 +111,10 @@ func SimulateMsgEditAccount(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgEditProfile(
+			data.Moniker,
+			newMoniker,
 			data.Name,
 			data.Surname,
-			data.Moniker,
 			data.Bio,
 			data.Pictures,
 			acc.Address,
@@ -163,19 +164,19 @@ func sendMsgEditAccount(
 // randomAccountEditFields returns random profile data
 func randomAccountEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, types.Profile, bool, error) {
+) (sim.Account, types.Profile, string, bool, error) {
 	if len(accs) == 0 {
-		return sim.Account{}, types.Profile{}, true, nil
+		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 	account := RandomAccount(r, k.GetAccounts(ctx))
 	acc := GetSimAccount(account.Creator, accs)
 
 	// Skip the operation without error as the profile is not valid
 	if acc == nil {
-		return sim.Account{}, types.Profile{}, true, nil
+		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 
-	return *acc, account, false, nil
+	return *acc, account, RandomMoniker(r), false, nil
 }
 
 // SimulateMsgDeleteAccount tests and runs a single msg delete profile where the creator already exists

@@ -5,6 +5,7 @@
 - Implemented the support for hashtags in posts (#96)
 - Updated the post create CLI command in posts (#117)
 - Implemented the support for registering new reactions (#94)
+- Implemented the decentralized profile (#56)
 
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)

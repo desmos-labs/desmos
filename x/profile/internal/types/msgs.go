@@ -68,7 +68,7 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NewMoniker cannot be blank or empty")
 	}
 
 	return nil
@@ -90,24 +90,26 @@ func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
 
 // MsgEditProfile defines a EditProfile message
 type MsgEditProfile struct {
-	Name     string         `json:"name,omitempty"`
-	Surname  string         `json:"surname,omitempty"`
-	Moniker  string         `json:"moniker"`
-	Bio      string         `json:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator"`
+	PreviousMoniker string         `json:"previous_moniker"`
+	NewMoniker      string         `json:"new_moniker"`
+	Name            string         `json:"name,omitempty"`
+	Surname         string         `json:"surname,omitempty"`
+	Bio             string         `json:"bio,omitempty"`
+	Pictures        *Pictures      `json:"pictures,omitempty"`
+	Creator         sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgEditProfile is a constructor function for MsgEditProfile
-func NewMsgEditProfile(name string, surname string, moniker string, bio string, pictures *Pictures,
+func NewMsgEditProfile(previousMoniker string, newMoniker string, name string, surname string, bio string, pictures *Pictures,
 	creator sdk.AccAddress) MsgEditProfile {
 	return MsgEditProfile{
-		Name:     name,
-		Surname:  surname,
-		Moniker:  moniker,
-		Bio:      bio,
-		Pictures: pictures,
-		Creator:  creator,
+		PreviousMoniker: previousMoniker,
+		NewMoniker:      newMoniker,
+		Name:            name,
+		Surname:         surname,
+		Bio:             bio,
+		Pictures:        pictures,
+		Creator:         creator,
 	}
 }
 
@@ -123,6 +125,18 @@ func (msg MsgEditProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
+	if len(strings.TrimSpace(msg.PreviousMoniker)) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot be blank or empty")
+	}
+
+	if len(msg.PreviousMoniker) > MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile previous moniker cannot exceed %d characters", MaxMonikerLength))
+	}
+
+	if len(msg.NewMoniker) > MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile new moniker cannot exceed %d characters", MaxMonikerLength))
+	}
+
 	if len(msg.Name) > MaxNameSurnameLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
 	}
@@ -133,14 +147,6 @@ func (msg MsgEditProfile) ValidateBasic() error {
 
 	if len(msg.Bio) > MaxBioLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
-	}
-
-	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be blank or empty")
-	}
-
-	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	return nil
@@ -187,7 +193,7 @@ func (msg MsgDeleteProfile) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker cannot be blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NewMoniker cannot be blank or empty")
 	}
 
 	return nil

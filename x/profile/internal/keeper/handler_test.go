@@ -12,7 +12,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-func Test_handleMsgCreateAccount(t *testing.T) {
+func Test_handleMsgCreateProfile(t *testing.T) {
 	tests := []struct {
 		name            string
 		existentAccount *types.Profile
@@ -84,23 +84,34 @@ func Test_handleMsgCreateAccount(t *testing.T) {
 	}
 }
 
-func Test_handleMsgEditAccount(t *testing.T) {
+func Test_handleMsgEditProfile(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
+	testAcc2 := types.Profile{
+		Name:     "name",
+		Surname:  "surname",
+		Moniker:  "newMoniker",
+		Bio:      "biography",
+		Pictures: &testPictures,
+		Creator:  editor,
+	}
+
 	tests := []struct {
-		name            string
-		existentAccount *types.Profile
-		msg             types.MsgEditProfile
-		expErr          error
+		name             string
+		existentAccounts types.Profiles
+		expAccount       *types.Profile
+		msg              types.MsgEditProfile
+		expErr           error
 	}{
 		{
-			name:            "Profile edited",
-			existentAccount: &testAccount,
+			name:             "Profile edited",
+			existentAccounts: types.Profiles{testAccount},
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				"newMoniker",
 				testAccount.Name,
 				testAccount.Surname,
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
@@ -108,17 +119,33 @@ func Test_handleMsgEditAccount(t *testing.T) {
 			expErr: nil,
 		},
 		{
-			name:            "Profile not edited because the new moniker already exists",
-			existentAccount: &testAccount,
+			name:             "Profile not edited because no profile with given moniker found",
+			existentAccounts: nil,
 			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				"newMoniker",
 				testAccount.Name,
 				testAccount.Surname,
-				testAccount.Moniker,
 				testAccount.Bio,
 				testAccount.Pictures,
-				editor,
+				testAccount.Creator,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "an account with moniker: moniker has already been created"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("No existent profile with moniker: moniker")),
+		},
+		{
+			name:             "Profile not edited because the new moniker already exists",
+			existentAccounts: types.Profiles{testAccount, testAcc2},
+			msg: types.NewMsgEditProfile(
+				testAccount.Moniker,
+				"newMoniker",
+				testAccount.Name,
+				testAccount.Surname,
+				testAccount.Bio,
+				testAccount.Pictures,
+				testPostOwner,
+			),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "an account with moniker: newMoniker has already been created"),
 		},
 	}
 
@@ -128,9 +155,11 @@ func Test_handleMsgEditAccount(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 
-			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Moniker)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+			if test.existentAccounts != nil {
+				for _, acc := range test.existentAccounts {
+					key := types.ProfileStoreKey(acc.Moniker)
+					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
+				}
 			}
 
 			handler := keeper.NewHandler(k)
@@ -142,12 +171,12 @@ func Test_handleMsgEditAccount(t *testing.T) {
 			}
 			if res != nil {
 				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Moniker), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.NewMoniker), res.Data)
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeAccountEdited,
-					sdk.NewAttribute(types.AttributeAccountMoniker, test.msg.Moniker),
+					sdk.NewAttribute(types.AttributeAccountMoniker, test.msg.NewMoniker),
 					sdk.NewAttribute(types.AttributeAccountCreator, test.msg.Creator.String()),
 				)
 

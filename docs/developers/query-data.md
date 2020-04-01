@@ -10,3 +10,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 
 ## Sessions
 - [Query a session](queries/session.md)
+
+## Profiles
+- [Query a profile](queries/profile.md)
+- [Query the stored profiles](queries/profiles.md)

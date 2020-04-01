@@ -108,21 +108,21 @@ E.g (with all the other optional fields)
 // GetCmdEditProfile is the CLI command for editing an profile
 func GetCmdEditProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "edit [moniker]",
+		Use:   "edit [previous_moniker] [[new_moniker]]",
 		Short: "Edit an existent profile",
 		Long: fmt.Sprintf(`
-Edit an existing profile specifying the moniker, name, surname, bio, a profile picture and cover.
-Every data except moniker are optional.
+Edit an existing profile specifying the previous moniker, new moniker, name, surname, bio, a profile picture and cover.
+Every data except previous_moniker are optional.
 
 E.g (with all the other optional fields)
-%s tx profile edit leoDiCap \
+%s tx profile edit leoDiCap leoDaVinci \
 	--name "Leo" \
 	--surname "Di Cap" \
 	--bio "Hollywood actor. Proud environmentalist" \
 	--picture "https://profilePic.jpg"
 	--cover "https://profileCover.jpg"
 `, version.ClientName),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -136,17 +136,22 @@ E.g (with all the other optional fields)
 			surname := viper.GetString(flagSurname)
 			bio := viper.GetString(flagBio)
 
-			msg := types.NewMsgEditProfile(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
+			prevMoniker := args[0]
+			newMoniker := args[0]
+			if len(args) > 1 {
+				newMoniker = args[1]
+			}
+			msg := types.NewMsgEditProfile(prevMoniker, newMoniker, name, surname, bio, &pictures, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagName, "", "Name of the profile")
-	cmd.Flags().String(flagSurname, "", "Surname of the profile")
-	cmd.Flags().String(flagBio, "", "Biography of the profile")
-	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
-	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")
+	cmd.Flags().String(flagName, "default", "Name of the profile")
+	cmd.Flags().String(flagSurname, "default", "Surname of the profile")
+	cmd.Flags().String(flagBio, "default", "Biography of the profile")
+	cmd.Flags().String(flagProfilePic, "default", "Profile related profile picture")
+	cmd.Flags().String(flagProfileCover, "default", "Profile related profile cover")
 
 	return cmd
 }

@@ -463,9 +463,9 @@ func (f *Fixtures) TxProfileCreate(moniker string, from sdk.AccAddress, flags ..
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-func (f *Fixtures) TxProfileEdit(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profile edit %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, moniker, from, f.Flags())
+func (f *Fixtures) TxProfileEdit(prevMoniker string, newMoniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profile edit %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, prevMoniker, newMoniker, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 

@@ -136,6 +136,7 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 
 	// Later usage variables
 	moniker := "mrBrown"
+	newMoniker := "mrPink"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -158,7 +159,7 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	require.Equal(t, profile.Moniker, moniker)
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileEdit(moniker, fooAddr, "-y",
+	success, _, sterr = f.TxProfileEdit(moniker, newMoniker, fooAddr, "-y",
 		"--name Leo",
 		"--surname Di Cap",
 		"--bio Hollywood actor. Proud environmentalist",
@@ -172,14 +173,14 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	editedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, editedProfiles)
 	editedProfile := editedProfiles[0]
-	require.Equal(t, editedProfile.Moniker, moniker)
+	require.Equal(t, editedProfile.Moniker, newMoniker)
 
 	//Make sure the profile has been edited
 	require.NotEqual(t, storedProfiles[0].Name, editedProfiles[0].Name)
 	require.NotEqual(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileEdit(moniker, fooAddr, "--dry-run",
+	success, _, _ = f.TxProfileEdit(moniker, newMoniker, fooAddr, "--dry-run",
 		"--name Leo",
 		"--surname Di Cap",
 		"--bio Hollywood actor. Proud environmentalist",
@@ -188,7 +189,7 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileEdit(moniker, fooAddr, "--generate-only=true",
+	success, stdout, stderr := f.TxProfileEdit(moniker, newMoniker, fooAddr, "--generate-only=true",
 		"--name Leo",
 		"--surname Di Cap",
 		"--bio Hollywood actor. Proud environmentalist",
@@ -262,7 +263,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 
 	// Check state didn't change
 	storedProfiles = f.QueryProfiles()
-	require.Len(t, storedProfiles, 1)
+	require.Len(t, storedProfiles, 0)
 
 	f.Cleanup()
 }
