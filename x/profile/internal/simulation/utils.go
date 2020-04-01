@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	monikersLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	monikersLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
 
 	randomNames = []string{
 		"Drake",
@@ -119,9 +119,9 @@ func RandomAccount(r *rand.Rand, accounts types.Profiles) types.Profile {
 
 // RandomMoniker return a random moniker from the randomMonikers list given
 func RandomMoniker(r *rand.Rand) string {
-	b := make([]byte, 20)
+	b := make([]byte, 30)
 	for i := range b {
-		b[i] = monikersLetters[rand.Intn(len(monikersLetters))]
+		b[i] = monikersLetters[r.Intn(len(monikersLetters))]
 	}
 	return string(b)
 }

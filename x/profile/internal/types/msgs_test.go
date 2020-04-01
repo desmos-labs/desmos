@@ -150,12 +150,12 @@ func TestMsgCreateAccount_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateProfile(
 				testAccount.Name,
 				testAccount.Surname,
-				"asdserhrtyjeqrgdfhnr1",
+				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 20 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 30 characters"),
 		},
 		{
 			name: "No error message",
@@ -302,12 +302,12 @@ func TestMsgEditAccount_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditProfile(
 				testAccount.Name,
 				testAccount.Surname,
-				"asdserhrtyjeqrgdfhnr1",
+				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
 				testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 20 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 30 characters"),
 		},
 		{
 			name: "No error message",

@@ -8,7 +8,7 @@ const (
 	StoreKey   = ModuleName
 
 	MaxNameSurnameLength = 500
-	MaxMonikerLength     = 20
+	MaxMonikerLength     = 30
 	MaxBioLength         = 1000
 
 	ActionCreateProfile = "create_profile"

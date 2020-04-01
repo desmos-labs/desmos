@@ -164,6 +164,9 @@ func sendMsgEditAccount(
 func randomAccountEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (sim.Account, types.Profile, bool, error) {
+	if len(accs) == 0 {
+		return sim.Account{}, types.Profile{}, true, nil
+	}
 	account := RandomAccount(r, k.GetAccounts(ctx))
 	acc := GetSimAccount(account.Creator, accs)
 
