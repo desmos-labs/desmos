@@ -245,7 +245,13 @@ func sendMsgDeleteAccount(
 func randomAccountDeleteFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (sim.Account, string, bool, error) {
-	account := RandomAccount(r, k.GetProfiles(ctx))
+
+	accounts := k.GetProfiles(ctx)
+
+	if len(accounts) == 0 {
+		return sim.Account{}, "", true, nil
+	}
+	account := RandomAccount(r, accounts)
 
 	acc := GetSimAccount(account.Creator, accs)
 
