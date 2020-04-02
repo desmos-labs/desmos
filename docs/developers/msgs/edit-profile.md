@@ -29,7 +29,7 @@ This message allows you to edit the a previously created profile.
 | `surname` | String | (Optional) Surname of the user |
 | `bio` | String | (Optional) Biography of the user |
 | `pictures` | Object | (Optional) Object containing all the information related to the profile's pictures |
-| `creator` | String | Desmos address of the user that is creating the profile |
+| `creator` | String | Desmos address of the user that is editing the profile |
 
 ## Example
 ````json

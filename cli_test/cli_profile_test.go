@@ -79,8 +79,8 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	// Create a profile
 	success, _, sterr := f.TxProfileCreate(moniker, fooAddr, "-y",
 		"--name Leonardo",
-		"--surname Di Caprio",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCaprio",
+		"--bio biography",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.True(t, success)
@@ -96,8 +96,8 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	// Test --dry-run
 	success, _, _ = f.TxProfileCreate(moniker, fooAddr, "--dry-run",
 		"--name Leonardo",
-		"--surname Di Caprio",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCaprio",
+		"--bio biography",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.True(t, success)
@@ -105,8 +105,8 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	// Test --generate-only
 	success, stdout, stderr := f.TxProfileCreate(moniker, fooAddr, "--generate-only=true",
 		"--name Leonardo",
-		"--surname Di Caprio",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCaprio",
+		"--bio biography",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.Empty(t, stderr)
@@ -144,8 +144,8 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	// Create an profile
 	success, _, sterr := f.TxProfileCreate(moniker, fooAddr, "-y",
 		"--name Leonardo",
-		"--surname Di Caprio",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCaprio",
+		"--bio biography",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.True(t, success)
@@ -161,15 +161,15 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	// Edit the profile
 	success, _, sterr = f.TxProfileEdit(moniker, newMoniker, fooAddr, "-y",
 		"--name Leo",
-		"--surname Di Cap",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCap",
+		"--bio HollywoodActor",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	//Make sure the profile is saved
+	//Make sure the profile is edited
 	editedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, editedProfiles)
 	editedProfile := editedProfiles[0]
@@ -182,8 +182,8 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	// Test --dry-run
 	success, _, _ = f.TxProfileEdit(moniker, newMoniker, fooAddr, "--dry-run",
 		"--name Leo",
-		"--surname Di Cap",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCap",
+		"--bio HollywoodActor",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.True(t, success)
@@ -191,8 +191,8 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	// Test --generate-only
 	success, stdout, stderr := f.TxProfileEdit(moniker, newMoniker, fooAddr, "--generate-only=true",
 		"--name Leo",
-		"--surname Di Cap",
-		"--bio Hollywood actor. Proud environmentalist",
+		"--surname DiCap",
+		"--bio HollywoodActor",
 		"--picture https://profilePic.jpg",
 		"--cover https://profileCover.jpg")
 	require.Empty(t, stderr)

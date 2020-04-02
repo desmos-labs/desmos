@@ -16,7 +16,7 @@ This message allows you to delete the a previously created profile.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `moniker` | String | Moniker of the user's profile |
-| `creator` | String | Desmos address of the user that is creating the profile |
+| `creator` | String | Desmos address of the user that is deleting the profile |
 
 ## Example
 ````json

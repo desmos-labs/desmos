@@ -63,32 +63,13 @@ E.g (with all the other optional fields)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			picture, err := cmd.Flags().GetString(flagProfilePic)
-			if err != nil {
-				return fmt.Errorf(err.Error())
-			}
-
-			cover, err := cmd.Flags().GetString(flagProfileCover)
-			if err != nil {
-				return fmt.Errorf(err.Error())
-			}
-
+			picture := viper.GetString(flagProfilePic)
+			cover := viper.GetString(flagProfileCover)
 			pictures := types.NewPictures(picture, cover)
 
-			name, err := cmd.Flags().GetString(flagName)
-			if err != nil {
-				return fmt.Errorf(err.Error())
-			}
-
-			surname, err := cmd.Flags().GetString(flagSurname)
-			if err != nil {
-				return fmt.Errorf(err.Error())
-			}
-
-			bio, err := cmd.Flags().GetString(flagBio)
-			if err != nil {
-				return fmt.Errorf(err.Error())
-			}
+			name := viper.GetString(flagName)
+			surname := viper.GetString(flagSurname)
+			bio := viper.GetString(flagBio)
 
 			msg := types.NewMsgCreateProfile(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
 
@@ -115,7 +96,7 @@ Edit an existing profile specifying the previous moniker, new moniker, name, sur
 Every data except previous_moniker are optional.
 
 E.g (with all the other optional fields)
-%s tx profile edit leoDiCap leoDaVinci \
+%s tx profile edit leoDiCap DiCapLeo \
 	--name "Leo" \
 	--surname "Di Cap" \
 	--bio "Hollywood actor. Proud environmentalist" \
