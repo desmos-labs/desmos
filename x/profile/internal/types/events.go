@@ -1,11 +1,11 @@
 package types
 
 const (
-	EventTypeAccountCreated = "account_created"
-	EventTypeAccountEdited  = "account_edited"
-	EventTypeAccountDeleted = "account_deleted"
+	EventTypeProfileCreated = "profile_created"
+	EventTypeProfileEdited  = "profile_edited"
+	EventTypeProfileDeleted = "profile_deleted"
 
 	// Profile attributes
-	AttributeAccountMoniker = "account_moniker"
-	AttributeAccountCreator = "account_creator"
+	AttributeProfileMoniker = "profile_moniker"
+	AttributeProfileCreator = "profile_creator"
 )

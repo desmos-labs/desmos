@@ -15,20 +15,20 @@ import (
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the posts module",
+		Short:                      "Querying commands for the profile module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 	postQueryCmd.AddCommand(flags.GetCommands(
-		GetCmdQueryAccount(cdc),
-		GetCmdQueryAccounts(cdc),
+		GetCmdQueryProfile(cdc),
+		GetCmdQueryProfiles(cdc),
 	)...)
 	return postQueryCmd
 }
 
-// GetCmdQueryAccount queries an account
-func GetCmdQueryAccount(cdc *codec.Codec) *cobra.Command {
+// GetCmdQueryProfile queries a profile
+func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "profile [moniker]",
 		Short: "Retrieve the profile having the moniker, if any.",
@@ -50,8 +50,8 @@ func GetCmdQueryAccount(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdQueryAccounts queries all the accounts
-func GetCmdQueryAccounts(cdc *codec.Codec) *cobra.Command {
+// GetCmdQueryProfiles queries all the profiles
+func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "profiles",
 		Short: "Retrieve all the profiles.",

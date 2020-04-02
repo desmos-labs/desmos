@@ -1,5 +1,5 @@
 # `MsgEditProfile`
-This message allows you to edit the a previously created profile.
+This message allows you to edit a previously created profile.
 
 ## Structure
 ````json

@@ -28,7 +28,7 @@ func TestProfile_String(t *testing.T) {
 	)
 }
 
-func TestAccount_Equals(t *testing.T) {
+func TestProfile_Equals(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var testPictures = types.NewPictures("profile", "cover")
 
@@ -81,7 +81,7 @@ func TestAccount_Equals(t *testing.T) {
 }
 
 //TODO add tests for chainLink and verifiedServices when implemented
-func TestAccount_Validate(t *testing.T) {
+func TestProfile_Validate(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
 	tests := []struct {

@@ -51,9 +51,9 @@ func handleMsgCreateProfile(ctx sdk.Context, keeper Keeper, msg types.MsgCreateP
 	}
 
 	createEvent := sdk.NewEvent(
-		types.EventTypeAccountCreated,
-		sdk.NewAttribute(types.AttributeAccountMoniker, account.Moniker),
-		sdk.NewAttribute(types.AttributeAccountCreator, account.Creator.String()),
+		types.EventTypeProfileCreated,
+		sdk.NewAttribute(types.AttributeProfileMoniker, account.Moniker),
+		sdk.NewAttribute(types.AttributeProfileCreator, account.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
@@ -121,9 +121,9 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 	}
 
 	createEvent := sdk.NewEvent(
-		types.EventTypeAccountEdited,
-		sdk.NewAttribute(types.AttributeAccountMoniker, account.Moniker),
-		sdk.NewAttribute(types.AttributeAccountCreator, account.Creator.String()),
+		types.EventTypeProfileEdited,
+		sdk.NewAttribute(types.AttributeProfileMoniker, account.Moniker),
+		sdk.NewAttribute(types.AttributeProfileCreator, account.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
@@ -154,9 +154,9 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 	keeper.DeleteProfile(ctx, msg.Moniker)
 
 	createEvent := sdk.NewEvent(
-		types.EventTypeAccountDeleted,
-		sdk.NewAttribute(types.AttributeAccountMoniker, acc.Moniker),
-		sdk.NewAttribute(types.AttributeAccountCreator, acc.Creator.String()),
+		types.EventTypeProfileDeleted,
+		sdk.NewAttribute(types.AttributeProfileMoniker, acc.Moniker),
+		sdk.NewAttribute(types.AttributeProfileCreator, acc.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)

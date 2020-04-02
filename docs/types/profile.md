@@ -4,11 +4,11 @@ Inside Desmos, profile are the way that users could register their own identity.
 Since this is a decentralized profile, every data inside it can be omitted except for the `moniker` which could be used
 to identify a desmos `bech32addr` once the profile is created. 
 
-Profile can be enriched with some of your personal information that could be verified later on chain by providing some
-additional information to make possible to verify your identity.
+Profile can be enriched with some of your personal data. 
+These data that could be verified later on chain by providing some additional information.
 
 ## Contained data
-A profile contains different data. Most of them could be omitted and each of them could be edited.
+A profile contains different fields. Most of them could be omitted and each of them could be edited.
 
 ### `Name`
 The `Name` identifies the name of the profile owner. It's omittable. Cannot be longer than `500` characters

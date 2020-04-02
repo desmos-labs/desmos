@@ -12,48 +12,48 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgCreateAccount = "op_weight_msg_create_account"
-	OpWeightMsgEditAccount   = "op_weight_msg_edit_account"
-	OpWeightMsgDeleteAccount = "op_weight_msg_delete_account"
+	OpWeightMsgCreateProfile = "op_weight_msg_create_profile"
+	OpWeightMsgEditProfile   = "op_weight_msg_edit_profile"
+	OpWeightMsgDeleteProfile = "op_weight_msg_delete_profile"
 
 	DefaultGasValue = 5000000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
-	var weightMsgCreateAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateAccount, &weightMsgCreateAccount, nil,
+	var weightMsgCreateProfile int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCreateProfile, &weightMsgCreateProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgCreateAccount = params.DefaultWeightMsgCreateAccount
+			weightMsgCreateProfile = params.DefaultWeightMsgCreateAccount
 		},
 	)
 
-	var weightMsgEditAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditAccount, &weightMsgEditAccount, nil,
+	var weightMsgEditProfile int
+	appParams.GetOrGenerate(cdc, OpWeightMsgEditProfile, &weightMsgEditProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgEditAccount = params.DefaultWeightMsgEditAccount
+			weightMsgEditProfile = params.DefaultWeightMsgEditAccount
 		},
 	)
 
-	var weightMsgDeleteAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteAccount, &weightMsgDeleteAccount, nil,
+	var weightMsgDeleteProfile int
+	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteProfile, &weightMsgDeleteProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgDeleteAccount = params.DefaultWeightMsgDeleteAccount
+			weightMsgDeleteProfile = params.DefaultWeightMsgDeleteAccount
 		},
 	)
 
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
-			weightMsgCreateAccount,
-			SimulateMsgCreateAccount(ak),
+			weightMsgCreateProfile,
+			SimulateMsgCreateProfile(ak),
 		),
 		sim.NewWeightedOperation(
-			weightMsgEditAccount,
-			SimulateMsgEditAccount(k, ak),
+			weightMsgEditProfile,
+			SimulateMsgEditProfile(k, ak),
 		),
 		sim.NewWeightedOperation(
-			weightMsgDeleteAccount,
-			SimulateMsgDeleteAccount(k, ak),
+			weightMsgDeleteProfile,
+			SimulateMsgDeleteProfile(k, ak),
 		),
 	}
 }

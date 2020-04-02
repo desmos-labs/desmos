@@ -22,7 +22,7 @@ import (
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	postsTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Posts transaction subcommands",
+		Short:                      "Profile transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

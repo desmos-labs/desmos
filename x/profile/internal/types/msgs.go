@@ -67,10 +67,6 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
-	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NewMoniker cannot be blank or empty")
-	}
-
 	return nil
 }
 

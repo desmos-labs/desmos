@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func TestKeeper_SaveAccount(t *testing.T) {
+func TestKeeper_SaveProfile(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -60,7 +60,7 @@ func TestKeeper_SaveAccount(t *testing.T) {
 	}
 }
 
-func TestKeeper_DeleteAccount(t *testing.T) {
+func TestKeeper_DeleteProfile(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	err := k.SaveProfile(ctx, testAccount)
@@ -79,7 +79,7 @@ func TestKeeper_DeleteAccount(t *testing.T) {
 	require.False(t, found)
 }
 
-func TestKeeper_GetAccount(t *testing.T) {
+func TestKeeper_GetProfile(t *testing.T) {
 
 	tests := []struct {
 		name            string
@@ -121,7 +121,7 @@ func TestKeeper_GetAccount(t *testing.T) {
 	}
 }
 
-func TestKeeper_GetAccounts(t *testing.T) {
+func TestKeeper_GetProfiles(t *testing.T) {
 	tests := []struct {
 		name             string
 		existentAccounts types.Profiles

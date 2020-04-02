@@ -13,7 +13,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func Test_queryAccount(t *testing.T) {
+func Test_queryProfile(t *testing.T) {
 
 	tests := []struct {
 		name          string
@@ -66,7 +66,7 @@ func Test_queryAccount(t *testing.T) {
 
 }
 
-func Test_queryAccounts(t *testing.T) {
+func Test_queryProfiles(t *testing.T) {
 
 	tests := []struct {
 		name          string

@@ -15,17 +15,17 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
 		case types.QueryProfile:
-			return queryAccount(ctx, path[1:], req, keeper)
+			return queryProfile(ctx, path[1:], req, keeper)
 		case types.QueryProfiles:
-			return queryAccounts(ctx, req, keeper)
+			return queryProfiles(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")
 		}
 	}
 }
 
-// queryAccount handles the request to get an account having a moniker
-func queryAccount(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+// queryProfile handles the request to get a profile having a moniker
+func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	account, found := keeper.GetProfile(ctx, path[0])
 
 	if !found {
@@ -41,8 +41,8 @@ func queryAccount(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Ke
 	return bz, nil
 }
 
-// queryPosts handles the request of listing all the accounts
-func queryAccounts(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+// queryProfiles handles the request of listing all the profiles
+func queryProfiles(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	accounts := keeper.GetProfiles(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &accounts)

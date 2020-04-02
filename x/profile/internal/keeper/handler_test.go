@@ -71,9 +71,9 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
-					types.EventTypeAccountCreated,
-					sdk.NewAttribute(types.AttributeAccountMoniker, test.msg.Moniker),
-					sdk.NewAttribute(types.AttributeAccountCreator, test.msg.Creator.String()),
+					types.EventTypeProfileCreated,
+					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
+					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
 				require.Len(t, ctx.EventManager().Events(), 1)
@@ -179,9 +179,9 @@ func Test_handleMsgEditProfile(t *testing.T) {
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
-					types.EventTypeAccountEdited,
-					sdk.NewAttribute(types.AttributeAccountMoniker, test.msg.NewMoniker),
-					sdk.NewAttribute(types.AttributeAccountCreator, test.msg.Creator.String()),
+					types.EventTypeProfileEdited,
+					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.NewMoniker),
+					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
 				require.Len(t, ctx.EventManager().Events(), 1)
@@ -192,7 +192,7 @@ func Test_handleMsgEditProfile(t *testing.T) {
 	}
 }
 
-func Test_handleMsgDeleteAccount(t *testing.T) {
+func Test_handleMsgDeleteProfile(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -247,9 +247,9 @@ func Test_handleMsgDeleteAccount(t *testing.T) {
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
-					types.EventTypeAccountDeleted,
-					sdk.NewAttribute(types.AttributeAccountMoniker, test.msg.Moniker),
-					sdk.NewAttribute(types.AttributeAccountCreator, test.msg.Creator.String()),
+					types.EventTypeProfileDeleted,
+					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
+					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
 				require.Len(t, ctx.EventManager().Events(), 1)
