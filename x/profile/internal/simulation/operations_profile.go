@@ -82,6 +82,9 @@ func sendMsgCreateProfile(
 // randomCreateProfileFields returns random profile data
 func randomCreateProfileFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
 ) (*AccountData, bool, error) {
+	if len(accs) == 0 {
+		return nil, true, nil
+	}
 
 	accountData := RandomAccountData(r, accs)
 	acc := ak.GetAccount(ctx, accountData.Creator.Address)
@@ -116,8 +119,8 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			*data.Name,
 			*data.Surname,
 			*data.Bio,
-			data.Pictures.Profile,
-			data.Pictures.Cover,
+			"",
+			"",
 			acc.Address,
 		)
 
@@ -246,6 +249,9 @@ func sendMsgDeleteProfile(
 func randomProfileDeleteFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (sim.Account, bool, error) {
+	if len(accs) == 0 {
+		return sim.Account{}, true, nil
+	}
 
 	accounts := k.GetProfiles(ctx)
 
