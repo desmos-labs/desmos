@@ -40,7 +40,7 @@ func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
 
 	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.ProfileStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile)},
+		kv.Pair{Key: types.ProfileStoreKey(profile.Creator.String()), Value: cdc.MustMarshalBinaryBare(&profile)},
 	}
 
 	tests := []struct {

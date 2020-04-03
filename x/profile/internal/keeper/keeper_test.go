@@ -10,6 +10,58 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func TestKeeper_AssociateMonikerWithAddress(t *testing.T) {
+	ctx, k := SetupTestInput()
+
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	moniker := "moniker"
+
+	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+
+	store := ctx.KVStore(k.StoreKey)
+
+	var acc sdk.AccAddress
+	bz := store.Get([]byte(moniker))
+	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
+
+	require.Equal(t, creator, acc)
+}
+
+func TestKeeper_GetMonikerRelatedAddress(t *testing.T) {
+	ctx, k := SetupTestInput()
+
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	moniker := "moner"
+
+	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+
+	addr := k.GetMonikerRelatedAddress(ctx, moniker)
+
+	require.Equal(t, creator, addr)
+}
+
+func TestKeeper_DeleteMonikerAddressAssociation(t *testing.T) {
+	ctx, k := SetupTestInput()
+
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	moniker := "monik"
+
+	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+
+	k.DeleteMonikerAddressAssociation(ctx, moniker)
+
+	addr := k.GetMonikerRelatedAddress(ctx, moniker)
+
+	require.Nil(t, addr)
+
+}
+
 func TestKeeper_SaveProfile(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)

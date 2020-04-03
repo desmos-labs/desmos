@@ -42,8 +42,8 @@ func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr 
 	return addr
 }
 
-// deleteMonikerAddressAssociation delete the given moniker association with an address
-func (k Keeper) deleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
+// DeleteMonikerAddressAssociation delete the given moniker association with an address
+func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
 	store.Delete([]byte(moniker))
 }
@@ -72,7 +72,7 @@ func (k Keeper) DeleteProfile(ctx sdk.Context, address string, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ProfileStoreKey(address)
 	store.Delete(key)
-	k.deleteMonikerAddressAssociation(ctx, moniker)
+	k.DeleteMonikerAddressAssociation(ctx, moniker)
 }
 
 // GetProfiles returns all the created accounts inside the current context.
