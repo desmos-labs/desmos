@@ -23,7 +23,8 @@ func TestKeeper_AssociateMonikerWithAddress(t *testing.T) {
 	store := ctx.KVStore(k.StoreKey)
 
 	var acc sdk.AccAddress
-	bz := store.Get([]byte(moniker))
+	key := types.MonikerStoreKey(moniker)
+	bz := store.Get(key)
 	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
 	require.Equal(t, creator, acc)
@@ -119,14 +120,14 @@ func TestKeeper_DeleteProfile(t *testing.T) {
 	err := k.SaveProfile(ctx, testAccount)
 	require.Nil(t, err)
 
-	res, found := k.GetProfile(ctx, testAccount.Creator.String())
+	res, found := k.GetProfile(ctx, testAccount.Creator)
 
 	require.Equal(t, testAccount, res)
 	require.True(t, found)
 
-	k.DeleteProfile(ctx, testAccount.Creator.String(), testAccount.Moniker)
+	k.DeleteProfile(ctx, testAccount.Creator, testAccount.Moniker)
 
-	res, found = k.GetProfile(ctx, testAccount.Creator.String())
+	res, found = k.GetProfile(ctx, testAccount.Creator)
 
 	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
@@ -162,7 +163,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
 
-			res, found := k.GetProfile(ctx, testPostOwner.String())
+			res, found := k.GetProfile(ctx, testPostOwner)
 
 			if test.existentAccount != nil {
 				require.Equal(t, *test.existentAccount, res)

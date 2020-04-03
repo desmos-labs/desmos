@@ -41,6 +41,7 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ProfileStoreKey(profile.Creator.String()), Value: cdc.MustMarshalBinaryBare(&profile)},
+		kv.Pair{Key: types.MonikerStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
 	}
 
 	tests := []struct {
@@ -48,6 +49,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
+		{"Moniker", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
 		{"other", ""},
 	}
 

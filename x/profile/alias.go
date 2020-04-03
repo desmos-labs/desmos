@@ -46,8 +46,8 @@ var (
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
 	SimulateMsgEditProfile   = simulation.SimulateMsgEditProfile
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
-	RandomAccountData        = simulation.RandomAccountData
-	RandomAccount            = simulation.RandomAccount
+	RandomAccountData        = simulation.RandomProfileData
+	RandomAccount            = simulation.RandomProfile
 	RandomMoniker            = simulation.RandomMoniker
 	RandomName               = simulation.RandomName
 	RandomSurname            = simulation.RandomSurname
@@ -76,7 +76,7 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
-	AccountData      = simulation.AccountData
+	AccountData      = simulation.ProfileData
 	Pictures         = types.Pictures
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile

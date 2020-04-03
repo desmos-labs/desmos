@@ -95,6 +95,9 @@ func GetCmdEditProfile(cdc *codec.Codec) *cobra.Command {
 Edit an existing profile specifying the previous moniker, new moniker, name, surname, bio, a profile picture and cover.
 Every data except moniker is optional.
 
+All the attributes (except previous_moniker) will not accept the string "default" as a value because it's reserved for internal operations.
+
+
 E.g (with all the other optional fields)
 %s tx profile edit leoDiCap \
     --moniker "DiCapLeo" \

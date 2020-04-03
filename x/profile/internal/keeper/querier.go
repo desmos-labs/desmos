@@ -31,7 +31,7 @@ func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Ke
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	account, found := keeper.GetProfile(ctx, address.String())
+	account, found := keeper.GetProfile(ctx, address)
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,

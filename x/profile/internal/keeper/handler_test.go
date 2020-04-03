@@ -54,7 +54,7 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}

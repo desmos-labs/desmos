@@ -25,14 +25,16 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 // AssociateMonikerWithAddress save the relation of moniker and address on chain
 func (k Keeper) AssociateMonikerWithAddress(ctx sdk.Context, moniker string, address sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Set([]byte(moniker), k.Cdc.MustMarshalBinaryBare(&address))
+	key := types.MonikerStoreKey(moniker)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&address))
 }
 
 // GetMonikerRelatedAddress returns the address associated to the given moniker or nil if it not exists
 func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
 
-	bz := store.Get([]byte(moniker))
+	key := types.MonikerStoreKey(moniker)
+	bz := store.Get(key)
 	if bz == nil {
 		return nil
 	}
@@ -45,32 +47,34 @@ func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr 
 // DeleteMonikerAddressAssociation delete the given moniker association with an address
 func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Delete([]byte(moniker))
+	key := types.MonikerStoreKey(moniker)
+	store.Delete(key)
 }
 
 // SaveProfile allows to save the given account inside the current context.
 // It assumes that the given account has already been validated.
 // It returns an error if an account with the same moniker from a different creator already exists
-func (k Keeper) SaveProfile(ctx sdk.Context, acc types.Profile) error {
+func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := types.ProfileStoreKey(acc.Creator.String())
+	key := types.ProfileStoreKey(profile.Creator.String())
 
-	if addr := k.GetMonikerRelatedAddress(ctx, acc.Moniker); addr != nil && !addr.Equals(acc.Creator) {
-		return fmt.Errorf("an account with moniker: %s has already been created", acc.Moniker)
+	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
+		return fmt.Errorf("an account with moniker: %s has already been created", profile.Moniker)
 	}
 
-	k.AssociateMonikerWithAddress(ctx, acc.Moniker, acc.Creator)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&acc))
+	k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&profile))
 
 	return nil
 }
 
 // DeleteProfile allows to delete an account associated with the given address inside the current context.
 // It assumes that the address-related account exists.
-func (k Keeper) DeleteProfile(ctx sdk.Context, address string, moniker string) {
+// nolint: interfacer
+func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.ProfileStoreKey(address)
+	key := types.ProfileStoreKey(address.String())
 	store.Delete(key)
 	k.DeleteMonikerAddressAssociation(ctx, moniker)
 }
@@ -95,10 +99,11 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 }
 
 // GetProfile returns the account corresponding to the given address inside the current context.
-func (k Keeper) GetProfile(ctx sdk.Context, address string) (account types.Profile, found bool) {
+// nolint: interfacer
+func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (account types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := types.ProfileStoreKey(address)
+	key := types.ProfileStoreKey(address.String())
 
 	if bz := store.Get(key); bz != nil {
 		k.Cdc.MustUnmarshalBinaryBare(bz, &account)

@@ -81,12 +81,12 @@ func sendMsgCreateProfile(
 
 // randomCreateProfileFields returns random profile data
 func randomCreateProfileFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
-) (*AccountData, bool, error) {
+) (*ProfileData, bool, error) {
 	if len(accs) == 0 {
 		return nil, true, nil
 	}
 
-	accountData := RandomAccountData(r, accs)
+	accountData := RandomProfileData(r, accs)
 	acc := ak.GetAccount(ctx, accountData.Creator.Address)
 
 	// Skip the operation without error as the profile is not valid
@@ -176,7 +176,7 @@ func randomProfileEditFields(
 	if len(accounts) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
-	account := RandomAccount(r, accounts)
+	account := RandomProfile(r, accounts)
 	acc := GetSimAccount(account.Creator, accs)
 
 	// Skip the operation without error as the profile is not valid
@@ -258,7 +258,7 @@ func randomProfileDeleteFields(
 	if len(accounts) == 0 {
 		return sim.Account{}, true, nil
 	}
-	account := RandomAccount(r, accounts)
+	account := RandomProfile(r, accounts)
 
 	acc := GetSimAccount(account.Creator, accs)
 

@@ -31,6 +31,9 @@ This message allows you to edit a previously created profile.
 | `pictures` | Object | (Optional) Object containing all the information related to the profile's pictures |
 | `creator` | String | Desmos address of the user that is editing the profile |
 
+All the attributes (except `previous_moniker` and `creator`) will not accept the string `default` as a value because it's reserved for internal operations.
+
+
 ## Example
 ````json
 {
@@ -56,3 +59,4 @@ The action associated to this message is the following:
 ```
 edit_profile
 ```
+

@@ -83,8 +83,8 @@ var (
 	}
 )
 
-// AccountData contains the randomly generated data of an profile
-type AccountData struct {
+// ProfileData contains the randomly generated data of an profile
+type ProfileData struct {
 	Moniker string
 	Name    string
 	Surname string
@@ -93,15 +93,15 @@ type AccountData struct {
 	Creator sim.Account
 }
 
-// RandomAccountData return a random AccountData from random data and random accounts list
-func RandomAccountData(r *rand.Rand, accs []sim.Account) AccountData {
+// RandomProfileData return a random ProfileData from random data and random accounts list
+func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 	simAccount, _ := sim.RandomAcc(r, accs)
 	pictures := types.Pictures{
 		Profile: RandomProfilePic(r),
 		Cover:   RandomProfileCover(r),
 	}
 
-	return AccountData{
+	return ProfileData{
 		Moniker: RandomMoniker(r),
 		Name:    RandomName(r),
 		Surname: RandomSurname(r),
@@ -111,8 +111,8 @@ func RandomAccountData(r *rand.Rand, accs []sim.Account) AccountData {
 	}
 }
 
-// RandomAccount picks and returns a random profile from an array
-func RandomAccount(r *rand.Rand, accounts types.Profiles) types.Profile {
+// RandomProfile picks and returns a random profile from an array
+func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }

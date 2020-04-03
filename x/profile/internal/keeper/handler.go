@@ -102,11 +102,12 @@ func getEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Pro
 
 // handleMsgEditProfile handles the edit of a profile
 func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
-	account, found := keeper.GetProfile(ctx, msg.Creator.String())
+	account, found := keeper.GetProfile(ctx, msg.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("No existent profile to edit for address: %s", msg.Creator))
 	}
+	previousMoniker := account.Moniker
 
 	account = getEditedProfile(account, msg)
 
@@ -114,6 +115,8 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("An account with moniker: %s has already been created", msg.NewMoniker))
 	}
+
+	keeper.DeleteMonikerAddressAssociation(ctx, previousMoniker)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileEdited,
@@ -133,14 +136,14 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 
 // handleMsgDeleteProfile handles the deletion of a profile
 func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteProfile) (*sdk.Result, error) {
-	profile, found := keeper.GetProfile(ctx, msg.Creator.String())
+	profile, found := keeper.GetProfile(ctx, msg.Creator)
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("No profile associated with this address: %s", msg.Creator))
 	}
 
-	keeper.DeleteProfile(ctx, profile.Creator.String(), profile.Moniker)
+	keeper.DeleteProfile(ctx, profile.Creator, profile.Moniker)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileDeleted,

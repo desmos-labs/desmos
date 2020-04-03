@@ -18,7 +18,7 @@ func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) 
 
 	accounts = make(types.Profiles, accountsNumber)
 	for i := 0; i < accountsNumber; i++ {
-		accountData := RandomAccountData(simState.Rand, simState.Accounts)
+		accountData := RandomProfileData(simState.Rand, simState.Accounts)
 		account := types.Profile{
 			Moniker: accountData.Moniker,
 			Name:    &accountData.Name,
