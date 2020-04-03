@@ -26,7 +26,12 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 // queryProfile handles the request to get a profile having a moniker
 func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	account, found := keeper.GetProfile(ctx, path[0])
+	address, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	account, found := keeper.GetProfile(ctx, address.String())
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,

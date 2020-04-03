@@ -11,7 +11,7 @@ import (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profile/{moniker}", queryProfileHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/profiles/{address}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
 }
 
@@ -19,9 +19,9 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		moniker := vars["moniker"]
+		address := vars["address"]
 
-		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, moniker)
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, address)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

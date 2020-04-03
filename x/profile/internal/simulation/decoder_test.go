@@ -15,12 +15,15 @@ import (
 var (
 	privKey            = ed25519.GenPrivKey().PubKey()
 	accountCreatorAddr = sdk.AccAddress(privKey.Address())
+	name               = "leo"
+	surname            = "Di Caprio"
+	bio                = "Hollywood Actor. Proud environmentalist"
 
 	profile = types.Profile{
-		Name:    "leo",
-		Surname: "Di Caprio",
+		Name:    &name,
+		Surname: &surname,
 		Moniker: "leoDiCap",
-		Bio:     "Hollywood Actor. Proud environmentalist",
+		Bio:     &bio,
 		Creator: accountCreatorAddr,
 	}
 )

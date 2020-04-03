@@ -6,8 +6,7 @@ This message allows you to delete the a previously created profile.
 {
   "type": "desmos/MsgDeleteProfile",
   "value": {
-    "moniker": "mazinga",
-    "creator": "desmos1qchdngxk8zkl4c4mheqdlpgcegkdrtucmwllpx"
+    "creator": "<Address of the profile owner>"
   }
 }
 ````
@@ -15,7 +14,6 @@ This message allows you to delete the a previously created profile.
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `moniker` | String | Moniker of the user's profile |
 | `creator` | String | Desmos address of the user that is deleting the profile |
 
 ## Example
@@ -23,7 +21,6 @@ This message allows you to delete the a previously created profile.
 {
   "type": "desmos/MsgDeleteProfile",
   "value": {
-    "moniker": "mazinga",
     "creator": "desmos1qchdngxk8zkl4c4mheqdlpgcegkdrtucmwllpx"
   }
 }

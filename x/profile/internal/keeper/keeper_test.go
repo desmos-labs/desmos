@@ -48,8 +48,9 @@ func TestKeeper_SaveProfile(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
 
 			err := k.SaveProfile(ctx, test.account)
@@ -66,20 +67,21 @@ func TestKeeper_DeleteProfile(t *testing.T) {
 	err := k.SaveProfile(ctx, testAccount)
 	require.Nil(t, err)
 
-	res, found := k.GetProfile(ctx, testAccount.Moniker)
+	res, found := k.GetProfile(ctx, testAccount.Creator.String())
 
 	require.Equal(t, testAccount, res)
 	require.True(t, found)
 
-	k.DeleteProfile(ctx, testAccount.Moniker)
+	k.DeleteProfile(ctx, testAccount.Creator.String(), testAccount.Moniker)
 
-	res, found = k.GetProfile(ctx, testAccount.Moniker)
+	res, found = k.GetProfile(ctx, testAccount.Creator.String())
 
 	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
 }
 
 func TestKeeper_GetProfile(t *testing.T) {
+	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
 	tests := []struct {
 		name            string
@@ -103,11 +105,12 @@ func TestKeeper_GetProfile(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
 
-			res, found := k.GetProfile(ctx, "moniker")
+			res, found := k.GetProfile(ctx, testPostOwner.String())
 
 			if test.existentAccount != nil {
 				require.Equal(t, *test.existentAccount, res)
@@ -143,7 +146,7 @@ func TestKeeper_GetProfiles(t *testing.T) {
 
 			if len(test.existentAccounts) != 0 {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccounts[0].Moniker)
+				key := types.ProfileStoreKey(test.existentAccounts[0].Creator.String())
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 

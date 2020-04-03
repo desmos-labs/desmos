@@ -23,15 +23,15 @@ func Test_queryProfile(t *testing.T) {
 	}{
 		{
 			name:          "Profile doesnt exist",
-			path:          []string{types.QueryProfile, "monk"},
+			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testAccount,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("Profile with moniker %s doesn't exists", "monk"),
+				fmt.Sprintf("Profile with moniker %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			),
 		},
 		{
 			name:          "Profile returned correctly",
-			path:          []string{types.QueryProfile, "moniker"},
+			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testAccount,
 			expErr:        nil,
 		},

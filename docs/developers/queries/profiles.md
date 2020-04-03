@@ -3,10 +3,10 @@ This query endpoint allows you to get all the stored profiles.
 
 **CLI**
  ```bash
-desmoscli query profiles
+desmoscli query profile all
 
 # Example
-# desmoscli query profiles
+# desmoscli query profile all
 ``` 
 
 **REST**

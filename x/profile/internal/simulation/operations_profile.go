@@ -113,10 +113,11 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		msg := types.NewMsgEditProfile(
 			data.Moniker,
 			newMoniker,
-			data.Name,
-			data.Surname,
-			data.Bio,
-			data.Pictures,
+			*data.Name,
+			*data.Surname,
+			*data.Bio,
+			data.Pictures.Profile,
+			data.Pictures.Cover,
 			acc.Address,
 		)
 
@@ -189,7 +190,7 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
-		acc, moniker, skip, err := randomProfileDeleteFields(r, ctx, accs, k, ak)
+		acc, skip, err := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -198,7 +199,7 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgDeleteProfile(moniker, acc.Address)
+		msg := types.NewMsgDeleteProfile(acc.Address)
 
 		err = sendMsgDeleteProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
@@ -244,12 +245,12 @@ func sendMsgDeleteProfile(
 // randomProfileDeleteFields returns random profile data
 func randomProfileDeleteFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, string, bool, error) {
+) (sim.Account, bool, error) {
 
 	accounts := k.GetProfiles(ctx)
 
 	if len(accounts) == 0 {
-		return sim.Account{}, "", true, nil
+		return sim.Account{}, true, nil
 	}
 	account := RandomAccount(r, accounts)
 
@@ -257,8 +258,8 @@ func randomProfileDeleteFields(
 
 	// Skip the operation without error as the profile is not valid
 	if acc == nil {
-		return sim.Account{}, "", true, nil
+		return sim.Account{}, true, nil
 	}
 
-	return *acc, account.Moniker, false, nil
+	return *acc, false, nil
 }

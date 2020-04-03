@@ -7,9 +7,9 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
 {
   "type": "desmos/MsgCreateProfile",
   "value": {
+    "moniker": "<Profile moniker>",
     "name": "<Profile name>",
     "surname": "<Profile surname>",
-    "moniker": "<Profile moniker>",
     "bio": "<Profile biography>",
     "pictures": {
       "profile": "<Profile account's picture>",
@@ -23,9 +23,9 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
+| `moniker` | String | Moniker of the user's profile |
 | `name` | String | (Optional) Name of the user |
 | `surname` | String | (Optional) Surname of the user |
-| `moniker` | String | Moniker of the user's profile |
 | `bio` | String | (Optional) Biography of the user |
 | `pictures` | Object | (Optional) Object containing all the information related to the profile's pictures |
 | `creator` | String | Desmos address of the user that is creating the profile |
@@ -35,9 +35,9 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
 {
   "type": "desmos/MsgCreateProfile",
   "value": {
+    "moniker": "Eva01",
     "name": "Shinji",
     "surname": "Ikari",
-    "moniker": "Eva01",
     "bio": "evaPilot",
     "pictures": {
       "profile": "eva01Pic",

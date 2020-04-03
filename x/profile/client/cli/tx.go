@@ -20,7 +20,7 @@ import (
 
 // GetTxCmd set the tx commands
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
-	postsTxCmd := &cobra.Command{
+	profileTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Profile transaction subcommands",
 		DisableFlagParsing:         true,
@@ -28,13 +28,13 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	postsTxCmd.AddCommand(flags.PostCommands(
+	profileTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreateProfile(cdc),
 		GetCmdEditProfile(cdc),
 		GetCmdDeleteProfile(cdc),
 	)...)
 
-	return postsTxCmd
+	return profileTxCmd
 }
 
 // GetCmdCreateProfile is the CLI command for creating a profile
@@ -44,7 +44,7 @@ func GetCmdCreateProfile(cdc *codec.Codec) *cobra.Command {
 		Short: "Create a new profile",
 		Long: fmt.Sprintf(`
 Create a new profile specifying the moniker, name, surname, bio, a profile picture and cover.
-Every data except moniker are optional, let be free to specify only what you want to.
+Every data except the moniker is optional, feel free to specify only what you want other people to know publicly about you.
 
 E.g (only with moniker)
 %s tx profile create leoDiCap 
@@ -80,8 +80,8 @@ E.g (with all the other optional fields)
 	cmd.Flags().String(flagName, "", "Name of the profile")
 	cmd.Flags().String(flagSurname, "", "Surname of the profile")
 	cmd.Flags().String(flagBio, "", "Biography of the profile")
-	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
-	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")
+	cmd.Flags().String(flagProfilePic, "", "Profile related picture")
+	cmd.Flags().String(flagProfileCover, "", "Profile related cover picture")
 
 	return cmd
 }
@@ -89,21 +89,22 @@ E.g (with all the other optional fields)
 // GetCmdEditProfile is the CLI command for editing an profile
 func GetCmdEditProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "edit [previous_moniker] [[new_moniker]]",
+		Use:   "edit [previous_moniker]",
 		Short: "Edit an existent profile",
 		Long: fmt.Sprintf(`
 Edit an existing profile specifying the previous moniker, new moniker, name, surname, bio, a profile picture and cover.
-Every data except previous_moniker are optional.
+Every data except moniker is optional.
 
 E.g (with all the other optional fields)
-%s tx profile edit leoDiCap DiCapLeo \
+%s tx profile edit leoDiCap \
+    --moniker "DiCapLeo" \
 	--name "Leo" \
 	--surname "Di Cap" \
 	--bio "Hollywood actor. Proud environmentalist" \
 	--picture "https://profilePic.jpg"
 	--cover "https://profileCover.jpg"
 `, version.ClientName),
-		Args: cobra.RangeArgs(1, 2),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -111,23 +112,24 @@ E.g (with all the other optional fields)
 
 			picture := viper.GetString(flagProfilePic)
 			cover := viper.GetString(flagProfileCover)
-			pictures := types.NewPictures(picture, cover)
 
+			newMoniker := viper.GetString(flagNewMoniker)
 			name := viper.GetString(flagName)
 			surname := viper.GetString(flagSurname)
 			bio := viper.GetString(flagBio)
 
 			prevMoniker := args[0]
-			newMoniker := args[0]
-			if len(args) > 1 {
-				newMoniker = args[1]
+			if newMoniker == "default" {
+				newMoniker = prevMoniker
 			}
-			msg := types.NewMsgEditProfile(prevMoniker, newMoniker, name, surname, bio, &pictures, cliCtx.FromAddress)
+
+			msg := types.NewMsgEditProfile(prevMoniker, newMoniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
+	cmd.Flags().String(flagNewMoniker, "default", "New moniker of the profile")
 	cmd.Flags().String(flagName, "default", "Name of the profile")
 	cmd.Flags().String(flagSurname, "default", "Surname of the profile")
 	cmd.Flags().String(flagBio, "default", "Biography of the profile")
@@ -140,15 +142,15 @@ E.g (with all the other optional fields)
 // GetCmdDeleteProfile is the CLI command for deleting an profile
 func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete [moniker]",
-		Short: "Delete an existent profile",
+		Use:   "delete",
+		Short: "Delete an existent profile related to the user's address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			msg := types.NewMsgDeleteProfile(args[0], cliCtx.FromAddress)
+			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

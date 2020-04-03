@@ -7,6 +7,7 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
+	MinNameSurnameLength = 2
 	MaxNameSurnameLength = 500
 	MaxMonikerLength     = 30
 	MaxBioLength         = 1000
@@ -18,7 +19,7 @@ const (
 	//Queries
 	QuerierRoute  = ModuleName
 	QueryProfile  = "profile"
-	QueryProfiles = "profiles"
+	QueryProfiles = "all"
 )
 
 var (
@@ -28,6 +29,6 @@ var (
 )
 
 // ProfileStoreKey turns a moniker to a key used to store a profile into the profiles store
-func ProfileStoreKey(moniker string) []byte {
-	return append(ProfileStorePrefix, []byte(moniker)...)
+func ProfileStoreKey(address string) []byte {
+	return append(ProfileStorePrefix, []byte(address)...)
 }

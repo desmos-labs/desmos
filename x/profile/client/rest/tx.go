@@ -12,9 +12,9 @@ import (
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profile/create", createProfileHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profile/edit", editProfileHandler(cliCtx)).Methods("PUT")
-	r.HandleFunc("/profile/delete", deleteProfileHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles", createProfileHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/edit/{address}", editProfileHandler(cliCtx)).Methods("PUT")
+	r.HandleFunc("/profiles/delete/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
 }
 
 func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -51,6 +51,7 @@ func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req EditProfileReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -63,13 +64,21 @@ func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
+		addr, err := sdk.AccAddressFromBech32(vars["address"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgEditProfile(req.PreviousMoniker, req.NewMoniker, req.Name, req.Surname, req.Bio, req.Pictures, addr)
+		msg := types.NewMsgEditProfile(
+			req.PreviousMoniker,
+			req.NewMoniker,
+			req.Name,
+			req.Surname,
+			req.Bio,
+			req.Pictures.Profile,
+			req.Pictures.Cover,
+			addr)
 
 		err = msg.ValidateBasic()
 		if err != nil {
@@ -83,6 +92,7 @@ func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req DeleteProfileReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -95,13 +105,13 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
+		addr, err := sdk.AccAddressFromBech32(vars["address"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgDeleteProfile(req.Moniker, addr)
+		msg := types.NewMsgDeleteProfile(addr)
 
 		err = msg.ValidateBasic()
 		if err != nil {

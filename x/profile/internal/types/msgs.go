@@ -14,9 +14,9 @@ import (
 
 // MsgCreateProfile defines a CreateProfile message
 type MsgCreateProfile struct {
+	Moniker  string         `json:"moniker"`
 	Name     string         `json:"name,omitempty"`
 	Surname  string         `json:"surname,omitempty"`
-	Moniker  string         `json:"moniker"`
 	Bio      string         `json:"bio,omitempty"`
 	Pictures *Pictures      `json:"pictures,omitempty"`
 	Creator  sdk.AccAddress `json:"creator"`
@@ -26,9 +26,9 @@ type MsgCreateProfile struct {
 func NewMsgCreateProfile(name string, surname string, moniker string, bio string, pictures *Pictures,
 	creator sdk.AccAddress) MsgCreateProfile {
 	return MsgCreateProfile{
+		Moniker:  moniker,
 		Name:     name,
 		Surname:  surname,
-		Moniker:  moniker,
 		Bio:      bio,
 		Pictures: pictures,
 		Creator:  creator,
@@ -47,8 +47,16 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
+	if len(msg.Name) != 0 && len(msg.Name) < MinNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+	}
+
 	if len(msg.Name) > MaxNameSurnameLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(msg.Surname) != 0 && len(msg.Surname) < MinNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
 	}
 
 	if len(msg.Surname) > MaxNameSurnameLength {
@@ -91,20 +99,22 @@ type MsgEditProfile struct {
 	Name            string         `json:"name,omitempty"`
 	Surname         string         `json:"surname,omitempty"`
 	Bio             string         `json:"bio,omitempty"`
-	Pictures        *Pictures      `json:"pictures,omitempty"`
+	ProfilePic      string         `json:"profile_pic,omitempty"`
+	ProfileCov      string         `json:"profile_cov,omitempty"`
 	Creator         sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgEditProfile is a constructor function for MsgEditProfile
-func NewMsgEditProfile(previousMoniker string, newMoniker string, name string, surname string, bio string, pictures *Pictures,
-	creator sdk.AccAddress) MsgEditProfile {
+func NewMsgEditProfile(previousMoniker string, newMoniker string, name string, surname string, bio string, profilePic string,
+	profileCov string, creator sdk.AccAddress) MsgEditProfile {
 	return MsgEditProfile{
 		PreviousMoniker: previousMoniker,
 		NewMoniker:      newMoniker,
 		Name:            name,
 		Surname:         surname,
 		Bio:             bio,
-		Pictures:        pictures,
+		ProfilePic:      profilePic,
+		ProfileCov:      profileCov,
 		Creator:         creator,
 	}
 }
@@ -133,8 +143,16 @@ func (msg MsgEditProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile new moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
+	if len(msg.Name) != 0 && len(msg.Name) < MinNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+	}
+
 	if len(msg.Name) > MaxNameSurnameLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+	}
+
+	if len(msg.Surname) != 0 && len(msg.Surname) < MinNameSurnameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
 	}
 
 	if len(msg.Surname) > MaxNameSurnameLength {
@@ -164,14 +182,12 @@ func (msg MsgEditProfile) GetSigners() []sdk.AccAddress {
 
 // MsgDeleteProfile defines a DeleteProfile message
 type MsgDeleteProfile struct {
-	Moniker string         `json:"moniker"`
 	Creator sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgDeleteProfile is a constructor function for MsgDeleteProfile
-func NewMsgDeleteProfile(moniker string, creator sdk.AccAddress) MsgDeleteProfile {
+func NewMsgDeleteProfile(creator sdk.AccAddress) MsgDeleteProfile {
 	return MsgDeleteProfile{
-		Moniker: moniker,
 		Creator: creator,
 	}
 }
@@ -186,10 +202,6 @@ func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
 func (msg MsgDeleteProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
-	}
-
-	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NewMoniker cannot be blank or empty")
 	}
 
 	return nil

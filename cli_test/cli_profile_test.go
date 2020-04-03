@@ -123,7 +123,7 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIProfileEdit(t *testing.T) {
+func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -159,7 +159,82 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	require.Equal(t, profile.Moniker, moniker)
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileEdit(moniker, newMoniker, fooAddr, "-y",
+	success, _, sterr = f.TxProfileEdit(moniker, fooAddr, "-y",
+		"--moniker mrPink")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	//Make sure the profile is edited
+	editedProfiles := f.QueryProfiles()
+	require.NotEmpty(t, editedProfiles)
+	editedProfile := editedProfiles[0]
+	require.Equal(t, editedProfile.Moniker, newMoniker)
+
+	//Make sure the profile has been edited
+	require.Equal(t, storedProfiles[0].Name, editedProfiles[0].Name)
+	require.Equal(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
+
+	// Test --dry-run
+	success, _, _ = f.TxProfileEdit(moniker, fooAddr, "--dry-run",
+		"--moniker mrPink")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxProfileEdit(moniker, fooAddr, "--generate-only=true",
+		"--moniker mrPink")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedProfiles = f.QueryProfiles()
+	require.Len(t, storedProfiles, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	moniker := "mrBrown"
+	newMoniker := "mrPink"
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	// Create an profile
+	success, _, sterr := f.TxProfileCreate(moniker, fooAddr, "-y",
+		"--name Leonardo",
+		"--surname DiCaprio",
+		"--bio biography",
+		"--picture https://profilePic.jpg",
+		"--cover https://profileCover.jpg")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	//Make sure the profile is saved
+	storedProfiles := f.QueryProfiles()
+	require.NotEmpty(t, storedProfiles)
+	profile := storedProfiles[0]
+	require.Equal(t, profile.Moniker, moniker)
+
+	// Edit the profile
+	success, _, sterr = f.TxProfileEdit(moniker, fooAddr, "-y",
+		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",
 		"--bio HollywoodActor",
@@ -180,7 +255,8 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	require.NotEqual(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileEdit(moniker, newMoniker, fooAddr, "--dry-run",
+	success, _, _ = f.TxProfileEdit(moniker, fooAddr, "--dry-run",
+		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",
 		"--bio HollywoodActor",
@@ -189,7 +265,8 @@ func TestDesmosCLIProfileEdit(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileEdit(moniker, newMoniker, fooAddr, "--generate-only=true",
+	success, stdout, stderr := f.TxProfileEdit(moniker, fooAddr, "--generate-only=true",
+		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",
 		"--bio HollywoodActor",

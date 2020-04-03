@@ -37,5 +37,4 @@ type EditProfileReq struct {
 // Delete defines the properties of a profile deletion request's body
 type DeleteProfileReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Moniker string       `json:"moniker"`
 }

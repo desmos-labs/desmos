@@ -13,25 +13,25 @@ import (
 
 // GetQueryCmd adds the query commands
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	postQueryCmd := &cobra.Command{
+	profileQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the profile module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(flags.GetCommands(
+	profileQueryCmd.AddCommand(flags.GetCommands(
 		GetCmdQueryProfile(cdc),
 		GetCmdQueryProfiles(cdc),
 	)...)
-	return postQueryCmd
+	return profileQueryCmd
 }
 
 // GetCmdQueryProfile queries a profile
 func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "profile [moniker]",
-		Short: "Retrieve the profile having the moniker, if any.",
+		Use:   "profile [address]",
+		Short: "Retrieve the profile having the specified user address, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -53,8 +53,8 @@ func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryProfiles queries all the profiles
 func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "profiles",
-		Short: "Retrieve all the profiles.",
+		Use:   "all",
+		Short: "Retrieve all the registered profiles.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

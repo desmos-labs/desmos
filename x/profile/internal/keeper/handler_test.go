@@ -23,23 +23,23 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			name:            "Profile already exists",
 			existentAccount: &testAccount,
 			msg: types.NewMsgCreateProfile(
-				testAccount.Name,
-				testAccount.Surname,
+				*testAccount.Name,
+				*testAccount.Surname,
 				testAccount.Moniker,
-				testAccount.Bio,
+				*testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker moniker already exist"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker moniker already exists"),
 		},
 		{
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
 			msg: types.NewMsgCreateProfile(
-				testAccount.Name,
-				testAccount.Surname,
+				*testAccount.Name,
+				*testAccount.Surname,
 				testAccount.Moniker,
-				testAccount.Bio,
+				*testAccount.Bio,
 				testAccount.Pictures,
 				testAccount.Creator,
 			),
@@ -56,6 +56,7 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			if test.existentAccount != nil {
 				key := types.ProfileStoreKey(test.existentAccount.Moniker)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
 
 			handler := keeper.NewHandler(k)
@@ -88,11 +89,15 @@ func Test_handleMsgEditProfile(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
+	var name = "name"
+	var surname = "surname"
+	var bio = "biography"
+
 	testAcc2 := types.Profile{
-		Name:     "name",
-		Surname:  "surname",
+		Name:     &name,
+		Surname:  &surname,
 		Moniker:  "newMoniker",
-		Bio:      "biography",
+		Bio:      &bio,
 		Pictures: &testPictures,
 		Creator:  editor,
 	}
@@ -110,28 +115,30 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			msg: types.NewMsgEditProfile(
 				testAccount.Moniker,
 				"newMoniker",
-				testAccount.Name,
-				testAccount.Surname,
-				testAccount.Bio,
-				testAccount.Pictures,
+				*testAccount.Name,
+				*testAccount.Surname,
+				*testAccount.Bio,
+				testAccount.Pictures.Profile,
+				testAccount.Pictures.Cover,
 				testAccount.Creator,
 			),
 			expErr: nil,
 		},
 		{
-			name:             "Profile not edited because no profile with given moniker found",
+			name:             "Profile not edited because no profile with given account found",
 			existentAccounts: nil,
 			msg: types.NewMsgEditProfile(
 				testAccount.Moniker,
 				"newMoniker",
-				testAccount.Name,
-				testAccount.Surname,
-				testAccount.Bio,
-				testAccount.Pictures,
+				*testAccount.Name,
+				*testAccount.Surname,
+				*testAccount.Bio,
+				testAccount.Pictures.Profile,
+				testAccount.Pictures.Cover,
 				testAccount.Creator,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("No existent profile with moniker: moniker")),
+				fmt.Sprintf("No existent profile to edit for address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 		},
 		{
 			name:             "Profile not edited because the new moniker already exists",
@@ -139,13 +146,14 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			msg: types.NewMsgEditProfile(
 				testAccount.Moniker,
 				"newMoniker",
-				testAccount.Name,
-				testAccount.Surname,
-				testAccount.Bio,
-				testAccount.Pictures,
+				*testAccount.Name,
+				*testAccount.Surname,
+				*testAccount.Bio,
+				testAccount.Pictures.Profile,
+				testAccount.Pictures.Cover,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "an account with moniker: newMoniker has already been created"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker: newMoniker has already been created"),
 		},
 	}
 
@@ -157,8 +165,9 @@ func Test_handleMsgEditProfile(t *testing.T) {
 
 			if test.existentAccounts != nil {
 				for _, acc := range test.existentAccounts {
-					key := types.ProfileStoreKey(acc.Moniker)
+					key := types.ProfileStoreKey(acc.Creator.String())
 					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
+					k.AssociateMonikerWithAddress(ctx, acc.Moniker, acc.Creator)
 				}
 			}
 
@@ -193,9 +202,6 @@ func Test_handleMsgEditProfile(t *testing.T) {
 }
 
 func Test_handleMsgDeleteProfile(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		name            string
 		existentAccount *types.Profile
@@ -205,20 +211,14 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 		{
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
-			msg:             types.NewMsgDeleteProfile("moniker", testAccount.Creator),
+			msg:             types.NewMsgDeleteProfile(testAccount.Creator),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("An account with %s moniker doesn't exist", "moniker")),
-		},
-		{
-			name:            "Profile not owned by user",
-			existentAccount: &testAccount,
-			msg:             types.NewMsgDeleteProfile("moniker", user),
-			expErr:          sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("You cannot delete an account that is not yours")),
+				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 		},
 		{
 			name:            "Profile deleted successfully",
 			existentAccount: &testAccount,
-			msg:             types.NewMsgDeleteProfile("moniker", testAccount.Creator),
+			msg:             types.NewMsgDeleteProfile(testAccount.Creator),
 			expErr:          nil,
 		},
 	}
@@ -230,8 +230,9 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Moniker)
+				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
 
 			handler := keeper.NewHandler(k)
@@ -243,12 +244,12 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			}
 			if res != nil {
 				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Moniker), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("moniker"), res.Data)
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeProfileDeleted,
-					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
+					sdk.NewAttribute(types.AttributeProfileMoniker, "moniker"),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 

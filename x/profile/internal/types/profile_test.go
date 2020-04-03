@@ -13,17 +13,21 @@ func TestProfile_String(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
+	var name = "name"
+	var surname = "surname"
+	var bio = "biography"
+
 	var testAccount = types.Profile{
-		Name:     "name",
-		Surname:  "surname",
+		Name:     &name,
+		Surname:  &surname,
 		Moniker:  "moniker",
-		Bio:      "biography",
+		Bio:      &bio,
 		Pictures: &testPictures,
 		Creator:  owner,
 	}
 
 	require.Equal(t,
-		`{"name":"name","surname":"surname","moniker":"moniker","bio":"biography","pictures":{"profile":"profile","cover":"cover"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"moniker":"moniker","name":"name","surname":"surname","bio":"biography","pictures":{"profile":"profile","cover":"cover"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		testAccount.String(),
 	)
 }
@@ -33,19 +37,19 @@ func TestProfile_Equals(t *testing.T) {
 	var testPictures = types.NewPictures("profile", "cover")
 
 	var testAccount = types.Profile{
-		Name:     "name",
-		Surname:  "surname",
+		Name:     &name,
+		Surname:  &surname,
 		Moniker:  "moniker",
-		Bio:      "biography",
+		Bio:      &bio,
 		Pictures: &testPictures,
 		Creator:  testPostOwner,
 	}
 
 	var testAccount2 = types.Profile{
-		Name:     "name",
-		Surname:  "surname",
+		Name:     &name,
+		Surname:  &surname,
 		Moniker:  "oniker",
-		Bio:      "biography",
+		Bio:      &bio,
 		Pictures: &testPictures,
 		Creator:  testPostOwner,
 	}
@@ -83,6 +87,9 @@ func TestProfile_Equals(t *testing.T) {
 //TODO add tests for chainLink and verifiedServices when implemented
 func TestProfile_Validate(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	var name = "name"
+	var surname = "surname"
+	var bio = "biography"
 
 	tests := []struct {
 		name    string
@@ -92,10 +99,10 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Empty profile creator returns error",
 			account: types.Profile{
-				Name:     "name",
-				Surname:  "surname",
+				Name:     &name,
+				Surname:  &surname,
 				Moniker:  "moniker",
-				Bio:      "biography",
+				Bio:      &bio,
 				Pictures: &testPictures,
 				Creator:  nil,
 			},
@@ -104,10 +111,10 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Empty profile moniker returns error",
 			account: types.Profile{
-				Name:     "name",
-				Surname:  "surname",
+				Name:     &name,
+				Surname:  &surname,
 				Moniker:  "",
-				Bio:      "biography",
+				Bio:      &bio,
 				Pictures: &testPictures,
 				Creator:  testPostOwner,
 			},
@@ -116,10 +123,10 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Valid account returns no error",
 			account: types.Profile{
-				Name:     "name",
-				Surname:  "surname",
+				Name:     &name,
+				Surname:  &surname,
 				Moniker:  "moniker",
-				Bio:      "biography",
+				Bio:      &bio,
 				Pictures: &testPictures,
 				Creator:  testPostOwner,
 			},
