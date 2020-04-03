@@ -13,10 +13,10 @@ type GenesisState struct {
 
 // Profile is a struct for a Profile
 type Profile struct {
-	Name             string         `json:"name,omitempty"`
-	Surname          string         `json:"surname,omitempty"`
 	Moniker          string         `json:"moniker"`
-	Bio              string         `json:"bio,omitempty"`
+	Name             *string        `json:"name,omitempty"`
+	Surname          *string        `json:"surname,omitempty"`
+	Bio              *string        `json:"bio,omitempty"`
 	Pictures         *Pictures      `json:"pictures,omitempty"`
 	VerifiedServices []ServiceLink  `json:"verified_services,omitempty"`
 	ChainLinks       []ChainLink    `json:"chain_links,omitempty"`
