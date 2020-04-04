@@ -64,14 +64,10 @@ func TestKeeper_DeleteMonikerAddressAssociation(t *testing.T) {
 }
 
 func TestKeeper_GetMonikerFromAddress(t *testing.T) {
-	ctx, k := SetupTestInput()
-
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
-
-	monikers := []string{"lol", "oink"}
 
 	tests := []struct {
 		name       string
@@ -81,15 +77,24 @@ func TestKeeper_GetMonikerFromAddress(t *testing.T) {
 	}{
 		{
 			name:       "found right moniker",
-			monikers:   monikers,
+			monikers:   []string{"lol", "oink"},
 			addresses:  []sdk.AccAddress{creator, creator2},
 			expMoniker: "lol",
+		},
+		{
+			name:       "no moniker found",
+			monikers:   []string{"lol", "oink"},
+			addresses:  []sdk.AccAddress{creator},
+			expMoniker: "",
 		},
 	}
 
 	for _, test := range tests {
-		for i, moniker := range test.monikers {
-			k.AssociateMonikerWithAddress(ctx, moniker, test.addresses[i])
+		ctx, k := SetupTestInput()
+		if len(test.addresses) == len(test.monikers) {
+			for i, moniker := range test.monikers {
+				k.AssociateMonikerWithAddress(ctx, moniker, test.addresses[i])
+			}
 		}
 
 		monk := k.GetMonikerFromAddress(ctx, test.addresses[0])

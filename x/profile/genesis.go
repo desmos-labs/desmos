@@ -15,13 +15,9 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, profile := range data.Profiles {
-		if err := profile.Validate(); err != nil {
-			panic(err)
-		}
 		if err := keeper.SaveProfile(ctx, profile); err != nil {
 			panic(err)
 		}
 	}
-
 	return nil
 }
