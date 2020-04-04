@@ -1,10 +1,12 @@
 package keeper
 
 import (
+	"bytes"
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
@@ -44,6 +46,22 @@ func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr 
 	return addr
 }
 
+func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (moniker string) {
+	store := ctx.KVStore(k.StoreKey)
+	it := sdk.KVStorePrefixIterator(store, types.MonikerStorePrefix)
+	defer it.Close()
+
+	for ; it.Valid(); it.Next() {
+		var acc sdk.AccAddress
+		k.Cdc.MustUnmarshalBinaryBare(it.Value(), &acc)
+		if acc.Equals(addr) {
+			return string(bytes.TrimPrefix(it.Key(), types.MonikerStorePrefix))
+		}
+	}
+
+	return ""
+}
+
 // DeleteMonikerAddressAssociation delete the given moniker association with an address
 func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
@@ -58,6 +76,9 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 	store := ctx.KVStore(k.StoreKey)
 
 	key := types.ProfileStoreKey(profile.Creator.String())
+
+	moniker := k.GetMonikerFromAddress(ctx, profile.Creator)
+	k.DeleteMonikerAddressAssociation(ctx, moniker)
 
 	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
 		return fmt.Errorf("an account with moniker: %s has already been created", profile.Moniker)

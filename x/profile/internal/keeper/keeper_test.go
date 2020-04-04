@@ -63,21 +63,58 @@ func TestKeeper_DeleteMonikerAddressAssociation(t *testing.T) {
 
 }
 
+func TestKeeper_GetMonikerFromAddress(t *testing.T) {
+	ctx, k := SetupTestInput()
+
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	monikers := []string{"lol", "oink"}
+
+	tests := []struct {
+		name       string
+		monikers   []string
+		addresses  []sdk.AccAddress
+		expMoniker string
+	}{
+		{
+			name:       "found right moniker",
+			monikers:   monikers,
+			addresses:  []sdk.AccAddress{creator, creator2},
+			expMoniker: "lol",
+		},
+	}
+
+	for _, test := range tests {
+		for i, moniker := range test.monikers {
+			k.AssociateMonikerWithAddress(ctx, moniker, test.addresses[i])
+		}
+
+		monk := k.GetMonikerFromAddress(ctx, test.addresses[0])
+
+		require.Equal(t, test.expMoniker, monk)
+	}
+
+}
+
 func TestKeeper_SaveProfile(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
 	require.NoError(t, err)
 
 	tests := []struct {
-		name            string
-		account         types.Profile
-		existentAccount *types.Profile
-		expError        error
+		name             string
+		account          types.Profile
+		existentAccounts types.Profiles
+		expError         error
 	}{
 		{
-			name:            "Non existent Profile saved correctly",
-			account:         testAccount,
-			existentAccount: nil,
-			expError:        nil,
+			name:             "Non existent Profile saved correctly",
+			account:          testAccount,
+			existentAccounts: nil,
+			expError:         nil,
 		},
 		{
 			name: "Existent account with different creator returns error",
@@ -89,8 +126,8 @@ func TestKeeper_SaveProfile(t *testing.T) {
 				Pictures: testAccount.Pictures,
 				Creator:  creator,
 			},
-			existentAccount: &testAccount,
-			expError:        fmt.Errorf("an account with moniker: moniker has already been created"),
+			existentAccounts: types.Profiles{testAccount},
+			expError:         fmt.Errorf("an account with moniker: moniker has already been created"),
 		},
 	}
 
@@ -99,11 +136,11 @@ func TestKeeper_SaveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 
-			if test.existentAccount != nil {
+			for _, profile := range test.existentAccounts {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
+				key := types.ProfileStoreKey(profile.Creator.String())
+				store.Set(key, k.Cdc.MustMarshalBinaryBare(profile))
+				k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
 			}
 
 			err := k.SaveProfile(ctx, test.account)
