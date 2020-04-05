@@ -49,7 +49,7 @@ var name = "name"
 var surname = "surname"
 var bio = "biography"
 
-var testAccount = types.Profile{
+var testProfile = types.Profile{
 	Name:     &name,
 	Surname:  &surname,
 	Moniker:  "moniker",

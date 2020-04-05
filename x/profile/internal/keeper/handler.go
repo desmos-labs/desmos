@@ -69,7 +69,7 @@ const (
 
 // returns the profile with the proper edited fields
 // default string is used to let user replace previous inserted values with blank or empty ones
-func getEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Profile {
+func GetEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Profile {
 	account.Moniker = msg.NewMoniker
 
 	if msg.Name != defaultValue {
@@ -109,7 +109,7 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 	}
 	previousMoniker := account.Moniker
 
-	account = getEditedProfile(account, msg)
+	account = GetEditedProfile(account, msg)
 
 	err := keeper.SaveProfile(ctx, account)
 	if err != nil {

@@ -117,21 +117,21 @@ func TestKeeper_SaveProfile(t *testing.T) {
 	}{
 		{
 			name:             "Non existent Profile saved correctly",
-			account:          testAccount,
+			account:          testProfile,
 			existentAccounts: nil,
 			expError:         nil,
 		},
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				Name:     testAccount.Name,
-				Surname:  testAccount.Surname,
-				Moniker:  testAccount.Moniker,
-				Bio:      testAccount.Bio,
-				Pictures: testAccount.Pictures,
+				Name:     testProfile.Name,
+				Surname:  testProfile.Surname,
+				Moniker:  testProfile.Moniker,
+				Bio:      testProfile.Bio,
+				Pictures: testProfile.Pictures,
 				Creator:  creator,
 			},
-			existentAccounts: types.Profiles{testAccount},
+			existentAccounts: types.Profiles{testProfile},
 			expError:         fmt.Errorf("an account with moniker: moniker has already been created"),
 		},
 	}
@@ -159,17 +159,17 @@ func TestKeeper_SaveProfile(t *testing.T) {
 func TestKeeper_DeleteProfile(t *testing.T) {
 	ctx, k := SetupTestInput()
 
-	err := k.SaveProfile(ctx, testAccount)
+	err := k.SaveProfile(ctx, testProfile)
 	require.Nil(t, err)
 
-	res, found := k.GetProfile(ctx, testAccount.Creator)
+	res, found := k.GetProfile(ctx, testProfile.Creator)
 
-	require.Equal(t, testAccount, res)
+	require.Equal(t, testProfile, res)
 	require.True(t, found)
 
-	k.DeleteProfile(ctx, testAccount.Creator, testAccount.Moniker)
+	k.DeleteProfile(ctx, testProfile.Creator, testProfile.Moniker)
 
-	res, found = k.GetProfile(ctx, testAccount.Creator)
+	res, found = k.GetProfile(ctx, testProfile.Creator)
 
 	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
@@ -185,7 +185,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 	}{
 		{
 			name:            "Profile founded",
-			existentAccount: &testAccount,
+			existentAccount: &testProfile,
 		},
 		{
 			name:            "Profile not found",
@@ -226,7 +226,7 @@ func TestKeeper_GetProfiles(t *testing.T) {
 	}{
 		{
 			name:             "Non empty Profiles list returned",
-			existentAccounts: types.Profiles{testAccount},
+			existentAccounts: types.Profiles{testProfile},
 		},
 		{
 			name:             "Profile not found",

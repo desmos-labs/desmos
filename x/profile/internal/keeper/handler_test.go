@@ -21,14 +21,14 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 	}{
 		{
 			name:            "Profile already exists",
-			existentAccount: &testAccount,
+			existentAccount: &testProfile,
 			msg: types.NewMsgCreateProfile(
-				*testAccount.Name,
-				*testAccount.Surname,
-				testAccount.Moniker,
-				*testAccount.Bio,
-				testAccount.Pictures,
-				testAccount.Creator,
+				*testProfile.Name,
+				*testProfile.Surname,
+				testProfile.Moniker,
+				*testProfile.Bio,
+				testProfile.Pictures,
+				testProfile.Creator,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker moniker already exists"),
 		},
@@ -36,12 +36,12 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
 			msg: types.NewMsgCreateProfile(
-				*testAccount.Name,
-				*testAccount.Surname,
-				testAccount.Moniker,
-				*testAccount.Bio,
-				testAccount.Pictures,
-				testAccount.Creator,
+				*testProfile.Name,
+				*testProfile.Surname,
+				testProfile.Moniker,
+				*testProfile.Bio,
+				testProfile.Pictures,
+				testProfile.Creator,
 			),
 			expErr: nil,
 		},
@@ -111,16 +111,16 @@ func Test_handleMsgEditProfile(t *testing.T) {
 	}{
 		{
 			name:             "Profile edited",
-			existentAccounts: types.Profiles{testAccount},
+			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgEditProfile(
-				testAccount.Moniker,
+				testProfile.Moniker,
 				"newMoniker",
-				*testAccount.Name,
-				*testAccount.Surname,
-				*testAccount.Bio,
-				testAccount.Pictures.Profile,
-				testAccount.Pictures.Cover,
-				testAccount.Creator,
+				*testProfile.Name,
+				*testProfile.Surname,
+				*testProfile.Bio,
+				testProfile.Pictures.Profile,
+				testProfile.Pictures.Cover,
+				testProfile.Creator,
 			),
 			expErr: nil,
 		},
@@ -128,29 +128,29 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because no profile with given account found",
 			existentAccounts: nil,
 			msg: types.NewMsgEditProfile(
-				testAccount.Moniker,
+				testProfile.Moniker,
 				"newMoniker",
-				*testAccount.Name,
-				*testAccount.Surname,
-				*testAccount.Bio,
-				testAccount.Pictures.Profile,
-				testAccount.Pictures.Cover,
-				testAccount.Creator,
+				*testProfile.Name,
+				*testProfile.Surname,
+				*testProfile.Bio,
+				testProfile.Pictures.Profile,
+				testProfile.Pictures.Cover,
+				testProfile.Creator,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("No existent profile to edit for address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 		},
 		{
 			name:             "Profile not edited because the new moniker already exists",
-			existentAccounts: types.Profiles{testAccount, testAcc2},
+			existentAccounts: types.Profiles{testProfile, testAcc2},
 			msg: types.NewMsgEditProfile(
-				testAccount.Moniker,
+				testProfile.Moniker,
 				"newMoniker",
-				*testAccount.Name,
-				*testAccount.Surname,
-				*testAccount.Bio,
-				testAccount.Pictures.Profile,
-				testAccount.Pictures.Cover,
+				*testProfile.Name,
+				*testProfile.Surname,
+				*testProfile.Bio,
+				testProfile.Pictures.Profile,
+				testProfile.Pictures.Cover,
 				testPostOwner,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker: newMoniker has already been created"),
@@ -211,14 +211,14 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 		{
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
-			msg:             types.NewMsgDeleteProfile(testAccount.Creator),
+			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 		},
 		{
 			name:            "Profile deleted successfully",
-			existentAccount: &testAccount,
-			msg:             types.NewMsgDeleteProfile(testAccount.Creator),
+			existentAccount: &testProfile,
+			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
 			expErr:          nil,
 		},
 	}
@@ -257,6 +257,97 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
 			}
 
+		})
+	}
+}
+
+func TestHandler_GetEditedProfile(t *testing.T) {
+	name := "mame"
+	surname := "habe"
+	bio := "bioh"
+	pictures := types.NewPictures("pic", "cov")
+	picEdited := types.NewPictures("pic", testProfile.Pictures.Cover)
+	covEdited := types.NewPictures("pic", "cov")
+
+	tests := []struct {
+		name       string
+		profile    types.Profile
+		msg        types.MsgEditProfile
+		expProfile types.Profile
+	}{
+		{
+			name:    "edited profile correctly",
+			profile: testProfile,
+			msg: types.NewMsgEditProfile(
+				"moniker",
+				"omn",
+				name,
+				surname,
+				bio,
+				"pic",
+				"cov",
+				testProfile.Creator,
+			),
+			expProfile: types.Profile{
+				Name:     &name,
+				Surname:  &surname,
+				Moniker:  "omn",
+				Bio:      &bio,
+				Pictures: &pictures,
+				Creator:  testProfile.Creator,
+			},
+		},
+		{
+			name:    "edited profile correctly 2",
+			profile: testProfile,
+			msg: types.NewMsgEditProfile(
+				"moniker",
+				"omn",
+				name,
+				surname,
+				bio,
+				"pic",
+				"default",
+				testProfile.Creator,
+			),
+			expProfile: types.Profile{
+				Name:     &name,
+				Surname:  &surname,
+				Moniker:  "omn",
+				Bio:      &bio,
+				Pictures: &picEdited,
+				Creator:  testProfile.Creator,
+			},
+		},
+		{
+			name:    "edited profile correctly 3",
+			profile: testProfile,
+			msg: types.NewMsgEditProfile(
+				"moniker",
+				"omn",
+				name,
+				surname,
+				bio,
+				"default",
+				"cov",
+				testProfile.Creator,
+			),
+			expProfile: types.Profile{
+				Name:     &name,
+				Surname:  &surname,
+				Moniker:  "omn",
+				Bio:      &bio,
+				Pictures: &covEdited,
+				Creator:  testProfile.Creator,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			edited := keeper.GetEditedProfile(test.profile, test.msg)
+			require.Equal(t, test.expProfile, edited)
 		})
 	}
 }

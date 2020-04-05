@@ -24,7 +24,7 @@ func Test_queryProfile(t *testing.T) {
 		{
 			name:          "Profile doesnt exist",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			storedAccount: testAccount,
+			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("Profile with moniker %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			),
@@ -32,7 +32,7 @@ func Test_queryProfile(t *testing.T) {
 		{
 			name:          "Profile returned correctly",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			storedAccount: testAccount,
+			storedAccount: testProfile,
 			expErr:        nil,
 		},
 	}
@@ -83,8 +83,8 @@ func Test_queryProfiles(t *testing.T) {
 		{
 			name:          "Profile returned correctly",
 			path:          []string{types.QueryProfiles},
-			storedAccount: &testAccount,
-			expResult:     types.Profiles{testAccount},
+			storedAccount: &testProfile,
+			expResult:     types.Profiles{testProfile},
 		},
 	}
 
