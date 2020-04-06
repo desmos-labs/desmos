@@ -1,5 +1,5 @@
 # Query a profile
-This query endpoint allows you to retrieve the details of a single profile having its moniker. 
+This query endpoint allows you to retrieve the details of a single profile having its moniker or address. 
 
 **CLI**
  ```bash
