@@ -159,7 +159,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, profile.Moniker, moniker)
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileEdit(moniker, fooAddr, "-y",
+	success, _, sterr = f.TxProfileEdit(fooAddr, "-y",
 		"--moniker mrPink")
 	require.True(t, success)
 	require.Empty(t, sterr)
@@ -176,12 +176,12 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileEdit(moniker, fooAddr, "--dry-run",
+	success, _, _ = f.TxProfileEdit(fooAddr, "--dry-run",
 		"--moniker mrPink")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileEdit(moniker, fooAddr, "--generate-only=true",
+	success, stdout, stderr := f.TxProfileEdit(fooAddr, "--generate-only=true",
 		"--moniker mrPink")
 	require.Empty(t, stderr)
 	require.True(t, success)
@@ -233,7 +233,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.Equal(t, profile.Moniker, moniker)
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileEdit(moniker, fooAddr, "-y",
+	success, _, sterr = f.TxProfileEdit(fooAddr, "-y",
 		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",
@@ -255,7 +255,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.NotEqual(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileEdit(moniker, fooAddr, "--dry-run",
+	success, _, _ = f.TxProfileEdit(fooAddr, "--dry-run",
 		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",
@@ -265,7 +265,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileEdit(moniker, fooAddr, "--generate-only=true",
+	success, stdout, stderr := f.TxProfileEdit(fooAddr, "--generate-only=true",
 		"--moniker mrPink",
 		"--name Leo",
 		"--surname DiCap",

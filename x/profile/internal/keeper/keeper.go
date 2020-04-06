@@ -34,18 +34,15 @@ func (k Keeper) AssociateMonikerWithAddress(ctx sdk.Context, moniker string, add
 // GetMonikerRelatedAddress returns the address associated to the given moniker or nil if it not exists
 func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-
-	key := types.MonikerStoreKey(moniker)
-	bz := store.Get(key)
+	bz := store.Get(types.MonikerStoreKey(moniker))
 	if bz == nil {
 		return nil
 	}
-
 	k.Cdc.MustUnmarshalBinaryBare(bz, &addr)
-
 	return addr
 }
 
+// GetMonikerFromAddress returns the moniker associated with the given address or an empty string if no moniker exists
 func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (moniker string) {
 	store := ctx.KVStore(k.StoreKey)
 	it := sdk.KVStorePrefixIterator(store, types.MonikerStorePrefix)

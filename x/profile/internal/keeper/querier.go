@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,18 +25,26 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-// queryProfile handles the request to get a profile having a moniker
+// queryProfile handles the request to get a profile having a moniker or an address
 func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	if len(strings.TrimSpace(path[0])) == 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker or address cannot be empty or blank")
+	}
+
 	address, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		address = keeper.GetMonikerRelatedAddress(ctx, path[0])
+		if address == nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No address related to this moniker: %s", path[0]))
+		}
+
 	}
 
 	account, found := keeper.GetProfile(ctx, address)
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("Profile with moniker %s doesn't exists", path[0]))
+			fmt.Sprintf("Profile with address %s doesn't exists", path[0]))
 	}
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &account)

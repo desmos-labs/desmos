@@ -75,6 +75,12 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
+	if msg.Pictures != nil {
+		if err := msg.Pictures.Validate(); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -94,28 +100,26 @@ func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
 
 // MsgEditProfile defines a EditProfile message
 type MsgEditProfile struct {
-	PreviousMoniker string         `json:"previous_moniker"`
-	NewMoniker      string         `json:"new_moniker"`
-	Name            string         `json:"name,omitempty"`
-	Surname         string         `json:"surname,omitempty"`
-	Bio             string         `json:"bio,omitempty"`
-	ProfilePic      string         `json:"profile_pic,omitempty"`
-	ProfileCov      string         `json:"profile_cov,omitempty"`
-	Creator         sdk.AccAddress `json:"creator"`
+	NewMoniker string         `json:"new_moniker"`
+	Name       string         `json:"name,omitempty"`
+	Surname    string         `json:"surname,omitempty"`
+	Bio        string         `json:"bio,omitempty"`
+	ProfilePic string         `json:"profile_pic,omitempty"`
+	ProfileCov string         `json:"profile_cov,omitempty"`
+	Creator    sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgEditProfile is a constructor function for MsgEditProfile
-func NewMsgEditProfile(previousMoniker string, newMoniker string, name string, surname string, bio string, profilePic string,
+func NewMsgEditProfile(newMoniker string, name string, surname string, bio string, profilePic string,
 	profileCov string, creator sdk.AccAddress) MsgEditProfile {
 	return MsgEditProfile{
-		PreviousMoniker: previousMoniker,
-		NewMoniker:      newMoniker,
-		Name:            name,
-		Surname:         surname,
-		Bio:             bio,
-		ProfilePic:      profilePic,
-		ProfileCov:      profileCov,
-		Creator:         creator,
+		NewMoniker: newMoniker,
+		Name:       name,
+		Surname:    surname,
+		Bio:        bio,
+		ProfilePic: profilePic,
+		ProfileCov: profileCov,
+		Creator:    creator,
 	}
 }
 
@@ -129,14 +133,6 @@ func (msg MsgEditProfile) Type() string { return ActionEditProfile }
 func (msg MsgEditProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
-	}
-
-	if len(strings.TrimSpace(msg.PreviousMoniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot be blank or empty")
-	}
-
-	if len(msg.PreviousMoniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile previous moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	if len(msg.NewMoniker) > MaxMonikerLength {

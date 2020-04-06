@@ -22,16 +22,36 @@ func Test_queryProfile(t *testing.T) {
 		expErr        error
 	}{
 		{
-			name:          "Profile doesnt exist",
+			name:          "Profile doesnt exist (address given)",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("Profile with moniker %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				fmt.Sprintf("Profile with address %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			),
 		},
 		{
-			name:          "Profile returned correctly",
+			name:          "Profile doesnt exist (blank path given)",
+			path:          []string{types.QueryProfile, ""},
+			storedAccount: testProfile,
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"Moniker or address cannot be empty or blank",
+			),
+		},
+		{
+			name:          "Profile doesnt exist (moniker given)",
+			path:          []string{types.QueryProfile, "monk"},
+			storedAccount: testProfile,
+			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this moniker: monk"),
+		},
+		{
+			name:          "Profile returned correctly (address given)",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			storedAccount: testProfile,
+			expErr:        nil,
+		},
+		{
+			name:          "Profile returned correctly (moniker given)",
+			path:          []string{types.QueryProfile, "moniker"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},

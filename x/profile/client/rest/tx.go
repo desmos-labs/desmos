@@ -13,8 +13,8 @@ import (
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles", createProfileHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profiles/edit/{address}", editProfileHandler(cliCtx)).Methods("PUT")
-	r.HandleFunc("/profiles/delete/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles/{address}", editProfileHandler(cliCtx)).Methods("PUT")
+	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
 }
 
 func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -71,7 +71,6 @@ func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgEditProfile(
-			req.PreviousMoniker,
 			req.NewMoniker,
 			req.Name,
 			req.Surname,

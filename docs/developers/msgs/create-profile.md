@@ -12,8 +12,8 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
     "surname": "<Profile surname>",
     "bio": "<Profile biography>",
     "pictures": {
-      "profile": "<Profile account's picture>",
-      "cover": "<Profile cover picture>"
+      "profile": "<URI of the profile account's picture>",
+      "cover": "<URI of the profile cover picture>"
     },
     "creator": "<Desmos address that's creating the profile>"
   }
@@ -40,8 +40,8 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
     "surname": "Ikari",
     "bio": "evaPilot",
     "pictures": {
-      "profile": "eva01Pic",
-      "cover": "nervCover"
+      "profile": "https://shorturl.at/adnX3",
+      "cover": "https://shorturl.at/cgpyF"
     },
     "creator": "desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t"
   }

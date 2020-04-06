@@ -114,7 +114,6 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgEditProfile(
-			data.Moniker,
 			newMoniker,
 			*data.Name,
 			*data.Surname,

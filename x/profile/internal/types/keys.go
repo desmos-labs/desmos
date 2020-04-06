@@ -24,6 +24,8 @@ const (
 
 var (
 	TxHashRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
+	URIRegEx    = regexp.MustCompile(
+		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
 	ProfileStorePrefix = []byte("profile")
 	MonikerStorePrefix = []byte("moniker")

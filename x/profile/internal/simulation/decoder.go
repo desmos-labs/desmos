@@ -21,13 +21,8 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		return fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profileA, profileB)
 	case bytes.HasPrefix(kvA.Key, types.MonikerStorePrefix):
 		var addressA, addressB sdk.AccAddress
-		if len(kvB.Value) == 141 {
-			println(sdk.AccAddress(kvB.Value).String())
-		}
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &addressA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)
-		println(addressA.String())
-		println(addressB.String())
 		return fmt.Sprintf("AddressA: %s\nAddressB: %s\n", addressA, addressB)
 	default:
 		panic(fmt.Sprintf("invalid profile key %X", kvA.Key))

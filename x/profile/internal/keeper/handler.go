@@ -70,7 +70,9 @@ const (
 // returns the profile with the proper edited fields
 // default string is used to let user replace previous inserted values with blank or empty ones
 func GetEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Profile {
-	account.Moniker = msg.NewMoniker
+	if msg.NewMoniker != defaultValue {
+		account.Moniker = msg.NewMoniker
+	}
 
 	if msg.Name != defaultValue {
 		account = account.WithName(msg.Name)
@@ -86,7 +88,7 @@ func GetEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Pro
 
 	if msg.ProfilePic != defaultValue && msg.ProfileCov != defaultValue {
 		pictures := types.NewPictures(msg.ProfilePic, msg.ProfileCov)
-		account = account.WithPictures(&pictures)
+		account = account.WithPictures(pictures)
 	} else {
 		if msg.ProfilePic != defaultValue && msg.ProfileCov == defaultValue {
 			account.Pictures.Profile = msg.ProfilePic
@@ -110,8 +112,12 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 	previousMoniker := account.Moniker
 
 	account = GetEditedProfile(account, msg)
+	err := account.Validate()
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
 
-	err := keeper.SaveProfile(ctx, account)
+	err = keeper.SaveProfile(ctx, account)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("An account with moniker: %s has already been created", msg.NewMoniker))
 	}

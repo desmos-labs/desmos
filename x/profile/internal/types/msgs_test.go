@@ -15,7 +15,7 @@ import (
 // ----------------------
 
 var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testPictures = types.NewPictures("profile", "cover")
+var testPictures = types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF")
 
 var name = "name"
 var surname = "surname"
@@ -26,7 +26,7 @@ var testProfile = types.Profile{
 	Surname:  &surname,
 	Moniker:  "moniker",
 	Bio:      &bio,
-	Pictures: &testPictures,
+	Pictures: testPictures,
 	Creator:  testProfileOwner,
 }
 
@@ -40,7 +40,6 @@ var msgCreateProfile = types.NewMsgCreateProfile(
 )
 
 var msgEditProfile = types.NewMsgEditProfile(
-	testProfile.Moniker,
 	"monk",
 	*testProfile.Name,
 	*testProfile.Surname,
@@ -65,6 +64,7 @@ func TestMsgCreateProfile_Type(t *testing.T) {
 }
 
 func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
+	var invalidPics = types.NewPictures("adnX3", "https://shorturl.at/cgpyF")
 	tests := []struct {
 		name  string
 		msg   types.MsgCreateProfile
@@ -187,6 +187,18 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 30 characters"),
 		},
 		{
+			name: "Invalid pictures uri",
+			msg: types.NewMsgCreateProfile(
+				*testProfile.Name,
+				*testProfile.Surname,
+				testProfile.Moniker,
+				*testProfile.Bio,
+				invalidPics,
+				testProfile.Creator,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
+		},
+		{
 			name: "No error message",
 			msg: types.NewMsgCreateProfile(
 				*testProfile.Name,
@@ -194,6 +206,18 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 				testProfile.Moniker,
 				*testProfile.Bio,
 				testProfile.Pictures,
+				testProfile.Creator,
+			),
+			error: nil,
+		},
+		{
+			name: "No error message with nil pics",
+			msg: types.NewMsgCreateProfile(
+				*testProfile.Name,
+				*testProfile.Surname,
+				testProfile.Moniker,
+				*testProfile.Bio,
+				nil,
 				testProfile.Creator,
 			),
 			error: nil,
@@ -216,7 +240,7 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgCreateProfile_GetSignBytes(t *testing.T) {
 	actual := msgCreateProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreateProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"moniker","name":"name","pictures":{"cover":"cover","profile":"profile"},"surname":"surname"}}`
+	expected := `{"type":"desmos/MsgCreateProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"moniker","name":"name","pictures":{"cover":"https://shorturl.at/cgpyF","profile":"https://shorturl.at/adnX3"},"surname":"surname"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -250,7 +274,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgEditProfile(
 				testProfile.Moniker,
-				testProfile.Moniker,
 				*testProfile.Name,
 				*testProfile.Surname,
 				*testProfile.Bio,
@@ -263,7 +286,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max name length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				testProfile.Moniker,
 				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
 					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
@@ -283,7 +305,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 			name: "Min name length not reached",
 			msg: types.NewMsgEditProfile(
 				testProfile.Moniker,
-				testProfile.Moniker,
 				"m",
 				*testProfile.Surname,
 				*testProfile.Bio,
@@ -296,7 +317,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max surname length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				testProfile.Moniker,
 				*testProfile.Name,
 				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
@@ -316,7 +336,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 			name: "Min surname length not reached",
 			msg: types.NewMsgEditProfile(
 				testProfile.Moniker,
-				testProfile.Moniker,
 				*testProfile.Name,
 				"l",
 				*testProfile.Bio,
@@ -329,7 +348,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				testProfile.Moniker,
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -351,37 +369,8 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile biography cannot exceed 1000 characters"),
 		},
 		{
-			name: "Empty moniker error",
-			msg: types.NewMsgEditProfile(
-				"",
-				testProfile.Moniker,
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot be blank or empty"),
-		},
-		{
-			name: "Max previous moniker length exceeded",
-			msg: types.NewMsgEditProfile(
-				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
-				testProfile.Moniker,
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile previous moniker cannot exceed 30 characters"),
-		},
-		{
 			name: "Max new moniker length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -395,7 +384,6 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "No error message",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				testProfile.Moniker,
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -424,7 +412,7 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgEditProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"name","new_moniker":"monk","previous_moniker":"moniker","profile_cov":"cover","profile_pic":"profile","surname":"surname"}}`
+	expected := `{"type":"desmos/MsgEditProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"name","new_moniker":"monk","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3","surname":"surname"}}`
 	require.Equal(t, expected, string(actual))
 }
 

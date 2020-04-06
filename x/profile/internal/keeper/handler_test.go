@@ -98,7 +98,7 @@ func Test_handleMsgEditProfile(t *testing.T) {
 		Surname:  &surname,
 		Moniker:  "newMoniker",
 		Bio:      &bio,
-		Pictures: &testPictures,
+		Pictures: testPictures,
 		Creator:  editor,
 	}
 
@@ -113,7 +113,6 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile edited",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				"newMoniker",
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -128,7 +127,6 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because no profile with given account found",
 			existentAccounts: nil,
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				"newMoniker",
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -144,7 +142,6 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because the new moniker already exists",
 			existentAccounts: types.Profiles{testProfile, testAcc2},
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
 				"newMoniker",
 				*testProfile.Name,
 				*testProfile.Surname,
@@ -154,6 +151,20 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				testPostOwner,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker: newMoniker has already been created"),
+		},
+		{
+			name:             "Profile not edited because of the invalid pics uri",
+			existentAccounts: types.Profiles{testProfile},
+			msg: types.NewMsgEditProfile(
+				"newMoniker",
+				*testProfile.Name,
+				*testProfile.Surname,
+				*testProfile.Bio,
+				"pic",
+				testProfile.Pictures.Cover,
+				testProfile.Creator,
+			),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
 		},
 	}
 
@@ -279,7 +290,6 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"moniker",
 				"omn",
 				name,
 				surname,
@@ -293,7 +303,7 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 				Surname:  &surname,
 				Moniker:  "omn",
 				Bio:      &bio,
-				Pictures: &pictures,
+				Pictures: pictures,
 				Creator:  testProfile.Creator,
 			},
 		},
@@ -301,7 +311,6 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly 2",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"moniker",
 				"omn",
 				name,
 				surname,
@@ -315,7 +324,7 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 				Surname:  &surname,
 				Moniker:  "omn",
 				Bio:      &bio,
-				Pictures: &picEdited,
+				Pictures: picEdited,
 				Creator:  testProfile.Creator,
 			},
 		},
@@ -323,7 +332,6 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly 3",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"moniker",
 				"omn",
 				name,
 				surname,
@@ -337,7 +345,28 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 				Surname:  &surname,
 				Moniker:  "omn",
 				Bio:      &bio,
-				Pictures: &covEdited,
+				Pictures: covEdited,
+				Creator:  testProfile.Creator,
+			},
+		},
+		{
+			name:    "edited profile correctly 4",
+			profile: testProfile,
+			msg: types.NewMsgEditProfile(
+				"default",
+				name,
+				surname,
+				bio,
+				"default",
+				"cov",
+				testProfile.Creator,
+			),
+			expProfile: types.Profile{
+				Name:     &name,
+				Surname:  &surname,
+				Moniker:  testProfile.Moniker,
+				Bio:      &bio,
+				Pictures: covEdited,
 				Creator:  testProfile.Creator,
 			},
 		},

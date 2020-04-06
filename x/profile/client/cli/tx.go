@@ -65,13 +65,11 @@ E.g (with all the other optional fields)
 
 			picture := viper.GetString(flagProfilePic)
 			cover := viper.GetString(flagProfileCover)
-			pictures := types.NewPictures(picture, cover)
-
 			name := viper.GetString(flagName)
 			surname := viper.GetString(flagSurname)
 			bio := viper.GetString(flagBio)
 
-			msg := types.NewMsgCreateProfile(name, surname, args[0], bio, &pictures, cliCtx.FromAddress)
+			msg := types.NewMsgCreateProfile(name, surname, args[0], bio, types.NewPictures(picture, cover), cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -89,17 +87,16 @@ E.g (with all the other optional fields)
 // GetCmdEditProfile is the CLI command for editing an profile
 func GetCmdEditProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "edit [previous_moniker]",
+		Use:   "edit",
 		Short: "Edit an existent profile",
 		Long: fmt.Sprintf(`
-Edit an existing profile specifying the previous moniker, new moniker, name, surname, bio, a profile picture and cover.
-Every data except moniker is optional.
+Edit an existing profile specifying the new moniker, name, surname, bio, a profile picture and cover.
+Every data is optional.
 
-All the attributes (except previous_moniker) will not accept the string "default" as a value because it's reserved for internal operations.
-
+All the attributes will not accept the string "default" as a value because it's reserved for internal operations.
 
 E.g (with all the other optional fields)
-%s tx profile edit leoDiCap \
+%s tx profile edit \
     --moniker "DiCapLeo" \
 	--name "Leo" \
 	--surname "Di Cap" \
@@ -107,7 +104,7 @@ E.g (with all the other optional fields)
 	--picture "https://profilePic.jpg"
 	--cover "https://profileCover.jpg"
 `, version.ClientName),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -121,12 +118,7 @@ E.g (with all the other optional fields)
 			surname := viper.GetString(flagSurname)
 			bio := viper.GetString(flagBio)
 
-			prevMoniker := args[0]
-			if newMoniker == "default" {
-				newMoniker = prevMoniker
-			}
-
-			msg := types.NewMsgEditProfile(prevMoniker, newMoniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
+			msg := types.NewMsgEditProfile(newMoniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

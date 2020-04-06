@@ -144,13 +144,13 @@ func TestProfile_WithPics(t *testing.T) {
 		{
 			name:       "not nil name",
 			profile:    profile,
-			pics:       &pics,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: &pics},
+			pics:       pics,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: pics},
 		},
 		{
 			name:       "nil name",
 			profile:    profile,
-			pics:       &noPics,
+			pics:       noPics,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
@@ -177,12 +177,12 @@ func TestProfile_String(t *testing.T) {
 		Surname:  &surname,
 		Moniker:  "moniker",
 		Bio:      &bio,
-		Pictures: &testPictures,
+		Pictures: testPictures,
 		Creator:  owner,
 	}
 
 	require.Equal(t,
-		`{"moniker":"moniker","name":"name","surname":"surname","bio":"biography","pictures":{"profile":"profile","cover":"cover"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"moniker":"moniker","name":"name","surname":"surname","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		testAccount.String(),
 	)
 }
@@ -199,7 +199,7 @@ func TestProfile_Equals(t *testing.T) {
 		Surname:          &surname,
 		Moniker:          "moniker",
 		Bio:              &bio,
-		Pictures:         &testPictures,
+		Pictures:         testPictures,
 		VerifiedServices: []types.ServiceLink{verifiedService},
 		Creator:          testPostOwner,
 	}
@@ -209,7 +209,7 @@ func TestProfile_Equals(t *testing.T) {
 		Surname:    &surname,
 		Moniker:    "oniker",
 		Bio:        &bio,
-		Pictures:   &testPictures,
+		Pictures:   testPictures,
 		ChainLinks: chainLinks,
 		Creator:    testPostOwner,
 	}
@@ -219,7 +219,7 @@ func TestProfile_Equals(t *testing.T) {
 		Surname:  &surname,
 		Moniker:  "oniker",
 		Bio:      &bio,
-		Pictures: &testPictures,
+		Pictures: testPictures,
 		Creator:  testPostOwner,
 	}
 
@@ -228,7 +228,7 @@ func TestProfile_Equals(t *testing.T) {
 		Surname:          &surname,
 		Moniker:          "moniker",
 		Bio:              &bio,
-		Pictures:         &testPictures,
+		Pictures:         testPictures,
 		VerifiedServices: []types.ServiceLink{verifiedService},
 		ChainLinks:       chainLinks,
 		Creator:          testPostOwner,
@@ -282,6 +282,7 @@ func TestProfile_Validate(t *testing.T) {
 	var name = "name"
 	var surname = "surname"
 	var bio = "biography"
+	var invalidPics = types.NewPictures("pic", "cover")
 
 	tests := []struct {
 		name    string
@@ -295,7 +296,7 @@ func TestProfile_Validate(t *testing.T) {
 				Surname:  &surname,
 				Moniker:  "moniker",
 				Bio:      &bio,
-				Pictures: &testPictures,
+				Pictures: testPictures,
 				Creator:  nil,
 			},
 			expErr: fmt.Errorf("profile creator cannot be empty or blank"),
@@ -307,22 +308,34 @@ func TestProfile_Validate(t *testing.T) {
 				Surname:  &surname,
 				Moniker:  "",
 				Bio:      &bio,
-				Pictures: &testPictures,
+				Pictures: testPictures,
 				Creator:  testPostOwner,
 			},
 			expErr: fmt.Errorf("profile moniker cannot be empty or blank"),
 		},
 		{
-			name: "Valid account returns no error",
+			name: "Valid profile returns no error",
 			account: types.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",
 				Bio:      &bio,
-				Pictures: &testPictures,
+				Pictures: testPictures,
 				Creator:  testPostOwner,
 			},
 			expErr: nil,
+		},
+		{
+			name: "Invalid profile pictures returns error",
+			account: types.Profile{
+				Name:     &name,
+				Surname:  &surname,
+				Moniker:  "moniker",
+				Bio:      &bio,
+				Pictures: invalidPics,
+				Creator:  testPostOwner,
+			},
+			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
 	}
 

@@ -25,13 +25,12 @@ type CreateProfileReq struct {
 
 // EditProfileReq defines the properties of a profile edit request's body
 type EditProfileReq struct {
-	BaseReq         rest.BaseReq    `json:"base_req"`
-	PreviousMoniker string          `json:"previous_moniker"`
-	NewMoniker      string          `json:"new_moniker"`
-	Name            string          `json:"name,omitempty"`
-	Surname         string          `json:"surname,omitempty"`
-	Bio             string          `json:"bio,omitempty"`
-	Pictures        *types.Pictures `json:"pictures,omitempty"`
+	BaseReq    rest.BaseReq    `json:"base_req"`
+	NewMoniker string          `json:"new_moniker"`
+	Name       string          `json:"name,omitempty"`
+	Surname    string          `json:"surname,omitempty"`
+	Bio        string          `json:"bio,omitempty"`
+	Pictures   *types.Pictures `json:"pictures,omitempty"`
 }
 
 // Delete defines the properties of a profile deletion request's body

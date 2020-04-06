@@ -108,6 +108,7 @@ func (profile Profile) Equals(other Profile) bool {
 		profile.Creator.Equals(other.Creator)
 }
 
+// Validate check the validity of the Profile
 func (profile Profile) Validate() error {
 	if profile.Creator.Empty() {
 		return fmt.Errorf("profile creator cannot be empty or blank")
@@ -115,6 +116,12 @@ func (profile Profile) Validate() error {
 
 	if len(strings.TrimSpace(profile.Moniker)) == 0 {
 		return fmt.Errorf("profile moniker cannot be empty or blank")
+	}
+
+	if profile.Pictures != nil {
+		if err := profile.Pictures.Validate(); err != nil {
+			return err
+		}
 	}
 
 	if len(profile.VerifiedServices) != 0 {

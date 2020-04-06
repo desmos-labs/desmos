@@ -57,29 +57,13 @@ var (
 	}
 
 	randomProfilePics = []string{
-		"pic1",
-		"pic2",
-		"pic3",
-		"pic4",
-		"pic5",
-		"pic6",
-		"pic7",
-		"pic8",
-		"pic9",
-		"pic10",
+		"https://shorturl.at/adnX3",
+		"https://shorturl.at/adnX4",
 	}
 
 	randomProfileCovers = []string{
-		"cov1",
-		"cov2",
-		"cov3",
-		"cov4",
-		"cov5",
-		"cov6",
-		"cov7",
-		"cov8",
-		"cov9",
-		"cov10",
+		"https://shorturl.at/cgpyF",
+		"https://shorturl.at/cgpyG",
 	}
 )
 
