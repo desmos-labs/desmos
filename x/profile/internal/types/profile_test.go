@@ -9,6 +9,161 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestNewProfile(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	moniker := "monik"
+	expProfile := types.Profile{Moniker: moniker, Creator: owner}
+	actProfile := types.NewProfile(moniker, owner)
+
+	require.Equal(t, expProfile, actProfile)
+}
+
+func TestProfile_WithName(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	moniker := "monik"
+	profile := types.NewProfile(moniker, owner)
+	name := "name"
+
+	tests := []struct {
+		name       string
+		profile    types.Profile
+		profName   string
+		expProfile types.Profile
+	}{
+		{
+			name:       "not nil name",
+			profile:    profile,
+			profName:   name,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner, Name: &name},
+		},
+		{
+			name:       "nil name",
+			profile:    profile,
+			profName:   "",
+			expProfile: types.Profile{Moniker: moniker, Creator: owner},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actProf := test.profile.WithName(test.profName)
+			require.Equal(t, test.expProfile, actProf)
+		})
+	}
+}
+
+func TestProfile_WithSurname(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	moniker := "monker"
+	profile := types.NewProfile(moniker, owner)
+	surname := "surname"
+
+	tests := []struct {
+		name        string
+		profile     types.Profile
+		profSurname string
+		expProfile  types.Profile
+	}{
+		{
+			name:        "not nil name",
+			profile:     profile,
+			profSurname: surname,
+			expProfile:  types.Profile{Moniker: moniker, Creator: owner, Surname: &surname},
+		},
+		{
+			name:        "nil name",
+			profile:     profile,
+			profSurname: "",
+			expProfile:  types.Profile{Moniker: moniker, Creator: owner},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actProf := test.profile.WithSurname(test.profSurname)
+			require.Equal(t, test.expProfile, actProf)
+		})
+	}
+}
+
+func TestProfile_WithBio(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	moniker := "moniker"
+	profile := types.NewProfile(moniker, owner)
+	bio := "surname"
+
+	tests := []struct {
+		name       string
+		profile    types.Profile
+		profBio    string
+		expProfile types.Profile
+	}{
+		{
+			name:       "not nil name",
+			profile:    profile,
+			profBio:    bio,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner, Bio: &bio},
+		},
+		{
+			name:       "nil name",
+			profile:    profile,
+			profBio:    "",
+			expProfile: types.Profile{Moniker: moniker, Creator: owner},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actProf := test.profile.WithBio(test.profBio)
+			require.Equal(t, test.expProfile, actProf)
+		})
+	}
+}
+
+func TestProfile_WithPics(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	moniker := "moniker"
+	profile := types.NewProfile(moniker, owner)
+	pics := types.NewPictures("pic", "cov")
+	noPics := types.NewPictures("", "")
+
+	tests := []struct {
+		name       string
+		profile    types.Profile
+		pics       *types.Pictures
+		expProfile types.Profile
+	}{
+		{
+			name:       "not nil name",
+			profile:    profile,
+			pics:       &pics,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: &pics},
+		},
+		{
+			name:       "nil name",
+			profile:    profile,
+			pics:       &noPics,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actProf := test.profile.WithPictures(test.pics)
+			require.Equal(t, test.expProfile, actProf)
+		})
+	}
+}
+
 func TestProfile_String(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
@@ -36,22 +191,47 @@ func TestProfile_Equals(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var testPictures = types.NewPictures("profile", "cover")
 
+	var verifiedService = types.ServiceLink{Name: "name", Credential: "credential", Proof: "proof"}
+	var chainLinks = []types.ChainLink{{"chain", "hash"}}
+
 	var testAccount = types.Profile{
-		Name:     &name,
-		Surname:  &surname,
-		Moniker:  "moniker",
-		Bio:      &bio,
-		Pictures: &testPictures,
-		Creator:  testPostOwner,
+		Name:             &name,
+		Surname:          &surname,
+		Moniker:          "moniker",
+		Bio:              &bio,
+		Pictures:         &testPictures,
+		VerifiedServices: []types.ServiceLink{verifiedService},
+		Creator:          testPostOwner,
 	}
 
 	var testAccount2 = types.Profile{
+		Name:       &name,
+		Surname:    &surname,
+		Moniker:    "oniker",
+		Bio:        &bio,
+		Pictures:   &testPictures,
+		ChainLinks: chainLinks,
+		Creator:    testPostOwner,
+	}
+
+	var testAccount3 = types.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "oniker",
 		Bio:      &bio,
 		Pictures: &testPictures,
 		Creator:  testPostOwner,
+	}
+
+	var testAccount4 = types.Profile{
+		Name:             &name,
+		Surname:          &surname,
+		Moniker:          "moniker",
+		Bio:              &bio,
+		Pictures:         &testPictures,
+		VerifiedServices: []types.ServiceLink{verifiedService},
+		ChainLinks:       chainLinks,
+		Creator:          testPostOwner,
 	}
 
 	tests := []struct {
@@ -71,6 +251,18 @@ func TestProfile_Equals(t *testing.T) {
 			account:  testAccount,
 			otherAcc: testAccount2,
 			expBool:  false,
+		},
+		{
+			name:     "Non equals chain links lengths",
+			account:  testAccount2,
+			otherAcc: testAccount3,
+			expBool:  false,
+		},
+		{
+			name:     "Equals accounts with services and chain links",
+			account:  testAccount4,
+			otherAcc: testAccount4,
+			expBool:  true,
 		},
 	}
 

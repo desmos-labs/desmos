@@ -9,6 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestNewGenesis(t *testing.T) {
+	profiles := types.Profiles{}
+	expGenState := types.GenesisState{Profiles: profiles}
+
+	actualGenState := types.NewGenesisState(profiles)
+
+	require.Equal(t, expGenState, actualGenState)
+}
+
 func TestValidateGenesis(t *testing.T) {
 	var testPostOwner, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
