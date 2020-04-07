@@ -54,7 +54,7 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
+				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
@@ -150,7 +150,7 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				testProfile.Pictures.Cover,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker: newMoniker has already been created"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "A profile with moniker: newMoniker has already been created"),
 		},
 		{
 			name:             "Profile not edited because of the invalid pics uri",
@@ -176,7 +176,7 @@ func Test_handleMsgEditProfile(t *testing.T) {
 
 			if test.existentAccounts != nil {
 				for _, acc := range test.existentAccounts {
-					key := types.ProfileStoreKey(acc.Creator.String())
+					key := types.ProfileStoreKey(acc.Creator)
 					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
 					k.AssociateMonikerWithAddress(ctx, acc.Moniker, acc.Creator)
 				}
@@ -241,7 +241,7 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
+				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}

@@ -10,14 +10,12 @@ import (
 
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
-	Moniker          string         `json:"moniker"`
-	Name             *string        `json:"name,omitempty"`
-	Surname          *string        `json:"surname,omitempty"`
-	Bio              *string        `json:"bio,omitempty"`
-	Pictures         *Pictures      `json:"pictures,omitempty"`
-	VerifiedServices []ServiceLink  `json:"verified_services,omitempty"` // List of all the trusted services linked to this profile
-	ChainLinks       []ChainLink    `json:"chain_links,omitempty"`       // List of all the other chain accounts linked to this profile
-	Creator          sdk.AccAddress `json:"creator,omitempty" `
+	Moniker  string         `json:"moniker"`
+	Name     *string        `json:"name,omitempty"`
+	Surname  *string        `json:"surname,omitempty"`
+	Bio      *string        `json:"bio,omitempty"`
+	Pictures *Pictures      `json:"pictures,omitempty"`
+	Creator  sdk.AccAddress `json:"creator,omitempty" `
 }
 
 func NewProfile(moniker string, creator sdk.AccAddress) Profile {
@@ -79,27 +77,6 @@ func (profile Profile) String() string {
 
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
-
-	if len(profile.VerifiedServices) != len(other.VerifiedServices) {
-		return false
-	}
-
-	if len(profile.ChainLinks) != len(other.ChainLinks) {
-		return false
-	}
-
-	for index, service := range profile.VerifiedServices {
-		if !service.Equals(other.VerifiedServices[index]) {
-			return false
-		}
-	}
-
-	for index, chainLink := range profile.ChainLinks {
-		if !chainLink.Equals(other.ChainLinks[index]) {
-			return false
-		}
-	}
-
 	return profile.Name == other.Name &&
 		profile.Surname == other.Surname &&
 		profile.Moniker == other.Moniker &&
@@ -121,22 +98,6 @@ func (profile Profile) Validate() error {
 	if profile.Pictures != nil {
 		if err := profile.Pictures.Validate(); err != nil {
 			return err
-		}
-	}
-
-	if len(profile.VerifiedServices) != 0 {
-		for _, verifiedService := range profile.VerifiedServices {
-			if err := verifiedService.Validate(); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(profile.ChainLinks) != 0 {
-		for _, chainLink := range profile.ChainLinks {
-			if err := chainLink.Validate(); err != nil {
-				return err
-			}
 		}
 	}
 

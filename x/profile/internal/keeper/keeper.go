@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
@@ -66,22 +65,27 @@ func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string)
 	store.Delete(key)
 }
 
+// replaceMoniker delete the oldMoniker related to the creator address and associate the new one to it
+func (k Keeper) replaceMoniker(ctx sdk.Context, oldMoniker, newMoniker string, creator sdk.AccAddress) {
+	k.DeleteMonikerAddressAssociation(ctx, oldMoniker)
+	k.AssociateMonikerWithAddress(ctx, newMoniker, creator)
+}
+
 // SaveProfile allows to save the given account inside the current context.
 // It assumes that the given account has already been validated.
 // It returns an error if an account with the same moniker from a different creator already exists
 func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
-	store := ctx.KVStore(k.StoreKey)
-
-	key := types.ProfileStoreKey(profile.Creator.String())
-
-	moniker := k.GetMonikerFromAddress(ctx, profile.Creator)
-	k.DeleteMonikerAddressAssociation(ctx, moniker)
 
 	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
 		return fmt.Errorf("an account with moniker: %s has already been created", profile.Moniker)
 	}
 
-	k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
+	oldMoniker := k.GetMonikerFromAddress(ctx, profile.Creator)
+	k.replaceMoniker(ctx, oldMoniker, profile.Moniker, profile.Creator)
+
+	store := ctx.KVStore(k.StoreKey)
+	key := types.ProfileStoreKey(profile.Creator)
+
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&profile))
 
 	return nil
@@ -92,8 +96,7 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 // nolint: interfacer
 func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.ProfileStoreKey(address.String())
-	store.Delete(key)
+	store.Delete(types.ProfileStoreKey(address))
 	k.DeleteMonikerAddressAssociation(ctx, moniker)
 }
 
@@ -121,7 +124,7 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (account types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 
-	key := types.ProfileStoreKey(address.String())
+	key := types.ProfileStoreKey(address)
 
 	if bz := store.Get(key); bz != nil {
 		k.Cdc.MustUnmarshalBinaryBare(bz, &account)

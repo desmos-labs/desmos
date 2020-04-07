@@ -1,6 +1,10 @@
 package types
 
-import "regexp"
+import (
+	"regexp"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 const (
 	ModuleName = "profile"
@@ -32,8 +36,8 @@ var (
 )
 
 // ProfileStoreKey turns an address to a key used to store a profile into the profiles store
-func ProfileStoreKey(address string) []byte {
-	return append(ProfileStorePrefix, []byte(address)...)
+func ProfileStoreKey(address sdk.AccAddress) []byte {
+	return append(ProfileStorePrefix, address...)
 }
 
 // MonikerStoreKey turns a moniker to a key used to store a moniker -> address couple

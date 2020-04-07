@@ -191,47 +191,22 @@ func TestProfile_Equals(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var testPictures = types.NewPictures("profile", "cover")
 
-	var verifiedService = types.ServiceLink{Name: "name", Credential: "credential", Proof: "proof"}
-	var chainLinks = []types.ChainLink{{"chain", "hash"}}
-
 	var testAccount = types.Profile{
-		Name:             &name,
-		Surname:          &surname,
-		Moniker:          "moniker",
-		Bio:              &bio,
-		Pictures:         testPictures,
-		VerifiedServices: []types.ServiceLink{verifiedService},
-		Creator:          testPostOwner,
+		Name:     &name,
+		Surname:  &surname,
+		Moniker:  "moniker",
+		Bio:      &bio,
+		Pictures: testPictures,
+		Creator:  testPostOwner,
 	}
 
 	var testAccount2 = types.Profile{
-		Name:       &name,
-		Surname:    &surname,
-		Moniker:    "oniker",
-		Bio:        &bio,
-		Pictures:   testPictures,
-		ChainLinks: chainLinks,
-		Creator:    testPostOwner,
-	}
-
-	var testAccount3 = types.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "oniker",
 		Bio:      &bio,
 		Pictures: testPictures,
 		Creator:  testPostOwner,
-	}
-
-	var testAccount4 = types.Profile{
-		Name:             &name,
-		Surname:          &surname,
-		Moniker:          "moniker",
-		Bio:              &bio,
-		Pictures:         testPictures,
-		VerifiedServices: []types.ServiceLink{verifiedService},
-		ChainLinks:       chainLinks,
-		Creator:          testPostOwner,
 	}
 
 	tests := []struct {
@@ -251,18 +226,6 @@ func TestProfile_Equals(t *testing.T) {
 			account:  testAccount,
 			otherAcc: testAccount2,
 			expBool:  false,
-		},
-		{
-			name:     "Non equals chain links lengths",
-			account:  testAccount2,
-			otherAcc: testAccount3,
-			expBool:  false,
-		},
-		{
-			name:     "Equals accounts with services and chain links",
-			account:  testAccount4,
-			otherAcc: testAccount4,
-			expBool:  true,
 		},
 	}
 

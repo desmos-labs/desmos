@@ -104,36 +104,33 @@ func GetEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Pro
 
 // handleMsgEditProfile handles the edit of a profile
 func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfile) (*sdk.Result, error) {
-	account, found := keeper.GetProfile(ctx, msg.Creator)
+	profile, found := keeper.GetProfile(ctx, msg.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("No existent profile to edit for address: %s", msg.Creator))
 	}
-	previousMoniker := account.Moniker
 
-	account = GetEditedProfile(account, msg)
-	err := account.Validate()
+	profile = GetEditedProfile(profile, msg)
+	err := profile.Validate()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	err = keeper.SaveProfile(ctx, account)
+	err = keeper.SaveProfile(ctx, profile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("An account with moniker: %s has already been created", msg.NewMoniker))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("A profile with moniker: %s has already been created", msg.NewMoniker))
 	}
-
-	keeper.DeleteMonikerAddressAssociation(ctx, previousMoniker)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileEdited,
-		sdk.NewAttribute(types.AttributeProfileMoniker, account.Moniker),
-		sdk.NewAttribute(types.AttributeProfileCreator, account.Creator.String()),
+		sdk.NewAttribute(types.AttributeProfileMoniker, profile.Moniker),
+		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(account.Moniker),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
 		Events: sdk.Events{createEvent},
 	}
 

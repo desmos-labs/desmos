@@ -143,7 +143,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 
 			for _, profile := range test.existentAccounts {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(profile.Creator.String())
+				key := types.ProfileStoreKey(profile.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(profile))
 				k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
 			}
@@ -200,7 +200,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccount.Creator.String())
+				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
@@ -241,7 +241,7 @@ func TestKeeper_GetProfiles(t *testing.T) {
 
 			if len(test.existentAccounts) != 0 {
 				store := ctx.KVStore(k.StoreKey)
-				key := types.ProfileStoreKey(test.existentAccounts[0].Creator.String())
+				key := types.ProfileStoreKey(test.existentAccounts[0].Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
