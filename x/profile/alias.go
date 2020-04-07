@@ -37,6 +37,7 @@ const (
 
 var (
 	// functions aliases
+
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
 	DecodeStore              = simulation.DecodeStore
@@ -70,6 +71,7 @@ var (
 	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
+
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
@@ -79,7 +81,6 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
-	ProfileData      = simulation.ProfileData
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile
 	MsgDeleteProfile = types.MsgDeleteProfile

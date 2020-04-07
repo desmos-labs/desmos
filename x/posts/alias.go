@@ -61,6 +61,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewKeeper                     = keeper.NewKeeper
 	NewQuerier                    = keeper.NewQuerier
 	NewHandler                    = keeper.NewHandler
@@ -121,6 +122,7 @@ var (
 	IsEmoji                       = types.IsEmoji
 
 	// variable aliases
+
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
 	ModuleCdc                = types.ModuleCdc

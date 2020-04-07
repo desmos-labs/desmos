@@ -27,6 +27,7 @@ const (
 
 var (
 	// functions aliases
+
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
 	RandomizedGenState       = simulation.RandomizedGenState
@@ -45,6 +46,7 @@ var (
 	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
+
 	RandomNamespaces      = simulation.RandomNamespaces
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
