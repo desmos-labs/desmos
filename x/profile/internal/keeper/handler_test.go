@@ -23,10 +23,10 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			name:            "Profile already exists",
 			existentAccount: &testProfile,
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -36,10 +36,10 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -92,6 +92,8 @@ func Test_handleMsgEditProfile(t *testing.T) {
 	var name = "name"
 	var surname = "surname"
 	var bio = "biography"
+	var newMoniker = "newMoniker"
+	var invalidPic = "pic"
 
 	testAcc2 := types.Profile{
 		Name:     &name,
@@ -113,10 +115,10 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile edited",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgEditProfile(
-				"newMoniker",
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&newMoniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -127,10 +129,10 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because no profile with given account found",
 			existentAccounts: nil,
 			msg: types.NewMsgEditProfile(
-				"newMoniker",
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&newMoniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -142,10 +144,10 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because the new moniker already exists",
 			existentAccounts: types.Profiles{testProfile, testAcc2},
 			msg: types.NewMsgEditProfile(
-				"newMoniker",
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&newMoniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testPostOwner,
@@ -156,11 +158,11 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			name:             "Profile not edited because of the invalid pics uri",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgEditProfile(
-				"newMoniker",
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
-				"pic",
+				&newMoniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
+				&invalidPic,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
@@ -200,7 +202,7 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				//Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeProfileEdited,
-					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.NewMoniker),
+					sdk.NewAttribute(types.AttributeProfileMoniker, *test.msg.NewMoniker),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
@@ -276,9 +278,12 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 	name := "mame"
 	surname := "habe"
 	bio := "bioh"
-	pictures := types.NewPictures("pic", "cov")
-	picEdited := types.NewPictures("pic", testProfile.Pictures.Cover)
-	covEdited := types.NewPictures("pic", "cov")
+	pic := "pic"
+	cov := "cov"
+	pictures := types.NewPictures(&pic, &cov)
+	picEdited := types.NewPictures(&pic, testProfile.Pictures.Cover)
+	covEdited := types.NewPictures(&pic, &cov)
+	newMoniker := "omn"
 
 	tests := []struct {
 		name       string
@@ -290,18 +295,18 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"omn",
-				name,
-				surname,
-				bio,
-				"pic",
-				"cov",
+				&newMoniker,
+				&name,
+				&surname,
+				&bio,
+				&pic,
+				&cov,
 				testProfile.Creator,
 			),
 			expProfile: types.Profile{
 				Name:     &name,
 				Surname:  &surname,
-				Moniker:  "omn",
+				Moniker:  newMoniker,
 				Bio:      &bio,
 				Pictures: pictures,
 				Creator:  testProfile.Creator,
@@ -311,12 +316,12 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly 2",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"omn",
-				name,
-				surname,
-				bio,
-				"pic",
-				"default",
+				&newMoniker,
+				&name,
+				&surname,
+				&bio,
+				&pic,
+				nil,
 				testProfile.Creator,
 			),
 			expProfile: types.Profile{
@@ -332,12 +337,12 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly 3",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"omn",
-				name,
-				surname,
-				bio,
-				"default",
-				"cov",
+				&newMoniker,
+				&name,
+				&surname,
+				&bio,
+				nil,
+				&cov,
 				testProfile.Creator,
 			),
 			expProfile: types.Profile{
@@ -353,12 +358,12 @@ func TestHandler_GetEditedProfile(t *testing.T) {
 			name:    "edited profile correctly 4",
 			profile: testProfile,
 			msg: types.NewMsgEditProfile(
-				"default",
-				name,
-				surname,
-				bio,
-				"default",
-				"cov",
+				nil,
+				&name,
+				&surname,
+				&bio,
+				nil,
+				&cov,
 				testProfile.Creator,
 			),
 			expProfile: types.Profile{

@@ -37,6 +37,14 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	return profileTxCmd
 }
 
+func GetFlagValueOrNilOnDefault(flag string) *string {
+	flagValue := viper.GetString(flag)
+	if flagValue == "default" {
+		return nil
+	}
+	return &flagValue
+}
+
 // GetCmdCreateProfile is the CLI command for creating a profile
 func GetCmdCreateProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
@@ -63,23 +71,27 @@ E.g (with all the other optional fields)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			picture := viper.GetString(flagProfilePic)
-			cover := viper.GetString(flagProfileCover)
-			name := viper.GetString(flagName)
-			surname := viper.GetString(flagSurname)
-			bio := viper.GetString(flagBio)
+			picture := GetFlagValueOrNilOnDefault(flagProfilePic)
+			cover := GetFlagValueOrNilOnDefault(flagProfileCover)
+			var pictures *types.Pictures
+			if picture != nil && cover != nil {
+				pictures = types.NewPictures(picture, cover)
+			}
+			name := GetFlagValueOrNilOnDefault(flagName)
+			surname := GetFlagValueOrNilOnDefault(flagSurname)
+			bio := GetFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgCreateProfile(name, surname, args[0], bio, types.NewPictures(picture, cover), cliCtx.FromAddress)
+			msg := types.NewMsgCreateProfile(args[0], name, surname, bio, pictures, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagName, "", "Name of the profile")
-	cmd.Flags().String(flagSurname, "", "Surname of the profile")
-	cmd.Flags().String(flagBio, "", "Biography of the profile")
-	cmd.Flags().String(flagProfilePic, "", "Profile related picture")
-	cmd.Flags().String(flagProfileCover, "", "Profile related cover picture")
+	cmd.Flags().String(flagName, "default", "Name of the profile")
+	cmd.Flags().String(flagSurname, "default", "Surname of the profile")
+	cmd.Flags().String(flagBio, "default", "Biography of the profile")
+	cmd.Flags().String(flagProfilePic, "default", "Profile related picture")
+	cmd.Flags().String(flagProfileCover, "default", "Profile related cover picture")
 
 	return cmd
 }
@@ -110,13 +122,12 @@ E.g (with all the other optional fields)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			picture := viper.GetString(flagProfilePic)
-			cover := viper.GetString(flagProfileCover)
-
-			newMoniker := viper.GetString(flagNewMoniker)
-			name := viper.GetString(flagName)
-			surname := viper.GetString(flagSurname)
-			bio := viper.GetString(flagBio)
+			picture := GetFlagValueOrNilOnDefault(flagProfilePic)
+			cover := GetFlagValueOrNilOnDefault(flagProfileCover)
+			newMoniker := GetFlagValueOrNilOnDefault(flagNewMoniker)
+			name := GetFlagValueOrNilOnDefault(flagName)
+			surname := GetFlagValueOrNilOnDefault(flagSurname)
+			bio := GetFlagValueOrNilOnDefault(flagBio)
 
 			msg := types.NewMsgEditProfile(newMoniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
 

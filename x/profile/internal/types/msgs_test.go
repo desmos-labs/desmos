@@ -15,11 +15,33 @@ import (
 // ----------------------
 
 var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testPictures = types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF")
-
+var testProfilePic = "https://shorturl.at/adnX3"
+var testCoverPic = "https://shorturl.at/cgpyF"
+var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
 var name = "name"
 var surname = "surname"
 var bio = "biography"
+
+var invalidProfilePic = "adnX3"
+var invalidPics = types.NewPictures(&invalidProfilePic, &testCoverPic)
+var invalidMaxLenField = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
+	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
+	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
+	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
+	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
+	"6ou0LSnJMCTq"
+var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
+	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
+	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
+	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
+	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
+	"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
+	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
+	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
+	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
+	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
+	"6ou0LSnJMCTq"
+var invalidMinLenField = "l"
 
 var testProfile = types.Profile{
 	Name:     &name,
@@ -31,19 +53,20 @@ var testProfile = types.Profile{
 }
 
 var msgCreateProfile = types.NewMsgCreateProfile(
-	*testProfile.Name,
-	*testProfile.Surname,
 	testProfile.Moniker,
-	*testProfile.Bio,
+	testProfile.Name,
+	testProfile.Surname,
+	testProfile.Bio,
 	testProfile.Pictures,
 	testProfile.Creator,
 )
 
+var newMoniker = "monk"
 var msgEditProfile = types.NewMsgEditProfile(
-	"monk",
-	*testProfile.Name,
-	*testProfile.Surname,
-	*testProfile.Bio,
+	&newMoniker,
+	testProfile.Name,
+	testProfile.Surname,
+	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
 	testProfile.Creator,
@@ -64,7 +87,7 @@ func TestMsgCreateProfile_Type(t *testing.T) {
 }
 
 func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
-	var invalidPics = types.NewPictures("adnX3", "https://shorturl.at/cgpyF")
+
 	tests := []struct {
 		name  string
 		msg   types.MsgCreateProfile
@@ -73,10 +96,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty owner returns error",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				nil,
 			),
@@ -85,15 +108,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max name length exceeded",
 			msg: types.NewMsgCreateProfile(
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				&invalidMaxLenField,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -102,10 +120,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Min name length not reached",
 			msg: types.NewMsgCreateProfile(
-				"l",
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				&invalidMinLenField,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -114,10 +132,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Min surname length not reached",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				"m",
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				&invalidMinLenField,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -126,15 +144,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max surname length exceeded",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				&invalidMaxLenField,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -143,20 +156,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
+				testProfile.Name,
+				testProfile.Surname,
+				&invalidBio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -165,10 +168,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty moniker error",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				"",
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -177,10 +180,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max moniker length exceeded",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -189,10 +192,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid pictures uri",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				invalidPics,
 				testProfile.Creator,
 			),
@@ -201,10 +204,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "No error message",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures,
 				testProfile.Creator,
 			),
@@ -213,10 +216,10 @@ func TestMsgCreateProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "No error message with nil pics",
 			msg: types.NewMsgCreateProfile(
-				*testProfile.Name,
-				*testProfile.Surname,
 				testProfile.Moniker,
-				*testProfile.Bio,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				nil,
 				testProfile.Creator,
 			),
@@ -265,6 +268,7 @@ func TestMsgEditProfile_Type(t *testing.T) {
 }
 
 func TestMsgEditProfile_ValidateBasic(t *testing.T) {
+	invalidMonikerLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
 	tests := []struct {
 		name  string
 		msg   types.MsgEditProfile
@@ -273,10 +277,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty owner returns error",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				nil,
@@ -286,15 +290,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max name length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				&invalidMaxLenField,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -304,10 +303,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Min name length not reached",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				"m",
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				&invalidMinLenField,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -317,15 +316,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max surname length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				*testProfile.Name,
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				testProfile.Name,
+				&invalidMaxLenField,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -335,10 +329,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Min surname length not reached",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				*testProfile.Name,
-				"l",
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				testProfile.Name,
+				&invalidMinLenField,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -348,20 +342,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				*testProfile.Name,
-				*testProfile.Surname,
-				"9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz"+
-					"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51"+
-					"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF"+
-					"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd"+
-					"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv"+
-					"6ou0LSnJMCTq",
+				&testProfile.Moniker,
+				testProfile.Name,
+				testProfile.Surname,
+				&invalidBio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -371,10 +355,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max new moniker length exceeded",
 			msg: types.NewMsgEditProfile(
-				"asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1",
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&invalidMonikerLen,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
@@ -384,10 +368,10 @@ func TestMsgEditProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "No error message",
 			msg: types.NewMsgEditProfile(
-				testProfile.Moniker,
-				*testProfile.Name,
-				*testProfile.Surname,
-				*testProfile.Bio,
+				&testProfile.Moniker,
+				testProfile.Name,
+				testProfile.Surname,
+				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,

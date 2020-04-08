@@ -15,15 +15,15 @@ import (
 // MsgCreateProfile defines a CreateProfile message
 type MsgCreateProfile struct {
 	Moniker  string         `json:"moniker"`
-	Name     string         `json:"name,omitempty"`
-	Surname  string         `json:"surname,omitempty"`
-	Bio      string         `json:"bio,omitempty"`
+	Name     *string        `json:"name,omitempty"`
+	Surname  *string        `json:"surname,omitempty"`
+	Bio      *string        `json:"bio,omitempty"`
 	Pictures *Pictures      `json:"pictures,omitempty"`
 	Creator  sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgCreateProfile is a constructor function for MsgCreateProfile
-func NewMsgCreateProfile(name string, surname string, moniker string, bio string, pictures *Pictures,
+func NewMsgCreateProfile(moniker string, name, surname, bio *string, pictures *Pictures,
 	creator sdk.AccAddress) MsgCreateProfile {
 	return MsgCreateProfile{
 		Moniker:  moniker,
@@ -47,20 +47,24 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(msg.Name) != 0 && len(msg.Name) < MinNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+	if msg.Name != nil {
+		if len(*msg.Name) < MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+		}
+
+		if len(*msg.Name) > MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+		}
 	}
 
-	if len(msg.Name) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
-	}
+	if msg.Surname != nil {
+		if msg.Surname != nil && len(*msg.Surname) < MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
+		}
 
-	if len(msg.Surname) != 0 && len(msg.Surname) < MinNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
-	}
-
-	if len(msg.Surname) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
+		if len(*msg.Surname) > MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
+		}
 	}
 
 	if len(strings.TrimSpace(msg.Moniker)) == 0 {
@@ -71,7 +75,7 @@ func (msg MsgCreateProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
-	if len(msg.Bio) > MaxBioLength {
+	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
@@ -100,18 +104,18 @@ func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
 
 // MsgEditProfile defines a EditProfile message
 type MsgEditProfile struct {
-	NewMoniker string         `json:"new_moniker"`
-	Name       string         `json:"name,omitempty"`
-	Surname    string         `json:"surname,omitempty"`
-	Bio        string         `json:"bio,omitempty"`
-	ProfilePic string         `json:"profile_pic,omitempty"`
-	ProfileCov string         `json:"profile_cov,omitempty"`
+	NewMoniker *string        `json:"new_moniker"`
+	Name       *string        `json:"name,omitempty"`
+	Surname    *string        `json:"surname,omitempty"`
+	Bio        *string        `json:"bio,omitempty"`
+	ProfilePic *string        `json:"profile_pic,omitempty"`
+	ProfileCov *string        `json:"profile_cov,omitempty"`
 	Creator    sdk.AccAddress `json:"creator"`
 }
 
 // NewMsgEditProfile is a constructor function for MsgEditProfile
-func NewMsgEditProfile(newMoniker string, name string, surname string, bio string, profilePic string,
-	profileCov string, creator sdk.AccAddress) MsgEditProfile {
+func NewMsgEditProfile(newMoniker, name, surname, bio, profilePic,
+	profileCov *string, creator sdk.AccAddress) MsgEditProfile {
 	return MsgEditProfile{
 		NewMoniker: newMoniker,
 		Name:       name,
@@ -135,27 +139,31 @@ func (msg MsgEditProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(msg.NewMoniker) > MaxMonikerLength {
+	if msg.NewMoniker != nil && len(*msg.NewMoniker) > MaxMonikerLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile new moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
-	if len(msg.Name) != 0 && len(msg.Name) < MinNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+	if msg.Name != nil {
+		if len(*msg.Name) < MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+		}
+
+		if len(*msg.Name) > MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+		}
 	}
 
-	if len(msg.Name) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+	if msg.Surname != nil {
+		if msg.Surname != nil && len(*msg.Surname) < MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
+		}
+
+		if len(*msg.Surname) > MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
+		}
 	}
 
-	if len(msg.Surname) != 0 && len(msg.Surname) < MinNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
-	}
-
-	if len(msg.Surname) > MaxNameSurnameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
-	}
-
-	if len(msg.Bio) > MaxBioLength {
+	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 

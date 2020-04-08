@@ -26,42 +26,26 @@ func NewProfile(moniker string, creator sdk.AccAddress) Profile {
 }
 
 // WithSurname updates profile's name with the given one
-func (profile Profile) WithName(name string) Profile {
-	if strings.TrimSpace(name) == "" {
-		profile.Name = nil
-	} else {
-		profile.Name = &name
-	}
+func (profile Profile) WithName(name *string) Profile {
+	profile.Name = name
 	return profile
 }
 
 // WithSurname updates profile's surname with the given one
-func (profile Profile) WithSurname(surname string) Profile {
-	if strings.TrimSpace(surname) == "" {
-		profile.Surname = nil
-	} else {
-		profile.Surname = &surname
-	}
+func (profile Profile) WithSurname(surname *string) Profile {
+	profile.Surname = surname
 	return profile
 }
 
 // WithBio updates profile's bio with the given one
-func (profile Profile) WithBio(bio string) Profile {
-	if strings.TrimSpace(bio) == "" {
-		profile.Bio = nil
-	} else {
-		profile.Bio = &bio
-	}
+func (profile Profile) WithBio(bio *string) Profile {
+	profile.Bio = bio
 	return profile
 }
 
 // WithPicture updates profile's pictures with the given one
 func (profile Profile) WithPictures(pictures *Pictures) Profile {
-	if pictures.Profile == "" && pictures.Cover == "" {
-		profile.Pictures = nil
-	} else {
-		profile.Pictures = pictures
-	}
+	profile.Pictures = pictures
 	return profile
 }
 
@@ -91,7 +75,7 @@ func (profile Profile) Validate() error {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
 
-	if len(strings.TrimSpace(profile.Moniker)) == 0 {
+	if strings.TrimSpace(profile.Moniker) == "" {
 		return fmt.Errorf("profile moniker cannot be empty or blank")
 	}
 

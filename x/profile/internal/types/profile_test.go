@@ -33,23 +33,17 @@ func TestProfile_WithName(t *testing.T) {
 		expProfile types.Profile
 	}{
 		{
-			name:       "not nil name",
+			name:       "not nil name value",
 			profile:    profile,
 			profName:   name,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner, Name: &name},
-		},
-		{
-			name:       "nil name",
-			profile:    profile,
-			profName:   "",
-			expProfile: types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actProf := test.profile.WithName(test.profName)
+			actProf := test.profile.WithName(&test.profName)
 			require.Equal(t, test.expProfile, actProf)
 		})
 	}
@@ -69,23 +63,17 @@ func TestProfile_WithSurname(t *testing.T) {
 		expProfile  types.Profile
 	}{
 		{
-			name:        "not nil name",
+			name:        "not nil surname",
 			profile:     profile,
 			profSurname: surname,
 			expProfile:  types.Profile{Moniker: moniker, Creator: owner, Surname: &surname},
-		},
-		{
-			name:        "nil name",
-			profile:     profile,
-			profSurname: "",
-			expProfile:  types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actProf := test.profile.WithSurname(test.profSurname)
+			actProf := test.profile.WithSurname(&test.profSurname)
 			require.Equal(t, test.expProfile, actProf)
 		})
 	}
@@ -105,23 +93,17 @@ func TestProfile_WithBio(t *testing.T) {
 		expProfile types.Profile
 	}{
 		{
-			name:       "not nil name",
+			name:       "not nil bio",
 			profile:    profile,
 			profBio:    bio,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner, Bio: &bio},
-		},
-		{
-			name:       "nil name",
-			profile:    profile,
-			profBio:    "",
-			expProfile: types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actProf := test.profile.WithBio(test.profBio)
+			actProf := test.profile.WithBio(&test.profBio)
 			require.Equal(t, test.expProfile, actProf)
 		})
 	}
@@ -132,8 +114,9 @@ func TestProfile_WithPics(t *testing.T) {
 	require.NoError(t, err)
 	moniker := "moniker"
 	profile := types.NewProfile(moniker, owner)
-	pics := types.NewPictures("pic", "cov")
-	noPics := types.NewPictures("", "")
+	var pic = "profile"
+	var cov = "cover"
+	pics := types.NewPictures(&pic, &cov)
 
 	tests := []struct {
 		name       string
@@ -142,15 +125,15 @@ func TestProfile_WithPics(t *testing.T) {
 		expProfile types.Profile
 	}{
 		{
-			name:       "not nil name",
+			name:       "not nil pics",
 			profile:    profile,
 			pics:       pics,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: pics},
 		},
 		{
-			name:       "nil name",
+			name:       "nil pics",
 			profile:    profile,
-			pics:       noPics,
+			pics:       nil,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
@@ -189,7 +172,9 @@ func TestProfile_String(t *testing.T) {
 
 func TestProfile_Equals(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	var testPictures = types.NewPictures("profile", "cover")
+	var pic = "profile"
+	var cov = "cover"
+	var testPictures = types.NewPictures(&pic, &cov)
 
 	var testAccount = types.Profile{
 		Name:     &name,
@@ -245,7 +230,9 @@ func TestProfile_Validate(t *testing.T) {
 	var name = "name"
 	var surname = "surname"
 	var bio = "biography"
-	var invalidPics = types.NewPictures("pic", "cover")
+	var pic = "pic"
+	var cov = "cov"
+	var invalidPics = types.NewPictures(&pic, &cov)
 
 	tests := []struct {
 		name    string

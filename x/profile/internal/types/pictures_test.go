@@ -9,6 +9,8 @@ import (
 )
 
 func TestPictures_Equals(t *testing.T) {
+	profilePic := "profile"
+	profileCov := "cover"
 	tests := []struct {
 		name     string
 		pictures *types.Pictures
@@ -17,14 +19,14 @@ func TestPictures_Equals(t *testing.T) {
 	}{
 		{
 			name:     "Equals pictures returns true",
-			pictures: types.NewPictures("profile", "cover"),
-			otherPic: types.NewPictures("profile", "cover"),
+			pictures: types.NewPictures(&profilePic, &profileCov),
+			otherPic: types.NewPictures(&profilePic, &profileCov),
 			expBool:  true,
 		},
 		{
 			name:     "Different pictures returns false",
-			pictures: types.NewPictures("profile", "cover"),
-			otherPic: types.NewPictures("prof", "cover"),
+			pictures: types.NewPictures(&profileCov, &profilePic),
+			otherPic: types.NewPictures(&profilePic, &profileCov),
 			expBool:  false,
 		},
 	}
@@ -39,6 +41,9 @@ func TestPictures_Equals(t *testing.T) {
 }
 
 func TestPictures_Validate(t *testing.T) {
+	profilePic := "https://shorturl.at/adnX3"
+	profileCov := "https://shorturl.at/cgpyF"
+	invalidURI := "invalid"
 	tests := []struct {
 		name     string
 		pictures *types.Pictures
@@ -46,17 +51,17 @@ func TestPictures_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Valid Pictures",
-			pictures: types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
+			pictures: types.NewPictures(&profilePic, &profileCov),
 			expErr:   nil,
 		},
 		{
 			name:     "Invalid Pictures profile uri",
-			pictures: types.NewPictures("adnX3", "https://shorturl.at/cgpyF"),
+			pictures: types.NewPictures(&invalidURI, &profileCov),
 			expErr:   fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name:     "Invalid Pictures cover uri",
-			pictures: types.NewPictures("https://shorturl.at/adnX3", "cgpyF"),
+			pictures: types.NewPictures(&profilePic, &invalidURI),
 			expErr:   fmt.Errorf("invalid profile cover uri provided"),
 		},
 	}

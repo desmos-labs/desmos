@@ -37,7 +37,7 @@ func createProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreateProfile(req.Name, req.Surname, req.Moniker, req.Bio, req.Pictures, addr)
+		msg := types.NewMsgCreateProfile(req.Moniker, &req.Name, &req.Surname, &req.Bio, req.Pictures, addr)
 
 		err = msg.ValidateBasic()
 		if err != nil {
@@ -71,10 +71,10 @@ func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgEditProfile(
-			req.NewMoniker,
-			req.Name,
-			req.Surname,
-			req.Bio,
+			&req.NewMoniker,
+			&req.Name,
+			&req.Surname,
+			&req.Bio,
 			req.Pictures.Profile,
 			req.Pictures.Cover,
 			addr)

@@ -129,15 +129,15 @@ func RandomBio(r *rand.Rand) string {
 }
 
 // RandomProfilePic return a random profile pic value from the list of randomProfilePics given
-func RandomProfilePic(r *rand.Rand) string {
+func RandomProfilePic(r *rand.Rand) *string {
 	idx := r.Intn(len(randomProfilePics))
-	return randomProfilePics[idx]
+	return &randomProfilePics[idx]
 }
 
 // RandomProfileCover return a random profile cover from the list of randomProfileCovers
-func RandomProfileCover(r *rand.Rand) string {
+func RandomProfileCover(r *rand.Rand) *string {
 	idx := r.Intn(len(randomProfileCovers))
-	return randomProfileCovers[idx]
+	return &randomProfileCovers[idx]
 }
 
 // GetProfile gets the profile having the given address from the accs list

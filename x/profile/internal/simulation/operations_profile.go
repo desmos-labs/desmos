@@ -30,10 +30,10 @@ func SimulateMsgCreateProfile(ak auth.AccountKeeper) sim.Operation {
 		}
 
 		msg := types.NewMsgCreateProfile(
-			data.Name,
-			data.Surname,
 			data.Moniker,
-			data.Bio,
+			&data.Name,
+			&data.Surname,
+			&data.Bio,
 			&data.Picture,
 			data.Creator.Address,
 		)
@@ -114,12 +114,12 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgEditProfile(
-			newMoniker,
-			*data.Name,
-			*data.Surname,
-			*data.Bio,
-			"",
-			"",
+			&newMoniker,
+			data.Name,
+			data.Surname,
+			data.Bio,
+			nil,
+			nil,
 			acc.Address,
 		)
 

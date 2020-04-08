@@ -63,37 +63,33 @@ func handleMsgCreateProfile(ctx sdk.Context, keeper Keeper, msg types.MsgCreateP
 	return &result, nil
 }
 
-const (
-	defaultValue = "default"
-)
-
 // returns the profile with the proper edited fields
 // default string is used to let user replace previous inserted values with blank or empty ones
 func GetEditedProfile(account types.Profile, msg types.MsgEditProfile) types.Profile {
-	if msg.NewMoniker != defaultValue {
-		account.Moniker = msg.NewMoniker
+	if msg.NewMoniker != nil {
+		account.Moniker = *msg.NewMoniker
 	}
 
-	if msg.Name != defaultValue {
+	if msg.Name != nil {
 		account = account.WithName(msg.Name)
 	}
 
-	if msg.Surname != defaultValue {
+	if msg.Surname != nil {
 		account = account.WithSurname(msg.Surname)
 	}
 
-	if msg.Bio != defaultValue {
+	if msg.Bio != nil {
 		account = account.WithBio(msg.Bio)
 	}
 
-	if msg.ProfilePic != defaultValue && msg.ProfileCov != defaultValue {
+	if msg.ProfilePic != nil && msg.ProfileCov != nil {
 		pictures := types.NewPictures(msg.ProfilePic, msg.ProfileCov)
 		account = account.WithPictures(pictures)
 	} else {
-		if msg.ProfilePic != defaultValue && msg.ProfileCov == defaultValue {
+		if msg.ProfilePic != nil && msg.ProfileCov == nil {
 			account.Pictures.Profile = msg.ProfilePic
 		}
-		if msg.ProfileCov != defaultValue && msg.ProfilePic == defaultValue {
+		if msg.ProfileCov != nil && msg.ProfilePic == nil {
 			account.Pictures.Cover = msg.ProfileCov
 		}
 		account = account.WithPictures(account.Pictures)
@@ -118,7 +114,7 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 
 	err = keeper.SaveProfile(ctx, profile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("A profile with moniker: %s has already been created", msg.NewMoniker))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("A profile with moniker: %s has already been created", *msg.NewMoniker))
 	}
 
 	createEvent := sdk.NewEvent(

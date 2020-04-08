@@ -2,17 +2,16 @@ package types
 
 import (
 	"fmt"
-	"strings"
 )
 
 // Pictures contains the data of a user profile's related pictures
 type Pictures struct {
-	Profile string `json:"profile,omitempty"`
-	Cover   string `json:"cover,omitempty"`
+	Profile *string `json:"profile,omitempty"`
+	Cover   *string `json:"cover,omitempty"`
 }
 
 // NewPictures is a constructor function for Pictures
-func NewPictures(profile, cover string) *Pictures {
+func NewPictures(profile, cover *string) *Pictures {
 	return &Pictures{
 		Profile: profile,
 		Cover:   cover,
@@ -37,14 +36,14 @@ func ValidateURI(uri string) error {
 // Validate check the validity of the Pictures
 func (pic Pictures) Validate() error {
 
-	if strings.TrimSpace(pic.Profile) != "" {
-		if err := ValidateURI(pic.Profile); err != nil {
+	if pic.Profile != nil {
+		if err := ValidateURI(*pic.Profile); err != nil {
 			return fmt.Errorf("invalid profile picture uri provided")
 		}
 	}
 
-	if strings.TrimSpace(pic.Cover) != "" {
-		if err := ValidateURI(pic.Cover); err != nil {
+	if pic.Cover != nil {
+		if err := ValidateURI(*pic.Cover); err != nil {
 			return fmt.Errorf("invalid profile cover uri provided")
 		}
 	}
