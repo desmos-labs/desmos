@@ -61,8 +61,7 @@ func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (mon
 // DeleteMonikerAddressAssociation delete the given moniker association with an address
 func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.MonikerStoreKey(moniker)
-	store.Delete(key)
+	store.Delete(types.MonikerStoreKey(moniker))
 }
 
 // replaceMoniker delete the oldMoniker related to the creator address and associate the new one to it
@@ -103,11 +102,8 @@ func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker s
 // GetProfiles returns all the created accounts inside the current context.
 func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 	accounts = make(types.Profiles, 0)
-
 	store := ctx.KVStore(k.StoreKey)
-
 	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
-
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -123,9 +119,7 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 // nolint: interfacer
 func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (account types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
-
 	key := types.ProfileStoreKey(address)
-
 	if bz := store.Get(key); bz != nil {
 		k.Cdc.MustUnmarshalBinaryBare(bz, &account)
 		return account, true
