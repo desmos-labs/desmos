@@ -9,6 +9,9 @@
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)
 
+# Version 0.3.1
+- Updated Cosmos SDK to `v0.38.3` and Tendermint to `v0.33.3` to solve security issues.
+
 # Version 0.3.0
 ## Changes
 - Implemented the support for media posts (#36)
