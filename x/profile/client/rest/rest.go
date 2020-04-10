@@ -17,19 +17,19 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 type CreateProfileReq struct {
 	BaseReq  rest.BaseReq    `json:"base_req"`
 	Moniker  string          `json:"moniker"`
-	Name     string          `json:"name,omitempty"`
-	Surname  string          `json:"surname,omitempty"`
-	Bio      string          `json:"bio,omitempty"`
+	Name     *string         `json:"name,omitempty"`
+	Surname  *string         `json:"surname,omitempty"`
+	Bio      *string         `json:"bio,omitempty"`
 	Pictures *types.Pictures `json:"pictures,omitempty"`
 }
 
 // EditProfileReq defines the properties of a profile edit request's body
 type EditProfileReq struct {
 	BaseReq    rest.BaseReq    `json:"base_req"`
-	NewMoniker string          `json:"new_moniker"`
-	Name       string          `json:"name,omitempty"`
-	Surname    string          `json:"surname,omitempty"`
-	Bio        string          `json:"bio,omitempty"`
+	NewMoniker *string         `json:"new_moniker"`
+	Name       *string         `json:"name,omitempty"`
+	Surname    *string         `json:"surname,omitempty"`
+	Bio        *string         `json:"bio,omitempty"`
 	Pictures   *types.Pictures `json:"pictures,omitempty"`
 }
 
