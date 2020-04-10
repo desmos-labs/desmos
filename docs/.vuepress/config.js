@@ -89,6 +89,13 @@ module.exports = {
                     ["validators/update", "Update"],
                     ["validators/halting", "Halting"],
                     ["validators/common-problems", "Common problems"],
+                    {
+                        title: "Updates",
+                        collapsable: true,
+                        children: [
+                            ["validators/updates/v0.3.1", "Version 0.3.1"],
+                        ]
+                    }
                 ]
             },
             {
