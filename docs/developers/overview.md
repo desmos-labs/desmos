@@ -11,9 +11,9 @@ Before digging into the available transactions, let's clarify the meaning of som
 
 * A **comment** is a post that has been liked to a parent post. 
 
-* A **like** is a kind of reaction that allows users to express a positive interest on a specific post. 
+* A **reaction** is the way that allows users to express a feeling on a specific post. 
 
-* An **unlike** is the action that the user performs when he wants to remove a like from a previously liked post.
+* A **profile** contains a series of (personal) data associated to an account that a user can create on the chain.
 
 * A **session** is the current method that we use in order to associate an external chain account to a Desmos account. This methodology will be completely removed and replace with [IBC](https://cosmos.network/docs/spec/ibc/) once it is stable and ready for production.  
 

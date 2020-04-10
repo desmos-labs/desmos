@@ -15,3 +15,8 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 * [`MsgRemovePostReaction`](msgs/remove-post-reaction.md): allows you to remove a reaction from a post.
 * [`MsgAnswerPoll`](msgs/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/register-reaction.md): allows you to register a reaction.
+
+### Profile
+* [`MsgCreateProfile`](msgs/create-profile.md): allows you to create a new profile for a user.
+* [`MsgEditProfile`](msgs/edit-profile.md): allows you to edit an existing profile.
+* [`MsgDeleteProfile`](msgs/delete-profile.md): allows you to delete an existing profile.

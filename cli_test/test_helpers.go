@@ -10,23 +10,24 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/stretchr/testify/require"
+	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/tests"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/profile"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -455,6 +456,26 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 }
 
 //___________________________________________________________________________________
+// desmoscli tx profile
+func (f *Fixtures) TxProfileCreate(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profile create %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, moniker, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileEdit(from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profile edit --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileDelete(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profile delete %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, moniker, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+//___________________________________________________________________________________
 // desmoscli query account
 
 // QueryAccount is desmoscli query account
@@ -763,6 +784,21 @@ func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
 	err := cdc.UnmarshalJSON([]byte(res), &registeredReactions)
 	require.NoError(f.T, err)
 	return registeredReactions
+}
+
+//___________________________________________________________________________________
+// query profile
+
+// QueryProfile returns stored profiles
+func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
+	cmd := fmt.Sprintf("%s query profile all --output=json %s", f.DesmosliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedProfile profile.Profiles
+	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
+	require.NoError(f.T, err)
+	return storedProfile
 }
 
 //___________________________________________________________________________________

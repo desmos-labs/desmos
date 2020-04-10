@@ -44,7 +44,7 @@ var (
 	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
 )
 
-// RandomAcc picks and returns a random post from an array and returns its
+// RandomPost picks and returns a random post from an array and returns its
 // position in the array.
 func RandomPost(r *rand.Rand, posts types.Posts) (types.Post, int) {
 	idx := r.Intn(len(posts))

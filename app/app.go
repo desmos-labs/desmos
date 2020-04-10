@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/profile"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -62,6 +63,7 @@ var (
 		// Custom modules
 		magpie.AppModuleBasic{},
 		posts.AppModuleBasic{},
+		profile.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -118,8 +120,9 @@ type DesmosApp struct {
 	paramsKeeper   params.Keeper
 
 	// Custom modules
-	magpieKeeper magpie.Keeper
-	postsKeeper  posts.Keeper
+	magpieKeeper  magpie.Keeper
+	postsKeeper   posts.Keeper
+	profileKeeper profile.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -145,7 +148,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, params.StoreKey, upgrade.StoreKey,
 
 		// Custom modules
-		magpie.StoreKey, posts.StoreKey,
+		magpie.StoreKey, posts.StoreKey, profile.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -210,6 +213,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// Register custom modules
 	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
 	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
+	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -227,6 +231,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		// Custom modules
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
+		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -242,7 +247,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		slashing.ModuleName, gov.ModuleName, supply.ModuleName, genutil.ModuleName,
 
 		// Custom modules
-		magpie.ModuleName, posts.ModuleName,
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
@@ -262,6 +267,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
+		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
