@@ -12,7 +12,7 @@ import (
 // --- MsgAddPostReaction
 // ----------------------
 
-var msgPostReaction = types.NewMsgAddPostReaction(types.PostID(94), "like", testOwner)
+var msgPostReaction = types.NewMsgAddPostReaction(id, "like", testOwner)
 
 func TestMsgAddPostReaction_Route(t *testing.T) {
 	actual := msgPostReaction.Route()
@@ -32,22 +32,22 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), ":like:", testOwner),
+			msg:   types.NewMsgAddPostReaction(nil, ":like:", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid user returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), ":like:", nil),
+			msg:   types.NewMsgAddPostReaction(id, ":like:", nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(5), "like", testOwner),
+			msg:   types.NewMsgAddPostReaction(id, "like", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgAddPostReaction(types.PostID(10), ":like:", testOwner),
+			msg:   types.NewMsgAddPostReaction(id, ":like:", testOwner),
 			error: nil,
 		},
 	}
@@ -80,7 +80,7 @@ func TestMsgAddPostReaction_GetSigners(t *testing.T) {
 // --- MsgRemovePostReaction
 // ----------------------
 
-var msgUnlikePost = types.NewMsgRemovePostReaction(types.PostID(94), testOwner, "like")
+var msgUnlikePost = types.NewMsgRemovePostReaction(id, testOwner, "like")
 
 func TestMsgRemovePostReaction_Route(t *testing.T) {
 	actual := msgUnlikePost.Route()
@@ -100,22 +100,22 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(0), testOwner, "like"),
+			msg:   types.NewMsgRemovePostReaction(nil, testOwner, "like"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid user address: ",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), nil, "like"),
+			msg:   types.NewMsgRemovePostReaction(id, nil, "like"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns no error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, ""),
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, ""),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(10), testOwner, "like"),
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, "like"),
 			error: nil,
 		},
 	}

@@ -126,7 +126,7 @@ var (
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
 	ModuleCdc                = types.ModuleCdc
-	SubspaceRegEx            = types.SubspaceRegEx
+	SubspaceRegEx            = types.Sha256RegEx
 	HashtagRegEx             = types.HashtagRegEx
 	ShortCodeRegEx           = types.ShortCodeRegEx
 	URIRegEx                 = types.URIRegEx

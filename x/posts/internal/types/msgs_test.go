@@ -28,9 +28,10 @@ var pollData = types.NewPollData(
 	false,
 	true,
 )
+var id = []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
-	types.PostID(53),
+	id,
 	false,
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
@@ -63,7 +64,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgCreatePost(
 				"Message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -78,7 +79,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty message returns error if medias and message are empty",
 			msg: types.NewMsgCreatePost(
 				"",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -93,7 +94,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if medias are empty",
 			msg: types.NewMsgCreatePost(
 				"message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -108,7 +109,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -123,7 +124,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -144,7 +145,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
 				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
 				`,
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -159,7 +160,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty subspace returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"",
 				map[string]string{},
@@ -174,7 +175,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "More than 10 optional data returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -201,7 +202,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Optional data longer than 200 characters returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -218,7 +219,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Future creation date returns error",
 			msg: types.NewMsgCreatePost(
 				"future post",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -233,7 +234,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty URI in medias returns error",
 			msg: types.NewMsgCreatePost(
 				"future post",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -253,7 +254,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Invalid URI in message returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -271,7 +272,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty mime type in message returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -291,7 +292,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Valid message does not return any error",
 			msg: types.NewMsgCreatePost(
 				"Message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -319,7 +320,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty medias and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -334,7 +335,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with non-empty medias and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -349,7 +350,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with non-empty medias and empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -364,7 +365,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty medias and empty message returns error",
 			msg: types.NewMsgCreatePost(
 				"",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -379,7 +380,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty poll returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				types.PostID(0),
+				nil,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -424,7 +425,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			name: "Message with non-empty external reference",
 			msg: types.NewMsgCreatePost(
 				"My new post",
-				types.PostID(53),
+				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{"field": "value"},
@@ -444,7 +445,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			name: "Message with empty external reference",
 			msg: types.NewMsgCreatePost(
 				"My post",
-				types.PostID(15),
+				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -464,7 +465,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			name: "Message with empty medias",
 			msg: types.NewMsgCreatePost(
 				"My Post without medias",
-				types.PostID(10),
+				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -479,7 +480,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			name: "Message with empty poll data",
 			msg: types.NewMsgCreatePost(
 				"My Post without medias",
-				types.PostID(10),
+				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -516,7 +517,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // ----------------------
 
 var editDate = time.Date(2010, 1, 1, 15, 0, 0, 0, timeZone)
-var msgEditPost = types.NewMsgEditPost(types.PostID(94), "Edited post message", testOwner, editDate)
+var msgEditPost = types.NewMsgEditPost(id, "Edited post message", testOwner, editDate)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -536,37 +537,37 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgEditPost(types.PostID(0), "Edited post message", testOwner, editDate),
+			msg:   types.NewMsgEditPost(nil, "Edited post message", testOwner, editDate),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", nil, editDate),
+			msg:   types.NewMsgEditPost(id, "Edited post message", nil, editDate),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
 			name:  "Blank message returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), " ", testOwner, editDate),
+			msg:   types.NewMsgEditPost(id, " ", testOwner, editDate),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty message returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "", testOwner, editDate),
+			msg:   types.NewMsgEditPost(id, "", testOwner, editDate),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty edit date returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Time{}),
+			msg:   types.NewMsgEditPost(id, "My new message", testOwner, time.Time{}),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid edit date"),
 		},
 		{
 			name:  "Future edit date returns error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "My new message", testOwner, time.Now().Add(time.Hour)),
+			msg:   types.NewMsgEditPost(id, "My new message", testOwner, time.Now().Add(time.Hour)),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Edit date cannot be in the future"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgEditPost(types.PostID(10), "Edited post message", testOwner, editDate),
+			msg:   types.NewMsgEditPost(id, "Edited post message", testOwner, editDate),
 			error: nil,
 		},
 	}

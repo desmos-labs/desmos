@@ -28,18 +28,6 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 // --- Posts
 // -------------
 
-// GetLastPostID returns the last post id that has been used
-func (k Keeper) GetLastPostID(ctx sdk.Context) types.PostID {
-	store := ctx.KVStore(k.StoreKey)
-	if !store.Has(types.LastPostIDStoreKey) {
-		return types.PostID(0)
-	}
-
-	var id types.PostID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &id)
-	return id
-}
-
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
 // If another post has the same ID of the given post, the old post will be overridden
@@ -48,11 +36,6 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 
 	// Save the post
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
-
-	// Set the last post id only if the current post has a greater one than the last one stored
-	if id := post.PostID; id > k.GetLastPostID(ctx) {
-		store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(&id))
-	}
 
 	// Save the comments to the parent post, if it is valid
 	if post.ParentID.Valid() {
@@ -161,18 +144,9 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		var result bool
 		first, second := filteredPosts[i], filteredPosts[j]
 
-		switch params.SortBy {
-		case types.PostSortByCreationDate:
-			result = first.Created.Before(second.Created)
-			if params.SortOrder == types.PostSortOrderDescending {
-				result = first.Created.After(second.Created)
-			}
-
-		default:
-			result = first.PostID < second.PostID
-			if params.SortOrder == types.PostSortOrderDescending {
-				result = first.PostID > second.PostID
-			}
+		result = first.Created.Before(second.Created)
+		if params.SortOrder == types.PostSortOrderDescending {
+			result = first.Created.After(second.Created)
 		}
 
 		// This should never be reached

@@ -64,7 +64,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
 	}
 
-	if !SubspaceRegEx.MatchString(msg.Subspace) {
+	if !Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
 	}
 

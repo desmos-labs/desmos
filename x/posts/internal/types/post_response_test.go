@@ -38,8 +38,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	answers2 := []types.AnswerID{types.AnswerID(1)}
 
 	post := types.NewPost(
-		types.PostID(10),
-		types.PostID(0),
+		id,
+		nil,
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -49,8 +49,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	).WithMedias(medias).WithPollData(pollData)
 
 	postNoMedia := types.NewPost(
-		types.PostID(10),
-		types.PostID(0),
+		id,
+		nil,
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -60,8 +60,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	).WithPollData(pollData)
 
 	postNoPoll := types.NewPost(
-		types.PostID(10),
-		types.PostID(0),
+		id,
+		nil,
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -76,7 +76,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		types.NewPostReaction("like", liker),
 		types.NewPostReaction("like", otherLiker),
 	}
-	children := types.PostIDs{types.PostID(98), types.PostID(100)}
+	children := types.PostIDs{id, id}
 
 	PostResponse := types.NewPostResponse(post, answersDetails, likes, children)
 
@@ -147,8 +147,8 @@ func TestPostQueryResponse_String(t *testing.T) {
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
 
 	post := types.NewPost(
-		types.PostID(10),
-		types.PostID(0),
+		id,
+		nil,
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -161,7 +161,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		types.NewPostReaction("like", liker),
 		types.NewPostReaction("like", otherLiker),
 	}
-	children := types.PostIDs{types.PostID(98), types.PostID(100)}
+	children := types.PostIDs{id, id}
 
 	PostResponse := types.NewPostResponse(post, answersDetails, likes, children)
 

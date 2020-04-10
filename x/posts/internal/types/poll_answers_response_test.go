@@ -18,7 +18,7 @@ func TestPollAnswersQueryResponse_String(t *testing.T) {
 	}
 
 	pollResponse := types.PollAnswersQueryResponse{
-		PostID:         types.PostID(0),
+		PostID:         id,
 		AnswersDetails: types.UserAnswers{answers},
 	}
 

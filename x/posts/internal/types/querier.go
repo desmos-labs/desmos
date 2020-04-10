@@ -27,7 +27,7 @@ func DefaultQueryPostsParams(page, limit int) QueryPostsParams {
 		Page:  page,
 		Limit: limit,
 
-		SortBy:    PostSortByID,
+		SortBy:    PostSortByCreationDate,
 		SortOrder: PostSortOrderAscending,
 
 		ParentID:       nil,

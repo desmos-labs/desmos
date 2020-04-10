@@ -21,21 +21,3 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 		i++
 	}
 }
-
-// ConflictsWith returns true if another post having the same ID or content of the
-// specified post already exists inside the store.
-// If it exists, it is returns the reference to such post and true, otherwise it returns nil and false.
-func (k Keeper) IsPostConflicting(ctx sdk.Context, post types.Post) (*types.Post, bool) {
-	var existing *types.Post
-
-	k.IteratePosts(ctx, func(_ int64, value types.Post) (stop bool) {
-		if post.IsConflictingWith(value) {
-			existing = &value
-			return true
-		}
-
-		return false
-	})
-
-	return existing, existing != nil
-}

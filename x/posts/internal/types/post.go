@@ -1,6 +1,9 @@
 package types
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -18,58 +21,36 @@ import (
 // ---------------
 
 // PostID represents a unique post id
-type PostID uint64
+type PostID []byte
+
+// ComputeID returns a sha256 hash of the given data concatenated together
+func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) []byte {
+	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
+	return hash[:]
+}
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return id != 0
-}
-
-// Next returns the subsequent id to this one
-func (id PostID) Next() PostID {
-	return id + 1
+	return id == nil
 }
 
 // String implements fmt.Stringer
 func (id PostID) String() string {
-	return strconv.FormatUint(uint64(id), 10)
+	return hex.EncodeToString(id)
 }
 
 // Equals compares two PostID instances
 func (id PostID) Equals(other PostID) bool {
-	return id == other
-}
-
-// MarshalJSON implements Marshaler
-func (id PostID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
-}
-
-// UnmarshalJSON implements Unmarshaler
-func (id *PostID) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-
-	postID, err := ParsePostID(s)
-	if err != nil {
-		return err
-	}
-
-	*id = postID
-	return nil
+	return bytes.Equal(id, other)
 }
 
 // ParsePostID returns the PostID represented inside the provided
 // value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
-	intVal, err := strconv.ParseUint(value, 10, 64)
-	if err != nil {
-		return PostID(0), err
+	if strings.TrimSpace(value) == "" || !Sha256RegEx.MatchString(value) {
+		return nil, fmt.Errorf("invalid postID cannot be parsed: %s", value)
 	}
-
-	return PostID(intVal), err
+	return []byte(value), nil
 }
 
 // ----------------
@@ -87,7 +68,7 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	}
 
 	for index, id := range ids {
-		if id != other[index] {
+		if id.Equals(other[index]) {
 			return false
 		}
 	}
@@ -181,7 +162,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
 	}
 
-	if !SubspaceRegEx.MatchString(p.Subspace) {
+	if !Sha256RegEx.MatchString(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
@@ -348,9 +329,4 @@ func (p Posts) Len() int {
 // Swap implements sort.Interface
 func (p Posts) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
-}
-
-// Less implements sort.Interface
-func (p Posts) Less(i, j int) bool {
-	return p[i].PostID < p[j].PostID
 }
