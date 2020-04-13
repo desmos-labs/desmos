@@ -18,7 +18,6 @@ const (
 	OpWeightMsgAnswerPoll           = simulation.OpWeightMsgAnswerPoll
 	OpWeightMsgRegisterReaction     = simulation.OpWeightMsgRegisterReaction
 	DefaultGasValue                 = simulation.DefaultGasValue
-	PostSortByID                    = types.PostSortByID
 	PostSortByCreationDate          = types.PostSortByCreationDate
 	PostSortOrderAscending          = types.PostSortOrderAscending
 	PostSortOrderDescending         = types.PostSortOrderDescending
@@ -130,7 +129,6 @@ var (
 	HashtagRegEx             = types.HashtagRegEx
 	ShortCodeRegEx           = types.ShortCodeRegEx
 	URIRegEx                 = types.URIRegEx
-	LastPostIDStoreKey       = types.LastPostIDStoreKey
 	PostStorePrefix          = types.PostStorePrefix
 	PostCommentsStorePrefix  = types.PostCommentsStorePrefix
 	PostReactionsStorePrefix = types.PostReactionsStorePrefix

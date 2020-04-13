@@ -81,7 +81,7 @@ func randomPollAnswerFields(
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || !post.PollData.Open {
-		return sim.Account{}, nil, types.PostID(0), true, nil
+		return sim.Account{}, nil, nil, true, nil
 	}
 
 	simAccount, _ := sim.RandomAcc(r, accs)
@@ -89,13 +89,13 @@ func randomPollAnswerFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, nil, types.PostID(0), true, nil
+		return sim.Account{}, nil, nil, true, nil
 	}
 
 	// Skip the operation without err as the poll does not allow to edit answers
 	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostID, acc.GetAddress())
 	if len(currentAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
-		return sim.Account{}, nil, types.PostID(0), true, nil
+		return sim.Account{}, nil, nil, true, nil
 	}
 
 	providedAnswers := post.PollData.ProvidedAnswers

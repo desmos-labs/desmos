@@ -3,7 +3,6 @@ package types
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -24,6 +23,7 @@ import (
 type PostID []byte
 
 // ComputeID returns a sha256 hash of the given data concatenated together
+// nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) []byte {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return hash[:]
@@ -31,12 +31,12 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return id == nil
+	return id != nil
 }
 
 // String implements fmt.Stringer
 func (id PostID) String() string {
-	return hex.EncodeToString(id)
+	return string(id)
 }
 
 // Equals compares two PostID instances
@@ -51,6 +51,27 @@ func ParsePostID(value string) (PostID, error) {
 		return nil, fmt.Errorf("invalid postID cannot be parsed: %s", value)
 	}
 	return []byte(value), nil
+}
+
+// MarshalJSON implements Marshaler
+func (id PostID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.String())
+}
+
+// UnmarshalJSON implements Unmarshaler
+func (id *PostID) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	postID, err := ParsePostID(s)
+	if err != nil {
+		return err
+	}
+
+	*id = postID
+	return nil
 }
 
 // ----------------
@@ -68,7 +89,7 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	}
 
 	for index, id := range ids {
-		if id.Equals(other[index]) {
+		if !id.Equals(other[index]) {
 			return false
 		}
 	}
@@ -315,8 +336,8 @@ type Posts []Post
 func (p Posts) String() string {
 	out := "ID - [Creator] Message\n"
 	for _, post := range p {
-		out += fmt.Sprintf("%d - [%s] %s\n",
-			post.PostID, post.Creator, post.Message)
+		out += fmt.Sprintf("%s - [%s] %s\n",
+			post.PostID.String(), post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
 }

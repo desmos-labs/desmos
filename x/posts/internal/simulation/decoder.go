@@ -12,11 +12,6 @@ import (
 // DecodeStore unmarshals the KVPair's Value to the corresponding posts type
 func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 	switch {
-	case bytes.Equal(kvA.Key, types.LastPostIDStoreKey):
-		var idA, idB types.PostID
-		cdc.MustUnmarshalBinaryBare(kvA.Value, &idA)
-		cdc.MustUnmarshalBinaryBare(kvB.Value, &idB)
-		return fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", idA, idB)
 	case bytes.HasPrefix(kvA.Key, types.PostStorePrefix):
 		var postA, postB types.Post
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &postA)

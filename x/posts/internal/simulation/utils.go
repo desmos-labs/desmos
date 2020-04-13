@@ -69,7 +69,7 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 	simAccount, _ := sim.RandomAcc(r, accs)
 	return PostData{
 		Creator:        simAccount,
-		ParentID:       types.PostID(0),
+		ParentID:       nil,
 		Message:        RandomMessage(r) + RandomHashtag(r),
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),

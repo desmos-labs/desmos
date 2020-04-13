@@ -16,10 +16,11 @@ import (
 // ---------------------------
 
 func Test_handleMsgCreatePost(t *testing.T) {
+	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
-		lastPostID  types.PostID
 		msg         types.MsgCreatePost
 		expPost     types.Post
 		expError    error
@@ -28,7 +29,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					types.PostID(1),
+					id,
 					testPost.ParentID,
 					testPost.Message,
 					testPost.AllowsComments,
@@ -38,7 +39,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Creator,
 				),
 			},
-			lastPostID: types.PostID(0),
 			msg: types.NewMsgCreatePost(
 				testPost.Message,
 				testPost.ParentID,
@@ -67,7 +67,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expPost: types.NewPost(
-				types.PostID(1),
+				id,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -81,7 +81,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			name: "Storing a valid post with missing parent id returns expError",
 			msg: types.NewMsgCreatePost(
 				testPost.Message,
-				types.PostID(50),
+				id2,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -96,8 +96,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					types.PostID(50),
-					types.PostID(50),
+					id,
+					id2,
 					"Parent post",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -108,7 +108,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			},
 			msg: types.NewMsgCreatePost(
 				testPost.Message,
-				types.PostID(50),
+				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -123,7 +123,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			name: "Post with exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					types.PostID(1),
+					id,
 					testPost.ParentID,
 					testPost.Message,
 					testPost.AllowsComments,
@@ -133,7 +133,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					testPost.Creator,
 				).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 			},
-			lastPostID: types.PostID(1),
 			msg: types.NewMsgCreatePost(
 				testPost.Message,
 				testPost.ParentID,
@@ -158,10 +157,6 @@ func Test_handleMsgCreatePost(t *testing.T) {
 
 			for _, p := range test.storedPosts {
 				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
-			}
-
-			if test.lastPostID.Valid() {
-				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(&test.lastPostID))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -200,6 +195,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 }
 
 func Test_handleMsgEditPost(t *testing.T) {
+	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	require.NoError(t, err)
 
@@ -213,7 +209,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 		{
 			name:       "Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(types.PostID(0), "Edited message", testPostOwner, testPost.Created),
+			msg:        types.NewMsgEditPost(id, "Edited message", testPostOwner, testPost.Created),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
@@ -284,7 +280,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 }
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
-
+	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -297,7 +293,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgAddPostReaction(types.PostID(0), ":smile:", user),
+			msg:   types.NewMsgAddPostReaction(id, ":smile:", user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
@@ -353,6 +349,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 }
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
+	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -366,7 +363,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgRemovePostReaction(types.PostID(0), user, "reaction"),
+			msg:   types.NewMsgRemovePostReaction(id, user, "reaction"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
 		},
 		{
@@ -432,6 +429,8 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
+	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	userPollAnswers := types.NewUserAnswer(answers, testPostOwner)
 
@@ -444,10 +443,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 	}{
 		{
 			name: "Post not found",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(2),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -466,10 +465,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "No poll associated with post",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -481,10 +480,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Answer after poll closure",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -501,14 +500,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			)),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("the poll associated with ID %s was closed at %s", types.PostID(1), testPostEndPollDateExpired)),
+				fmt.Sprintf("the poll associated with ID %s was closed at %s", id, testPostEndPollDateExpired)),
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -529,10 +528,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Creator provide too many answers",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2, 3}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -553,10 +552,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Creator provide answers that are not the ones provided by the poll",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 3}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 3}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -576,10 +575,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",
@@ -600,10 +599,10 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 		},
 		{
 			name: "Answered correctly to post's poll",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testPostOwner),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				nil,
 				"Post message",
 				false,
 				"desmos",

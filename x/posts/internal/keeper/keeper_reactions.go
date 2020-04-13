@@ -86,23 +86,17 @@ func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Pos
 }
 
 // GetReactions allows to returns the list of reactions that have been stored inside the given context
-func (k Keeper) GetReactions(ctx sdk.Context) map[types.PostID]types.PostReactions {
+func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 	defer iterator.Close()
 
-	reactionsData := map[types.PostID]types.PostReactions{}
+	reactionsData := map[string]types.PostReactions{}
 	for ; iterator.Valid(); iterator.Next() {
 		var postLikes types.PostReactions
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postLikes)
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
-		postID, err := types.ParsePostID(string(idBytes))
-		if err != nil {
-			// This should never verify
-			panic(err)
-		}
-
-		reactionsData[postID] = postLikes
+		reactionsData[string(idBytes)] = postLikes
 	}
 
 	return reactionsData

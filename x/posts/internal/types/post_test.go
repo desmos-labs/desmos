@@ -160,7 +160,7 @@ func TestPost_String(t *testing.T) {
 	}
 
 	require.Equal(t,
-		`{"id":"19","parent_id":"1","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","parent_id":"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
@@ -198,7 +198,7 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			post:     types.NewPost(types.PostID(nil), types.PostID(nil), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
-			expError: "invalid post id: 0",
+			expError: "invalid post id: ",
 		},
 		{
 			post:     types.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
@@ -316,7 +316,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 			).WithMedias(medias).WithPollData(pollData),
-			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 1 is longer than this",
+			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af is longer than this",
 		},
 	}
 
@@ -857,7 +857,7 @@ func TestPosts_String(t *testing.T) {
 	}
 
 	expected := `ID - [Creator] Message
-1 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-2 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	require.Equal(t, expected, posts.String())
 }
