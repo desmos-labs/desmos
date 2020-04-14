@@ -53,7 +53,7 @@ var testPostEndPollDateExpired = time.Date(2019, 1, 1, 1, 15, 00, 000, timeZone)
 var answer = types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
 
 var answer2 = types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
-var postID = []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+var postID = []byte("19de02e105c68a60e45c289bff")
 
 var testPost = types.NewPost(
 	postID,

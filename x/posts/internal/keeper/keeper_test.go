@@ -385,6 +385,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	id3 := []byte("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 	id4 := []byte("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
+	id5 := []byte("84a5d9fc5f0acd2bb9c0a49ecaefabbe4698372e1ae88d32f9f6f80b3c0ab95e")
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -421,12 +422,12 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		),
 		types.NewPost(
 			id4,
-			id2,
+			id5,
 			"Post 3",
 			false,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			map[string]string{},
-			date,
+			time.Date(2020, 3, 1, 1, 1, 0, 0, timeZone),
 			creator2,
 		),
 	}
@@ -459,7 +460,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		{
 			name:     "Creation time matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: &date},
-			expected: types.Posts{posts[0], posts[2]},
+			expected: types.Posts{posts[0]},
 		},
 		{
 			name:     "Allows comments matcher works properly",
@@ -479,12 +480,12 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		{
 			name:     "Sorting by date ascending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderAscending},
-			expected: types.Posts{posts[0], posts[2], posts[1]},
+			expected: types.Posts{posts[0], posts[1], posts[2]},
 		},
 		{
 			name:     "Sorting by date descending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
-			expected: types.Posts{posts[1], posts[0], posts[2]},
+			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
 		{
 			name:     "Filtering by hashtags works properly",

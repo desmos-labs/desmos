@@ -38,7 +38,10 @@ const (
 var (
 	// functions aliases
 
-	WeightedOperations       = simulation.WeightedOperations
+	NewHandler               = keeper.NewHandler
+	GetEditedProfile         = keeper.GetEditedProfile
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 	RandomizedGenState       = simulation.RandomizedGenState
 	DecodeStore              = simulation.DecodeStore
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
@@ -53,6 +56,11 @@ var (
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
+	WeightedOperations       = simulation.WeightedOperations
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
 	NewMsgCreateProfile      = types.NewMsgCreateProfile
 	NewMsgEditProfile        = types.NewMsgEditProfile
 	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
@@ -61,31 +69,23 @@ var (
 	NewProfile               = types.NewProfile
 	NewPictures              = types.NewPictures
 	ValidateURI              = types.ValidateURI
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewHandler               = keeper.NewHandler
-	GetEditedProfile         = keeper.GetEditedProfile
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
 
+	ModuleCdc          = types.ModuleCdc
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
 	MonikerStorePrefix = types.MonikerStorePrefix
-	ModuleCdc          = types.ModuleCdc
 )
 
 type (
 	Keeper           = keeper.Keeper
+	GenesisState     = types.GenesisState
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
 	Profile          = types.Profile
 	Profiles         = types.Profiles
 	Pictures         = types.Pictures
-	GenesisState     = types.GenesisState
 )

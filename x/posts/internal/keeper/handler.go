@@ -52,7 +52,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	// Check for double posting
 	if existing, found := keeper.GetPost(ctx, post.PostID); found {
-		msg := `the provided post conflicts with another one with id %s. Please check that either their creation date, subspace or creator are different`
+		msg := `the provided post conflicts with the one having id %s. Please check that either their creation date, subspace or creator are different`
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(msg, existing.PostID))
 	}
 
@@ -93,6 +93,11 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	existing, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if !msg.Editor.Equals(existing.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post

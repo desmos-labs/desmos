@@ -66,7 +66,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 
 func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
 	actual := msgPostReaction.GetSignBytes()
-	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"94","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
+	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"3139646530326531303563363861363065343563323839626666","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -133,7 +133,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 
 func TestMsgRemovePostReaction_GetSignBytes(t *testing.T) {
 	actual := msgUnlikePost.GetSignBytes()
-	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"94","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"3139646530326531303563363861363065343563323839626666","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

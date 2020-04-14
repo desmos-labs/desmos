@@ -106,9 +106,13 @@ E.g.
 
 			allowsComments := viper.GetBool(flagAllowsComments)
 
-			parentID, err := types.ParsePostID(viper.GetString(flagParentID))
-			if err != nil {
-				return err
+			var parentID types.PostID
+			if flagValue := viper.GetString(flagParentID); flagValue != defaultParentID {
+				val, err := types.ParsePostID(flagValue)
+				if err != nil {
+					return err
+				}
+				parentID = val
 			}
 
 			// medias' checks
@@ -222,7 +226,7 @@ E.g.
 	}
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(flagParentID, defaultParentID, "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")

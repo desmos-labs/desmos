@@ -22,5 +22,5 @@ func TestPollAnswersQueryResponse_String(t *testing.T) {
 		AnswersDetails: types.UserAnswers{answers},
 	}
 
-	require.Equal(t, "Post ID [0] - Answers Details:\nUser: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", pollResponse.String())
+	require.Equal(t, "Post ID [3139646530326531303563363861363065343563323839626666] - Answers Details:\nUser: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", pollResponse.String())
 }

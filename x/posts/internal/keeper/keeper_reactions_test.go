@@ -15,7 +15,7 @@ import (
 // -------------
 
 func TestKeeper_SaveReaction(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := []byte("19de02e105c68a60e45c289bff")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -49,7 +49,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":like:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with :like: to the post with id 10"),
+			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with :like: to the post with id 3139646530326531303563363861363065343563323839626666"),
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", liker)},
 		},
 		{
@@ -69,7 +69,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 10 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
+			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 3139646530326531303563363861363065343563323839626666 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
 		},
 		{
 			name:           "First liker is stored properly",
@@ -207,7 +207,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 }
 
 func TestKeeper_GetPostReactions(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := []byte("19de02e105c68a60e45c289bff")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 

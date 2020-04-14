@@ -16,8 +16,11 @@ import (
 // ---------------------------
 
 func Test_handleMsgCreatePost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := []byte("19de02e105c68a60e45c289bff")
+	id2 := []byte("f1b909289cd23188c19da17ae")
+
+	computedID := types.ComputeID(testPost.Created, testPost.Creator, testPost.Subspace)
+
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
@@ -29,7 +32,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					id,
+					computedID,
 					testPost.ParentID,
 					testPost.Message,
 					testPost.AllowsComments,
@@ -51,7 +54,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 1. Please check that either their creation date, subspace or creator are different"),
+				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7. Please check that either their creation date, subspace or creator are different"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -67,7 +70,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expPost: types.NewPost(
-				id,
+				computedID,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -90,7 +93,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id 50 not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id 66316239303932383963643233313838633139646131376165 not found"),
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
@@ -117,13 +120,13 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 50 does not allow comments"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 does not allow comments"),
 		},
 		{
 			name: "Post with exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					id,
+					computedID,
 					testPost.ParentID,
 					testPost.Message,
 					testPost.AllowsComments,
@@ -145,7 +148,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 1. Please check that either their creation date, subspace or creator are different"),
+				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7. Please check that either their creation date, subspace or creator are different"),
 		},
 	}
 
@@ -195,7 +198,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 }
 
 func Test_handleMsgEditPost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := []byte("19de02e105c68a60e45c289bff")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	require.NoError(t, err)
 
@@ -210,7 +213,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 			name:       "Post not found",
 			storedPost: nil,
 			msg:        types.NewMsgEditPost(id, "Edited message", testPostOwner, testPost.Created),
-			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
+			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
 		},
 		{
 			name:       "Invalid editor",
@@ -280,7 +283,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 }
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := []byte("19de02e105c68a60e45c289bff")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -294,7 +297,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgAddPostReaction(id, ":smile:", user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
 		},
 		{
 			name:               "Valid message works properly",
@@ -349,7 +352,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 }
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := []byte("19de02e105c68a60e45c289bff")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -364,7 +367,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgRemovePostReaction(id, user, "reaction"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 0 not found"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
 		},
 		{
 			name:         "PostReaction not found",
@@ -429,8 +432,8 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := []byte("19de02e105c68a60e45c289bff")
+	id2 := []byte("f1b909289cd23188c19da17ae")
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	userPollAnswers := types.NewUserAnswer(answers, testPostOwner)
 
@@ -461,13 +464,13 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				true,
 				true,
 			)),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 1 doesn't exist"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 66316239303932383963643233313838633139646131376165 doesn't exist"),
 		},
 		{
 			name: "No poll associated with post",
 			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
-				id,
+				id2,
 				nil,
 				"Post message",
 				false,
@@ -476,7 +479,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostCreationDate,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 1"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 66316239303932383963643233313838633139646131376165"),
 		},
 		{
 			name: "Answer after poll closure",
@@ -524,7 +527,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			),
 			),
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "the poll associated with ID 1 doesn't allow multiple answers"),
+				sdkerrors.ErrInvalidRequest, "the poll associated with ID 3139646530326531303563363861363065343563323839626666 doesn't allow multiple answers"),
 		},
 		{
 			name: "Creator provide too many answers",
@@ -595,7 +598,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			)),
 			storedAnswers: &userPollAnswers,
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "post with ID 1 doesn't allow answers' edits"),
+				sdkerrors.ErrInvalidRequest, "post with ID 3139646530326531303563363861363065343563323839626666 doesn't allow answers' edits"),
 		},
 		{
 			name: "Answered correctly to post's poll",

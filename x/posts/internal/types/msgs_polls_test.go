@@ -67,7 +67,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 
 func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 	actual := msgAnswerPollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"1"}}`
+	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"3139646530326531303563363861363065343563323839626666"}}`
 	require.Equal(t, expected, string(actual))
 }
 

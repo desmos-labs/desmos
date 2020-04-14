@@ -28,11 +28,7 @@ const (
 var (
 	// functions aliases
 
-	WeightedOperations       = simulation.WeightedOperations
-	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomizedGenState       = simulation.RandomizedGenState
-	DecodeStore              = simulation.DecodeStore
-	RandomSessionData        = simulation.RandomSessionData
+	RegisterCodec            = types.RegisterCodec
 	NewMsgCreateSession      = types.NewMsgCreateSession
 	SessionStoreKey          = types.SessionStoreKey
 	ParseSessionID           = types.ParseSessionID
@@ -40,18 +36,22 @@ var (
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
+	DecodeStore              = simulation.DecodeStore
+	RandomSessionData        = simulation.RandomSessionData
+	WeightedOperations       = simulation.WeightedOperations
+	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
+	RandomizedGenState       = simulation.RandomizedGenState
 
 	// variable aliases
 
 	RandomNamespaces      = simulation.RandomNamespaces
+	ModuleCdc             = types.ModuleCdc
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
-	ModuleCdc             = types.ModuleCdc
 )
 
 type (

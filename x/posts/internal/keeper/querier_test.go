@@ -46,19 +46,19 @@ func Test_queryPost(t *testing.T) {
 			name:               "Post not found returns error",
 			path:               []string{types.QueryPost, "1"},
 			registeredReaction: nil,
-			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: 1"),
 		},
 		{
-			name: "Post without likes is returned properly",
+			name: "Post without reactions is returned properly",
 			storedPosts: types.Posts{
 				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			registeredReaction: nil,
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expResult: types.NewPostResponse(
-				types.NewPost(id2, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{},
 				types.PostIDs{id2},
@@ -71,7 +71,7 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			registeredReaction: nil,
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expResult: types.NewPostResponse(
 				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -93,7 +93,7 @@ func Test_queryPost(t *testing.T) {
 				},
 			},
 			registeredReaction: &reaction,
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expResult: types.NewPostResponse(
 				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -117,7 +117,7 @@ func Test_queryPost(t *testing.T) {
 				},
 			},
 			registeredReaction: &reaction,
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expResult: types.NewPostResponse(
 				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				nil,
@@ -142,7 +142,7 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			registeredReaction: &reaction,
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expResult: types.NewPostResponse(
 				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -336,11 +336,11 @@ func Test_queryPollAnswers(t *testing.T) {
 		{
 			name:     "Post not found returns error",
 			path:     []string{types.QueryPollAnswers, "1"},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 1 not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: 1"),
 		},
 		{
 			name: "Post without poll returns error",
-			path: []string{types.QueryPollAnswers, "1"},
+			path: []string{types.QueryPollAnswers, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			storedPosts: types.Posts{
 				types.NewPost(
 					id,
@@ -353,11 +353,11 @@ func Test_queryPollAnswers(t *testing.T) {
 					testPost.Creator,
 				).WithMedias(testPost.Medias),
 			},
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 1 has no poll associated"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id 31396465303265313035633638613630653435633238396266663139666465373435626361396336336333386632303935623539653865383039306165316166 has no poll associated"),
 		},
 		{
 			name: "Returns answers details of the post correctly",
-			path: []string{types.QueryPollAnswers, "1"},
+			path: []string{types.QueryPollAnswers, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			storedPosts: types.Posts{
 				types.NewPost(
 					id,

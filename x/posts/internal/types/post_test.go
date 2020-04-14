@@ -133,13 +133,69 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	}
 }
 
+func TestPostID_MarshalJSON(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	computedID := types.ComputeID(creationDate, creator, subspace)
+	json := types.ModuleCdc.MustMarshalJSON(computedID)
+	stringID := computedID.String()
+	require.Equal(t, stringID, string(json))
+}
+
+func TestPostID_UnmarshalJSON(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	computedID := types.ComputeID(creationDate, creator, subspace)
+	stringID := computedID.String()
+
+	tests := []struct {
+		name     string
+		value    string
+		expID    types.PostID
+		expError string
+	}{
+		{
+			name:     "Invalid ID returns error",
+			value:    "id",
+			expID:    nil,
+			expError: "invalid postID cannot be parsed: id",
+		},
+		{
+			name:     "Valid id is read properly",
+			value:    stringID,
+			expID:    computedID,
+			expError: "",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			var id types.PostID
+			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
+
+			if err == nil {
+				require.Equal(t, test.expID, id)
+			} else {
+				require.Equal(t, test.expError, err.Error())
+			}
+		})
+	}
+}
+
 // -----------
 // --- Post
 // -----------
 
 func TestPost_String(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := []byte("19de02e105c68a60e45c289bff")
+	id2 := []byte("f1b909289cd23188c19da17ae")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -160,14 +216,14 @@ func TestPost_String(t *testing.T) {
 	}
 
 	require.Equal(t,
-		`{"id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","parent_id":"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"3139646530326531303563363861363065343563323839626666","parent_id":"66316239303932383963643233313838633139646131376165","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
 
 func TestPost_Validate(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := []byte("19de02e105c68a60e45c289bff")
+	id2 := []byte("f1b909289cd23188c19da17ae")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -316,7 +372,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 			).WithMedias(medias).WithPollData(pollData),
-			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af is longer than this",
+			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 3139646530326531303563363861363065343563323839626666 is longer than this",
 		},
 	}
 
@@ -821,8 +877,8 @@ func TestPost_GetPostHashtags(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_String(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := []byte("19de02e105c68a60e45c289bff")
+	id2 := []byte("f1b909289cd23188c19da17ae")
 	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -857,7 +913,7 @@ func TestPosts_String(t *testing.T) {
 	}
 
 	expected := `ID - [Creator] Message
-19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+3139646530326531303563363861363065343563323839626666 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+3139646530326531303563363861363065343563323839626666 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	require.Equal(t, expected, posts.String())
 }
