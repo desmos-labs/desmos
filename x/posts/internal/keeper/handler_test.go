@@ -16,8 +16,8 @@ import (
 // ---------------------------
 
 func Test_handleMsgCreatePost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
-	id2 := []byte("f1b909289cd23188c19da17ae")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	computedID := types.ComputeID(testPost.Created, testPost.Creator, testPost.Subspace)
 
@@ -93,7 +93,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id 66316239303932383963643233313838633139646131376165 not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd not found"),
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
@@ -120,7 +120,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.Medias,
 				testPost.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 does not allow comments"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af does not allow comments"),
 		},
 		{
 			name: "Post with exact same data is not posted again",
@@ -198,7 +198,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 }
 
 func Test_handleMsgEditPost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	require.NoError(t, err)
 
@@ -213,7 +213,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 			name:       "Post not found",
 			storedPost: nil,
 			msg:        types.NewMsgEditPost(id, "Edited message", testPostOwner, testPost.Created),
-			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
+			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:       "Invalid editor",
@@ -283,7 +283,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 }
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -297,7 +297,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgAddPostReaction(id, ":smile:", user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:               "Valid message works properly",
@@ -352,7 +352,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 }
 
 func Test_handleMsgRemovePostReaction(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
@@ -367,7 +367,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		{
 			name:  "Post not found",
 			msg:   types.NewMsgRemovePostReaction(id, user, "reaction"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 3139646530326531303563363861363065343563323839626666 not found"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:         "PostReaction not found",
@@ -432,8 +432,8 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 }
 
 func Test_handleMsgAnswerPollPost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
-	id2 := []byte("f1b909289cd23188c19da17ae")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	userPollAnswers := types.NewUserAnswer(answers, testPostOwner)
 
@@ -449,7 +449,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -464,14 +464,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				true,
 				true,
 			)),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 66316239303932383963643233313838633139646131376165 doesn't exist"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd doesn't exist"),
 		},
 		{
 			name: "No poll associated with post",
 			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
 				id2,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -479,14 +479,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 				testPostCreationDate,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: 66316239303932383963643233313838633139646131376165"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
 		},
 		{
 			name: "Answer after poll closure",
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -510,7 +510,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -527,14 +527,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			),
 			),
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "the poll associated with ID 3139646530326531303563363861363065343563323839626666 doesn't allow multiple answers"),
+				sdkerrors.ErrInvalidRequest, "the poll associated with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow multiple answers"),
 		},
 		{
 			name: "Creator provide too many answers",
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -558,7 +558,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 3}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -581,7 +581,7 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",
@@ -598,14 +598,14 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 			)),
 			storedAnswers: &userPollAnswers,
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "post with ID 3139646530326531303563363861363065343563323839626666 doesn't allow answers' edits"),
+				sdkerrors.ErrInvalidRequest, "post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow answers' edits"),
 		},
 		{
 			name: "Answered correctly to post's poll",
 			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testPostOwner),
 			storedPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post message",
 				false,
 				"desmos",

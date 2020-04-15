@@ -32,7 +32,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
 			types.ComputeID(postData.CreationDate, postData.Creator.Address, postData.Subspace),
-			nil,
+			"",
 			postData.Message,
 			postData.AllowsComments,
 			postData.Subspace,

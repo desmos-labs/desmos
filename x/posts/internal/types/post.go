@@ -1,7 +1,6 @@
 package types
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -21,63 +20,28 @@ import (
 // ---------------
 
 // PostID represents a unique post id
-type PostID []byte
+type PostID string
 
 // ComputeID returns a sha256 hash of the given data concatenated together
 // nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
-	return hash[:]
+	return PostID(hex.EncodeToString(hash[:]))
 }
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return id != nil
+	return strings.TrimSpace(id.String()) != "" && Sha256RegEx.MatchString(id.String())
 }
 
 // String implements fmt.Stringer
 func (id PostID) String() string {
-	return hex.EncodeToString(id)
+	return string(id)
 }
 
 // Equals compares two PostID instances
 func (id PostID) Equals(other PostID) bool {
-	return bytes.Equal(id, other)
-}
-
-// ParsePostID returns the PostID represented inside the provided
-// value, or an error if no id could be parsed properly
-func ParsePostID(value string) (PostID, error) {
-	if strings.TrimSpace(value) == "" || !Sha256RegEx.MatchString(value) {
-		return nil, fmt.Errorf("invalid postID cannot be parsed: %s", value)
-	}
-
-	decoded, err := hex.DecodeString(value)
-	if err != nil {
-		return nil, err
-	}
-
-	return decoded, nil
-}
-
-// MarshalJSON implements Marshaler
-func (id PostID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
-}
-
-// UnmarshalJSON implements Unmarshaler
-func (id *PostID) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-	postID, err := ParsePostID(s)
-	if err != nil {
-		return err
-	}
-
-	*id = postID
-	return nil
+	return id == other
 }
 
 // ----------------
@@ -122,7 +86,7 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 // Post is a struct of a post
 type Post struct {
 	PostID         PostID         `json:"id"`                      // Unique id
-	ParentID       PostID         `json:"parent_id,omitempty"`     // Post of which this one is a comment
+	ParentID       PostID         `json:"parent_id"`               // Post of which this one is a comment
 	Message        string         `json:"message"`                 // Message contained inside the post
 	Created        time.Time      `json:"created"`                 // RFC3339 date at which the post has been created
 	LastEdited     time.Time      `json:"last_edited"`             // RFC3339 date at which the post has been edited the last time

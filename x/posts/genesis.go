@@ -1,7 +1,10 @@
 package posts
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -24,11 +27,11 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 	for postID, usersAnswersDetails := range data.PollAnswers {
 		for _, userAnswersDetails := range usersAnswersDetails {
-			parsedID, err := ParsePostID(postID)
-			if err != nil {
-				panic(err)
+			postID := types.PostID(postID)
+			if !postID.Valid() {
+				panic(fmt.Sprintf("invalid parent ID: %s", postID))
 			}
-			keeper.SavePollAnswers(ctx, parsedID, userAnswersDetails)
+			keeper.SavePollAnswers(ctx, postID, userAnswersDetails)
 		}
 	}
 
@@ -40,11 +43,11 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 	for postID, postReactions := range data.PostReactions {
 		for _, postReaction := range postReactions {
-			parsedID, err := ParsePostID(postID)
-			if err != nil {
-				panic(err)
+			postID := types.PostID(postID)
+			if !postID.Valid() {
+				panic(fmt.Sprintf("invalid parent ID: %s", postID))
 			}
-			if err := keeper.SavePostReaction(ctx, parsedID, postReaction); err != nil {
+			if err := keeper.SavePostReaction(ctx, postID, postReaction); err != nil {
 				panic(err)
 			}
 		}

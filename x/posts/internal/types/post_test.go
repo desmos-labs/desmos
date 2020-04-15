@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"encoding/hex"
 	"testing"
 	"time"
 
@@ -15,9 +14,78 @@ import (
 // --- PostID
 // -------------
 
-func TestParsePostID(t *testing.T) {
-	id, err := hex.DecodeString("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+func TestPostID_Equals(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creationDate2 := creationDate
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
+	const (
+		subspace = "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	)
+	subspace2 := "ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1"
+	tests := []struct {
+		name    string
+		postID  types.PostID
+		otherID types.PostID
+		expBool bool
+	}{
+		{
+			name:    "Equal IDs returns true",
+			postID:  types.ComputeID(creationDate, creator, subspace),
+			otherID: types.ComputeID(creationDate2, creator, subspace),
+			expBool: true,
+		},
+		{
+			name:    "Non Equal IDs returns false",
+			postID:  types.ComputeID(creationDate, creator, subspace),
+			otherID: types.ComputeID(creationDate2, creator, subspace2),
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res := test.postID.Equals(test.otherID)
+			require.Equal(t, test.expBool, res)
+		})
+	}
+
+}
+
+func TestPostID_String(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	const (
+		subspace = "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	)
+	computedID := types.ComputeID(creationDate, creator, subspace)
+
+	require.Equal(t, "f55d90114d81e70399d6330a57081b86ae1bdf928b78a57e88870f64240009ef", computedID.String())
+}
+
+func TestPostID_MarshalJSON(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	computedID := types.ComputeID(creationDate, creator, subspace)
+	json := types.ModuleCdc.MustMarshalJSON(computedID)
+	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
+	require.Equal(t, stringID, string(json))
+}
+
+func TestPostID_UnmarshalJSON(t *testing.T) {
+	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	computedID := types.ComputeID(creationDate, creator, subspace)
+	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
+
 	tests := []struct {
 		name     string
 		value    string
@@ -25,21 +93,15 @@ func TestParsePostID(t *testing.T) {
 		expError string
 	}{
 		{
-			name:     "Invalid id returns error",
+			name:     "Invalid ID returns error",
 			value:    "id",
-			expID:    types.PostID(id),
-			expError: "invalid postID cannot be parsed: id",
+			expID:    "",
+			expError: "invalid character 'i' looking for beginning of value",
 		},
 		{
-			name:     "Empty id returns error",
-			value:    "",
-			expID:    types.PostID(id),
-			expError: "invalid postID cannot be parsed: ",
-		},
-		{
-			name:     "Valid id returns proper value",
-			value:    "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			expID:    types.PostID(id),
+			name:     "Valid id is read properly",
+			value:    stringID,
+			expID:    computedID,
 			expError: "",
 		},
 	}
@@ -47,7 +109,8 @@ func TestParsePostID(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			id, err := types.ParsePostID(test.value)
+			var id types.PostID
+			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
 
 			if err == nil {
 				require.Equal(t, test.expID, id)
@@ -135,69 +198,13 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestPostID_MarshalJSON(t *testing.T) {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-
-	computedID := types.ComputeID(creationDate, creator, subspace)
-	json := types.ModuleCdc.MustMarshalJSON(computedID)
-	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
-	require.Equal(t, stringID, string(json))
-}
-
-func TestPostID_UnmarshalJSON(t *testing.T) {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-
-	computedID := types.ComputeID(creationDate, creator, subspace)
-	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
-
-	tests := []struct {
-		name     string
-		value    string
-		expID    types.PostID
-		expError string
-	}{
-		{
-			name:     "Invalid ID returns error",
-			value:    "id",
-			expID:    nil,
-			expError: "invalid character 'i' looking for beginning of value",
-		},
-		{
-			name:     "Valid id is read properly",
-			value:    stringID,
-			expID:    computedID,
-			expError: "",
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			var id types.PostID
-			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
-
-			if err == nil {
-				require.Equal(t, test.expID, id)
-			} else {
-				require.Equal(t, test.expError, err.Error())
-			}
-		})
-	}
-}
-
 // -----------
 // --- Post
 // -----------
 
 func TestPost_String(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
-	id2 := []byte("f1b909289cd23188c19da17ae")
+	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
+	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -206,8 +213,8 @@ func TestPost_String(t *testing.T) {
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 	post := types.Post{
-		PostID:         types.PostID(id),
-		ParentID:       types.PostID(id2),
+		PostID:         id,
+		ParentID:       id2,
 		Message:        "My post message",
 		Created:        date,
 		LastEdited:     date.AddDate(0, 0, 1),
@@ -218,14 +225,14 @@ func TestPost_String(t *testing.T) {
 	}
 
 	require.Equal(t,
-		`{"id":"3139646530326531303563363861363065343563323839626666","parent_id":"66316239303932383963643233313838633139646131376165","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		post.String(),
 	)
 }
 
 func TestPost_Validate(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
-	id2 := []byte("f1b909289cd23188c19da17ae")
+	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
+	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -251,42 +258,52 @@ func TestPost_Validate(t *testing.T) {
 	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
 
 	tests := []struct {
+		name     string
 		post     types.Post
 		expError string
 	}{
 		{
-			post:     types.NewPost(types.PostID(nil), types.PostID(nil), "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			name:     "Invalid postID",
+			post:     types.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post id: ",
 		},
 		{
+			name:     "Invalid post owner",
 			post:     types.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
+			name:     "Empty post message and media",
 			post:     types.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
+			name:     "Empty post message (blank) and media",
 			post:     types.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
+			name:     "Invalid post creation time",
 			post:     types.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
+			name:     "Invalid post last edit time",
 			post:     types.Post{PostID: id, Creator: owner, Message: "Message", Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", Created: date, LastEdited: date.AddDate(0, 0, -1)},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
+			name:     "Invalid post subspace",
 			post:     types.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
+			name:     "Invalid post subspace(blank)",
 			post:     types.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
+			name: "Post creation data in future",
 			post: types.Post{
 				PostID:         id,
 				ParentID:       id2,
@@ -301,6 +318,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post creation date cannot be in the future",
 		},
 		{
+			name: "Post last edit date in future",
 			post: types.Post{
 				PostID:         id,
 				ParentID:       id2,
@@ -316,6 +334,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post last edit date cannot be in the future",
 		},
 		{
+			name: "Post message cannot be longer than 500 characters",
 			post: types.NewPost(
 				id,
 				id2,
@@ -335,6 +354,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post message cannot be longer than 500 characters",
 		},
 		{
+			name: "post optional data cannot contain more than 10 key-value",
 			post: types.NewPost(
 				id,
 				id2,
@@ -360,6 +380,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "post optional data cannot contain more than 10 key-value pairs",
 		},
 		{
+			name: "post optional data values cannot exceed 200 characters",
 			post: types.NewPost(
 				id,
 				id2,
@@ -374,7 +395,7 @@ func TestPost_Validate(t *testing.T) {
 				date,
 				owner,
 			).WithMedias(medias).WithPollData(pollData),
-			expError: "post optional data values cannot exceed 200 characters. key1 of post with id 3139646530326531303563363861363065343563323839626666 is longer than this",
+			expError: "post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this",
 		},
 	}
 
@@ -391,8 +412,8 @@ func TestPost_Validate(t *testing.T) {
 }
 
 func TestPost_Equals(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -771,8 +792,8 @@ func TestPost_Equals(t *testing.T) {
 }
 
 func TestPost_GetPostHashtags(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -879,8 +900,8 @@ func TestPost_GetPostHashtags(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_String(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff")
-	id2 := []byte("f1b909289cd23188c19da17ae")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -915,7 +936,7 @@ func TestPosts_String(t *testing.T) {
 	}
 
 	expected := `ID - [Creator] Message
-3139646530326531303563363861363065343563323839626666 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-3139646530326531303563363861363065343563323839626666 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	require.Equal(t, expected, posts.String())
 }

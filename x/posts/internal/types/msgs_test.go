@@ -28,7 +28,7 @@ var pollData = types.NewPollData(
 	false,
 	true,
 )
-var id = []byte("19de02e105c68a60e45c289bff")
+var id = types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	id,
@@ -64,7 +64,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgCreatePost(
 				"Message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -79,7 +79,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty message returns error if medias and message are empty",
 			msg: types.NewMsgCreatePost(
 				"",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -94,7 +94,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if medias are empty",
 			msg: types.NewMsgCreatePost(
 				"message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -109,7 +109,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -124,7 +124,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty message returns no error if medias aren't empty",
 			msg: types.NewMsgCreatePost(
 				"",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -145,7 +145,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
 				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
 				`,
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -160,7 +160,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty subspace returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"",
 				map[string]string{},
@@ -175,7 +175,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "More than 10 optional data returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -202,7 +202,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Optional data longer than 200 characters returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -219,7 +219,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Future creation date returns error",
 			msg: types.NewMsgCreatePost(
 				"future post",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -234,7 +234,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty URI in medias returns error",
 			msg: types.NewMsgCreatePost(
 				"future post",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -254,7 +254,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Invalid URI in message returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -272,7 +272,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Empty mime type in message returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -292,7 +292,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Valid message does not return any error",
 			msg: types.NewMsgCreatePost(
 				"Message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{
@@ -320,7 +320,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty medias and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -335,7 +335,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with non-empty medias and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -350,7 +350,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with non-empty medias and empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -365,7 +365,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty medias and empty message returns error",
 			msg: types.NewMsgCreatePost(
 				"",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -380,7 +380,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Message with empty poll returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
-				nil,
+				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -439,7 +439,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My new post","optional_data":{"field":"value"},"parent_id":"3139646530326531303563363861363065343563323839626666","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -459,7 +459,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My post","parent_id":"3139646530326531303563363861363065343563323839626666","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty medias",
@@ -474,7 +474,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				types.PostMedias{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"3139646530326531303563363861363065343563323839626666","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty poll data",
@@ -494,7 +494,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				nil,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My Post without medias","parent_id":"3139646530326531303563363861363065343563323839626666","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My Post without medias","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -537,7 +537,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgEditPost(nil, "Edited post message", testOwner, editDate),
+			msg:   types.NewMsgEditPost("", "Edited post message", testOwner, editDate),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
@@ -588,7 +588,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2010-01-01T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"3139646530326531303563363861363065343563323839626666"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2010-01-01T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

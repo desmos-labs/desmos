@@ -57,14 +57,14 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post without reactions is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(computedID2, computedID, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			registeredReaction: nil,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{},
 				types.PostIDs{computedID2},
@@ -73,13 +73,13 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post without children is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			registeredReaction: nil,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{},
 				types.PostIDs{},
@@ -88,7 +88,7 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post without medias is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 				types.NewPost(computedID2, computedID, "Child", false, "", map[string]string{}, testPost.Created, creator),
 			},
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
@@ -101,7 +101,7 @@ func Test_queryPost(t *testing.T) {
 			registeredReaction: &reaction,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{
 					types.NewPostReaction(":like:", creator),
@@ -113,7 +113,7 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post without poll and poll answers is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				types.NewPost(computedID2, computedID, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedReactions: map[string]types.PostReactions{
@@ -125,7 +125,7 @@ func Test_queryPost(t *testing.T) {
 			registeredReaction: &reaction,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				nil,
 				types.PostReactions{
 					types.NewPostReaction(":like:", creator),
@@ -137,7 +137,7 @@ func Test_queryPost(t *testing.T) {
 		{
 			name: "Post with all data is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(computedID2, computedID, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedReactions: map[string]types.PostReactions{
@@ -150,7 +150,7 @@ func Test_queryPost(t *testing.T) {
 			registeredReaction: &reaction,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.NewPost(computedID, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				types.PostReactions{
 					types.NewPostReaction(":like:", creator),
@@ -180,9 +180,7 @@ func Test_queryPost(t *testing.T) {
 
 			for postID, reactions := range test.storedReactions {
 				for _, reaction := range reactions {
-					parsedID, err := types.ParsePostID(postID)
-					require.NoError(t, err)
-					err = k.SavePostReaction(ctx, parsedID, reaction)
+					err = k.SavePostReaction(ctx, types.PostID(postID), reaction)
 					require.NoError(t, err)
 				}
 			}
@@ -207,8 +205,8 @@ func Test_queryPost(t *testing.T) {
 }
 
 func Test_queryPosts(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -224,14 +222,14 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Empty params returns all",
 			storedPosts: types.Posts{
-				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			params:        types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 					types.PostReactions{},
 					types.PostIDs{id2},
@@ -263,13 +261,13 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Empty params returns all posts without poll data and poll answers",
 			storedPosts: types.Posts{
-				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
+				types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			params: types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
+					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 					nil,
 					types.PostReactions{},
 					types.PostIDs{id2},
@@ -279,14 +277,14 @@ func Test_queryPosts(t *testing.T) {
 		{
 			name: "Non empty params return proper posts",
 			storedPosts: types.Posts{
-				types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+				types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 			},
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			params:        types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.NewPost(id, nil, "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
+					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 					types.PostReactions{},
 					types.PostIDs{id2},
@@ -354,7 +352,7 @@ func Test_queryPollAnswers(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewPost(
 					computedID,
-					nil,
+					"",
 					"post with poll",
 					false,
 					"",
@@ -371,7 +369,7 @@ func Test_queryPollAnswers(t *testing.T) {
 			storedPosts: types.Posts{
 				types.NewPost(
 					computedID,
-					nil,
+					"",
 					"post with poll",
 					false,
 					"",

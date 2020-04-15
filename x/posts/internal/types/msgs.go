@@ -16,7 +16,7 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       PostID            `json:"parent_id,omitempty"`
+	ParentID       PostID            `json:"parent_id"`
 	Message        string            `json:"message"`
 	AllowsComments bool              `json:"allows_comments"`
 	Subspace       string            `json:"subspace"`

@@ -106,15 +106,7 @@ E.g.
 
 			allowsComments := viper.GetBool(flagAllowsComments)
 
-			parentID := types.PostID(nil)
-			if flagValue := viper.GetString(flagParentID); flagValue != defaultParentID {
-				val, err := types.ParsePostID(flagValue)
-				if err != nil {
-					return err
-				}
-				parentID = val
-			}
-
+			parentID := types.PostID(viper.GetString(flagParentID))
 			// medias' checks
 
 			mediasStrings, err := cmd.Flags().GetStringArray(flagMedia)
@@ -226,7 +218,7 @@ E.g.
 	}
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(flagParentID, defaultParentID, "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(flagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
@@ -245,9 +237,9 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
@@ -274,9 +266,9 @@ E.g.
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
@@ -303,9 +295,9 @@ E.g.
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
@@ -325,9 +317,9 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return err
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			var answers []types.AnswerID

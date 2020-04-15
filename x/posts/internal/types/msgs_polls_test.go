@@ -32,7 +32,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPoll(types.PostID(nil), []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPoll("", []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
 		},
 		{
@@ -67,7 +67,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 
 func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 	actual := msgAnswerPollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"3139646530326531303563363861363065343563323839626666"}}`
+	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

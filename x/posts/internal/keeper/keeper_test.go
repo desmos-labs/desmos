@@ -14,8 +14,8 @@ import (
 // -------------
 
 func TestKeeper_SavePost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name                 string
 		existingPosts        types.Posts
@@ -27,7 +27,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name: "Post with ID already present",
 			existingPosts: types.Posts{
 				types.NewPost(id,
-					nil,
+					"",
 					"Post",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -37,7 +37,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				),
 			},
 			newPost: types.NewPost(id,
-				nil,
+				"",
 				"New post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -51,7 +51,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name: "Post which ID is not already present",
 			existingPosts: types.Posts{
 				types.NewPost(id,
-					nil,
+					"",
 					"Post",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -61,7 +61,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				),
 			},
 			newPost: types.NewPost(id,
-				nil,
+				"",
 				"New post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -75,7 +75,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
 				types.NewPost(id,
-					nil,
+					"",
 					"Parent",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -99,7 +99,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name: "Post with ID greater ID than Last ID stored",
 			existingPosts: types.Posts{
 				types.NewPost(id,
-					nil,
+					"",
 					"Post lesser",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -109,7 +109,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				),
 			},
 			newPost: types.NewPost(id,
-				nil,
+				"",
 				"New post greater",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -123,7 +123,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name: "Post with ID lesser ID than Last ID stored",
 			existingPosts: types.Posts{
 				types.NewPost(id,
-					nil,
+					"",
 					"Post ID greater",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -133,7 +133,7 @@ func TestKeeper_SavePost(t *testing.T) {
 				),
 			},
 			newPost: types.NewPost(id,
-				nil,
+				"",
 				"New post ID lesser",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -148,7 +148,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			existingPosts: types.Posts{},
 			newPost: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post without medias",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -162,7 +162,7 @@ func TestKeeper_SavePost(t *testing.T) {
 			name:          "Post without poll data is saved properly",
 			existingPosts: types.Posts{},
 			newPost: types.NewPost(id,
-				nil,
+				"",
 				"New post ID lesser",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -201,7 +201,8 @@ func TestKeeper_SavePost(t *testing.T) {
 }
 
 func TestKeeper_GetPost(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+
 	tests := []struct {
 		name       string
 		postExists bool
@@ -219,7 +220,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			postExists: true,
 			expected: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -234,7 +235,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			postExists: true,
 			expected: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -249,7 +250,7 @@ func TestKeeper_GetPost(t *testing.T) {
 			postExists: true,
 			expected: types.NewPost(
 				id,
-				nil,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -280,10 +281,10 @@ func TestKeeper_GetPost(t *testing.T) {
 }
 
 func TestKeeper_GetPostChildrenIDs(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-	id3 := []byte("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
-	id4 := []byte("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+	id4 := types.PostID("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
 	tests := []struct {
 		name           string
 		storedPosts    types.Posts
@@ -298,13 +299,13 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(id, nil, "Original post", false,
+				types.NewPost(id, "", "Original post", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
 				types.NewPost(id2, id, "First commit", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
-				types.NewPost(id3, nil, "Second post", false,
+				types.NewPost(id3, "", "Second post", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
 				types.NewPost(id4, id3, "Comment to second post", false,
@@ -336,7 +337,7 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 }
 
 func TestKeeper_GetPosts(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name  string
 		posts types.Posts
@@ -350,7 +351,7 @@ func TestKeeper_GetPosts(t *testing.T) {
 			posts: types.Posts{
 				types.NewPost(
 					id,
-					nil,
+					"",
 					"",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -381,11 +382,11 @@ func TestKeeper_GetPosts(t *testing.T) {
 }
 
 func TestKeeper_GetPostsFiltered(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-	id3 := []byte("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
-	id4 := []byte("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
-	id5 := []byte("84a5d9fc5f0acd2bb9c0a49ecaefabbe4698372e1ae88d32f9f6f80b3c0ab95e")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+	id4 := types.PostID("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
+	id5 := types.PostID("84a5d9fc5f0acd2bb9c0a49ecaefabbe4698372e1ae88d32f9f6f80b3c0ab95e")
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")

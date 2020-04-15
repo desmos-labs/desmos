@@ -182,7 +182,7 @@ func randomPostEditFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, nil, "", true, nil
+		return sim.Account{}, "", "", true, nil
 	}
 
 	return *acc, post.PostID, RandomMessage(r), false, nil
