@@ -106,7 +106,7 @@ E.g.
 
 			allowsComments := viper.GetBool(flagAllowsComments)
 
-			var parentID types.PostID
+			parentID := types.PostID(nil)
 			if flagValue := viper.GetString(flagParentID); flagValue != defaultParentID {
 				val, err := types.ParsePostID(flagValue)
 				if err != nil {

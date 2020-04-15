@@ -671,7 +671,9 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 	require.NoError(t, err)
 
 	shortCode := ":smile:"
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	const (
+		subspace = "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+	)
 	value := "https://smile.jpg"
 	reaction := types.NewReaction(user, shortCode, value, subspace)
 

@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"encoding/hex"
 	"testing"
 	"time"
 
@@ -15,7 +16,8 @@ import (
 // -------------
 
 func TestParsePostID(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id, err := hex.DecodeString("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	require.NoError(t, err)
 	tests := []struct {
 		name     string
 		value    string
@@ -141,7 +143,7 @@ func TestPostID_MarshalJSON(t *testing.T) {
 
 	computedID := types.ComputeID(creationDate, creator, subspace)
 	json := types.ModuleCdc.MustMarshalJSON(computedID)
-	stringID := computedID.String()
+	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
 	require.Equal(t, stringID, string(json))
 }
 
@@ -152,7 +154,7 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	computedID := types.ComputeID(creationDate, creator, subspace)
-	stringID := computedID.String()
+	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
 
 	tests := []struct {
 		name     string
@@ -164,7 +166,7 @@ func TestPostID_UnmarshalJSON(t *testing.T) {
 			name:     "Invalid ID returns error",
 			value:    "id",
 			expID:    nil,
-			expError: "invalid postID cannot be parsed: id",
+			expError: "invalid character 'i' looking for beginning of value",
 		},
 		{
 			name:     "Valid id is read properly",
