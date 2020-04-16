@@ -10,9 +10,8 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/desmos-labs/desmos/x/commons"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // ---------------
@@ -300,7 +299,6 @@ func (p Posts) String() string {
 	return strings.TrimSpace(out)
 }
 
-// TODO should we remove these functions?
 // Len implements sort.Interface
 func (p Posts) Len() int {
 	return len(p)
@@ -309,4 +307,9 @@ func (p Posts) Len() int {
 // Swap implements sort.Interface
 func (p Posts) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
+}
+
+// Less implements sort.Interface
+func (p Posts) Less(i, j int) bool {
+	return p[i].Created.Before(p[j].Created)
 }

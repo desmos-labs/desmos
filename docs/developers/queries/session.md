@@ -14,5 +14,5 @@ desmoscli query sessions session [id]
 /sessions/{sessionId}
 
 # Example
-# curl https://morpheus1000.desmos.network/sessions/66
+# curl https://morpheus4000.desmos.network/sessions/66
 ```

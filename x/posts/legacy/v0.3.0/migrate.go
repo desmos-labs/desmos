@@ -17,8 +17,9 @@ func Migrate(oldGenState v020posts.GenesisState) GenesisState {
 	posts, reactions = SquashPostIDs(posts, reactions)
 
 	return GenesisState{
-		Posts:     migratePosts(posts),
-		Reactions: migrateReactions(reactions),
+		Posts:       migratePosts(posts),
+		PollAnswers: nil,
+		Reactions:   migrateReactions(reactions),
 	}
 }
 

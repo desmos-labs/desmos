@@ -6,7 +6,7 @@ This query endpoint allows you to retrieve the details of answers made to a post
 desmoscli query posts poll-answers [id]
 
 # Example
-# desmoscli query posts poll-answers 1
+# desmoscli query posts poll-answers a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
 ``` 
 
 **REST**
@@ -14,5 +14,5 @@ desmoscli query posts poll-answers [id]
 /posts/{postId}/poll-answers
 
 # Example
-# curl https://morpheus1000.desmos.network/posts/10/poll-answers
+# curl https://morpheus4000.desmos.network/posts/10/poll-answers
 ```

@@ -28,7 +28,7 @@ This message allows you to edit the message of a previously published public pos
 {
   "type": "desmos/MsgEditPost",
   "value": {
-    "post_id": "1",
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
     "message": "Desmos you rock!",
     "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
     "edit_date": "2020-02-05T01:00:00"

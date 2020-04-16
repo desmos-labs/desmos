@@ -27,7 +27,7 @@ With this message you can remove a reaction from a post you have previously reac
   "value": {
     "value": "like",
     "liker": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "post_id": "12"
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc"
   }
 }
 ```

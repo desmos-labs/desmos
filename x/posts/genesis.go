@@ -2,6 +2,7 @@ package posts
 
 import (
 	"fmt"
+	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -12,7 +13,7 @@ import (
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
 		Posts:               k.GetPosts(ctx),
-		PollAnswers:         k.GetPollAnswersMap(ctx),
+		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
 		PostReactions:       k.GetReactions(ctx),
 		RegisteredReactions: k.ListReactions(ctx),
 	}
@@ -20,12 +21,14 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+
 	// Sort the posts so that they are inserted based on their IDs
+	sort.Sort(data.Posts)
 	for _, post := range data.Posts {
 		keeper.SavePost(ctx, post)
 	}
 
-	for postID, usersAnswersDetails := range data.PollAnswers {
+	for postID, usersAnswersDetails := range data.UsersPollAnswers {
 		for _, userAnswersDetails := range usersAnswersDetails {
 			postID := types.PostID(postID)
 			if !postID.Valid() {

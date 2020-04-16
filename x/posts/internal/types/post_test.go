@@ -65,62 +65,6 @@ func TestPostID_String(t *testing.T) {
 	require.Equal(t, "f55d90114d81e70399d6330a57081b86ae1bdf928b78a57e88870f64240009ef", computedID.String())
 }
 
-func TestPostID_MarshalJSON(t *testing.T) {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-
-	computedID := types.ComputeID(creationDate, creator, subspace)
-	json := types.ModuleCdc.MustMarshalJSON(computedID)
-	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
-	require.Equal(t, stringID, string(json))
-}
-
-func TestPostID_UnmarshalJSON(t *testing.T) {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-
-	computedID := types.ComputeID(creationDate, creator, subspace)
-	stringID := string(types.ModuleCdc.MustMarshalJSON(computedID))
-
-	tests := []struct {
-		name     string
-		value    string
-		expID    types.PostID
-		expError string
-	}{
-		{
-			name:     "Invalid ID returns error",
-			value:    "id",
-			expID:    "",
-			expError: "invalid character 'i' looking for beginning of value",
-		},
-		{
-			name:     "Valid id is read properly",
-			value:    stringID,
-			expID:    computedID,
-			expError: "",
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			var id types.PostID
-			err := types.ModuleCdc.UnmarshalJSON([]byte(test.value), &id)
-
-			if err == nil {
-				require.Equal(t, test.expID, id)
-			} else {
-				require.Equal(t, test.expError, err.Error())
-			}
-		})
-	}
-}
-
 // -------------
 // --- PostIDs
 // -------------

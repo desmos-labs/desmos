@@ -43,11 +43,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 
 		var commentsIDs types.PostIDs
 		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
-
 		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
-			sort.Slice(editedIDs, func(i, j int) bool {
-				return editedIDs[i].String() < editedIDs[j].String()
-			})
 			store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&editedIDs))
 		}
 	}

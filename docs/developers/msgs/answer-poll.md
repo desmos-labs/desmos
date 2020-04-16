@@ -25,7 +25,7 @@ This message allows you to answer to a post's poll.
 {
   "type": "desmos/MsgAnswerPoll",
   "value": {
-    "post_id": "1",
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
     "answers": [
       "1",
       "2"

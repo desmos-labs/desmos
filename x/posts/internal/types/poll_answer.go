@@ -90,13 +90,13 @@ func (pa PollAnswer) Equals(other PollAnswer) bool {
 }
 
 // ---------------
-// --- PollAnswers
+// --- UsersPollAnswers
 // ---------------
 
-// PollAnswers represents a slice of poll answers
+// UsersPollAnswers represents a slice of poll answers
 type PollAnswers []PollAnswer
 
-// NewPollAnswers builds a new PollAnswers object starting from the given answers
+// NewPollAnswers builds a new UsersPollAnswers object starting from the given answers
 func NewPollAnswers(answers ...PollAnswer) PollAnswers {
 	return answers
 }
@@ -143,7 +143,7 @@ func (answers PollAnswers) Equals(other PollAnswers) bool {
 }
 
 // AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
-// It returns a new slice of PollAnswers containing such PollAnswer.
+// It returns a new slice of UsersPollAnswers containing such PollAnswer.
 func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
 	for _, answer := range answers {
 		if answer.Equals(newAnswer) {

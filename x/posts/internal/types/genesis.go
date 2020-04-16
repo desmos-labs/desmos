@@ -3,7 +3,7 @@ package types
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
 	Posts               Posts                    `json:"posts"`
-	PollAnswers         map[string]UserAnswers   `json:"poll_answers_details"`
+	UsersPollAnswers    map[string]UserAnswers   `json:"users_poll_answers"`
 	PostReactions       map[string]PostReactions `json:"post_reactions"`
 	RegisteredReactions Reactions                `json:"registered_reactions"`
 }
@@ -30,7 +30,7 @@ func ValidateGenesis(data GenesisState) error {
 		}
 	}
 
-	for _, pollAnswers := range data.PollAnswers {
+	for _, pollAnswers := range data.UsersPollAnswers {
 		for _, pollAnswer := range pollAnswers {
 			if err := pollAnswer.Validate(); err != nil {
 				return err

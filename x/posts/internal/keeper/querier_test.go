@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -43,6 +44,12 @@ func Test_queryPost(t *testing.T) {
 		expError           error
 	}{
 		{
+			name:               "Invalid query endpoint",
+			path:               []string{"invalid", ""},
+			registeredReaction: nil,
+			expError:           fmt.Errorf("unknown post query endpoint"),
+		},
+		{
 			name:               "Invalid ID returns error",
 			path:               []string{types.QueryPost, ""},
 			registeredReaction: nil,
@@ -50,9 +57,9 @@ func Test_queryPost(t *testing.T) {
 		},
 		{
 			name:               "Post not found returns error",
-			path:               []string{types.QueryPost, "1"},
+			path:               []string{types.QueryPost, computedID.String()},
 			registeredReaction: nil,
-			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: 1"),
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id f29d559522dd14484d38330a4df10115c04814d23cf35aabd9c35c80dbd5268f not found"),
 		},
 		{
 			name: "Post without reactions is returned properly",

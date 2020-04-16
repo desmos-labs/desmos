@@ -24,7 +24,8 @@ func TestMigrate(t *testing.T) {
 			{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
 			{Subspace: "106a5842fc5fce6f663176285ed1516dbb1e3d15c05abab12fdca46d60b539b7"},
 		},
-		Reactions: nil,
+		PollAnswers: nil,
+		Reactions:   nil,
 	}
 
 	// Check for posts
