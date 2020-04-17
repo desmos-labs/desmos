@@ -14,5 +14,5 @@ desmoscli query posts poll-answers [id]
 /posts/{postId}/poll-answers
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/posts/10/poll-answers
+# curl http://lcd.morpheus.desmos.network:1317/posts/a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc/poll-answers
 ```
