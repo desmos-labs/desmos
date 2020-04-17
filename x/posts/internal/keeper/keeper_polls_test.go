@@ -9,7 +9,7 @@ import (
 )
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -28,14 +28,14 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	}{
 		{
 			name:               "Save answers with no previous answers in this context",
-			postID:             types.PostID(id),
+			postID:             id,
 			userAnswersDetails: types.NewUserAnswer(answers, user),
 			previousUsersAD:    nil,
 			expUsersAD:         types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 		{
 			name:               "Save new answers",
-			postID:             types.PostID(id),
+			postID:             id,
 			userAnswersDetails: types.NewUserAnswer(answers2, user2),
 			previousUsersAD:    types.UserAnswers{types.NewUserAnswer(answers, user)},
 			expUsersAD: types.UserAnswers{
@@ -67,7 +67,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 }
 
 func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -80,12 +80,12 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	}{
 		{
 			name:          "No answers returns empty list",
-			postID:        types.PostID(id),
+			postID:        id,
 			storedAnswers: nil,
 		},
 		{
 			name:          "Answers returned correctly",
-			postID:        types.PostID(id),
+			postID:        id,
 			storedAnswers: types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 	}
@@ -107,7 +107,7 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 }
 
 func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -126,14 +126,14 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 		{
 			name:          "No answers for user returns nil",
 			storedAnswers: types.NewUserAnswer(answers, user),
-			postID:        types.PostID(id),
+			postID:        id,
 			user:          user2,
 			expAnswers:    nil,
 		},
 		{
 			name:          "Matching user returns answers made by him",
 			storedAnswers: types.NewUserAnswer(answers, user),
-			postID:        types.PostID(id),
+			postID:        id,
 			user:          user,
 			expAnswers:    answers,
 		},
