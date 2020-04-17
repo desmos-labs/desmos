@@ -96,7 +96,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
 
 		// match parent id if valid
-		if params.ParentID != nil {
+		if params.ParentID != "" {
 			matchParentID = params.ParentID.Equals(post.ParentID)
 		}
 

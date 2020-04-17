@@ -455,7 +455,7 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		},
 		{
 			name:     "Parent ID matcher works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: &posts[0].ParentID},
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: posts[0].ParentID},
 			expected: types.Posts{posts[0], posts[1]},
 		},
 		{
