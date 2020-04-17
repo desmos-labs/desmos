@@ -57,7 +57,7 @@ func TestPollAnswer_Equals(t *testing.T) {
 }
 
 // ---------------
-// --- UsersPollAnswers
+// --- PollAnswers
 // ---------------
 
 func TestPollAnswers_String(t *testing.T) {
