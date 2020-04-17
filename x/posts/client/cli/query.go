@@ -93,11 +93,11 @@ $ %s query posts posts --page=2 --limit=100
 
 			// ParentID
 			if parentID := viper.GetString(flagParentID); len(parentID) > 0 {
-				pID := types.PostID(parentID)
-				if err := pID.Valid(); err != nil {
-					return err
+				id := types.PostID(parentID)
+				if !id.Valid() {
+					return fmt.Errorf("invalid postID: %s", id)
 				}
-				params.ParentID = pID
+				params.ParentID = &id
 			}
 
 			// CreationTime

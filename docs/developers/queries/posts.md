@@ -42,5 +42,6 @@ Available parameters:
 
 ```bash
 # Example
-# curl https://morpheus4000.desmos.network/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+# curl http://lcd.morpheus.desmos.network:1317/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+
 ```

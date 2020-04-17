@@ -36,7 +36,7 @@ func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
-	if err := msg.PostID.Valid(); err != nil {
+	if !msg.PostID.Valid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
 	}
 
@@ -90,7 +90,7 @@ func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
-	if err := msg.PostID.Valid(); err != nil {
+	if !msg.PostID.Valid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
 	}
 

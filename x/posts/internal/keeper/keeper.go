@@ -38,7 +38,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Save the comments to the parent post, if it is valid
-	if err := post.ParentID.Valid(); err == nil {
+	if post.ParentID.Valid() {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
 		var commentsIDs types.PostIDs
@@ -96,7 +96,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
 
 		// match parent id if valid
-		if params.ParentID != "" {
+		if params.ParentID != nil {
 			matchParentID = params.ParentID.Equals(post.ParentID)
 		}
 
@@ -143,9 +143,18 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		var result bool
 		first, second := filteredPosts[i], filteredPosts[j]
 
-		result = first.Created.Before(second.Created)
-		if params.SortOrder == types.PostSortOrderDescending {
-			result = first.Created.After(second.Created)
+		switch params.SortBy {
+		case types.PostSortByCreationDate:
+			result = first.Created.Before(second.Created)
+			if params.SortOrder == types.PostSortOrderDescending {
+				result = first.Created.After(second.Created)
+			}
+
+		default:
+			result = first.PostID < second.PostID
+			if params.SortOrder == types.PostSortOrderDescending {
+				result = first.PostID > second.PostID
+			}
 		}
 
 		// This should never be reached

@@ -455,8 +455,8 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		},
 		{
 			name:     "Parent ID matcher works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: posts[0].ParentID},
-			expected: types.Posts{posts[0], posts[1]},
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: &posts[0].ParentID},
+			expected: types.Posts{posts[1], posts[0]},
 		},
 		{
 			name:     "Creation time matcher works properly",
@@ -487,6 +487,16 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			name:     "Sorting by date descending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
 			expected: types.Posts{posts[2], posts[1], posts[0]},
+		},
+		{
+			name:     "Sorting by ID ascending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
+			expected: types.Posts{posts[1], posts[2], posts[0]},
+		},
+		{
+			name:     "Sorting by ID descending works properly",
+			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
+			expected: types.Posts{posts[0], posts[2], posts[1]},
 		},
 		{
 			name:     "Filtering by hashtags works properly",

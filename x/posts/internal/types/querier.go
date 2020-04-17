@@ -14,7 +14,7 @@ type QueryPostsParams struct {
 	SortBy    string // Field that should determine the sorting
 	SortOrder string // Either ascending or descending
 
-	ParentID       PostID
+	ParentID       *PostID
 	CreationTime   *time.Time
 	AllowsComments *bool
 	Subspace       string
@@ -30,7 +30,7 @@ func DefaultQueryPostsParams(page, limit int) QueryPostsParams {
 		SortBy:    PostSortByCreationDate,
 		SortOrder: PostSortOrderAscending,
 
-		ParentID:       "",
+		ParentID:       nil,
 		CreationTime:   nil,
 		AllowsComments: nil,
 		Subspace:       "",
