@@ -54,7 +54,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7. Please check that either their creation date, subspace or creator are different"),
+				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -148,7 +148,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 				testPost.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7. Please check that either their creation date, subspace or creator are different"),
+				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
 		},
 	}
 

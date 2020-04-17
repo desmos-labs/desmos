@@ -52,8 +52,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	// Check for double posting
 	if existing, found := keeper.GetPost(ctx, post.PostID); found {
-		msg := `the provided post conflicts with the one having id %s. Please check that either their creation date, subspace or creator are different`
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(msg, existing.PostID))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the provided post conflicts with the one having id %s", existing.PostID))
 	}
 
 	// If valid, check the parent post
