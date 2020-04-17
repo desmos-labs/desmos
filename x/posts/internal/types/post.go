@@ -129,12 +129,12 @@ func (p Post) WithPollData(data PollData) Post {
 
 // String implements fmt.Stringer
 func (p Post) String() string {
-	b, err := json.Marshal(&p)
+	bytes, err := json.Marshal(&p)
 	if err != nil {
 		panic(err)
 	}
 
-	return string(b)
+	return string(bytes)
 }
 
 // Validate implements validator
