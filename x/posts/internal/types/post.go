@@ -29,8 +29,11 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 }
 
 // Valid tells if the id can be used safely
-func (id PostID) Valid() bool {
-	return strings.TrimSpace(id.String()) != "" && Sha256RegEx.MatchString(id.String())
+func (id PostID) Valid() error {
+	if strings.TrimSpace(id.String()) == "" || !Sha256RegEx.MatchString(id.String()) {
+		return fmt.Errorf("invalid postID: %s", id)
+	}
+	return nil
 }
 
 // String implements fmt.Stringer
@@ -136,8 +139,8 @@ func (p Post) String() string {
 
 // Validate implements validator
 func (p Post) Validate() error {
-	if !p.PostID.Valid() {
-		return fmt.Errorf("invalid post id: %s", p.PostID)
+	if err := p.PostID.Valid(); err != nil {
+		return err
 	}
 
 	if p.Creator == nil {

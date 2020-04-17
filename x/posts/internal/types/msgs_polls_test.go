@@ -33,7 +33,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id",
 			msg:   types.NewMsgAnswerPoll("", []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid answerer address",

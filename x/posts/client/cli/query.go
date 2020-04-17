@@ -94,8 +94,8 @@ $ %s query posts posts --page=2 --limit=100
 			// ParentID
 			if parentID := viper.GetString(flagParentID); len(parentID) > 0 {
 				pID := types.PostID(parentID)
-				if !pID.Valid() {
-					return fmt.Errorf("invalid parent ID, %s", parentID)
+				if err := pID.Valid(); err != nil {
+					return err
 				}
 				params.ParentID = pID
 			}

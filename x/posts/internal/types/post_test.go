@@ -209,7 +209,7 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name:     "Invalid postID",
 			post:     types.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
-			expError: "invalid post id: ",
+			expError: "invalid postID: ",
 		},
 		{
 			name:     "Invalid post owner",

@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -41,8 +40,8 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		parentID := types.PostID(req.ParentID)
-		if !parentID.Valid() {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid parent ID: %s", parentID))
+		if err := parentID.Valid(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -79,8 +78,8 @@ func addReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		postID := types.PostID(req.PostID)
-		if !postID.Valid() {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid parent ID: %s", postID))
+		if err := postID.Valid(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -115,8 +114,8 @@ func removeReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		postID := types.PostID(req.PostID)
-		if !postID.Valid() {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid parent ID: %s", postID))
+		if err := postID.Valid(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -153,8 +152,8 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		postID := types.PostID(vars["postID"])
-		if !postID.Valid() {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid parent ID: %s", postID))
+		if err := postID.Valid(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 

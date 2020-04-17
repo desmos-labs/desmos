@@ -57,7 +57,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	}
 
 	// If valid, check the parent post
-	if post.ParentID.Valid() {
+	if err := post.ParentID.Valid(); err == nil {
 		parentPost, found := keeper.GetPost(ctx, post.ParentID)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("parent post with id %s not found", post.ParentID))

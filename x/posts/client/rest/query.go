@@ -78,8 +78,8 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
 			id := types.PostID(v)
-			if !id.Valid() {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid post ID: %s", v))
+			if err := id.Valid(); err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			params.ParentID = id

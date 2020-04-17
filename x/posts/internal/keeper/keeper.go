@@ -38,7 +38,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Save the comments to the parent post, if it is valid
-	if post.ParentID.Valid() {
+	if err := post.ParentID.Valid(); err == nil {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
 		var commentsIDs types.PostIDs

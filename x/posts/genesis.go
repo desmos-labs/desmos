@@ -1,7 +1,6 @@
 package posts
 
 import (
-	"fmt"
 	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,8 +30,8 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	for postID, usersAnswersDetails := range data.UsersPollAnswers {
 		for _, userAnswersDetails := range usersAnswersDetails {
 			postID := types.PostID(postID)
-			if !postID.Valid() {
-				panic(fmt.Sprintf("invalid parent ID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				panic(err)
 			}
 			keeper.SavePollAnswers(ctx, postID, userAnswersDetails)
 		}
@@ -47,8 +46,8 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	for postID, postReactions := range data.PostReactions {
 		for _, postReaction := range postReactions {
 			postID := types.PostID(postID)
-			if !postID.Valid() {
-				panic(fmt.Sprintf("invalid parent ID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				panic(err)
 			}
 			if err := keeper.SavePostReaction(ctx, postID, postReaction); err != nil {
 				panic(err)

@@ -53,7 +53,7 @@ func Test_queryPost(t *testing.T) {
 			name:               "Invalid ID returns error",
 			path:               []string{types.QueryPost, ""},
 			registeredReaction: nil,
-			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: "),
 		},
 		{
 			name:               "Post not found returns error",
@@ -346,12 +346,12 @@ func Test_queryPollAnswers(t *testing.T) {
 		{
 			name:     "Invalid post id returns error",
 			path:     []string{types.QueryPollAnswers, ""},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: "),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: "),
 		},
 		{
 			name:     "Post not found returns error",
 			path:     []string{types.QueryPollAnswers, "1"},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid post id: 1"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1"),
 		},
 		{
 			name: "Post without poll returns error",

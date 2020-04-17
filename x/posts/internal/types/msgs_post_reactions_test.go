@@ -33,7 +33,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgAddPostReaction("", ":like:", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user returns error",
@@ -101,7 +101,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgRemovePostReaction("", testOwner, "like"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user address: ",

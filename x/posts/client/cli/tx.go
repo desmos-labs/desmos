@@ -234,8 +234,8 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
@@ -263,8 +263,8 @@ E.g.
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
@@ -292,8 +292,8 @@ E.g.
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
@@ -314,8 +314,8 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			if err := postID.Valid(); err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 			}
 
 			var answers []types.AnswerID

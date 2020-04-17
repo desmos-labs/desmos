@@ -35,8 +35,8 @@ func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
-	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
+	if err := msg.PostID.Valid(); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
 	}
 
 	if msg.Answerer.Empty() {
