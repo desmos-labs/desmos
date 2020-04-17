@@ -4,7 +4,7 @@ import (
 	v030magpie "github.com/desmos-labs/desmos/x/magpie/legacy/v0.3.0"
 )
 
-// Migrate accepts exported genesis state from v0.2.0 and migrates it to v0.3.0
+// Migrate accepts exported genesis state from v0.3.0 and migrates it to v0.4.0
 // genesis state. This migration adds the default session length to the new genesis state.
 func Migrate(oldGenState v030magpie.GenesisState) GenesisState {
 	return GenesisState{
