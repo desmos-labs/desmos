@@ -77,12 +77,12 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
-			parsedParentID, err := types.ParsePostID(v)
-			if err != nil {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			parentID := types.PostID(v)
+			if !parentID.Valid() {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 				return
 			}
-			params.ParentID = &parsedParentID
+			params.ParentID = &parentID
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {

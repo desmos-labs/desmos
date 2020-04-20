@@ -60,9 +60,9 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 
 // queryPost handles the request to get a post having a specific id
 func queryPost(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	id, err := types.ParsePostID(path[0])
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Invalid post id: %s", path[0]))
+	id := types.PostID(path[0])
+	if !id.Valid() {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
 	}
 
 	post, found := keeper.GetPost(ctx, id)
@@ -105,10 +105,9 @@ func queryPosts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, 
 
 //queryPollAnswers handles the request to get poll answers related to a post with given id
 func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	id, err := types.ParsePostID(path[0])
-
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Invalid post id: %s", path[0]))
+	id := types.PostID(path[0])
+	if !id.Valid() {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
 	}
 
 	post, found := keeper.GetPost(ctx, id)

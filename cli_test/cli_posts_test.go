@@ -41,7 +41,8 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Nil(t, post.Medias)
 
@@ -94,7 +95,8 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.False(t, post.AllowsComments)
 	require.Nil(t, post.PollData)
 	require.Nil(t, post.Medias)
@@ -151,7 +153,8 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 2)
 	require.Equal(t, post.Medias, posts.NewPostMedias(
@@ -212,7 +215,8 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 2)
 	require.Equal(t, post.Medias, posts.NewPostMedias(
@@ -271,7 +275,8 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 0)
 
@@ -327,7 +332,8 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	require.Equal(t, posts.PostID(1), post.PostID)
+	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.Medias)
 	require.NotNil(t, post.PollData)
 
@@ -403,24 +409,29 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
 	// Insert an answer
-	success, _, sterr = f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "-y")
+	success, _, sterr = f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Check that answers have been inserted
-	post := f.QueryPost(1)
-	require.NotEmpty(t, post.PollAnswers)
-	require.Equal(t, posts.NewUserAnswer([]posts.AnswerID{posts.AnswerID(1)}, fooAddr), post.PollAnswers[0])
+	postQueryResponse := f.QueryPost(post.PostID.String())
+	require.NotEmpty(t, postQueryResponse.PollAnswers)
+	require.Equal(t, posts.NewUserAnswer([]posts.AnswerID{posts.AnswerID(1)}, fooAddr), postQueryResponse.PollAnswers[0])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--dry-run")
+	success, _, stderr := f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--dry-run")
 	require.Empty(t, sterr)
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAnswerPoll(posts.PostID(1), []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -429,8 +440,8 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
-	post = f.QueryPost(1)
-	require.Len(t, post.PollAnswers, 1)
+	postQueryResponse = f.QueryPost(post.PostID.String())
+	require.Len(t, postQueryResponse.PollAnswers, 1)
 
 	f.Cleanup()
 }
@@ -452,23 +463,28 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
 	// Edit the message
-	success, _, sterr = f.TxPostsEdit(1, "NewMessage", fooAddr, "-y")
+	success, _, sterr = f.TxPostsEdit(post.PostID.String(), "NewMessage", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the message is edited
-	storedPost := f.QueryPost(1)
-	require.Equal(t, posts.PostID(1), storedPost.PostID)
+	storedPost := f.QueryPost(post.PostID.String())
+	require.Equal(t, post.PostID, storedPost.PostID)
 	require.Equal(t, "NewMessage", storedPost.Message)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsEdit(1, "OtherMessage", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsEdit(1, "OtherMessage", fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -477,7 +493,7 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
-	storedPosts := f.QueryPosts()
+	storedPosts = f.QueryPosts()
 	require.Len(t, storedPosts, 1)
 
 	f.Cleanup()
@@ -508,6 +524,11 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
 	// Register reactions
 	for _, reaction := range reactions {
 		success, _, sterr = f.TxPostsRegisterReaction(reaction.ShortCode, reaction.Value, reaction.Subspace, reaction.Creator, "-y")
@@ -520,22 +541,22 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// add-reaction
 
 	// Add a reaction
-	success, _, sterr = f.TxPostsAddReaction(1, ":thumbsup:", fooAddr, "-y")
+	success, _, sterr = f.TxPostsAddReaction(post.PostID.String(), ":thumbsup:", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the reaction is added
-	storedPost := f.QueryPost(1)
+	storedPost := f.QueryPost(post.PostID.String())
 	require.Len(t, storedPost.Reactions, 1)
 	require.Equal(t, storedPost.Reactions[0], posts.NewPostReaction(":thumbsup:", fooAddr))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(1, ":blush:", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAddReaction(1, ":thumbsdown:", fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsAddReaction(post.PostID.String(), ":thumbsdown:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -544,28 +565,28 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
-	storedPost = f.QueryPost(1)
+	storedPost = f.QueryPost(post.PostID.String())
 	require.Len(t, storedPost.Reactions, 1)
 
 	// __________________________________________________________________________________
 	// remove-reaction
 
 	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(1, ":thumbsup:", fooAddr, "-y")
+	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":thumbsup:", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the reaction has been removed
-	storedPost = f.QueryPost(1)
+	storedPost = f.QueryPost(post.PostID.String())
 	require.Empty(t, storedPost.Reactions)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRemoveReaction(1, ":blush:", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRemoveReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr = f.TxPostsRemoveReaction(1, ":thumbsdown:", fooAddr, "--generate-only=true")
+	success, stdout, stderr = f.TxPostsRemoveReaction(post.PostID.String(), ":thumbsdown:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg = unmarshalStdTx(f.T, stdout)
@@ -574,7 +595,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
-	storedPost = f.QueryPost(1)
+	storedPost = f.QueryPost(post.PostID.String())
 	require.Empty(t, storedPost.Reactions)
 
 	f.Cleanup()

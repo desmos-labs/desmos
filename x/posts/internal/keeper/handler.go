@@ -36,7 +36,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
-		keeper.GetLastPostID(ctx).Next(),
+		types.ComputeID(msg.CreationDate, msg.Creator, msg.Subspace),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
@@ -51,9 +51,8 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 	}
 
 	// Check for double posting
-	if existing, found := keeper.IsPostConflicting(ctx, post); found {
-		msg := `the provided post conflicts with the one having id %s. Please check that either their creation date, subspace or creator are different`
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(msg, existing.PostID))
+	if existing, found := keeper.GetPost(ctx, post.PostID); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the provided post conflicts with the one having id %s", existing.PostID))
 	}
 
 	// If valid, check the parent post

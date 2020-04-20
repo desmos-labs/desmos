@@ -428,22 +428,22 @@ func (f *Fixtures) TxPostsAnswerPoll(pollID posts.PostID, answers []posts.Answer
 }
 
 // TxPostsEdit is desmoscli tx posts edit
-func (f *Fixtures) TxPostsEdit(id int, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx posts edit %d %s --keyring-backend=test --from=%s %v`,
+func (f *Fixtures) TxPostsEdit(id string, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts edit %s %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, id, message, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsAddReaction is desmoscli tx posts add-reaction
-func (f *Fixtures) TxPostsAddReaction(id int, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx posts add-reaction %d %s --keyring-backend=test --from=%s %v`,
+func (f *Fixtures) TxPostsAddReaction(id string, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts add-reaction %s %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, id, reaction, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsRemoveReaction is desmoscli tx posts remove-reaction
-func (f *Fixtures) TxPostsRemoveReaction(id int, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx posts remove-reaction %d %s --keyring-backend=test --from=%s %v`,
+func (f *Fixtures) TxPostsRemoveReaction(id string, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx posts remove-reaction %s %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, id, reaction, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
@@ -763,8 +763,8 @@ func (f *Fixtures) QueryPosts(flags ...string) posts.Posts {
 }
 
 // QueryPost returns a specific stored post
-func (f *Fixtures) QueryPost(id int, flags ...string) posts.PostQueryResponse {
-	cmd := fmt.Sprintf("%s query posts post %d --output=json %s", f.DesmosliBinary, id, f.Flags())
+func (f *Fixtures) QueryPost(id string, flags ...string) posts.PostQueryResponse {
+	cmd := fmt.Sprintf("%s query posts post %s --output=json %s", f.DesmosliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()

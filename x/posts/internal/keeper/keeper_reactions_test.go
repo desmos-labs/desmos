@@ -15,6 +15,7 @@ import (
 // -------------
 
 func TestKeeper_SaveReaction(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -34,10 +35,10 @@ func TestKeeper_SaveReaction(t *testing.T) {
 		{
 			name:           "PostReaction from same user already present returns expError",
 			storedReaction: types.PostReactions{types.NewPostReaction(":like:", liker)},
-			postID:         types.PostID(10),
+			postID:         id,
 			reaction:       types.NewPostReaction(":like:", liker),
 			storedPost: types.NewPost(
-				types.PostID(10),
+				id,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -48,16 +49,16 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":like:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with :like: to the post with id 10"),
+			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with :like: to the post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", liker)},
 		},
 		{
 			name:           "PostReaction is not a registered reaction and returns error",
 			storedReaction: types.PostReactions{},
-			postID:         types.PostID(10),
+			postID:         id,
 			reaction:       types.NewPostReaction(":like:", liker),
 			storedPost: types.NewPost(
-				types.PostID(10),
+				id,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -68,15 +69,15 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 10 and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
+			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
 		},
 		{
 			name:           "First liker is stored properly",
 			storedReaction: types.PostReactions{},
-			postID:         types.PostID(10),
+			postID:         id,
 			reaction:       types.NewPostReaction(":like:", liker),
 			storedPost: types.NewPost(
-				types.PostID(10),
+				id,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -93,10 +94,10 @@ func TestKeeper_SaveReaction(t *testing.T) {
 		{
 			name:           "Second liker is stored properly",
 			storedReaction: types.PostReactions{types.NewPostReaction(":like:", liker)},
-			postID:         types.PostID(10),
+			postID:         id,
 			reaction:       types.NewPostReaction(":like:", otherLiker),
 			storedPost: types.NewPost(
-				types.PostID(10),
+				id,
 				testPost.ParentID,
 				testPost.Message,
 				testPost.AllowsComments,
@@ -139,6 +140,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 }
 
 func TestKeeper_RemoveReaction(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -154,7 +156,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 		{
 			name:           "PostReaction from same liker is removed properly",
 			storedLikes:    types.PostReactions{types.NewPostReaction(":like:", liker)},
-			postID:         types.PostID(10),
+			postID:         id,
 			liker:          liker,
 			value:          ":like:",
 			error:          nil,
@@ -163,7 +165,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 		{
 			name:           "Non existing reaction returns error - Creator",
 			storedLikes:    types.PostReactions{},
-			postID:         types.PostID(15),
+			postID:         id,
 			liker:          liker,
 			value:          ":like:",
 			error:          fmt.Errorf("cannot remove the reaction with value :like: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
@@ -172,7 +174,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 		{
 			name:           "Non existing reaction returns error - Value",
 			storedLikes:    types.PostReactions{types.NewPostReaction(":like:", liker)},
-			postID:         types.PostID(15),
+			postID:         id,
 			liker:          liker,
 			value:          ":smile:",
 			error:          fmt.Errorf("cannot remove the reaction with value :smile: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
@@ -205,6 +207,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 }
 
 func TestKeeper_GetPostReactions(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -221,7 +224,7 @@ func TestKeeper_GetPostReactions(t *testing.T) {
 		{
 			name:   "Empty list are returned properly",
 			likes:  types.PostReactions{},
-			postID: types.PostID(10),
+			postID: id,
 		},
 		{
 			name: "Valid list of likes is returned properly",
@@ -229,7 +232,7 @@ func TestKeeper_GetPostReactions(t *testing.T) {
 				types.NewPostReaction(":smile:", otherLiker),
 				types.NewPostReaction(":smile:", liker),
 			},
-			postID:             types.PostID(3257),
+			postID:             id,
 			storedPost:         testPost,
 			registeredReaction: testRegisteredReaction,
 		},
@@ -258,6 +261,8 @@ func TestKeeper_GetPostReactions(t *testing.T) {
 }
 
 func TestKeeper_GetReactions(t *testing.T) {
+	id := "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
+	id2 := "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"
 	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
@@ -266,20 +271,20 @@ func TestKeeper_GetReactions(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		likes map[types.PostID]types.PostReactions
+		likes map[string]types.PostReactions
 	}{
 		{
 			name:  "Empty likes data are returned correctly",
-			likes: map[types.PostID]types.PostReactions{},
+			likes: map[string]types.PostReactions{},
 		},
 		{
 			name: "Non empty likes data are returned correcly",
-			likes: map[types.PostID]types.PostReactions{
-				types.PostID(5): {
+			likes: map[string]types.PostReactions{
+				id: {
 					types.NewPostReaction("reaction", liker1),
 					types.NewPostReaction("reaction", liker2),
 				},
-				types.PostID(10): {
+				id2: {
 					types.NewPostReaction("reaction", liker1),
 				},
 			},
@@ -292,7 +297,7 @@ func TestKeeper_GetReactions(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
 			for postID, likes := range test.likes {
-				store.Set(types.PostReactionsStoreKey(postID), k.Cdc.MustMarshalBinaryBare(likes))
+				store.Set(types.PostReactionsStoreKey(types.PostID(postID)), k.Cdc.MustMarshalBinaryBare(likes))
 			}
 
 			likesData := k.GetReactions(ctx)

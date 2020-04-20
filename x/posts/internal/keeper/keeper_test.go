@@ -13,44 +13,12 @@ import (
 // --- Posts
 // -------------
 
-func TestKeeper_GetLastPostId(t *testing.T) {
-	tests := []struct {
-		name       string
-		existingID types.PostID
-		expected   types.PostID
-	}{
-		{
-			name:     "First ID returns correct value",
-			expected: types.PostID(0),
-		},
-		{
-			name:       "Existing ID returns correct value",
-			existingID: types.PostID(3),
-			expected:   types.PostID(3),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			if test.existingID.Valid() {
-				store := ctx.KVStore(k.StoreKey)
-				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
-			}
-
-			actual := k.GetLastPostID(ctx)
-			require.Equal(t, test.expected, actual)
-		})
-	}
-}
-
 func TestKeeper_SavePost(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name                 string
 		existingPosts        types.Posts
-		lastPostID           types.PostID
 		newPost              types.Post
 		expParentCommentsIDs types.PostIDs
 		expLastID            types.PostID
@@ -58,8 +26,8 @@ func TestKeeper_SavePost(t *testing.T) {
 		{
 			name: "Post with ID already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1),
-					types.PostID(0),
+				types.NewPost(id,
+					"",
 					"Post",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -68,9 +36,8 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Creator,
 				),
 			},
-			lastPostID: types.PostID(1),
-			newPost: types.NewPost(types.PostID(1),
-				types.PostID(0),
+			newPost: types.NewPost(id,
+				"",
 				"New post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -79,13 +46,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Creator,
 			),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(1),
 		},
 		{
 			name: "Post which ID is not already present",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(1),
-					types.PostID(0),
+				types.NewPost(id,
+					"",
 					"Post",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -94,9 +60,8 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Creator,
 				),
 			},
-			lastPostID: types.PostID(1),
-			newPost: types.NewPost(types.PostID(15),
-				types.PostID(0),
+			newPost: types.NewPost(id,
+				"",
 				"New post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -105,13 +70,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Creator,
 			),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(15),
 		},
 		{
 			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
-				types.NewPost(types.PostID(1),
-					types.PostID(0),
+				types.NewPost(id,
+					"",
 					"Parent",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -120,9 +84,8 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPost.Creator,
 				),
 			},
-			lastPostID: types.PostID(1),
-			newPost: types.NewPost(types.PostID(15),
-				types.PostID(1),
+			newPost: types.NewPost(id2,
+				id,
 				"Comment",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -130,14 +93,13 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPost.Created,
 				testPost.Creator,
 			),
-			expParentCommentsIDs: []types.PostID{types.PostID(15)},
-			expLastID:            types.PostID(15),
+			expParentCommentsIDs: []types.PostID{id2},
 		},
 		{
 			name: "Post with ID greater ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4),
-					types.PostID(0),
+				types.NewPost(id,
+					"",
 					"Post lesser",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -146,9 +108,8 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPostOwner,
 				),
 			},
-			lastPostID: types.PostID(4),
-			newPost: types.NewPost(types.PostID(5),
-				types.PostID(0),
+			newPost: types.NewPost(id,
+				"",
 				"New post greater",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -157,13 +118,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPostOwner,
 			),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(5),
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
 			existingPosts: types.Posts{
-				types.NewPost(types.PostID(4),
-					types.PostID(0),
+				types.NewPost(id,
+					"",
 					"Post ID greater",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -172,9 +132,8 @@ func TestKeeper_SavePost(t *testing.T) {
 					testPostOwner,
 				),
 			},
-			lastPostID: types.PostID(4),
-			newPost: types.NewPost(types.PostID(3),
-				types.PostID(0),
+			newPost: types.NewPost(id,
+				"",
 				"New post ID lesser",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -183,15 +142,13 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPostOwner,
 			),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(4),
 		},
 		{
 			name:          "Post without medias is saved properly",
 			existingPosts: types.Posts{},
-			lastPostID:    types.PostID(0),
 			newPost: types.NewPost(
-				types.PostID(1),
-				types.PostID(0),
+				id,
+				"",
 				"Post without medias",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -200,14 +157,12 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPostOwner,
 			).WithMedias(testPost.Medias),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(1),
 		},
 		{
 			name:          "Post without poll data is saved properly",
 			existingPosts: types.Posts{},
-			lastPostID:    types.PostID(0),
-			newPost: types.NewPost(types.PostID(1),
-				types.PostID(0),
+			newPost: types.NewPost(id,
+				"",
 				"New post ID lesser",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -216,7 +171,6 @@ func TestKeeper_SavePost(t *testing.T) {
 				testPostOwner,
 			).WithPollData(*testPost.PollData),
 			expParentCommentsIDs: []types.PostID{},
-			expLastID:            types.PostID(1),
 		},
 	}
 
@@ -228,7 +182,6 @@ func TestKeeper_SavePost(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			for _, p := range test.existingPosts {
 				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
-				store.Set(types.LastPostIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.lastPostID))
 			}
 
 			// Save the post
@@ -239,11 +192,6 @@ func TestKeeper_SavePost(t *testing.T) {
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			require.True(t, expected.Equals(test.newPost))
 
-			// Check the latest post id
-			var lastPostID types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastPostIDStoreKey), &lastPostID)
-			require.Equal(t, test.expLastID, lastPostID)
-
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
 			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
@@ -253,6 +201,8 @@ func TestKeeper_SavePost(t *testing.T) {
 }
 
 func TestKeeper_GetPost(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+
 	tests := []struct {
 		name       string
 		postExists bool
@@ -261,16 +211,16 @@ func TestKeeper_GetPost(t *testing.T) {
 	}{
 		{
 			name:     "Non existent post is not found",
-			ID:       types.PostID(123),
+			ID:       id,
 			expected: types.Post{},
 		},
 		{
 			name:       "Existing post is found properly",
-			ID:         types.PostID(45),
+			ID:         id,
 			postExists: true,
 			expected: types.NewPost(
-				types.PostID(45),
-				types.PostID(0),
+				id,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -281,11 +231,11 @@ func TestKeeper_GetPost(t *testing.T) {
 		},
 		{
 			name:       "Existing post with medias is found properly",
-			ID:         types.PostID(45),
+			ID:         id,
 			postExists: true,
 			expected: types.NewPost(
-				types.PostID(45),
-				types.PostID(0),
+				id,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -296,11 +246,11 @@ func TestKeeper_GetPost(t *testing.T) {
 		},
 		{
 			name:       "Existing post with poll is found properly",
-			ID:         types.PostID(45),
+			ID:         id,
 			postExists: true,
 			expected: types.NewPost(
-				types.PostID(45),
-				types.PostID(0),
+				id,
+				"",
 				"Post",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -331,6 +281,10 @@ func TestKeeper_GetPost(t *testing.T) {
 }
 
 func TestKeeper_GetPostChildrenIDs(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+	id4 := types.PostID("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
 	tests := []struct {
 		name           string
 		storedPosts    types.Posts
@@ -339,27 +293,27 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 	}{
 		{
 			name:           "Empty children list is returned properly",
-			postID:         types.PostID(76),
+			postID:         id,
 			expChildrenIDs: types.PostIDs{},
 		},
 		{
 			name: "Non empty children list is returned properly",
 			storedPosts: types.Posts{
-				types.NewPost(types.PostID(10), types.PostID(0), "Original post", false,
+				types.NewPost(id, "", "Original post", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(55), types.PostID(10), "First commit", false,
+				types.NewPost(id2, id, "First commit", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(11), types.PostID(0), "Second post", false,
+				types.NewPost(id3, "", "Second post", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
-				types.NewPost(types.PostID(104), types.PostID(11), "Comment to second post", false,
+				types.NewPost(id4, id3, "Comment to second post", false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{},
 					testPost.Created, testPost.Creator),
 			},
-			postID:         types.PostID(10),
-			expChildrenIDs: types.PostIDs{types.PostID(55)},
+			postID:         id,
+			expChildrenIDs: types.PostIDs{id2},
 		},
 	}
 
@@ -383,6 +337,7 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 }
 
 func TestKeeper_GetPosts(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name  string
 		posts types.Posts
@@ -395,8 +350,8 @@ func TestKeeper_GetPosts(t *testing.T) {
 			name: "Existing list is returned properly",
 			posts: types.Posts{
 				types.NewPost(
-					types.PostID(13),
-					types.PostID(0),
+					id,
+					"",
 					"",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -427,6 +382,11 @@ func TestKeeper_GetPosts(t *testing.T) {
 }
 
 func TestKeeper_GetPostsFiltered(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+	id4 := types.PostID("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
+	id5 := types.PostID("84a5d9fc5f0acd2bb9c0a49ecaefabbe4698372e1ae88d32f9f6f80b3c0ab95e")
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -442,8 +402,8 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 
 	posts := types.Posts{
 		types.NewPost(
-			types.PostID(10),
-			types.PostID(1),
+			id2,
+			id,
 			"Post 1 #test #desmos",
 			false,
 			"",
@@ -452,8 +412,8 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			creator1,
 		),
 		types.NewPost(
-			types.PostID(11),
-			types.PostID(1),
+			id3,
+			id,
 			"Post 2",
 			true,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -462,13 +422,13 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 			creator2,
 		),
 		types.NewPost(
-			types.PostID(12),
-			types.PostID(2),
+			id4,
+			id5,
 			"Post 3",
 			false,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			map[string]string{},
-			date,
+			time.Date(2020, 3, 1, 1, 1, 0, 0, timeZone),
 			creator2,
 		),
 	}
@@ -496,12 +456,12 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		{
 			name:     "Parent ID matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: &posts[0].ParentID},
-			expected: types.Posts{posts[0], posts[1]},
+			expected: types.Posts{posts[1], posts[0]},
 		},
 		{
 			name:     "Creation time matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: &date},
-			expected: types.Posts{posts[0], posts[2]},
+			expected: types.Posts{posts[0]},
 		},
 		{
 			name:     "Allows comments matcher works properly",
@@ -521,22 +481,22 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 		{
 			name:     "Sorting by date ascending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderAscending},
-			expected: types.Posts{posts[0], posts[2], posts[1]},
+			expected: types.Posts{posts[0], posts[1], posts[2]},
 		},
 		{
 			name:     "Sorting by date descending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
-			expected: types.Posts{posts[1], posts[0], posts[2]},
+			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
 		{
 			name:     "Sorting by ID ascending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
-			expected: types.Posts{posts[0], posts[1], posts[2]},
+			expected: types.Posts{posts[1], posts[2], posts[0]},
 		},
 		{
 			name:     "Sorting by ID descending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
-			expected: types.Posts{posts[2], posts[1], posts[0]},
+			expected: types.Posts{posts[0], posts[2], posts[1]},
 		},
 		{
 			name:     "Filtering by hashtags works properly",

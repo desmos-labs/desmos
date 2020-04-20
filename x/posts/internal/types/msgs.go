@@ -64,7 +64,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Post message cannot exceed %d characters", MaxPostMessageLength))
 	}
 
-	if !SubspaceRegEx.MatchString(msg.Subspace) {
+	if !Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
 	}
 
@@ -155,7 +155,7 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
 	}
 
 	if msg.Editor.Empty() {

@@ -105,14 +105,9 @@ E.g.
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			allowsComments := viper.GetBool(flagAllowsComments)
-
-			parentID, err := types.ParsePostID(viper.GetString(flagParentID))
-			if err != nil {
-				return err
-			}
+			parentID := types.PostID(viper.GetString(flagParentID))
 
 			// medias' checks
-
 			mediasStrings, err := cmd.Flags().GetStringArray(flagMedia)
 			if err != nil {
 				return fmt.Errorf("invalid flag value: %s", flagMedia)
@@ -124,20 +119,17 @@ E.g.
 				if len(argz) != 2 {
 					return fmt.Errorf("if medias are specified, the arguments has to be exactly 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
 				}
-
 				media := types.NewPostMedia(argz[0], argz[1])
 				medias = medias.AppendIfMissing(media)
 			}
 
 			// polls' checks
-
 			pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
 			if err != nil {
 				return fmt.Errorf("invalid %s value", flagPollDetails)
 			}
 
 			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
-
 			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
 				return fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", flagPollDetails)
 			}
@@ -222,7 +214,7 @@ E.g.
 	}
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(flagParentID, "0", "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(flagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
@@ -241,9 +233,9 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
@@ -262,7 +254,7 @@ Add a reaction to the post having the given id with the specified value.
 The value has to be a reaction short code.
 
 E.g. 
-%s tx posts add-reaction 12 :thumbsup: --from jack
+%s tx posts add-reaction a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc :thumbsup: --from jack
 `, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -270,9 +262,9 @@ E.g.
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
@@ -291,7 +283,7 @@ Removes the reaction having the given value from the post having the given id.
 The value has to be a reaction short code.
 
 E.g. 
-%s tx posts remove-reaction 12 :thumbsup: --from jack
+%s tx posts remove-reaction a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc :thumbsup: --from jack
 `, version.ClientName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -299,9 +291,9 @@ E.g.
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, err.Error())
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
@@ -321,9 +313,9 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			postID, err := types.ParsePostID(args[0])
-			if err != nil {
-				return err
+			postID := types.PostID(args[0])
+			if !postID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
 			var answers []types.AnswerID
@@ -342,6 +334,7 @@ func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
+// GetCmdRegisterReaction is the CLI command for registering a reaction
 func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "register-reaction [short-code] [value] [subspace]",

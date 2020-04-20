@@ -41,22 +41,16 @@ func (k Keeper) GetPollAnswers(ctx sdk.Context, postID types.PostID) types.UserA
 }
 
 // GetPollAnswersMap allows to returns the list of answers that have been stored inside the given context
-func (k Keeper) GetPollAnswersMap(ctx sdk.Context) map[types.PostID]types.UserAnswers {
+func (k Keeper) GetPollAnswersMap(ctx sdk.Context) map[string]types.UserAnswers {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
 
-	usersAnswersData := map[types.PostID]types.UserAnswers{}
+	usersAnswersData := map[string]types.UserAnswers{}
 	for ; iterator.Valid(); iterator.Next() {
 		var userAnswers types.UserAnswers
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PollAnswersStorePrefix)
-		postID, err := types.ParsePostID(string(idBytes))
-		if err != nil {
-			// This should never happen
-			panic(err)
-		}
-
-		usersAnswersData[postID] = userAnswers
+		usersAnswersData[string(idBytes)] = userAnswers
 	}
 
 	return usersAnswersData

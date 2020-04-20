@@ -46,7 +46,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode")
 	}
 
-	if !SubspaceRegEx.MatchString(msg.Subspace) {
+	if !Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash")
 	}
 

@@ -1,5 +1,6 @@
 # Version 0.4.0
 ## Changes
+- Improved the generation of post ids (#131)
 - Improved `alias.go` files (#103)
 - Added the support for posting empty-message posts with medias (#110)
 - Implemented the support for hashtags in posts (#96)

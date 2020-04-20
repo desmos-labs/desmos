@@ -38,8 +38,22 @@ const (
 var (
 	// functions aliases
 
-	WeightedOperations       = simulation.WeightedOperations
-	RandomizedGenState       = simulation.RandomizedGenState
+	NewMsgCreateProfile      = types.NewMsgCreateProfile
+	NewMsgEditProfile        = types.NewMsgEditProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	ProfileStoreKey          = types.ProfileStoreKey
+	MonikerStoreKey          = types.MonikerStoreKey
+	NewProfile               = types.NewProfile
+	NewPictures              = types.NewPictures
+	ValidateURI              = types.ValidateURI
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
+	NewQuerier               = keeper.NewQuerier
+	NewHandler               = keeper.NewHandler
+	GetEditedProfile         = keeper.GetEditedProfile
+	NewKeeper                = keeper.NewKeeper
 	DecodeStore              = simulation.DecodeStore
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
 	SimulateMsgEditProfile   = simulation.SimulateMsgEditProfile
@@ -53,22 +67,8 @@ var (
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
-	NewMsgCreateProfile      = types.NewMsgCreateProfile
-	NewMsgEditProfile        = types.NewMsgEditProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
-	NewProfile               = types.NewProfile
-	NewPictures              = types.NewPictures
-	ValidateURI              = types.ValidateURI
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewHandler               = keeper.NewHandler
-	GetEditedProfile         = keeper.GetEditedProfile
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
+	WeightedOperations       = simulation.WeightedOperations
+	RandomizedGenState       = simulation.RandomizedGenState
 
 	// variable aliases
 

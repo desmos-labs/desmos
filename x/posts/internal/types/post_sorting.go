@@ -1,9 +1,9 @@
 package types
 
 const (
-	PostSortByID           = "id"
 	PostSortByCreationDate = "created"
 
+	PostSortByID            = "id"
 	PostSortOrderAscending  = "ascending"
 	PostSortOrderDescending = "descending"
 )

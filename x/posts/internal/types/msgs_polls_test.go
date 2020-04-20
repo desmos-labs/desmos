@@ -12,7 +12,7 @@ import (
 // --- MsgAnswerPoll
 // ----------------------
 
-var msgAnswerPollPost = types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, testOwner)
+var msgAnswerPollPost = types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testOwner)
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
 	actual := msgAnswerPollPost.Route()
@@ -32,22 +32,22 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPoll(types.PostID(0), []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id"),
+			msg:   types.NewMsgAnswerPoll("", []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid answerer address",
-			msg:   types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, nil),
+			msg:   types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
-			msg:   types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{}, msgAnswerPollPost.Answerer),
+			msg:   types.NewMsgAnswerPoll(id, []types.AnswerID{}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
-			msg:  types.NewMsgAnswerPoll(types.PostID(1), []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
+			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
 		},
 	}
 
@@ -67,7 +67,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 
 func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 	actual := msgAnswerPollPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"1"}}`
+	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answerer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","answers":["1","2"],"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

@@ -18,7 +18,6 @@ const (
 	OpWeightMsgAnswerPoll           = simulation.OpWeightMsgAnswerPoll
 	OpWeightMsgRegisterReaction     = simulation.OpWeightMsgRegisterReaction
 	DefaultGasValue                 = simulation.DefaultGasValue
-	PostSortByID                    = types.PostSortByID
 	PostSortByCreationDate          = types.PostSortByCreationDate
 	PostSortOrderAscending          = types.PostSortOrderAscending
 	PostSortOrderDescending         = types.PostSortOrderDescending
@@ -62,9 +61,7 @@ const (
 var (
 	// functions aliases
 
-	NewKeeper                     = keeper.NewKeeper
-	NewQuerier                    = keeper.NewQuerier
-	NewHandler                    = keeper.NewHandler
+	DecodeStore                   = simulation.DecodeStore
 	SimulateMsgAnswerToPoll       = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgAddPostReaction    = simulation.SimulateMsgAddPostReaction
 	SimulateMsgRemovePostReaction = simulation.SimulateMsgRemovePostReaction
@@ -88,54 +85,55 @@ var (
 	RegisteredReactionsData       = simulation.RegisteredReactionsData
 	WeightedOperations            = simulation.WeightedOperations
 	RandomizedGenState            = simulation.RandomizedGenState
-	DecodeStore                   = simulation.DecodeStore
-	NewPollData                   = types.NewPollData
-	ArePollDataEquals             = types.ArePollDataEquals
-	NewUserAnswer                 = types.NewUserAnswer
-	ParsePostID                   = types.ParsePostID
+	ComputeID                     = types.ComputeID
 	NewPost                       = types.NewPost
 	NewMsgAnswerPoll              = types.NewMsgAnswerPoll
-	NewPostMedia                  = types.NewPostMedia
-	ValidateURI                   = types.ValidateURI
-	NewPostMedias                 = types.NewPostMedias
-	NewMsgRegisterReaction        = types.NewMsgRegisterReaction
-	ParseAnswerID                 = types.ParseAnswerID
-	NewPollAnswer                 = types.NewPollAnswer
-	NewPollAnswers                = types.NewPollAnswers
-	RegisterCodec                 = types.RegisterCodec
-	NewMsgAddPostReaction         = types.NewMsgAddPostReaction
-	NewMsgRemovePostReaction      = types.NewMsgRemovePostReaction
+	NewMsgCreatePost              = types.NewMsgCreatePost
+	NewMsgEditPost                = types.NewMsgEditPost
 	PostStoreKey                  = types.PostStoreKey
 	PostCommentsStoreKey          = types.PostCommentsStoreKey
 	PostReactionsStoreKey         = types.PostReactionsStoreKey
 	ReactionsStoreKey             = types.ReactionsStoreKey
 	PollAnswersStoreKey           = types.PollAnswersStoreKey
+	NewPostResponse               = types.NewPostResponse
+	NewPostMedia                  = types.NewPostMedia
+	ValidateURI                   = types.ValidateURI
+	NewPostMedias                 = types.NewPostMedias
+	NewPostReaction               = types.NewPostReaction
 	NewGenesisState               = types.NewGenesisState
 	DefaultGenesisState           = types.DefaultGenesisState
 	ValidateGenesis               = types.ValidateGenesis
-	NewPostResponse               = types.NewPostResponse
-	NewPostReaction               = types.NewPostReaction
+	NewPollData                   = types.NewPollData
+	ArePollDataEquals             = types.ArePollDataEquals
+	NewUserAnswer                 = types.NewUserAnswer
+	NewMsgAddPostReaction         = types.NewMsgAddPostReaction
+	NewMsgRemovePostReaction      = types.NewMsgRemovePostReaction
+	ParseAnswerID                 = types.ParseAnswerID
+	NewPollAnswer                 = types.NewPollAnswer
+	NewPollAnswers                = types.NewPollAnswers
+	NewMsgRegisterReaction        = types.NewMsgRegisterReaction
 	DefaultQueryPostsParams       = types.DefaultQueryPostsParams
-	NewMsgCreatePost              = types.NewMsgCreatePost
-	NewMsgEditPost                = types.NewMsgEditPost
 	NewReaction                   = types.NewReaction
 	IsEmoji                       = types.IsEmoji
+	RegisterCodec                 = types.RegisterCodec
+	NewHandler                    = keeper.NewHandler
+	NewKeeper                     = keeper.NewKeeper
+	NewQuerier                    = keeper.NewQuerier
 
 	// variable aliases
 
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
-	ModuleCdc                = types.ModuleCdc
-	SubspaceRegEx            = types.SubspaceRegEx
+	Sha256RegEx              = types.Sha256RegEx
 	HashtagRegEx             = types.HashtagRegEx
 	ShortCodeRegEx           = types.ShortCodeRegEx
 	URIRegEx                 = types.URIRegEx
-	LastPostIDStoreKey       = types.LastPostIDStoreKey
 	PostStorePrefix          = types.PostStorePrefix
 	PostCommentsStorePrefix  = types.PostCommentsStorePrefix
 	PostReactionsStorePrefix = types.PostReactionsStorePrefix
 	ReactionsStorePrefix     = types.ReactionsStorePrefix
 	PollAnswersStorePrefix   = types.PollAnswersStorePrefix
+	ModuleCdc                = types.ModuleCdc
 )
 
 type (
@@ -143,32 +141,32 @@ type (
 	PostData                 = simulation.PostData
 	PostReactionData         = simulation.PostReactionData
 	ReactionData             = simulation.ReactionData
-	PollData                 = types.PollData
-	UserAnswer               = types.UserAnswer
-	UserAnswers              = types.UserAnswers
 	PostID                   = types.PostID
 	PostIDs                  = types.PostIDs
 	Post                     = types.Post
 	Posts                    = types.Posts
 	MsgAnswerPoll            = types.MsgAnswerPoll
+	PollAnswersQueryResponse = types.PollAnswersQueryResponse
+	MsgCreatePost            = types.MsgCreatePost
+	MsgEditPost              = types.MsgEditPost
+	PostQueryResponse        = types.PostQueryResponse
 	PostMedia                = types.PostMedia
 	PostMedias               = types.PostMedias
-	MsgRegisterReaction      = types.MsgRegisterReaction
+	PostReaction             = types.PostReaction
+	PostReactions            = types.PostReactions
+	GenesisState             = types.GenesisState
+	PollData                 = types.PollData
+	UserAnswer               = types.UserAnswer
+	UserAnswers              = types.UserAnswers
+	MsgAddPostReaction       = types.MsgAddPostReaction
+	MsgRemovePostReaction    = types.MsgRemovePostReaction
 	AnswerID                 = types.AnswerID
 	PollAnswer               = types.PollAnswer
 	PollAnswers              = types.PollAnswers
+	MsgRegisterReaction      = types.MsgRegisterReaction
 	OptionalData             = types.OptionalData
 	KeyValue                 = types.KeyValue
-	MsgAddPostReaction       = types.MsgAddPostReaction
-	MsgRemovePostReaction    = types.MsgRemovePostReaction
-	PollAnswersQueryResponse = types.PollAnswersQueryResponse
-	GenesisState             = types.GenesisState
-	PostQueryResponse        = types.PostQueryResponse
-	PostReaction             = types.PostReaction
-	PostReactions            = types.PostReactions
 	QueryPostsParams         = types.QueryPostsParams
-	MsgCreatePost            = types.MsgCreatePost
-	MsgEditPost              = types.MsgEditPost
 	Reaction                 = types.Reaction
 	Reactions                = types.Reactions
 )

@@ -7,7 +7,7 @@ desmoscli query posts [--flags]
 ```
 
 Available flags: 
-- `--parent-id` (e.g. `--parent-id=5`)
+- `--parent-id` (e.g. `--parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc`)
 - `--creation-time` (e.g. `--creation-time=2020-01-01T12:00:00`)
 - `--allows-comments` (e.g. `--allows-comments=true`)
 - `--subspace` (e.g. `--subspace=desmos`)
@@ -23,7 +23,7 @@ Available flags:
 
 ```bash
 # Example
-# desmoscli query posts --parent-id=1 --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
+# desmoscli query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
 ```
 
 **REST**
@@ -32,7 +32,7 @@ Available flags:
 ```
 
 Available parameters: 
-- `parent_id` (e.g. `parent_id=5`)
+- `parent_id` (e.g. `parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc`)
 - `creation_time` (e.g. `creation_time=2020-01-01T12:00:00`)
 - `allows_comments` (e.g. `allows_comments=true`)
 - `subspace` (e.g. `subspace=desmos`)
@@ -42,5 +42,6 @@ Available parameters:
 
 ```bash
 # Example
-# curl https://morpheus1000.desmos.network/posts?parent_id=1&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+# curl http://lcd.morpheus.desmos.network:1317/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+
 ```

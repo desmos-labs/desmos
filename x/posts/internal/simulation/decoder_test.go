@@ -16,13 +16,17 @@ import (
 )
 
 var (
+	id              = types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2             = types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id3             = types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+	id4             = types.PostID("a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c")
 	privKey         = ed25519.GenPrivKey().PubKey()
 	postCreatorAddr = sdk.AccAddress(privKey.Address())
 
 	timeZone, _ = time.LoadLocation("UTC")
 	testPost    = types.NewPost(
-		types.PostID(3257),
-		types.PostID(0),
+		id4,
+		"",
 		"Post message",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -54,9 +58,7 @@ func makeTestCodec() (cdc *codec.Codec) {
 
 func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
-
-	lastPostID := types.PostID(1)
-	comments := types.PostIDs{types.PostID(10), types.PostID(14), types.PostID(20)}
+	comments := types.PostIDs{id, id2, id3}
 	postReactions := types.PostReactions{
 		types.NewPostReaction(":thumbsup:", postCreatorAddr),
 		types.NewPostReaction("blue_heart:", postCreatorAddr),
@@ -70,7 +72,6 @@ func TestDecodeStore(t *testing.T) {
 	)
 
 	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.LastPostIDStoreKey, Value: cdc.MustMarshalBinaryBare(lastPostID)},
 		kv.Pair{Key: types.PostStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&testPost)},
 		kv.Pair{Key: types.PostCommentsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&comments)},
 		kv.Pair{Key: types.PostReactionsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&postReactions)},
@@ -81,7 +82,6 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"LastPostID", fmt.Sprintf("LastPostIDA: %s\nLastPostIDB: %s\n", lastPostID, lastPostID)},
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", testPost, testPost)},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
 		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},

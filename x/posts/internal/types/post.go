@@ -1,6 +1,8 @@
 package types
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -8,9 +10,8 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/desmos-labs/desmos/x/commons"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // ---------------
@@ -18,58 +19,28 @@ import (
 // ---------------
 
 // PostID represents a unique post id
-type PostID uint64
+type PostID string
+
+// ComputeID returns a sha256 hash of the given data concatenated together
+// nolint: interfacer
+func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
+	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
+	return PostID(hex.EncodeToString(hash[:]))
+}
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return id != 0
-}
-
-// Next returns the subsequent id to this one
-func (id PostID) Next() PostID {
-	return id + 1
+	return strings.TrimSpace(id.String()) != "" && Sha256RegEx.MatchString(id.String())
 }
 
 // String implements fmt.Stringer
 func (id PostID) String() string {
-	return strconv.FormatUint(uint64(id), 10)
+	return string(id)
 }
 
 // Equals compares two PostID instances
 func (id PostID) Equals(other PostID) bool {
 	return id == other
-}
-
-// MarshalJSON implements Marshaler
-func (id PostID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
-}
-
-// UnmarshalJSON implements Unmarshaler
-func (id *PostID) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-
-	postID, err := ParsePostID(s)
-	if err != nil {
-		return err
-	}
-
-	*id = postID
-	return nil
-}
-
-// ParsePostID returns the PostID represented inside the provided
-// value, or an error if no id could be parsed properly
-func ParsePostID(value string) (PostID, error) {
-	intVal, err := strconv.ParseUint(value, 10, 64)
-	if err != nil {
-		return PostID(0), err
-	}
-
-	return PostID(intVal), err
 }
 
 // ----------------
@@ -87,7 +58,7 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 	}
 
 	for index, id := range ids {
-		if id != other[index] {
+		if !id.Equals(other[index]) {
 			return false
 		}
 	}
@@ -166,7 +137,7 @@ func (p Post) String() string {
 // Validate implements validator
 func (p Post) Validate() error {
 	if !p.PostID.Valid() {
-		return fmt.Errorf("invalid post id: %s", p.PostID)
+		return fmt.Errorf("invalid postID: %s", p.PostID)
 	}
 
 	if p.Creator == nil {
@@ -181,7 +152,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
 	}
 
-	if !SubspaceRegEx.MatchString(p.Subspace) {
+	if !Sha256RegEx.MatchString(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
@@ -228,18 +199,6 @@ func (p Post) Validate() error {
 // Equals allows to check whether the contents of p are the same of other
 func (p Post) Equals(other Post) bool {
 	return p.PostID.Equals(other.PostID) && p.ContentsEquals(other)
-}
-
-// IsConflictingWith returns true if other is somehow conflicting with this post.
-// In order to not be conflicting, two posts should have a different ID and also either:
-// - a different creation date
-// - a different subspace
-// - a different creator
-//
-// If they have the same creation date, subspace and creator they are considered conflicting.
-func (p Post) IsConflictingWith(other Post) bool {
-	return p.PostID.Equals(other.PostID) ||
-		(p.Created.Equal(other.Created) && p.Subspace == other.Subspace && p.Creator.Equals(other.Creator))
 }
 
 // ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
@@ -334,7 +293,7 @@ type Posts []Post
 func (p Posts) String() string {
 	out := "ID - [Creator] Message\n"
 	for _, post := range p {
-		out += fmt.Sprintf("%d - [%s] %s\n",
+		out += fmt.Sprintf("%s - [%s] %s\n",
 			post.PostID, post.Creator, post.Message)
 	}
 	return strings.TrimSpace(out)
@@ -352,5 +311,5 @@ func (p Posts) Swap(i, j int) {
 
 // Less implements sort.Interface
 func (p Posts) Less(i, j int) bool {
-	return p[i].PostID < p[j].PostID
+	return p[i].Created.Before(p[j].Created)
 }

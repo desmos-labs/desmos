@@ -51,7 +51,7 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("reaction value should be a URL or an emoji")
 	}
 
-	if !SubspaceRegEx.MatchString(reaction.Subspace) {
+	if !Sha256RegEx.MatchString(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

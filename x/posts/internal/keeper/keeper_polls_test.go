@@ -9,6 +9,7 @@ import (
 )
 
 func TestKeeper_SavePollPostAnswers(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -27,14 +28,14 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	}{
 		{
 			name:               "Save answers with no previous answers in this context",
-			postID:             types.PostID(1),
+			postID:             id,
 			userAnswersDetails: types.NewUserAnswer(answers, user),
 			previousUsersAD:    nil,
 			expUsersAD:         types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 		{
 			name:               "Save new answers",
-			postID:             types.PostID(1),
+			postID:             id,
 			userAnswersDetails: types.NewUserAnswer(answers2, user2),
 			previousUsersAD:    types.UserAnswers{types.NewUserAnswer(answers, user)},
 			expUsersAD: types.UserAnswers{
@@ -66,6 +67,7 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 }
 
 func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -78,12 +80,12 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 	}{
 		{
 			name:          "No answers returns empty list",
-			postID:        types.PostID(1),
+			postID:        id,
 			storedAnswers: nil,
 		},
 		{
 			name:          "Answers returned correctly",
-			postID:        types.PostID(1),
+			postID:        id,
 			storedAnswers: types.UserAnswers{types.NewUserAnswer(answers, user)},
 		},
 	}
@@ -105,6 +107,7 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 }
 
 func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
+	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -123,14 +126,14 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 		{
 			name:          "No answers for user returns nil",
 			storedAnswers: types.NewUserAnswer(answers, user),
-			postID:        types.PostID(1),
+			postID:        id,
 			user:          user2,
 			expAnswers:    nil,
 		},
 		{
 			name:          "Matching user returns answers made by him",
 			storedAnswers: types.NewUserAnswer(answers, user),
-			postID:        types.PostID(1),
+			postID:        id,
 			user:          user,
 			expAnswers:    answers,
 		},
@@ -142,51 +145,5 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 
 		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
 		require.Equal(t, test.expAnswers, actualPostPollAnswers)
-	}
-}
-
-func TestKeeper_GetAnswersDetailsMap(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
-
-	user2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
-
-	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
-
-	tests := []struct {
-		name    string
-		usersAD map[types.PostID]types.UserAnswers
-	}{
-		{
-			name:    "Empty users answers details data are returned correctly",
-			usersAD: map[types.PostID]types.UserAnswers{},
-		},
-		{
-			name: "Non empty users answers details data are returned correcly",
-			usersAD: map[types.PostID]types.UserAnswers{
-				types.PostID(1): {
-					types.NewUserAnswer(answers, user),
-					types.NewUserAnswer(answers, user2),
-				},
-				types.PostID(2): {
-					types.NewUserAnswer(answers, user2),
-				},
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-			for postID, userAD := range test.usersAD {
-				store.Set(types.PollAnswersStoreKey(postID), k.Cdc.MustMarshalBinaryBare(userAD))
-			}
-
-			usersADData := k.GetPollAnswersMap(ctx)
-			require.Equal(t, test.usersAD, usersADData)
-		})
 	}
 }

@@ -10,7 +10,7 @@ import (
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
 )
 
-// Migrate migrates exported state from v0.1.0 to a v0.2.0 genesis state.
+// Migrate migrates exported state from v0.2.0 to a v0.3.0 genesis state.
 // It requires args to contain an integer value representing the block interval that should be considered when
 // converting block height-based timestamps into time.Time timestamps.
 func Migrate(appState genutil.AppMap, _ ...interface{}) genutil.AppMap {
