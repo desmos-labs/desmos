@@ -354,6 +354,11 @@ func Test_queryPollAnswers(t *testing.T) {
 			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1"),
 		},
 		{
+			name:     "No post associated with ID given",
+			path:     []string{types.QueryPollAnswers, stringID},
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Post with id %s not found", stringID)),
+		},
+		{
 			name: "Post without poll returns error",
 			path: []string{types.QueryPollAnswers, stringID},
 			storedPosts: types.Posts{

@@ -20,7 +20,7 @@ func TestMigrate(t *testing.T) {
 	creationTime := time.Now().UTC()
 
 	parentPost030 := v030posts.Post{
-		PostID:         v030posts.PostID(2),
+		PostID:         v030posts.PostID(1),
 		ParentID:       v030posts.PostID(0),
 		Message:        "Message",
 		AllowsComments: true,
@@ -33,8 +33,8 @@ func TestMigrate(t *testing.T) {
 	}
 
 	post030 := v030posts.Post{
-		PostID:         v030posts.PostID(4),
-		ParentID:       v030posts.PostID(2),
+		PostID:         v030posts.PostID(2),
+		ParentID:       v030posts.PostID(1),
 		Message:        "Message",
 		AllowsComments: true,
 		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -117,8 +117,21 @@ func TestMigrate(t *testing.T) {
 	// Check for posts
 	require.Len(t, migrated.Posts, len(expected.Posts))
 	for index, post := range migrated.Posts {
-		require.Equal(t, expected.Posts[index].Subspace, post.Subspace)
+		require.Equal(t, expected.Posts[index].PostID, post.PostID)
 	}
+
+	// Check for users poll answers
+	require.Len(t, migrated.UsersPollAnswers, len(expected.UsersPollAnswers))
+	for key := range expected.UsersPollAnswers {
+		require.Equal(t, expected.UsersPollAnswers[key], migrated.UsersPollAnswers[key])
+	}
+
+	// Check for posts reactions
+	require.Len(t, migrated.PostReactions, len(expected.PostReactions))
+	for key := range expected.PostReactions {
+		require.Equal(t, expected.PostReactions[key], migrated.PostReactions[key])
+	}
+
 }
 
 func TestRemoveDoublePosts(t *testing.T) {
