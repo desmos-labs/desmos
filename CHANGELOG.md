@@ -1,3 +1,7 @@
+# Version 0.5.0
+## Changes
+- Added YAML support for types (#124)
+
 # Version 0.4.0
 ## Changes
 - Improved the generation of post ids (#131)

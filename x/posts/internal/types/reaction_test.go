@@ -20,7 +20,7 @@ func TestReaction_String(t *testing.T) {
 		"https://smile.jpg",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
-	require.Equal(t, `{"ShortCode":":smile:","Value":"https://smile.jpg","Subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","Creator":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}`, reaction.String())
+	require.Equal(t, `{"shortcode":":smile:","value":"https://smile.jpg","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}`, reaction.String())
 }
 
 func TestReaction_Validate(t *testing.T) {

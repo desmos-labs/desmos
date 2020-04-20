@@ -10,12 +10,12 @@ import (
 
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
-	Moniker  string         `json:"moniker"`
-	Name     *string        `json:"name,omitempty"`
-	Surname  *string        `json:"surname,omitempty"`
-	Bio      *string        `json:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator,omitempty" `
+	Moniker  string         `json:"moniker" yaml:"moniker"`
+	Name     *string        `json:"name,omitempty" yaml:"name,omitempty"`
+	Surname  *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
+	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
+	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 func NewProfile(moniker string, creator sdk.AccAddress) Profile {

@@ -10,9 +10,9 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer  `json:"poll_answers,omitempty"`
-	Reactions   PostReactions `json:"reactions"`
-	Children    PostIDs       `json:"children"`
+	PollAnswers []UserAnswer  `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
+	Reactions   PostReactions `json:"reactions" yaml:"reactions,omitempty"`
+	Children    PostIDs       `json:"children" yaml:"children"`
 }
 
 // String implements fmt.Stringer
