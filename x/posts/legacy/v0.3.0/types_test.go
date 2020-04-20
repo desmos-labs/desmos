@@ -326,6 +326,7 @@ func TestPollAnswers_Equals(t *testing.T) {
 func TestArePollDataEquals(t *testing.T) {
 	answer := v030posts.PollAnswer{ID: v030posts.AnswerID(1), Text: "Yes"}
 	answer2 := v030posts.PollAnswer{ID: v030posts.AnswerID(2), Text: "No"}
+	creationTime := time.Now().UTC()
 
 	tests := []struct {
 		name      string
@@ -448,14 +449,14 @@ func TestArePollDataEquals(t *testing.T) {
 			first: v030posts.PollData{
 				Question:          "poll?",
 				ProvidedAnswers:   v030posts.PollAnswers{answer, answer2},
-				EndDate:           time.Now().UTC(),
+				EndDate:           creationTime,
 				Open:              true,
 				AllowsAnswerEdits: true,
 			},
 			second: v030posts.PollData{
 				Question:          "poll?",
 				ProvidedAnswers:   v030posts.PollAnswers{answer, answer2},
-				EndDate:           time.Now().UTC(),
+				EndDate:           creationTime,
 				Open:              true,
 				AllowsAnswerEdits: true,
 			},
