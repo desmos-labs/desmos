@@ -54,6 +54,352 @@ func TestPostID_String(t *testing.T) {
 
 // POST
 
+func TestPost_ContentEquals(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	otherOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+	medias := v030posts.PostMedias{
+		v030posts.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+		},
+	}
+
+	tests := []struct {
+		name      string
+		first     v030posts.Post
+		second    v030posts.Post
+		expEquals bool
+	}{
+		{
+			name: "Different parent ID",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(10),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different message",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "Another post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different creation time",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date.AddDate(0, 0, 1),
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different last edited",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 2),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different allows comments",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: false,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different subspace",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "desmos-1",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "desmos-2",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different optional data",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData: map[string]string{
+					"field": "value",
+				},
+				Creator: owner,
+				Medias:  medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData: map[string]string{
+					"field": "other-value",
+				},
+				Creator: owner,
+				Medias:  medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different owner",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         medias,
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different medias",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         v030posts.PostMedias{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Different polls",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+				Medias:         medias,
+				PollData:       nil,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        otherOwner,
+				Medias:         medias,
+				PollData:       &v030posts.PollData{},
+			},
+			expEquals: false,
+		},
+		{
+			name: "Equals posts",
+			first: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{"optional": "data"},
+				Creator:        owner,
+			},
+			second: v030posts.Post{
+				PostID:         v030posts.PostID(19),
+				ParentID:       v030posts.PostID(1),
+				Message:        "My post message",
+				Created:        date,
+				LastEdited:     date.AddDate(0, 0, 1),
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{"optional": "data"},
+				Creator:        owner,
+			},
+			expEquals: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expEquals, test.first.ContentsEquals(test.second))
+		})
+	}
+}
+
 func TestPost_ConflictWith(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)

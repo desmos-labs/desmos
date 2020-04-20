@@ -102,6 +102,27 @@ func (p Post) ConflictsWith(other Post) bool {
 		p.Creator.Equals(other.Creator)
 }
 
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+func (p Post) ContentsEquals(other Post) bool {
+	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
+	if equalsOptionalData {
+		for key := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		}
+	}
+
+	return p.ParentID == other.ParentID &&
+		p.Message == other.Message &&
+		p.Created.Equal(other.Created) &&
+		p.LastEdited.Equal(other.LastEdited) &&
+		p.AllowsComments == other.AllowsComments &&
+		p.Subspace == other.Subspace &&
+		equalsOptionalData &&
+		p.Creator.Equals(other.Creator) &&
+		p.Medias.Equals(other.Medias) &&
+		ArePollDataEquals(p.PollData, other.PollData)
+}
+
 // Equals allows to check whether the contents of pm are the same of other
 func (pm PostMedia) Equals(other PostMedia) bool {
 	return pm.URI == other.URI && pm.MimeType == other.MimeType
@@ -168,25 +189,4 @@ func ArePollDataEquals(first, second *PollData) bool {
 	}
 
 	return first == second
-}
-
-// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
-func (p Post) ContentsEquals(other Post) bool {
-	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
-	if equalsOptionalData {
-		for key := range p.OptionalData {
-			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
-		}
-	}
-
-	return p.ParentID == other.ParentID &&
-		p.Message == other.Message &&
-		p.Created.Equal(other.Created) &&
-		p.LastEdited.Equal(other.LastEdited) &&
-		p.AllowsComments == other.AllowsComments &&
-		p.Subspace == other.Subspace &&
-		equalsOptionalData &&
-		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) &&
-		ArePollDataEquals(p.PollData, other.PollData)
 }
