@@ -12,8 +12,8 @@ import (
 func Migrate(oldGenState v030posts.GenesisState) GenesisState {
 	return GenesisState{
 		Posts:               migratePosts(oldGenState.Posts),
-		UsersPollAnswers:    migrateUsersAnswers(oldGenState.PollAnswers, oldGenState.Posts),
-		PostReactions:       migratePostReactions(oldGenState.Reactions, oldGenState.Posts),
+		UsersPollAnswers:    MigrateUsersAnswers(oldGenState.PollAnswers, oldGenState.Posts),
+		PostReactions:       MigratePostReactions(oldGenState.Reactions, oldGenState.Posts),
 		RegisteredReactions: []Reaction{},
 	}
 }
@@ -59,8 +59,22 @@ func migratePosts(posts []v030posts.Post) []Post {
 	return migratedPosts
 }
 
-// migrateUsersAnswers takes a slice of v0.4.0 UsersAnswers object and migrates them to v0.4.0 UserAnswers
-func migrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, posts []v030posts.Post) map[string][]UserAnswer {
+// ConvertID take the given v030 post ID and convert it to a v040 post ID
+func ConvertID(id string, posts []v030posts.Post) (postID PostID) {
+	for _, post := range posts {
+		convertedID, err := v030posts.ParsePostID(id)
+		if err != nil {
+			panic(fmt.Errorf("postID parsing error (migration): %s", err))
+		}
+		if post.PostID == convertedID {
+			postID = ComputeID(post.Created, post.Creator, post.Subspace)
+		}
+	}
+	return postID
+}
+
+// MigrateUsersAnswers takes a slice of v0.4.0 UsersAnswers object and migrates them to v0.4.0 UserAnswers
+func MigrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, posts []v030posts.Post) map[string][]UserAnswer {
 	migratedUsersAnswers := make(map[string][]UserAnswer, len(usersAnswersMap))
 
 	//Migrate the users answers
@@ -79,17 +93,7 @@ func migrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, post
 			}
 		}
 
-		var postID PostID
-		for _, post := range posts {
-			convertedID, err := v030posts.ParsePostID(key)
-			if err != nil {
-				panic(fmt.Errorf("postID parsing error (migration): %s", err))
-			}
-			if post.PostID == convertedID {
-				postID = ComputeID(post.Created, post.Creator, post.Subspace)
-			}
-		}
-
+		postID := ConvertID(key, posts)
 		migratedUsersAnswers[string(postID)] = newUserAnswers
 	}
 
@@ -97,7 +101,7 @@ func migrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, post
 }
 
 // migrateReactions takes a map of v0.3.0 Reaction objects and migrates them to a v0.4.0 map of Reaction objects.
-func migratePostReactions(postReactions map[string][]v030posts.Reaction, posts []v030posts.Post) map[string][]PostReaction {
+func MigratePostReactions(postReactions map[string][]v030posts.Reaction, posts []v030posts.Post) map[string][]PostReaction {
 	migratedLikes := make(map[string][]PostReaction, len(postReactions))
 
 	for key, value := range postReactions {
@@ -111,17 +115,7 @@ func migratePostReactions(postReactions map[string][]v030posts.Reaction, posts [
 			}
 		}
 
-		var postID PostID
-		for _, post := range posts {
-			convertedID, err := v030posts.ParsePostID(key)
-			if err != nil {
-				panic(fmt.Errorf("postID parsing error (migration): %s", err))
-			}
-			if post.PostID == convertedID {
-				postID = ComputeID(post.Created, post.Creator, post.Subspace)
-			}
-		}
-
+		postID := ConvertID(key, posts)
 		migratedLikes[string(postID)] = reactions
 	}
 
