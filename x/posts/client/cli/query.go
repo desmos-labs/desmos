@@ -124,6 +124,7 @@ $ %s query posts posts --page=2 --limit=100
 				params.Subspace = subspace
 			}
 
+			// Hashtags
 			if hashtags := viper.GetStringSlice(flagHashtag); len(hashtags) > 0 {
 				params.Hashtags = hashtags
 			}
