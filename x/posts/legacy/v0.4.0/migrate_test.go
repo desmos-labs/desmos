@@ -1,6 +1,8 @@
 package v040_test
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -146,8 +148,8 @@ func TestConvertID(t *testing.T) {
 		Medias:         v030posts.PostMedias{v030posts.PostMedia{URI: "https://uri.com", MimeType: "text/plain"}},
 	}
 
-	actualID := v040posts.ConvertID("2", []v030posts.Post{post})
-
+	actualID, err := v040posts.ConvertID("2", []v030posts.Post{post})
+	require.NoError(t, err)
 	require.Equal(t, v040posts.PostID("58c2b3f9cd00d04369595f51270acb5f382192293b540d8b2a7e1c917a4f8ad7"), actualID)
 }
 
@@ -183,44 +185,22 @@ func TestMigrateUsersAnswers(t *testing.T) {
 		User:    postCreator,
 	}}}
 
-	actualAnswers := v040posts.MigrateUsersAnswers(v030UserAnswers, []v030posts.Post{post})
-
+	actualAnswers, err := v040posts.MigrateUsersAnswers(v030UserAnswers, []v030posts.Post{post})
+	require.NoError(t, err)
 	require.Equal(t, expectedAnswers, actualAnswers)
 }
 
-func TestMigratePostReactions(t *testing.T) {
-	postCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+func TestMigrate030(t *testing.T) {
+	config := sdk.GetConfig()
+	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
+	config.Seal()
+
+	content, err := ioutil.ReadFile("v030state.json")
 	require.NoError(t, err)
 
-	parentCreationTime := time.Now().UTC()
-	postCreationTime := parentCreationTime.Add(time.Hour)
+	var v030state v030posts.GenesisState
+	err = json.Unmarshal(content, &v030state)
+	require.NoError(t, err)
 
-	post := v030posts.Post{
-		PostID:         v030posts.PostID(2),
-		ParentID:       v030posts.PostID(1),
-		Message:        "Message",
-		AllowsComments: true,
-		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData:   map[string]string{},
-		Created:        postCreationTime,
-		LastEdited:     time.Time{},
-		Creator:        postCreator,
-		Medias:         v030posts.PostMedias{v030posts.PostMedia{URI: "https://uri.com", MimeType: "text/plain"}},
-	}
-
-	postID := v040posts.ComputeID(post.Created, post.Creator, post.Subspace)
-
-	v030postReactions := map[string][]v030posts.Reaction{post.PostID.String(): {v030posts.Reaction{
-		Owner: postCreator,
-		Value: ":fire:",
-	}}}
-
-	expectedPostReactions := map[string][]v040posts.PostReaction{string(postID): {v040posts.PostReaction{
-		Owner: postCreator,
-		Value: ":fire:",
-	}}}
-
-	actualReactions := v040posts.MigratePostReactions(v030postReactions, []v030posts.Post{post})
-
-	require.Equal(t, expectedPostReactions, actualReactions)
+	v040posts.Migrate(v030state)
 }
