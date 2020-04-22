@@ -42,8 +42,8 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(msg.Value) && !IsEmoji(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode")
+	if !URIRegEx.MatchString(msg.Value) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL")
 	}
 
 	if !Sha256RegEx.MatchString(msg.Subspace) {
