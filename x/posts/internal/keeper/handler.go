@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 
@@ -124,10 +125,6 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
-func convertToShortcode(emoji emoji2.Emoji) string {
-	return fmt.Sprintf(":%s:", emoji.Descriptor)
-}
-
 // registeredReaction registers a reaction in the given context
 func registerReaction(ctx sdk.Context, keeper Keeper, shortcode, subspace, value string, creator sdk.AccAddress) error {
 	if _, isAlreadyRegistered := keeper.DoesReactionForShortCodeExist(ctx, shortcode, subspace); isAlreadyRegistered {
@@ -149,11 +146,13 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	}
 
 	// Create and store the postReaction
-	parsedValue := msg.Value
-	if emoji, err := emoji2.LookupEmoji(msg.Value); err == nil {
-		parsedValue = convertToShortcode(emoji)
+	// nolint: gocritic
+	parsedValue := strings.ReplaceAll(msg.Value, "️", "️")
+	emoji, err := emoji2.LookupEmoji(parsedValue)
+	if err == nil {
 		// nolint: errcheck
-		_ = registerReaction(ctx, keeper, parsedValue, post.Subspace, msg.Value, types.ModuleAddress)
+		_ = registerReaction(ctx, keeper, emoji.Shortcodes[0], post.Subspace, msg.Value, types.ModuleAddress)
+		parsedValue = emoji.Shortcodes[0]
 	}
 	postReaction := types.NewPostReaction(parsedValue, msg.User)
 

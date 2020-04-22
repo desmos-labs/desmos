@@ -287,7 +287,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	var testRegisteredReaction2 = types.NewReaction(types.ModuleAddress, ":Slightly Smiling Face:", "🙂",
+	var testRegisteredReaction2 = types.NewReaction(types.ModuleAddress, ":slightly_smiling_face:", "🙂",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 
 	tests := []struct {

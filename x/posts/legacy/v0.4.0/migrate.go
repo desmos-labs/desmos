@@ -139,6 +139,7 @@ func GetReactionShortCodeFromValue(originalValue string) (string, error) {
 	}
 
 	value = strings.Split(value, " ")[0]
+	// nolint: gocritic
 	if value == "like" {
 		value = ":heart:"
 	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {

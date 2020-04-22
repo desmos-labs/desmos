@@ -499,7 +499,6 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	f.Cleanup()
 }
 
-//TODO add test with emoji
 func TestDesmosCLIPostsReactions(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
@@ -513,7 +512,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	reactions := posts.Reactions{
-		posts.Reaction{":thumbsup:", "http://earth.jpg", subspace, fooAddr},
+		posts.Reaction{":earth:", "http://earth.jpg", subspace, fooAddr},
 		posts.Reaction{":blush:", "https://gph.is/2p19Zai", subspace, fooAddr},
 		posts.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
 	}
@@ -542,7 +541,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// add-reaction
 
 	// Add a reaction
-	success, _, sterr = f.TxPostsAddReaction(post.PostID.String(), ":thumbsup:", fooAddr, "-y")
+	success, _, sterr = f.TxPostsAddReaction(post.PostID.String(), "👍", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -550,7 +549,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// Make sure the reaction is added
 	storedPost := f.QueryPost(post.PostID.String())
 	require.Len(t, storedPost.Reactions, 1)
-	require.Equal(t, storedPost.Reactions[0], posts.NewPostReaction(":thumbsup:", fooAddr))
+	require.Equal(t, storedPost.Reactions[0], posts.NewPostReaction(":+1:", fooAddr))
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
@@ -573,7 +572,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// remove-reaction
 
 	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":thumbsup:", fooAddr, "-y")
+	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
