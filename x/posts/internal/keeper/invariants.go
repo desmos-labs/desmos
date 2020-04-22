@@ -122,7 +122,7 @@ func ValidPollForPollAnswersInvariants(k Keeper) sdk.Invariant {
 			}
 		}
 
-		return sdk.FormatInvariant(types.ModuleName, "poll answers referes to posts without poll",
+		return sdk.FormatInvariant(types.ModuleName, "poll answers refers to posts without poll",
 			fmt.Sprintf("The following post IDs referred to posts that either not exists or has no poll associated:\n %s",
 				formatOutputIDs(invalidPostIDs)),
 		), invalidPostIDs != nil
