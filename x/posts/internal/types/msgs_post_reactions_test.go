@@ -43,11 +43,16 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid value returns error",
 			msg:   types.NewMsgAddPostReaction(id, "like", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode"),
 		},
 		{
-			name:  "Valid message returns no error",
+			name:  "Valid message returns no error (with shortcode)",
 			msg:   types.NewMsgAddPostReaction(id, ":like:", testOwner),
+			error: nil,
+		},
+		{
+			name:  "Valid message returns no error (with emoji)",
+			msg:   types.NewMsgAddPostReaction(id, "🤩", testOwner),
 			error: nil,
 		},
 	}

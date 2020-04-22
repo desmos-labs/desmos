@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	emoji2 "github.com/tmdvs/Go-Emoji-Utils"
 	"strconv"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -123,6 +124,10 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
+func convertToShortcode(emoji emoji2.Emoji) string {
+	return fmt.Sprintf(":%s:", emoji.Descriptor)
+}
+
 // handleMsgAddPostReaction handles the adding of a reaction to a post
 func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
 
@@ -133,7 +138,11 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	}
 
 	// Create and store the reaction
-	reaction := types.NewPostReaction(msg.Value, msg.User)
+	parsedValue := msg.Value
+	if emoji, err := emoji2.LookupEmoji(msg.Value); err == nil {
+		parsedValue = convertToShortcode(emoji)
+	}
+	reaction := types.NewPostReaction(parsedValue, msg.User)
 
 	if err := keeper.SavePostReaction(ctx, post.PostID, reaction); err != nil {
 		return nil, err
@@ -144,7 +153,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		types.EventTypePostReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Value),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, parsedValue),
 	)
 	ctx.EventManager().EmitEvent(event)
 

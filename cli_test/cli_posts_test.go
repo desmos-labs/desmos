@@ -499,6 +499,7 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	f.Cleanup()
 }
 
+//TODO add test with emoji
 func TestDesmosCLIPostsReactions(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)

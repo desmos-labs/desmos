@@ -287,6 +287,9 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
+	var testRegisteredReaction2 = types.NewReaction(user, ":Slightly Smiling Face:", "🙂",
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+
 	tests := []struct {
 		name               string
 		existingPost       *types.Post
@@ -300,10 +303,17 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
-			name:               "Valid message works properly",
+			name:               "Valid message works properly (shortcode)",
 			existingPost:       &testPost,
 			msg:                types.NewMsgAddPostReaction(testPost.PostID, ":smile:", user),
 			registeredReaction: &testRegisteredReaction,
+			error:              nil,
+		},
+		{
+			name:               "Valid message works properly (emoji)",
+			existingPost:       &testPost,
+			msg:                types.NewMsgAddPostReaction(testPost.PostID, "🙂", user),
+			registeredReaction: &testRegisteredReaction2,
 			error:              nil,
 		},
 	}
@@ -317,7 +327,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
 				if test.registeredReaction != nil {
-					k.RegisterReaction(ctx, testRegisteredReaction)
+					k.RegisterReaction(ctx, *test.registeredReaction)
 				}
 			}
 
@@ -330,7 +340,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 					types.EventTypePostReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.registeredReaction.ShortCode),
 				))
 
 				var storedPost types.Post
@@ -339,7 +349,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.Contains(t, storedReactions, types.NewPostReaction(test.msg.Value, test.msg.User))
+				require.Contains(t, storedReactions, types.NewPostReaction(test.registeredReaction.ShortCode, test.msg.User))
 			}
 
 			// Invalid response

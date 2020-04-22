@@ -41,7 +41,7 @@ var (
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
 	shortCodes  = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "👍"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its

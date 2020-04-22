@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,8 +45,9 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
-	if !ShortCodeRegEx.MatchString(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code")
+	_, err := emoji.LookupEmoji(msg.Value)
+	if !ShortCodeRegEx.MatchString(msg.Value) && err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
 	}
 
 	return nil
