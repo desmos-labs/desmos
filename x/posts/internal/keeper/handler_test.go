@@ -287,7 +287,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	var testRegisteredReaction2 = types.NewReaction(user, ":Slightly Smiling Face:", "🙂",
+	var testRegisteredReaction2 = types.NewReaction(types.ModuleAddress, ":Slightly Smiling Face:", "🙂",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 
 	tests := []struct {
@@ -326,7 +326,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
-				if test.registeredReaction != nil {
+				if test.registeredReaction != nil && test.registeredReaction.Value != "🙂" {
 					k.RegisterReaction(ctx, *test.registeredReaction)
 				}
 			}
@@ -346,6 +346,13 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
+
+				if test.msg.Value == "🙂" {
+					var regReaction types.Reaction
+					bytes := store.Get(types.ReactionsStoreKey(testRegisteredReaction2.ShortCode, testRegisteredReaction2.Subspace))
+					k.Cdc.MustUnmarshalBinaryBare(bytes, &regReaction)
+					require.Equal(t, testRegisteredReaction2, regReaction)
+				}
 
 				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)

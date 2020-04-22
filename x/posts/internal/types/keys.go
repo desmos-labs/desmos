@@ -2,6 +2,8 @@ package types
 
 import (
 	"regexp"
+
+	"github.com/cosmos/cosmos-sdk/x/supply"
 )
 
 const (
@@ -34,6 +36,8 @@ var (
 	ShortCodeRegEx = regexp.MustCompile(`:[a-z]([a-z\d_])*:`)
 	URIRegEx       = regexp.MustCompile(
 		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
+
+	ModuleAddress = supply.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")

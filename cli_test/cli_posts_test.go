@@ -513,9 +513,9 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	reactions := posts.Reactions{
-		posts.Reaction{":thumbsup:", "U+1F44D", subspace, fooAddr},
-		posts.Reaction{":blush:", "U+1F60A", subspace, fooAddr},
-		posts.Reaction{":thumbsdown:", "U+1F44E", subspace, fooAddr},
+		posts.Reaction{":thumbsup:", "http://earth.jpg", subspace, fooAddr},
+		posts.Reaction{":blush:", "https://gph.is/2p19Zai", subspace, fooAddr},
+		posts.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
 	}
 
 	// Create a post
@@ -667,7 +667,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	shortCode := ":like:"
-	value := "🎉"
+	value := "https://gph.is/2phybnt"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))

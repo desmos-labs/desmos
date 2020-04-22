@@ -2,11 +2,11 @@ package types
 
 import (
 	"fmt"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ----------------------
