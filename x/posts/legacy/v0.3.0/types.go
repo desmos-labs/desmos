@@ -1,6 +1,7 @@
 package v030
 
 import (
+	"encoding/json"
 	"regexp"
 	"strconv"
 	"time"
@@ -31,6 +32,27 @@ func (id PostID) String() string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
+// MarshalJSON implements Marshaler
+func (id PostID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.String())
+}
+
+// UnmarshalJSON implements Unmarshaler
+func (id *PostID) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	postID, err := ParsePostID(s)
+	if err != nil {
+		return err
+	}
+
+	*id = postID
+	return nil
+}
+
 // ParsePostID returns the PostID represented inside the provided
 // value, or an error if no id could be parsed properly
 func ParsePostID(value string) (PostID, error) {
@@ -52,6 +74,43 @@ type PostMedia struct {
 
 // AnswerID represents a unique answer id
 type AnswerID uint64
+
+// String implements fmt.Stringer
+func (id AnswerID) String() string {
+	return strconv.FormatUint(uint64(id), 10)
+}
+
+// MarshalJSON implements Marshaler
+func (id AnswerID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.String())
+}
+
+// UnmarshalJSON implements Unmarshaler
+func (id *AnswerID) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	postID, err := ParseAnswerID(s)
+	if err != nil {
+		return err
+	}
+
+	*id = postID
+	return nil
+}
+
+// ParseAnswerID returns the AnswerID represented inside the provided
+// value, or an error if no id could be parsed properly
+func ParseAnswerID(value string) (AnswerID, error) {
+	intVal, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return AnswerID(0), err
+	}
+
+	return AnswerID(intVal), err
+}
 
 // PollAnswer contains the data of a single poll answer inserted by the creator
 type PollAnswer struct {
