@@ -25,7 +25,7 @@ This message allows you to add a reaction to a post that is already existing on 
 {
   "type": "desmos/MsgAddPostReaction",
   "value": {
-    "value": "like",
+    "value": "👍",
     "liker": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
     "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc"
   }

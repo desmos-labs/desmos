@@ -53,11 +53,11 @@ func GetReactionsToRegister(
 		for _, reaction := range reactions {
 
 			if !containsReactionWithCode(reactionsToRegister, reaction.Value) {
-				post, err := getPostWithId(posts, PostID(postID))
+				post, err := getPostWithID(posts, PostID(postID))
 				if err != nil {
 					return nil, err
 				}
-
+				// nolint: errcheck
 				reactionEmoji, _ := emoji.LookupEmojiByCode(reaction.Value)
 
 				reactionsToRegister = append(reactionsToRegister, Reaction{
@@ -74,8 +74,8 @@ func GetReactionsToRegister(
 	return reactionsToRegister, nil
 }
 
-// getPostWithId returns the post having the specified id from the given posts list
-func getPostWithId(posts []Post, id PostID) (Post, error) {
+// getPostWithID returns the post having the specified id from the given posts list
+func getPostWithID(posts []Post, id PostID) (Post, error) {
 	for _, post := range posts {
 		if post.PostID == id {
 			return post, nil
