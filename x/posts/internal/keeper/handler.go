@@ -138,7 +138,6 @@ func registerReaction(ctx sdk.Context, keeper Keeper, shortcode, subspace, value
 
 // handleMsgAddPostReaction handles the adding of a reaction to a post
 func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
-
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
 	if !found {
@@ -147,15 +146,13 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 
 	// Create and store the postReaction
 	// nolint: gocritic
-	parsedValue := strings.ReplaceAll(msg.Value, "️", "️")
-	emoji, err := emoji2.LookupEmoji(parsedValue)
-	if err == nil {
+	emojiValue := strings.ReplaceAll(msg.Value, "️", "️")
+	if emoji, err := emoji2.LookupEmoji(emojiValue); err == nil {
 		// nolint: errcheck
 		_ = registerReaction(ctx, keeper, emoji.Shortcodes[0], post.Subspace, msg.Value, types.ModuleAddress)
-		parsedValue = emoji.Shortcodes[0]
+		emojiValue = emoji.Shortcodes[0]
 	}
-	postReaction := types.NewPostReaction(parsedValue, msg.User)
-
+	postReaction := types.NewPostReaction(emojiValue, msg.User)
 	if err := keeper.SavePostReaction(ctx, post.PostID, postReaction); err != nil {
 		return nil, err
 	}
@@ -165,7 +162,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		types.EventTypePostReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyPostReactionValue, parsedValue),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, emojiValue),
 	)
 	ctx.EventManager().EmitEvent(event)
 
