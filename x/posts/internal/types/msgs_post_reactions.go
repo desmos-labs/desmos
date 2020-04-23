@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -100,8 +99,9 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
-	if len(strings.TrimSpace(msg.Reaction)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank")
+	_, err := emoji.LookupEmoji(msg.Reaction)
+	if !ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
 	}
 
 	return nil

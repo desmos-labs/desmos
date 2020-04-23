@@ -6,11 +6,24 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
+	emoji2 "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ----------------------
 // --- MsgAddPostReaction
 // ----------------------
+
+func TestShortCodeRegEx(t *testing.T) {
+	for _, emoji := range emoji2.Emojis {
+		for _, shortcode := range emoji.Shortcodes {
+			res := types.ShortCodeRegEx.MatchString(shortcode)
+			if !res {
+				println(shortcode)
+			}
+			require.True(t, res)
+		}
+	}
+}
 
 var msgPostReaction = types.NewMsgAddPostReaction(id, "like", testOwner)
 
@@ -105,22 +118,27 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgRemovePostReaction("", testOwner, "like"),
+			msg:   types.NewMsgRemovePostReaction("", testOwner, ":+1:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user address: ",
-			msg:   types.NewMsgRemovePostReaction(id, nil, "like"),
+			msg:   types.NewMsgRemovePostReaction(id, nil, ":like:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
-			name:  "Invalid value returns no error",
+			name:  "Blank value returns no error",
 			msg:   types.NewMsgRemovePostReaction(id, testOwner, ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode"),
 		},
 		{
-			name:  "Valid message returns no error",
-			msg:   types.NewMsgRemovePostReaction(id, testOwner, "like"),
+			name:  "Valid message returns no error (with shortcode)",
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, ":+1:"),
+			error: nil,
+		},
+		{
+			name:  "Valid message returns no error (with emoji)",
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, "🤩"),
 			error: nil,
 		},
 	}

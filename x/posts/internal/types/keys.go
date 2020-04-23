@@ -33,7 +33,7 @@ const (
 var (
 	Sha256RegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	HashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
-	ShortCodeRegEx = regexp.MustCompile(`:[a-z]([a-z\d_])*:`)
+	ShortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
 	URIRegEx       = regexp.MustCompile(
 		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
