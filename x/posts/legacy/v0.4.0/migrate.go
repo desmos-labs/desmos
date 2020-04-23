@@ -145,11 +145,13 @@ func GetReactionShortCodeFromValue(originalValue string) (string, error) {
 	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {
 		value = ":+1:"
 	} else if value == ":grinning_face_with_star_eyes:" {
-		value = ":star_struck:"
+		value = ":star-struck:"
 	} else if value == ":grinning_face_with_one_large_and_one_small_eye:" {
 		value = ":zany_face:"
 	} else if value == ":lion_face:" {
 		value = ":lion:"
+	} else if value == ":star_struck:" {
+		value = ":star-struck:"
 	}
 
 	// Try to get the emoji by considering the value as the shortcode
