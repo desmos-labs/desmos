@@ -86,10 +86,8 @@ github.com/davecgh/go-spew v0.0.0-20171005155431-ecdeabc65495/go.mod h1:J7Y8YcW2
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200422130625-3fc513eb8df1 h1:j4PkY/7GZPFbVGQwM0wjXSwv0DAQysh16VlLZ604kUk=
-github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200422130625-3fc513eb8df1/go.mod h1:ZNQ0iS+PKk6omWMDzC1J9pbj0KU+HKigcMBR/WCzP6o=
-github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200422132037-9b4168f68934 h1:i//Pjt4dhYVYwk1tnroYJXtv2sl924x07FulbzU5tug=
-github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200422132037-9b4168f68934/go.mod h1:ZNQ0iS+PKk6omWMDzC1J9pbj0KU+HKigcMBR/WCzP6o=
+github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200423112559-5d32aea5e5aa h1:rpo9dkjWqltnaKg9vCbpFHMtUUOYlnGjiataKL77PP8=
+github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200423112559-5d32aea5e5aa/go.mod h1:ZNQ0iS+PKk6omWMDzC1J9pbj0KU+HKigcMBR/WCzP6o=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/dustin/go-humanize v0.0.0-20171111073723-bb3d318650d4/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
