@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ---------------
@@ -15,7 +16,7 @@ import (
 // PostReaction is a struct of a user reaction to a post
 type PostReaction struct {
 	Owner sdk.AccAddress `json:"owner"` // Creator that has created the reaction
-	Value string         `json:"value"` // PostReaction of the reaction
+	Value string         `json:"value"` // Value of the reaction, either an emoji or a shortcode
 }
 
 // NewPostReaction returns a new PostReaction
@@ -61,6 +62,11 @@ func (reaction PostReaction) Equals(other PostReaction) bool {
 // PostReactions represents a slice of PostReaction objects
 type PostReactions []PostReaction
 
+// NewPostReactions allows to create a new PostReactions object from the given reactions
+func NewPostReactions(reactions ...PostReaction) PostReactions {
+	return reactions
+}
+
 // AppendIfMissing returns a new slice of PostReaction objects containing
 // the given reaction if it wasn't already present.
 // It also returns the result of the append.
@@ -74,17 +80,34 @@ func (reactions PostReactions) AppendIfMissing(other PostReaction) (PostReaction
 }
 
 // ContainsReactionFrom returns true if the reactions slice contain
-// a reaction from the given user having the given value, false otherwise
+// a reaction from the given user having the given value, false otherwise.
+// NOTE: The value can be either an emoji or a shortcode.
 func (reactions PostReactions) ContainsReactionFrom(user sdk.Address, value string) bool {
 	return reactions.IndexOfByUserAndValue(user, value) != -1
 }
 
 // IndexOfByUserAndValue returns the index of the reaction from the
-// given user with the specified value inside the reactions slice.
+// given user with the specified code inside the reactions slice.
+// NOTE: The value can be either an emoji or a shortcode.
 func (reactions PostReactions) IndexOfByUserAndValue(owner sdk.Address, value string) int {
+	reactEmoji, err := emoji.LookupEmoji(value)
+	isEmoji := err == nil
+
 	for index, reaction := range reactions {
-		if reaction.Owner.Equals(owner) && reaction.Value == value {
-			return index
+		if reaction.Owner.Equals(owner) {
+			// The given value is a shortcode, so check only that
+			if !isEmoji && reaction.Value == value {
+				return index
+			}
+
+			// The given value is an emoji, so we need to check is any of its shortcode match this reaction value
+			if isEmoji {
+				for _, code := range reactEmoji.Shortcodes {
+					if reaction.Value == code {
+						return index
+					}
+				}
+			}
 		}
 	}
 	return -1

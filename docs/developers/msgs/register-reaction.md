@@ -7,7 +7,7 @@ If you want to know more about the `Reaction` type, you can do so inside the [`R
 {
   "type": "desmos/MsgRegisterReaction",
   "value": {
-    "short_code": "<reaction short code>",
+    "shortcode": "<reaction short code>",
     "value": "<url (identifing gif or image)>",
     "subspace": "<Reaction subspace>",
     "creator": "<Desmos address that's registering the reaction>"
@@ -18,7 +18,7 @@ If you want to know more about the `Reaction` type, you can do so inside the [`R
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `short_code` | String | Short code that identifies the reaction (e.g. `":earth_hug:"`)  |
+| `shortcode` | String | Short code that identifies the reaction (e.g. `":earth_hug:"`)  |
 | `value` | String | Value can be a URL identifing gif, images   |
 | `subspace` | String | Required string that identifies the subspace inside which the reaction will be registered |
 | `creator` | String | Desmos address of the user that is registering the reaction |

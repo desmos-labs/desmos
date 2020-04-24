@@ -197,7 +197,7 @@ func registerReactionHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRegisterReaction(creator, req.ShortCode, req.Value, req.Subspace)
+		msg := types.NewMsgRegisterReaction(creator, req.Shortcode, req.Value, req.Subspace)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
