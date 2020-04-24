@@ -69,7 +69,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and sub 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
+			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to the post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and subspace 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
 		},
 		{
 			name:           "First liker is stored properly",
