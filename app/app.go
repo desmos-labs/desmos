@@ -250,6 +250,15 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
 	)
 
+	// We remove the gov module due to the fact that if it was not initialized, it will return an error
+	app.mm.SetOrderExportGenesis(
+		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
+		slashing.ModuleName, supply.ModuleName, genutil.ModuleName,
+
+		// Custom modules
+		magpie.ModuleName, posts.ModuleName,
+	)
+
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
