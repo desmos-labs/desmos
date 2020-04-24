@@ -1,10 +1,11 @@
 package keeper_test
 
 import (
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestKeeper_IterateProfile(t *testing.T) {
