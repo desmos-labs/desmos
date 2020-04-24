@@ -36,10 +36,21 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 // getPostResponse allows to get a PostQueryResponse from the given post retrieving the other information
 // using the given Context and Keeper.
 func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.PostQueryResponse {
-	// Get the likes
-	postLikes := keeper.GetPostReactions(ctx, post.PostID)
-	if postLikes == nil {
-		postLikes = types.PostReactions{}
+	// Get the reactions
+	postReactions := keeper.GetPostReactions(ctx, post.PostID)
+	if postReactions == nil {
+		postReactions = types.PostReactions{}
+	}
+
+	// Convert the reactions
+	var reactionsResponses = make([]types.ReactionQueryResponse, len(postReactions))
+	for index, reaction := range postReactions {
+		registeredReaction, _ := keeper.GetRegisteredReaction(ctx, reaction.Value, post.Subspace)
+		reactionsResponses[index] = types.ReactionQueryResponse{
+			Value: registeredReaction.Value,
+			Code:  reaction.Value,
+			Owner: reaction.Owner,
+		}
 	}
 
 	// Get the children
@@ -55,7 +66,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	}
 
 	// Crete the response object
-	return types.NewPostResponse(post, answers, postLikes, childrenIDs)
+	return types.NewPostResponse(post, answers, reactionsResponses, childrenIDs)
 }
 
 // queryPost handles the request to get a post having a specific id
@@ -135,7 +146,7 @@ func queryPollAnswers(ctx sdk.Context, path []string, _ abci.RequestQuery, keepe
 }
 
 func queryRegisteredReactions(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	reactions := keeper.ListReactions(ctx)
+	reactions := keeper.GetRegisteredReactions(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &reactions)
 

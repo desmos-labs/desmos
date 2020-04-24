@@ -16,7 +16,7 @@ const (
 	OpWeightMsgEditProfile   = "op_weight_msg_edit_profile"
 	OpWeightMsgDeleteProfile = "op_weight_msg_delete_profile"
 
-	DefaultGasValue = 5000000
+	DefaultGasValue = 200000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights

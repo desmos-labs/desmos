@@ -25,7 +25,7 @@ const (
 
 	// Reaction attributes
 	AttributeKeyReactionCreator   = "creator"
-	AttributeKeyReactionShortCode = "short_code"
+	AttributeKeyReactionShortCode = "shortcode"
 	AttributeKeyReactionSubSpace  = "subspace"
 
 	// Generic attributes

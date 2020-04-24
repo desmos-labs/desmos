@@ -4,25 +4,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // PostQueryResponse represents the data of a post
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer  `json:"poll_answers,omitempty"`
-	Reactions   PostReactions `json:"reactions"`
-	Children    PostIDs       `json:"children"`
+	PollAnswers []UserAnswer            `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
+	Reactions   []ReactionQueryResponse `json:"reactions" yaml:"reactions"`
+	Children    PostIDs                 `json:"children" yaml:"children"`
 }
 
 // String implements fmt.Stringer
 func (response PostQueryResponse) String() string {
-	out := "ID - [PostReactions] [Children] \n"
-	out += fmt.Sprintf("%s - [%s] [%s] \n", response.Post.PostID, response.Reactions, response.Children)
+	out := fmt.Sprintf(`
+ID: %s
+Reactions: %s
+Children: %s
+`, response.Post.PostID, response.Reactions, response.Children)
 	return strings.TrimSpace(out)
 }
 
-func NewPostResponse(post Post, pollAnswers []UserAnswer, reactions PostReactions, children PostIDs) PostQueryResponse {
+func NewPostResponse(
+	post Post, pollAnswers []UserAnswer, reactions []ReactionQueryResponse, children PostIDs,
+) PostQueryResponse {
 	return PostQueryResponse{
 		Post:        post,
 		PollAnswers: pollAnswers,
@@ -49,4 +56,18 @@ func (response *PostQueryResponse) UnmarshalJSON(data []byte) error {
 
 	*response = PostQueryResponse(temp)
 	return nil
+}
+
+type ReactionQueryResponse struct {
+	Value string         `json:"value" yaml:"value"`
+	Code  string         `json:"shortcode" yaml:"shortcode"`
+	Owner sdk.AccAddress `json:"owner" yaml:"owner"`
+}
+
+func NewReactionQueryResponse(value, code string, owner sdk.AccAddress) ReactionQueryResponse {
+	return ReactionQueryResponse{
+		Value: value,
+		Code:  code,
+		Owner: owner,
+	}
 }

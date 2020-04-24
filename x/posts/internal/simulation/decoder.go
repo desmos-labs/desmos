@@ -9,7 +9,7 @@ import (
 	"github.com/tendermint/tendermint/libs/kv"
 )
 
-// DecodeStore unmarshals the KVPair's Value to the corresponding posts type
+// DecodeStore unmarshals the KVPair's Reaction to the corresponding posts type
 func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 	switch {
 	case bytes.HasPrefix(kvA.Key, types.PostStorePrefix):

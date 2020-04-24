@@ -6,9 +6,9 @@ With this message you can remove a reaction from a post you have previously reac
 {
   "type": "desmos/MsgRemovePostReaction",
   "value": {
-    "reaction": "<Value of the reaction to be removed>",
-    "liker": "<Desmos address of the user unliking the post>",
-    "post_id": "<Id of the post to unlike>"
+    "post_id": "<Id of the post to unlike>",
+    "user": "<Desmos address of the user who is removing the reaction>",
+    "value": "<Shortcode of the reaction or Emoji to be removed>"
   }
 }
 ```
@@ -16,18 +16,30 @@ With this message you can remove a reaction from a post you have previously reac
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `value` | String | Value of the reaction to be removed | 
-| `liker` | String | Desmos address of the user that had added the reaction | 
 | `post_id` | String | ID of the post from which to remove the reaction |
+| `user` | String | Desmos address of the user who is removing the reaction | 
+| `value` | String | Shortcode of the reaction or Emoji to add | 
 
-## Example
+## Example with emoji
 ```json
 {
   "type": "desmos/MsgRemovePostReaction",
   "value": {
-    "value": "like",
-    "liker": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc"
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+    "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+    "value": "👍"
+  }
+}
+```
+
+## Example with shortcode
+```json
+{
+  "type": "desmos/MsgRemovePostReaction",
+  "value": {
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+    "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+    "value": ":+1:"
   }
 }
 ```

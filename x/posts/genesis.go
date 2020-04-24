@@ -15,7 +15,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		Posts:               k.GetPosts(ctx),
 		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
 		PostReactions:       k.GetReactions(ctx),
-		RegisteredReactions: k.ListReactions(ctx),
+		RegisteredReactions: k.GetRegisteredReactions(ctx),
 	}
 }
 
@@ -39,7 +39,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	}
 
 	for _, reaction := range data.RegisteredReactions {
-		if _, found := keeper.DoesReactionForShortCodeExist(ctx, reaction.ShortCode, reaction.Subspace); !found {
+		if _, found := keeper.GetRegisteredReaction(ctx, reaction.ShortCode, reaction.Subspace); !found {
 			keeper.RegisterReaction(ctx, reaction)
 		}
 	}

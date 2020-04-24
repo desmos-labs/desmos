@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 var (
@@ -41,7 +42,7 @@ var (
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
 	shortCodes  = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	reactValues = []string{"http://earth.jpg", "https://gph.is/2p19Zai", "https://gph.is/2phybnt"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -87,9 +88,21 @@ type PostReactionData struct {
 }
 
 // RandomPostReactionData returns a randomly generated post reaction data object
-func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode string) PostReactionData {
+func RandomPostReactionData(
+	r *rand.Rand, accs []sim.Account, postID types.PostID, reactions types.Reactions,
+) PostReactionData {
+	// Get a random reaction
+	reaction := reactions[r.Intn(len(reactions))]
+	reactionValue := reaction.ShortCode
+
+	// 50% chance of using an emoji
+	if r.Intn(101) <= 50 {
+		e := RandomEmoji(r)
+		reactionValue = e.Value
+	}
+
 	return PostReactionData{
-		Value:  shortCode,
+		Value:  reactionValue,
 		User:   accs[r.Intn(len(accs))],
 		PostID: postID,
 	}
@@ -195,7 +208,23 @@ func RandomReactionValue(r *rand.Rand) string {
 
 // RandomReactionShortCode return a random reaction shortCode
 func RandomReactionShortCode(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(reactValues))]
+	return shortCodes[r.Intn(len(shortCodes))]
+}
+
+// RandomEmoji returns a random emoji
+func RandomEmoji(r *rand.Rand) emoji.Emoji {
+	index := r.Intn(len(emoji.Emojis))
+
+	var rEmoji emoji.Emoji
+	var i = 0
+	for _, v := range emoji.Emojis {
+		if i == index {
+			rEmoji = v
+			break
+		}
+		i++
+	}
+	return rEmoji
 }
 
 // RandomReactionData returns a randomly generated reaction data object
