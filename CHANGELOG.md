@@ -1,3 +1,6 @@
+# Version 0.3.2
+- Fixed a bug that should allow to properly export the state of the chain
+
 # Version 0.3.1
 - Updated Cosmos SDK to `v0.38.3` and Tendermint to `v0.33.3` to solve security issues.
 
