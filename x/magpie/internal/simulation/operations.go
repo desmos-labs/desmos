@@ -23,16 +23,16 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
 
-	var weightMsgSend int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgSend, nil,
+	var weightMsgCreatePost int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
 		func(_ *rand.Rand) {
-			weightMsgSend = params.DefaultWeightMsgCreatePost
+			weightMsgCreatePost = params.DefaultWeightMsgCreatePost
 		},
 	)
 
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
-			weightMsgSend,
+			weightMsgCreatePost,
 			SimulateMsgCreateSession(ak),
 		),
 	}

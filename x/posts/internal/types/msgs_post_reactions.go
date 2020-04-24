@@ -2,10 +2,10 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ----------------------
@@ -14,17 +14,17 @@ import (
 
 // MsgAddPostReaction defines the message to be used to add a reaction to a post
 type MsgAddPostReaction struct {
-	PostID PostID         `json:"post_id"` // Id of the post to react to
-	Value  string         `json:"value"`   // Value of the reaction
-	User   sdk.AccAddress `json:"user"`    // Address of the user reacting to the post
+	PostID   PostID         `json:"post_id"`  // Id of the post to react to
+	Reaction string         `json:"reaction"` // Reaction of the reaction
+	User     sdk.AccAddress `json:"user"`     // Address of the user reacting to the post
 }
 
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
 func NewMsgAddPostReaction(postID PostID, value string, user sdk.AccAddress) MsgAddPostReaction {
 	return MsgAddPostReaction{
-		PostID: postID,
-		User:   user,
-		Value:  value,
+		PostID:   postID,
+		User:     user,
+		Reaction: value,
 	}
 }
 
@@ -44,8 +44,9 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
-	if !ShortCodeRegEx.MatchString(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code")
+	_, err := emoji.LookupEmoji(msg.Reaction)
+	if !ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
 	}
 
 	return nil
@@ -69,16 +70,16 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // an existing reaction from a specific user having a specific value
 type MsgRemovePostReaction struct {
 	PostID   PostID         `json:"post_id"`  // Id of the post to unlike
+	Reaction string         `json:"reaction"` // Reaction of the reaction to be removed
 	User     sdk.AccAddress `json:"user"`     // Address of the user that has previously liked the post
-	Reaction string         `json:"reaction"` // Value of the reaction to be removed
 }
 
 // MsgUnlikePostPost is the constructor of MsgRemovePostReaction
-func NewMsgRemovePostReaction(postID PostID, user sdk.AccAddress, reaction string) MsgRemovePostReaction {
+func NewMsgRemovePostReaction(postID PostID, user sdk.AccAddress, value string) MsgRemovePostReaction {
 	return MsgRemovePostReaction{
 		PostID:   postID,
 		User:     user,
-		Reaction: reaction,
+		Reaction: value,
 	}
 }
 
@@ -98,8 +99,9 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
 	}
 
-	if len(strings.TrimSpace(msg.Reaction)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank")
+	_, err := emoji.LookupEmoji(msg.Reaction)
+	if !ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
 	}
 
 	return nil

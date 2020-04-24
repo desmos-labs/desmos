@@ -94,8 +94,8 @@ type PostReaction struct {
 // Reaction represents a registered reaction that can be referenced
 // by its shortCode inside post reactions
 type Reaction struct {
-	ShortCode string
-	Value     string
-	Subspace  string
-	Creator   sdk.AccAddress
+	ShortCode string         `json:"shortcode" yaml:"shortcode"`
+	Value     string         `json:"value" yaml:"value"`
+	Subspace  string         `json:"subspace" yaml:"subspace"`
+	Creator   sdk.AccAddress `json:"creator" yaml:"creator"`
 }

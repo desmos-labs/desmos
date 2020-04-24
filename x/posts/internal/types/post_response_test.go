@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 	"time"
 
@@ -24,61 +25,40 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
-	medias := types.PostMedias{
-		types.PostMedia{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	}
-
-	testPostEndPollDate := time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
-	pollData := types.NewPollData("poll?", testPostEndPollDate, types.PollAnswers{answer, answer2}, true, false, true)
-
-	answers2 := []types.AnswerID{types.AnswerID(1)}
-
 	post := types.NewPost(
-		id,
+		"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 		"",
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
-		date,
+		time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
 		postOwner,
-	).WithMedias(medias).WithPollData(pollData)
+	)
 
-	postNoMedia := types.NewPost(
-		id,
-		"",
-		"Post",
+	medias := types.NewPostMedias(
+		types.NewPostMedia("https://uri.com", "text/plain"),
+	)
+
+	pollData := types.NewPollData(
+		"poll?",
+		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+		types.PollAnswers{answer, answer2},
 		true,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		date,
-		postOwner,
-	).WithPollData(pollData)
-
-	postNoPoll := types.NewPost(
-		id,
-		"",
-		"Post",
+		false,
 		true,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		date,
-		postOwner,
-	).WithMedias(medias)
+	)
 
-	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
+	answersDetails := types.NewUserAnswers(
+		types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, liker),
+	)
 
-	likes := types.PostReactions{
-		types.NewPostReaction("like", liker),
-		types.NewPostReaction("like", otherLiker),
-	}
 	children := types.PostIDs{id, id}
 
-	PostResponse := types.NewPostResponse(post, answersDetails, likes, children)
+	reactionsResponses := []types.ReactionQueryResponse{
+		types.NewReactionQueryResponse("https://example.com/like", ":like:", liker),
+		types.NewReactionQueryResponse("👍", ":+1:", otherLiker),
+	}
 
 	tests := []struct {
 		name        string
@@ -86,19 +66,34 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		expResponse string
 	}{
 		{
-			name:        "Post Query Response with Post that contains media and poll",
-			response:    PostResponse,
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain"}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			name: "Post Query Response with Post that contains media and poll",
+			response: types.NewPostResponse(
+				post.WithMedias(medias).WithPollData(pollData),
+				answersDetails,
+				reactionsResponses,
+				children,
+			),
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain"}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"value":"https://example.com/like","shortcode":":like:","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"value":"👍","shortcode":":+1:","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
-			name:        "Post Query with Post that not contains poll",
-			response:    types.NewPostResponse(postNoPoll, nil, likes, children),
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain"}],"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			name: "Post Query with Post that not contains poll",
+			response: types.NewPostResponse(
+				post.WithMedias(medias),
+				nil,
+				reactionsResponses,
+				children,
+			),
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain"}],"reactions":[{"value":"https://example.com/like","shortcode":":like:","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"value":"👍","shortcode":":+1:","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
-			name:        "Post Query Response with Post that not contains media",
-			response:    types.NewPostResponse(postNoMedia, answersDetails, likes, children),
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"like"},{"owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae","value":"like"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			name: "Post Query Response with Post that not contains media",
+			response: types.NewPostResponse(
+				post.WithPollData(pollData),
+				answersDetails,
+				reactionsResponses,
+				children,
+			),
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"value":"https://example.com/like","shortcode":":like:","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"value":"👍","shortcode":":+1:","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 	}
 
@@ -125,63 +120,46 @@ func TestPostQueryResponse_String(t *testing.T) {
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	answers2 := []types.AnswerID{types.AnswerID(1)}
-	answersDetails := []types.UserAnswer{types.NewUserAnswer(answers2, liker)}
+	medias := types.NewPostMedias(types.NewPostMedia("https://uri.com", "text/plain"))
 
-	date := time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone)
-	medias := types.PostMedias{
-		types.PostMedia{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	}
-	answer := types.PollAnswer{
-		ID:   types.AnswerID(1),
-		Text: "Yes",
-	}
-
-	answer2 := types.PollAnswer{
-		ID:   types.AnswerID(2),
-		Text: "No",
-	}
-	pollData := types.NewPollData("poll?", time.Now().UTC().Add(time.Hour), types.PollAnswers{answer, answer2}, true, false, true)
-
-	post := types.NewPost(
-		id,
-		"",
-		"Post",
+	pollData := types.NewPollData(
+		"poll?",
+		time.Now().UTC().Add(time.Hour),
+		types.NewPollAnswers(
+			types.NewPollAnswer(types.AnswerID(1), "Yes"),
+			types.NewPollAnswer(types.AnswerID(2), "No"),
+		),
 		true,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		date,
-		postOwner,
-	).WithMedias(medias).WithPollData(pollData)
+		false,
+		true,
+	)
 
-	likes := types.PostReactions{
-		types.NewPostReaction("like", liker),
-		types.NewPostReaction("like", otherLiker),
-	}
-	children := types.PostIDs{id, id}
-
-	PostResponse := types.NewPostResponse(post, answersDetails, likes, children)
-
-	tests := []struct {
-		name        string
-		response    types.PostQueryResponse
-		expResponse string
-	}{
-		{
-			name:        "Post query response string",
-			response:    PostResponse,
-			expResponse: "ID - [PostReactions] [Children] \ndd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 - [[{\"owner\":\"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4\",\"value\":\"like\"} {\"owner\":\"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae\",\"value\":\"like\"}]] [[dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]]",
+	postResponse := types.NewPostResponse(
+		types.NewPost(
+			"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+			"",
+			"Post",
+			true,
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			map[string]string{},
+			time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
+			postOwner,
+		).WithMedias(medias).WithPollData(pollData),
+		types.NewUserAnswers(
+			types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, liker),
+		),
+		[]types.ReactionQueryResponse{
+			types.NewReactionQueryResponse("https://example.com/like", ":like:", liker),
+			types.NewReactionQueryResponse("👍", ":+1:", otherLiker),
 		},
-	}
+		types.PostIDs{id, id},
+	)
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			stringResponse := test.response.String()
-			require.Equal(t, test.expResponse, stringResponse)
-		})
-	}
+	expected := `
+ID: dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1
+Reactions: [{https://example.com/like :like: cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4} {👍 :+1: cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae}]
+Children: [dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1, dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]
+`
+	stringResponse := postResponse.String()
+	require.Equal(t, strings.TrimSpace(expected), stringResponse)
 }

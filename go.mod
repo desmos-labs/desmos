@@ -15,3 +15,5 @@ require (
 	github.com/tendermint/tm-db v0.5.0
 	github.com/tmdvs/Go-Emoji-Utils v1.1.0
 )
+
+replace github.com/tmdvs/Go-Emoji-Utils => github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200423112559-5d32aea5e5aa

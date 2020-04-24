@@ -172,7 +172,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.PostReactions{},
 		},
 		{
-			name:           "Non existing reaction returns error - Value",
+			name:           "Non existing reaction returns error - Reaction",
 			storedLikes:    types.PostReactions{types.NewPostReaction(":like:", liker)},
 			postID:         id,
 			liker:          liker,
@@ -192,7 +192,7 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
-			err := k.RemovePostReaction(ctx, test.postID, test.liker, test.value)
+			err := k.RemovePostReaction(ctx, test.postID, types.NewPostReaction(test.value, test.liker))
 			require.Equal(t, test.error, err)
 
 			var stored types.PostReactions
@@ -371,7 +371,7 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 			key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
 			store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.storedReaction))
 
-			actualReaction, exist := k.DoesReactionForShortCodeExist(ctx, test.shortCode, reaction.Subspace)
+			actualReaction, exist := k.GetRegisteredReaction(ctx, test.shortCode, reaction.Subspace)
 			if test.shortCode == reaction.ShortCode {
 				require.True(t, exist)
 				require.Equal(t, test.storedReaction, actualReaction)
@@ -407,7 +407,7 @@ func TestKeeper_ListReactions(t *testing.T) {
 		store.Set(key, k.Cdc.MustMarshalBinaryBare(reaction))
 	}
 
-	actualReactions := k.ListReactions(ctx)
+	actualReactions := k.GetRegisteredReactions(ctx)
 
 	require.Equal(t, reactions, actualReactions)
 

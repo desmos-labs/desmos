@@ -196,10 +196,24 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 		expIndex  int
 	}{
 		{
-			name:      "Non-empty list returns proper index with valid value",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			name:      "Non-empty list returns proper index with valid value (shortcode)",
+			reactions: types.PostReactions{types.NewPostReaction(":+1:", user)},
 			owner:     user,
-			value:     "reaction",
+			value:     ":+1:",
+			expIndex:  0,
+		},
+		{
+			name:      "Non-empty list returns proper index with valid value (emoji - one code)",
+			reactions: types.PostReactions{types.NewPostReaction(":+1:", user)},
+			owner:     user,
+			value:     "👍",
+			expIndex:  0,
+		},
+		{
+			name:      "Non-empty list returns proper index with valid value (emoji - another code)",
+			reactions: types.PostReactions{types.NewPostReaction(":thumbsup:", user)},
+			owner:     user,
+			value:     "👍",
 			expIndex:  0,
 		},
 		{
