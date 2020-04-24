@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strings"
 )
 
@@ -10,9 +11,24 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer  `json:"poll_answers,omitempty"`
-	Reactions   PostReactions `json:"reactions"`
-	Children    PostIDs       `json:"children"`
+	PollAnswers []UserAnswer          `json:"poll_answers,omitempty"`
+	Reactions   PostReactionsResponse `json:"reactions"`
+	Children    PostIDs               `json:"children"`
+}
+
+type PostReactionsResponse struct {
+	Value string         `json:"value"`
+	Code  string         `json:"code"`
+	User  sdk.AccAddress `json:"user"`
+}
+
+type PostReactionsResponses []PostReactionsResponse
+
+// String implements fmt.Stringer
+func (reactionResponse PostReactionsResponse) String() string {
+	out := "[Value] [Code] [Creator]\n"
+	out += fmt.Sprintf("[%s] [%s] [%s]\n", reactionResponse.Value, reactionResponse.Code, reactionResponse.User)
+	return strings.TrimSpace(out)
 }
 
 // String implements fmt.Stringer
@@ -20,6 +36,13 @@ func (response PostQueryResponse) String() string {
 	out := "ID - [PostReactions] [Children] \n"
 	out += fmt.Sprintf("%s - [%s] [%s] \n", response.Post.PostID, response.Reactions, response.Children)
 	return strings.TrimSpace(out)
+}
+
+func NewPostReactionsResponse(reaction PostReaction) PostReactionsResponse {
+	return PostReactionsResponse{
+		Value: reaction.Value,
+		Code:  reaction.Owner,
+	}
 }
 
 func NewPostResponse(post Post, pollAnswers []UserAnswer, reactions PostReactions, children PostIDs) PostQueryResponse {
