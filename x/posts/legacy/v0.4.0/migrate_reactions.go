@@ -13,7 +13,7 @@ import (
 func MigratePostReactions(
 	postReactions map[string][]v030posts.Reaction, posts []v030posts.Post,
 ) (map[string][]PostReaction, error) {
-	migratedLikes := make(map[string][]PostReaction, len(postReactions))
+	migratedReactions := make(map[string][]PostReaction, len(postReactions))
 
 	for key, value := range postReactions {
 
@@ -36,10 +36,32 @@ func MigratePostReactions(
 			return nil, err
 		}
 
-		migratedLikes[string(postID)] = reactions
+		migratedReactions[string(postID)] = RemoveDuplicatedReactions(reactions)
 	}
 
-	return migratedLikes, nil
+	return migratedReactions, nil
+}
+
+// RemoveDuplicatedReactions removes all the duplicated reactions present inside
+// the given slice, returning a new one without such duplicates
+func RemoveDuplicatedReactions(reactions []PostReaction) (reacts []PostReaction) {
+
+	for _, reaction := range reactions {
+
+		exists := false
+		for _, r := range reacts {
+			if r.Value == reaction.Value && r.Owner.Equals(reaction.Owner) {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			reacts = append(reacts, reaction)
+		}
+	}
+
+	return reacts
 }
 
 // GetReactionsToRegister takes the list of posts that exist and the map of all the
@@ -51,12 +73,12 @@ func GetReactionsToRegister(
 	for postID, reactions := range postReactions {
 
 		for _, reaction := range reactions {
+			post, err := getPostWithID(posts, PostID(postID))
+			if err != nil {
+				return nil, err
+			}
 
-			if !containsReactionWithCode(reactionsToRegister, reaction.Value) {
-				post, err := getPostWithID(posts, PostID(postID))
-				if err != nil {
-					return nil, err
-				}
+			if !containsReactionWithCodeForSubspace(reactionsToRegister, reaction.Value, post.Subspace) {
 				// nolint: errcheck
 				reactionEmoji, _ := emoji.LookupEmojiByCode(reaction.Value)
 
@@ -85,11 +107,11 @@ func getPostWithID(posts []Post, id PostID) (Post, error) {
 	return Post{}, fmt.Errorf("post with id %s does not exist in list", id)
 }
 
-// containsReactionWithCode returns true if the reactions list contains a reaction having
+// containsReactionWithCodeForSubspace returns true if the reactions list contains a reaction having
 // the specified code, or false otherwise
-func containsReactionWithCode(reactions []Reaction, code string) bool {
+func containsReactionWithCodeForSubspace(reactions []Reaction, code, subspace string) bool {
 	for _, reaction := range reactions {
-		if reaction.ShortCode == code {
+		if reaction.ShortCode == code && reaction.Subspace == subspace {
 			return true
 		}
 	}

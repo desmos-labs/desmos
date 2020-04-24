@@ -81,12 +81,14 @@ func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Pos
 
 	var reactions types.PostReactions
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
+
 	return reactions
 }
 
 // GetReactions allows to returns the list of reactions that have been stored inside the given context
 func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
+
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 	defer iterator.Close()
 
@@ -108,8 +110,7 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 // RegisterReaction allows to register a new reaction for later reference
 func (k Keeper) RegisterReaction(ctx sdk.Context, reaction types.Reaction) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reaction))
+	store.Set(types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), k.Cdc.MustMarshalBinaryBare(reaction))
 }
 
 // GetRegisteredReaction returns the registered reaction which has the given shortcode
@@ -131,10 +132,9 @@ func (k Keeper) GetRegisteredReaction(
 
 // GetRegisteredReactions returns all the registered reactions
 func (k Keeper) GetRegisteredReactions(ctx sdk.Context) (reactions types.Reactions) {
-
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
 
+	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

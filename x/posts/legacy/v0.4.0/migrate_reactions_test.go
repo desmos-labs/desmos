@@ -112,3 +112,27 @@ func TestGetReactionsToRegister(t *testing.T) {
 		require.Contains(t, expected, reaction)
 	}
 }
+
+func TestRemoveDuplicatedReactions(t *testing.T) {
+	user1, err := sdk.AccAddressFromBech32("cosmos1ka2q839eszjnpe0k8j7ylqau84xka68wtydafr")
+	require.NoError(t, err)
+
+	user2, err := sdk.AccAddressFromBech32("cosmos1s6ux4zsygfkdtpq9s027vykhetw2g67npt0anh")
+	require.NoError(t, err)
+
+	reactions := []v040posts.PostReaction{
+		{Owner: user1, Value: ":+1:"},
+		{Owner: user1, Value: ":heart:"},
+		{Owner: user2, Value: ":heart:"},
+		{Owner: user1, Value: ":+1:"},
+		{Owner: user2, Value: ":heart:"},
+		{Owner: user2, Value: ":dog:"},
+	}
+
+	require.Equal(t, v040posts.RemoveDuplicatedReactions(reactions), []v040posts.PostReaction{
+		{Owner: user1, Value: ":+1:"},
+		{Owner: user1, Value: ":heart:"},
+		{Owner: user2, Value: ":heart:"},
+		{Owner: user2, Value: ":dog:"},
+	})
+}
