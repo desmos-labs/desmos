@@ -1,10 +1,7 @@
 package v040
 
 import (
-	"strings"
-
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // Migrate accepts exported genesis state from v0.3.0 and migrates it to v0.4.0
@@ -12,7 +9,7 @@ import (
 // uint64 to a sha-256 hashed string
 func Migrate(oldGenState v030posts.GenesisState) GenesisState {
 
-	posts := migratePosts(oldGenState.Posts)
+	posts := MigratePosts(oldGenState.Posts)
 
 	answers, err := MigrateUsersAnswers(oldGenState.PollAnswers, oldGenState.Posts)
 	if err != nil {
@@ -54,9 +51,9 @@ func ComputeParentID(posts []v030posts.Post, parentID v030posts.PostID) PostID {
 	return ""
 }
 
-// migratePosts takes a slice of v0.3.0 Post object and migrates them to v0.4.0 Post.
+// MigratePosts takes a slice of v0.3.0 Post object and migrates them to v0.4.0 Post.
 // For each post, its id is converted from an uint64 representation to a SHA-256 string representation.
-func migratePosts(posts []v030posts.Post) []Post {
+func MigratePosts(posts []v030posts.Post) []Post {
 	migratedPosts := make([]Post, len(posts))
 
 	// Migrate the posts
@@ -123,42 +120,4 @@ func MigrateUsersAnswers(
 	}
 
 	return migratedUsersAnswers, nil
-}
-
-// GetReactionShortCodeFromValue retrieves the shortcode that should
-// be associated to the reaction having the given value
-func GetReactionShortCodeFromValue(originalValue string) (string, error) {
-	// Make the value lowercase and replace - dividers with _
-	value := strings.ToLower(originalValue)
-	value = strings.ReplaceAll(value, "️", "")
-	value = strings.ReplaceAll(value, "-", "_")
-
-	// Try to get any present emoji by considering the value as the emoji itself
-	if presentEmojis := emoji.FindAll(value); len(presentEmojis) > 0 {
-		return presentEmojis[0].Match.(emoji.Emoji).Shortcodes[0], nil
-	}
-
-	value = strings.Split(value, " ")[0]
-	// nolint: gocritic
-	if value == "like" {
-		value = ":heart:"
-	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {
-		value = ":+1:"
-	} else if value == ":grinning_face_with_star_eyes:" {
-		value = ":star-struck:"
-	} else if value == ":grinning_face_with_one_large_and_one_small_eye:" {
-		value = ":zany_face:"
-	} else if value == ":lion_face:" {
-		value = ":lion:"
-	} else if value == ":star_struck:" {
-		value = ":star-struck:"
-	}
-
-	// Try to get the emoji by considering the value as the shortcode
-	foundEmoji, err := emoji.LookupEmojiByCode(value)
-	if err != nil {
-		return "", err
-	}
-
-	return foundEmoji.Shortcodes[0], nil
 }
