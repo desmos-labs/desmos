@@ -198,7 +198,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		types.EventTypePostReactionRemoved,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionValue),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 	)
 	ctx.EventManager().EmitEvent(event)
 
