@@ -68,6 +68,8 @@ func MigratePosts(posts []v030posts.Post) []Post {
 			Subspace:       oldPost.Subspace,
 			OptionalData:   OptionalData(oldPost.OptionalData),
 			Creator:        oldPost.Creator,
+			Medias:         MigrateMedias(oldPost.Medias),
+			PollData:       MigratePollData(oldPost.PollData),
 		}
 	}
 
@@ -87,6 +89,42 @@ func ConvertID(id string, posts []v030posts.Post) (postID PostID, error error) {
 		}
 	}
 	return postID, nil
+}
+
+// MigrateMedias takes the given v030 medias and converts them into a v040 medias array
+func MigrateMedias(medias []v030posts.PostMedia) []PostMedia {
+	newMedias := make([]PostMedia, len(medias))
+	for index, media := range medias {
+		newMedias[index] = PostMedia{
+			URI:      media.URI,
+			MimeType: media.MimeType,
+		}
+	}
+	return newMedias
+}
+
+// MigrateMedias takes the given v030 poll data and converts it into a v040 poll data
+func MigratePollData(data *v030posts.PollData) *PollData {
+	if data == nil {
+		return nil
+	}
+
+	answers := make([]PollAnswer, len(data.ProvidedAnswers))
+	for index, answer := range data.ProvidedAnswers {
+		answers[index] = PollAnswer{
+			ID:   AnswerID(answer.ID),
+			Text: answer.Text,
+		}
+	}
+
+	return &PollData{
+		Question:              data.Question,
+		ProvidedAnswers:       answers,
+		EndDate:               data.EndDate,
+		Open:                  data.Open,
+		AllowsMultipleAnswers: data.AllowsMultipleAnswers,
+		AllowsAnswerEdits:     data.AllowsAnswerEdits,
+	}
 }
 
 // MigrateUsersAnswers takes a slice of v0.3.0 UsersAnswers object and migrates them to v0.4.0 UserAnswers

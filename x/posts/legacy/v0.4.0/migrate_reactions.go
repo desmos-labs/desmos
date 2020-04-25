@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // MigratePostReactions takes a map of v0.3.0 Reaction objects and migrates
@@ -57,6 +57,7 @@ func GetReactionShortCodeFromValue(originalValue string) (string, error) {
 	}
 
 	value = strings.Split(value, " ")[0]
+	// nolint: gocritic
 	if value == "like" {
 		value = ":heart:"
 	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {

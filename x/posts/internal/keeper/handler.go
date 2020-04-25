@@ -9,7 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // NewHandler returns a handler for "magpie" type messages.

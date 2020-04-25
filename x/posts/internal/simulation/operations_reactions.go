@@ -8,10 +8,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/tendermint/tendermint/crypto"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ---------------

@@ -6,10 +6,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // ---------------------------
