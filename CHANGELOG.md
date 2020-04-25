@@ -8,6 +8,7 @@
 - Implemented the support for registering new reactions (#94)
 - Implemented the support for decentralized profiles (#56)
 - Improved the storage usage to reduce gas usage (#125)
+- Removed the `gov` and `upgrade` modules as they are currently not used (#142)
 
 ## Bug fixes
 - Fixed a bug inside the migration procedure of the `magpie` module (#106)

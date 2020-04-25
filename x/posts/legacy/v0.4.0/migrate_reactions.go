@@ -2,10 +2,11 @@ package v040
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
 )
 
 // MigratePostReactions takes a map of v0.3.0 Reaction objects and migrates
@@ -40,6 +41,46 @@ func MigratePostReactions(
 	}
 
 	return migratedReactions, nil
+}
+
+// GetReactionShortCodeFromValue retrieves the shortcode that should
+// be associated to the reaction having the given value
+func GetReactionShortCodeFromValue(originalValue string) (string, error) {
+	// Make the value lowercase and replace - dividers with _
+	value := strings.ToLower(originalValue)
+	value = strings.ReplaceAll(value, "️", "")
+	value = strings.ReplaceAll(value, "-", "_")
+
+	// Try to get any present emoji by considering the value as the emoji itself
+	if presentEmojis := emoji.FindAll(value); len(presentEmojis) > 0 {
+		return presentEmojis[0].Match.(emoji.Emoji).Shortcodes[0], nil
+	}
+
+	value = strings.Split(value, " ")[0]
+	// nolint: gocritic
+	if value == "like" {
+		value = ":heart:"
+	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {
+		value = ":+1:"
+	} else if value == ":grinning_face_with_star_eyes:" {
+		value = ":star-struck:"
+	} else if value == ":grinning_face_with_one_large_and_one_small_eye:" {
+		value = ":zany_face:"
+	} else if value == ":lion_face:" {
+		value = ":lion:"
+	} else if value == ":star_struck:" {
+		value = ":star-struck:"
+	} else if value == ":money_mouth_face:" {
+		value = ":money-mouth_face:"
+	}
+
+	// Try to get the emoji by considering the value as the shortcode
+	foundEmoji, err := emoji.LookupEmojiByCode(value)
+	if err != nil {
+		return "", err
+	}
+
+	return foundEmoji.Shortcodes[0], nil
 }
 
 // RemoveDuplicatedReactions removes all the duplicated reactions present inside

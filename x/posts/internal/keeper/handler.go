@@ -9,7 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // NewHandler returns a handler for "magpie" type messages.
@@ -165,7 +165,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		types.EventTypePostReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Reaction),
+		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionValue),
 	)
 	ctx.EventManager().EmitEvent(event)
 
@@ -198,7 +198,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		types.EventTypePostReactionRemoved,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Reaction),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 	)
 	ctx.EventManager().EmitEvent(event)
 
@@ -318,6 +318,7 @@ func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegi
 		types.EventTypeRegisterReaction,
 		sdk.NewAttribute(types.AttributeKeyReactionCreator, msg.Creator.String()),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, msg.ShortCode),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Value),
 		sdk.NewAttribute(types.AttributeKeyReactionSubSpace, msg.Subspace),
 	)
 	ctx.EventManager().EmitEvent(event)

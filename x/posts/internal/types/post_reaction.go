@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // ---------------

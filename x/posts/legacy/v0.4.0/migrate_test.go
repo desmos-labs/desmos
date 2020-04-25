@@ -202,5 +202,16 @@ func TestMigrate030(t *testing.T) {
 	err = json.Unmarshal(content, &v030state)
 	require.NoError(t, err)
 
+	posts := v040posts.MigratePosts(v030state.Posts)
+
+	_, err = v040posts.MigrateUsersAnswers(v030state.PollAnswers, v030state.Posts)
+	require.NoError(t, err)
+
+	reactions, err := v040posts.MigratePostReactions(v030state.Reactions, v030state.Posts)
+	require.NoError(t, err)
+
+	_, err = v040posts.GetReactionsToRegister(posts, reactions)
+	require.NoError(t, err)
+
 	v040posts.Migrate(v030state)
 }
