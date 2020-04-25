@@ -342,23 +342,22 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 			// Valid response
 			if res != nil {
+				// Check the post reactions
+				reactValue := test.msg.Reaction
+				if e, err := emoji.LookupEmoji(reactValue); err == nil {
+					reactValue = e.Shortcodes[0]
+				}
 				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostReactionAdded,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Reaction),
+					sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactValue),
 				))
 
 				// Check the post
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
 				require.True(t, test.existingPost.Equals(storedPost))
-
-				// Check the post reactions
-				reactValue := test.msg.Reaction
-				if e, err := emoji.LookupEmoji(reactValue); err == nil {
-					reactValue = e.Shortcodes[0]
-				}
 
 				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
@@ -787,6 +786,7 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 					types.EventTypeRegisterReaction,
 					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
 					sdk.NewAttribute(types.AttributeKeyReactionSubSpace, test.msg.Subspace),
 				))
 
