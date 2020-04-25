@@ -318,6 +318,7 @@ func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegi
 		types.EventTypeRegisterReaction,
 		sdk.NewAttribute(types.AttributeKeyReactionCreator, msg.Creator.String()),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, msg.ShortCode),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Value),
 		sdk.NewAttribute(types.AttributeKeyReactionSubSpace, msg.Subspace),
 	)
 	ctx.EventManager().EmitEvent(event)
