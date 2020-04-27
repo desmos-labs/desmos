@@ -285,7 +285,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 func Test_handleMsgAddPostReaction(t *testing.T) {
 	post := types.NewPost(
-		types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"",
 		"Post message",
 		false,
@@ -304,6 +304,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 		msg                types.MsgAddPostReaction
 		registeredReaction *types.Reaction
 		error              error
+		expEvent           sdk.Event
 	}{
 		{
 			name:  "Post not found",
@@ -315,11 +316,23 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			existingPost:       &post,
 			msg:                types.NewMsgAddPostReaction(post.PostID, ":smile:", user),
 			registeredReaction: &testRegisteredReaction,
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionAdded,
+				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
+			),
 		},
 		{
 			name:         "Valid message works properly (emoji)",
 			existingPost: &post,
 			msg:          types.NewMsgAddPostReaction(post.PostID, "🙂", user),
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionAdded,
+				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
+			),
 		},
 	}
 
@@ -342,12 +355,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, sdk.NewEvent(
-					types.EventTypePostReactionAdded,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Reaction),
-				))
+				require.Contains(t, res.Events, test.expEvent)
 
 				// Check the post
 				var storedPost types.Post
