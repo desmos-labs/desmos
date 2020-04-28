@@ -27,6 +27,7 @@ const (
 
 var (
 	// functions aliases
+
 	DecodeStore              = simulation.DecodeStore
 	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
@@ -45,6 +46,7 @@ var (
 	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
+
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
