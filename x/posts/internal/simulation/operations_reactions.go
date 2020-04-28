@@ -8,7 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/tendermint/tendermint/crypto"
@@ -98,11 +97,13 @@ func randomAddPostReactionFields(
 
 	k.SavePost(ctx, post)
 
+	var reaction types.Reaction
 	data := RandomReactionData(r, accs)
-	reaction := types.NewReaction(data.Creator.Address, data.ShortCode, data.Value, post.Subspace)
+	reaction = types.NewReaction(data.Creator.Address, data.ShortCode, data.Value, post.Subspace)
+
 	k.RegisterReaction(ctx, reaction)
 
-	reactionData := RandomPostReactionData(r, accs, postID, types.NewReactions(reaction))
+	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid
@@ -111,8 +112,8 @@ func randomAddPostReactionFields(
 	}
 
 	// Skip if the reaction already exists
-	postReactions := k.GetPostReactions(ctx, reactionData.PostID)
-	if postReactions.ContainsReactionFrom(reactionData.User.Address, reactionData.Value) {
+	reactions := k.GetPostReactions(ctx, reactionData.PostID)
+	if reactions.ContainsReactionFrom(reactionData.User.Address, reactionData.Value) {
 		return nil, true, nil
 	}
 
@@ -193,14 +194,6 @@ func randomRemovePostReactionFields(
 	}
 
 	reaction := reactions[r.Intn(len(reactions))]
-	reactionValue := reaction.Value
-
-	// 50 % of chance of using the shortcode, if it's a valid emoji
-	if r.Intn(101) <= 50 {
-		if e, err := emoji.LookupEmojiByCode(reactionValue); err == nil {
-			reactionValue = e.Value
-		}
-	}
 
 	acc := ak.GetAccount(ctx, reaction.Owner)
 
@@ -210,7 +203,7 @@ func randomRemovePostReactionFields(
 	}
 
 	user := GetAccount(reaction.Owner, accs)
-	data := PostReactionData{Value: reactionValue, User: *user, PostID: post.PostID}
+	data := PostReactionData{Value: reaction.Value, User: *user, PostID: post.PostID}
 	return &data, false, nil
 }
 
