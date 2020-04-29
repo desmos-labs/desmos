@@ -17,7 +17,7 @@ The `ShortCode` identifies the actual reaction short code.
 Short codes are codes used on various websites to speed up reaction insertion using a keyboard.
 These begin and end with a colon, and contain the literal name of the reaction itself. 
 For example, it can look something like `:emoji-shortcode:`.
-When registering a new reaction, the shot code must be validated by the following regEx: `:[a-z]([a-z\d_])*:`. 
+When registering a new reaction, the shot code must be validated by the following regEx: `:[a-z0-9+-]([a-z0-9\d_-])*:`. 
 [Here](https://www.webfx.com/tools/emoji-cheat-sheet/) the list of all available short codes.
 
 ### `Value`
