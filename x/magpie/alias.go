@@ -28,38 +28,38 @@ const (
 var (
 	// functions aliases
 
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
-	NewHandler               = keeper.NewHandler
 	DecodeStore              = simulation.DecodeStore
-	RandomSessionData        = simulation.RandomSessionData
+	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomizedGenState       = simulation.RandomizedGenState
-	ParseSessionID           = types.ParseSessionID
-	NewSession               = types.NewSession
+	RandomSessionData        = simulation.RandomSessionData
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewMsgCreateSession      = types.NewMsgCreateSession
 	SessionStoreKey          = types.SessionStoreKey
+	NewMsgCreateSession      = types.NewMsgCreateSession
+	ParseSessionID           = types.ParseSessionID
+	NewSession               = types.NewSession
+	RegisterCodec            = types.RegisterCodec
+	NewHandler               = keeper.NewHandler
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
 
-	RandomNamespaces      = simulation.RandomNamespaces
-	ModuleCdc             = types.ModuleCdc
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
+	ModuleCdc             = types.ModuleCdc
+	RandomNamespaces      = simulation.RandomNamespaces
 )
 
 type (
-	Keeper           = keeper.Keeper
 	SessionData      = simulation.SessionData
+	GenesisState     = types.GenesisState
+	MsgCreateSession = types.MsgCreateSession
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
-	GenesisState     = types.GenesisState
-	MsgCreateSession = types.MsgCreateSession
+	Keeper           = keeper.Keeper
 )

@@ -281,7 +281,7 @@ func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []sim.Ac
 	}
 
 	// Skip if the reaction already exists
-	_, registered := k.DoesReactionForShortCodeExist(ctx, reactionData.ShortCode, reactionData.Subspace)
+	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {
 		return nil, true, nil
 	}

@@ -1,9 +1,6 @@
 package v040
 
 import (
-	"fmt"
-	"sort"
-
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
 )
 
@@ -11,91 +8,30 @@ import (
 // genesis state. This migration changes the way posts IDs are specified from a simple
 // uint64 to a sha-256 hashed string
 func Migrate(oldGenState v030posts.GenesisState) GenesisState {
-	posts, postReactions := RemoveDoublePosts(oldGenState.Posts, oldGenState.Reactions)
-	posts, postReactions = SquashPostIDs(posts, postReactions)
+
+	posts := MigratePosts(oldGenState.Posts)
+
+	answers, err := MigrateUsersAnswers(oldGenState.PollAnswers, oldGenState.Posts)
+	if err != nil {
+		panic(err)
+	}
+
+	reactions, err := MigratePostReactions(oldGenState.Reactions, oldGenState.Posts)
+	if err != nil {
+		panic(err)
+	}
+
+	registeredReactions, err := GetReactionsToRegister(posts, reactions)
+	if err != nil {
+		panic(err)
+	}
 
 	return GenesisState{
-		Posts:               migratePosts(posts),
-		UsersPollAnswers:    migrateUsersAnswers(oldGenState.PollAnswers, posts),
-		PostReactions:       migratePostReactions(postReactions, posts),
-		RegisteredReactions: []Reaction{},
+		Posts:               posts,
+		UsersPollAnswers:    answers,
+		PostReactions:       reactions,
+		RegisteredReactions: registeredReactions,
 	}
-}
-
-// RemoveDoublePosts removes all the duplicated posts that have the same contents from the given posts slice.
-// All the reactions associated with the removed posts are moved to the post with the lower id.
-func RemoveDoublePosts(posts []v030posts.Post, postReactions map[string][]v030posts.Reaction) ([]v030posts.Post, map[string][]v030posts.Reaction) {
-	var newPosts []v030posts.Post
-	newReactions := make(map[string][]v030posts.Reaction, len(postReactions))
-
-	for index, post := range posts {
-
-		var conflictingID v030posts.PostID
-		for _, other := range posts[0:index] {
-			if post.ConflictsWith(other) {
-
-				// If the post has the same contents we just skip it and move all the postReactions to the original one
-				if post.ContentsEquals(other) {
-					conflictingID = other.PostID
-					break
-				}
-
-				panic(fmt.Errorf("post with id %s and that with id %s are conflicting but do not contains the same data",
-					post.PostID, other.PostID))
-			}
-		}
-
-		postReactions := postReactions[post.PostID.String()]
-		if conflictingID > 0 {
-			originalReactions := newReactions[conflictingID.String()]
-			newReactions[conflictingID.String()] = append(originalReactions, postReactions...)
-		} else {
-			newPosts = append(newPosts, post)
-			if len(postReactions) > 0 {
-				newReactions[post.PostID.String()] = postReactions
-			}
-		}
-	}
-
-	return newPosts, newReactions
-}
-
-// SquashPostIDs iterates over all the given posts and reactions and squashes the post IDs
-// to be all subsequent to each other so that no IDs are skipped
-func SquashPostIDs(posts []v030posts.Post, postReactions map[string][]v030posts.Reaction) ([]v030posts.Post, map[string][]v030posts.Reaction) {
-	// Sort the posts for easier management
-	sort.Slice(posts, func(i, j int) bool {
-		return posts[i].PostID < posts[j].PostID
-	})
-
-	newPosts := make([]v030posts.Post, len(posts))
-	newReactions := make(map[string][]v030posts.Reaction)
-
-	postIDsReplacements := make(map[string]v030posts.PostID)
-
-	for index, post := range posts {
-		oldPostID := post.PostID
-		newPostID := v030posts.PostID(index + 1)
-
-		post.PostID = newPostID
-		postIDsReplacements[oldPostID.String()] = newPostID
-
-		// Change the parent id if previously replaced
-		newParentID := postIDsReplacements[post.ParentID.String()]
-		if newParentID > 0 {
-			post.ParentID = newParentID
-		}
-
-		newPosts[index] = post
-
-		// Update the postReactions reference if some reaction exists for this post
-		postReactions := postReactions[oldPostID.String()]
-		if len(postReactions) > 0 {
-			newReactions[newPostID.String()] = postReactions
-		}
-	}
-
-	return newPosts, newReactions
 }
 
 // ComputeParentID get the post related to the given parentID if exists and returns it computed ID.
@@ -106,7 +42,7 @@ func ComputeParentID(posts []v030posts.Post, parentID v030posts.PostID) PostID {
 	}
 
 	for _, post := range posts {
-		if post.ParentID == parentID {
+		if post.PostID == parentID {
 			return ComputeID(post.Created, post.Creator, post.Subspace)
 		}
 	}
@@ -115,10 +51,9 @@ func ComputeParentID(posts []v030posts.Post, parentID v030posts.PostID) PostID {
 	return ""
 }
 
-// migratePosts takes a slice of v0.2.0 Post object and migrates them to v0.3.0 Post
-// For each post, if the subspace is a valid sha-256 hash it is preserved the way it is, otherwise it is
-// converted by hashing it.
-func migratePosts(posts []v030posts.Post) []Post {
+// MigratePosts takes a slice of v0.3.0 Post object and migrates them to v0.4.0 Post.
+// For each post, its id is converted from an uint64 representation to a SHA-256 string representation.
+func MigratePosts(posts []v030posts.Post) []Post {
 	migratedPosts := make([]Post, len(posts))
 
 	// Migrate the posts
@@ -133,14 +68,69 @@ func migratePosts(posts []v030posts.Post) []Post {
 			Subspace:       oldPost.Subspace,
 			OptionalData:   OptionalData(oldPost.OptionalData),
 			Creator:        oldPost.Creator,
+			Medias:         MigrateMedias(oldPost.Medias),
+			PollData:       MigratePollData(oldPost.PollData),
 		}
 	}
 
 	return migratedPosts
 }
 
-// migrateUsersAnswers takes a slice of v0.4.0 UsersAnswers object and migrates them to v0.4.0 UserAnswers
-func migrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, posts []v030posts.Post) map[string][]UserAnswer {
+// ConvertID take the given v030 post ID and convert it to a v040 post ID
+func ConvertID(id string, posts []v030posts.Post) (postID PostID, error error) {
+	for _, post := range posts {
+		convertedID, err := v030posts.ParsePostID(id)
+		if err != nil {
+			return "", err
+		}
+
+		if post.PostID == convertedID {
+			postID = ComputeID(post.Created, post.Creator, post.Subspace)
+		}
+	}
+	return postID, nil
+}
+
+// MigrateMedias takes the given v030 medias and converts them into a v040 medias array
+func MigrateMedias(medias []v030posts.PostMedia) []PostMedia {
+	newMedias := make([]PostMedia, len(medias))
+	for index, media := range medias {
+		newMedias[index] = PostMedia{
+			URI:      media.URI,
+			MimeType: media.MimeType,
+		}
+	}
+	return newMedias
+}
+
+// MigrateMedias takes the given v030 poll data and converts it into a v040 poll data
+func MigratePollData(data *v030posts.PollData) *PollData {
+	if data == nil {
+		return nil
+	}
+
+	answers := make([]PollAnswer, len(data.ProvidedAnswers))
+	for index, answer := range data.ProvidedAnswers {
+		answers[index] = PollAnswer{
+			ID:   AnswerID(answer.ID),
+			Text: answer.Text,
+		}
+	}
+
+	return &PollData{
+		Question:              data.Question,
+		ProvidedAnswers:       answers,
+		EndDate:               data.EndDate,
+		Open:                  data.Open,
+		AllowsMultipleAnswers: data.AllowsMultipleAnswers,
+		AllowsAnswerEdits:     data.AllowsAnswerEdits,
+	}
+}
+
+// MigrateUsersAnswers takes a slice of v0.3.0 UsersAnswers object and migrates them to v0.4.0 UserAnswers
+func MigrateUsersAnswers(
+	usersAnswersMap map[string][]v030posts.UserAnswer, posts []v030posts.Post,
+) (map[string][]UserAnswer, error) {
 	migratedUsersAnswers := make(map[string][]UserAnswer, len(usersAnswersMap))
 
 	//Migrate the users answers
@@ -159,51 +149,13 @@ func migrateUsersAnswers(usersAnswersMap map[string][]v030posts.UserAnswer, post
 			}
 		}
 
-		var postID PostID
-		for _, post := range posts {
-			convertedID, err := v030posts.ParsePostID(key)
-			if err != nil {
-				panic(fmt.Errorf("postID parsing error (migration): %s", err))
-			}
-			if post.PostID == convertedID {
-				postID = ComputeID(post.Created, post.Creator, post.Subspace)
-			}
+		postID, err := ConvertID(key, posts)
+		if err != nil {
+			return nil, err
 		}
 
 		migratedUsersAnswers[string(postID)] = newUserAnswers
 	}
 
-	return migratedUsersAnswers
-}
-
-// migrateReactions takes a map of v0.3.0 Reaction objects and migrates them to a v0.4.0 map of Reaction objects.
-func migratePostReactions(postReactions map[string][]v030posts.Reaction, posts []v030posts.Post) map[string][]PostReaction {
-	migratedLikes := make(map[string][]PostReaction, len(postReactions))
-
-	for key, value := range postReactions {
-
-		// Migrate the postReactions
-		reactions := make([]PostReaction, len(value))
-		for index, reaction := range value {
-			reactions[index] = PostReaction{
-				Owner: reaction.Owner,
-				Value: reaction.Value,
-			}
-		}
-
-		var postID PostID
-		for _, post := range posts {
-			convertedID, err := v030posts.ParsePostID(key)
-			if err != nil {
-				panic(fmt.Errorf("postID parsing error (migration): %s", err))
-			}
-			if post.PostID == convertedID {
-				postID = ComputeID(post.Created, post.Creator, post.Subspace)
-			}
-		}
-
-		migratedLikes[string(postID)] = reactions
-	}
-
-	return migratedLikes
+	return migratedUsersAnswers, nil
 }

@@ -33,9 +33,9 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 
 	// Check if the reaction is a registered one
 	post, _ := k.GetPost(ctx, postID)
-	if _, exist := k.DoesReactionForShortCodeExist(ctx, reaction.Value, post.Subspace); !exist {
-		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and sub %s, please register it before use",
-			reaction.Value, postID, post.Subspace)
+	if _, exist := k.GetRegisteredReaction(ctx, reaction.Value, post.Subspace); !exist {
+		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post "+
+			"with ID %s and subspace %s, please register it before use", reaction.Value, postID, post.Subspace)
 	}
 
 	// Save the new reaction
@@ -49,7 +49,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 // given postID. If no reaction with the same value was previously added from the given user, an expError
 // is returned.
 // nolint: interfacer
-func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, user sdk.AccAddress, value string) error {
+func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.PostReactionsStoreKey(postID)
 
@@ -58,13 +58,12 @@ func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, user sd
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
 	// Check if the user exists
-	if !reactions.ContainsReactionFrom(user, value) {
-		return fmt.Errorf("cannot remove the reaction with value %s from user %s as it does not exist",
-			value, user)
+	if !reactions.ContainsReactionFrom(reaction.Owner, reaction.Value) {
+		return fmt.Errorf("cannot remove the reaction with value %s from user %s as it does not exist", reaction.Value, reaction.Owner)
 	}
 
 	// Remove and save the reactions list
-	if newLikes, edited := reactions.RemoveReaction(user, value); edited {
+	if newLikes, edited := reactions.RemoveReaction(reaction.Owner, reaction.Value); edited {
 		if len(newLikes) == 0 {
 			store.Delete(key)
 		} else {
@@ -82,12 +81,14 @@ func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.Pos
 
 	var reactions types.PostReactions
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
+
 	return reactions
 }
 
 // GetReactions allows to returns the list of reactions that have been stored inside the given context
 func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
+
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
 	defer iterator.Close()
 
@@ -109,12 +110,15 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 // RegisterReaction allows to register a new reaction for later reference
 func (k Keeper) RegisterReaction(ctx sdk.Context, reaction types.Reaction) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reaction))
+	store.Set(types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), k.Cdc.MustMarshalBinaryBare(reaction))
 }
 
-// DoesReactionForShortCodeExist checks whether a reaction already exists for the given shortCode, returning it if it does.
-func (k Keeper) DoesReactionForShortCodeExist(ctx sdk.Context, shortcode string, subspace string) (reaction types.Reaction, exist bool) {
+// GetRegisteredReaction returns the registered reaction which has the given shortcode
+// and is registered to be used inside the given subspace.
+// If no reaction could be found, returns false instead.
+func (k Keeper) GetRegisteredReaction(
+	ctx sdk.Context, shortcode string, subspace string,
+) (reaction types.Reaction, exist bool) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ReactionsStoreKey(shortcode, subspace)
 
@@ -126,12 +130,11 @@ func (k Keeper) DoesReactionForShortCodeExist(ctx sdk.Context, shortcode string,
 	return reaction, true
 }
 
-// ListReactions returns all the registered reactions
-func (k Keeper) ListReactions(ctx sdk.Context) (reactions types.Reactions) {
-
+// GetRegisteredReactions returns all the registered reactions
+func (k Keeper) GetRegisteredReactions(ctx sdk.Context) (reactions types.Reactions) {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
 
+	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

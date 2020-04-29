@@ -43,6 +43,15 @@ func (id PostID) Equals(other PostID) bool {
 	return id == other
 }
 
+// ParsePostID takes the given value and returns a PostID from it.
+// If the given value cannot be parse, an error is returned instead.
+func ParsePostID(value string) (PostID, error) {
+	if !Sha256RegEx.MatchString(value) {
+		return "", fmt.Errorf("%s is not a valid post id", value)
+	}
+	return PostID(value), nil
+}
+
 // ----------------
 // --- Post IDs
 // ----------------
@@ -76,6 +85,17 @@ func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 		}
 	}
 	return append(ids, id), true
+}
+
+// String implements fmt.Stringer
+func (ids PostIDs) String() string {
+	var stringIDs = make([]string, len(ids))
+	for index, id := range ids {
+		stringIDs[index] = id.String()
+	}
+
+	out := strings.Join(stringIDs, ", ")
+	return fmt.Sprintf("[%s]", strings.TrimSpace(out))
 }
 
 // ---------------

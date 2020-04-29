@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	emoji "github.com/tmdvs/Go-Emoji-Utils"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // Reaction represents a registered reaction that can be referenced
@@ -85,6 +85,11 @@ func (reaction Reaction) Equals(other Reaction) bool {
 
 // Reactions represents a slice of Reaction objects
 type Reactions []Reaction
+
+// NewReactions allows to create a Reactions object given a list of reactions
+func NewReactions(reactions ...Reaction) Reactions {
+	return reactions
+}
 
 // AppendIfMissing returns a new slice of Reaction objects containing
 // the given reaction if it wasn't already present.

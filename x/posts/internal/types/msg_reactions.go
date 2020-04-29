@@ -10,7 +10,7 @@ import (
 // MsgRegisterReaction represents the message that must be used when wanting
 // to register a new reaction shortCode and the associated value
 type MsgRegisterReaction struct {
-	ShortCode string         `json:"short_code" yaml:"short_code"`
+  ShortCode string         `json:"shortcode" yaml:"shortcode"`
 	Value     string         `json:"value" yaml:"value"`
 	Subspace  string         `json:"subspace" yaml:"subspace"`
 	Creator   sdk.AccAddress `json:"creator" yaml:"creator"`
@@ -42,8 +42,8 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(msg.Value) && !IsEmoji(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a URL or an emoji unicode")
+	if !URIRegEx.MatchString(msg.Value) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL")
 	}
 
 	if !Sha256RegEx.MatchString(msg.Subspace) {

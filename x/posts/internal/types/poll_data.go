@@ -157,6 +157,11 @@ func (userAnswers UserAnswer) Equals(other UserAnswer) bool {
 
 type UserAnswers []UserAnswer
 
+// NewUserAnswers allows to create a new UserAnswers object from the given answers
+func NewUserAnswers(answers ...UserAnswer) UserAnswers {
+	return answers
+}
+
 // AppendIfMissingOrIfUserEquals appends the given answer to the user's answers slice if it does not exist inside it yet
 // or if the user of the answer details is the same.
 // It returns a new slice of containing such answer and a boolean indicating if the slice has been modified or not.

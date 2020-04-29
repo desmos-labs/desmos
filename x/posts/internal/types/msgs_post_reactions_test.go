@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	emoji2 "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
@@ -11,6 +12,18 @@ import (
 // ----------------------
 // --- MsgAddPostReaction
 // ----------------------
+
+func TestShortCodeRegEx(t *testing.T) {
+	for _, emoji := range emoji2.Emojis {
+		for _, shortcode := range emoji.Shortcodes {
+			res := types.ShortCodeRegEx.MatchString(shortcode)
+			if !res {
+				println(shortcode)
+			}
+			require.True(t, res)
+		}
+	}
+}
 
 var msgPostReaction = types.NewMsgAddPostReaction(id, "like", testOwner)
 
@@ -43,11 +56,16 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid value returns error",
 			msg:   types.NewMsgAddPostReaction(id, "like", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction short code must be an emoji short code"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode"),
 		},
 		{
-			name:  "Valid message returns no error",
+			name:  "Valid message returns no error (with shortcode)",
 			msg:   types.NewMsgAddPostReaction(id, ":like:", testOwner),
+			error: nil,
+		},
+		{
+			name:  "Valid message returns no error (with emoji)",
+			msg:   types.NewMsgAddPostReaction(id, "🤩", testOwner),
 			error: nil,
 		},
 	}
@@ -66,7 +84,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 
 func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
 	actual := msgPostReaction.GetSignBytes()
-	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","value":"like"}}`
+	expected := `{"type":"desmos/MsgAddPostReaction","value":{"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -100,22 +118,27 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgRemovePostReaction("", testOwner, "like"),
+			msg:   types.NewMsgRemovePostReaction("", testOwner, ":+1:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user address: ",
-			msg:   types.NewMsgRemovePostReaction(id, nil, "like"),
+			msg:   types.NewMsgRemovePostReaction(id, nil, ":like:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
-			name:  "Invalid value returns no error",
+			name:  "Blank value returns no error",
 			msg:   types.NewMsgRemovePostReaction(id, testOwner, ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value cannot be empty nor blank"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode"),
 		},
 		{
-			name:  "Valid message returns no error",
-			msg:   types.NewMsgRemovePostReaction(id, testOwner, "like"),
+			name:  "Valid message returns no error (with shortcode)",
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, ":+1:"),
+			error: nil,
+		},
+		{
+			name:  "Valid message returns no error (with emoji)",
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, "🤩"),
 			error: nil,
 		},
 	}

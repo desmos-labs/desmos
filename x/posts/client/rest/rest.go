@@ -49,7 +49,7 @@ type AnswerPollPostReq struct {
 
 type RegisterReactionReq struct {
 	BaseReq   rest.BaseReq `json:"base_req"`
-	ShortCode string       `json:"short_code"`
+	Shortcode string       `json:"shortcode"`
 	Value     string       `json:"value"`
 	Subspace  string       `json:"subspace"`
 }

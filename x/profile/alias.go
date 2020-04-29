@@ -15,6 +15,11 @@ const (
 	OpWeightMsgEditProfile   = simulation.OpWeightMsgEditProfile
 	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
 	DefaultGasValue          = simulation.DefaultGasValue
+	EventTypeProfileCreated  = types.EventTypeProfileCreated
+	EventTypeProfileEdited   = types.EventTypeProfileEdited
+	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
+	AttributeProfileMoniker  = types.AttributeProfileMoniker
+	AttributeProfileCreator  = types.AttributeProfileCreator
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
 	StoreKey                 = types.StoreKey
@@ -28,33 +33,18 @@ const (
 	QuerierRoute             = types.QuerierRoute
 	QueryProfile             = types.QueryProfile
 	QueryProfiles            = types.QueryProfiles
-	EventTypeProfileCreated  = types.EventTypeProfileCreated
-	EventTypeProfileEdited   = types.EventTypeProfileEdited
-	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileMoniker  = types.AttributeProfileMoniker
-	AttributeProfileCreator  = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
 
-	NewMsgCreateProfile      = types.NewMsgCreateProfile
-	NewMsgEditProfile        = types.NewMsgEditProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
-	NewProfile               = types.NewProfile
-	NewPictures              = types.NewPictures
-	ValidateURI              = types.ValidateURI
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewQuerier               = keeper.NewQuerier
 	NewHandler               = keeper.NewHandler
 	GetEditedProfile         = keeper.GetEditedProfile
 	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
+	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
 	SimulateMsgEditProfile   = simulation.SimulateMsgEditProfile
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
@@ -67,8 +57,18 @@ var (
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
-	WeightedOperations       = simulation.WeightedOperations
-	RandomizedGenState       = simulation.RandomizedGenState
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	ProfileStoreKey          = types.ProfileStoreKey
+	MonikerStoreKey          = types.MonikerStoreKey
+	NewMsgCreateProfile      = types.NewMsgCreateProfile
+	NewMsgEditProfile        = types.NewMsgEditProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	NewPictures              = types.NewPictures
+	ValidateURI              = types.ValidateURI
+	NewProfile               = types.NewProfile
+	RegisterCodec            = types.RegisterCodec
 
 	// variable aliases
 
@@ -80,12 +80,12 @@ var (
 )
 
 type (
-	Keeper           = keeper.Keeper
+	GenesisState     = types.GenesisState
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
+	Pictures         = types.Pictures
 	Profile          = types.Profile
 	Profiles         = types.Profiles
-	Pictures         = types.Pictures
-	GenesisState     = types.GenesisState
+	Keeper           = keeper.Keeper
 )
