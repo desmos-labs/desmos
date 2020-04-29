@@ -24,4 +24,3 @@ ignore:
   - "*.md"
   - "*.rst"
   - "x/**/test_common.go"
-  - "x/**/invariants.go"

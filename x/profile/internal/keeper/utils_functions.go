@@ -5,8 +5,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
-// IterateProfile iterates through the profiles set and performs the provided function
-func (k Keeper) IterateProfile(ctx sdk.Context, fn func(index int64, profile types.Profile) (stop bool)) {
+// IterateProfiles iterates through the profiles set and performs the provided function
+func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile types.Profile) (stop bool)) {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
 	defer iterator.Close()

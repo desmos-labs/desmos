@@ -38,7 +38,7 @@ func formatOutputProfiles(invalidProfiles types.Profiles) (outputProfiles string
 func NonEmptyProfileCreatorOrMonikerInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles types.Profiles
-		k.IterateProfile(ctx, func(_ int64, profile types.Profile) (stop bool) {
+		k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
 			if err := profile.Validate(); err != nil {
 				invalidProfiles = append(invalidProfiles, profile)
 			}

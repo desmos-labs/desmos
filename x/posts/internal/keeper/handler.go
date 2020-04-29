@@ -125,18 +125,18 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
-// registeredReaction registers a reaction in the given context
+// registeredReaction registers a postReaction in the given context
 func registerReaction(ctx sdk.Context, keeper Keeper, shortcode, subspace, value string, creator sdk.AccAddress) error {
 	if _, isAlreadyRegistered := keeper.GetRegisteredReaction(ctx, shortcode, subspace); isAlreadyRegistered {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-			"reaction with shortcode %s and subspace %s has already been registered", shortcode, subspace))
+			"postReaction with shortcode %s and subspace %s has already been registered", shortcode, subspace))
 	}
 	reaction := types.NewReaction(creator, shortcode, value, subspace)
 	keeper.RegisterReaction(ctx, reaction)
 	return nil
 }
 
-// handleMsgAddPostReaction handles the adding of a reaction to a post
+// handleMsgAddPostReaction handles the adding of a postReaction to a post
 func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPostReaction) (*sdk.Result, error) {
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
@@ -144,14 +144,14 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	// Get the reaction value
+	// Get the postReaction value
 	reactionValue := strings.ReplaceAll(msg.Reaction, "️", "")
 
-	// Check if the reaction is an emoji
+	// Check if the postReaction is an emoji
 	if emojiReact, err := emoji.LookupEmoji(reactionValue); err == nil {
 		reactionValue = emojiReact.Shortcodes[0]
 
-		// nolint: errcheck - We don't care if the reaction is already registered
+		// nolint: errcheck - We don't care if the postReaction is already registered
 		_ = registerReaction(ctx, keeper, reactionValue, post.Subspace, msg.Reaction, types.ModuleAddress)
 	}
 
@@ -176,7 +176,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 	return &result, nil
 }
 
-// handleMsgRemovePostReaction handles the removal of a reaction from a post
+// handleMsgRemovePostReaction handles the removal of a postReaction from a post
 func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRemovePostReaction) (*sdk.Result, error) {
 	// Get the post
 	post, found := keeper.GetPost(ctx, msg.PostID)
@@ -184,10 +184,10 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	// Get the reaction value
+	// Get the postReaction value
 	reactionValue := strings.ReplaceAll(msg.Reaction, "️", "")
 
-	// Remove the reaction
+	// Remove the postReaction
 	reaction := types.NewPostReaction(reactionValue, msg.User)
 	if err := keeper.RemovePostReaction(ctx, post.PostID, reaction); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -203,7 +203,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	ctx.EventManager().EmitEvent(event)
 
 	result := sdk.Result{
-		Data:   []byte("reaction removed properly"),
+		Data:   []byte("postReaction removed properly"),
 		Events: sdk.Events{event},
 	}
 	return &result, nil
@@ -308,7 +308,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	return &result, nil
 }
 
-// handleMsgRegisterReaction handles the reaction registration
+// handleMsgRegisterReaction handles the postReaction registration
 func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegisterReaction) (*sdk.Result, error) {
 	err := registerReaction(ctx, keeper, msg.ShortCode, msg.Subspace, msg.Value, msg.Creator)
 	if err != nil {
@@ -324,7 +324,7 @@ func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegi
 	ctx.EventManager().EmitEvent(event)
 
 	result := sdk.Result{
-		Data:   []byte("reaction registered properly"),
+		Data:   []byte("postReaction registered properly"),
 		Events: sdk.Events{event},
 	}
 

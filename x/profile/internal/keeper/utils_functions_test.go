@@ -28,9 +28,9 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	}
 
 	expProfiles := types.Profiles{
+		profiles[0],
 		profiles[1],
 		profiles[3],
-		profiles[0],
 	}
 
 	ctx, k := SetupTestInput()
@@ -41,7 +41,7 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	}
 
 	var validProfiles types.Profiles
-	k.IterateProfile(ctx, func(_ int64, profile types.Profile) (stop bool) {
+	k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
 		if profile.Moniker == "not" {
 			return false
 		}
@@ -49,6 +49,10 @@ func TestKeeper_IterateProfile(t *testing.T) {
 		return false
 	})
 
-	require.Equal(t, expProfiles, validProfiles)
+	require.Len(t, expProfiles, len(validProfiles))
+
+	for _, profile := range validProfiles {
+		require.Contains(t, expProfiles, profile)
+	}
 
 }

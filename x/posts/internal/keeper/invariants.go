@@ -10,7 +10,7 @@ import (
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 	ir.RegisterRoute(types.ModuleName, "hash256-post-id",
-		Hash256PostIDInvariant(keeper))
+		ValidPostsInvariants(keeper))
 	ir.RegisterRoute(types.ModuleName, "comments-date",
 		ValidCommentsDateInvariants(keeper))
 	ir.RegisterRoute(types.ModuleName, "post-reactions",
@@ -19,12 +19,10 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidPollForPollAnswersInvariants(keeper))
 }
 
-//TODO not sure if this should be used or can be deleted
-
 // AllInvariants runs all invariants of the module
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		if res, stop := Hash256PostIDInvariant(k)(ctx); stop {
+		if res, stop := ValidPostsInvariants(k)(ctx); stop {
 			return res, stop
 		}
 
@@ -52,19 +50,19 @@ func formatOutputIDs(ids types.PostIDs) (outputIDs string) {
 	return outputIDs
 }
 
-// Hash256PostIDInvariant checks that the all posts have a SHA256 ID
-func Hash256PostIDInvariant(k Keeper) sdk.Invariant {
+// ValidPostsInvariants checks that the all posts are valid
+func ValidPostsInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPostIDs types.PostIDs
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if !post.PostID.Valid() {
+			if post.Validate() != nil {
 				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false
 		})
 
-		return sdk.FormatInvariant(types.ModuleName, "invalid post IDs",
-			fmt.Sprintf("The following post IDs are invalid:\n %s", formatOutputIDs(invalidPostIDs)),
+		return sdk.FormatInvariant(types.ModuleName, "invalid posts IDs",
+			fmt.Sprintf("The following posts are invalid:\n %s", formatOutputIDs(invalidPostIDs)),
 		), invalidPostIDs != nil
 	}
 }
@@ -91,40 +89,56 @@ func ValidCommentsDateInvariants(k Keeper) sdk.Invariant {
 	}
 }
 
+// formatOutputReactions concatenate the reactions given into a unique string
+func formatOutputReactions(reactions types.PostReactions) (outputReactions string) {
+	for _, reaction := range reactions {
+		outputReactions += reaction.String() + "\n"
+	}
+	return outputReactions
+}
+
 // ValidPostForReactionsInvariants checks that the post related to the reactions is valid and exists
 func ValidPostForReactionsInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPostIDs types.PostIDs
+		var invalidReactions types.PostReactions
 		reactions := k.GetReactions(ctx)
-		for key := range reactions {
+		for key, value := range reactions {
 			postID := types.PostID(key)
 			if _, found := k.GetPost(ctx, postID); !found {
-				invalidPostIDs = append(invalidPostIDs, postID)
+				invalidReactions = append(invalidReactions, value...)
 			}
 		}
 
 		return sdk.FormatInvariant(types.ModuleName, "posts reactions refers to non existing posts",
-			fmt.Sprintf("The following post IDs referred to posts that did not exist:\n %s",
-				formatOutputIDs(invalidPostIDs)),
-		), invalidPostIDs != nil
+			fmt.Sprintf("The following reactions refer to posts that do not exist:\n %s",
+				formatOutputReactions(invalidReactions)),
+		), invalidReactions != nil
 	}
+}
+
+// formatOutputPollAnswers concatenate the poll answers given into a unique string
+func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers string) {
+	for _, answer := range pollAnswers {
+		outputAnswers += answer.String() + "\n"
+	}
+	return outputAnswers
 }
 
 // ValidPollForPollAnswersInvariants check that the poll answers are referred to a valid post's poll
 func ValidPollForPollAnswersInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPostIDs types.PostIDs
+		var invalidPollAnswers types.UserAnswers
 		answers := k.GetPollAnswersMap(ctx)
-		for key := range answers {
+		for key, value := range answers {
 			postID := types.PostID(key)
 			if post, found := k.GetPost(ctx, postID); !found || (found && post.PollData == nil) {
-				invalidPostIDs = append(invalidPostIDs, postID)
+				invalidPollAnswers = append(invalidPollAnswers, value...)
 			}
 		}
 
 		return sdk.FormatInvariant(types.ModuleName, "poll answers refers to posts without poll",
-			fmt.Sprintf("The following post IDs referred to posts that either not exists or has no poll associated:\n %s",
-				formatOutputIDs(invalidPostIDs)),
-		), invalidPostIDs != nil
+			fmt.Sprintf("The following answers refer to a post that either does not exist or has no poll associated to it:\n %s",
+				formatOutputPollAnswers(invalidPollAnswers)),
+		), invalidPollAnswers != nil
 	}
 }

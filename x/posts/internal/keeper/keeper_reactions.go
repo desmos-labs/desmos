@@ -13,9 +13,9 @@ import (
 // --- PostReactions
 // -------------
 
-// SavePostReaction allows to save the given reaction inside the store.
-// It assumes that the given reaction is valid.
-// If another reaction from the same user for the same post and with the same value exists, returns an expError.
+// SavePostReaction allows to save the given postReaction inside the store.
+// It assumes that the given postReaction is valid.
+// If another postReaction from the same user for the same post and with the same value exists, returns an expError.
 // nolint: interfacer
 func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.StoreKey)
@@ -31,22 +31,22 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 			reaction.Owner, reaction.Value, postID)
 	}
 
-	// Check if the reaction is a registered one
+	// Check if the postReaction is a registered one
 	post, _ := k.GetPost(ctx, postID)
 	if _, exist := k.GetRegisteredReaction(ctx, reaction.Value, post.Subspace); !exist {
-		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post "+
+		return fmt.Errorf("postReaction with short code %s isn't registered yet and can't be used to react to the post "+
 			"with ID %s and subspace %s, please register it before use", reaction.Value, postID, post.Subspace)
 	}
 
-	// Save the new reaction
+	// Save the new postReaction
 	reactions = append(reactions, reaction)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reactions))
 
 	return nil
 }
 
-// RemovePostReaction removes the reaction from the given user from the post having the
-// given postID. If no reaction with the same value was previously added from the given user, an expError
+// RemovePostReaction removes the postReaction from the given user from the post having the
+// given postID. If no postReaction with the same value was previously added from the given user, an expError
 // is returned.
 // nolint: interfacer
 func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
@@ -59,7 +59,7 @@ func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, reactio
 
 	// Check if the user exists
 	if !reactions.ContainsReactionFrom(reaction.Owner, reaction.Value) {
-		return fmt.Errorf("cannot remove the reaction with value %s from user %s as it does not exist", reaction.Value, reaction.Owner)
+		return fmt.Errorf("cannot remove the postReaction with value %s from user %s as it does not exist", reaction.Value, reaction.Owner)
 	}
 
 	// Remove and save the reactions list
@@ -107,15 +107,15 @@ func (k Keeper) GetReactions(ctx sdk.Context) map[string]types.PostReactions {
 // --- Reactions
 // -------------
 
-// RegisterReaction allows to register a new reaction for later reference
+// RegisterReaction allows to register a new postReaction for later reference
 func (k Keeper) RegisterReaction(ctx sdk.Context, reaction types.Reaction) {
 	store := ctx.KVStore(k.StoreKey)
 	store.Set(types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), k.Cdc.MustMarshalBinaryBare(reaction))
 }
 
-// GetRegisteredReaction returns the registered reaction which has the given shortcode
+// GetRegisteredReaction returns the registered postReaction which has the given shortcode
 // and is registered to be used inside the given subspace.
-// If no reaction could be found, returns false instead.
+// If no postReaction could be found, returns false instead.
 func (k Keeper) GetRegisteredReaction(
 	ctx sdk.Context, shortcode string, subspace string,
 ) (reaction types.Reaction, exist bool) {
