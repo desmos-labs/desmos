@@ -37,6 +37,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewHandler               = keeper.NewHandler
 	GetEditedProfile         = keeper.GetEditedProfile
 	NewKeeper                = keeper.NewKeeper
@@ -70,6 +71,7 @@ var (
 	RegisterCodec            = types.RegisterCodec
 
 	// variable aliases
+
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
@@ -86,5 +88,4 @@ type (
 	Profile          = types.Profile
 	Profiles         = types.Profiles
 	Keeper           = keeper.Keeper
-	ProfileData      = simulation.ProfileData
 )

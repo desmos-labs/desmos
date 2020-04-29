@@ -795,6 +795,7 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 					types.EventTypeRegisterReaction,
 					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
+					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
 					sdk.NewAttribute(types.AttributeKeyReactionSubSpace, test.msg.Subspace),
 				))
 

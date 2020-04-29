@@ -61,6 +61,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewHandler                    = keeper.NewHandler
 	NewKeeper                     = keeper.NewKeeper
 	NewQuerier                    = keeper.NewQuerier
@@ -80,7 +81,6 @@ var (
 	GetAccount                    = simulation.GetAccount
 	RandomReactionValue           = simulation.RandomReactionValue
 	RandomReactionShortCode       = simulation.RandomReactionShortCode
-	RandomEmoji                   = simulation.RandomEmoji
 	RandomReactionData            = simulation.RandomReactionData
 	RegisteredReactionsData       = simulation.RegisteredReactionsData
 	DecodeStore                   = simulation.DecodeStore
@@ -127,6 +127,7 @@ var (
 	NewMsgRegisterReaction        = types.NewMsgRegisterReaction
 
 	// variable aliases
+
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
 	Sha256RegEx              = types.Sha256RegEx
