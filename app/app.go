@@ -213,6 +213,16 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
 	app.mm.SetOrderEndBlockers(staking.ModuleName)
 
+	// NOTE: The genutils module must occur after staking so that pools are
+	// properly initialized with tokens from genesis accounts.
+	app.mm.SetOrderInitGenesis(
+		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
+		slashing.ModuleName, supply.ModuleName, genutil.ModuleName,
+
+		// Custom modules
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
+	)
+
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
