@@ -175,6 +175,7 @@ func TestAppImportExport(t *testing.T) {
 	storeKeysPrefixes := []StoreKeysPrefixes{
 		{app.keys[baseapp.MainStoreKey], newApp.keys[baseapp.MainStoreKey], [][]byte{}},
 		{app.keys[auth.StoreKey], newApp.keys[auth.StoreKey], [][]byte{}},
+		// TODO: Reinsert gov once implemented again
 		{app.keys[staking.StoreKey], newApp.keys[staking.StoreKey],
 			[][]byte{
 				staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,
