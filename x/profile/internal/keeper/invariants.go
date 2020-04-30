@@ -10,14 +10,12 @@ import (
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 	ir.RegisterRoute(types.ModuleName, "valid-profile",
-		NonEmptyProfileCreatorOrMonikerInvariant(keeper))
+		ValidProfileInvariant(keeper))
 }
 
-//TODO not sure if this should be used or can be deleted
-// AllInvariants runs all invariants of the module
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		if res, stop := NonEmptyProfileCreatorOrMonikerInvariant(k)(ctx); stop {
+		if res, stop := ValidProfileInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
@@ -34,8 +32,8 @@ func formatOutputProfiles(invalidProfiles types.Profiles) (outputProfiles string
 	return outputProfiles
 }
 
-// NonEmptyProfileCreatorOrMonikerInvariant checks that all registered profiles have a non-empty moniker and a non-empty creator
-func NonEmptyProfileCreatorOrMonikerInvariant(k Keeper) sdk.Invariant {
+// ValidProfileInvariant checks that all registered profiles have a non-empty moniker and a non-empty creator
+func ValidProfileInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles types.Profiles
 		k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {

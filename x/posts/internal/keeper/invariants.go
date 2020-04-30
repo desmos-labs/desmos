@@ -10,31 +10,31 @@ import (
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 	ir.RegisterRoute(types.ModuleName, "hash256-post-id",
-		ValidPostsInvariants(keeper))
+		ValidPostsInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "comments-date",
-		ValidCommentsDateInvariants(keeper))
+		ValidCommentsDateInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "post-reactions",
-		ValidPostForReactionsInvariants(keeper))
+		ValidPostForReactionsInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "post-poll-answers",
-		ValidPollForPollAnswersInvariants(keeper))
+		ValidPollForPollAnswersInvariant(keeper))
 }
 
 // AllInvariants runs all invariants of the module
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		if res, stop := ValidPostsInvariants(k)(ctx); stop {
+		if res, stop := ValidPostsInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
-		if res, stop := ValidCommentsDateInvariants(k)(ctx); stop {
+		if res, stop := ValidCommentsDateInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
-		if res, stop := ValidPollForPollAnswersInvariants(k)(ctx); stop {
+		if res, stop := ValidPollForPollAnswersInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
-		if res, stop := ValidPostForReactionsInvariants(k)(ctx); stop {
+		if res, stop := ValidPostForReactionsInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
@@ -50,8 +50,8 @@ func formatOutputIDs(ids types.PostIDs) (outputIDs string) {
 	return outputIDs
 }
 
-// ValidPostsInvariants checks that the all posts are valid
-func ValidPostsInvariants(k Keeper) sdk.Invariant {
+// ValidPostsInvariant checks that the all posts are valid
+func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPostIDs types.PostIDs
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
@@ -67,8 +67,8 @@ func ValidPostsInvariants(k Keeper) sdk.Invariant {
 	}
 }
 
-// ValidCommentsDateInvariants checks that comments creation date is always greater than parent creation date
-func ValidCommentsDateInvariants(k Keeper) sdk.Invariant {
+// ValidCommentsDateInvariant checks that comments creation date is always greater than parent creation date
+func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidCommentsIDs types.PostIDs
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
@@ -97,8 +97,8 @@ func formatOutputReactions(reactions types.PostReactions) (outputReactions strin
 	return outputReactions
 }
 
-// ValidPostForReactionsInvariants checks that the post related to the reactions is valid and exists
-func ValidPostForReactionsInvariants(k Keeper) sdk.Invariant {
+// ValidPostForReactionsInvariant checks that the post related to the reactions is valid and exists
+func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidReactions types.PostReactions
 		reactions := k.GetReactions(ctx)
@@ -124,8 +124,8 @@ func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers strin
 	return outputAnswers
 }
 
-// ValidPollForPollAnswersInvariants check that the poll answers are referred to a valid post's poll
-func ValidPollForPollAnswersInvariants(k Keeper) sdk.Invariant {
+// ValidPollForPollAnswersInvariant check that the poll answers are referred to a valid post's poll
+func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPollAnswers types.UserAnswers
 		answers := k.GetPollAnswersMap(ctx)
