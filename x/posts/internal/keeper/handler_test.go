@@ -443,7 +443,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			name:         "Reaction not found",
 			existingPost: &post,
 			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "reaction"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value postReaction from user %s as it does not exist", user)),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value reaction from user %s as it does not exist", user)),
 		},
 		{
 			name:             "Removing a reaction using the code works properly",
