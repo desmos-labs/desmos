@@ -420,7 +420,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	reaction := types.NewPostReaction("postReaction", user)
+	reaction := types.NewPostReaction("reaction", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
 	require.NoError(t, err)
@@ -436,24 +436,24 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	}{
 		{
 			name:  "Post not found",
-			msg:   types.NewMsgRemovePostReaction("invalid", user, "postReaction"),
+			msg:   types.NewMsgRemovePostReaction("invalid", user, "reaction"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id invalid not found"),
 		},
 		{
 			name:         "Reaction not found",
 			existingPost: &post,
-			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "postReaction"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the postReaction with value postReaction from user %s as it does not exist", user)),
+			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "reaction"),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value postReaction from user %s as it does not exist", user)),
 		},
 		{
-			name:             "Removing a postReaction using the code works properly",
+			name:             "Removing a reaction using the code works properly",
 			existingPost:     &post,
 			existingReaction: &reaction,
 			msg:              types.NewMsgRemovePostReaction(post.PostID, user, reaction.Value),
 			error:            nil,
 		},
 		{
-			name:             "Removing a postReaction using the code works properly",
+			name:             "Removing a reaction using the code works properly",
 			existingPost:     &post,
 			existingReaction: &emojiReaction,
 			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emoji.Value),
@@ -767,11 +767,11 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 			error:            nil,
 		},
 		{
-			name:             "Already registered postReaction returns error",
+			name:             "Already registered reaction returns error",
 			existingReaction: &reaction,
 			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-				"postReaction with shortcode %s and subspace %s has already been registered", shortCode, subspace)),
+				"reaction with shortcode %s and subspace %s has already been registered", shortCode, subspace)),
 		},
 	}
 

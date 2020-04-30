@@ -53,7 +53,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", liker)},
 		},
 		{
-			name:           "Reaction is not a registered postReaction and returns error",
+			name:           "Reaction is not a registered reaction and returns error",
 			storedReaction: types.PostReactions{},
 			postID:         id,
 			reaction:       types.NewPostReaction(":like:", liker),
@@ -69,7 +69,7 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			),
 			registeredReaction: types.NewReaction(liker, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: fmt.Errorf("postReaction with short code :like: isn't registered yet and can't be used to react to " +
+			error: fmt.Errorf("reaction with short code :like: isn't registered yet and can't be used to react to " +
 				"the post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and subspace " +
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
 		},
@@ -165,21 +165,21 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 			expectedStored: types.PostReactions{},
 		},
 		{
-			name:           "Non existing postReaction returns error - Creator",
+			name:           "Non existing reaction returns error - Creator",
 			storedLikes:    types.PostReactions{},
 			postID:         id,
 			liker:          liker,
 			value:          ":like:",
-			error:          fmt.Errorf("cannot remove the postReaction with value :like: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value :like: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.PostReactions{},
 		},
 		{
-			name:           "Non existing postReaction returns error - Reaction",
+			name:           "Non existing reaction returns error - Reaction",
 			storedLikes:    types.PostReactions{types.NewPostReaction(":like:", liker)},
 			postID:         id,
 			liker:          liker,
 			value:          ":smile:",
-			error:          fmt.Errorf("cannot remove the postReaction with value :smile: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
+			error:          fmt.Errorf("cannot remove the reaction with value :smile: from user cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 as it does not exist"),
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", liker)},
 		},
 	}
@@ -283,11 +283,11 @@ func TestKeeper_GetReactions(t *testing.T) {
 			name: "Non empty likes data are returned correcly",
 			likes: map[string]types.PostReactions{
 				id: {
-					types.NewPostReaction("postReaction", liker1),
-					types.NewPostReaction("postReaction", liker2),
+					types.NewPostReaction("reaction", liker1),
+					types.NewPostReaction("reaction", liker2),
 				},
 				id2: {
-					types.NewPostReaction("postReaction", liker1),
+					types.NewPostReaction("reaction", liker1),
 				},
 			},
 		},
@@ -352,13 +352,13 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 		expBool        bool
 	}{
 		{
-			name:           "postReaction for given short code exists",
+			name:           "reaction for given short code exists",
 			storedReaction: reaction,
 			shortCode:      ":smile:",
 			expBool:        true,
 		},
 		{
-			name:           "postReaction for the given short code doesn't exist",
+			name:           "reaction for the given short code doesn't exist",
 			storedReaction: reaction,
 			shortCode:      ":test:",
 			expBool:        false,
