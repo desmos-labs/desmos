@@ -44,7 +44,7 @@ func ValidProfileInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid profiles",
-			fmt.Sprintf("The following list contains invalid profiles that have empty moniker, empty creator or both:\n %s",
+			fmt.Sprintf("The following list contains invalid profiles:\n %s",
 				formatOutputProfiles(invalidProfiles)),
 		), invalidProfiles != nil
 	}
