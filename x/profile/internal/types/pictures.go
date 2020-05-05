@@ -6,8 +6,8 @@ import (
 
 // Pictures contains the data of a user profile's related pictures
 type Pictures struct {
-	Profile *string `json:"profile,omitempty"`
-	Cover   *string `json:"cover,omitempty"`
+	Profile *string `json:"profile,omitempty" yaml:"profile,omitempty"`
+	Cover   *string `json:"cover,omitempty" yaml:"cover,omitempty"`
 }
 
 // NewPictures is a constructor function for Pictures

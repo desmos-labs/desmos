@@ -144,12 +144,12 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
-			name:          "Post without medias is saved properly",
+			name:          "Post with medias is saved properly",
 			existingPosts: types.Posts{},
 			newPost: types.NewPost(
 				id,
 				"",
-				"Post without medias",
+				"Post with medias",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -159,11 +159,11 @@ func TestKeeper_SavePost(t *testing.T) {
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
-			name:          "Post without poll data is saved properly",
+			name:          "Post with poll data is saved properly",
 			existingPosts: types.Posts{},
 			newPost: types.NewPost(id,
 				"",
-				"New post ID lesser",
+				"Post with poll data",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},

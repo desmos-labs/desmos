@@ -14,12 +14,12 @@ import (
 
 // MsgCreateProfile defines a CreateProfile message
 type MsgCreateProfile struct {
-	Moniker  string         `json:"moniker"`
-	Name     *string        `json:"name,omitempty"`
-	Surname  *string        `json:"surname,omitempty"`
-	Bio      *string        `json:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator"`
+	Moniker  string         `json:"moniker" yaml:"moniker"`
+	Name     *string        `json:"name,omitempty" yaml:"name,omitempty"`
+	Surname  *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
+	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
+	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgCreateProfile is a constructor function for MsgCreateProfile
@@ -104,13 +104,13 @@ func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
 
 // MsgEditProfile defines a EditProfile message
 type MsgEditProfile struct {
-	NewMoniker *string        `json:"new_moniker"`
-	Name       *string        `json:"name,omitempty"`
-	Surname    *string        `json:"surname,omitempty"`
-	Bio        *string        `json:"bio,omitempty"`
-	ProfilePic *string        `json:"profile_pic,omitempty"`
-	ProfileCov *string        `json:"profile_cov,omitempty"`
-	Creator    sdk.AccAddress `json:"creator"`
+	NewMoniker *string        `json:"new_moniker" yaml:"new_moniker"`
+	Name       *string        `json:"name,omitempty" yaml:"name,omitempty"`
+	Surname    *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
+	Bio        *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	ProfilePic *string        `json:"profile_pic,omitempty" yaml:"profile_pic,omitempty"`
+	ProfileCov *string        `json:"profile_cov,omitempty" yaml:"profile_cov,omitempty"`
+	Creator    sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgEditProfile is a constructor function for MsgEditProfile
@@ -186,7 +186,7 @@ func (msg MsgEditProfile) GetSigners() []sdk.AccAddress {
 
 // MsgDeleteProfile defines a DeleteProfile message
 type MsgDeleteProfile struct {
-	Creator sdk.AccAddress `json:"creator"`
+	Creator sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgDeleteProfile is a constructor function for MsgDeleteProfile

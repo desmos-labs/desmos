@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/posts/client/cli"
 	"github.com/desmos-labs/desmos/x/posts/client/rest"
+	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -95,7 +96,9 @@ func (AppModule) Name() string {
 }
 
 // RegisterInvariants performs a no-op.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
+	keeper.RegisterInvariants(ir, am.keeper)
+}
 
 // Route returns the message routing key for the posts module.
 func (am AppModule) Route() string {

@@ -13,7 +13,7 @@ import (
 type PostQueryResponse struct {
 	Post
 	PollAnswers []UserAnswer            `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
-	Reactions   []ReactionQueryResponse `json:"reactions" yaml:"reactions"`
+	Reactions   []ReactionQueryResponse `json:"reactions" yaml:"reactions,omitempty"`
 	Children    PostIDs                 `json:"children" yaml:"children"`
 }
 
