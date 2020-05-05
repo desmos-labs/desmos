@@ -9,7 +9,7 @@ import (
 
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
-	ir.RegisterRoute(types.ModuleName, "hash256-post-id",
+	ir.RegisterRoute(types.ModuleName, "valid-post",
 		ValidPostsInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "comments-date",
 		ValidCommentsDateInvariant(keeper))
