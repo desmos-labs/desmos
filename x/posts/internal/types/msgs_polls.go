@@ -13,9 +13,9 @@ import (
 
 // MsgAnswerPoll defines the AnswerPoll message
 type MsgAnswerPoll struct {
-	PostID      PostID         `json:"post_id"`
-	UserAnswers []AnswerID     `json:"answers"`
-	Answerer    sdk.AccAddress `json:"answerer"`
+	PostID      PostID         `json:"post_id" yaml:"post_id"`
+	UserAnswers []AnswerID     `json:"answers" yaml:"answers"`
+	Answerer    sdk.AccAddress `json:"answerer" yaml:"answerer"`
 }
 
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll

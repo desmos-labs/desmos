@@ -10,10 +10,10 @@ import (
 // MsgRegisterReaction represents the message that must be used when wanting
 // to register a new reaction shortCode and the associated value
 type MsgRegisterReaction struct {
-	ShortCode string         `json:"shortcode"`
-	Value     string         `json:"value"`
-	Subspace  string         `json:"subspace"`
-	Creator   sdk.AccAddress `json:"creator"`
+	ShortCode string         `json:"shortcode" yaml:"shortcode"`
+	Value     string         `json:"value" yaml:"value"`
+	Subspace  string         `json:"subspace" yaml:"subspace"`
+	Creator   sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgRegisterReaction is a constructor function for MsgRegisterReaction
