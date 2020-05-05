@@ -10,8 +10,8 @@ import (
 // ---------------
 
 type PostMedia struct {
-	URI      string `json:"uri"`
-	MimeType string `json:"mime_type"`
+	URI      string `json:"uri" yaml:"uri"`
+	MimeType string `json:"mime_type" yaml:"mime_type"`
 }
 
 func NewPostMedia(uri, mimeType string) PostMedia {

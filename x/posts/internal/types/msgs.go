@@ -16,15 +16,15 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       PostID            `json:"parent_id"`
-	Message        string            `json:"message"`
-	AllowsComments bool              `json:"allows_comments"`
-	Subspace       string            `json:"subspace"`
-	OptionalData   map[string]string `json:"optional_data,omitempty"`
-	Creator        sdk.AccAddress    `json:"creator"`
-	CreationDate   time.Time         `json:"creation_date"`
-	Medias         PostMedias        `json:"medias,omitempty"`
-	PollData       *PollData         `json:"poll_data,omitempty"`
+	ParentID       PostID            `json:"parent_id" yaml:"parent_id"`
+	Message        string            `json:"message" yaml:"message"`
+	AllowsComments bool              `json:"allows_comments" yaml:"allows_comments"`
+	Subspace       string            `json:"subspace" yaml:"subspace"`
+	OptionalData   map[string]string `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
+	Creator        sdk.AccAddress    `json:"creator" yaml:"creator"`
+	CreationDate   time.Time         `json:"creation_date" yaml:"creation_date"`
+	Medias         PostMedias        `json:"medias,omitempty" yaml:"medias,omitempty"`
+	PollData       *PollData         `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
@@ -130,10 +130,10 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID   PostID         `json:"post_id"`
-	Message  string         `json:"message"`
-	Editor   sdk.AccAddress `json:"editor"`
-	EditDate time.Time      `json:"edit_date"`
+	PostID   PostID         `json:"post_id" yaml:"post_id"`
+	Message  string         `json:"message" yaml:"message"`
+	Editor   sdk.AccAddress `json:"editor" yaml:"editor"`
+	EditDate time.Time      `json:"edit_date" yaml:"edit_date"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost

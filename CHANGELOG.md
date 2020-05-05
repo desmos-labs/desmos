@@ -1,3 +1,8 @@
+# Version 0.5.0
+## Changes
+- Implemented invariants for posts and profile modules (#90)
+- Added YAML support for types (#124)
+
 # Version 0.4.0
 ## Changes
 - Improved the generation of post ids (#131)

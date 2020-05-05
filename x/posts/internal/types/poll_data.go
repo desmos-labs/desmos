@@ -15,12 +15,12 @@ import (
 
 // PollData contains the information of a poll that is associated to a post
 type PollData struct {
-	Question              string      `json:"question"`                // Describes what poll is about
-	ProvidedAnswers       PollAnswers `json:"provided_answers"`        // Lists of answers provided by the creator
-	EndDate               time.Time   `json:"end_date"`                // RFC3339 date at which the poll will no longer accept new answers
-	Open                  bool        `json:"is_open"`                 // Tells if the poll is still accepting answers
-	AllowsMultipleAnswers bool        `json:"allows_multiple_answers"` // Tells if the poll is a single or multiple answers one
-	AllowsAnswerEdits     bool        `json:"allows_answer_edits"`     // Tells if the poll allows answer edits
+	Question              string      `json:"question" yaml:"question"`                               // Describes what poll is about
+	ProvidedAnswers       PollAnswers `json:"provided_answers" yaml:"provided_answers"`               // Lists of answers provided by the creator
+	EndDate               time.Time   `json:"end_date" yaml:"end_date"`                               // RFC3339 date at which the poll will no longer accept new answers
+	Open                  bool        `json:"is_open" yaml:"is_open"`                                 // Tells if the poll is still accepting answers
+	AllowsMultipleAnswers bool        `json:"allows_multiple_answers" yaml:"allows_multiple_answers"` // Tells if the poll is a single or multiple answers one
+	AllowsAnswerEdits     bool        `json:"allows_answer_edits" yaml:"allows_answer_edits"`         // Tells if the poll allows answer edits
 }
 
 // NewPollData returns a new PollData object pointer containing the given data
@@ -96,8 +96,8 @@ func (pd PollData) Equals(other PollData) bool {
 
 // UserAnswer contains the data of a user's answer submission
 type UserAnswer struct {
-	Answers []AnswerID     `json:"answers"`
-	User    sdk.AccAddress `json:"user"`
+	Answers []AnswerID     `json:"answers" yaml:"answers"`
+	User    sdk.AccAddress `json:"user" yaml:"user"`
 }
 
 // NewUserAnswer returns a new AnswerDetails object containing the given data

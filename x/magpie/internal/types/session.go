@@ -47,14 +47,14 @@ func ParseSessionID(value string) (SessionID, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionID      `json:"id,string"`              // Id of the session
-	Owner         sdk.AccAddress `json:"owner"`                  // Desmos owner of this session
-	Created       int64          `json:"creation_time,string"`   // Block height at which the session has been created
-	Expiry        int64          `json:"expiration_time,string"` // Block height at which the session will expire
-	Namespace     string         `json:"namespace"`              // External chain identifier
-	ExternalOwner string         `json:"external_owner"`         // External chain owner address
-	PubKey        string         `json:"pub_key"`                // External chain owner public key
-	Signature     string         `json:"signature"`              // Session signature
+	SessionID     SessionID      `json:"id,string" yaml:"id,string"`                    // Id of the session
+	Owner         sdk.AccAddress `json:"owner" yaml:"owner"`                            // Desmos owner of this session
+	Created       int64          `json:"creation_time,string" yaml:"creation_time"`     // Block height at which the session has been created
+	Expiry        int64          `json:"expiration_time,string" yaml:"expiration_time"` // Block height at which the session will expire
+	Namespace     string         `json:"namespace" yaml:"namespace"`                    // External chain identifier
+	ExternalOwner string         `json:"external_owner" yaml:"external_owner"`          // External chain owner address
+	PubKey        string         `json:"pub_key" yaml:"pub_key"`                        // External chain owner public key
+	Signature     string         `json:"signature" yaml:"signature"`                    // Session signature
 }
 
 // NewSession return a new session containing the given parameters

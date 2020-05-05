@@ -15,8 +15,8 @@ import (
 
 // PostReaction is a struct of a user reaction to a post
 type PostReaction struct {
-	Owner sdk.AccAddress `json:"owner"` // Creator that has created the reaction
-	Value string         `json:"value"` // Value of the reaction, either an emoji or a shortcode
+	Owner sdk.AccAddress `json:"owner" yaml:"owner"` // Creator that has created the reaction
+	Value string         `json:"value" yaml:"value"` // Value of the reaction, either an emoji or a shortcode
 }
 
 // NewPostReaction returns a new PostReaction
