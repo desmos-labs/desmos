@@ -10,11 +10,11 @@ import (
 
 // MsgCreateSession defines the MsgCreateSession message
 type MsgCreateSession struct {
-	Owner         sdk.AccAddress `json:"owner"`
-	Namespace     string         `json:"namespace"`
-	ExternalOwner string         `json:"external_owner"`
-	PubKey        string         `json:"pub_key"`
-	Signature     string         `json:"signature"`
+	Owner         sdk.AccAddress `json:"owner" yaml:"owner"`
+	Namespace     string         `json:"namespace" yaml:"namespace"`
+	ExternalOwner string         `json:"external_owner" yaml:"external_owner"`
+	PubKey        string         `json:"pub_key" yaml:"pub_key"`
+	Signature     string         `json:"signature" yaml:"signature"`
 }
 
 // NewMsgCreateSession is the constructor of MsgCreateSession
