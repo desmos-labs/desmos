@@ -95,7 +95,7 @@ func replayTxs(rootDir string) error {
 	// Application
 	fmt.Fprintln(os.Stderr, "Creating application")
 	gapp := app.NewDesmosApp(
-		ctx.Logger, appDB, traceStoreWriter, true, map[int64]bool{},
+		ctx.Logger, appDB, traceStoreWriter, true, map[int64]bool{}, invCheckPeriod,
 		baseapp.SetPruning(store.PruneEverything), // nothing
 	)
 

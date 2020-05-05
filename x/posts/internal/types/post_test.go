@@ -341,6 +341,16 @@ func TestPost_Validate(t *testing.T) {
 			).WithMedias(medias).WithPollData(pollData),
 			expError: "post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this",
 		},
+		{
+			name:     "Valid post without poll data",
+			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias),
+			expError: "",
+		},
+		{
+			name:     "Valid post without medias",
+			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			expError: "",
+		},
 	}
 
 	for _, test := range tests {

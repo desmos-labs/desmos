@@ -209,8 +209,10 @@ func (p Post) Validate() error {
 		return err
 	}
 
-	if err := p.PollData.Validate(); err != nil {
-		return err
+	if p.PollData != nil {
+		if err := p.PollData.Validate(); err != nil {
+			return err
+		}
 	}
 
 	return nil
