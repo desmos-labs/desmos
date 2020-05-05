@@ -5,11 +5,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // NewHandler returns a handler for "magpie" type messages.
@@ -144,18 +143,33 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	// Get the reaction value
-	reactionValue := strings.ReplaceAll(msg.Reaction, "️", "")
+	var reactionShortcode string
+	var reactionValue string
+	// Parse reaction adding the variation selector-16 to let the emoji being readable
+	parsedReaction := strings.ReplaceAll(msg.Reaction, "️", "")
 
 	// Check if the reaction is an emoji
-	if emojiReact, err := emoji.LookupEmoji(reactionValue); err == nil {
-		reactionValue = emojiReact.Shortcodes[0]
-
-		// nolint: errcheck - We don't care if the reaction is already registered
-		_ = registerReaction(ctx, keeper, reactionValue, post.Subspace, msg.Reaction, types.ModuleAddress)
+	if emojiReact, err := emoji.LookupEmoji(parsedReaction); err == nil {
+		reactionShortcode = emojiReact.Shortcodes[0]
+		reactionValue = emojiReact.Value
+	} else { //if not, check if the shortcode is related to any emoji
+		emo, err := emoji.LookupEmojiByCode(parsedReaction)
+		if err != nil { // if no emoji is related to it, check if the shortcode has been registered before
+			regReaction, exist := keeper.GetRegisteredReaction(ctx, parsedReaction, post.Subspace)
+			if !exist { // if it has not been registered yet, no one can use it to react to the post
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+					fmt.Sprintf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and subspace %s, please register it before use",
+						parsedReaction, post.PostID, post.Subspace))
+			}
+			reactionValue = regReaction.Value
+			reactionShortcode = regReaction.ShortCode
+		} else {
+			reactionValue = emo.Value
+			reactionShortcode = emo.Shortcodes[0]
+		}
 	}
 
-	postReaction := types.NewPostReaction(reactionValue, msg.User)
+	postReaction := types.NewPostReaction(reactionShortcode, msg.User)
 	if err := keeper.SavePostReaction(ctx, post.PostID, postReaction); err != nil {
 		return nil, err
 	}
@@ -165,7 +179,8 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		types.EventTypePostReactionAdded,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionValue),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
+		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
 	)
 	ctx.EventManager().EmitEvent(event)
 
@@ -184,11 +199,35 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	// Get the reaction value
-	reactionValue := strings.ReplaceAll(msg.Reaction, "️", "")
+	var reactionShortcode string
+	var reactionValue string
+
+	// Parse reaction adding the variation selector-16 to let the emoji being readable
+	parsedReaction := strings.ReplaceAll(msg.Reaction, "️", "")
+
+	// Check if the reaction is an emoji
+	if emojiReact, err := emoji.LookupEmoji(parsedReaction); err == nil {
+		reactionShortcode = emojiReact.Shortcodes[0]
+		reactionValue = emojiReact.Value
+	} else { //if not, check if the shortcode is related to any emoji
+		emo, err := emoji.LookupEmojiByCode(parsedReaction)
+		if err != nil { // if no emoji is related to it, check if the shortcode has been registered before
+			regReaction, exist := keeper.GetRegisteredReaction(ctx, parsedReaction, post.Subspace)
+			if !exist { // if it has not been registered yet, no one can remove it because no one can even use it to react to any post
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+					fmt.Sprintf("reaction with short code %s isn't registered yet and couldn't be used to react to the post with id %s and subspace %s",
+						parsedReaction, post.PostID, post.Subspace))
+			}
+			reactionValue = regReaction.Value
+			reactionShortcode = regReaction.ShortCode
+		} else {
+			reactionValue = emo.Value
+			reactionShortcode = emo.Shortcodes[0]
+		}
+	}
 
 	// Remove the reaction
-	reaction := types.NewPostReaction(reactionValue, msg.User)
+	reaction := types.NewPostReaction(reactionShortcode, msg.User)
 	if err := keeper.RemovePostReaction(ctx, post.PostID, reaction); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -199,6 +238,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User.String()),
 		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
+		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
 	)
 	ctx.EventManager().EmitEvent(event)
 

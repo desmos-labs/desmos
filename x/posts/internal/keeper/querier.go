@@ -3,12 +3,12 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	abci "github.com/tendermint/tendermint/abci/types"
-
-	"github.com/cosmos/cosmos-sdk/codec"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // NewQuerier is the module level router for state queries
@@ -45,9 +45,15 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	// Convert the reactions
 	var reactionsResponses = make([]types.ReactionQueryResponse, len(postReactions))
 	for index, reaction := range postReactions {
-		registeredReaction, _ := keeper.GetRegisteredReaction(ctx, reaction.Value, post.Subspace)
+		var reactionValue string
+		if em, err := emoji.LookupEmojiByCode(reaction.Value); err == nil {
+			reactionValue = em.Value
+		} else {
+			registeredReaction, _ := keeper.GetRegisteredReaction(ctx, reaction.Value, post.Subspace)
+			reactionValue = registeredReaction.Value
+		}
 		reactionsResponses[index] = types.ReactionQueryResponse{
-			Value: registeredReaction.Value,
+			Value: reactionValue,
 			Code:  reaction.Value,
 			Owner: reaction.Owner,
 		}
