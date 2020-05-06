@@ -76,7 +76,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
-			name: "Empty message returns error if medias and message are empty",
+			name: "Empty message returns error if medias, poll data and message are empty",
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
@@ -86,9 +86,9 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				creator,
 				date,
 				nil,
-				msgCreatePost.PollData,
+				nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message or medias are required and cannot be both blank or empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message, medias or poll are required and cannot be all blank or empty"),
 		},
 		{
 			name: "Non-empty message returns no error if medias are empty",
@@ -132,6 +132,36 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				date,
 				msgCreatePost.Medias,
 				msgCreatePost.PollData,
+			),
+			error: nil,
+		},
+		{
+			name: "Empty message returns no error if poll isn't empty",
+			msg: types.NewMsgCreatePost(
+				"",
+				"",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				date,
+				nil,
+				msgCreatePost.PollData,
+			),
+			error: nil,
+		},
+		{
+			name: "Non-empty message returns no error if poll is empty",
+			msg: types.NewMsgCreatePost(
+				"message",
+				"",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				date,
+				nil,
+				nil,
 			),
 			error: nil,
 		},
@@ -317,7 +347,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with empty medias and non-empty message returns no error",
+			name: "Message with empty medias non-empty poll and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
@@ -332,7 +362,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with non-empty medias and non-empty message returns no error",
+			name: "Message with non-empty medias, non-empty poll and non-empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
@@ -347,7 +377,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with non-empty medias and empty message returns no error",
+			name: "Message with non-empty medias, non empty poll and empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
@@ -362,7 +392,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with empty medias and empty message returns error",
+			name: "Message with empty medias, non empty poll and empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
@@ -374,10 +404,10 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message or medias are required and cannot be both blank or empty"),
+			error: nil,
 		},
 		{
-			name: "Message with empty poll returns no error",
+			name: "Message with empty poll, non-empty medias and non empty message returns no error",
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
