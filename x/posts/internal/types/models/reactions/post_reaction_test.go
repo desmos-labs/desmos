@@ -1,11 +1,11 @@
-package types_test
+package reactions_test
 
 import (
 	"errors"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +13,7 @@ func TestPostReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	reaction := types.NewPostReaction("reaction", user)
+	reaction := reactions.NewPostReaction("reaction", user)
 	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
 }
 
@@ -23,22 +23,22 @@ func TestPostReaction_Validate(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		reaction types.PostReaction
+		reaction reactions.PostReaction
 		error    error
 	}{
 		{
 			name:     "Valid reaction returns no error",
-			reaction: types.NewPostReaction("reaction", user),
+			reaction: reactions.NewPostReaction("reaction", user),
 			error:    nil,
 		},
 		{
 			name:     "Missing owner returns error",
-			reaction: types.NewPostReaction("reaction", nil),
+			reaction: reactions.NewPostReaction("reaction", nil),
 			error:    errors.New("invalid reaction owner: "),
 		},
 		{
 			name:     "Missing value returns error",
-			reaction: types.NewPostReaction("", user),
+			reaction: reactions.NewPostReaction("", user),
 			error:    errors.New("reaction value cannot be empty or blank"),
 		},
 	}
@@ -60,20 +60,20 @@ func TestPostReaction_Equals(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		first         types.PostReaction
-		second        types.PostReaction
+		first         reactions.PostReaction
+		second        reactions.PostReaction
 		shouldBeEqual bool
 	}{
 		{
 			name:          "Returns false with different user",
-			first:         types.NewPostReaction("reaction", user),
-			second:        types.NewPostReaction("reaction", otherLiker),
+			first:         reactions.NewPostReaction("reaction", user),
+			second:        reactions.NewPostReaction("reaction", otherLiker),
 			shouldBeEqual: false,
 		},
 		{
 			name:          "Returns true with the same data",
-			first:         types.NewPostReaction("reaction", user),
-			second:        types.NewPostReaction("reaction", user),
+			first:         reactions.NewPostReaction("reaction", user),
+			second:        reactions.NewPostReaction("reaction", user),
 			shouldBeEqual: true,
 		},
 	}
@@ -95,26 +95,26 @@ func TestPostReactions_AppendIfMissing(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		reactions types.PostReactions
-		newLike   types.PostReaction
-		expLikes  types.PostReactions
+		reactions reactions.PostReactions
+		newLike   reactions.PostReaction
+		expLikes  reactions.PostReactions
 		expAppend bool
 	}{
 		{
 			name:      "New reaction is appended properly to empty list",
-			reactions: types.PostReactions{},
-			newLike:   types.NewPostReaction("reaction", user),
-			expLikes:  types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{},
+			newLike:   reactions.NewPostReaction("reaction", user),
+			expLikes:  reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			expAppend: true,
 		},
 		{
 			name:      "New reaction is appended properly to existing list",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
-			newLike:   types.NewPostReaction("reaction", otherLiker),
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			newLike:   reactions.NewPostReaction("reaction", otherLiker),
 			expAppend: true,
-			expLikes: types.PostReactions{
-				types.NewPostReaction("reaction", user),
-				types.NewPostReaction("reaction", otherLiker),
+			expLikes: reactions.PostReactions{
+				reactions.NewPostReaction("reaction", user),
+				reactions.NewPostReaction("reaction", otherLiker),
 			},
 		},
 	}
@@ -138,35 +138,35 @@ func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		reactions   types.PostReactions
+		reactions   reactions.PostReactions
 		owner       sdk.AccAddress
 		value       string
 		expContains bool
 	}{
 		{
 			name:        "Non-empty list returns true with valid address",
-			reactions:   types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:       user,
 			value:       "reaction",
 			expContains: true,
 		},
 		{
 			name:        "Empty list returns false",
-			reactions:   types.PostReactions{},
+			reactions:   reactions.PostReactions{},
 			owner:       user,
 			value:       "reaction",
 			expContains: false,
 		},
 		{
 			name:        "Non-empty list returns false with not found address",
-			reactions:   types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:       otherLiker,
 			value:       "reaction",
 			expContains: false,
 		},
 		{
 			name:        "Non-empty list returns false with not found value",
-			reactions:   types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:       user,
 			value:       "reaction-2",
 			expContains: false,
@@ -190,49 +190,49 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		reactions types.PostReactions
+		reactions reactions.PostReactions
 		owner     sdk.AccAddress
 		value     string
 		expIndex  int
 	}{
 		{
 			name:      "Non-empty list returns proper index with valid value (shortcode)",
-			reactions: types.PostReactions{types.NewPostReaction(":+1:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", user)},
 			owner:     user,
 			value:     ":+1:",
 			expIndex:  0,
 		},
 		{
 			name:      "Non-empty list returns proper index with valid value (emoji - one code)",
-			reactions: types.PostReactions{types.NewPostReaction(":+1:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", user)},
 			owner:     user,
 			value:     "👍",
 			expIndex:  0,
 		},
 		{
 			name:      "Non-empty list returns proper index with valid value (emoji - another code)",
-			reactions: types.PostReactions{types.NewPostReaction(":thumbsup:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":thumbsup:", user)},
 			owner:     user,
 			value:     "👍",
 			expIndex:  0,
 		},
 		{
 			name:      "Empty list returns -1",
-			reactions: types.PostReactions{},
+			reactions: reactions.PostReactions{},
 			owner:     user,
 			value:     "reaction",
 			expIndex:  -1,
 		},
 		{
 			name:      "Non-empty list returns -1 with not found address",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction",
 			expIndex:  -1,
 		},
 		{
 			name:      "Non-empty list returns -1 with not found value",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction-2",
 			expIndex:  -1,
@@ -256,42 +256,42 @@ func TestPostReactions_RemoveReaction(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		reactions types.PostReactions
+		reactions reactions.PostReactions
 		owner     sdk.AccAddress
 		value     string
-		expResult types.PostReactions
+		expResult reactions.PostReactions
 		expEdited bool
 	}{
 		{
 			name:      "PostReaction is removed from non-empty list",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:     user,
 			value:     "reaction",
-			expResult: types.PostReactions{},
+			expResult: reactions.PostReactions{},
 			expEdited: true,
 		},
 		{
 			name:      "Empty list is not edited",
-			reactions: types.PostReactions{},
+			reactions: reactions.PostReactions{},
 			owner:     user,
 			value:     "reaction",
-			expResult: types.PostReactions{},
+			expResult: reactions.PostReactions{},
 			expEdited: false,
 		},
 		{
 			name:      "Non-empty list with not found address is not edited",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction",
-			expResult: types.PostReactions{types.NewPostReaction("reaction", user)},
+			expResult: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			expEdited: false,
 		},
 		{
 			name:      "Non-empty list with not found value is not edited",
-			reactions: types.PostReactions{types.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction-2",
-			expResult: types.PostReactions{types.NewPostReaction("reaction", user)},
+			expResult: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
 			expEdited: false,
 		},
 	}

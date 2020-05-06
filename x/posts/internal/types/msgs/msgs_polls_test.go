@@ -1,10 +1,11 @@
-package types_test
+package msgs_test
 
 import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/msgs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,7 +13,7 @@ import (
 // --- MsgAnswerPoll
 // ----------------------
 
-var msgAnswerPollPost = types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, testOwner)
+var msgAnswerPollPost = msgs.NewMsgAnswerPoll(id, []models.AnswerID{1, 2}, testOwner)
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
 	actual := msgAnswerPollPost.Route()
@@ -27,27 +28,27 @@ func TestMsgAnswerPollPost_Type(t *testing.T) {
 func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgAnswerPoll
+		msg   msgs.MsgAnswerPoll
 		error error
 	}{
 		{
 			name:  "Invalid post id",
-			msg:   types.NewMsgAnswerPoll("", []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
+			msg:   msgs.NewMsgAnswerPoll("", []models.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid answerer address",
-			msg:   types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, nil),
+			msg:   msgs.NewMsgAnswerPoll(id, []models.AnswerID{1, 2}, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
-			msg:   types.NewMsgAnswerPoll(id, []types.AnswerID{}, msgAnswerPollPost.Answerer),
+			msg:   msgs.NewMsgAnswerPoll(id, []models.AnswerID{}, msgAnswerPollPost.Answerer),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
+			msg:  msgs.NewMsgAnswerPoll(id, []models.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
 		},
 	}
 

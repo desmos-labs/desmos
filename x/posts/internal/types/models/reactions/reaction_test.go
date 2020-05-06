@@ -1,10 +1,10 @@
-package types_test
+package reactions_test
 
 import (
 	"errors"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +14,7 @@ func TestReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	reaction := types.NewReaction(
+	reaction := reactions.NewReaction(
 		user,
 		":smile:",
 		"https://smile.jpg",
@@ -24,15 +24,17 @@ func TestReaction_String(t *testing.T) {
 }
 
 func TestReaction_Validate(t *testing.T) {
+	testOwner, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
-		reaction types.Reaction
+		reaction reactions.Reaction
 		error    error
 	}{
 		{
 			name: "Valid reaction returns no error (url on value)",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"https://smile.jpg",
@@ -42,7 +44,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "Valid reaction returns no error (unicode on value)",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"U+1F600",
@@ -52,7 +54,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "Missing creator returns error",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				nil,
 				":smile:",
 				"https://smile.jpg",
@@ -62,7 +64,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty short code returns error",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				"",
 				"https://smile.jpg",
@@ -72,7 +74,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid short code returns error",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				"smile:",
 				"https://smile.jpg",
@@ -82,7 +84,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty value returns error",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"",
@@ -92,7 +94,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid value returns error (url)",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"smile.jpg",
@@ -102,7 +104,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid value returns error (unicode)",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"U+1",
@@ -112,7 +114,7 @@ func TestReaction_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid subspace returns no error",
-			reaction: types.NewReaction(
+			reaction: reactions.NewReaction(
 				testOwner,
 				":smile:",
 				"https://smile.jpg",
@@ -139,23 +141,23 @@ func TestReaction_Equals(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		first         types.Reaction
-		second        types.Reaction
+		first         reactions.Reaction
+		second        reactions.Reaction
 		shouldBeEqual bool
 	}{
 		{
 			name: "Returns false with different user",
-			first: types.NewReaction(user, ":smile:", "smile.jpg",
+			first: reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			second: types.NewReaction(otherLiker, ":smile:", "smile.jpg",
+			second: reactions.NewReaction(otherLiker, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldBeEqual: false,
 		},
 		{
 			name: "Returns true with the same data",
-			first: types.NewReaction(user, ":smile:", "smile.jpg",
+			first: reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			second: types.NewReaction(user, ":smile:", "smile.jpg",
+			second: reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldBeEqual: true,
 		},
@@ -175,31 +177,31 @@ func TestReactions_AppendIfMissing(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		reactions   types.Reactions
-		newReaction types.Reaction
-		expReaction types.Reactions
+		reactions   reactions.Reactions
+		newReaction reactions.Reaction
+		expReaction reactions.Reactions
 		expAppend   bool
 	}{
 		{
 			name:      "New reaction is appended properly to empty list",
-			reactions: types.Reactions{},
-			newReaction: types.NewReaction(user, ":smile:", "smile.jpg",
+			reactions: reactions.Reactions{},
+			newReaction: reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			expReaction: types.Reactions{types.NewReaction(user, ":smile:", "smile.jpg",
+			expReaction: reactions.Reactions{reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 			expAppend: true,
 		},
 		{
 			name: "New reaction is appended properly to existing list",
-			reactions: types.Reactions{types.NewReaction(user, ":smile:", "smile.jpg",
+			reactions: reactions.Reactions{reactions.NewReaction(user, ":smile:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
-			newReaction: types.NewReaction(user, ":sad:", "smile.jpg",
+			newReaction: reactions.NewReaction(user, ":sad:", "smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			expAppend: true,
-			expReaction: types.Reactions{
-				types.NewReaction(user, ":smile:", "smile.jpg",
+			expReaction: reactions.Reactions{
+				reactions.NewReaction(user, ":smile:", "smile.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewReaction(user, ":sad:", "smile.jpg",
+				reactions.NewReaction(user, ":sad:", "smile.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 		},
