@@ -47,7 +47,8 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
 	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode."+
+			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
 
 	return nil
@@ -102,7 +103,8 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
 	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode. "+
+			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
 
 	return nil

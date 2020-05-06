@@ -40,7 +40,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 	}
 
 	if !models.ShortCodeRegEx.MatchString(msg.ShortCode) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
 
 	if !models.URIRegEx.MatchString(msg.Value) {

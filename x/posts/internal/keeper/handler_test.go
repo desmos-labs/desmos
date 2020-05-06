@@ -312,6 +312,15 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id invalid not found"),
 		},
 		{
+			name:         "Registered Reaction not found",
+			existingPost: &post,
+			msg:          types.NewMsgAddPostReaction(post.PostID, ":super-smile:", user),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction with short code :super-smile: isn't registered yet "+
+				"and can't be used to react to the post with ID "+
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and subspace "+
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
+		},
+		{
 			name:               "Valid message works properly (shortcode)",
 			existingPost:       &post,
 			msg:                types.NewMsgAddPostReaction(post.PostID, ":smile:", user),
@@ -320,6 +329,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				types.EventTypePostReactionAdded,
 				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
 			),
 		},
@@ -331,6 +341,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				types.EventTypePostReactionAdded,
 				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "🙂"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
 			),
 		},
@@ -381,18 +392,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 					}
 					require.True(t, found)
 				} else {
-					emoji, err := emoji.LookupEmoji(test.msg.Reaction)
-					require.NoError(t, err)
-
-					post, found := k.GetPost(ctx, test.msg.PostID)
-					require.True(t, found)
-
-					require.Contains(t, registeredReactions, types.Reaction{
-						ShortCode: emoji.Shortcodes[0],
-						Value:     test.msg.Reaction,
-						Subspace:  post.Subspace,
-						Creator:   types.ModuleAddress,
-					})
+					require.Empty(t, registeredReactions)
 				}
 			}
 
@@ -420,7 +420,9 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	reaction := types.NewPostReaction("reaction", user)
+	regReaction := types.NewReaction(user, ":reaction:", "react", testPost.Subspace)
+	reaction := types.NewPostReaction(":reaction:", user)
+	emojiShortcodeReaction := types.NewPostReaction(":smile:", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
 	require.NoError(t, err)
@@ -428,11 +430,13 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], user)
 
 	tests := []struct {
-		name             string
-		existingPost     *types.Post
-		existingReaction *types.PostReaction
-		msg              types.MsgRemovePostReaction
-		error            error
+		name               string
+		existingPost       *types.Post
+		registeredReaction *types.Reaction
+		existingReaction   *types.PostReaction
+		msg                types.MsgRemovePostReaction
+		error              error
+		expEvent           sdk.Event
 	}{
 		{
 			name:  "Post not found",
@@ -442,22 +446,51 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 		{
 			name:         "Reaction not found",
 			existingPost: &post,
-			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "reaction"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value reaction from user %s as it does not exist", user)),
+			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "😄"),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value :smile: from user %s as it does not exist", user)),
 		},
 		{
-			name:             "Removing a reaction using the code works properly",
+			name:               "Removing a reaction using the code works properly (registered reaction)",
+			existingPost:       &post,
+			existingReaction:   &reaction,
+			registeredReaction: &regReaction,
+			msg:                types.NewMsgRemovePostReaction(post.PostID, user, reaction.Value),
+			error:              nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionRemoved,
+				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, regReaction.Value),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, regReaction.ShortCode),
+			),
+		},
+		{
+			name:             "Removing a reaction using the code works properly (emoji shortcode)",
 			existingPost:     &post,
-			existingReaction: &reaction,
-			msg:              types.NewMsgRemovePostReaction(post.PostID, user, reaction.Value),
+			existingReaction: &emojiShortcodeReaction,
+			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emojiShortcodeReaction.Value),
 			error:            nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionRemoved,
+				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiShortcodeReaction.Value),
+			),
 		},
 		{
-			name:             "Removing a reaction using the code works properly",
+			name:             "Removing a reaction using the emoji works properly",
 			existingPost:     &post,
 			existingReaction: &emojiReaction,
 			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emoji.Value),
 			error:            nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionRemoved,
+				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, emoji.Value),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiReaction.Value),
+			),
 		},
 	}
 
@@ -469,6 +502,11 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
+			}
+
+			if test.registeredReaction != nil {
+				store.Set(types.ReactionsStoreKey(test.registeredReaction.ShortCode, test.registeredReaction.Subspace),
+					k.Cdc.MustMarshalBinaryBare(&test.registeredReaction))
 			}
 
 			if test.existingReaction != nil {
@@ -483,12 +521,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, sdk.NewEvent(
-					types.EventTypePostReactionRemoved,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, test.msg.User.String()),
-					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Reaction),
-				))
+				require.Contains(t, res.Events, test.expEvent)
 
 				var storedPost types.Post
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)

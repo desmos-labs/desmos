@@ -2,6 +2,9 @@
 ## Changes
 - Implemented invariants for posts and profile modules (#90)
 - Added YAML support for types (#124)
+- Improved reactions events (#144)
+- Removed automatic registration of emoji reactions (#145)
+- Improved reaction registration error message (#147)
 - Allow for empty message posts when they contain a poll (#148)
 
 # Version 0.4.0

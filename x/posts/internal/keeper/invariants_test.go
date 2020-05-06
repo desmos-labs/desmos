@@ -131,13 +131,6 @@ func TestInvariants(t *testing.T) {
 				k.RegisterReaction(ctx, *test.reaction)
 				// nolint: errcheck
 				k.SavePostReaction(ctx, parentPost.PostID, *test.postReaction)
-				if test.name == "ValidPostForReactions Invariants violated" {
-					reactions := types.PostReactions{}
-					store := ctx.KVStore(k.StoreKey)
-					key := types.PostReactionsStoreKey(commentPost.PostID)
-					reactions = append(reactions, *test.postReaction)
-					store.Set(key, k.Cdc.MustMarshalBinaryBare(&reactions))
-				}
 			}
 			if test.answers != nil {
 				k.SavePollAnswers(ctx, test.posts[0].PostID, *test.answers)

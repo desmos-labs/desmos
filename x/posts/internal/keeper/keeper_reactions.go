@@ -14,7 +14,7 @@ import (
 // -------------
 
 // SavePostReaction allows to save the given reaction inside the store.
-// It assumes that the given reaction is valid.
+// It assumes that the given reaction is valid and already registered.
 // If another reaction from the same user for the same post and with the same value exists, returns an expError.
 // nolint: interfacer
 func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
@@ -29,13 +29,6 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 	if reactions.ContainsReactionFrom(reaction.Owner, reaction.Value) {
 		return fmt.Errorf("%s has already reacted with %s to the post with id %s",
 			reaction.Owner, reaction.Value, postID)
-	}
-
-	// Check if the reaction is a registered one
-	post, _ := k.GetPost(ctx, postID)
-	if _, exist := k.GetRegisteredReaction(ctx, reaction.Value, post.Subspace); !exist {
-		return fmt.Errorf("reaction with short code %s isn't registered yet and can't be used to react to the post "+
-			"with ID %s and subspace %s, please register it before use", reaction.Value, postID, post.Subspace)
 	}
 
 	// Save the new reaction
