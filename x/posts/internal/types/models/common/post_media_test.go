@@ -1,10 +1,10 @@
-package types_test
+package common_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,12 +13,12 @@ import (
 // -----------
 
 func TestPostMedias_String(t *testing.T) {
-	postMedias := types.PostMedias{
-		types.PostMedia{
+	postMedias := common.PostMedias{
+		common.PostMedia{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
-		types.PostMedia{
+		common.PostMedia{
 			URI:      "https://another.com",
 			MimeType: "application/json",
 		},
@@ -34,28 +34,28 @@ func TestPostMedias_String(t *testing.T) {
 func TestPostMedias_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
-		first     types.PostMedias
-		second    types.PostMedias
+		first     common.PostMedias
+		second    common.PostMedias
 		expEquals bool
 	}{
 		{
 			name: "Same data returns true",
-			first: types.PostMedias{
-				types.PostMedia{
+			first: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				types.PostMedia{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
 			},
-			second: types.PostMedias{
-				types.PostMedia{
+			second: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				types.PostMedia{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
@@ -64,18 +64,18 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different data returns false",
-			first: types.PostMedias{
-				types.PostMedia{
+			first: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				types.PostMedia{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
 			},
-			second: types.PostMedias{
-				types.PostMedia{
+			second: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
@@ -84,18 +84,18 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different length returns false",
-			first: types.PostMedias{
-				types.PostMedia{
+			first: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				types.PostMedia{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
 			},
-			second: types.PostMedias{
-				types.PostMedia{
+			second: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
@@ -115,29 +115,29 @@ func TestPostMedias_Equals(t *testing.T) {
 func TestPostMedias_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
-		medias      types.PostMedias
-		newMedia    types.PostMedia
-		expMedias   types.PostMedias
+		medias      common.PostMedias
+		newMedia    common.PostMedia
+		expMedias   common.PostMedias
 		expAppended bool
 	}{
 		{
 			name: "append a new media and returns true",
-			medias: types.PostMedias{
-				types.PostMedia{
+			medias: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
 			},
-			newMedia: types.PostMedia{
+			newMedia: common.PostMedia{
 				URI:      "uri",
 				MimeType: "application/json",
 			},
-			expMedias: types.PostMedias{
-				types.PostMedia{
+			expMedias: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				types.PostMedia{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
@@ -145,18 +145,18 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 		},
 		{
 			name: "not append an existing media and returns false",
-			medias: types.PostMedias{
-				types.PostMedia{
+			medias: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
 			},
-			newMedia: types.PostMedia{
+			newMedia: common.PostMedia{
 				URI:      "uri",
 				MimeType: "text/plain",
 			},
-			expMedias: types.PostMedias{
-				types.PostMedia{
+			expMedias: common.PostMedias{
+				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
@@ -175,12 +175,12 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 
 func TestPostMedias_Validate(t *testing.T) {
 	tests := []struct {
-		postMedia types.PostMedias
+		postMedia common.PostMedias
 		expErr    string
 	}{
 		{
-			postMedia: types.PostMedias{
-				types.PostMedia{
+			postMedia: common.PostMedias{
+				common.PostMedia{
 					URI:      "",
 					MimeType: "text/plain",
 				},
@@ -189,8 +189,8 @@ func TestPostMedias_Validate(t *testing.T) {
 		},
 
 		{
-			postMedia: types.PostMedias{
-				types.PostMedia{
+			postMedia: common.PostMedias{
+				common.PostMedia{
 					URI:      "htt://example.com",
 					MimeType: "text/plain",
 				},
@@ -198,8 +198,8 @@ func TestPostMedias_Validate(t *testing.T) {
 			expErr: "invalid uri provided",
 		},
 		{
-			postMedia: types.PostMedias{
-				types.PostMedia{
+			postMedia: common.PostMedias{
+				common.PostMedia{
 					URI:      "https://example.com",
 					MimeType: "",
 				},
@@ -226,32 +226,32 @@ func TestPostMedias_Validate(t *testing.T) {
 
 func TestPostMedia_Validate(t *testing.T) {
 	tests := []struct {
-		postMedia types.PostMedia
+		postMedia common.PostMedia
 		expErr    string
 	}{
 		{
-			postMedia: types.PostMedia{
+			postMedia: common.PostMedia{
 				URI:      "",
 				MimeType: "text/plain",
 			},
 			expErr: "invalid uri provided",
 		},
 		{
-			postMedia: types.PostMedia{
+			postMedia: common.PostMedia{
 				URI:      "htt://example.com",
 				MimeType: "text/plain",
 			},
 			expErr: "invalid uri provided",
 		},
 		{
-			postMedia: types.PostMedia{
+			postMedia: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "",
 			},
 			expErr: "mime type must be specified and cannot be empty",
 		},
 		{
-			postMedia: types.PostMedia{
+			postMedia: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
@@ -274,17 +274,17 @@ func TestPostMedia_Validate(t *testing.T) {
 func TestPostMedia_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
-		first     types.PostMedia
-		second    types.PostMedia
+		first     common.PostMedia
+		second    common.PostMedia
 		expEquals bool
 	}{
 		{
 			name: "Same data returns true",
-			first: types.PostMedia{
+			first: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
-			second: types.PostMedia{
+			second: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
@@ -292,11 +292,11 @@ func TestPostMedia_Equals(t *testing.T) {
 		},
 		{
 			name: "Different URI returns false",
-			first: types.PostMedia{
+			first: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
-			second: types.PostMedia{
+			second: common.PostMedia{
 				URI:      "https://another.com",
 				MimeType: "text/plain",
 			},
@@ -304,11 +304,11 @@ func TestPostMedia_Equals(t *testing.T) {
 		},
 		{
 			name: "Different mime type returns false",
-			first: types.PostMedia{
+			first: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
-			second: types.PostMedia{
+			second: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "application/json",
 			},
@@ -366,7 +366,7 @@ func TestPostMedia_ParseURI(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.uri, func(t *testing.T) {
-			require.Equal(t, test.expErr, types.ValidateURI(test.uri))
+			require.Equal(t, test.expErr, common.ValidateURI(test.uri))
 		})
 	}
 }

@@ -1,4 +1,4 @@
-package types
+package polls
 
 import (
 	"encoding/json"
