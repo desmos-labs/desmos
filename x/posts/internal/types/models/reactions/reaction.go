@@ -1,4 +1,4 @@
-package types
+package reactions
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 )
 
 // Reaction represents a registered reaction that can be referenced
@@ -43,15 +44,15 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
-	if !ShortCodeRegEx.MatchString(reaction.ShortCode) {
+	if !common.ShortCodeRegEx.MatchString(reaction.ShortCode) {
 		return fmt.Errorf("reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(reaction.Value) && !IsEmoji(reaction.Value) {
+	if !common.URIRegEx.MatchString(reaction.Value) && !IsEmoji(reaction.Value) {
 		return fmt.Errorf("reaction value should be a URL or an emoji")
 	}
 
-	if !Sha256RegEx.MatchString(reaction.Subspace) {
+	if !common.Sha256RegEx.MatchString(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

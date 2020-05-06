@@ -1,7 +1,7 @@
-package types_test
+package polls_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
 	"github.com/stretchr/testify/require"
 
 	"testing"
@@ -12,38 +12,38 @@ import (
 // ---------------
 
 func TestPollAnswer_String(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
+	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
 	require.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
 }
 
 func TestPollAnswer_Validate(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(0), Text: ""}
+	answer := polls.PollAnswer{ID: polls.AnswerID(0), Text: ""}
 	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
 func TestPollAnswer_Equals(t *testing.T) {
 	tests := []struct {
 		name        string
-		answer      types.PollAnswer
-		otherAnswer types.PollAnswer
+		answer      polls.PollAnswer
+		otherAnswer polls.PollAnswer
 		expEquals   bool
 	}{
 		{
 			name:        "Different answers ID",
-			answer:      types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"},
-			otherAnswer: types.PollAnswer{ID: types.AnswerID(2), Text: "Yes"},
+			answer:      polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"},
+			otherAnswer: polls.PollAnswer{ID: polls.AnswerID(2), Text: "Yes"},
 			expEquals:   false,
 		},
 		{
 			name:        "Different answers Text",
-			answer:      types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"},
-			otherAnswer: types.PollAnswer{ID: types.AnswerID(1), Text: "No"},
+			answer:      polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"},
+			otherAnswer: polls.PollAnswer{ID: polls.AnswerID(1), Text: "No"},
 			expEquals:   false,
 		},
 		{
 			name:        "Equals answers",
-			answer:      types.PollAnswer{ID: types.AnswerID(1), Text: "yes"},
-			otherAnswer: types.PollAnswer{ID: types.AnswerID(1), Text: "yes"},
+			answer:      polls.PollAnswer{ID: polls.AnswerID(1), Text: "yes"},
+			otherAnswer: polls.PollAnswer{ID: polls.AnswerID(1), Text: "yes"},
 			expEquals:   true,
 		},
 	}
@@ -61,24 +61,24 @@ func TestPollAnswer_Equals(t *testing.T) {
 // ---------------
 
 func TestPollAnswers_String(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
-	answers := types.PollAnswers{answer, answer2}
+	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
+	answer2 := polls.PollAnswer{ID: polls.AnswerID(2), Text: "No"}
+	answers := polls.PollAnswers{answer, answer2}
 
 	require.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
 }
 
 func TestPollAnswers_Validate(t *testing.T) {
 	tests := []struct {
-		answers types.PollAnswers
+		answers polls.PollAnswers
 		expErr  string
 	}{
 		{
-			answers: types.PollAnswers{},
+			answers: polls.PollAnswers{},
 			expErr:  "poll answers must be at least two",
 		},
 		{
-			answers: types.PollAnswers{types.NewPollAnswer(types.AnswerID(0), ""), types.NewPollAnswer(types.AnswerID(1), "")},
+			answers: polls.PollAnswers{polls.NewPollAnswer(polls.AnswerID(0), ""), polls.NewPollAnswer(polls.AnswerID(1), "")},
 			expErr:  "answer text must be specified and cannot be empty",
 		},
 	}
@@ -89,31 +89,31 @@ func TestPollAnswers_Validate(t *testing.T) {
 }
 
 func TestPollAnswers_Equals(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
+	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
+	answer2 := polls.PollAnswer{ID: polls.AnswerID(2), Text: "No"}
 
 	tests := []struct {
 		name      string
-		answers   types.PollAnswers
-		others    types.PollAnswers
+		answers   polls.PollAnswers
+		others    polls.PollAnswers
 		expEquals bool
 	}{
 		{
 			name:      "Different lengths",
-			answers:   types.PollAnswers{answer},
-			others:    types.PollAnswers{},
+			answers:   polls.PollAnswers{answer},
+			others:    polls.PollAnswers{},
 			expEquals: false,
 		},
 		{
 			name:      "Different answers",
-			answers:   types.PollAnswers{answer},
-			others:    types.PollAnswers{answer2},
+			answers:   polls.PollAnswers{answer},
+			others:    polls.PollAnswers{answer2},
 			expEquals: false,
 		},
 		{
 			name:      "Equals answers",
-			answers:   types.PollAnswers{answer},
-			others:    types.PollAnswers{answer},
+			answers:   polls.PollAnswers{answer},
+			others:    polls.PollAnswers{answer},
 			expEquals: true,
 		},
 	}
@@ -127,24 +127,24 @@ func TestPollAnswers_Equals(t *testing.T) {
 }
 
 func TestPollAnswers_AppendIfMissing(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
+	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
+	answer2 := polls.PollAnswer{ID: polls.AnswerID(2), Text: "No"}
 
 	tests := []struct {
 		name    string
-		answers types.PollAnswers
-		answer  types.PollAnswer
+		answers polls.PollAnswers
+		answer  polls.PollAnswer
 		expLen  int
 	}{
 		{
 			name:    "Appended new answer",
-			answers: types.PollAnswers{answer},
+			answers: polls.PollAnswers{answer},
 			answer:  answer2,
 			expLen:  2,
 		},
 		{
 			name:    "Not appended an existing answer",
-			answers: types.PollAnswers{answer},
+			answers: polls.PollAnswers{answer},
 			answer:  answer,
 			expLen:  1,
 		},
@@ -159,11 +159,11 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 }
 
 func TestPollAnswers_ExtractAnswersIDs(t *testing.T) {
-	answer := types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}
-	answer2 := types.PollAnswer{ID: types.AnswerID(2), Text: "No"}
+	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
+	answer2 := polls.PollAnswer{ID: polls.AnswerID(2), Text: "No"}
 
-	expectedIDs := []types.AnswerID{1, 2}
-	pollAnswers := types.PollAnswers{answer, answer2}
+	expectedIDs := []polls.AnswerID{1, 2}
+	pollAnswers := polls.PollAnswers{answer, answer2}
 
 	actual := pollAnswers.ExtractAnswersIDs()
 
