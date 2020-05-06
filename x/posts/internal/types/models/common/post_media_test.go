@@ -2,6 +2,7 @@ package common_test
 
 import (
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
@@ -13,25 +14,37 @@ import (
 // -----------
 
 func TestPostMedias_String(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err2)
+
 	postMedias := common.PostMedias{
 		common.PostMedia{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
+			Tags:     []sdk.AccAddress{tag, tag2},
 		},
 		common.PostMedia{
 			URI:      "https://another.com",
 			MimeType: "application/json",
+			Tags:     []sdk.AccAddress{tag},
 		},
 	}
 
 	actual := postMedias.String()
 
-	expected := "URI [Mime-Type]\n[https://uri.com] text/plain \n[https://another.com] application/json"
+	expected := "[URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\ncosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n]"
 
 	require.Equal(t, expected, actual)
 }
 
 func TestPostMedias_Equals(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err2)
+
 	tests := []struct {
 		name      string
 		first     common.PostMedias
@@ -44,20 +57,24 @@ func TestPostMedias_Equals(t *testing.T) {
 				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
+					Tags:     []sdk.AccAddress{tag, tag2},
 				},
 				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
+					Tags:     []sdk.AccAddress{tag},
 				},
 			},
 			second: common.PostMedias{
 				common.PostMedia{
 					URI:      "uri",
 					MimeType: "text/plain",
+					Tags:     []sdk.AccAddress{tag, tag2},
 				},
 				common.PostMedia{
 					URI:      "uri",
 					MimeType: "application/json",
+					Tags:     []sdk.AccAddress{tag},
 				},
 			},
 			expEquals: true,
