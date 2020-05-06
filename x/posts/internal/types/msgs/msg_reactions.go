@@ -1,10 +1,11 @@
-package types
+package msgs
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
 )
 
 // MsgRegisterReaction represents the message that must be used when wanting
@@ -27,10 +28,10 @@ func NewMsgRegisterReaction(creator sdk.AccAddress, shortCode, value, subspace s
 }
 
 // Route should return the name of the module
-func (msg MsgRegisterReaction) Route() string { return RouterKey }
+func (msg MsgRegisterReaction) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgRegisterReaction) Type() string { return ActionRegisterReaction }
+func (msg MsgRegisterReaction) Type() string { return models.ActionRegisterReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRegisterReaction) ValidateBasic() error {
@@ -38,15 +39,15 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if !ShortCodeRegEx.MatchString(msg.ShortCode) {
+	if !models.ShortCodeRegEx.MatchString(msg.ShortCode) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction short code must be an emoji short code")
 	}
 
-	if !URIRegEx.MatchString(msg.Value) {
+	if !models.URIRegEx.MatchString(msg.Value) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL")
 	}
 
-	if !Sha256RegEx.MatchString(msg.Subspace) {
+	if !models.Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash")
 	}
 
@@ -55,7 +56,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRegisterReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

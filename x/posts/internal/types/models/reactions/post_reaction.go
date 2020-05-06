@@ -1,4 +1,4 @@
-package types
+package reactions
 
 import (
 	"encoding/json"
