@@ -1,7 +1,3 @@
-# Version 0.6.0
-## Changes
-- Implemented tags in post medias (#118)
-
 # Version 0.5.0
 ## Changes
 - Implemented invariants for posts and profile modules (#90)
