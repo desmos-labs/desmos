@@ -74,7 +74,7 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
-		Medias:         RandomMedias(r),
+		Medias:         RandomMedias(r, accs),
 		PollData:       RandomPollData(r),
 	}
 }
@@ -125,14 +125,16 @@ func RandomHashtag(r *rand.Rand) string {
 }
 
 // RandomMedias returns a randomly generated list of post medias
-func RandomMedias(r *rand.Rand) types.PostMedias {
+func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
 	mediaNumber := r.Intn(20)
+
+	acc, _ := sim.RandomAcc(r, accs)
 
 	postMedias := make(types.PostMedias, mediaNumber)
 	for i := 0; i < mediaNumber; i++ {
 		host := RandomHosts[r.Intn(len(RandomHosts))]
 		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
-		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType)
+		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, []sdk.AccAddress{acc.Address})
 	}
 
 	return postMedias

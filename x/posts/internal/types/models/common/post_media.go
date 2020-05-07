@@ -2,9 +2,9 @@ package common
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // ---------------
@@ -14,7 +14,7 @@ import (
 type PostMedia struct {
 	URI      string           `json:"uri" yaml:"uri"`
 	MimeType string           `json:"mime_type" yaml:"mime_type"`
-	Tags     []sdk.AccAddress `json:"tags" yaml:"tags"`
+	Tags     []sdk.AccAddress `json:"tags,omitempty" yaml:"tags,omitempty"`
 }
 
 func NewPostMedia(uri, mimeType string, tags []sdk.AccAddress) PostMedia {
@@ -37,7 +37,7 @@ func (pm PostMedia) Validate() error {
 
 	for _, address := range pm.Tags {
 		if address.Empty() {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid empty tag address: %s", address))
+			return fmt.Errorf("invalid empty tag address: %s", address)
 		}
 	}
 

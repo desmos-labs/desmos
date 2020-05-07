@@ -34,7 +34,7 @@ var (
 		time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone),
 		postCreatorAddr,
 	).WithMedias(types.NewPostMedias(
-		types.NewPostMedia("https://uri.com", "text/plain"),
+		types.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postCreatorAddr}),
 	)).WithPollData(types.NewPollData(
 		"title",
 		time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
