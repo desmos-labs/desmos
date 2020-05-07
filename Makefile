@@ -18,9 +18,9 @@ ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
 endif
 
-ifeq ($(WITH_CLEVELDB),yes)
+ifeq ($(WITH_ROCKSDB),yes)
   build_tags += gcc
-  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
 
 build_tags += $(BUILD_TAGS)
