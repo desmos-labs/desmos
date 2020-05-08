@@ -17,7 +17,7 @@ func Migrate(oldGenState v040posts.GenesisState) v040posts.GenesisState {
 }
 
 // GetReactionsToRegister takes the list of reactions that were registered in v0.4.0 and
-//returns a new list without the registered Unicode emojis.
+// returns a new list without the registered Unicode emojis.
 func GetReactionsToRegister(oldRegisteredReactions []v040posts.Reaction) (reactionsToRegister []v040posts.Reaction) {
 	for _, reaction := range oldRegisteredReactions {
 		if _, err := emoji.LookupEmojiByCode(reaction.ShortCode); err != nil {

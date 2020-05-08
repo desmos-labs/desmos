@@ -1,12 +1,15 @@
 package v050_test
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
-	v050 "github.com/desmos-labs/desmos/x/posts/legacy/v0.5.0"
+	v050posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.5.0"
 	"github.com/stretchr/testify/require"
 )
 
@@ -125,7 +128,7 @@ func TestMigrate(t *testing.T) {
 		},
 	}
 
-	migrated := v050.Migrate(v040GenState)
+	migrated := v050posts.Migrate(v040GenState)
 
 	// Check for posts
 	require.Len(t, migrated.Posts, len(expected.Posts))
@@ -182,7 +185,49 @@ func TestGetReactionsToRegister(t *testing.T) {
 		},
 	}
 
-	actual := v050.GetReactionsToRegister(registeredReactions)
+	actual := v050posts.GetReactionsToRegister(registeredReactions)
 
 	require.Equal(t, expected, actual)
+}
+
+func TestMigrate040(t *testing.T) {
+	config := sdk.GetConfig()
+	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
+	config.Seal()
+
+	content, err := ioutil.ReadFile("v040state.json")
+	require.NoError(t, err)
+
+	var v040state v040posts.GenesisState
+	err = json.Unmarshal(content, &v040state)
+	require.NoError(t, err)
+
+	v050state := v050posts.Migrate(v040state)
+	for _, reaction := range v050state.RegisteredReactions {
+		// Make sure each reaction shrotcode does not represent an emoji
+		_, err := emoji.LookupEmojiByCode(reaction.ShortCode)
+		require.Error(t, err)
+
+		// Make sure no reaction value is an emoji
+		_, err = emoji.LookupEmoji(reaction.Value)
+		require.Error(t, err)
+	}
+
+	// Make sure the posts are all the same
+	require.Equal(t, len(v050state.Posts), len(v040state.Posts))
+	for index, post := range v050state.Posts {
+		require.Equal(t, post, v040state.Posts[index])
+	}
+
+	// Make sure the reactions are all the same
+	require.Equal(t, len(v050state.PostReactions), len(v040state.PostReactions))
+	for index, postReaction := range v050state.PostReactions {
+		require.Equal(t, postReaction, v040state.PostReactions[index])
+	}
+
+	// Make sure the poll answers are all the same
+	require.Equal(t, len(v050state.UsersPollAnswers), len(v040state.UsersPollAnswers))
+	for index, answer := range v050state.UsersPollAnswers {
+		require.Equal(t, answer, v040state.UsersPollAnswers[index])
+	}
 }
