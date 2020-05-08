@@ -1,3 +1,7 @@
+# Version 0.6.0
+## Changes
+- Switched backendDB from golevelDB to rocksDB (#111)
+
 # Version 0.5.0
 ## Changes
 - Implemented invariants for posts and profile modules (#90)
