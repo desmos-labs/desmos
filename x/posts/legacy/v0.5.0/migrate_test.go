@@ -151,3 +151,38 @@ func TestMigrate(t *testing.T) {
 		require.Equal(t, expected.RegisteredReactions[index], reaction)
 	}
 }
+
+func TestGetReactionsToRegister(t *testing.T) {
+	postCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	registeredReactions := []v040posts.Reaction{
+		{
+			ShortCode: ":fire:",
+			Value:     "🔥",
+			Subspace:  subspace,
+			Creator:   postCreator,
+		},
+		{
+			ShortCode: ":my_house:",
+			Value:     "https://myHouse.png",
+			Subspace:  subspace,
+			Creator:   postCreator,
+		},
+	}
+
+	expected := []v040posts.Reaction{
+		{
+			ShortCode: ":my_house:",
+			Value:     "https://myHouse.png",
+			Subspace:  subspace,
+			Creator:   postCreator,
+		},
+	}
+
+	actual := v050.GetReactionsToRegister(registeredReactions)
+
+	require.Equal(t, expected, actual)
+}
