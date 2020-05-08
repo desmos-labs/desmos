@@ -128,13 +128,18 @@ func RandomHashtag(r *rand.Rand) string {
 func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
 	mediaNumber := r.Intn(20)
 
-	acc, _ := sim.RandomAcc(r, accs)
+	tagsLen := r.Intn(50)
+	tags := make([]sdk.AccAddress, tagsLen)
+	for i := 0; i < tagsLen; i++ {
+		acc, _ := sim.RandomAcc(r, accs)
+		tags[i] = acc.Address
+	}
 
 	postMedias := make(types.PostMedias, mediaNumber)
 	for i := 0; i < mediaNumber; i++ {
 		host := RandomHosts[r.Intn(len(RandomHosts))]
 		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
-		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, []sdk.AccAddress{acc.Address})
+		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, tags)
 	}
 
 	return postMedias

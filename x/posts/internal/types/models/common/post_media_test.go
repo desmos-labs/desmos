@@ -171,6 +171,34 @@ func TestPostMedias_Equals(t *testing.T) {
 			},
 			expEquals: false,
 		},
+		{
+			name: "nil tags returns true",
+			first: common.PostMedias{
+				common.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+					Tags:     nil,
+				},
+				common.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+					Tags:     nil,
+				},
+			},
+			second: common.PostMedias{
+				common.PostMedia{
+					URI:      "uri",
+					MimeType: "text/plain",
+					Tags:     nil,
+				},
+				common.PostMedia{
+					URI:      "uri",
+					MimeType: "application/json",
+					Tags:     nil,
+				},
+			},
+			expEquals: true,
+		},
 	}
 
 	for _, test := range tests {
@@ -336,11 +364,20 @@ func TestPostMedia_Validate(t *testing.T) {
 			expErr: "invalid empty tag address: ",
 		},
 		{
-			name: "No errors media",
+			name: "No errors media (with tags)",
 			postMedia: common.PostMedia{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{tag},
+			},
+			expErr: "",
+		},
+		{
+			name: "No errors media (without tags)",
+			postMedia: common.PostMedia{
+				URI:      "https://example.com",
+				MimeType: "text/plain",
+				Tags:     nil,
 			},
 			expErr: "",
 		},

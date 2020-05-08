@@ -216,7 +216,9 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -228,21 +230,27 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 2)
-	require.Equal(t, post.Medias, posts.NewPostMedias(
+	require.Len(t, post.Medias, 3)
+	require.Equal(t, posts.NewPostMedias(
 		posts.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
-		posts.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
+		posts.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2}),
+		posts.NewPostMedia("https://example.com/media3", "text/plain", nil),
+	), post.Medias)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
 		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
 		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
