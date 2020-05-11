@@ -1,6 +1,7 @@
 # Version 0.6.0
 ## Changes
-- Switched backendDB from golevelDB to rocksDB (#111)
+- Changed default database backend from [LevelDB](https://github.com/google/leveldb) 
+  to [RocksDB](https://github.com/facebook/rocksdb) (#111)
 
 # Version 0.5.0
 ## Changes
