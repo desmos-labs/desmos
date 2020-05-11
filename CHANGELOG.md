@@ -1,5 +1,6 @@
 # Version 0.6.0
 ## Changes
+- Implemented tags in post medias (#118)
 - Changed default database backend from [LevelDB](https://github.com/google/leveldb) 
   to [RocksDB](https://github.com/facebook/rocksdb) (#111)
 

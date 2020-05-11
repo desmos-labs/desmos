@@ -74,7 +74,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		types.EventTypePostCreated,
 		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
-		sdk.NewAttribute(types.AttributeKeyCreationTime, post.Created.String()),
+		sdk.NewAttribute(types.AttributeKeyPostCreationTime, post.Created.String()),
 		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator.String()),
 	)
 	ctx.EventManager().EmitEvent(createEvent)
