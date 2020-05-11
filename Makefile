@@ -29,11 +29,12 @@ endif
 ifeq ($(DB_BACKEND),cleveldb)
   build_tags += gcc
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
-else ifeq($(DB_BACKEND),leveldb)
- # Do nothing as LevelDB is the default backendDB of Cosmos SDK
-else
-build_tags += gcc
-ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
+else ifeq ($(DB_BACKEND),leveldb)
+  # Do nothing as LevelDB is the default backendDB of Cosmos SDK
+else ifeq ($(DB_BACKEND),)
+  build_tags += gcc
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
+endif
 endif
 
 build_tags += $(BUILD_TAGS)
