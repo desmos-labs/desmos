@@ -208,15 +208,10 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
-	tag, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
-	require.NoError(t, err)
-	tag2, err2 := sdk.AccAddressFromBech32("desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
-	require.NoError(t, err2)
-
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json",
 		"--media https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
@@ -232,23 +227,23 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 3)
 	require.Equal(t, posts.NewPostMedias(
-		posts.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
-		posts.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2}),
+		posts.NewPostMedia("https://example.com/media1", "text/plain", nil),
+		posts.NewPostMedia("https://example.com/media2", "application/json", nil),
 		posts.NewPostMedia("https://example.com/media3", "text/plain", nil),
 	), post.Medias)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json",
 		"--media https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr",
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json",
 		"--media https://example.com/media3,text/plain",
 	)
 	require.Empty(t, stderr)
