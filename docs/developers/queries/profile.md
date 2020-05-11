@@ -3,11 +3,11 @@ This query endpoint allows you to retrieve the details of a single profile havin
 
 **CLI**
  ```bash
-desmoscli query profile [address or moniker]
+desmoscli query profiles profile [address_or_moniker]
 
 # Example
-# desmoscli query profile desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
-# desmoscli query profile leonardo
+# desmoscli query profiles profile desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
+# desmoscli query profiles profile leonardo
 ``` 
 
 **REST**
@@ -15,6 +15,6 @@ desmoscli query profile [address or moniker]
 /profiles/{address}
 
 # Example
-# curl https://morpheus4000.desmos.network/profile/desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
-# curl https://morpheus4000.desmos.network/profile/leonardo
+# curl https://morpheus4000.desmos.network/profiles/desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
+# curl https://morpheus4000.desmos.network/profiles/leonardo
 ```
