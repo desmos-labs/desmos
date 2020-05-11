@@ -12,7 +12,7 @@ desmoscli query profiles profile [address_or_moniker]
 
 **REST**
 ```
-/profiles/{address}
+/profiles/{address_or_moniker}
 
 # Example
 # curl https://morpheus4000.desmos.network/profiles/desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t

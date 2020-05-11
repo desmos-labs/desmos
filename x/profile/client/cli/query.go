@@ -15,7 +15,7 @@ import (
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	profileQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the profile module",
+		Short:                      "Querying commands for the profiles module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
