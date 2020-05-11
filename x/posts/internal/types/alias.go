@@ -38,6 +38,7 @@ const (
 
 var (
 	// functions aliases
+
 	RegisterModelsCodec      = models.RegisterModelsCodec
 	PostStoreKey             = models.PostStoreKey
 	PostCommentsStoreKey     = models.PostCommentsStoreKey
@@ -73,6 +74,7 @@ var (
 	NewMsgRegisterReaction   = msgs.NewMsgRegisterReaction
 
 	// variable aliases
+
 	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx

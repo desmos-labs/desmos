@@ -30,8 +30,8 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryProfile queries a profile from the given address or moniker
 func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "[address or moniker]",
-		Short: "Retrieve the profile having the specified user address, if any.",
+		Use:   "[address_or_moniker]",
+		Short: "Retrieve the profile having the specified user address or profile moniker, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
