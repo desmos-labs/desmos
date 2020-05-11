@@ -176,7 +176,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		return nil, err
 	}
 
-	postReaction := types.NewPostReaction(reactionShortcode, msg.User)
+	postReaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
 	if err := keeper.SavePostReaction(ctx, post.PostID, postReaction); err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 	}
 
 	// Remove the reaction
-	reaction := types.NewPostReaction(reactionShortcode, msg.User)
+	reaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
 	if err := keeper.RemovePostReaction(ctx, post.PostID, reaction); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

@@ -13,14 +13,15 @@ func TestPostReaction_String(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
-	reaction := reactions.NewPostReaction("reaction", user)
-	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","value":"reaction"}`, reaction.String())
+	reaction := reactions.NewPostReaction(":smile:", "reaction", user)
+	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","shortcode":":smile:","value":"reaction"}`, reaction.String())
 }
 
 func TestPostReaction_Validate(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)
 
+	//nolint - errcheck
 	tests := []struct {
 		name     string
 		reaction reactions.PostReaction
@@ -28,18 +29,23 @@ func TestPostReaction_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Valid reaction returns no error",
-			reaction: reactions.NewPostReaction("reaction", user),
+			reaction: reactions.NewPostReaction(":smile:", "reaction", user),
 			error:    nil,
 		},
 		{
 			name:     "Missing owner returns error",
-			reaction: reactions.NewPostReaction("reaction", nil),
+			reaction: reactions.NewPostReaction(":smile:", "reaction", nil),
 			error:    errors.New("invalid reaction owner: "),
 		},
 		{
 			name:     "Missing value returns error",
-			reaction: reactions.NewPostReaction("", user),
+			reaction: reactions.NewPostReaction(":smile:", "", user),
 			error:    errors.New("reaction value cannot be empty or blank"),
+		},
+		{
+			name:     "Invalid shortcode returns error",
+			reaction: reactions.NewPostReaction("invalid", "reaction", user),
+			error:    errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 	}
 
@@ -66,14 +72,26 @@ func TestPostReaction_Equals(t *testing.T) {
 	}{
 		{
 			name:          "Returns false with different user",
-			first:         reactions.NewPostReaction("reaction", user),
-			second:        reactions.NewPostReaction("reaction", otherLiker),
+			first:         reactions.NewPostReaction(":smile:", "reaction", user),
+			second:        reactions.NewPostReaction(":smile:", "reaction", otherLiker),
+			shouldBeEqual: false,
+		},
+		{
+			name:          "Returns false with different value",
+			first:         reactions.NewPostReaction(":smile:", "reaction", user),
+			second:        reactions.NewPostReaction(":smile:", "reactions", otherLiker),
+			shouldBeEqual: false,
+		},
+		{
+			name:          "Returns false with different shortcode",
+			first:         reactions.NewPostReaction(":smile:", "reaction", user),
+			second:        reactions.NewPostReaction(":face:", "reaction", otherLiker),
 			shouldBeEqual: false,
 		},
 		{
 			name:          "Returns true with the same data",
-			first:         reactions.NewPostReaction("reaction", user),
-			second:        reactions.NewPostReaction("reaction", user),
+			first:         reactions.NewPostReaction(":smile:", "reaction", user),
+			second:        reactions.NewPostReaction(":smile:", "reaction", user),
 			shouldBeEqual: true,
 		},
 	}
@@ -103,18 +121,18 @@ func TestPostReactions_AppendIfMissing(t *testing.T) {
 		{
 			name:      "New reaction is appended properly to empty list",
 			reactions: reactions.PostReactions{},
-			newLike:   reactions.NewPostReaction("reaction", user),
-			expLikes:  reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			newLike:   reactions.NewPostReaction(":smile:", "reaction", user),
+			expLikes:  reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			expAppend: true,
 		},
 		{
 			name:      "New reaction is appended properly to existing list",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
-			newLike:   reactions.NewPostReaction("reaction", otherLiker),
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
+			newLike:   reactions.NewPostReaction(":smile:", "reaction", otherLiker),
 			expAppend: true,
 			expLikes: reactions.PostReactions{
-				reactions.NewPostReaction("reaction", user),
-				reactions.NewPostReaction("reaction", otherLiker),
+				reactions.NewPostReaction(":smile:", "reaction", user),
+				reactions.NewPostReaction(":smile:", "reaction", otherLiker),
 			},
 		},
 	}
@@ -140,35 +158,35 @@ func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 		name        string
 		reactions   reactions.PostReactions
 		owner       sdk.AccAddress
-		value       string
+		shortcode   string
 		expContains bool
 	}{
 		{
 			name:        "Non-empty list returns true with valid address",
-			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:       user,
-			value:       "reaction",
+			shortcode:   ":smile:",
 			expContains: true,
 		},
 		{
 			name:        "Empty list returns false",
 			reactions:   reactions.PostReactions{},
 			owner:       user,
-			value:       "reaction",
+			shortcode:   ":smile:",
 			expContains: false,
 		},
 		{
 			name:        "Non-empty list returns false with not found address",
-			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:       otherLiker,
-			value:       "reaction",
+			shortcode:   ":smile:",
 			expContains: false,
 		},
 		{
 			name:        "Non-empty list returns false with not found value",
-			reactions:   reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions:   reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:       user,
-			value:       "reaction-2",
+			shortcode:   ":like:",
 			expContains: false,
 		},
 	}
@@ -176,7 +194,7 @@ func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expContains, test.reactions.ContainsReactionFrom(test.owner, test.value))
+			require.Equal(t, test.expContains, test.reactions.ContainsReactionFrom(test.owner, test.shortcode))
 		})
 	}
 }
@@ -197,21 +215,21 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 	}{
 		{
 			name:      "Non-empty list returns proper index with valid value (shortcode)",
-			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", "👍", user)},
 			owner:     user,
 			value:     ":+1:",
 			expIndex:  0,
 		},
 		{
 			name:      "Non-empty list returns proper index with valid value (emoji - one code)",
-			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":+1:", "👍", user)},
 			owner:     user,
 			value:     "👍",
 			expIndex:  0,
 		},
 		{
 			name:      "Non-empty list returns proper index with valid value (emoji - another code)",
-			reactions: reactions.PostReactions{reactions.NewPostReaction(":thumbsup:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":thumbsup:", "👍", user)},
 			owner:     user,
 			value:     "👍",
 			expIndex:  0,
@@ -225,14 +243,14 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 		},
 		{
 			name:      "Non-empty list returns -1 with not found address",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction",
 			expIndex:  -1,
 		},
 		{
 			name:      "Non-empty list returns -1 with not found value",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:     otherLiker,
 			value:     "reaction-2",
 			expIndex:  -1,
@@ -258,15 +276,15 @@ func TestPostReactions_RemoveReaction(t *testing.T) {
 		name      string
 		reactions reactions.PostReactions
 		owner     sdk.AccAddress
-		value     string
+		shortcode string
 		expResult reactions.PostReactions
 		expEdited bool
 	}{
 		{
 			name:      "PostReaction is removed from non-empty list",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:     user,
-			value:     "reaction",
+			shortcode: ":smile:",
 			expResult: reactions.PostReactions{},
 			expEdited: true,
 		},
@@ -274,24 +292,24 @@ func TestPostReactions_RemoveReaction(t *testing.T) {
 			name:      "Empty list is not edited",
 			reactions: reactions.PostReactions{},
 			owner:     user,
-			value:     "reaction",
+			shortcode: ":smile:",
 			expResult: reactions.PostReactions{},
 			expEdited: false,
 		},
 		{
 			name:      "Non-empty list with not found address is not edited",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:     otherLiker,
-			value:     "reaction",
-			expResult: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			shortcode: ":smile:",
+			expResult: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			expEdited: false,
 		},
 		{
 			name:      "Non-empty list with not found value is not edited",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			owner:     otherLiker,
-			value:     "reaction-2",
-			expResult: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			shortcode: ":like:",
+			expResult: reactions.PostReactions{reactions.NewPostReaction(":smile:", "reaction", user)},
 			expEdited: false,
 		},
 	}
@@ -299,7 +317,7 @@ func TestPostReactions_RemoveReaction(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			result, edited := test.reactions.RemoveReaction(test.owner, test.value)
+			result, edited := test.reactions.RemoveReaction(test.owner, test.shortcode)
 			require.Equal(t, test.expEdited, edited)
 			require.Equal(t, test.expResult, result)
 		})

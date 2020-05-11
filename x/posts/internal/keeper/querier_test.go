@@ -100,8 +100,8 @@ func Test_queryPost(t *testing.T) {
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			storedReactions: map[string]types.PostReactions{
 				stringID: {
-					types.NewPostReaction(":like:", creator),
-					types.NewPostReaction(":like:", otherCreator),
+					types.NewPostReaction(":like:", "https://smile.jpg", creator),
+					types.NewPostReaction(":like:", "https://smile.jpg", otherCreator),
 				},
 			},
 			registeredReaction: &reaction,
@@ -124,8 +124,8 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedReactions: map[string]types.PostReactions{
 				stringID: {
-					types.NewPostReaction(":like:", creator),
-					types.NewPostReaction(":like:", otherCreator),
+					types.NewPostReaction(":like:", "https://smile.jpg", creator),
+					types.NewPostReaction(":like:", "https://smile.jpg", otherCreator),
 				},
 			},
 			registeredReaction: &reaction,
@@ -148,8 +148,8 @@ func Test_queryPost(t *testing.T) {
 			},
 			storedReactions: map[string]types.PostReactions{
 				stringID: {
-					types.NewPostReaction(":like:", creator),
-					types.NewPostReaction(":like:", otherCreator),
+					types.NewPostReaction(":like:", "https://smile.jpg", creator),
+					types.NewPostReaction(":like:", "https://smile.jpg", otherCreator),
 				},
 			},
 			storedAnswers:      []types.UserAnswer{types.NewUserAnswer(answers, creator)},

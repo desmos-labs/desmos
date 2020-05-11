@@ -103,7 +103,7 @@ func randomAddPostReactionFields(
 
 	k.RegisterReaction(ctx, reaction)
 
-	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode)
+	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid

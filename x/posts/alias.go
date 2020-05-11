@@ -66,6 +66,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewPostMedia                     = common.NewPostMedia
 	ValidateURI                      = common.ValidateURI
 	NewPostMedias                    = common.NewPostMedias
@@ -139,6 +140,7 @@ var (
 	RegisterModelsCodec              = models.RegisterModelsCodec
 
 	// variable aliases
+
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
 	ModuleCdc                = types.ModuleCdc
