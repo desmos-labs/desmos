@@ -11,23 +11,21 @@ const (
 	EventTypeRegisterReaction    = "reaction_registered"
 
 	// Post attributes
-	AttributeKeyPostID       = "post_id"
-	AttributeKeyPostParentID = "post_parent_id"
-	AttributeKeyPostOwner    = "post_owner"
-	AttributeKeyPostEditTime = "post_edit_time"
+	AttributeKeyPostID           = "post_id"
+	AttributeKeyPostParentID     = "post_parent_id"
+	AttributeKeyPostOwner        = "post_owner"
+	AttributeKeyPostEditTime     = "post_edit_time"
+	AttributeKeyPostCreationTime = "post_creation_time"
 
 	// Poll attributes
 	AttributeKeyPollAnswerer = "poll_answerer"
 
 	// PostReaction attributes
-	AttributeKeyPostReactionOwner = "user"
-	AttributeKeyPostReactionValue = "reaction"
+	AttributeKeyPostReactionOwner = "reaction_user"
+	AttributeKeyPostReactionValue = "reaction_value"
+	AttributeKeyReactionShortCode = "reaction_shortcode"
 
 	// Reaction attributes
-	AttributeKeyReactionCreator   = "creator"
-	AttributeKeyReactionShortCode = "shortcode"
-	AttributeKeyReactionSubSpace  = "subspace"
-
-	// Generic attributes
-	AttributeKeyCreationTime = "creation_time"
+	AttributeKeyReactionCreator  = "reaction_creator"
+	AttributeKeyReactionSubSpace = "reaction_subspace"
 )
