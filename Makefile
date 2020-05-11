@@ -35,7 +35,6 @@ else ifeq ($(DB_BACKEND),)
   build_tags += gcc
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
-endif
 
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
