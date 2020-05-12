@@ -96,7 +96,7 @@ If you want to add a poll to your post you need to specify it through two flags:
 If a poll is provided, the post can be created even without specifying any message as follows:
 
 E.g.
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post with poll" true \
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post with poll" \
 	--poll-details "question=Which dog do you prefer?,multiple-answers=false,allows-answer-edits=true,end-date=2020-01-01T15:00:00.000Z" \
 	--poll-answer "Beagle" \
 	--poll-answer "Pug" \
