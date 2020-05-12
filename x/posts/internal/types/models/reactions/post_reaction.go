@@ -18,7 +18,7 @@ import (
 type PostReaction struct {
 	Owner     sdk.AccAddress `json:"owner" yaml:"owner"`         // Creator that has created the reaction
 	Shortcode string         `json:"shortcode" yaml:"shortcode"` // Shortcode of the reaction
-	Value     string         `json:"value" yaml:"value"`         // Value of the reaction, either an emoji or a shortcode
+	Value     string         `json:"value" yaml:"value"`         // Value of the reaction
 }
 
 // NewPostReaction returns a new PostReaction

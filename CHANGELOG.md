@@ -1,7 +1,7 @@
 # Version 0.6.0
 ## Changes
 - Implemented tags in post medias (#118)
-
+- Edited PostReaction struct to allow a better integration with middle layer applications (#157)
 # Version 0.5.0
 ## Changes
 - Implemented invariants for posts and profile modules (#90)
