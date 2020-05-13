@@ -106,7 +106,7 @@ func TestInvariants(t *testing.T) {
 			answers:      nil,
 			postReaction: &postReaction,
 			reaction:     &reaction,
-			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n {\"owner\":\"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\",\"shortcode\":\":like:\",\"value\":\"+1\"}\n\n",
+			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n {\"shortcode\":\":like:\",\"value\":\"+1\",\"owner\":\"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\"}\n\n",
 			expBool:      true,
 		},
 		{

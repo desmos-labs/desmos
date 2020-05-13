@@ -430,7 +430,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 	regReaction := types.NewReaction(user, ":reaction:", "react", testPost.Subspace)
 	reaction := types.NewPostReaction(":reaction:", "react", user)
-	emojiShortcodeReaction := types.NewPostReaction(":smile:", "react", user)
+	emojiShortcodeReaction := types.NewPostReaction(":smile:", "😄", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
 	require.NoError(t, err)

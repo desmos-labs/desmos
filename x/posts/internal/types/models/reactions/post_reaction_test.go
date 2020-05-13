@@ -14,7 +14,7 @@ func TestPostReaction_String(t *testing.T) {
 	require.NoError(t, err)
 
 	reaction := reactions.NewPostReaction(":smile:", "reaction", user)
-	require.Equal(t, `{"owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4","shortcode":":smile:","value":"reaction"}`, reaction.String())
+	require.Equal(t, `{"shortcode":":smile:","value":"reaction","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}`, reaction.String())
 }
 
 func TestPostReaction_Validate(t *testing.T) {
@@ -256,29 +256,29 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 			expIndex:  -1,
 		},
 		{
-			name:      "Exiting reaction search by code",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			name:      "Existing reaction search by code",
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":reaction:", "reaction", user)},
 			owner:     user,
-			value:     "reaction",
+			value:     ":reaction:",
 			expIndex:  0,
 		},
 		{
 			name:      "Exiting emoji reaction stored by value search by code",
-			reactions: reactions.PostReactions{reactions.NewPostReaction("🔥", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", "🔥", user)},
 			owner:     user,
 			value:     ":fire:",
 			expIndex:  0,
 		},
 		{
 			name:      "Exiting emoji reaction stored by code search by code",
-			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", "🔥", user)},
 			owner:     user,
 			value:     ":fire:",
 			expIndex:  0,
 		},
 		{
 			name:      "Exiting emoji reaction stored by code search by value",
-			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", user)},
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", "🔥", user)},
 			owner:     user,
 			value:     "🔥",
 			expIndex:  0,

@@ -16,16 +16,16 @@ import (
 
 // PostReaction is a struct of a user reaction to a post
 type PostReaction struct {
-	Owner     sdk.AccAddress `json:"owner" yaml:"owner"`         // Creator that has created the reaction
 	Shortcode string         `json:"shortcode" yaml:"shortcode"` // Shortcode of the reaction
 	Value     string         `json:"value" yaml:"value"`         // Value of the reaction
+	Owner     sdk.AccAddress `json:"owner" yaml:"owner"`         // Creator that has created the reaction
 }
 
 // NewPostReaction returns a new PostReaction
 func NewPostReaction(shortcode, value string, owner sdk.AccAddress) PostReaction {
 	return PostReaction{
-		Value:     value,
 		Shortcode: shortcode,
+		Value:     value,
 		Owner:     owner,
 	}
 }
@@ -123,7 +123,7 @@ func (reactions PostReactions) IndexOfByUserAndValue(owner sdk.Address, value st
 			}
 
 			if reactEmoji == nil {
-				if value == reaction.Value {
+				if value == reaction.Shortcode {
 					return index
 				}
 			}
