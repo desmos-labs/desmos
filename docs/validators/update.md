@@ -38,14 +38,19 @@ After updating the fullnode software **do not** start it yet. If you have mistak
 :::
 
 ## 4. Migrate to a new network   
-After updating the fullnode, it is now time to migrate the old chain state to a new genesis state. To do so, you need to execute the following command: 
+After updating the fullnode, it is now time to migrate the old chain state to a new genesis state. 
+First of all, do a backup of your current genesis file: 
 
 ```bash
-mv ~/.desmosd/config/
-desmosd migrate <version> ./old-state.json \
+cp ~/.desmosd/config/genesis.json ~/.desmosd/config/genesis.json.bak
+```
+
+Then, you can migrate the old state and replace it with the new one: 
+```bash
+desmosd migrate <version> old-state.json \
   --chain-id <new-chain-id> \
   --genesis-time <new-genesis-time> \
-  > ~/.desmosd/config
+  > ~/.desmosd/config/genesis.json
 ```
 
 Please note that the `version`, `new-chain-id` and the `new-genesis-time` will be communicated to you in advance and will also be available inside the proper folder [on the testnets repo](https://github.com/desmos-labs/morpheus). 
@@ -53,8 +58,8 @@ Please note that the `version`, `new-chain-id` and the `new-genesis-time` will b
 Once you have migrated the genesis file, you need to reset the status of your node.
 
 ## 5. Reset your node
-:::danger Make sure you understand what you are doing
-Please be cautious when you reset your node. Unintended mistakes may lead to missing validator key or double sign.
+:::danger Make sure you understand what you are doing  
+Please be cautious when you reset your node. Unintended mistakes may lead to missing validator key or double sign.  
 :::
 
 Resetting the node will have the followings happen.
