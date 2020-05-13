@@ -3,13 +3,16 @@ package keeper_test
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"math/rand"
 	"testing"
+	"time"
+
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
-// RandomPostIDOrSubspace
+// RandomPostIDOrSubspace returns a random PostID
 func RandomPostIDOrSubspace() types.PostID {
 	bytes := make([]byte, 128)
 	_, err := rand.Read(bytes)
@@ -20,80 +23,49 @@ func RandomPostIDOrSubspace() types.PostID {
 	return types.PostID(hex.EncodeToString(hash[:]))
 }
 
-func RandomPosts() ([]types.Post, rand.Rand) {
+func RandomMessage(r *rand.Rand) string {
+	bytes := make([]byte, r.Intn(500))
+	_, err := rand.Read(bytes)
+	if err != nil {
+		panic(err)
+	}
+
+	return hex.EncodeToString(bytes)
+}
+
+func RandomPost() types.Post {
 	r := rand.New(rand.NewSource(100))
-	return []types.Post{
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		),
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		).WithMedias(testPost.Medias),
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		).WithMedias(simulation.RandomMedias(r)),
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		).WithPollData(*simulation.RandomPollData(r)),
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		).WithMedias(testPost.Medias).WithPollData(*simulation.RandomPollData(r)),
-		types.NewPost(
-			RandomPostIDOrSubspace(),
-			RandomPostIDOrSubspace(),
-			"Message",
-			false,
-			RandomPostIDOrSubspace().String(),
-			map[string]string{},
-			testPost.Created,
-			testPost.Creator,
-		).WithMedias(simulation.RandomMedias(r)).WithPollData(*simulation.RandomPollData(r)),
-	}, *r
+	accounts := sim.RandomAccounts(r, r.Intn(20))
+
+	post := types.NewPost(
+		RandomPostIDOrSubspace(),
+		RandomPostIDOrSubspace(),
+		RandomMessage(r),
+		r.Intn(101) <= 50,
+		RandomPostIDOrSubspace().String(),
+		map[string]string{},
+		time.Now(),
+		accounts[r.Intn(20)].Address,
+	)
+
+	if r.Intn(101) <= 50 {
+		post = post.WithMedias(simulation.RandomMedias(r, accounts))
+	}
+
+	if r.Intn(101) <= 50 {
+		if pollData := simulation.RandomPollData(r); pollData != nil {
+			post = post.WithPollData(*pollData)
+		}
+	}
+
+	return post
 }
 
 func BenchmarkKeeper_SavePost(b *testing.B) {
 	ctx, k := SetupTestInput()
-	posts, r := RandomPosts()
-
-	r.Intn(len(posts))
 
 	for i := 0; i < b.N; i++ {
-
+		k.SavePost(ctx, RandomPost())
 	}
 }
 
