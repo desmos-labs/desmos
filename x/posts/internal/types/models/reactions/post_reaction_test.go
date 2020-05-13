@@ -237,6 +237,34 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 			value:     "reaction-2",
 			expIndex:  -1,
 		},
+		{
+			name:      "Exiting reaction search by code",
+			reactions: reactions.PostReactions{reactions.NewPostReaction("reaction", user)},
+			owner:     user,
+			value:     "reaction",
+			expIndex:  0,
+		},
+		{
+			name:      "Exiting emoji reaction stored by value search by code",
+			reactions: reactions.PostReactions{reactions.NewPostReaction("🔥", user)},
+			owner:     user,
+			value:     ":fire:",
+			expIndex:  0,
+		},
+		{
+			name:      "Exiting emoji reaction stored by code search by code",
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", user)},
+			owner:     user,
+			value:     ":fire:",
+			expIndex:  0,
+		},
+		{
+			name:      "Exiting emoji reaction stored by code search by value",
+			reactions: reactions.PostReactions{reactions.NewPostReaction(":fire:", user)},
+			owner:     user,
+			value:     "🔥",
+			expIndex:  0,
+		},
 	}
 
 	for _, test := range tests {

@@ -29,7 +29,7 @@ func TestInvariants(t *testing.T) {
 		{
 			name:        "ValidProfile invariant violated",
 			profile:     types.NewProfile("", owner),
-			expResponse: "profile: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[Moniker]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
+			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[Moniker]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:     true,
 		},
 	}

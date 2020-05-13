@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ModuleName = "profile"
+	ModuleName = "profiles"
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
