@@ -72,7 +72,7 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-				[]types.ReactionQueryResponse{},
+				[]types.PostReaction{},
 				types.PostIDs{computedID2},
 			),
 		},
@@ -87,7 +87,7 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-				[]types.ReactionQueryResponse{},
+				[]types.PostReaction{},
 				types.PostIDs{},
 			),
 		},
@@ -109,9 +109,9 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-				[]types.ReactionQueryResponse{
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, creator),
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, otherCreator),
+				[]types.PostReaction{
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, creator),
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, otherCreator),
 				},
 				types.PostIDs{computedID2},
 			),
@@ -133,9 +133,9 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 				nil,
-				[]types.ReactionQueryResponse{
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, creator),
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, otherCreator),
+				[]types.PostReaction{
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, creator),
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, otherCreator),
 				},
 				types.PostIDs{computedID2},
 			),
@@ -158,9 +158,9 @@ func Test_queryPost(t *testing.T) {
 			expResult: types.NewPostResponse(
 				types.NewPost(computedID, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-				[]types.ReactionQueryResponse{
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, creator),
-					types.NewReactionQueryResponse(reaction.Value, reaction.ShortCode, otherCreator),
+				[]types.PostReaction{
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, creator),
+					types.NewPostReaction(reaction.ShortCode, reaction.Value, otherCreator),
 				},
 				types.PostIDs{computedID2},
 			),
@@ -237,13 +237,13 @@ func Test_queryPosts(t *testing.T) {
 				types.NewPostResponse(
 					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-					[]types.ReactionQueryResponse{},
+					[]types.PostReaction{},
 					types.PostIDs{id2},
 				),
 				types.NewPostResponse(
 					types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 					nil,
-					[]types.ReactionQueryResponse{},
+					[]types.PostReaction{},
 					types.PostIDs{},
 				),
 			},
@@ -259,7 +259,7 @@ func Test_queryPosts(t *testing.T) {
 				types.NewPostResponse(
 					types.NewPost(id2, id, "Child", false, "", map[string]string{}, testPost.Created, creator).WithPollData(*testPost.PollData),
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-					[]types.ReactionQueryResponse{},
+					[]types.PostReaction{},
 					types.PostIDs{},
 				),
 			},
@@ -275,7 +275,7 @@ func Test_queryPosts(t *testing.T) {
 				types.NewPostResponse(
 					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias),
 					nil,
-					[]types.ReactionQueryResponse{},
+					[]types.PostReaction{},
 					types.PostIDs{id2},
 				),
 			},
@@ -292,7 +292,7 @@ func Test_queryPosts(t *testing.T) {
 				types.NewPostResponse(
 					types.NewPost(id, "", "Parent", false, "", map[string]string{}, testPost.Created, creator).WithMedias(testPost.Medias).WithPollData(*testPost.PollData),
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
-					[]types.ReactionQueryResponse{},
+					[]types.PostReaction{},
 					types.PostIDs{id2},
 				),
 			},

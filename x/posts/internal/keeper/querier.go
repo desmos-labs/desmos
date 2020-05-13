@@ -41,16 +41,6 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 		postReactions = types.PostReactions{}
 	}
 
-	// Convert the reactions
-	var reactionsResponses = make([]types.ReactionQueryResponse, len(postReactions))
-	for index, reaction := range postReactions {
-		reactionsResponses[index] = types.ReactionQueryResponse{
-			Value: reaction.Value,
-			Code:  reaction.Shortcode,
-			Owner: reaction.Owner,
-		}
-	}
-
 	// Get the children
 	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
 	if childrenIDs == nil {
@@ -64,7 +54,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	}
 
 	// Crete the response object
-	return types.NewPostResponse(post, answers, reactionsResponses, childrenIDs)
+	return types.NewPostResponse(post, answers, postReactions, childrenIDs)
 }
 
 // queryPost handles the request to get a post having a specific id
