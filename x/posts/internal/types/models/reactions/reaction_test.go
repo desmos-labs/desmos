@@ -70,7 +70,8 @@ func TestReaction_Validate(t *testing.T) {
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction short code must be an emoji short code"),
+			//nolint - errcheck
+			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name: "Invalid short code returns error",
@@ -80,7 +81,8 @@ func TestReaction_Validate(t *testing.T) {
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction short code must be an emoji short code"),
+			//nolint - errcheck
+			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name: "Empty value returns error",

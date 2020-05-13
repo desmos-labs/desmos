@@ -40,8 +40,9 @@ var (
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
-	shortCodes  = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	shortCodes      = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
+	reactValues     = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -81,23 +82,25 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 
 // PostReactionData contains all the data needed for a post reaction to be properly added or removed from a post
 type PostReactionData struct {
-	Value  string
-	User   sim.Account
-	PostID types.PostID
+	Shortcode string
+	Value     string
+	User      sim.Account
+	PostID    types.PostID
 }
 
 // RandomPostReactionData returns a randomly generated post reaction data object
-func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode string) PostReactionData {
+func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode, value string) PostReactionData {
 	return PostReactionData{
-		Value:  shortCode,
-		User:   accs[r.Intn(len(accs))],
-		PostID: postID,
+		Shortcode: shortCode,
+		Value:     value,
+		User:      accs[r.Intn(len(accs))],
+		PostID:    postID,
 	}
 }
 
-// RandomPostReactionValue returns a random reaction value
+// RandomPostReactionValue returns a random post reaction value
 func RandomPostReactionValue(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(shortCodes))]
+	return postReactValues[r.Intn(len(postReactValues))]
 }
 
 // RandomPostID returns a randomly extracted post id from the list of posts given
@@ -202,7 +205,7 @@ func RandomReactionValue(r *rand.Rand) string {
 
 // RandomReactionShortCode return a random reaction shortCode
 func RandomReactionShortCode(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(reactValues))]
+	return shortCodes[r.Intn(len(shortCodes))]
 }
 
 // RandomReactionData returns a randomly generated reaction data object

@@ -45,7 +45,8 @@ func (reaction Reaction) Validate() error {
 	}
 
 	if !common.ShortCodeRegEx.MatchString(reaction.ShortCode) {
-		return fmt.Errorf("reaction short code must be an emoji short code")
+		//nolint - errcheck
+		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
 
 	if !common.URIRegEx.MatchString(reaction.Value) && !IsEmoji(reaction.Value) {

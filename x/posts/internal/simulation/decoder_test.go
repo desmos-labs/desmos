@@ -60,8 +60,8 @@ func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
 	comments := types.PostIDs{id, id2, id3}
 	postReactions := types.PostReactions{
-		types.NewPostReaction(":thumbsup:", postCreatorAddr),
-		types.NewPostReaction("blue_heart:", postCreatorAddr),
+		types.NewPostReaction(":thumbsup:", "👍", postCreatorAddr),
+		types.NewPostReaction("blue_heart:", "💙", postCreatorAddr),
 	}
 
 	reaction := types.NewReaction(

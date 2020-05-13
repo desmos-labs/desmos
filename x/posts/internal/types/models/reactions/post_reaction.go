@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 )
 
 // ---------------
@@ -15,15 +16,17 @@ import (
 
 // PostReaction is a struct of a user reaction to a post
 type PostReaction struct {
-	Owner sdk.AccAddress `json:"owner" yaml:"owner"` // Creator that has created the reaction
-	Value string         `json:"value" yaml:"value"` // Value of the reaction, either an emoji or a shortcode
+	Shortcode string         `json:"shortcode" yaml:"shortcode"` // Shortcode of the reaction
+	Value     string         `json:"value" yaml:"value"`         // Value of the reaction
+	Owner     sdk.AccAddress `json:"owner" yaml:"owner"`         // Creator that has created the reaction
 }
 
 // NewPostReaction returns a new PostReaction
-func NewPostReaction(value string, owner sdk.AccAddress) PostReaction {
+func NewPostReaction(shortcode, value string, owner sdk.AccAddress) PostReaction {
 	return PostReaction{
-		Value: value,
-		Owner: owner,
+		Shortcode: shortcode,
+		Value:     value,
+		Owner:     owner,
 	}
 }
 
@@ -46,12 +49,18 @@ func (reaction PostReaction) Validate() error {
 		return fmt.Errorf("reaction value cannot be empty or blank")
 	}
 
+	if !common.ShortCodeRegEx.MatchString(reaction.Shortcode) {
+		//nolint - errcheck
+		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :")
+	}
+
 	return nil
 }
 
 // Equals returns true if reaction and other contain the same data
 func (reaction PostReaction) Equals(other PostReaction) bool {
 	return reaction.Value == other.Value &&
+		reaction.Shortcode == other.Shortcode &&
 		reaction.Owner.Equals(other.Owner)
 }
 
@@ -107,14 +116,14 @@ func (reactions PostReactions) IndexOfByUserAndValue(owner sdk.Address, value st
 
 				// Check the emoji shortcodes
 				for _, code := range reactEmoji.Shortcodes {
-					if reaction.Value == code {
+					if reaction.Shortcode == code {
 						return index
 					}
 				}
 			}
 
 			if reactEmoji == nil {
-				if value == reaction.Value {
+				if value == reaction.Shortcode {
 					return index
 				}
 			}

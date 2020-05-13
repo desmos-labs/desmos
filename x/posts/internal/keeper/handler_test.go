@@ -374,14 +374,22 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				require.True(t, test.existingPost.Equals(storedPost))
 
 				// Check the post reactions
-				reactValue := test.msg.Reaction
-				if e, err := emoji.LookupEmoji(reactValue); err == nil {
-					reactValue = e.Shortcodes[0]
+				var reactValue, reactShortcode string
+				if e, err := emoji.LookupEmoji(test.msg.Reaction); err == nil {
+					reactShortcode = e.Shortcodes[0]
+					reactValue = e.Value
+				} else {
+					e, err := emoji.LookupEmojiByCode(test.msg.Reaction)
+					if err != nil {
+						panic(err)
+					}
+					reactShortcode = e.Shortcodes[0]
+					reactValue = e.Value
 				}
 
 				var storedReactions types.PostReactions
 				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.Contains(t, storedReactions, types.NewPostReaction(reactValue, test.msg.User))
+				require.Contains(t, storedReactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
 
 				// Check the registered reactions
 				registeredReactions := k.GetRegisteredReactions(ctx)
@@ -421,13 +429,13 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	require.NoError(t, err)
 
 	regReaction := types.NewReaction(user, ":reaction:", "react", testPost.Subspace)
-	reaction := types.NewPostReaction(":reaction:", user)
-	emojiShortcodeReaction := types.NewPostReaction(":smile:", user)
+	reaction := types.NewPostReaction(":reaction:", "react", user)
+	emojiShortcodeReaction := types.NewPostReaction(":smile:", "😄", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
 	require.NoError(t, err)
 
-	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], user)
+	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], emoji.Value, user)
 
 	tests := []struct {
 		name               string
@@ -454,7 +462,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			existingPost:       &post,
 			existingReaction:   &reaction,
 			registeredReaction: &regReaction,
-			msg:                types.NewMsgRemovePostReaction(post.PostID, user, reaction.Value),
+			msg:                types.NewMsgRemovePostReaction(post.PostID, user, reaction.Shortcode),
 			error:              nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionRemoved,
@@ -468,14 +476,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 			name:             "Removing a reaction using the code works properly (emoji shortcode)",
 			existingPost:     &post,
 			existingReaction: &emojiShortcodeReaction,
-			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emojiShortcodeReaction.Value),
+			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emojiShortcodeReaction.Shortcode),
 			error:            nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionRemoved,
 				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
-				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiShortcodeReaction.Value),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiShortcodeReaction.Shortcode),
 			),
 		},
 		{
@@ -489,7 +497,7 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, emoji.Value),
-				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiReaction.Value),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiReaction.Shortcode),
 			),
 		},
 	}
