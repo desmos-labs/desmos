@@ -168,8 +168,8 @@ func TestPostQueryResponse_String(t *testing.T) {
 			models.NewUserAnswer([]models.AnswerID{models.AnswerID(1)}, liker),
 		),
 		[]models.PostReaction{
-			models.NewPostReaction("https://example.com/like", ":like:", liker),
-			models.NewPostReaction("👍", ":+1:", otherLiker),
+			models.NewPostReaction(":like:", "https://example.com/like", liker),
+			models.NewPostReaction(":+1:", "👍", otherLiker),
 		},
 		models.PostIDs{
 			"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
