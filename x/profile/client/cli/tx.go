@@ -22,7 +22,7 @@ import (
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Profile transaction subcommands",
+		Short:                      "Profiles transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -58,7 +58,7 @@ E.g (only with moniker)
 %s tx profile create leoDiCap 
 
 E.g (with all the other optional fields)
-%s tx profile create leoDiCap \
+%s tx profiles create leoDiCap \
 	--name "Leonardo" \
 	--surname "Di Caprio" \
 	--bio "Hollywood actor. Proud environmentalist" \
@@ -108,7 +108,7 @@ Every data is optional.
 All the attributes will not accept the string "default" as a value because it's reserved for internal operations.
 
 E.g (with all the other optional fields)
-%s tx profile edit \
+%s tx profiles edit \
     --moniker "DiCapLeo" \
 	--name "Leo" \
 	--surname "Di Cap" \
