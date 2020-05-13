@@ -90,22 +90,32 @@ func (reactions PostReactions) ContainsReactionFrom(user sdk.Address, value stri
 // given user with the specified code inside the reactions slice.
 // NOTE: The value can be either an emoji or a shortcode.
 func (reactions PostReactions) IndexOfByUserAndValue(owner sdk.Address, value string) int {
-	reactEmoji, err := emoji.LookupEmoji(value)
-	isEmoji := err == nil
+	var reactEmoji *emoji.Emoji
+	if ej, err := emoji.LookupEmoji(value); err == nil {
+		reactEmoji = &ej
+	} else if ej, err := emoji.LookupEmojiByCode(value); err == nil {
+		reactEmoji = &ej
+	}
 
 	for index, reaction := range reactions {
 		if reaction.Owner.Equals(owner) {
-			// The given value is a shortcode, so check only that
-			if !isEmoji && reaction.Value == value {
-				return index
-			}
+			if reactEmoji != nil {
+				// Check the emoji value
+				if reaction.Value == reactEmoji.Value {
+					return index
+				}
 
-			// The given value is an emoji, so we need to check is any of its shortcode match this reaction value
-			if isEmoji {
+				// Check the emoji shortcodes
 				for _, code := range reactEmoji.Shortcodes {
 					if reaction.Value == code {
 						return index
 					}
+				}
+			}
+
+			if reactEmoji == nil {
+				if value == reaction.Value {
+					return index
 				}
 			}
 		}
