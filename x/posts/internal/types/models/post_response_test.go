@@ -65,8 +65,8 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	}
 
 	reactionsResponses := []models.PostReaction{
-		models.NewPostReaction("https://example.com/like", ":like:", liker),
-		models.NewPostReaction("👍", ":+1:", otherLiker),
+		models.NewPostReaction(":like:", "https://example.com/like", liker),
+		models.NewPostReaction(":+1:", "👍", otherLiker),
 	}
 
 	tests := []struct {
