@@ -38,7 +38,7 @@ var msgCreatePost = msgs.NewMsgCreatePost(
 	map[string]string{},
 	testOwner,
 	date,
-	models.NewPostMedias(models.NewPostMedia("https://uri.com", "text/plain")),
+	models.NewPostMedias(models.NewPostMedia("https://uri.com", "text/plain", nil)),
 	&pollData,
 )
 

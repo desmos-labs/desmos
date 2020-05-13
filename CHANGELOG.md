@@ -1,3 +1,7 @@
+# Version 0.6.0
+## Changes
+- Implemented tags in post medias (#118)
+
 # Version 0.5.1
 ## Bug fixes
 - Fixed a bug that caused users to be unable to add more than one reaction to the same post

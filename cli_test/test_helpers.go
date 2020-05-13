@@ -458,19 +458,19 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 //___________________________________________________________________________________
 // desmoscli tx profile
 func (f *Fixtures) TxProfileCreate(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profile create %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx profiles create %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, moniker, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 func (f *Fixtures) TxProfileEdit(from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profile edit --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx profiles edit --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 func (f *Fixtures) TxProfileDelete(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profile delete %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx profiles delete %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, moniker, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
@@ -791,7 +791,7 @@ func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
 
 // QueryProfile returns stored profiles
 func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
-	cmd := fmt.Sprintf("%s query profile all --output=json %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmosliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()

@@ -50,7 +50,11 @@ This message allows you to create a new public post. If you want to know more ab
     "medias": [
       {
         "uri": "https://example.com/media1",
-        "mime_type": "text/plain"
+        "mime_type": "text/plain",
+        "tags": [
+            "desmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+            "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru"
+        ]   
       },
       {
         "uri": "https://example.com/media2",
