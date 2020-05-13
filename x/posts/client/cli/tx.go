@@ -66,18 +66,20 @@ By default this field is set to true.
 === Medias ===
 If you want to add one or more media(s) attachment(s), you have to use the --media flag.
 You need to firstly specify the media URI and then its mime-type separeted by a comma.
+You can also specify the desmos addresses tagged in the media you're sharing by adding as 
+many address you want after the mime-type separated by a comma.
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single media" \
-  --media "https://example.com/media1,text/plain" \
+  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --allows-comments false
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" \
-  --media "https://example.com/media1,text/plain" \
+  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --media "https://example.com/media2,application/json"
 
 If medias are provided, the post could be created even without any message as following:
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" \
-  --media "https://example.com/media1,text/plain" \
+  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --media "https://example.com/media2,application/json" \
   --allows-comments false
 
@@ -94,7 +96,7 @@ If you want to add a poll to your post you need to specify it through two flags:
 If a poll is provided, the post can be created even without specifying any message as follows:
 
 E.g.
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post with poll" true \
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Post with poll" \
 	--poll-details "question=Which dog do you prefer?,multiple-answers=false,allows-answer-edits=true,end-date=2020-01-01T15:00:00.000Z" \
 	--poll-answer "Beagle" \
 	--poll-answer "Pug" \
@@ -118,10 +120,20 @@ E.g.
 			medias := types.PostMedias{}
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
-				if len(argz) != 2 {
-					return fmt.Errorf("if medias are specified, the arguments has to be exactly 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
+				var tags []sdk.AccAddress
+				// if some tags are specified
+				if len(argz) < 2 {
+					return fmt.Errorf("if medias are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
+				} else if len(argz) > 2 {
+					for _, addr := range argz[2:] {
+						tag, err := sdk.AccAddressFromBech32(addr)
+						if err != nil {
+							return err
+						}
+						tags = append(tags, tag)
+					}
 				}
-				media := types.NewPostMedia(argz[0], argz[1])
+				media := types.NewPostMedia(argz[0], argz[1], tags)
 				medias = medias.AppendIfMissing(media)
 			}
 

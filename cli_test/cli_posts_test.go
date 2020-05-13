@@ -141,10 +141,15 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
+	tag, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
+	require.NoError(t, err)
+	tag2, err2 := sdk.AccAddressFromBech32("desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+	require.NoError(t, err2)
+
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json")
+		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -158,19 +163,19 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 2)
 	require.Equal(t, post.Medias, posts.NewPostMedias(
-		posts.NewPostMedia("https://example.com/media1", "text/plain"),
-		posts.NewPostMedia("https://example.com/media2", "application/json")))
+		posts.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
+		posts.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://second.example.com/media1,text/plain",
-		"--media https://second.example.com/media2,application/json")
+		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://third.example.com/media1,text/plain",
-		"--media https://third.example.com/media2,application/json")
+		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -206,7 +211,9 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
 		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json")
+		"--media https://example.com/media2,application/json",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -218,21 +225,27 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 2)
-	require.Equal(t, post.Medias, posts.NewPostMedias(
-		posts.NewPostMedia("https://example.com/media1", "text/plain"),
-		posts.NewPostMedia("https://example.com/media2", "application/json")))
+	require.Len(t, post.Medias, 3)
+	require.Equal(t, posts.NewPostMedias(
+		posts.NewPostMedia("https://example.com/media1", "text/plain", nil),
+		posts.NewPostMedia("https://example.com/media2", "application/json", nil),
+		posts.NewPostMedia("https://example.com/media3", "text/plain", nil),
+	), post.Medias)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://second.example.com/media1,text/plain",
-		"--media https://second.example.com/media2,application/json")
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://third.example.com/media1,text/plain",
-		"--media https://third.example.com/media2,application/json")
+		"--media https://example.com/media1,text/plain",
+		"--media https://example.com/media2,application/json",
+		"--media https://example.com/media3,text/plain",
+	)
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)

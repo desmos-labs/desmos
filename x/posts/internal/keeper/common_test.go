@@ -65,7 +65,7 @@ var testPost = types.NewPost(
 	testPostCreationDate,
 	testPostOwner,
 ).WithMedias(types.NewPostMedias(
-	types.NewPostMedia("https://uri.com", "text/plain"),
+	types.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{testPostOwner}),
 )).WithPollData(types.NewPollData(
 	"poll?",
 	testPostEndPollDate,
