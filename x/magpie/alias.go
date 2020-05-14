@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 	ModuleName                = types.ModuleName
 	RouterKey                 = types.RouterKey
 	StoreKey                  = types.StoreKey
@@ -23,16 +22,19 @@ const (
 	AttributeKeyExpiry        = types.AttributeKeyExpiry
 	AttributeValueCategory    = types.AttributeValueCategory
 	QuerySessions             = keeper.QuerySessions
+	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 )
 
 var (
 	// functions aliases
-
+	NewHandler               = keeper.NewHandler
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
+	RandomSessionData        = simulation.RandomSessionData
+	DecodeStore              = simulation.DecodeStore
 	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomSessionData        = simulation.RandomSessionData
-	DecodeStore              = simulation.DecodeStore
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
@@ -41,12 +43,8 @@ var (
 	ParseSessionID           = types.ParseSessionID
 	NewSession               = types.NewSession
 	RegisterCodec            = types.RegisterCodec
-	NewHandler               = keeper.NewHandler
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
-
 	RandomNamespaces      = simulation.RandomNamespaces
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
