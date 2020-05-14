@@ -34,7 +34,7 @@ func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Oper
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgAddPostReaction(data.PostID, data.Value, data.User.Address)
+		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address)
 		err = sendMsgAddPostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
@@ -103,7 +103,7 @@ func randomAddPostReactionFields(
 
 	k.RegisterReaction(ctx, reaction)
 
-	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode)
+	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid
@@ -137,7 +137,7 @@ func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address, data.Value)
+		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address, data.Shortcode)
 		err = sendMsgRemovePostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
@@ -203,7 +203,7 @@ func randomRemovePostReactionFields(
 	}
 
 	user := GetAccount(reaction.Owner, accs)
-	data := PostReactionData{Value: reaction.Value, User: *user, PostID: post.PostID}
+	data := PostReactionData{Shortcode: reaction.Shortcode, Value: reaction.Value, User: *user, PostID: post.PostID}
 	return &data, false, nil
 }
 

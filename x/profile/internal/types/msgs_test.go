@@ -78,7 +78,7 @@ var msgDeleteProfile = types.NewMsgDeleteProfile(
 
 func TestMsgCreateProfile_Route(t *testing.T) {
 	actual := msgCreateProfile.Route()
-	require.Equal(t, "profile", actual)
+	require.Equal(t, "profiles", actual)
 }
 
 func TestMsgCreateProfile_Type(t *testing.T) {
@@ -259,7 +259,7 @@ func TestMsgCreateProfile_GetSigners(t *testing.T) {
 
 func TestMsgEditProfile_Route(t *testing.T) {
 	actual := msgEditProfile.Route()
-	require.Equal(t, "profile", actual)
+	require.Equal(t, "profiles", actual)
 }
 
 func TestMsgEditProfile_Type(t *testing.T) {
@@ -412,7 +412,7 @@ func TestMsgEditProfile_GetSigners(t *testing.T) {
 
 func TestMsgDeleteProfile_Route(t *testing.T) {
 	actual := msgDeleteProfile.Route()
-	require.Equal(t, "profile", actual)
+	require.Equal(t, "profiles", actual)
 }
 
 func TestMsgDeleteProfile_Type(t *testing.T) {

@@ -12,9 +12,9 @@ import (
 // that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer            `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
-	Reactions   []ReactionQueryResponse `json:"reactions" yaml:"reactions,omitempty"`
-	Children    PostIDs                 `json:"children" yaml:"children"`
+	PollAnswers []UserAnswer   `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
+	Reactions   []PostReaction `json:"reactions" yaml:"reactions,omitempty"`
+	Children    PostIDs        `json:"children" yaml:"children"`
 }
 
 // String implements fmt.Stringer
@@ -28,7 +28,7 @@ Children: %s
 }
 
 func NewPostResponse(
-	post Post, pollAnswers []UserAnswer, reactions []ReactionQueryResponse, children PostIDs,
+	post Post, pollAnswers []UserAnswer, reactions []PostReaction, children PostIDs,
 ) PostQueryResponse {
 	return PostQueryResponse{
 		Post:        post,

@@ -1,8 +1,12 @@
 # Version 0.6.0
 ## Changes
+- Added the option to use [RocksDB](https://github.com/facebook/rocksdb) as both Tendermint and/or Cosmos database backend (#111)
 - Implemented tags in post medias (#118)
-- Changed default database backend from [LevelDB](https://github.com/google/leveldb) 
-  to [RocksDB](https://github.com/facebook/rocksdb) (#111)
+- Edited PostReaction struct to allow a better integration with middle layer applications (#157)
+
+# Version 0.5.1
+## Bug fixes
+- Fixed a bug that caused users to be unable to add more than one reaction to the same post
 
 # Version 0.5.0
 ## Changes
