@@ -76,6 +76,7 @@ module.exports = {
                 children: [
                     ["fullnode/overview", "Overview"],
                     ["fullnode/installation", "Setup"],
+                    ["fullnode/rocksdb-installation", "Using RocksDB"],
                     ["fullnode/update", "Update"],
                 ]
             },

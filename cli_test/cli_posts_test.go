@@ -562,7 +562,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// Make sure the reaction is added
 	storedPost := f.QueryPost(post.PostID.String())
 	require.Len(t, storedPost.Reactions, 1)
-	require.Equal(t, posts.NewReactionQueryResponse("👍", ":+1:", fooAddr), storedPost.Reactions[0])
+	require.Equal(t, posts.NewPostReaction(":+1:", "👍", fooAddr), storedPost.Reactions[0])
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")

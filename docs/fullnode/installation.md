@@ -73,6 +73,10 @@ Note that is still possible to build and run the software on __Windows__ but it 
 ::::
 
 ## 2. Build the software
+Before installing the software, a consideration must be done. 
+
+By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further. 
+
 The following operations will all be done in the terminal environment under your home directory.
 
 ```bash
@@ -83,11 +87,16 @@ git clone https://github.com/desmos-labs/desmos.git && cd desmos
 # sudo apt install git-all --yes
 
 # Checkout the correct commit
-# We are using tag v0.2.0 for morpheus-1001 testnet
-git checkout tags/v0.2.0
+# Please check on https://github.com/desmos-labs/morpheus to get the proper 
+# the tag to use based on the current network version
+git checkout tags/<version>
 
 # Build the software
+# If you want to use the default database backend run 
 make install
+
+# If you want to use RocksDB run instead
+make install DB_BACKEND=rocksdb 
 ```
 
 If the software is built successfully, `desmosd` and `desmoscli` will be located at `/go/bin` of your home directory. If you have setup your environment variables correctly in the previous step, you should be able to access them correctly. Try to check the version of the software.
@@ -134,6 +143,23 @@ persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"
 ```
 
 Save the file and exit the text editor.
+
+## (Optional) Change your database backend
+If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 2](#2-build-the-software), there is one more thing you need to do. 
+
+In order to tell Tendermint to use RocksDB as its database backend engine, you are required to change the following like inside the `config.toml` file: 
+
+```toml
+db_backend="goleveldb"
+```
+
+To become
+
+```toml
+db_backend="rocksdb"
+```
+
+Once you have done so, you can go ahead with [point 6](#6-start-the-desmos-node).
 
 ## 6. Start the Desmos node
 Now you are good to run the full node. To do so, run:
