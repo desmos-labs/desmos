@@ -144,6 +144,23 @@ persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"
 
 Save the file and exit the text editor.
 
+## (Optional) Change your database backend
+If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 2](#2-build-the-software), there is one more thing you need to do. 
+
+In order to tell Tendermint to use RocksDB as its database backend engine, you are required to change the following like inside the `config.toml` file: 
+
+```toml
+db_backend="goleveldb"
+```
+
+To become
+
+```toml
+db_backend="rocksdb"
+```
+
+Once you have done so, you can go ahead with [point 6](#6-start-the-desmos-node).
+
 ## 6. Start the Desmos node
 Now you are good to run the full node. To do so, run:
 
