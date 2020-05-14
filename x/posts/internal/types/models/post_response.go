@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // PostQueryResponse represents the data of a post
@@ -56,18 +54,4 @@ func (response *PostQueryResponse) UnmarshalJSON(data []byte) error {
 
 	*response = PostQueryResponse(temp)
 	return nil
-}
-
-type ReactionQueryResponse struct {
-	Value string         `json:"value" yaml:"value"`
-	Code  string         `json:"shortcode" yaml:"shortcode"`
-	Owner sdk.AccAddress `json:"owner" yaml:"owner"`
-}
-
-func NewReactionQueryResponse(value, code string, owner sdk.AccAddress) ReactionQueryResponse {
-	return ReactionQueryResponse{
-		Value: value,
-		Code:  code,
-		Owner: owner,
-	}
 }
