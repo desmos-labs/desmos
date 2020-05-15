@@ -94,22 +94,6 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	}
 }
 
-/*
-// randomMapKey returns a random map key
-func randomMapKey(mapI interface{}) interface{} {
-	keys := reflect.ValueOf(mapI).MapKeys()
-	return keys[rand.Intn(len(keys))].Interface()
-}
-
-//RandomPostReaction returns a random emoji from the Emojis Map
-func RandomPostReaction(r *rand.Rand) types.PostReaction {
-	accounts := sim.RandomAccounts(r, 20)
-	em := emoji.Emojis[randomMapKey(emoji.Emojis).(string)]
-	creator := accounts[r.Intn(len(accounts))].Address
-	return types.NewPostReaction(em.Shortcodes[0], em.Value, creator)
-}
-*/
-
 func BenchmarkKeeper_SavePost(b *testing.B) {
 	fmt.Println("Benchmark: Save a post")
 	ctx, k := SetupTestInput()
@@ -168,20 +152,12 @@ func BenchmarkKeeper_SavePostReaction(b *testing.B) {
 
 	posts := k.GetPosts(ctx)
 	post := posts[r.Intn(len(posts))]
-	//reaction := RandomPostReaction(r)
-
-	accs := sim.RandomAccounts(r, 20)
-	reactions := types.PostReactions{
-		types.NewPostReaction(emoji.Emojis["1F36A"].Shortcodes[0], emoji.Emojis["1F36A"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F600"].Shortcodes[0], emoji.Emojis["1F600"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F630"].Shortcodes[0], emoji.Emojis["1F630"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F919"].Shortcodes[0], emoji.Emojis["1F919"].Value, accs[r.Intn(len(accs))].Address),
-	}
+	reaction := simulation.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		// nolint: errcheck
-		k.SavePostReaction(ctx, post.PostID, reactions[r.Intn(len(reactions))])
+		k.SavePostReaction(ctx, post.PostID, reaction)
 	}
 }
 
