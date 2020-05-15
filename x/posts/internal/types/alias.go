@@ -38,6 +38,7 @@ const (
 
 var (
 	// functions aliases
+
 	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
 	NewMsgCreatePost         = msgs.NewMsgCreatePost
 	NewMsgEditPost           = msgs.NewMsgEditPost
@@ -72,6 +73,7 @@ var (
 	NewReactions             = reactions.NewReactions
 
 	// variable aliases
+
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx

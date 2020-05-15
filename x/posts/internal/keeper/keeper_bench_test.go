@@ -9,7 +9,6 @@ import (
 	"time"
 
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
@@ -66,7 +65,6 @@ func RandomPost() types.Post {
 }
 
 //RandomQueryParams returns randomized QueryPostsParams
-//TODO: the nil parameters should have a randomize value based on existent posts values?
 func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	sortBy := types.PostSortByCreationDate
 	sortOrder := types.PostSortOrderAscending
@@ -99,6 +97,7 @@ func BenchmarkKeeper_SavePost(b *testing.B) {
 	ctx, k := SetupTestInput()
 	post := RandomPost()
 
+	b.SetParallelism(10)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		k.SavePost(ctx, post)
@@ -172,19 +171,11 @@ func BenchmarkKeeper_GetPostReactions(b *testing.B) {
 
 	posts := k.GetPosts(ctx)
 	post := posts[r.Intn(len(posts))]
-	//reaction := RandomPostReaction(r)
-
-	accs := sim.RandomAccounts(r, 20)
-	reactions := types.PostReactions{
-		types.NewPostReaction(emoji.Emojis["1F36A"].Shortcodes[0], emoji.Emojis["1F36A"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F600"].Shortcodes[0], emoji.Emojis["1F600"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F630"].Shortcodes[0], emoji.Emojis["1F630"].Value, accs[r.Intn(len(accs))].Address),
-		types.NewPostReaction(emoji.Emojis["1F919"].Shortcodes[0], emoji.Emojis["1F919"].Value, accs[r.Intn(len(accs))].Address),
-	}
+	reaction := simulation.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
 		// nolint: errcheck
-		k.SavePostReaction(ctx, post.PostID, reactions[r.Intn(len(reactions))])
+		k.SavePostReaction(ctx, post.PostID, reaction)
 	}
 
 	b.ResetTimer()

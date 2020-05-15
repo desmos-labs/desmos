@@ -27,6 +27,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
@@ -45,6 +46,7 @@ var (
 	NewSession               = types.NewSession
 
 	// variable aliases
+
 	RandomNamespaces      = simulation.RandomNamespaces
 	ModuleCdc             = types.ModuleCdc
 	SessionLengthKey      = types.SessionLengthKey

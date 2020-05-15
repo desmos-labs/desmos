@@ -36,6 +36,7 @@ const (
 
 var (
 	// functions aliases
+
 	ParseAnswerID     = polls.ParseAnswerID
 	NewPollAnswer     = polls.NewPollAnswer
 	NewPollAnswers    = polls.NewPollAnswers
@@ -53,6 +54,7 @@ var (
 	NewPostMedias     = common.NewPostMedias
 
 	// variable aliases
+
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx

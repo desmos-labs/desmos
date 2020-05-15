@@ -37,6 +37,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewHandler               = keeper.NewHandler
 	GetEditedProfile         = keeper.GetEditedProfile
 	RegisterInvariants       = keeper.RegisterInvariants
@@ -73,6 +74,7 @@ var (
 	MonikerStoreKey          = types.MonikerStoreKey
 
 	// variable aliases
+
 	ModuleCdc          = types.ModuleCdc
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
@@ -82,7 +84,6 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
-	ProfileData      = simulation.ProfileData
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
