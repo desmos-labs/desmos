@@ -3,6 +3,8 @@
 - Added the option to use [RocksDB](https://github.com/facebook/rocksdb) as both Tendermint and/or Cosmos database backend (#111)
 - Implemented tags in post medias (#118)
 - Edited PostReaction struct to allow a better integration with middle layer applications (#157)
+- Fixed the account query CLI command (#155)
+- Fixed the profile deletion CLI command (#166)
 
 # Version 0.5.1
 ## Bug fixes
