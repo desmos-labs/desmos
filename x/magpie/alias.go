@@ -27,6 +27,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
@@ -45,6 +46,7 @@ var (
 	RegisterCodec            = types.RegisterCodec
 
 	// variable aliases
+
 	RandomNamespaces      = simulation.RandomNamespaces
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey

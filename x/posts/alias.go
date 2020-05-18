@@ -66,6 +66,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewGenesisState                  = types.NewGenesisState
 	DefaultGenesisState              = types.DefaultGenesisState
 	ValidateGenesis                  = types.ValidateGenesis
@@ -138,6 +139,7 @@ var (
 	SimulateMsgEditPost              = simulation.SimulateMsgEditPost
 
 	// variable aliases
+
 	ModuleCdc                = types.ModuleCdc
 	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
