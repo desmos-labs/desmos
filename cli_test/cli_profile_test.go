@@ -316,7 +316,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	require.Equal(t, profile.Moniker, moniker)
 
 	// Delete the profile
-	success, _, sterr = f.TxProfileDelete(moniker, fooAddr, "-y")
+	success, _, sterr = f.TxProfileDelete(fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -326,11 +326,11 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	require.Empty(t, storedProfiles)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileDelete(moniker, fooAddr, "--dry-run")
+	success, _, _ = f.TxProfileDelete(fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileDelete(moniker, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxProfileDelete(fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
