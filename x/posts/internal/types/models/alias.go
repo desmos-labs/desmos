@@ -36,7 +36,6 @@ const (
 
 var (
 	// functions aliases
-
 	NewPostMedia      = common.NewPostMedia
 	ValidateURI       = common.ValidateURI
 	NewPostMedias     = common.NewPostMedias
@@ -54,7 +53,6 @@ var (
 	NewReactions      = reactions.NewReactions
 
 	// variable aliases
-
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx
@@ -68,10 +66,10 @@ var (
 )
 
 type (
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
 	OptionalData  = common.OptionalData
 	KeyValue      = common.KeyValue
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
