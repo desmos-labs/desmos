@@ -16,6 +16,13 @@ import (
 )
 
 const (
+	OpWeightMsgCreatePost           = simulation.OpWeightMsgCreatePost
+	OpWeightMsgEditPost             = simulation.OpWeightMsgEditPost
+	OpWeightMsgAddReaction          = simulation.OpWeightMsgAddReaction
+	OpWeightMsgRemoveReaction       = simulation.OpWeightMsgRemoveReaction
+	OpWeightMsgAnswerPoll           = simulation.OpWeightMsgAnswerPoll
+	OpWeightMsgRegisterReaction     = simulation.OpWeightMsgRegisterReaction
+	DefaultGasValue                 = simulation.DefaultGasValue
 	EventTypePostCreated            = types.EventTypePostCreated
 	EventTypePostEdited             = types.EventTypePostEdited
 	EventTypePostReactionAdded      = types.EventTypePostReactionAdded
@@ -55,28 +62,36 @@ const (
 	PostSortByID                    = common.PostSortByID
 	PostSortOrderAscending          = common.PostSortOrderAscending
 	PostSortOrderDescending         = common.PostSortOrderDescending
-	OpWeightMsgCreatePost           = simulation.OpWeightMsgCreatePost
-	OpWeightMsgEditPost             = simulation.OpWeightMsgEditPost
-	OpWeightMsgAddReaction          = simulation.OpWeightMsgAddReaction
-	OpWeightMsgRemoveReaction       = simulation.OpWeightMsgRemoveReaction
-	OpWeightMsgAnswerPoll           = simulation.OpWeightMsgAnswerPoll
-	OpWeightMsgRegisterReaction     = simulation.OpWeightMsgRegisterReaction
-	DefaultGasValue                 = simulation.DefaultGasValue
 )
 
 var (
 	// functions aliases
 
+	NewGenesisState                  = types.NewGenesisState
+	DefaultGenesisState              = types.DefaultGenesisState
+	ValidateGenesis                  = types.ValidateGenesis
+	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
+	RegisterCodec                    = types.RegisterCodec
+	RegisterModelsCodec              = models.RegisterModelsCodec
+	PostStoreKey                     = models.PostStoreKey
+	PostCommentsStoreKey             = models.PostCommentsStoreKey
+	PostReactionsStoreKey            = models.PostReactionsStoreKey
+	ReactionsStoreKey                = models.ReactionsStoreKey
+	PollAnswersStoreKey              = models.PollAnswersStoreKey
+	ComputeID                        = models.ComputeID
+	ParsePostID                      = models.ParsePostID
+	NewPost                          = models.NewPost
+	NewPostResponse                  = models.NewPostResponse
 	NewPostMedia                     = common.NewPostMedia
 	ValidateURI                      = common.ValidateURI
 	NewPostMedias                    = common.NewPostMedias
+	ParseAnswerID                    = polls.ParseAnswerID
+	NewPollAnswer                    = polls.NewPollAnswer
+	NewPollAnswers                   = polls.NewPollAnswers
 	NewPollData                      = polls.NewPollData
 	ArePollDataEquals                = polls.ArePollDataEquals
 	NewUserAnswer                    = polls.NewUserAnswer
 	NewUserAnswers                   = polls.NewUserAnswers
-	ParseAnswerID                    = polls.ParseAnswerID
-	NewPollAnswer                    = polls.NewPollAnswer
-	NewPollAnswers                   = polls.NewPollAnswers
 	NewPostReaction                  = reactions.NewPostReaction
 	NewPostReactions                 = reactions.NewPostReactions
 	NewReaction                      = reactions.NewReaction
@@ -89,6 +104,8 @@ var (
 	NewMsgAnswerPoll                 = msgs.NewMsgAnswerPoll
 	NewMsgAddPostReaction            = msgs.NewMsgAddPostReaction
 	NewMsgRemovePostReaction         = msgs.NewMsgRemovePostReaction
+	NewKeeper                        = keeper.NewKeeper
+	NewQuerier                       = keeper.NewQuerier
 	NewHandler                       = keeper.NewHandler
 	RegisterInvariants               = keeper.RegisterInvariants
 	AllInvariants                    = keeper.AllInvariants
@@ -96,8 +113,6 @@ var (
 	ValidCommentsDateInvariant       = keeper.ValidCommentsDateInvariant
 	ValidPostForReactionsInvariant   = keeper.ValidPostForReactionsInvariant
 	ValidPollForPollAnswersInvariant = keeper.ValidPollForPollAnswersInvariant
-	NewKeeper                        = keeper.NewKeeper
-	NewQuerier                       = keeper.NewQuerier
 	SimulateMsgAddPostReaction       = simulation.SimulateMsgAddPostReaction
 	SimulateMsgRemovePostReaction    = simulation.SimulateMsgRemovePostReaction
 	SimulateMsgRegisterReaction      = simulation.SimulateMsgRegisterReaction
@@ -116,31 +131,16 @@ var (
 	RandomReactionShortCode          = simulation.RandomReactionShortCode
 	RandomReactionData               = simulation.RandomReactionData
 	RegisteredReactionsData          = simulation.RegisteredReactionsData
-	RandomEmojiPostReaction          = simulation.RandomEmojiPostReaction
 	DecodeStore                      = simulation.DecodeStore
 	RandomizedGenState               = simulation.RandomizedGenState
 	WeightedOperations               = simulation.WeightedOperations
 	SimulateMsgAnswerToPoll          = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgCreatePost            = simulation.SimulateMsgCreatePost
 	SimulateMsgEditPost              = simulation.SimulateMsgEditPost
-	NewGenesisState                  = types.NewGenesisState
-	DefaultGenesisState              = types.DefaultGenesisState
-	ValidateGenesis                  = types.ValidateGenesis
-	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
-	RegisterCodec                    = types.RegisterCodec
-	PostStoreKey                     = models.PostStoreKey
-	PostCommentsStoreKey             = models.PostCommentsStoreKey
-	PostReactionsStoreKey            = models.PostReactionsStoreKey
-	ReactionsStoreKey                = models.ReactionsStoreKey
-	PollAnswersStoreKey              = models.PollAnswersStoreKey
-	ComputeID                        = models.ComputeID
-	ParsePostID                      = models.ParsePostID
-	NewPost                          = models.NewPost
-	NewPostResponse                  = models.NewPostResponse
-	RegisterModelsCodec              = models.RegisterModelsCodec
 
 	// variable aliases
 
+	ModuleCdc                = types.ModuleCdc
 	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
@@ -155,7 +155,6 @@ var (
 	MsgsCodec                = msgs.MsgsCodec
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
-	ModuleCdc                = types.ModuleCdc
 )
 
 type (
@@ -174,12 +173,12 @@ type (
 	PostMedias               = common.PostMedias
 	OptionalData             = common.OptionalData
 	KeyValue                 = common.KeyValue
-	PollData                 = polls.PollData
-	UserAnswer               = polls.UserAnswer
-	UserAnswers              = polls.UserAnswers
 	AnswerID                 = polls.AnswerID
 	PollAnswer               = polls.PollAnswer
 	PollAnswers              = polls.PollAnswers
+	PollData                 = polls.PollData
+	UserAnswer               = polls.UserAnswer
+	UserAnswers              = polls.UserAnswers
 	PostReaction             = reactions.PostReaction
 	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction

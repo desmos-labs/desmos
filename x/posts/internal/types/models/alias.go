@@ -37,6 +37,9 @@ const (
 var (
 	// functions aliases
 
+	NewPostMedia      = common.NewPostMedia
+	ValidateURI       = common.ValidateURI
+	NewPostMedias     = common.NewPostMedias
 	ParseAnswerID     = polls.ParseAnswerID
 	NewPollAnswer     = polls.NewPollAnswer
 	NewPollAnswers    = polls.NewPollAnswers
@@ -49,9 +52,6 @@ var (
 	NewReaction       = reactions.NewReaction
 	IsEmoji           = reactions.IsEmoji
 	NewReactions      = reactions.NewReactions
-	NewPostMedia      = common.NewPostMedia
-	ValidateURI       = common.ValidateURI
-	NewPostMedias     = common.NewPostMedias
 
 	// variable aliases
 

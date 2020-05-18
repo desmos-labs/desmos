@@ -11,6 +11,10 @@ import (
 )
 
 const (
+	OpWeightMsgCreateProfile = simulation.OpWeightMsgCreateProfile
+	OpWeightMsgEditProfile   = simulation.OpWeightMsgEditProfile
+	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
+	DefaultGasValue          = simulation.DefaultGasValue
 	EventTypeProfileCreated  = types.EventTypeProfileCreated
 	EventTypeProfileEdited   = types.EventTypeProfileEdited
 	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
@@ -29,10 +33,6 @@ const (
 	QuerierRoute             = types.QuerierRoute
 	QueryProfile             = types.QueryProfile
 	QueryProfiles            = types.QueryProfiles
-	OpWeightMsgCreateProfile = simulation.OpWeightMsgCreateProfile
-	OpWeightMsgEditProfile   = simulation.OpWeightMsgEditProfile
-	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
-	DefaultGasValue          = simulation.DefaultGasValue
 )
 
 var (
@@ -45,8 +45,6 @@ var (
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
-	RandomizedGenState       = simulation.RandomizedGenState
-	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
 	SimulateMsgEditProfile   = simulation.SimulateMsgEditProfile
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
@@ -60,18 +58,20 @@ var (
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
 	DecodeStore              = simulation.DecodeStore
-	NewMsgCreateProfile      = types.NewMsgCreateProfile
-	NewMsgEditProfile        = types.NewMsgEditProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	NewPictures              = types.NewPictures
-	ValidateURI              = types.ValidateURI
-	NewProfile               = types.NewProfile
+	RandomizedGenState       = simulation.RandomizedGenState
+	WeightedOperations       = simulation.WeightedOperations
 	RegisterCodec            = types.RegisterCodec
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	ProfileStoreKey          = types.ProfileStoreKey
 	MonikerStoreKey          = types.MonikerStoreKey
+	NewMsgCreateProfile      = types.NewMsgCreateProfile
+	NewMsgEditProfile        = types.NewMsgEditProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	NewPictures              = types.NewPictures
+	ValidateURI              = types.ValidateURI
+	NewProfile               = types.NewProfile
 
 	// variable aliases
 
@@ -84,11 +84,11 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
+	GenesisState     = types.GenesisState
 	MsgCreateProfile = types.MsgCreateProfile
 	MsgEditProfile   = types.MsgEditProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
 	Pictures         = types.Pictures
 	Profile          = types.Profile
 	Profiles         = types.Profiles
-	GenesisState     = types.GenesisState
 )
