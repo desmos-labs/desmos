@@ -1,6 +1,6 @@
 package types
 
-// Magpie module event types
+// Posts module event types
 const (
 	EventTypePostCreated         = "post_created"
 	EventTypePostEdited          = "post_edited"
