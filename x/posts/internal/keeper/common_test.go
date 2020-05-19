@@ -27,7 +27,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 		panic(err)
 	}
 
-	// create a Cdc and a context
+	// create a cdc and a context
 	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 

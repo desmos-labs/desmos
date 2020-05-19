@@ -27,9 +27,10 @@ const (
 
 var (
 	// functions aliases
-	NewQuerier               = keeper.NewQuerier
+
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 	DecodeStore              = simulation.DecodeStore
 	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
@@ -45,6 +46,7 @@ var (
 	NewSession               = types.NewSession
 
 	// variable aliases
+
 	RandomNamespaces      = simulation.RandomNamespaces
 	ModuleCdc             = types.ModuleCdc
 	SessionLengthKey      = types.SessionLengthKey
