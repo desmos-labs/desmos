@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/report/internal/types/models"
+	"github.com/desmos-labs/desmos/x/report/internal/types/models/common"
 )
 
 // ----------------------
@@ -26,10 +27,10 @@ func NewMsgReportPost(id posts.PostID, repType, message string, user sdk.AccAddr
 }
 
 // Route should return the name of the module
-func (msg MsgReportPost) Route() string { return models.RouterKey }
+func (msg MsgReportPost) Route() string { return common.RouterKey }
 
 // Type should return the action
-func (msg MsgReportPost) Type() string { return models.ActionReportPost }
+func (msg MsgReportPost) Type() string { return common.ActionReportPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {

@@ -11,4 +11,5 @@ func init() {
 
 func RegisterCodec(cdc *codec.Codec) {
 	RegisterMessagesCodec(cdc)
+	RegisterModelsCodec(cdc)
 }

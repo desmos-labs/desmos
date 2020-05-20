@@ -6,32 +6,37 @@ package types
 
 import (
 	"github.com/desmos-labs/desmos/x/report/internal/types/models"
+	"github.com/desmos-labs/desmos/x/report/internal/types/models/common"
 	"github.com/desmos-labs/desmos/x/report/internal/types/msgs"
 )
 
 const (
-	ModuleName       = models.ModuleName
-	RouterKey        = models.RouterKey
-	StoreKey         = models.StoreKey
-	ActionReportPost = models.ActionReportPost
-	QuerierRoute     = models.QuerierRoute
-	QueryReport      = models.QueryReport
-	QueryReports     = models.QueryReports
+	ModuleName       = common.ModuleName
+	RouterKey        = common.RouterKey
+	StoreKey         = common.StoreKey
+	ActionReportPost = common.ActionReportPost
+	QuerierRoute     = common.QuerierRoute
+	QueryReports     = common.QueryReports
 )
 
 var (
 	// functions aliases
+	ReportStoreKey        = models.ReportStoreKey
+	NewReportResponse     = models.NewReportResponse
+	NewReport             = models.NewReport
+	RegisterModelsCodec   = models.RegisterModelsCodec
 	NewMsgReportPost      = msgs.NewMsgReportPost
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
-	NewReport             = models.NewReport
 
 	// variable aliases
-	ReportsStorePrefix = models.ReportsStorePrefix
+	ModelsCdc          = models.ModelsCdc
+	ReportsStorePrefix = common.ReportsStorePrefix
 	MsgsCodec          = msgs.MsgsCodec
 )
 
 type (
-	Report        = models.Report
-	Reports       = models.Reports
-	MsgReportPost = msgs.MsgReportPost
+	ReportsQueryResponse = models.ReportsQueryResponse
+	Report               = models.Report
+	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
 )

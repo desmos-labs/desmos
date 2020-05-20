@@ -2,11 +2,11 @@ package types
 
 // GenesisState contains the data of the genesis state for the posts module
 type GenesisState struct {
-	Reports Reports `json:"reports" yaml:"reports"`
+	Reports map[string]Reports `json:"reports" yaml:"reports"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(reports Reports) GenesisState {
+func NewGenesisState(reports map[string]Reports) GenesisState {
 	return GenesisState{
 		Reports: reports,
 	}
@@ -19,9 +19,10 @@ func DefaultGenesisState() GenesisState {
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(data GenesisState) error {
-	if err := data.Reports.Validate(); err != nil {
-		return err
+	for _, reports := range data.Reports {
+		if err := reports.Validate(); err != nil {
+			return err
+		}
 	}
-
 	return nil
 }

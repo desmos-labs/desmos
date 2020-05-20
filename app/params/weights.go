@@ -11,4 +11,5 @@ const (
 	DefaultWeightMsgCreateAccount    int = 100
 	DefaultWeightMsgEditAccount      int = 100
 	DefaultWeightMsgDeleteAccount    int = 100
+	DefaultWeightMsgReportPost       int = 100
 )

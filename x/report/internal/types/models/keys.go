@@ -1,18 +1,10 @@
 package models
 
-const (
-	ModuleName = "reports"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
-
-	ActionReportPost = "report_post"
-
-	// Queries
-	QuerierRoute = ModuleName
-	QueryReport  = "report"
-	QueryReports = "reports"
+import (
+	"github.com/desmos-labs/desmos/x/posts"
 )
 
-var (
-	ReportsStorePrefix = []byte("reports")
-)
+// ReportsStoreKey turn an id to a key used to store a report inside the reports store
+func ReportStoreKey(id posts.PostID) []byte {
+	return append(ReportsStorePrefix, []byte(id)...)
+}
