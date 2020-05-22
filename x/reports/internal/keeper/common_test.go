@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,7 +14,6 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
-	"time"
 )
 
 func SetupTestInput() (sdk.Context, keeper.Keeper) {

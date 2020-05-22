@@ -2,6 +2,8 @@ package simulation
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
@@ -9,15 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/kv"
-	"testing"
 )
 
+// nolint
 var (
 	privKey           = ed25519.GenPrivKey().PubKey()
 	reportCreatorAddr = sdk.AccAddress(privKey.Address())
-
-	id  = posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 = posts.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id                = posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 )
 
 func makeTestCodec() (cdc *codec.Codec) {

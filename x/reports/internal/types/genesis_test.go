@@ -1,11 +1,12 @@
 package types_test
 
 import (
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestNewGenesis(t *testing.T) {
@@ -16,7 +17,8 @@ func TestNewGenesis(t *testing.T) {
 }
 
 func TestValidateGenesis(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name        string

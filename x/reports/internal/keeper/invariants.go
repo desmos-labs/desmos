@@ -1,7 +1,11 @@
 package keeper
 
 import (
+	"bytes"
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 )
 
@@ -21,9 +25,30 @@ func AllInvariants(k Keeper) sdk.Invariant {
 	}
 }
 
+// formatOutputIDs concatenate the ids given into a unique string
+func formatOutputIDs(ids posts.PostIDs) (outputIDs string) {
+	for _, id := range ids {
+		outputIDs += id.String() + "\n"
+	}
+	return outputIDs
+}
+
 // ValidReportsIDs checks that all reports are associated with a valid postID that correspond to an existent post
 func ValidReportsIDs(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
+		var invalidIDs posts.PostIDs
+		store := ctx.KVStore(k.StoreKey)
+		iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
+		defer iterator.Close()
+		for ; iterator.Valid(); iterator.Next() {
+			postID := posts.PostID(bytes.TrimPrefix(iterator.Key(), types.ReportsStorePrefix))
+			if valid := postID.Valid(); !valid {
+				invalidIDs = append(invalidIDs, postID)
+			}
+		}
 
+		return sdk.FormatInvariant(types.ModuleName, "invalid reports' IDs",
+			fmt.Sprintf("The following list contains invalid postIDs:\n %s",
+				formatOutputIDs(invalidIDs))), invalidIDs != nil
 	}
 }

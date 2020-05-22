@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -14,7 +15,7 @@ import (
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	postQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the posts module",
+		Short:                      "Querying commands for the reports module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -28,7 +29,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryPostReports queries a post's reports
 func GetCmdQueryPostReports(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "reports [post-id]",
+		Use:   "all [post-id]",
 		Short: "Returns all the reports of the posts with the given ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

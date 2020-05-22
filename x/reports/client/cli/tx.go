@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -21,7 +22,7 @@ import (
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	postsTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Posts transaction subcommands",
+		Short:                      "Reports transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -37,7 +38,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdReportPost is the CLI command for reporting a post
 func GetCmdReportPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "reports [post-id] [reports-type] [reports-message]",
+		Use:   "report [post-id] [reports-type] [reports-message]",
 		Short: "reports a post",
 		Long: fmt.Sprintf(`
 Report an existent post specifying its ID, the reports's type and message.

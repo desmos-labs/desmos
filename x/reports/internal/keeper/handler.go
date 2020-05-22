@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
@@ -10,6 +11,8 @@ import (
 // NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case types.MsgReportPost:
 			return handleMsgReportPost(ctx, keeper, msg)
@@ -42,7 +45,7 @@ func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost
 
 	result := sdk.Result{
 		Data:   []byte(fmt.Sprintf("post with ID: %s reported correctly", msg.PostID)),
-		Events: sdk.Events{createEvent},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }

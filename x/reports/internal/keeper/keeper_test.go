@@ -1,10 +1,11 @@
 package keeper_test
 
 import (
+	"testing"
+
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestKeeper_SaveReport(t *testing.T) {
@@ -26,7 +27,7 @@ func TestKeeper_SaveReport(t *testing.T) {
 			name:   "Existent reports not added",
 			report: models.NewReport("type", "message", creator),
 			existentReports: models.Reports{
-				{"type", "message", creator},
+				{Type: "type", Message: "message", User: creator},
 			},
 			expAdd:     false,
 			expReports: models.Reports{models.NewReport("type", "message", creator)},
@@ -60,7 +61,7 @@ func TestKeeper_GetPostReports(t *testing.T) {
 		{
 			name: "Returns a non-empty reports array",
 			expReports: models.Reports{
-				{"atype", "amessage", creator},
+				{Type: "type", Message: "message", User: creator},
 			},
 		},
 		{
@@ -83,7 +84,7 @@ func TestKeeper_GetPostReports(t *testing.T) {
 
 func TestKeeper_GetReportsMap(t *testing.T) {
 	reports := models.Reports{
-		{"atype", "amessage", creator},
+		{Type: "type", Message: "message", User: creator},
 	}
 	tests := []struct {
 		name            string

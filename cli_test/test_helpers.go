@@ -12,6 +12,7 @@ import (
 
 	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/reports"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -476,6 +477,15 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 }
 
 //___________________________________________________________________________________
+// desmoscli tx reports
+
+func (f *Fixtures) TxReportPost(id, repType, repMess string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx reports report %s %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmosliBinary, id, repType, repMess, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+//___________________________________________________________________________________
 // desmoscli query account
 
 // QueryAccount is desmoscli query account
@@ -799,6 +809,22 @@ func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile
+}
+
+//___________________________________________________________________________________
+// query profile
+
+// QueryReports returns stored reports associated to the id given
+func (f *Fixtures) QueryReports(id string, flags ...string) reports.ReportsQueryResponse {
+	cmd := fmt.Sprintf("%s query reports all %s --output=json %s", f.DesmosliBinary, id, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+
+	var storedReports reports.ReportsQueryResponse
+	err := cdc.UnmarshalJSON([]byte(res), &storedReports)
+	require.NoError(f.T, err)
+	return storedReports
 }
 
 //___________________________________________________________________________________

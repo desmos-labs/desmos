@@ -3,6 +3,7 @@ package simulation
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/libs/kv"

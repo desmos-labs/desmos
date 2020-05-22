@@ -2,6 +2,7 @@ package reports
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
 	abci "github.com/tendermint/tendermint/abci/types"

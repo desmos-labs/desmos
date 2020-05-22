@@ -2,13 +2,14 @@ package keeper_test
 
 import (
 	"fmt"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_handleMsgReportPost(t *testing.T) {
@@ -80,14 +81,14 @@ func Test_handleMsgReportPost(t *testing.T) {
 				require.Equal(t, []byte(fmt.Sprintf("post with ID: %s reported correctly", postID)), res.Data)
 
 				//Check the events
-				createAccountEv := sdk.NewEvent(
+				createReportEv := sdk.NewEvent(
 					types.EventTypePostReported,
 					sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
 					sdk.NewAttribute(types.AttributeKeyReportOwner, test.msg.Report.User.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createReportEv)
 			}
 
 		})

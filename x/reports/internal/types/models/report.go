@@ -3,9 +3,10 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
-	"strings"
 )
 
 // Report is the struct of a post's reports

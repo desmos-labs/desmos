@@ -1,13 +1,14 @@
 package keeper_test
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func Test_queryReports(t *testing.T) {

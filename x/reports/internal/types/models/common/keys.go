@@ -15,7 +15,7 @@ const (
 var (
 	ReportsStorePrefix = []byte("reports")
 
-	// Report's type
+	// ReportsTypes
 	// TODO should this lists be saved on chain-state?
 	ReportsTypes = []string{
 		"nudity",

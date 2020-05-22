@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -9,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"

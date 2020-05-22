@@ -1,10 +1,11 @@
 package simulation
 
 import (
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/posts"
 	"math/rand"
 	"time"
+
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/posts"
 )
 
 var (

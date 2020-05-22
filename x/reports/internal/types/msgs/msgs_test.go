@@ -2,15 +2,17 @@ package msgs_test
 
 import (
 	"fmt"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestMsgReportPost_Route(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
 	actual := msgReport.Route()
@@ -18,7 +20,8 @@ func TestMsgReportPost_Route(t *testing.T) {
 }
 
 func TestMsgReportPost_Type(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
 	actual := msgReport.Type()
@@ -26,7 +29,8 @@ func TestMsgReportPost_Type(t *testing.T) {
 }
 
 func TestMsgReportPost_ValidateBasic(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name  string
@@ -60,7 +64,8 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgReportPost_GetSignBytes(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
 	actual := msgReport.GetSignBytes()
@@ -70,7 +75,8 @@ func TestMsgReportPost_GetSignBytes(t *testing.T) {
 }
 
 func TestNewMsgReportPost_GetSigners(t *testing.T) {
-	creator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
 	actual := msgReport.GetSigners()

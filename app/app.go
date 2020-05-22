@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/desmos-labs/desmos/x/reports"
 	"io"
 	"os"
 
@@ -58,6 +59,7 @@ var (
 		magpie.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		profile.AppModuleBasic{},
+		reports.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -115,6 +117,7 @@ type DesmosApp struct {
 	magpieKeeper  magpie.Keeper
 	postsKeeper   posts.Keeper
 	profileKeeper profile.Keeper
+	reportsKeeper reports.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -140,7 +143,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		params.StoreKey,
 
 		// Custom modules
-		magpie.StoreKey, posts.StoreKey, profile.StoreKey,
+		magpie.StoreKey, posts.StoreKey, profile.StoreKey, reports.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -196,6 +199,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
 	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
 	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey])
+	app.reportsKeeper = reports.NewKeeper(app.postsKeeper, app.cdc, keys[reports.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -213,6 +217,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -228,7 +233,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		slashing.ModuleName, supply.ModuleName, crisis.ModuleName, genutil.ModuleName,
 
 		// Custom modules
-		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName, reports.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -249,6 +254,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

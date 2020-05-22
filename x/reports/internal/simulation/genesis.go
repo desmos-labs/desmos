@@ -1,11 +1,12 @@
 package simulation
 
 import (
+	"math/rand"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
-	"math/rand"
 )
 
 func RandomizedGenState(simState *module.SimulationState) {

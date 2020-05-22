@@ -1,6 +1,8 @@
 package simulation
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -8,7 +10,6 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/crypto"
-	"math/rand"
 )
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
