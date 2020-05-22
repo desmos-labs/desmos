@@ -13,25 +13,6 @@ const (
 )
 
 var (
-	ReportsStorePrefix = []byte("reports")
-
-	// ReportsTypes
-	// TODO should this lists be saved on chain-state?
-	ReportsTypes = []string{
-		"nudity",
-		"violence",
-		"intimidation",
-		"suicide or self-harm",
-		"fake news",
-		"spam",
-		"unauthorized sale",
-		"hatred incitement",
-		"promotion of drug use",
-		"non-consensual intimate images",
-		"pornography",
-		"children abuse",
-		"animals abuse",
-		"bullying",
-		"scam",
-	}
+	ReportsStorePrefix     = []byte("reports")
+	ReportsTypeStorePrefix = []byte("report_type")
 )

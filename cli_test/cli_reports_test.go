@@ -56,7 +56,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	storedReports := f.QueryReports(computedID.String())
 	require.NotEmpty(t, storedReports.Reports)
 	report := storedReports.Reports[0]
-	require.Equal(t, report.Type, repType)
+	require.Equal(t, string(report.Type), repType)
 	require.Equal(t, report.Message, repMess)
 	require.Equal(t, report.User, fooAcc.Address)
 

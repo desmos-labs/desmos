@@ -31,10 +31,10 @@ const (
 
 var (
 	// functions aliases
-	RegisterModelsCodec    = models.RegisterModelsCodec
 	ReportStoreKey         = models.ReportStoreKey
 	NewReportResponse      = models.NewReportResponse
 	NewReport              = models.NewReport
+	RegisterModelsCodec    = models.RegisterModelsCodec
 	NewMsgReportPost       = msgs.NewMsgReportPost
 	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
 	GetQueryCmd            = cli.GetQueryCmd
@@ -42,12 +42,12 @@ var (
 	GetTxCmd               = cli.GetTxCmd
 	GetCmdReportPost       = cli.GetCmdReportPost
 	RegisterRoutes         = rest.RegisterRoutes
-	NewHandler             = keeper.NewHandler
 	NewKeeper              = keeper.NewKeeper
 	NewQuerier             = keeper.NewQuerier
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
+	NewHandler             = keeper.NewHandler
 	DecodeStore            = simulation.DecodeStore
 	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
 	RandomReportsData      = simulation.RandomReportsData
@@ -62,20 +62,22 @@ var (
 	RegisterCodec          = types.RegisterCodec
 
 	// variable aliases
-	ReportsStorePrefix = common.ReportsStorePrefix
-	ReportsTypes       = common.ReportsTypes
-	MsgsCodec          = msgs.MsgsCodec
-	ModuleCdc          = types.ModuleCdc
-	ModelsCdc          = models.ModelsCdc
+	ModuleCdc              = types.ModuleCdc
+	ModelsCdc              = models.ModelsCdc
+	ReportsStorePrefix     = common.ReportsStorePrefix
+	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
+	MsgsCodec              = msgs.MsgsCodec
 )
 
 type (
-	GenesisState         = types.GenesisState
-	ReportsQueryResponse = models.ReportsQueryResponse
-	Report               = models.Report
-	Reports              = models.Reports
 	MsgReportPost        = msgs.MsgReportPost
 	ReportPostReq        = rest.ReportPostReq
 	Keeper               = keeper.Keeper
 	ReportsData          = simulation.ReportsData
+	GenesisState         = types.GenesisState
+	ReportsQueryResponse = models.ReportsQueryResponse
+	ReportType           = models.ReportType
+	ReportTypes          = models.ReportTypes
+	Report               = models.Report
+	Reports              = models.Reports
 )

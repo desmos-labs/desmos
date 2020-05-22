@@ -14,6 +14,7 @@ import (
 
 func Test_handleMsgReportPost(t *testing.T) {
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
+	msgReport2 := types.NewMsgReportPost(postID, "unregistered", "message", creator)
 	existentPost := posts.NewPost(postID,
 		"",
 		"Post",
@@ -48,6 +49,13 @@ func Test_handleMsgReportPost(t *testing.T) {
 				msgReport.PostID, msgReport.Report.User)),
 		},
 		{
+			name:           "reports type not registered",
+			msg:            msgReport2,
+			existentReport: &existentReport,
+			existentPost:   &existentPost,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "message's report type unregistered is not one of the registered types"),
+		},
+		{
 			name:           "message handled correctly",
 			msg:            msgReport,
 			existentReport: nil,
@@ -63,6 +71,10 @@ func Test_handleMsgReportPost(t *testing.T) {
 
 			if test.existentPost != nil {
 				k.PostKeeper.SavePost(ctx, *test.existentPost)
+			}
+
+			if test.msg.Report.Type != "unregistered" {
+				k.RegisterReportsTypes(ctx, test.msg.Report.Type)
 			}
 
 			if test.existentReport != nil {

@@ -22,7 +22,7 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
-		data, skip, err := randomReportPostFields(r, ctx, accs, k, ak)
+		data, skip, err := randomReportPostFields(r, ctx, accs, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -33,7 +33,7 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 
 		msg := types.NewMsgReportPost(
 			data.PostID,
-			data.Type,
+			string(data.Type),
 			data.Message,
 			data.Creator.Address,
 		)
@@ -50,6 +50,7 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		)
 
 		k.PostKeeper.SavePost(ctx, post)
+		k.RegisterReportsTypes(ctx, msg.Report.Type)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
@@ -92,7 +93,7 @@ func sendMsgReportPost(
 }
 
 func randomReportPostFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
 ) (*ReportsData, bool, error) {
 	reportsData := RandomReportsData(r, accs)
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)

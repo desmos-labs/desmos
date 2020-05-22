@@ -37,6 +37,25 @@ const (
 
 var (
 	// functions aliases
+	NewMsgCreateProfile      = types.NewMsgCreateProfile
+	NewMsgEditProfile        = types.NewMsgEditProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	ProfileStoreKey          = types.ProfileStoreKey
+	MonikerStoreKey          = types.MonikerStoreKey
+	NewProfile               = types.NewProfile
+	NewPictures              = types.NewPictures
+	ValidateURI              = types.ValidateURI
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
+	RegisterInvariants       = keeper.RegisterInvariants
+	AllInvariants            = keeper.AllInvariants
+	ValidProfileInvariant    = keeper.ValidProfileInvariant
+	NewHandler               = keeper.NewHandler
+	GetEditedProfile         = keeper.GetEditedProfile
 	DecodeStore              = simulation.DecodeStore
 	SimulateMsgCreateProfile = simulation.SimulateMsgCreateProfile
 	SimulateMsgEditProfile   = simulation.SimulateMsgEditProfile
@@ -52,32 +71,13 @@ var (
 	GetSimAccount            = simulation.GetSimAccount
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
-	RegisterCodec            = types.RegisterCodec
-	NewMsgCreateProfile      = types.NewMsgCreateProfile
-	NewMsgEditProfile        = types.NewMsgEditProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
-	NewProfile               = types.NewProfile
-	NewPictures              = types.NewPictures
-	ValidateURI              = types.ValidateURI
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterInvariants       = keeper.RegisterInvariants
-	AllInvariants            = keeper.AllInvariants
-	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	NewHandler               = keeper.NewHandler
-	GetEditedProfile         = keeper.GetEditedProfile
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
-	ModuleCdc          = types.ModuleCdc
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
 	MonikerStorePrefix = types.MonikerStorePrefix
+	ModuleCdc          = types.ModuleCdc
 )
 
 type (

@@ -6,52 +6,23 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
 	"github.com/stretchr/testify/require"
 )
 
-func TestReport_String(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	report := types.NewReport("scam", "it's a trap", creator)
-	require.Equal(t, `{"type":"scam","message":"it's a trap","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`, report.String())
-}
-
-func TestReport_ValidReportType(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
+func TestReportType_Empty(t *testing.T) {
 	tests := []struct {
 		name    string
-		reports types.Reports
+		repType types.ReportType
 		expBool bool
 	}{
 		{
-			name: "Valid reports type",
-			reports: types.Reports{
-				types.NewReport("scam", "it's a trap", creator),
-				types.NewReport("nudity", "it's a trap", creator),
-				types.NewReport("violence", "it's a trap", creator),
-				types.NewReport("intimidation", "it's a trap", creator),
-				types.NewReport("suicide or self-harm", "it's a trap", creator),
-				types.NewReport("fake news", "it's a trap", creator),
-				types.NewReport("spam", "it's a trap", creator),
-				types.NewReport("unauthorized sale", "it's a trap", creator),
-				types.NewReport("hatred incitement", "it's a trap", creator),
-				types.NewReport("promotion of drug use", "it's a trap", creator),
-				types.NewReport("non-consensual intimate images", "it's a trap", creator),
-				types.NewReport("pornography", "it's a trap", creator),
-				types.NewReport("children abuse", "it's a trap", creator),
-				types.NewReport("animals abuse", "it's a trap", creator),
-				types.NewReport("bullying", "it's a trap", creator),
-			},
+			name:    "empty type returns true",
+			repType: types.ReportType(""),
 			expBool: true,
 		},
 		{
-			name: "Invalid reports type",
-			reports: models.Reports{
-				types.NewReport("type", "mess", creator),
-			},
+			name:    "non-empty type returns false",
+			repType: types.ReportType("spam"),
 			expBool: false,
 		},
 	}
@@ -59,11 +30,48 @@ func TestReport_ValidReportType(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			for _, rep := range test.reports {
-				require.Equal(t, test.expBool, rep.ValidReportType())
-			}
+			actualBool := test.repType.Empty()
+			require.Equal(t, actualBool, test.expBool)
 		})
 	}
+
+}
+
+func TestReportsTypes_Contains(t *testing.T) {
+	tests := []struct {
+		name         string
+		reportsTypes types.ReportTypes
+		repType      types.ReportType
+		expBool      bool
+	}{
+		{
+			name:         "array containing report type returns true",
+			reportsTypes: types.ReportTypes{"spam"},
+			repType:      types.ReportType("spam"),
+			expBool:      true,
+		},
+		{
+			name:         "array non-containing report type returns false",
+			reportsTypes: types.ReportTypes{"spam"},
+			repType:      types.ReportType("offense"),
+			expBool:      false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			actualBool := test.reportsTypes.Contains(test.repType)
+			require.Equal(t, actualBool, test.expBool)
+		})
+	}
+}
+
+func TestReport_String(t *testing.T) {
+	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	report := types.NewReport("scam", "it's a trap", creator)
+	require.Equal(t, `{"type":"scam","message":"it's a trap","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`, report.String())
 }
 
 func TestReport_Validate(t *testing.T) {
@@ -78,12 +86,7 @@ func TestReport_Validate(t *testing.T) {
 		{
 			name:   "empty reports's type returns error",
 			report: types.NewReport("", "message", creator),
-			expErr: fmt.Errorf("invalid reports type, please referes to our official reports's type list to check the valid ones"),
-		},
-		{
-			name:   "invalid reports's type returns error",
-			report: types.NewReport("type", "message", creator),
-			expErr: fmt.Errorf("invalid reports type, please referes to our official reports's type list to check the valid ones"),
+			expErr: fmt.Errorf("report type cannot be empty"),
 		},
 		{
 			name:   "empty reports's message returns error",
@@ -170,12 +173,7 @@ func TestReports_Validate(t *testing.T) {
 		{
 			name:    "empty reports's type returns error",
 			reports: types.Reports{types.NewReport("", "message", creator)},
-			expErr:  fmt.Errorf("invalid reports type, please referes to our official reports's type list to check the valid ones"),
-		},
-		{
-			name:    "invalid reports's type returns error",
-			reports: types.Reports{types.NewReport("type", "message", creator)},
-			expErr:  fmt.Errorf("invalid reports type, please referes to our official reports's type list to check the valid ones"),
+			expErr:  fmt.Errorf("report type cannot be empty"),
 		},
 		{
 			name:    "empty reports's message returns error",

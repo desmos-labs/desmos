@@ -11,8 +11,9 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	reports := map[string]types.Reports{}
-	expGenState := types.GenesisState{Reports: reports}
-	actualGenState := types.NewGenesisState(reports)
+	repTypes := types.ReportTypes{}
+	expGenState := types.GenesisState{Reports: reports, ReportsTypes: repTypes}
+	actualGenState := types.NewGenesisState(reports, repTypes)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -33,10 +34,11 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid reports returns error",
 			genesis: types.GenesisState{
+				ReportsTypes: types.ReportTypes{"spam", "scam", "nudity"},
 				Reports: map[string]types.Reports{
 					postID.String(): {
 						types.NewReport("scam", "message", creator),
-						types.NewReport("type", "message", creator),
+						types.NewReport("", "message", creator),
 					},
 				},
 			},

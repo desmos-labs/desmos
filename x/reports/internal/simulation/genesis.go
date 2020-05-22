@@ -11,7 +11,7 @@ import (
 
 func RandomizedGenState(simState *module.SimulationState) {
 	reports := randomReports(simState)
-	reportsGenesis := types.NewGenesisState(reports)
+	reportsGenesis := types.NewGenesisState(reports, repTypes)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(reportsGenesis)
 }
 

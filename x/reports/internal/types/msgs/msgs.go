@@ -23,7 +23,7 @@ type MsgReportPost struct {
 func NewMsgReportPost(id posts.PostID, repType, message string, user sdk.AccAddress) MsgReportPost {
 	return MsgReportPost{
 		PostID: id,
-		Report: models.NewReport(repType, message, user),
+		Report: models.NewReport(models.ReportType(repType), message, user),
 	}
 }
 
