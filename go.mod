@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d
-	github.com/cosmos/cosmos-sdk v0.38.3
+	github.com/cosmos/cosmos-sdk v0.38.4
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/gorilla/mux v1.7.3
 	github.com/otiai10/copy v1.0.2

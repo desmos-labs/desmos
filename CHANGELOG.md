@@ -1,5 +1,10 @@
 # Version 0.7.0
 - Implemented benchmarks tests (#126)
+
+# Version 0.6.1
+## Changes
+- Updated Cosmos to v0.38.4 (#177)
+
 # Version 0.6.0
 ## Changes
 - Added the option to use [RocksDB](https://github.com/facebook/rocksdb) as both Tendermint and/or Cosmos database backend (#111)
