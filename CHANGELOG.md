@@ -1,4 +1,7 @@
 # Version 0.6.1
+## Changes
+- Updated Cosmos to v0.38.4 (#177)
+
 ## Bug fixes
 - Fixed the on-chain events usage (#175)
 
