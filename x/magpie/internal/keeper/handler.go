@@ -15,6 +15,8 @@ import (
 // NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
@@ -90,7 +92,7 @@ func handleMsgCreateSession(ctx sdk.Context, keeper Keeper, msg types.MsgCreateS
 
 	result := sdk.Result{
 		Data:   types.ModuleCdc.MustMarshalBinaryLengthPrefixed(session.SessionID),
-		Events: sdk.Events{createSessionEvent},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
