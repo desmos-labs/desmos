@@ -184,8 +184,8 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyPostCreationTime, test.expPost.Created.String()),
 					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
 				)
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), creationEvent)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, creationEvent)
 			}
 
 			// Invalid response
@@ -774,8 +774,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 						sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
 					)
 
-					require.Len(t, ctx.EventManager().Events(), 1)
-					require.Contains(t, ctx.EventManager().Events(), answerEvent)
+					require.Len(t, res.Events, 1)
+					require.Contains(t, res.Events, answerEvent)
 				}
 			}
 		})
