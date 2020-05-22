@@ -14,6 +14,8 @@ import (
 // NewHandler returns a handler for "magpie" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case types.MsgCreatePost:
 			return handleMsgCreatePost(ctx, keeper, msg)
@@ -81,7 +83,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(post.PostID),
-		Events: sdk.Events{createEvent},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
@@ -119,7 +121,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(existing.PostID),
-		Events: sdk.Events{editEvent},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
@@ -193,7 +195,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 
 	result := sdk.Result{
 		Data:   []byte("postReaction added properly"),
-		Events: sdk.Events{event},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
@@ -229,7 +231,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 
 	result := sdk.Result{
 		Data:   []byte("reaction removed properly"),
-		Events: sdk.Events{event},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
@@ -328,7 +330,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"),
-		Events: sdk.Events{answerEvent},
+		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil
 }
@@ -350,7 +352,7 @@ func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegi
 
 	result := sdk.Result{
 		Data:   []byte("reaction registered properly"),
-		Events: sdk.Events{event},
+		Events: ctx.EventManager().Events(),
 	}
 
 	return &result, nil

@@ -12,6 +12,8 @@ import (
 // NewHandler returns a handler for "profile" type messages.
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case types.MsgCreateProfile:
 			return handleMsgCreateProfile(ctx, keeper, msg)
@@ -57,7 +59,7 @@ func handleMsgCreateProfile(ctx sdk.Context, keeper Keeper, msg types.MsgCreateP
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(account.Moniker),
-		Events: sdk.Events{createEvent},
+		Events: ctx.EventManager().Events(),
 	}
 
 	return &result, nil
@@ -127,7 +129,7 @@ func handleMsgEditProfile(ctx sdk.Context, keeper Keeper, msg types.MsgEditProfi
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
-		Events: sdk.Events{createEvent},
+		Events: ctx.EventManager().Events(),
 	}
 
 	return &result, nil
@@ -154,7 +156,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
-		Events: sdk.Events{createEvent},
+		Events: ctx.EventManager().Events(),
 	}
 
 	return &result, nil
