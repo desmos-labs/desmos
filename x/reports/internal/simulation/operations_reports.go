@@ -2,24 +2,27 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
-func SimulateMsgReportPost(ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
-		data, skip, err := randomReportPostFields(r, ctx, accs, ak)
+		data, skip, err := randomReportPostFields(r, ctx, accs, k, ak)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -34,6 +37,19 @@ func SimulateMsgReportPost(ak auth.AccountKeeper) sim.Operation {
 			data.Message,
 			data.Creator.Address,
 		)
+
+		post := posts.NewPost(
+			data.PostID,
+			"",
+			"message",
+			true,
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			map[string]string{},
+			time.Now(),
+			data.Creator.Address,
+		)
+
+		k.PostKeeper.SavePost(ctx, post)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
@@ -76,7 +92,7 @@ func sendMsgReportPost(
 }
 
 func randomReportPostFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*ReportsData, bool, error) {
 	reportsData := RandomReportsData(r, accs)
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)

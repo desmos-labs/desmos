@@ -26,11 +26,21 @@ var (
 	}
 
 	repTypes = []string{
-		"offense",
-		"scam",
-		"racism",
+		"nudity",
+		"violence",
+		"intimidation",
+		"suicide or self-harm",
+		"fake news",
+		"spam",
+		"unauthorized sale",
+		"hatred incitement",
+		"promotion of drug use",
+		"non-consensual intimate images",
 		"pornography",
-		"bad language",
+		"children abuse",
+		"animals abuse",
+		"bullying",
+		"scam",
 	}
 )
 

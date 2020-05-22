@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/desmos-labs/desmos/x/reports"
 	"io"
 	"os"
 
@@ -10,6 +9,7 @@ import (
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"
+	"github.com/desmos-labs/desmos/x/reports"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"

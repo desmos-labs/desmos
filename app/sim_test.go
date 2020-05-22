@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/reports"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -13,6 +12,7 @@ import (
 	"github.com/desmos-labs/desmos/x/magpie"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"
+	"github.com/desmos-labs/desmos/x/reports"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
