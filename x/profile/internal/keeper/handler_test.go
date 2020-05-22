@@ -77,8 +77,8 @@ func Test_handleMsgCreateProfile(t *testing.T) {
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createAccountEv)
 			}
 
 		})
@@ -206,8 +206,8 @@ func Test_handleMsgEditProfile(t *testing.T) {
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createAccountEv)
 			}
 
 		})
@@ -266,8 +266,8 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createAccountEv)
 			}
 
 		})
