@@ -161,19 +161,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile biography cannot exceed 1000 characters"),
 		},
 		{
-			name: "Empty moniker",
-			msg: types.NewMsgSaveProfile(
-				"",
-				testProfile.Name,
-				testProfile.Surname,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be empty"),
-		},
-		{
 			name: "Min moniker length not reached",
 			msg: types.NewMsgSaveProfile(
 				"l",

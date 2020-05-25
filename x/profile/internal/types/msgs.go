@@ -2,8 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -47,10 +45,6 @@ func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 func (msg MsgSaveProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
-	}
-
-	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be empty"))
 	}
 
 	if len(msg.Moniker) < MinMonikerLength {

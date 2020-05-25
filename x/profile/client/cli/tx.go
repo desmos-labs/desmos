@@ -36,6 +36,14 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	return profileTxCmd
 }
 
+func getFlagValueOrNilOnDefault(flag string) *string {
+	flagValue := viper.GetString(flag)
+	if flagValue == "" {
+		return nil
+	}
+	return &flagValue
+}
+
 // GetCmdSaveProfile is the CLI command for saving an profile
 func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
@@ -60,14 +68,14 @@ If you are editing an existing profile you should fill all the existent fields o
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			picture := viper.GetString(flagProfilePic)
-			cover := viper.GetString(flagProfileCover)
 			moniker := viper.GetString(flagMoniker)
-			name := viper.GetString(flagName)
-			surname := viper.GetString(flagSurname)
-			bio := viper.GetString(flagBio)
+			picture := getFlagValueOrNilOnDefault(flagProfilePic)
+			cover := getFlagValueOrNilOnDefault(flagProfileCover)
+			name := getFlagValueOrNilOnDefault(flagName)
+			surname := getFlagValueOrNilOnDefault(flagSurname)
+			bio := getFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgSaveProfile(moniker, &name, &surname, &bio, &picture, &cover, cliCtx.FromAddress)
+			msg := types.NewMsgSaveProfile(moniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
