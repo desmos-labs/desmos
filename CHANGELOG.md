@@ -1,5 +1,6 @@
 # Version 0.7.0
 - Implemented benchmarks tests (#126)
+- Implemented posts' reports (#50)
 
 # Version 0.6.1
 ## Changes

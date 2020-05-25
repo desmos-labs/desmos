@@ -16,7 +16,7 @@ import (
 // MsgReportPost defines a ReportPost message
 type MsgReportPost struct {
 	PostID posts.PostID  `json:"post_id" yaml:"post_id"`
-	Report models.Report `json:"reports" yaml:"reports"`
+	Report models.Report `json:"report" yaml:"report"`
 }
 
 // NewMsgReportPost returns a MsgReportPost object
