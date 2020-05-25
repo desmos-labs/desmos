@@ -10,7 +10,6 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgCreateProfile{}, "desmos/MsgCreateProfile", nil)
-	cdc.RegisterConcrete(MsgEditProfile{}, "desmos/MsgEditProfile", nil)
+	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 }

@@ -5,6 +5,7 @@
 # Version 0.6.1
 ## Changes
 - Updated Cosmos to v0.38.4 (#177)
+- Updated the way with which the profiles are created and edited (#170)
 
 ## Bug fixes
 - Fixed the on-chain events usage (#175)
