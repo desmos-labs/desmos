@@ -34,8 +34,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Re
 	key := models.ReportStoreKey(postID)
 	// Get the list of reports related to the given postID
 	var reports models.Reports
-	bz := store.Get(key)
-	k.Cdc.MustUnmarshalBinaryBare(bz, &reports)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reports)
 
 	// try to append the given reports
 	reports, appended := reports.AppendIfMissing(report)
