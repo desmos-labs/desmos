@@ -35,22 +35,15 @@ const (
 
 var (
 	// functions aliases
-	NewPictures              = types.NewPictures
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewMsgSaveProfile        = types.NewMsgSaveProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
-	NewProfile               = types.NewProfile
-	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
+	NewHandler               = keeper.NewHandler
+	DecodeStore              = simulation.DecodeStore
+	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
 	RandomProfileData        = simulation.RandomProfileData
 	RandomProfile            = simulation.RandomProfile
 	RandomMoniker            = simulation.RandomMoniker
@@ -62,9 +55,16 @@ var (
 	GetSimAccount            = simulation.GetSimAccount
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
-	DecodeStore              = simulation.DecodeStore
-	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
+	NewProfile               = types.NewProfile
+	NewPictures              = types.NewPictures
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
+	NewMsgSaveProfile        = types.NewMsgSaveProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	ProfileStoreKey          = types.ProfileStoreKey
+	MonikerStoreKey          = types.MonikerStoreKey
 
 	// variable aliases
 	ModuleCdc          = types.ModuleCdc
@@ -75,12 +75,12 @@ var (
 )
 
 type (
-	Keeper           = keeper.Keeper
-	ProfileData      = simulation.ProfileData
+	Profile          = types.Profile
+	Profiles         = types.Profiles
 	Pictures         = types.Pictures
 	GenesisState     = types.GenesisState
 	MsgSaveProfile   = types.MsgSaveProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
-	Profile          = types.Profile
-	Profiles         = types.Profiles
+	Keeper           = keeper.Keeper
+	ProfileData      = simulation.ProfileData
 )

@@ -14,3 +14,6 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 ## Profiles
 - [Query a profile](queries/profile.md)
 - [Query the stored profiles](queries/profiles.md)
+
+## Reports
+- [Query the post's related reports](queries/reports.md)

@@ -70,7 +70,7 @@ func TestMsgReportPost_GetSignBytes(t *testing.T) {
 	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
 	actual := msgReport.GetSignBytes()
 
-	expected := `{"type":"desmos/MsgReportPost","value":{"post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","reports":{"message":"message","type":"type","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}}`
+	expected := `{"type":"desmos/MsgReportPost","value":{"post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","report":{"message":"message","type":"type","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}}`
 	require.Equal(t, expected, string(actual))
 }
 

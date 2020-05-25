@@ -24,6 +24,25 @@ This message allows you to report a post. If you want to know more about the `Re
 | `message` | String | Message of the report |
 | `user`    | String | Desmos address of the user that is reporting the post. |
 
+The `type` field will only accept the following values:
+```json
+"nudity",  
+"violence",  
+"intimidation",  
+"suicide or self-harm",  
+"fake news",  
+"spam",  
+"unauthorized sale",  
+"hatred incitement",  
+"promotion of drug use",  
+"non-consensual intimate images",  
+"pornography",  
+"children abuse",  
+"animals abuse",  
+"bullying",  
+"scam" 
+```
+
 ## Example
 ```json
 {
