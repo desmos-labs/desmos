@@ -78,7 +78,6 @@ func (k Keeper) GetPostReports(ctx sdk.Context, postID posts.PostID) (reports ty
 
 	// Get the list of reports related to the given postID
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(models.ReportStoreKey(postID)), &reports)
-
 	return reports
 }
 
