@@ -457,14 +457,8 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 
 //___________________________________________________________________________________
 // desmoscli tx profile
-func (f *Fixtures) TxProfileCreate(moniker string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles create %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, moniker, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxProfileEdit(from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles edit --keyring-backend=test --from=%s %v`,
+func (f *Fixtures) TxProfileSave(from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles save --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }

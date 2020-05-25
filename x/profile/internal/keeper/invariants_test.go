@@ -22,13 +22,13 @@ func TestInvariants(t *testing.T) {
 	}{
 		{
 			name:        "Invariants not violated",
-			profile:     types.NewProfile(moniker, owner),
+			profile:     types.NewProfile(owner).WithMoniker(moniker),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
 			name:        "ValidProfile invariant violated",
-			profile:     types.NewProfile("", owner),
+			profile:     types.NewProfile(owner).WithMoniker(""),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[Moniker]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:     true,
 		},

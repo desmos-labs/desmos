@@ -1,11 +1,10 @@
-# `MsgCreateProfile`
-This message allows you to create a new profile.
-If you want to know more about the `Profile` type, you can do so inside the [`Profile` type documentation page](../../types/profile.md)
+# `MsgSaveProfile`
+This message allows you to save a new profile or edit an existent one.
 
 ## Structure
 ````json
 {
-  "type": "desmos/MsgCreateProfile",
+  "type": "desmos/MsgSaveProfile",
   "value": {
     "moniker": "<Profile moniker>",
     "name": "<Profile name>",
@@ -28,16 +27,18 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
 | `surname` | String | (Optional) Surname of the user |
 | `bio` | String | (Optional) Biography of the user |
 | `pictures` | Object | (Optional) Object containing all the information related to the profile's pictures |
-| `creator` | String | Desmos address of the user that is creating the profile |
+| `creator` | String | Desmos address of the user that is editing the profile |
+
+If you are editing an existing profile you should fill all the existent fields otherwise they will be set as nil.
 
 ## Example
 ````json
 {
-  "type": "desmos/MsgCreateProfile",
+  "type": "desmos/MsgSaveProfile",
   "value": {
-    "moniker": "Eva01",
-    "name": "Shinji",
-    "surname": "Ikari",
+    "moniker": "Eva00",
+    "name": "Rei",
+    "surname": "Ayanami",
     "bio": "evaPilot",
     "pictures": {
       "profile": "https://shorturl.at/adnX3",
@@ -52,5 +53,6 @@ If you want to know more about the `Profile` type, you can do so inside the [`Pr
 The action associated to this message is the following:
 
 ```
-create_profile
+save_profile
 ```
+

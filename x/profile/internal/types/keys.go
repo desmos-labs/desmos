@@ -13,11 +13,11 @@ const (
 
 	MinNameSurnameLength = 2
 	MaxNameSurnameLength = 500
+	MinMonikerLength     = 2
 	MaxMonikerLength     = 30
 	MaxBioLength         = 1000
 
-	ActionCreateProfile = "create_profile"
-	ActionEditProfile   = "edit_profile"
+	ActionSaveProfile   = "save_profile"
 	ActionDeleteProfile = "delete_profile"
 
 	//Queries

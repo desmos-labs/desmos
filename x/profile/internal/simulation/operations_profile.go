@@ -14,13 +14,14 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-// SimulateMsgCreateProfile tests and runs a single msg create profile where the creator already exists
+// SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 // nolint: funlen
-func SimulateMsgCreateProfile(ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
-		data, skip, err := randomCreateProfileFields(r, ctx, accs, ak)
+
+		acc, data, newMoniker, skip, err := randomProfileSaveFields(r, ctx, accs, k)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -29,92 +30,8 @@ func SimulateMsgCreateProfile(ak auth.AccountKeeper) sim.Operation {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgCreateProfile(
-			data.Moniker,
-			&data.Name,
-			&data.Surname,
-			&data.Bio,
-			&data.Picture,
-			data.Creator.Address,
-		)
-
-		err = sendMsgCreateProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
-		return sim.NewOperationMsg(msg, true, ""), nil, nil
-	}
-}
-
-// sendMsgCreateProfile sends a transaction with a MsgCreateProfile from a provided random profile.
-func sendMsgCreateProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg types.MsgCreateProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
-) error {
-
-	account := ak.GetAccount(ctx, msg.Creator)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-
-	_, _, err = app.Deliver(tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// randomCreateProfileFields returns random profile data
-func randomCreateProfileFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
-) (*ProfileData, bool, error) {
-	if len(accs) == 0 {
-		return nil, true, nil
-	}
-
-	accountData := RandomProfileData(r, accs)
-	acc := ak.GetAccount(ctx, accountData.Creator.Address)
-
-	// Skip the operation without error as the profile is not valid
-	if acc == nil {
-		return nil, true, nil
-	}
-
-	return &accountData, false, nil
-}
-
-// SimulateMsgEditProfile tests and runs a single msg edit profile where the creator already exists
-// nolint: funlen
-func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
-	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []sim.Account, chainID string,
-	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
-
-		acc, data, newMoniker, skip, err := randomProfileEditFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
-		if skip {
-			return sim.NoOpMsg(types.ModuleName), nil, nil
-		}
-
-		msg := types.NewMsgEditProfile(
-			&newMoniker,
+		msg := types.NewMsgSaveProfile(
+			newMoniker,
 			data.Name,
 			data.Surname,
 			data.Bio,
@@ -123,7 +40,7 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			acc.Address,
 		)
 
-		err = sendMsgEditProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -132,10 +49,10 @@ func SimulateMsgEditProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 	}
 }
 
-// sendMsgEditProfile sends a transaction with a MsgEditProfile from a provided random profile.
-func sendMsgEditProfile(
+// sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
+func sendMsgSaveProfile(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg types.MsgEditProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
@@ -164,9 +81,9 @@ func sendMsgEditProfile(
 	return nil
 }
 
-// randomProfileEditFields returns random profile data
-func randomProfileEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+// randomProfileSaveFields returns random profile data
+func randomProfileSaveFields(
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
 ) (sim.Account, types.Profile, string, bool, error) {
 	if len(accs) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
