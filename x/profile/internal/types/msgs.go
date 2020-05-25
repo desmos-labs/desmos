@@ -9,102 +9,12 @@ import (
 )
 
 // ----------------------
-// --- MsgCreateProfile
+// --- MsgSaveProfile
 // ----------------------
 
-// MsgCreateProfile defines a CreateProfile message
-type MsgCreateProfile struct {
-	Moniker  string         `json:"moniker" yaml:"moniker"`
-	Name     *string        `json:"name,omitempty" yaml:"name,omitempty"`
-	Surname  *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
-	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
-}
-
-// NewMsgCreateProfile is a constructor function for MsgCreateProfile
-func NewMsgCreateProfile(moniker string, name, surname, bio *string, pictures *Pictures,
-	creator sdk.AccAddress) MsgCreateProfile {
-	return MsgCreateProfile{
-		Moniker:  moniker,
-		Name:     name,
-		Surname:  surname,
-		Bio:      bio,
-		Pictures: pictures,
-		Creator:  creator,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgCreateProfile) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgCreateProfile) Type() string { return ActionCreateProfile }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgCreateProfile) ValidateBasic() error {
-	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
-	}
-
-	if msg.Name != nil {
-		if len(*msg.Name) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
-		}
-
-		if len(*msg.Name) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
-		}
-	}
-
-	if msg.Surname != nil {
-		if msg.Surname != nil && len(*msg.Surname) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
-		}
-
-		if len(*msg.Surname) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
-		}
-	}
-
-	if len(strings.TrimSpace(msg.Moniker)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be blank or empty")
-	}
-
-	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
-	}
-
-	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
-	}
-
-	if msg.Pictures != nil {
-		if err := msg.Pictures.Validate(); err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgCreateProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
-}
-
-// GetSigners defines whose signature is required
-func (msg MsgCreateProfile) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Creator}
-}
-
-// ----------------------
-// --- MsgEditProfile
-// ----------------------
-
-// MsgEditProfile defines a EditProfile message
-type MsgEditProfile struct {
-	NewMoniker *string        `json:"new_moniker" yaml:"new_moniker"`
+// MsgSaveProfile defines a SaveProfile message
+type MsgSaveProfile struct {
+	Moniker    string         `json:"moniker" yaml:"moniker"`
 	Name       *string        `json:"name,omitempty" yaml:"name,omitempty"`
 	Surname    *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
 	Bio        *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
@@ -113,11 +23,11 @@ type MsgEditProfile struct {
 	Creator    sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
-// NewMsgEditProfile is a constructor function for MsgEditProfile
-func NewMsgEditProfile(newMoniker, name, surname, bio, profilePic,
-	profileCov *string, creator sdk.AccAddress) MsgEditProfile {
-	return MsgEditProfile{
-		NewMoniker: newMoniker,
+// NewMsgSaveProfile is a constructor function for MsgSaveProfile
+func NewMsgSaveProfile(moniker string, name, surname, bio, profilePic,
+	profileCov *string, creator sdk.AccAddress) MsgSaveProfile {
+	return MsgSaveProfile{
+		Moniker:    moniker,
 		Name:       name,
 		Surname:    surname,
 		Bio:        bio,
@@ -128,19 +38,27 @@ func NewMsgEditProfile(newMoniker, name, surname, bio, profilePic,
 }
 
 // Route should return the name of the module
-func (msg MsgEditProfile) Route() string { return RouterKey }
+func (msg MsgSaveProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgEditProfile) Type() string { return ActionEditProfile }
+func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgEditProfile) ValidateBasic() error {
+func (msg MsgSaveProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if msg.NewMoniker != nil && len(*msg.NewMoniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile new moniker cannot exceed %d characters", MaxMonikerLength))
+	if len(strings.TrimSpace(msg.Moniker)) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be empty"))
+	}
+
+	if len(msg.Moniker) < MinMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be less than %d characters", MinMonikerLength))
+	}
+
+	if len(msg.Moniker) > MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
 	}
 
 	if msg.Name != nil {
@@ -171,12 +89,12 @@ func (msg MsgEditProfile) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgEditProfile) GetSignBytes() []byte {
+func (msg MsgSaveProfile) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgEditProfile) GetSigners() []sdk.AccAddress {
+func (msg MsgSaveProfile) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
 

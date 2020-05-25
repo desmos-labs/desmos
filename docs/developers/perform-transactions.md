@@ -17,6 +17,5 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 * [`MsgRegisterReaction`](msgs/register-reaction.md): allows you to register a reaction.
 
 ### Profile
-* [`MsgCreateProfile`](msgs/create-profile.md): allows you to create a new profile for a user.
-* [`MsgEditProfile`](msgs/edit-profile.md): allows you to edit an existing profile.
+* [`MsgSaveProfile`](docs/developers/msgs/save-profile.md): allows you to create or edit an existing profile.
 * [`MsgDeleteProfile`](msgs/delete-profile.md): allows you to delete an existing profile.

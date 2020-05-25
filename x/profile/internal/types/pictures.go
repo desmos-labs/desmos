@@ -12,6 +12,9 @@ type Pictures struct {
 
 // NewPictures is a constructor function for Pictures
 func NewPictures(profile, cover *string) *Pictures {
+	if profile == nil && cover == nil {
+		return nil
+	}
 	return &Pictures{
 		Profile: profile,
 		Cover:   cover,
@@ -24,26 +27,17 @@ func (pic Pictures) Equals(otherPic *Pictures) bool {
 		pic.Cover == otherPic.Cover
 }
 
-// ValidateURI checks if the given uri string is well-formed according to the regExp and return and error otherwise
-func ValidateURI(uri string) error {
-	if !URIRegEx.MatchString(uri) {
-		return fmt.Errorf("invalid uri provided")
-	}
-
-	return nil
-}
-
 // Validate check the validity of the Pictures
 func (pic Pictures) Validate() error {
 
 	if pic.Profile != nil {
-		if err := ValidateURI(*pic.Profile); err != nil {
+		if valid := URIRegEx.MatchString(*pic.Profile); !valid {
 			return fmt.Errorf("invalid profile picture uri provided")
 		}
 	}
 
 	if pic.Cover != nil {
-		if err := ValidateURI(*pic.Cover); err != nil {
+		if valid := URIRegEx.MatchString(*pic.Cover); !valid {
 			return fmt.Errorf("invalid profile cover uri provided")
 		}
 	}

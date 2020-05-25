@@ -12,18 +12,27 @@ import (
 func TestNewProfile(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	moniker := "monik"
-	expProfile := types.Profile{Moniker: moniker, Creator: owner}
-	actProfile := types.NewProfile(moniker, owner)
+	expProfile := types.Profile{Creator: owner}
+	actProfile := types.NewProfile(owner)
 
 	require.Equal(t, expProfile, actProfile)
+}
+
+func TestProfile_WithMoniker(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	profile := types.NewProfile(owner)
+
+	profileWithMoniker := profile.WithMoniker("monik")
+
+	require.Equal(t, types.NewProfile(owner).WithMoniker("monik"), profileWithMoniker)
 }
 
 func TestProfile_WithName(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "monik"
-	profile := types.NewProfile(moniker, owner)
+	profile := types.NewProfile(owner).WithMoniker(moniker)
 	name := "name"
 
 	tests := []struct {
@@ -53,7 +62,7 @@ func TestProfile_WithSurname(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "monker"
-	profile := types.NewProfile(moniker, owner)
+	profile := types.NewProfile(owner).WithMoniker(moniker)
 	surname := "surname"
 
 	tests := []struct {
@@ -83,7 +92,7 @@ func TestProfile_WithBio(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "moniker"
-	profile := types.NewProfile(moniker, owner)
+	profile := types.NewProfile(owner).WithMoniker(moniker)
 	bio := "surname"
 
 	tests := []struct {
@@ -113,27 +122,29 @@ func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "moniker"
-	profile := types.NewProfile(moniker, owner)
+	profile := types.NewProfile(owner).WithMoniker(moniker)
 	var pic = "profile"
 	var cov = "cover"
-	pics := types.NewPictures(&pic, &cov)
 
 	tests := []struct {
 		name       string
 		profile    types.Profile
-		pics       *types.Pictures
+		pic        *string
+		cov        *string
 		expProfile types.Profile
 	}{
 		{
 			name:       "not nil pics",
 			profile:    profile,
-			pics:       pics,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: pics},
+			pic:        &pic,
+			cov:        &cov,
+			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: types.NewPictures(&pic, &cov)},
 		},
 		{
 			name:       "nil pics",
 			profile:    profile,
-			pics:       nil,
+			pic:        nil,
+			cov:        nil,
 			expProfile: types.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
@@ -141,7 +152,7 @@ func TestProfile_WithPics(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actProf := test.profile.WithPictures(test.pics)
+			actProf := test.profile.WithPictures(test.pic, test.cov)
 			require.Equal(t, test.expProfile, actProf)
 		})
 	}
