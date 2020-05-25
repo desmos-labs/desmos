@@ -12,11 +12,11 @@ import (
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profiles/{address}", editProfileHandler(cliCtx)).Methods("PUT")
+	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
 }
 
-func editProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		var req SaveProfileReq

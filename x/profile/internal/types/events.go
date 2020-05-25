@@ -1,7 +1,6 @@
 package types
 
 const (
-	EventTypeProfileCreated = "profile_created"
 	EventTypeProfileSaved   = "profile_saved"
 	EventTypeProfileDeleted = "profile_deleted"
 
