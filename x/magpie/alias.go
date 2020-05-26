@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	QuerySessions             = keeper.QuerySessions
 	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 	ModuleName                = types.ModuleName
 	RouterKey                 = types.RouterKey
@@ -22,34 +23,33 @@ const (
 	AttributeKeyExternalOwner = types.AttributeKeyExternalOwner
 	AttributeKeyExpiry        = types.AttributeKeyExpiry
 	AttributeValueCategory    = types.AttributeValueCategory
-	QuerySessions             = keeper.QuerySessions
 )
 
 var (
 	// functions aliases
-	NewHandler               = keeper.NewHandler
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
-	DecodeStore              = simulation.DecodeStore
 	RandomSessionData        = simulation.RandomSessionData
+	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomizedGenState       = simulation.RandomizedGenState
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewMsgCreateSession      = types.NewMsgCreateSession
 	SessionStoreKey          = types.SessionStoreKey
+	NewMsgCreateSession      = types.NewMsgCreateSession
 	ParseSessionID           = types.ParseSessionID
 	NewSession               = types.NewSession
+	RegisterCodec            = types.RegisterCodec
+	NewHandler               = keeper.NewHandler
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
-	RandomNamespaces      = simulation.RandomNamespaces
-	ModuleCdc             = types.ModuleCdc
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
+	ModuleCdc             = types.ModuleCdc
+	RandomNamespaces      = simulation.RandomNamespaces
 )
 
 type (

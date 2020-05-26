@@ -42,12 +42,12 @@ var (
 	ParsePostID              = models.ParsePostID
 	NewPost                  = models.NewPost
 	NewPostResponse          = models.NewPostResponse
+	RegisterModelsCodec      = models.RegisterModelsCodec
 	PostStoreKey             = models.PostStoreKey
 	PostCommentsStoreKey     = models.PostCommentsStoreKey
 	PostReactionsStoreKey    = models.PostReactionsStoreKey
 	ReactionsStoreKey        = models.ReactionsStoreKey
 	PollAnswersStoreKey      = models.PollAnswersStoreKey
-	RegisterModelsCodec      = models.RegisterModelsCodec
 	NewPostMedia             = common.NewPostMedia
 	ValidateURI              = common.ValidateURI
 	NewPostMedias            = common.NewPostMedias
@@ -58,20 +58,22 @@ var (
 	ArePollDataEquals        = polls.ArePollDataEquals
 	NewUserAnswer            = polls.NewUserAnswer
 	NewUserAnswers           = polls.NewUserAnswers
+	NewPostReaction          = reactions.NewPostReaction
+	NewPostReactions         = reactions.NewPostReactions
 	NewReaction              = reactions.NewReaction
 	IsEmoji                  = reactions.IsEmoji
 	NewReactions             = reactions.NewReactions
-	NewPostReaction          = reactions.NewPostReaction
-	NewPostReactions         = reactions.NewPostReactions
-	NewMsgRegisterReaction   = msgs.NewMsgRegisterReaction
 	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
-	NewMsgAddPostReaction    = msgs.NewMsgAddPostReaction
-	NewMsgRemovePostReaction = msgs.NewMsgRemovePostReaction
-	NewMsgAnswerPoll         = msgs.NewMsgAnswerPoll
 	NewMsgCreatePost         = msgs.NewMsgCreatePost
 	NewMsgEditPost           = msgs.NewMsgEditPost
+	NewMsgAnswerPoll         = msgs.NewMsgAnswerPoll
+	NewMsgAddPostReaction    = msgs.NewMsgAddPostReaction
+	NewMsgRemovePostReaction = msgs.NewMsgRemovePostReaction
+	NewMsgRegisterReaction   = msgs.NewMsgRegisterReaction
 
 	// variable aliases
+	MsgsCodec                = msgs.MsgsCodec
+	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx
@@ -82,21 +84,9 @@ var (
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
 	PollAnswersStorePrefix   = common.PollAnswersStorePrefix
-	MsgsCodec                = msgs.MsgsCodec
-	ModelsCdc                = models.ModelsCdc
 )
 
 type (
-	Reaction                 = reactions.Reaction
-	Reactions                = reactions.Reactions
-	PostReaction             = reactions.PostReaction
-	PostReactions            = reactions.PostReactions
-	MsgRegisterReaction      = msgs.MsgRegisterReaction
-	MsgAddPostReaction       = msgs.MsgAddPostReaction
-	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
 	PostID                   = models.PostID
 	PostIDs                  = models.PostIDs
 	Post                     = models.Post
@@ -113,4 +103,14 @@ type (
 	PollData                 = polls.PollData
 	UserAnswer               = polls.UserAnswer
 	UserAnswers              = polls.UserAnswers
+	PostReaction             = reactions.PostReaction
+	PostReactions            = reactions.PostReactions
+	Reaction                 = reactions.Reaction
+	Reactions                = reactions.Reactions
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgAddPostReaction       = msgs.MsgAddPostReaction
+	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
+	MsgRegisterReaction      = msgs.MsgRegisterReaction
 )
