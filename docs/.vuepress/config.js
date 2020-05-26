@@ -94,6 +94,8 @@ module.exports = {
                         collapsable: true,
                         children: [
                             ["validators/updates/v0.3.1", "Version 0.3.1"],
+                            ["validators/updates/v0.5.1", "Version 0.5.1"],
+                            ["validators/updates/v0.5.2", "Version 0.5.2"],
                         ]
                     }
                 ]
