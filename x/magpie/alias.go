@@ -27,37 +27,37 @@ const (
 
 var (
 	// functions aliases
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
-	NewHandler               = keeper.NewHandler
 	RandomSessionData        = simulation.RandomSessionData
+	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomizedGenState       = simulation.RandomizedGenState
-	DecodeStore              = simulation.DecodeStore
-	SessionStoreKey          = types.SessionStoreKey
-	ParseSessionID           = types.ParseSessionID
-	NewSession               = types.NewSession
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
+	SessionStoreKey          = types.SessionStoreKey
 	NewMsgCreateSession      = types.NewMsgCreateSession
+	ParseSessionID           = types.ParseSessionID
+	NewSession               = types.NewSession
+	RegisterCodec            = types.RegisterCodec
+	NewHandler               = keeper.NewHandler
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
-	RandomNamespaces      = simulation.RandomNamespaces
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
 	ModuleCdc             = types.ModuleCdc
+	RandomNamespaces      = simulation.RandomNamespaces
 )
 
 type (
+	Keeper           = keeper.Keeper
+	SessionData      = simulation.SessionData
+	GenesisState     = types.GenesisState
+	MsgCreateSession = types.MsgCreateSession
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
-	GenesisState     = types.GenesisState
-	MsgCreateSession = types.MsgCreateSession
-	Keeper           = keeper.Keeper
-	SessionData      = simulation.SessionData
 )
