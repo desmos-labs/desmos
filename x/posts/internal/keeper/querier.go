@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -42,23 +41,6 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 		postReactions = types.PostReactions{}
 	}
 
-	// Convert the reactions
-	var reactionsResponses = make([]types.ReactionQueryResponse, len(postReactions))
-	for index, reaction := range postReactions {
-		var reactionValue string
-		if em, err := emoji.LookupEmojiByCode(reaction.Value); err == nil {
-			reactionValue = em.Value
-		} else {
-			registeredReaction, _ := keeper.GetRegisteredReaction(ctx, reaction.Value, post.Subspace)
-			reactionValue = registeredReaction.Value
-		}
-		reactionsResponses[index] = types.ReactionQueryResponse{
-			Value: reactionValue,
-			Code:  reaction.Value,
-			Owner: reaction.Owner,
-		}
-	}
-
 	// Get the children
 	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
 	if childrenIDs == nil {
@@ -72,7 +54,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	}
 
 	// Crete the response object
-	return types.NewPostResponse(post, answers, reactionsResponses, childrenIDs)
+	return types.NewPostResponse(post, answers, postReactions, childrenIDs)
 }
 
 // queryPost handles the request to get a post having a specific id

@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -40,8 +41,9 @@ var (
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
-	shortCodes  = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	shortCodes      = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
+	reactValues     = []string{"http://earth.jpg", "U+1F600", "U+1F605", "U+1F610"}
+	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -74,30 +76,32 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
-		Medias:         RandomMedias(r),
+		Medias:         RandomMedias(r, accs),
 		PollData:       RandomPollData(r),
 	}
 }
 
 // PostReactionData contains all the data needed for a post reaction to be properly added or removed from a post
 type PostReactionData struct {
-	Value  string
-	User   sim.Account
-	PostID types.PostID
+	Shortcode string
+	Value     string
+	User      sim.Account
+	PostID    types.PostID
 }
 
 // RandomPostReactionData returns a randomly generated post reaction data object
-func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode string) PostReactionData {
+func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostID, shortCode, value string) PostReactionData {
 	return PostReactionData{
-		Value:  shortCode,
-		User:   accs[r.Intn(len(accs))],
-		PostID: postID,
+		Shortcode: shortCode,
+		Value:     value,
+		User:      accs[r.Intn(len(accs))],
+		PostID:    postID,
 	}
 }
 
-// RandomPostReactionValue returns a random reaction value
+// RandomPostReactionValue returns a random post reaction value
 func RandomPostReactionValue(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(shortCodes))]
+	return postReactValues[r.Intn(len(postReactValues))]
 }
 
 // RandomPostID returns a randomly extracted post id from the list of posts given
@@ -125,14 +129,21 @@ func RandomHashtag(r *rand.Rand) string {
 }
 
 // RandomMedias returns a randomly generated list of post medias
-func RandomMedias(r *rand.Rand) types.PostMedias {
+func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
 	mediaNumber := r.Intn(20)
+
+	tagsLen := r.Intn(50)
+	tags := make([]sdk.AccAddress, tagsLen)
+	for i := 0; i < tagsLen; i++ {
+		acc, _ := sim.RandomAcc(r, accs)
+		tags[i] = acc.Address
+	}
 
 	postMedias := make(types.PostMedias, mediaNumber)
 	for i := 0; i < mediaNumber; i++ {
 		host := RandomHosts[r.Intn(len(RandomHosts))]
 		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
-		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType)
+		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, tags)
 	}
 
 	return postMedias
@@ -195,7 +206,7 @@ func RandomReactionValue(r *rand.Rand) string {
 
 // RandomReactionShortCode return a random reaction shortCode
 func RandomReactionShortCode(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(reactValues))]
+	return shortCodes[r.Intn(len(shortCodes))]
 }
 
 // RandomReactionData returns a randomly generated reaction data object
@@ -225,4 +236,13 @@ func RegisteredReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
 	}
 
 	return reactionsData
+}
+
+// RandomEmojiPostReaction returns a random post reaction representing an emoji reaction
+func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
+	accounts := sim.RandomAccounts(r, 20)
+	creator := accounts[r.Intn(len(accounts))].Address
+
+	rEmoji := emoji.EmojisList[r.Intn(len(emoji.EmojisList))]
+	return types.NewPostReaction(rEmoji.Shortcodes[0], rEmoji.Value, creator)
 }

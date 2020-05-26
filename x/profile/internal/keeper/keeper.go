@@ -70,13 +70,13 @@ func (k Keeper) replaceMoniker(ctx sdk.Context, oldMoniker, newMoniker string, c
 	k.AssociateMonikerWithAddress(ctx, newMoniker, creator)
 }
 
-// SaveProfile allows to save the given account inside the current context.
-// It assumes that the given account has already been validated.
-// It returns an error if an account with the same moniker from a different creator already exists
+// SaveProfile allows to save the given profile inside the current context.
+// It assumes that the given profile has already been validated.
+// It returns an error if a profile with the same moniker from a different creator already exists
 func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 
 	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
-		return fmt.Errorf("an account with moniker: %s has already been created", profile.Moniker)
+		return fmt.Errorf("A profile with moniker: %s has already been created", profile.Moniker)
 	}
 
 	oldMoniker := k.GetMonikerFromAddress(ctx, profile.Creator)
@@ -90,8 +90,8 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 	return nil
 }
 
-// DeleteProfile allows to delete an account associated with the given address inside the current context.
-// It assumes that the address-related account exists.
+// DeleteProfile allows to delete a profile associated with the given address inside the current context.
+// It assumes that the address-related profile exists.
 // nolint: interfacer
 func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
@@ -99,9 +99,9 @@ func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker s
 	k.DeleteMonikerAddressAssociation(ctx, moniker)
 }
 
-// GetProfiles returns all the created accounts inside the current context.
-func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
-	accounts = make(types.Profiles, 0)
+// GetProfiles returns all the created profiles inside the current context.
+func (k Keeper) GetProfiles(ctx sdk.Context) (profiles types.Profiles) {
+	profiles = make(types.Profiles, 0)
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
 	defer iterator.Close()
@@ -109,20 +109,20 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (accounts types.Profiles) {
 	for ; iterator.Valid(); iterator.Next() {
 		var acc types.Profile
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &acc)
-		accounts = append(accounts, acc)
+		profiles = append(profiles, acc)
 	}
 
-	return accounts
+	return profiles
 }
 
-// GetProfile returns the account corresponding to the given address inside the current context.
+// GetProfile returns the profile corresponding to the given address inside the current context.
 // nolint: interfacer
-func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (account types.Profile, found bool) {
+func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ProfileStoreKey(address)
 	if bz := store.Get(key); bz != nil {
-		k.Cdc.MustUnmarshalBinaryBare(bz, &account)
-		return account, true
+		k.Cdc.MustUnmarshalBinaryBare(bz, &profile)
+		return profile, true
 	}
 
 	return types.Profile{}, false

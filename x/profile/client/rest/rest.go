@@ -13,20 +13,10 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)
 }
 
-// CreateProfileReq defines the properties of a profile creation request's body
-type CreateProfileReq struct {
-	BaseReq  rest.BaseReq    `json:"base_req"`
-	Moniker  string          `json:"moniker"`
-	Name     *string         `json:"name,omitempty"`
-	Surname  *string         `json:"surname,omitempty"`
-	Bio      *string         `json:"bio,omitempty"`
-	Pictures *types.Pictures `json:"pictures,omitempty"`
-}
-
-// EditProfileReq defines the properties of a profile edit request's body
-type EditProfileReq struct {
+// SaveProfileReq defines the properties of a profile save request's body
+type SaveProfileReq struct {
 	BaseReq    rest.BaseReq    `json:"base_req"`
-	NewMoniker *string         `json:"new_moniker"`
+	NewMoniker string          `json:"moniker"`
 	Name       *string         `json:"name,omitempty"`
 	Surname    *string         `json:"surname,omitempty"`
 	Bio        *string         `json:"bio,omitempty"`

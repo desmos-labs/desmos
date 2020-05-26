@@ -18,11 +18,16 @@ type Profile struct {
 	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
-func NewProfile(moniker string, creator sdk.AccAddress) Profile {
+func NewProfile(creator sdk.AccAddress) Profile {
 	return Profile{
-		Moniker: moniker,
 		Creator: creator,
 	}
+}
+
+//WithMoniker updates profile's moniker with the given one
+func (profile Profile) WithMoniker(moniker string) Profile {
+	profile.Moniker = moniker
+	return profile
 }
 
 // WithSurname updates profile's name with the given one
@@ -44,8 +49,8 @@ func (profile Profile) WithBio(bio *string) Profile {
 }
 
 // WithPicture updates profile's pictures with the given one
-func (profile Profile) WithPictures(pictures *Pictures) Profile {
-	profile.Pictures = pictures
+func (profile Profile) WithPictures(profilePic, coverPic *string) Profile {
+	profile.Pictures = NewPictures(profilePic, coverPic)
 	return profile
 }
 

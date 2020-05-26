@@ -41,7 +41,7 @@ func TestInvariants(t *testing.T) {
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
-	postReaction := types.NewPostReaction(":like:", user)
+	postReaction := types.NewPostReaction(":like:", "+1", user)
 	reaction := types.NewReaction(testPostOwner, ":like:", "+1", testPost.Subspace)
 	answer := types.NewUserAnswer(answers, testPostOwner)
 
@@ -106,7 +106,7 @@ func TestInvariants(t *testing.T) {
 			answers:      nil,
 			postReaction: &postReaction,
 			reaction:     &reaction,
-			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n {\"owner\":\"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\",\"value\":\":like:\"}\n\n",
+			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n {\"shortcode\":\":like:\",\"value\":\"+1\",\"owner\":\"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\"}\n\n",
 			expBool:      true,
 		},
 		{

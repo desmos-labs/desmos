@@ -1,3 +1,24 @@
+# Version 0.7.0
+- Implemented benchmarks tests (#126)
+
+# Version 0.6.1
+## Changes
+- Updated Cosmos to v0.38.4 (#177)
+- Updated the way with which the profiles are created and edited (#170)
+
+## Bug fixes
+- Fixed the on-chain events usage (#175)
+
+# Version 0.6.0
+## Changes
+- Added the option to use [RocksDB](https://github.com/facebook/rocksdb) as both Tendermint and/or Cosmos database backend (#111)
+- Implemented tags in post medias (#118)
+- Edited PostReaction struct to allow a better integration with middle layer applications (#157)
+
+## Bug fixes
+- Fixed the account query CLI command (#155)
+- Fixed the profile deletion CLI command (#166)
+
 # Version 0.5.2
 ## Bug fixes
 - Fixed a bug that caused the state export to fail due to [cosmos/cosmos-sdk#6280](https://github.com/cosmos/cosmos-sdk/issues/6280)

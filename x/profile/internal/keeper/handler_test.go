@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
@@ -12,80 +11,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-func Test_handleMsgCreateProfile(t *testing.T) {
-	tests := []struct {
-		name            string
-		existentAccount *types.Profile
-		msg             types.MsgCreateProfile
-		expErr          error
-	}{
-		{
-			name:            "Profile already exists",
-			existentAccount: &testProfile,
-			msg: types.NewMsgCreateProfile(
-				testProfile.Moniker,
-				testProfile.Name,
-				testProfile.Surname,
-				testProfile.Bio,
-				testProfile.Pictures,
-				testProfile.Creator,
-			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "An account with moniker moniker already exists"),
-		},
-		{
-			name:            "Profile doesnt exists",
-			existentAccount: nil,
-			msg: types.NewMsgCreateProfile(
-				testProfile.Moniker,
-				testProfile.Name,
-				testProfile.Surname,
-				testProfile.Bio,
-				testProfile.Pictures,
-				testProfile.Creator,
-			),
-			expErr: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-
-			if test.existentAccount != nil {
-				key := types.ProfileStoreKey(test.existentAccount.Creator)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
-			}
-
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
-
-			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
-			}
-			if res != nil {
-				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Moniker), res.Data)
-
-				//Check the events
-				createAccountEv := sdk.NewEvent(
-					types.EventTypeProfileCreated,
-					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
-					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
-				)
-
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
-			}
-
-		})
-	}
-}
-
-func Test_handleMsgEditProfile(t *testing.T) {
+func Test_handleMsgSaveProfile(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -108,14 +34,14 @@ func Test_handleMsgEditProfile(t *testing.T) {
 		name             string
 		existentAccounts types.Profiles
 		expAccount       *types.Profile
-		msg              types.MsgEditProfile
+		msg              types.MsgSaveProfile
 		expErr           error
 	}{
 		{
-			name:             "Profile edited",
+			name:             "Profile saved (with previous profile created)",
 			existentAccounts: types.Profiles{testProfile},
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
+			msg: types.NewMsgSaveProfile(
+				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
 				testProfile.Bio,
@@ -126,10 +52,10 @@ func Test_handleMsgEditProfile(t *testing.T) {
 			expErr: nil,
 		},
 		{
-			name:             "Profile not edited because no profile with given account found",
+			name:             "Profile saved (with no previous profile created)",
 			existentAccounts: nil,
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
+			msg: types.NewMsgSaveProfile(
+				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
 				testProfile.Bio,
@@ -137,14 +63,13 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("No existent profile to edit for address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
+			expErr: nil,
 		},
 		{
 			name:             "Profile not edited because the new moniker already exists",
 			existentAccounts: types.Profiles{testProfile, testAcc2},
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
+			msg: types.NewMsgSaveProfile(
+				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
 				testProfile.Bio,
@@ -157,8 +82,8 @@ func Test_handleMsgEditProfile(t *testing.T) {
 		{
 			name:             "Profile not edited because of the invalid pics uri",
 			existentAccounts: types.Profiles{testProfile},
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
+			msg: types.NewMsgSaveProfile(
+				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
 				testProfile.Bio,
@@ -197,17 +122,17 @@ func Test_handleMsgEditProfile(t *testing.T) {
 				require.Len(t, profiles, 1)
 
 				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.NewMoniker), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Moniker), res.Data)
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
-					types.EventTypeProfileEdited,
-					sdk.NewAttribute(types.AttributeProfileMoniker, *test.msg.NewMoniker),
+					types.EventTypeProfileSaved,
+					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createAccountEv)
 			}
 
 		})
@@ -266,122 +191,10 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, ctx.EventManager().Events(), 1)
-				require.Contains(t, ctx.EventManager().Events(), createAccountEv)
+				require.Len(t, res.Events, 1)
+				require.Contains(t, res.Events, createAccountEv)
 			}
 
-		})
-	}
-}
-
-func TestHandler_GetEditedProfile(t *testing.T) {
-	name := "mame"
-	surname := "habe"
-	bio := "bioh"
-	pic := "pic"
-	cov := "cov"
-	pictures := types.NewPictures(&pic, &cov)
-	picEdited := types.NewPictures(&pic, testProfile.Pictures.Cover)
-	covEdited := types.NewPictures(&pic, &cov)
-	newMoniker := "omn"
-
-	tests := []struct {
-		name       string
-		profile    types.Profile
-		msg        types.MsgEditProfile
-		expProfile types.Profile
-	}{
-		{
-			name:    "edited profile correctly",
-			profile: testProfile,
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
-				&name,
-				&surname,
-				&bio,
-				&pic,
-				&cov,
-				testProfile.Creator,
-			),
-			expProfile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  newMoniker,
-				Bio:      &bio,
-				Pictures: pictures,
-				Creator:  testProfile.Creator,
-			},
-		},
-		{
-			name:    "edited profile correctly 2",
-			profile: testProfile,
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
-				&name,
-				&surname,
-				&bio,
-				&pic,
-				nil,
-				testProfile.Creator,
-			),
-			expProfile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  "omn",
-				Bio:      &bio,
-				Pictures: picEdited,
-				Creator:  testProfile.Creator,
-			},
-		},
-		{
-			name:    "edited profile correctly 3",
-			profile: testProfile,
-			msg: types.NewMsgEditProfile(
-				&newMoniker,
-				&name,
-				&surname,
-				&bio,
-				nil,
-				&cov,
-				testProfile.Creator,
-			),
-			expProfile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  "omn",
-				Bio:      &bio,
-				Pictures: covEdited,
-				Creator:  testProfile.Creator,
-			},
-		},
-		{
-			name:    "edited profile correctly 4",
-			profile: testProfile,
-			msg: types.NewMsgEditProfile(
-				nil,
-				&name,
-				&surname,
-				&bio,
-				nil,
-				&cov,
-				testProfile.Creator,
-			),
-			expProfile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  testProfile.Moniker,
-				Bio:      &bio,
-				Pictures: covEdited,
-				Creator:  testProfile.Creator,
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			edited := keeper.GetEditedProfile(test.profile, test.msg)
-			require.Equal(t, test.expProfile, edited)
 		})
 	}
 }

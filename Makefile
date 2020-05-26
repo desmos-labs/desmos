@@ -14,21 +14,6 @@ include contrib/devtools/Makefile
 ########################################
 ### Build flags
 
-ifneq ($(GOSUM),)
-  ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
-endif
-
-ifeq ($(WITH_CLEVELDB),yes)
-  build_tags += gcc
-  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
-endif
-
-build_tags += $(BUILD_TAGS)
-build_tags := $(strip $(build_tags))
-
-ldflags += $(LDFLAGS)
-ldflags := $(strip $(ldflags))
-
 # Process linker flags
 ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
  	-X 'github.com/cosmos/cosmos-sdk/version.ServerName=desmosd' \
@@ -36,6 +21,24 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
  	-X 'github.com/cosmos/cosmos-sdk/version.Version=$(VERSION)' \
     -X 'github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)' \
   	-X 'github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags)'
+
+ifneq ($(GOSUM),)
+  ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
+endif
+
+ifeq ($(DB_BACKEND),cleveldb)
+  build_tags += gcc cleveldb
+  ldflags += -X 'github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb'
+else ifeq ($(DB_BACKEND),rocksdb)
+  build_tags += gcc rocksdb
+  ldflags += -X 'github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb'
+endif
+
+build_tags += $(BUILD_TAGS)
+build_tags := $(strip $(build_tags))
+
+ldflags += $(LDFLAGS)
+ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags="$(build_tags)" -ldflags="$(ldflags)"
 

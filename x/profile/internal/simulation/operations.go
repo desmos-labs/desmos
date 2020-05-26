@@ -12,8 +12,7 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgCreateProfile = "op_weight_msg_create_profile"
-	OpWeightMsgEditProfile   = "op_weight_msg_edit_profile"
+	OpWeightMsgSaveProfile   = "op_weight_msg_save_profile"
 	OpWeightMsgDeleteProfile = "op_weight_msg_delete_profile"
 
 	DefaultGasValue = 200000
@@ -21,17 +20,10 @@ const (
 
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
-	var weightMsgCreateProfile int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateProfile, &weightMsgCreateProfile, nil,
+	var weightMsgSaveProfile int
+	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgCreateProfile = params.DefaultWeightMsgCreateAccount
-		},
-	)
-
-	var weightMsgEditProfile int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditProfile, &weightMsgEditProfile, nil,
-		func(_ *rand.Rand) {
-			weightMsgEditProfile = params.DefaultWeightMsgEditAccount
+			weightMsgSaveProfile = params.DefaultWeightMsgSaveAccount
 		},
 	)
 
@@ -44,12 +36,8 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
-			weightMsgCreateProfile,
-			SimulateMsgCreateProfile(ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgEditProfile,
-			SimulateMsgEditProfile(k, ak),
+			weightMsgSaveProfile,
+			SimulateMsgSaveProfile(k, ak),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
