@@ -36,8 +36,15 @@ func TestDecodeStore(t *testing.T) {
 		types.NewReport("scam", "it's a scam", reportCreatorAddr),
 	}
 
+	reportsTypes := types.ReportTypes{
+		"scam",
+		"offense,",
+		"nudity",
+	}
+
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ReportStoreKey(id), Value: cdc.MustMarshalBinaryBare(&reports)},
+		kv.Pair{Key: types.ReportsTypeStorePrefix, Value: cdc.MustMarshalBinaryBare(&reportsTypes)},
 	}
 
 	tests := []struct {
@@ -45,6 +52,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
+		{"Report types", fmt.Sprintf("ReportsTypeA: %s\nReportsTypeB: %s\n", reportsTypes, reportsTypes)},
 		{"other", ""},
 	}
 
