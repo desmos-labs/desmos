@@ -93,9 +93,7 @@ module.exports = {
                         title: "Updates",
                         collapsable: true,
                         children: [
-                            ["validators/updates/v0.3.1", "Version v0.3.1"],
-                            ["validators/updates/v0.5.0", "Version v0.5.0"],
-                            ["validators/updates/v0.6.0", "Version v0.6.0"],
+                            ["validators/updates/v0.3.1", "Version 0.3.1"],
                         ]
                     }
                 ]
@@ -113,7 +111,9 @@ module.exports = {
                 title: "Migrations",
                 collapsable: true,
                 children: [
-                    ["migrations/v0.3.0", "Migrate to version 0.3.0"]
+                    ["migrations/0.3.0", "Migrate to version 0.3.0"],
+                    ["migrations/0.5.0", "Migrate to version 0.5.0"],
+                    ["migrations/0.6.0", "Migrate to version 0.6.0"],
                 ]
             }
         ],
