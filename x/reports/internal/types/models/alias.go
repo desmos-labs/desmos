@@ -24,5 +24,3 @@ var (
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 )
-
-type ()

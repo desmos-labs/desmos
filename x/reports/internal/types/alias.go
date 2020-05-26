@@ -29,10 +29,10 @@ var (
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
+	ModelsCdc              = models.ModelsCdc
 )
 
 type (
