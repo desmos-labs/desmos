@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -235,4 +236,13 @@ func RegisteredReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
 	}
 
 	return reactionsData
+}
+
+// RandomEmojiPostReaction returns a random post reaction representing an emoji reaction
+func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
+	accounts := sim.RandomAccounts(r, 20)
+	creator := accounts[r.Intn(len(accounts))].Address
+
+	rEmoji := emoji.EmojisList[r.Intn(len(emoji.EmojisList))]
+	return types.NewPostReaction(rEmoji.Shortcodes[0], rEmoji.Value, creator)
 }

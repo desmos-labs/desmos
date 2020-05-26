@@ -170,6 +170,6 @@ func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the magpie module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
 	// TODO: Implement these again
-	//return WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak)
+	//return WeightedOperations(simState.AppParams, simState.cdc, am.keeper, am.ak)
 	return nil
 }
