@@ -17,11 +17,6 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &reportsA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &reportsB)
 		return fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reportsA, reportsB)
-	case bytes.HasPrefix(kvA.Key, types.ReportsTypeStorePrefix):
-		var reportsA, reportsB types.ReportTypes
-		cdc.MustUnmarshalBinaryBare(kvA.Value, &reportsA)
-		cdc.MustUnmarshalBinaryBare(kvB.Value, &reportsB)
-		return fmt.Sprintf("ReportsTypeA: %s\nReportsTypeB: %s\n", reportsA, reportsB)
 	default:
 		panic(fmt.Sprintf("invalid account key %X", kvA.Key))
 	}

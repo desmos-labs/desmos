@@ -6,7 +6,6 @@ import (
 
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
 )
 
 var (
@@ -26,7 +25,7 @@ var (
 		"it'' racism",
 	}
 
-	repTypes = types.ReportTypes{
+	repTypes = []string{
 		"nudity",
 		"violence",
 		"intimidation",
@@ -49,7 +48,7 @@ type ReportsData struct {
 	Creator sim.Account
 	PostID  posts.PostID
 	Message string
-	Type    types.ReportType
+	Type    string
 }
 
 // RandomReportsData returns a randomly generated ReportsData based on the given random and accounts list
@@ -71,6 +70,6 @@ func RandomReportMessage(r *rand.Rand) string {
 	return messages[r.Intn(len(messages))]
 }
 
-func RandomReportTypes(r *rand.Rand) types.ReportType {
+func RandomReportTypes(r *rand.Rand) string {
 	return repTypes[r.Intn(len(repTypes))]
 }

@@ -50,7 +50,6 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		)
 
 		k.PostKeeper.SavePost(ctx, post)
-		k.RegisterReportsTypes(ctx, msg.Report.Type)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {

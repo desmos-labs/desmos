@@ -30,10 +30,6 @@ func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", msg.PostID))
 	}
 
-	if repTypes := keeper.GetRegisteredReportsTypes(ctx); !repTypes.Contains(msg.Report.Type) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("message's report type %s is not one of the registered types", msg.Report.Type))
-	}
-
 	keeper.SaveReport(ctx, msg.PostID, msg.Report)
 
 	createEvent := sdk.NewEvent(

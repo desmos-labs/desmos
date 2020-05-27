@@ -9,64 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestReportType_Empty(t *testing.T) {
-	tests := []struct {
-		name    string
-		repType types.ReportType
-		expBool bool
-	}{
-		{
-			name:    "empty type returns true",
-			repType: types.ReportType(""),
-			expBool: true,
-		},
-		{
-			name:    "non-empty type returns false",
-			repType: types.ReportType("spam"),
-			expBool: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualBool := test.repType.Empty()
-			require.Equal(t, actualBool, test.expBool)
-		})
-	}
-
-}
-
-func TestReportsTypes_Contains(t *testing.T) {
-	tests := []struct {
-		name         string
-		reportsTypes types.ReportTypes
-		repType      types.ReportType
-		expBool      bool
-	}{
-		{
-			name:         "array containing report type returns true",
-			reportsTypes: types.ReportTypes{"spam"},
-			repType:      types.ReportType("spam"),
-			expBool:      true,
-		},
-		{
-			name:         "array non-containing report type returns false",
-			reportsTypes: types.ReportTypes{"spam"},
-			repType:      types.ReportType("offense"),
-			expBool:      false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualBool := test.reportsTypes.Contains(test.repType)
-			require.Equal(t, actualBool, test.expBool)
-		})
-	}
-}
-
 func TestReport_String(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)

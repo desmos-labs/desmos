@@ -8,39 +8,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-type ReportType string
-
-// Empty returns true if the report type value is empty
-func (rt ReportType) Empty() bool {
-	return len(strings.TrimSpace(string(rt))) == 0
-}
-
-type ReportTypes []ReportType
-
-// Contains checks if the rts array contains the given reportType
-func (rts ReportTypes) Contains(reportType ReportType) bool {
-	//check for cli test purposes
-	if rts == nil {
-		return true
-	}
-
-	for _, rt := range rts {
-		if rt == reportType {
-			return true
-		}
-	}
-	return false
-}
-
 // Report is the struct of a post's reports
 type Report struct {
-	Type    ReportType     `json:"type" yaml:"type"`       // Identifies the type of the reports
+	Type    string         `json:"type" yaml:"type"`       // Identifies the type of the reports
 	Message string         `json:"message" yaml:"message"` // Contains the user message
 	User    sdk.AccAddress `json:"user" yaml:"user"`       // Identifies the reporting user
 }
 
 // NewReport returns a Report
-func NewReport(t ReportType, message string, user sdk.AccAddress) Report {
+func NewReport(t string, message string, user sdk.AccAddress) Report {
 	return Report{
 		Type:    t,
 		Message: message,
@@ -60,7 +36,7 @@ func (r Report) String() string {
 
 // Validate implements validator
 func (r Report) Validate() error {
-	if r.Type.Empty() {
+	if len(strings.TrimSpace(r.Type)) == 0 {
 		return fmt.Errorf("report type cannot be empty")
 	}
 

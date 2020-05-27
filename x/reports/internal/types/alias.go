@@ -21,24 +21,22 @@ const (
 
 var (
 	// functions aliases
-	RegisterModelsCodec   = models.RegisterModelsCodec
+	NewMsgReportPost      = msgs.NewMsgReportPost
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 	ReportStoreKey        = models.ReportStoreKey
 	NewReportResponse     = models.NewReportResponse
 	NewReport             = models.NewReport
-	NewMsgReportPost      = msgs.NewMsgReportPost
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	RegisterModelsCodec   = models.RegisterModelsCodec
 
 	// variable aliases
+	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
-	ModelsCdc              = models.ModelsCdc
 )
 
 type (
 	ReportsQueryResponse = models.ReportsQueryResponse
-	ReportType           = models.ReportType
-	ReportTypes          = models.ReportTypes
 	Report               = models.Report
 	Reports              = models.Reports
 	MsgReportPost        = msgs.MsgReportPost

@@ -42,32 +42,6 @@ func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Re
 
 }
 
-// RegisterReportsTypes allows to save the given reportType inside the chain state.
-func (k Keeper) RegisterReportsTypes(ctx sdk.Context, reportType types.ReportType) bool {
-	store := ctx.KVStore(k.StoreKey)
-
-	var reportsTypes types.ReportTypes
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportsTypeStorePrefix), &reportsTypes)
-
-	//check if the reports' type is already registered
-	for _, repType := range reportsTypes {
-		if repType == reportType {
-			return false
-		}
-	}
-
-	reportsTypes = append(reportsTypes, reportType)
-	store.Set(types.ReportsTypeStorePrefix, k.Cdc.MustMarshalBinaryBare(&reportsTypes))
-	return true
-}
-
-// GetRegisteredReportsTypes returns all the registered reports types inside the given context
-func (k Keeper) GetRegisteredReportsTypes(ctx sdk.Context) (reportsTypes types.ReportTypes) {
-	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportsTypeStorePrefix), &reportsTypes)
-	return reportsTypes
-}
-
 // GetPostReports returns the list of reports associated with the given postID.
 // If no reports is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID posts.PostID) (reports types.Reports) {
