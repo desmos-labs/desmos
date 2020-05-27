@@ -29,7 +29,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryPostReports queries a post's reports
 func GetCmdQueryPostReports(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "all [post-id]",
+		Use:   "post [id]",
 		Short: "Returns all the reports of the posts with the given ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

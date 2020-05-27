@@ -23,7 +23,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
 
 	//post keeper
-	postsK := posts.NewKeeper(testCodecPosts(), postsKey)
+	postsK := posts.NewKeeper(testCodec(), postsKey)
 
 	// create an in-memory db for reports
 	memDB := db.NewMemDB()
@@ -47,17 +47,6 @@ func testCodec() *codec.Codec {
 	// register the different types
 	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
 	types.RegisterCodec(cdc)
-
-	cdc.Seal()
-	return cdc
-}
-
-func testCodecPosts() *codec.Codec {
-	var cdc = codec.New()
-
-	// register the different types
-	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
-	posts.RegisterCodec(cdc)
 
 	cdc.Seal()
 	return cdc

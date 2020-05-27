@@ -29,7 +29,7 @@ func NewKeeper(pk posts.Keeper, cdc *codec.Codec, storeKey sdk.StoreKey) Keeper 
 // SaveReport allows to save the given reports inside the current context.
 // It assumes that the given reports has already been validated.
 // If the same reports has already been inserted, nothing will be changed.
-func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Report) bool {
+func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Report) {
 	store := ctx.KVStore(k.StoreKey)
 	key := models.ReportStoreKey(postID)
 	// Get the list of reports related to the given postID
@@ -37,12 +37,9 @@ func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Re
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reports)
 
 	// try to append the given reports
-	reports, appended := reports.AppendIfMissing(report)
-	if appended {
-		store.Set(key, k.Cdc.MustMarshalBinaryBare(&reports))
-	}
+	reports = append(reports, report)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reports))
 
-	return appended
 }
 
 // RegisterReportsTypes allows to save the given reportType inside the chain state.

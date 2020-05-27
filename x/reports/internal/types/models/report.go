@@ -118,15 +118,3 @@ func (reports Reports) Equals(other Reports) bool {
 
 	return true
 }
-
-// AppendIfMissing appends the given Report to the Reports slice if it does not exist inside it yet.
-// It returns a new slice of Reports containing such reports and a boolean indicating whether or not the original
-// slice has been modified.
-func (reports Reports) AppendIfMissing(report Report) (Reports, bool) {
-	for _, r := range reports {
-		if r.Equals(report) {
-			return reports, false
-		}
-	}
-	return append(reports, report), true
-}

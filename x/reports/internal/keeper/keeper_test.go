@@ -9,51 +9,18 @@ import (
 )
 
 func TestKeeper_SaveReport(t *testing.T) {
-	tests := []struct {
-		name            string
-		report          models.Report
-		existentReports models.Reports
-		expAdd          bool
-		expReports      models.Reports
-	}{
-		{
-			name:            "New reports added correctly",
-			report:          models.NewReport("type", "message", creator),
-			existentReports: nil,
-			expAdd:          true,
-			expReports:      models.Reports{models.NewReport("type", "message", creator)},
-		},
-		{
-			name:   "Existent reports not added",
-			report: models.NewReport("type", "message", creator),
-			existentReports: models.Reports{
-				{Type: "type", Message: "message", User: creator},
-			},
-			expAdd:     false,
-			expReports: models.Reports{models.NewReport("type", "message", creator)},
-		},
-	}
+	expReports := models.Reports{models.NewReport("type", "message", creator)}
+	report := models.NewReport("type", "message", creator)
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-			if test.existentReports != nil {
-				store.Set(types.ReportStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&test.existentReports))
-			}
+	ctx, k := SetupTestInput()
+	store := ctx.KVStore(k.StoreKey)
 
-			actual := k.SaveReport(ctx, postID, test.report)
+	k.SaveReport(ctx, postID, report)
 
-			require.Equal(t, test.expAdd, actual)
+	var reports models.Reports
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(postID)), &reports)
+	require.Equal(t, expReports, reports)
 
-			var reports models.Reports
-			bz := store.Get(types.ReportStoreKey(postID))
-			k.Cdc.MustUnmarshalBinaryBare(bz, &reports)
-
-			require.Equal(t, test.expReports, reports)
-		})
-	}
 }
 
 func TestKeeper_RegisterReportTypes(t *testing.T) {

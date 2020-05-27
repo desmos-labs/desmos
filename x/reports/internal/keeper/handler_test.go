@@ -41,14 +41,6 @@ func Test_handleMsgReportPost(t *testing.T) {
 			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", postID)),
 		},
 		{
-			name:           "reports already made by user",
-			msg:            msgReport,
-			existentReport: &existentReport,
-			existentPost:   &existentPost,
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reports to the post with id %s has already been made by user: %s",
-				msgReport.PostID, msgReport.Report.User)),
-		},
-		{
 			name:           "reports type not registered",
 			msg:            msgReport2,
 			existentReport: &existentReport,

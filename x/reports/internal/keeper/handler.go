@@ -34,11 +34,7 @@ func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("message's report type %s is not one of the registered types", msg.Report.Type))
 	}
 
-	// Save the reports if it's not been made before
-	if saved := keeper.SaveReport(ctx, msg.PostID, msg.Report); !saved {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reports to the post with id %s has already been made by user: %s",
-			msg.PostID, msg.Report.User))
-	}
+	keeper.SaveReport(ctx, msg.PostID, msg.Report)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypePostReported,

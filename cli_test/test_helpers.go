@@ -474,7 +474,7 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 // desmoscli tx reports
 
 func (f *Fixtures) TxReportPost(id, repType, repMess string, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx reports report %s %s %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx reports create %s %s %s --keyring-backend=test --from=%s %v`,
 		f.DesmosliBinary, id, repType, repMess, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
@@ -806,11 +806,11 @@ func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
 }
 
 //___________________________________________________________________________________
-// query profile
+// query reports
 
 // QueryReports returns stored reports associated to the id given
 func (f *Fixtures) QueryReports(id string, flags ...string) reports.ReportsQueryResponse {
-	cmd := fmt.Sprintf("%s query reports all %s --output=json %s", f.DesmosliBinary, id, f.Flags())
+	cmd := fmt.Sprintf("%s query reports post %s --output=json %s", f.DesmosliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()

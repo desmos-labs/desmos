@@ -38,13 +38,13 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdReportPost is the CLI command for reporting a post
 func GetCmdReportPost(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "report [post-id] [reports-type] [reports-message]",
+		Use:   "create [post-id] [reports-type] [reports-message]",
 		Short: "reports a post",
 		Long: fmt.Sprintf(`
 Report an existent post specifying its ID, the reports's type and message.
 
 E.g.
-%s tx reports report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
+%s tx reports create a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
 `, version.ClientName),
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
