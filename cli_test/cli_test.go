@@ -1,5 +1,3 @@
-// +build cli_test
-
 // nolint
 package clitest
 
@@ -22,6 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 )
 
@@ -467,147 +466,145 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
-	// TODO: Bring this back once the gov module is enabled again
-
 	// Start Desmosd server
-	//proc := f.GDStart()
-	//defer proc.Stop(false)
-	//
-	//depositParams := f.QueryGovParamDeposit()
-	//require.Equal(t, depositParams.MinDeposit, sdk.NewCoins(sdk.NewCoin(denom, sdk.TokensFromConsensusPower(10))))
-	//
-	//f.QueryGovParamVoting()
-	//f.QueryGovParamTallying()
-	//
-	//fooAddr := f.KeyAddress(keyFoo)
-	//
-	//fooAcc := f.QueryAccount(fooAddr)
-	//startTokens := sdk.TokensFromConsensusPower(140)
-	//require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	//
-	//proposalsQuery := f.QueryGovProposals()
-	//require.Empty(t, proposalsQuery)
-	//
-	//// Test submit generate only for submit proposal
-	//proposalTokens := sdk.TokensFromConsensusPower(5)
-	//success, stdout, stderr := f.TxGovSubmitProposal(
-	//	fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--generate-only", "-y")
-	//require.True(t, success)
-	//require.Empty(t, stderr)
-	//msg := unmarshalStdTx(t, stdout)
-	//require.NotZero(t, msg.Fee.Gas)
-	//require.Equal(t, len(msg.Msgs), 1)
-	//require.Equal(t, 0, len(msg.GetSignatures()))
-	//
-	//// Test --dry-run
-	//success, _, _ = f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--dry-run")
-	//require.True(t, success)
-	//
-	//// Create the proposal
-	//f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "-y")
-	//tests.WaitForNextNBlocksTM(1, f.Port)
-	//
-	//// Ensure transaction events can be queried
-	//searchResult := f.QueryTxs(1, 50, "message.action=submit_proposal", fmt.Sprintf("message.sender=%s", fooAddr))
-	//require.Len(t, searchResult.Txs, 1)
-	//
-	//// Ensure deposit was deducted
-	//fooAcc = f.QueryAccount(fooAddr)
-	//require.Equal(t, startTokens.Sub(proposalTokens), fooAcc.GetCoins().AmountOf(denom))
-	//
-	//// Ensure propsal is directly queryable
-	//proposal1 := f.QueryGovProposal(1)
-	//require.Equal(t, uint64(1), proposal1.ProposalID)
-	//require.Equal(t, gov.StatusDepositPeriod, proposal1.Status)
-	//
-	//// Ensure query proposals returns properly
-	//proposalsQuery = f.QueryGovProposals()
-	//require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
-	//
-	//// Query the deposits on the proposal
-	//deposit := f.QueryGovDeposit(1, fooAddr)
-	//require.Equal(t, proposalTokens, deposit.Amount.AmountOf(denom))
-	//
-	//// Test deposit generate only
-	//depositTokens := sdk.TokensFromConsensusPower(10)
-	//success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), "--generate-only")
-	//require.True(t, success)
-	//require.Empty(t, stderr)
-	//msg = unmarshalStdTx(t, stdout)
-	//require.NotZero(t, msg.Fee.Gas)
-	//require.Equal(t, len(msg.Msgs), 1)
-	//require.Equal(t, 0, len(msg.GetSignatures()))
-	//
-	//// Run the deposit transaction
-	//f.TxGovDeposit(1, keyFoo, sdk.NewCoin(denom, depositTokens), "-y")
-	//tests.WaitForNextNBlocksTM(1, f.Port)
-	//
-	//// test query deposit
-	//deposits := f.QueryGovDeposits(1)
-	//require.Len(t, deposits, 1)
-	//require.Equal(t, proposalTokens.Add(depositTokens), deposits[0].Amount.AmountOf(denom))
-	//
-	//// Ensure querying the deposit returns the proper amount
-	//deposit = f.QueryGovDeposit(1, fooAddr)
-	//require.Equal(t, proposalTokens.Add(depositTokens), deposit.Amount.AmountOf(denom))
-	//
-	//// Ensure events are set on the transaction
-	//searchResult = f.QueryTxs(1, 50, "message.action=deposit", fmt.Sprintf("message.sender=%s", fooAddr))
-	//require.Len(t, searchResult.Txs, 1)
-	//
-	//// Ensure account has expected amount of funds
-	//fooAcc = f.QueryAccount(fooAddr)
-	//require.Equal(t, startTokens.Sub(proposalTokens.Add(depositTokens)), fooAcc.GetCoins().AmountOf(denom))
-	//
-	//// Fetch the proposal and ensure it is now in the voting period
-	//proposal1 = f.QueryGovProposal(1)
-	//require.Equal(t, uint64(1), proposal1.ProposalID)
-	//require.Equal(t, gov.StatusVotingPeriod, proposal1.Status)
-	//
-	//// Test vote generate only
-	//success, stdout, stderr = f.TxGovVote(1, gov.OptionYes, fooAddr.String(), "--generate-only")
-	//require.True(t, success)
-	//require.Empty(t, stderr)
-	//msg = unmarshalStdTx(t, stdout)
-	//require.NotZero(t, msg.Fee.Gas)
-	//require.Equal(t, len(msg.Msgs), 1)
-	//require.Equal(t, 0, len(msg.GetSignatures()))
-	//
-	//// Vote on the proposal
-	//f.TxGovVote(1, gov.OptionYes, keyFoo, "-y")
-	//tests.WaitForNextNBlocksTM(1, f.Port)
-	//
-	//// Query the vote
-	//vote := f.QueryGovVote(1, fooAddr)
-	//require.Equal(t, uint64(1), vote.ProposalID)
-	//require.Equal(t, gov.OptionYes, vote.Option)
-	//
-	//// Query the votes
-	//votes := f.QueryGovVotes(1)
-	//require.Len(t, votes, 1)
-	//require.Equal(t, uint64(1), votes[0].ProposalID)
-	//require.Equal(t, gov.OptionYes, votes[0].Option)
-	//
-	//// Ensure events are applied to voting transaction properly
-	//searchResult = f.QueryTxs(1, 50, "message.action=vote", fmt.Sprintf("message.sender=%s", fooAddr))
-	//require.Len(t, searchResult.Txs, 1)
-	//
-	//// Ensure no proposals in deposit period
-	//proposalsQuery = f.QueryGovProposals("--status=DepositPeriod")
-	//require.Empty(t, proposalsQuery)
-	//
-	//// Ensure the proposal returns as in the voting period
-	//proposalsQuery = f.QueryGovProposals("--status=VotingPeriod")
-	//require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
-	//
-	//// submit a second test proposal
-	//f.TxGovSubmitProposal(keyFoo, "Text", "Apples", "test", sdk.NewCoin(denom, proposalTokens), "-y")
-	//tests.WaitForNextNBlocksTM(1, f.Port)
-	//
-	//// Test limit on proposals query
-	//proposalsQuery = f.QueryGovProposals("--limit=2")
-	//require.Len(t, proposalsQuery, 2)
-	//require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	depositParams := f.QueryGovParamDeposit()
+	require.Equal(t, depositParams.MinDeposit, sdk.NewCoins(sdk.NewCoin(denom, sdk.TokensFromConsensusPower(10))))
+
+	f.QueryGovParamVoting()
+	f.QueryGovParamTallying()
+
+	fooAddr := f.KeyAddress(keyFoo)
+
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+
+	proposalsQuery := f.QueryGovProposals()
+	require.Empty(t, proposalsQuery)
+
+	// Test submit generate only for submit proposal
+	proposalTokens := sdk.TokensFromConsensusPower(5)
+	success, stdout, stderr := f.TxGovSubmitProposal(
+		fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--generate-only", "-y")
+	require.True(t, success)
+	require.Empty(t, stderr)
+	msg := unmarshalStdTx(t, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Equal(t, len(msg.Msgs), 1)
+	require.Equal(t, 0, len(msg.GetSignatures()))
+
+	// Test --dry-run
+	success, _, _ = f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--dry-run")
+	require.True(t, success)
+
+	// Create the proposal
+	f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "-y")
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Ensure transaction events can be queried
+	searchResult := f.QueryTxs(1, 50, "message.action=submit_proposal", fmt.Sprintf("message.sender=%s", fooAddr))
+	require.Len(t, searchResult.Txs, 1)
+
+	// Ensure deposit was deducted
+	fooAcc = f.QueryAccount(fooAddr)
+	require.Equal(t, startTokens.Sub(proposalTokens), fooAcc.GetCoins().AmountOf(denom))
+
+	// Ensure propsal is directly queryable
+	proposal1 := f.QueryGovProposal(1)
+	require.Equal(t, uint64(1), proposal1.ProposalID)
+	require.Equal(t, gov.StatusDepositPeriod, proposal1.Status)
+
+	// Ensure query proposals returns properly
+	proposalsQuery = f.QueryGovProposals()
+	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
+
+	// Query the deposits on the proposal
+	deposit := f.QueryGovDeposit(1, fooAddr)
+	require.Equal(t, proposalTokens, deposit.Amount.AmountOf(denom))
+
+	// Test deposit generate only
+	depositTokens := sdk.TokensFromConsensusPower(10)
+	success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), "--generate-only")
+	require.True(t, success)
+	require.Empty(t, stderr)
+	msg = unmarshalStdTx(t, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Equal(t, len(msg.Msgs), 1)
+	require.Equal(t, 0, len(msg.GetSignatures()))
+
+	// Run the deposit transaction
+	f.TxGovDeposit(1, keyFoo, sdk.NewCoin(denom, depositTokens), "-y")
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test query deposit
+	deposits := f.QueryGovDeposits(1)
+	require.Len(t, deposits, 1)
+	require.Equal(t, proposalTokens.Add(depositTokens), deposits[0].Amount.AmountOf(denom))
+
+	// Ensure querying the deposit returns the proper amount
+	deposit = f.QueryGovDeposit(1, fooAddr)
+	require.Equal(t, proposalTokens.Add(depositTokens), deposit.Amount.AmountOf(denom))
+
+	// Ensure events are set on the transaction
+	searchResult = f.QueryTxs(1, 50, "message.action=deposit", fmt.Sprintf("message.sender=%s", fooAddr))
+	require.Len(t, searchResult.Txs, 1)
+
+	// Ensure account has expected amount of funds
+	fooAcc = f.QueryAccount(fooAddr)
+	require.Equal(t, startTokens.Sub(proposalTokens.Add(depositTokens)), fooAcc.GetCoins().AmountOf(denom))
+
+	// Fetch the proposal and ensure it is now in the voting period
+	proposal1 = f.QueryGovProposal(1)
+	require.Equal(t, uint64(1), proposal1.ProposalID)
+	require.Equal(t, gov.StatusVotingPeriod, proposal1.Status)
+
+	// Test vote generate only
+	success, stdout, stderr = f.TxGovVote(1, gov.OptionYes, fooAddr.String(), "--generate-only")
+	require.True(t, success)
+	require.Empty(t, stderr)
+	msg = unmarshalStdTx(t, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Equal(t, len(msg.Msgs), 1)
+	require.Equal(t, 0, len(msg.GetSignatures()))
+
+	// Vote on the proposal
+	f.TxGovVote(1, gov.OptionYes, keyFoo, "-y")
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Query the vote
+	vote := f.QueryGovVote(1, fooAddr)
+	require.Equal(t, uint64(1), vote.ProposalID)
+	require.Equal(t, gov.OptionYes, vote.Option)
+
+	// Query the votes
+	votes := f.QueryGovVotes(1)
+	require.Len(t, votes, 1)
+	require.Equal(t, uint64(1), votes[0].ProposalID)
+	require.Equal(t, gov.OptionYes, votes[0].Option)
+
+	// Ensure events are applied to voting transaction properly
+	searchResult = f.QueryTxs(1, 50, "message.action=vote", fmt.Sprintf("message.sender=%s", fooAddr))
+	require.Len(t, searchResult.Txs, 1)
+
+	// Ensure no proposals in deposit period
+	proposalsQuery = f.QueryGovProposals("--status=DepositPeriod")
+	require.Empty(t, proposalsQuery)
+
+	// Ensure the proposal returns as in the voting period
+	proposalsQuery = f.QueryGovProposals("--status=VotingPeriod")
+	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
+
+	// Submit a second test proposal
+	f.TxGovSubmitProposal(keyFoo, "Text", "Apples", "test", sdk.NewCoin(denom, proposalTokens), "-y")
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test limit on proposals query
+	proposalsQuery = f.QueryGovProposals("--limit=2")
+	require.Len(t, proposalsQuery, 2)
+	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
 
 	f.Cleanup()
 }
