@@ -1,6 +1,9 @@
-# Version 0.6.1
+# Version 0.6.2
 ## Changes
 - Updated Cosmos to v0.38.4 (#177)
+
+# Version 0.6.1
+## Changes
 - Updated the way with which the profiles are created and edited (#170)
 
 ## Bug fixes

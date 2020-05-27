@@ -15,5 +15,3 @@ require (
 	github.com/tendermint/tendermint v0.33.3
 	github.com/tendermint/tm-db v0.5.0
 )
-
-replace github.com/cosmos/cosmos-sdk => github.com/RiccardoM/cosmos-sdk v0.34.4-0.20200514074150-9bee4bc6ad6a
