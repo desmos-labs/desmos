@@ -26,7 +26,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 // handleMsgReportPost handles the reports of a post
 func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost) (*sdk.Result, error) {
 	// check if the post to reports exists
-	if _, found := keeper.PostKeeper.GetPost(ctx, msg.PostID); !found {
+	if exist := keeper.CheckPostExistence(ctx, msg.PostID); !exist {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", msg.PostID))
 	}
 

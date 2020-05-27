@@ -12,7 +12,7 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	PostKeeper posts.Keeper // post's keeper to perform checks on the postIDs
+	postKeeper posts.Keeper // post's keeper to perform checks on the postIDs
 	StoreKey   sdk.StoreKey // Unexposed key to access store from sdk.Context
 	Cdc        *codec.Codec // The wire codec for binary encoding/decoding.
 }
@@ -20,10 +20,17 @@ type Keeper struct {
 // NewKeeper creates new instances of the reports Keeper
 func NewKeeper(pk posts.Keeper, cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
-		PostKeeper: pk,
+		postKeeper: pk,
 		StoreKey:   storeKey,
 		Cdc:        cdc,
 	}
+}
+
+// CheckPostExistence checks if a post with the given postID is present inside
+// the current context and returns a boolean indicating that.
+func (k Keeper) CheckPostExistence(ctx sdk.Context, postID posts.PostID) bool {
+	_, exist := k.postKeeper.GetPost(ctx, postID)
+	return exist
 }
 
 // SaveReport allows to save the given reports inside the current context.

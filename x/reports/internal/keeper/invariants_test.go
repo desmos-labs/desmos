@@ -43,7 +43,7 @@ func TestInvariants(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+			ctx, k, _ := SetupTestInput()
 			// nolint: errcheck
 			k.SaveReport(ctx, test.postID, test.report)
 

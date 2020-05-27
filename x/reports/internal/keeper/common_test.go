@@ -16,7 +16,7 @@ import (
 	db "github.com/tendermint/tm-db"
 )
 
-func SetupTestInput() (sdk.Context, keeper.Keeper) {
+func SetupTestInput() (sdk.Context, keeper.Keeper, posts.Keeper) {
 
 	// define store keys
 	postsKey := sdk.NewKVStoreKey(posts.StoreKey)
@@ -38,7 +38,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 
-	return ctx, keeper.NewKeeper(postsK, cdc, reportsKey)
+	return ctx, keeper.NewKeeper(postsK, cdc, reportsKey), postsK
 }
 
 func testCodec() *codec.Codec {

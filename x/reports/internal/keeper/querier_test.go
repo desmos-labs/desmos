@@ -45,7 +45,7 @@ func Test_queryReports(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+			ctx, k, _ := SetupTestInput()
 
 			for _, rep := range test.storedReports {
 				k.SaveReport(ctx, postID, rep)

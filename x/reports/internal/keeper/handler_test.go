@@ -25,39 +25,33 @@ func Test_handleMsgReportPost(t *testing.T) {
 	)
 
 	tests := []struct {
-		name           string
-		msg            types.MsgReportPost
-		existentReport *types.Report
-		existentPost   *posts.Post
-		expErr         error
+		name         string
+		msg          types.MsgReportPost
+		existentPost *posts.Post
+		expErr       error
 	}{
 		{
-			name:           "post not found",
-			msg:            msgReport,
-			existentReport: nil,
-			existentPost:   nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", postID)),
+			name:         "post not found",
+			msg:          msgReport,
+			existentPost: nil,
+			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", postID)),
 		},
 		{
-			name:           "message handled correctly",
-			msg:            msgReport,
-			existentReport: nil,
-			existentPost:   &existentPost,
-			expErr:         nil,
+			name:         "message handled correctly",
+			msg:          msgReport,
+			existentPost: &existentPost,
+			expErr:       nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+			ctx, k, pk := SetupTestInput()
 
 			if test.existentPost != nil {
-				k.PostKeeper.SavePost(ctx, *test.existentPost)
-			}
-
-			if test.existentReport != nil {
-				k.SaveReport(ctx, postID, *test.existentReport)
+				// Save the post
+				pk.SavePost(ctx, *test.existentPost)
 			}
 
 			handler := keeper.NewHandler(k)
