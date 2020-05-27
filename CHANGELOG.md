@@ -1,5 +1,6 @@
 # Version 0.7.0
 - Implemented benchmarks tests (#126)
+- Restore `gov` module (#173)
 
 # Version 0.6.2
 ## Changes
