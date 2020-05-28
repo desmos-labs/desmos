@@ -51,13 +51,6 @@ func (r Report) Validate() error {
 	return nil
 }
 
-// Equals checks if the two reports are the same or not
-func (r Report) Equals(other Report) bool {
-	return r.Type == other.Type &&
-		r.Message == other.Message &&
-		r.User.Equals(other.User)
-}
-
 type Reports []Report
 
 // String implements stringer
@@ -78,19 +71,4 @@ func (reports Reports) Validate() error {
 		}
 	}
 	return nil
-}
-
-// Equals checks if the two reports slices are equal
-func (reports Reports) Equals(other Reports) bool {
-	if len(reports) != len(other) {
-		return false
-	}
-
-	for index, rep := range reports {
-		if !rep.Equals(other[index]) {
-			return false
-		}
-	}
-
-	return true
 }

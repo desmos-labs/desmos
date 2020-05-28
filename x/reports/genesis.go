@@ -1,8 +1,6 @@
 package reports
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -18,9 +16,9 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for postID, reports := range data.Reports {
-		postID := posts.PostID(postID)
-		if !postID.Valid() {
-			panic(fmt.Errorf("invalid postID: %s", postID))
+		postID, err := posts.ParsePostID(postID)
+		if err != nil {
+			panic(err)
 		}
 		for _, report := range reports {
 			keeper.SaveReport(ctx, postID, report)

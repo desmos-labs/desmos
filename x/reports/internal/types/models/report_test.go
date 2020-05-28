@@ -56,40 +56,6 @@ func TestReport_Validate(t *testing.T) {
 	}
 }
 
-func TestReport_Equals(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	types.NewReport("type", "message", creator)
-
-	tests := []struct {
-		name     string
-		report   types.Report
-		otherRep types.Report
-		expBool  bool
-	}{
-		{
-			name:     "equals reports returns true",
-			report:   types.NewReport("scam", "it's a trap", creator),
-			otherRep: types.NewReport("scam", "it's a trap", creator),
-			expBool:  true,
-		},
-		{
-			name:     "non-equals reports returns false",
-			report:   types.NewReport("scam", "it's a trap", creator),
-			otherRep: types.NewReport("spam", "it's a trap", creator),
-			expBool:  false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualBool := test.report.Equals(test.otherRep)
-			require.Equal(t, actualBool, test.expBool)
-		})
-	}
-}
-
 func TestReports_String(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
@@ -139,40 +105,6 @@ func TestReports_Validate(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			actualErr := test.reports.Validate()
 			require.Equal(t, actualErr, test.expErr)
-		})
-	}
-}
-
-func TestReports_Equals(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	types.NewReport("type", "message", creator)
-
-	tests := []struct {
-		name      string
-		reports   types.Reports
-		otherReps types.Reports
-		expBool   bool
-	}{
-		{
-			name:      "equals reports returns true",
-			reports:   types.Reports{types.NewReport("scam", "it's a trap", creator)},
-			otherReps: types.Reports{types.NewReport("scam", "it's a trap", creator)},
-			expBool:   true,
-		},
-		{
-			name:      "non-equals reports returns false",
-			reports:   types.Reports{types.NewReport("scam", "it's a trap", creator)},
-			otherReps: types.Reports{types.NewReport("spam", "it's a trap", creator)},
-			expBool:   false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actualBool := test.reports.Equals(test.otherReps)
-			require.Equal(t, actualBool, test.expBool)
 		})
 	}
 }

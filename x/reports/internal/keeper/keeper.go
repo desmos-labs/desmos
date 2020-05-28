@@ -39,6 +39,7 @@ func (k Keeper) CheckPostExistence(ctx sdk.Context, postID posts.PostID) bool {
 func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Report) {
 	store := ctx.KVStore(k.StoreKey)
 	key := models.ReportStoreKey(postID)
+
 	// Get the list of reports related to the given postID
 	var reports models.Reports
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reports)

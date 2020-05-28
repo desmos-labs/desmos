@@ -33,7 +33,7 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 
 		msg := types.NewMsgReportPost(
 			data.PostID,
-			string(data.Type),
+			data.Type,
 			data.Message,
 			data.Creator.Address,
 		)
@@ -50,8 +50,8 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		)
 
 		// Save the post
-		store := ctx.KVStore(k.StoreKey)
-		store.Set(posts.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
+		store := sdk.NewKVStoreKey(posts.StoreKey)
+		posts.NewKeeper(k.Cdc, store).SavePost(ctx, post)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
