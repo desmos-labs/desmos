@@ -1,6 +1,7 @@
 package simulation
 
 import (
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"math/rand"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
-func SimulateMsgReportPost(ak auth.AccountKeeper, pk posts.Keeper) sim.Operation {
+func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk posts.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -49,7 +50,7 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, pk posts.Keeper) sim.Operation
 		)
 
 		// Save the post
-		pk.SavePost(ctx, post)
+		k.PostKeeper.SavePost(ctx, post)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
