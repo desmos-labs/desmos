@@ -14,10 +14,6 @@ const (
 	OpWeightMsgSaveProfile   = simulation.OpWeightMsgSaveProfile
 	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
 	DefaultGasValue          = simulation.DefaultGasValue
-	EventTypeProfileSaved    = types.EventTypeProfileSaved
-	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileMoniker  = types.AttributeProfileMoniker
-	AttributeProfileCreator  = types.AttributeProfileCreator
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
 	StoreKey                 = types.StoreKey
@@ -31,16 +27,31 @@ const (
 	QuerierRoute             = types.QuerierRoute
 	QueryProfile             = types.QueryProfile
 	QueryProfiles            = types.QueryProfiles
+	EventTypeProfileSaved    = types.EventTypeProfileSaved
+	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
+	AttributeProfileMoniker  = types.AttributeProfileMoniker
+	AttributeProfileCreator  = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
+	NewMsgSaveProfile        = types.NewMsgSaveProfile
+	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
+	ProfileStoreKey          = types.ProfileStoreKey
+	MonikerStoreKey          = types.MonikerStoreKey
+	NewProfile               = types.NewProfile
+	NewPictures              = types.NewPictures
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
+	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	NewHandler               = keeper.NewHandler
+	DecodeStore              = simulation.DecodeStore
 	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
 	RandomProfileData        = simulation.RandomProfileData
@@ -54,33 +65,22 @@ var (
 	GetSimAccount            = simulation.GetSimAccount
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
-	DecodeStore              = simulation.DecodeStore
-	NewPictures              = types.NewPictures
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	NewMsgSaveProfile        = types.NewMsgSaveProfile
-	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
-	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
-	NewProfile               = types.NewProfile
 
 	// variable aliases
-	ModuleCdc          = types.ModuleCdc
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
 	MonikerStorePrefix = types.MonikerStorePrefix
+	ModuleCdc          = types.ModuleCdc
 )
 
 type (
 	Keeper           = keeper.Keeper
 	ProfileData      = simulation.ProfileData
-	Pictures         = types.Pictures
-	GenesisState     = types.GenesisState
 	MsgSaveProfile   = types.MsgSaveProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
 	Profile          = types.Profile
 	Profiles         = types.Profiles
+	Pictures         = types.Pictures
+	GenesisState     = types.GenesisState
 )
