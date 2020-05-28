@@ -1,13 +1,13 @@
 package simulation
 
 import (
+	"github.com/desmos-labs/desmos/x/posts"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/app/params"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 )
 
 const (
@@ -17,7 +17,7 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, ak auth.AccountKeeper, pk posts.Keeper) sim.WeightedOperations {
 	var weightMsgReportPost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgReportPost, &weightMsgReportPost, nil,
 		func(_ *rand.Rand) {
@@ -28,7 +28,7 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgReportPost,
-			SimulateMsgReportPost(k, ak),
+			SimulateMsgReportPost(ak, pk),
 		),
 	}
 }

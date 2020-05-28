@@ -2,6 +2,7 @@ package reports
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/x/posts"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -76,15 +77,17 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 	ak     auth.AccountKeeper
+	pk     posts.Keeper
 	keeper Keeper
 }
 
 // NewAppModule creates a new AppModule Object
-func NewAppModule(keeper Keeper, accountKeeper auth.AccountKeeper) AppModule {
+func NewAppModule(keeper Keeper, accountKeeper auth.AccountKeeper, postKeeper posts.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		ak:             accountKeeper,
 		keeper:         keeper,
+		pk:             postKeeper,
 	}
 }
 
@@ -170,5 +173,5 @@ func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
-	return WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak)
+	return WeightedOperations(simState.AppParams, simState.Cdc, am.ak, am.pk)
 }

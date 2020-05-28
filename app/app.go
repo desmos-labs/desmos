@@ -217,7 +217,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -254,7 +254,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

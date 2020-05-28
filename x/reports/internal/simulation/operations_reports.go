@@ -10,14 +10,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
-func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgReportPost(ak auth.AccountKeeper, pk posts.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -50,8 +49,7 @@ func SimulateMsgReportPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		)
 
 		// Save the post
-		store := sdk.NewKVStoreKey(posts.StoreKey)
-		posts.NewKeeper(k.Cdc, store).SavePost(ctx, post)
+		pk.SavePost(ctx, post)
 
 		err = sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
