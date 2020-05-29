@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramSubspace "github.com/cosmos/cosmos-sdk/x/params/subspace"
@@ -51,6 +52,12 @@ func DefaultNameSurnameLenParams() NameSurnameLenParams {
 		DefaultMinNameSurnameLength,
 		DefaultMaxNameSurnameLength,
 	)
+}
+
+// String implements stringer interface
+func (params NameSurnameLenParams) String() string {
+	out, _ := json.Marshal(params)
+	return string(out)
 }
 
 func validateNameSurnameLenParams(i interface{}) error {
