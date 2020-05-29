@@ -84,7 +84,79 @@ type MonikerLenParams struct {
 	MaxMonikerLen sdk.Int `json:"max_moniker_len" yaml:"min_moniker_len"`
 }
 
+// NewMonikerLenParams creates a new MonikerLenParams obj
+func NewMonikerLenParams(minLen, maxLen sdk.Int) MonikerLenParams {
+	return MonikerLenParams{
+		MinMonikerLen: minLen,
+		MaxMonikerLen: maxLen,
+	}
+}
+
+// DefaultMonikerLenParams return default params
+func DefaultMonikerLenParams() MonikerLenParams {
+	return MonikerLenParams{
+		MinMonikerLen: DefaultMinMonikerLength,
+		MaxMonikerLen: DefaultMaxMonikerLength,
+	}
+}
+
+// String implements stringer interface
+func (params MonikerLenParams) String() string {
+	out, _ := json.Marshal(params)
+	return string(out)
+}
+
+func validateMonikerLenParams(i interface{}) error {
+	params, isMonikerParams := i.(MonikerLenParams)
+	if !isMonikerParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
+		return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinMonikerLen)
+	}
+
+	if params.MaxMonikerLen.IsNegative() || params.MaxMonikerLen.GT(DefaultMaxMonikerLength) {
+		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxMonikerLen)
+	}
+
+	return nil
+}
+
 // BioLenParams defines the params around profiles' biography
 type BioLenParams struct {
 	MaxBioLen sdk.Int `json:"max_bio_len" yaml:"max_moniker_len"`
+}
+
+// NewBioLenParams creates a new BioLenParams obj
+func NewBioLenParams(maxLen sdk.Int) BioLenParams {
+	return BioLenParams{
+		MaxBioLen: maxLen,
+	}
+}
+
+// DefaultBioLenParams returns default params
+func DefaultBioLenParams() BioLenParams {
+	return BioLenParams{
+		MaxBioLen: DefaultMaxBioLength,
+	}
+}
+
+// String implements stringer interface
+func (params BioLenParams) String() string {
+	out, _ := json.Marshal(params)
+	return string(out)
+}
+
+func validateBioLenParams(i interface{}) error {
+	params, isBioLenParams := i.(BioLenParams)
+	if !isBioLenParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.MaxBioLen.IsNegative() || params.MaxBioLen.GT(DefaultMaxMonikerLength) {
+		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxBioLen)
+	}
+
+	return nil
 }
