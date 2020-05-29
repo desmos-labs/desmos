@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
@@ -17,12 +18,12 @@ import (
 func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
 	// define store keys
-	magpieKey := sdk.NewKVStoreKey("magpie")
+	postKey := sdk.NewKVStoreKey(common.StoreKey)
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(postKey, sdk.StoreTypeIAVL, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -31,7 +32,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 
-	return ctx, keeper.NewKeeper(cdc, magpieKey)
+	return ctx, keeper.NewKeeper(cdc, postKey)
 }
 
 func testCodec() *codec.Codec {

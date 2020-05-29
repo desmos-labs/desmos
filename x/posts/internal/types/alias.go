@@ -38,16 +38,23 @@ const (
 
 var (
 	// functions aliases
+	NewMsgRegisterReaction   = msgs.NewMsgRegisterReaction
+	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
+	NewMsgAddPostReaction    = msgs.NewMsgAddPostReaction
+	NewMsgRemovePostReaction = msgs.NewMsgRemovePostReaction
+	NewMsgAnswerPoll         = msgs.NewMsgAnswerPoll
+	NewMsgCreatePost         = msgs.NewMsgCreatePost
+	NewMsgEditPost           = msgs.NewMsgEditPost
 	ComputeID                = models.ComputeID
 	ParsePostID              = models.ParsePostID
 	NewPost                  = models.NewPost
 	NewPostResponse          = models.NewPostResponse
-	RegisterModelsCodec      = models.RegisterModelsCodec
 	PostStoreKey             = models.PostStoreKey
 	PostCommentsStoreKey     = models.PostCommentsStoreKey
 	PostReactionsStoreKey    = models.PostReactionsStoreKey
 	ReactionsStoreKey        = models.ReactionsStoreKey
 	PollAnswersStoreKey      = models.PollAnswersStoreKey
+	RegisterModelsCodec      = models.RegisterModelsCodec
 	NewPostMedia             = common.NewPostMedia
 	ValidateURI              = common.ValidateURI
 	NewPostMedias            = common.NewPostMedias
@@ -63,13 +70,6 @@ var (
 	NewReaction              = reactions.NewReaction
 	IsEmoji                  = reactions.IsEmoji
 	NewReactions             = reactions.NewReactions
-	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
-	NewMsgCreatePost         = msgs.NewMsgCreatePost
-	NewMsgEditPost           = msgs.NewMsgEditPost
-	NewMsgAnswerPoll         = msgs.NewMsgAnswerPoll
-	NewMsgAddPostReaction    = msgs.NewMsgAddPostReaction
-	NewMsgRemovePostReaction = msgs.NewMsgRemovePostReaction
-	NewMsgRegisterReaction   = msgs.NewMsgRegisterReaction
 
 	// variable aliases
 	MsgsCodec                = msgs.MsgsCodec
@@ -93,10 +93,10 @@ type (
 	Posts                    = models.Posts
 	PostQueryResponse        = models.PostQueryResponse
 	PollAnswersQueryResponse = models.PollAnswersQueryResponse
-	PostMedia                = common.PostMedia
-	PostMedias               = common.PostMedias
 	OptionalData             = common.OptionalData
 	KeyValue                 = common.KeyValue
+	PostMedia                = common.PostMedia
+	PostMedias               = common.PostMedias
 	AnswerID                 = polls.AnswerID
 	PollAnswer               = polls.PollAnswer
 	PollAnswers              = polls.PollAnswers
@@ -107,10 +107,10 @@ type (
 	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
 	Reactions                = reactions.Reactions
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgRegisterReaction      = msgs.MsgRegisterReaction
 	MsgAddPostReaction       = msgs.MsgAddPostReaction
 	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
-	MsgRegisterReaction      = msgs.MsgRegisterReaction
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
 )
