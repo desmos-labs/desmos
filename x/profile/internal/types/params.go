@@ -7,6 +7,11 @@ import (
 	paramSubspace "github.com/cosmos/cosmos-sdk/x/params/subspace"
 )
 
+const (
+	// default paramspace for params keeper
+	DefaultParamspace = ModuleName
+)
+
 // Default profile params
 var (
 	DefaultMinNameSurnameLength = sdk.NewInt(2)
@@ -18,16 +23,16 @@ var (
 
 // Parameters store keys
 var (
-	ParamStoreKeyNameSurnameLenRange = []byte("name_surname_len_range")
-	ParamStoreKeyMonikerLenRange     = []byte("moniker_len_range")
-	ParamStoreKeyMaxBioLen           = []byte("max_bio_len")
+	ParamStoreKeyNameSurnameLen = []byte("nameSurnameLenParams")
+	ParamStoreKeyMonikerLen     = []byte("monikerLenParams")
+	ParamStoreKeyMaxBioLen      = []byte("maxBioLenParams")
 )
 
 // ParamKeyTable - Key declaration for params
 func ParamKeyTable() paramSubspace.KeyTable {
 	return paramSubspace.NewKeyTable(
-		paramSubspace.NewParamSetPair(ParamStoreKeyNameSurnameLenRange, NameSurnameLenParams{}, validateNameSurnameLenParams),
-		paramSubspace.NewParamSetPair(ParamStoreKeyMonikerLenRange, MonikerLenParams{}, validateMonikerLenParams),
+		paramSubspace.NewParamSetPair(ParamStoreKeyNameSurnameLen, NameSurnameLenParams{}, validateNameSurnameLenParams),
+		paramSubspace.NewParamSetPair(ParamStoreKeyMonikerLen, MonikerLenParams{}, validateMonikerLenParams),
 		paramSubspace.NewParamSetPair(ParamStoreKeyMaxBioLen, BioLenParams{}, validateBioLenParams),
 	)
 }

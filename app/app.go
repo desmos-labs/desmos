@@ -195,10 +195,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
+	// Custom Modules params
+	app.subspaces[profile.ModuleName] = app.paramsKeeper.Subspace(profile.DefaultParamspace).WithKeyTable(profile.ParamKeyTable())
+
 	// Register custom modules
 	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
 	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
-	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey])
+	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey], app.subspaces[profile.ModuleName])
 	app.reportsKeeper = reports.NewKeeper(app.postsKeeper, app.cdc, keys[reports.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified

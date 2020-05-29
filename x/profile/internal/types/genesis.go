@@ -2,13 +2,19 @@ package types
 
 // GenesisState contains the data of the genesis state for the profile module
 type GenesisState struct {
-	Profiles []Profile `json:"profiles"`
+	Profiles             []Profile            `json:"profiles"`
+	NameSurnameLenParams NameSurnameLenParams `json:"name_surname_len_params"`
+	MonikerLenParams     MonikerLenParams     `json:"moniker_len_params"`
+	BioLenParams         BioLenParams         `json:"bio_len_params"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(profiles []Profile) GenesisState {
+func NewGenesisState(profiles []Profile, nsp NameSurnameLenParams, mp MonikerLenParams, bp BioLenParams) GenesisState {
 	return GenesisState{
-		Profiles: profiles,
+		Profiles:             profiles,
+		NameSurnameLenParams: nsp,
+		MonikerLenParams:     mp,
+		BioLenParams:         bp,
 	}
 }
 

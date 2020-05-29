@@ -66,22 +66,8 @@ const (
 
 var (
 	// functions aliases
-	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
-	NewMsgAddPostReaction            = msgs.NewMsgAddPostReaction
-	NewMsgRemovePostReaction         = msgs.NewMsgRemovePostReaction
-	NewMsgAnswerPoll                 = msgs.NewMsgAnswerPoll
-	NewMsgCreatePost                 = msgs.NewMsgCreatePost
-	NewMsgEditPost                   = msgs.NewMsgEditPost
-	NewMsgRegisterReaction           = msgs.NewMsgRegisterReaction
-	NewHandler                       = keeper.NewHandler
-	NewKeeper                        = keeper.NewKeeper
-	NewQuerier                       = keeper.NewQuerier
-	RegisterInvariants               = keeper.RegisterInvariants
-	AllInvariants                    = keeper.AllInvariants
-	ValidPostsInvariant              = keeper.ValidPostsInvariant
-	ValidCommentsDateInvariant       = keeper.ValidCommentsDateInvariant
-	ValidPostForReactionsInvariant   = keeper.ValidPostForReactionsInvariant
-	ValidPollForPollAnswersInvariant = keeper.ValidPollForPollAnswersInvariant
+	WeightedOperations               = simulation.WeightedOperations
+	RandomizedGenState               = simulation.RandomizedGenState
 	DecodeStore                      = simulation.DecodeStore
 	SimulateMsgAnswerToPoll          = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgAddPostReaction       = simulation.SimulateMsgAddPostReaction
@@ -105,13 +91,11 @@ var (
 	RandomReactionData               = simulation.RandomReactionData
 	RegisteredReactionsData          = simulation.RegisteredReactionsData
 	RandomEmojiPostReaction          = simulation.RandomEmojiPostReaction
-	WeightedOperations               = simulation.WeightedOperations
-	RandomizedGenState               = simulation.RandomizedGenState
-	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
 	NewGenesisState                  = types.NewGenesisState
 	DefaultGenesisState              = types.DefaultGenesisState
 	ValidateGenesis                  = types.ValidateGenesis
 	RegisterCodec                    = types.RegisterCodec
+	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
 	ComputeID                        = models.ComputeID
 	ParsePostID                      = models.ParsePostID
 	NewPost                          = models.NewPost
@@ -137,8 +121,27 @@ var (
 	NewReaction                      = reactions.NewReaction
 	IsEmoji                          = reactions.IsEmoji
 	NewReactions                     = reactions.NewReactions
+	NewMsgAddPostReaction            = msgs.NewMsgAddPostReaction
+	NewMsgRemovePostReaction         = msgs.NewMsgRemovePostReaction
+	NewMsgAnswerPoll                 = msgs.NewMsgAnswerPoll
+	NewMsgCreatePost                 = msgs.NewMsgCreatePost
+	NewMsgEditPost                   = msgs.NewMsgEditPost
+	NewMsgRegisterReaction           = msgs.NewMsgRegisterReaction
+	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
+	NewQuerier                       = keeper.NewQuerier
+	RegisterInvariants               = keeper.RegisterInvariants
+	AllInvariants                    = keeper.AllInvariants
+	ValidPostsInvariant              = keeper.ValidPostsInvariant
+	ValidCommentsDateInvariant       = keeper.ValidCommentsDateInvariant
+	ValidPostForReactionsInvariant   = keeper.ValidPostForReactionsInvariant
+	ValidPollForPollAnswersInvariant = keeper.ValidPollForPollAnswersInvariant
+	NewHandler                       = keeper.NewHandler
+	NewKeeper                        = keeper.NewKeeper
 
 	// variable aliases
+	MsgsCodec                = msgs.MsgsCodec
+	RandomMimeTypes          = simulation.RandomMimeTypes
+	RandomHosts              = simulation.RandomHosts
 	ModuleCdc                = types.ModuleCdc
 	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
@@ -151,17 +154,15 @@ var (
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
 	PollAnswersStorePrefix   = common.PollAnswersStorePrefix
-	MsgsCodec                = msgs.MsgsCodec
-	RandomMimeTypes          = simulation.RandomMimeTypes
-	RandomHosts              = simulation.RandomHosts
 )
 
 type (
+	Keeper                   = keeper.Keeper
 	PostData                 = simulation.PostData
 	PostReactionData         = simulation.PostReactionData
 	ReactionData             = simulation.ReactionData
-	QueryPostsParams         = types.QueryPostsParams
 	GenesisState             = types.GenesisState
+	QueryPostsParams         = types.QueryPostsParams
 	PostID                   = models.PostID
 	PostIDs                  = models.PostIDs
 	Post                     = models.Post
@@ -188,5 +189,4 @@ type (
 	MsgCreatePost            = msgs.MsgCreatePost
 	MsgEditPost              = msgs.MsgEditPost
 	MsgRegisterReaction      = msgs.MsgRegisterReaction
-	Keeper                   = keeper.Keeper
 )

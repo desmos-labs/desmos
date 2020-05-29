@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -29,7 +30,10 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 
-	return ctx, keeper.NewKeeper(cdc, magpieKey)
+	// define keepers
+	paramsKeeper := params.NewKeeper(cdc, sdk.NewKVStoreKey("params"), sdk.NewTransientStoreKey("transient_params"))
+
+	return ctx, keeper.NewKeeper(cdc, magpieKey, paramsKeeper.Subspace(types.DefaultParamspace).WithKeyTable(types.ParamKeyTable()))
 }
 
 func testCodec() *codec.Codec {
