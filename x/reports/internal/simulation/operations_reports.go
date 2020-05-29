@@ -1,7 +1,6 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"math/rand"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/tendermint/tendermint/crypto"
 )

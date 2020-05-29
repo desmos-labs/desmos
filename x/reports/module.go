@@ -2,7 +2,6 @@ package reports
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/x/posts"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -11,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/client/cli"
 	"github.com/desmos-labs/desmos/x/reports/client/rest"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"

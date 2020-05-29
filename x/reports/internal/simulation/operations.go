@@ -1,14 +1,14 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/app/params"
+	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 )
 
 const (

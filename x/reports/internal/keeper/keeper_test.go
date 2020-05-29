@@ -1,9 +1,9 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts"
 	"testing"
 
+	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
 	"github.com/stretchr/testify/require"
