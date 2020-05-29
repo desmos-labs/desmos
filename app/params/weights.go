@@ -10,4 +10,5 @@ const (
 	DefaultWeightMsgRegisterReaction int = 100
 	DefaultWeightMsgSaveAccount      int = 100
 	DefaultWeightMsgDeleteAccount    int = 100
+	DefaultWeightMsgReportPost       int = 100
 )
