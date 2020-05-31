@@ -1,3 +1,5 @@
+// +build cli_test
+
 // nolint
 package clitest
 
@@ -539,7 +541,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	f.TxGovDeposit(1, keyFoo, sdk.NewCoin(denom, depositTokens), "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	// Test query deposit
+	// test query deposit
 	deposits := f.QueryGovDeposits(1)
 	require.Len(t, deposits, 1)
 	require.Equal(t, proposalTokens.Add(depositTokens), deposits[0].Amount.AmountOf(denom))
@@ -597,7 +599,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	proposalsQuery = f.QueryGovProposals("--status=VotingPeriod")
 	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
 
-	// Submit a second test proposal
+	// submit a second test proposal
 	f.TxGovSubmitProposal(keyFoo, "Text", "Apples", "test", sdk.NewCoin(denom, proposalTokens), "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 

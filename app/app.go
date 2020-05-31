@@ -1,13 +1,13 @@
 package app
 
 import (
+	"github.com/cosmos/cosmos-sdk/x/gov"
 	"io"
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"
 	"github.com/desmos-labs/desmos/x/reports"
@@ -54,7 +54,9 @@ var (
 		bank.AppModuleBasic{},
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
-		gov.NewAppModuleBasic(paramsclient.ProposalHandler, distr.ProposalHandler),
+		gov.NewAppModuleBasic(
+			paramsclient.ProposalHandler, distr.ProposalHandler,
+		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
@@ -71,8 +73,8 @@ var (
 		auth.FeeCollectorName:     nil,
 		distr.ModuleName:          nil,
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 		gov.ModuleName:            {supply.Burner},
+		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -200,6 +202,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	govRouter := gov.NewRouter()
 	govRouter.AddRoute(gov.RouterKey, gov.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper))
+
 	app.GovKeeper = gov.NewKeeper(app.cdc, keys[gov.StoreKey], app.subspaces[gov.ModuleName], app.SupplyKeeper,
 		&stakingKeeper, govRouter,
 	)
@@ -262,8 +265,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.sm = module.NewSimulationManager(
 		auth.NewAppModule(app.AccountKeeper),
 		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
+		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
 
