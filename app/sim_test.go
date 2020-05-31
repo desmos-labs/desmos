@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"math/rand"
 	"os"
 	"path/filepath"
