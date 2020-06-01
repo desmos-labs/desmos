@@ -14,7 +14,7 @@ import (
 const (
 	OpWeightMsgReportPost = "op_weight_msg_report_post"
 
-	DefaultGasValue = 2000000
+	DefaultGasValue = 200000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
