@@ -355,6 +355,10 @@ func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
 		Short: "Register a new reaction",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if _, found := types.GetEmojiByShortCodeOrValue(args[1]); found {
+				return fmt.Errorf("%s represents an emoji shortcode and thus cannot be used to register another reaction", args[1])
+			}
+
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))

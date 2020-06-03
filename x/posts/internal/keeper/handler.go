@@ -7,7 +7,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -126,38 +125,24 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	return &result, nil
 }
 
-// registeredReaction registers a reaction in the given context
-func registerReaction(ctx sdk.Context, keeper Keeper, shortcode, subspace, value string, creator sdk.AccAddress) error {
-	if _, isAlreadyRegistered := keeper.GetRegisteredReaction(ctx, shortcode, subspace); isAlreadyRegistered {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-			"reaction with shortcode %s and subspace %s has already been registered", shortcode, subspace))
-	}
-	reaction := types.NewReaction(creator, shortcode, value, subspace)
-	keeper.RegisterReaction(ctx, reaction)
-	return nil
-}
-
 // extractReactionValueAndShortcode parse the given reaction returning its correct value and shortcode
-func extractReactionValueAndShortcode(keeper Keeper, ctx sdk.Context, reaction string, post types.Post) (string, string, error) {
+func extractReactionValueAndShortcode(keeper Keeper, ctx sdk.Context, reaction string, subspace string) (string, string, error) {
 	var reactionShortcode, reactionValue string
 
 	// Parse reaction adding the variation selector-16 to let the emoji being readable
 	parsedReaction := strings.ReplaceAll(reaction, "️", "")
 
-	// Check if the reaction is an emoji Unicode character
-	if emojiReact, err := emoji.LookupEmoji(reaction); err == nil {
+	if emojiReact, found := types.GetEmojiByShortCodeOrValue(reaction); found {
 		reactionShortcode = emojiReact.Shortcodes[0]
 		reactionValue = emojiReact.Value
-	} else if emojiReact, err := emoji.LookupEmojiByCode(reaction); err == nil { //Check if the reaction is an emoji shortcode
-		reactionShortcode = emojiReact.Shortcodes[0]
-		reactionValue = emojiReact.Value
-	} else { // The reaction is a shortcode that should be registered
-		regReaction, registered := keeper.GetRegisteredReaction(ctx, reaction, post.Subspace)
-		if !registered { // if it has not been registered yet, no one can use it to react to the post
+	} else {
+		// The reaction is a shortcode that should be registered
+		regReaction, registered := keeper.GetRegisteredReaction(ctx, reaction, subspace)
+		if !registered {
 			return "", "", sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("reaction with short code %s isn't registered yet and can't be used to react to the post with ID %s and subspace %s, please register it before use",
-					parsedReaction, post.PostID, post.Subspace))
+				fmt.Sprintf("short code %s must be registered before using it", parsedReaction))
 		}
+
 		reactionShortcode = regReaction.ShortCode
 		reactionValue = regReaction.Value
 	}
@@ -173,7 +158,7 @@ func handleMsgAddPostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgAddPo
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	reactionShortcode, reactionValue, err := extractReactionValueAndShortcode(keeper, ctx, msg.Reaction, post)
+	reactionShortcode, reactionValue, err := extractReactionValueAndShortcode(keeper, ctx, msg.Reaction, post.Subspace)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +193,7 @@ func handleMsgRemovePostReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
 	}
 
-	reactionShortcode, reactionValue, err := extractReactionValueAndShortcode(keeper, ctx, msg.Reaction, post)
+	reactionShortcode, reactionValue, err := extractReactionValueAndShortcode(keeper, ctx, msg.Reaction, post.Subspace)
 	if err != nil {
 		return nil, err
 	}
@@ -337,16 +322,27 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 
 // handleMsgRegisterReaction handles the reaction registration
 func handleMsgRegisterReaction(ctx sdk.Context, keeper Keeper, msg types.MsgRegisterReaction) (*sdk.Result, error) {
-	err := registerReaction(ctx, keeper, msg.ShortCode, msg.Subspace, msg.Value, msg.Creator)
-	if err != nil {
-		return nil, err
+	// Check if the shortcode is associated with an emoji
+	if _, found := types.GetEmojiByShortCodeOrValue(msg.ShortCode); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
+			"shortcode %s represents an emoji and thus can't be used to register a new reaction", msg.ShortCode))
 	}
+
+	// Make sure the reaction is already registered
+	if _, isAlreadyRegistered := keeper.GetRegisteredReaction(ctx, msg.ShortCode, msg.Subspace); isAlreadyRegistered {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
+			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace))
+	}
+
+	reaction := types.NewReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
+	keeper.RegisterReaction(ctx, reaction)
+
 	event := sdk.NewEvent(
 		types.EventTypeRegisterReaction,
-		sdk.NewAttribute(types.AttributeKeyReactionCreator, msg.Creator.String()),
-		sdk.NewAttribute(types.AttributeKeyReactionShortCode, msg.ShortCode),
-		sdk.NewAttribute(types.AttributeKeyPostReactionValue, msg.Value),
-		sdk.NewAttribute(types.AttributeKeyReactionSubSpace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeKeyReactionCreator, reaction.Creator.String()),
+		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reaction.ShortCode),
+		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reaction.Value),
+		sdk.NewAttribute(types.AttributeKeyReactionSubSpace, reaction.Subspace),
 	)
 	ctx.EventManager().EmitEvent(event)
 

@@ -24,6 +24,12 @@ func DefaultGenesisState() GenesisState {
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(data GenesisState) error {
+	for _, reaction := range data.RegisteredReactions {
+		if err := reaction.Validate(); err != nil {
+			return err
+		}
+	}
+
 	for _, record := range data.Posts {
 		if err := record.Validate(); err != nil {
 			return err
@@ -43,12 +49,6 @@ func ValidateGenesis(data GenesisState) error {
 			if err := record.Validate(); err != nil {
 				return err
 			}
-		}
-	}
-
-	for _, reaction := range data.RegisteredReactions {
-		if err := reaction.Validate(); err != nil {
-			return err
 		}
 	}
 
