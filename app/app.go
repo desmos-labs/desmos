@@ -266,6 +266,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		//evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
