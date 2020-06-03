@@ -1,3 +1,6 @@
+# Version 0.5.3
+- Restored evidence module (#189)
+
 # Version 0.5.2
 ## Bug fixes
 - Fixed a bug that caused the state export to fail due to [cosmos/cosmos-sdk#6280](https://github.com/cosmos/cosmos-sdk/issues/6280)
