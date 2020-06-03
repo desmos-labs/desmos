@@ -77,7 +77,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				testProfile.Pictures.Cover,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "A profile with moniker: newMoniker has already been created"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with moniker: newMoniker has already been created"),
 		},
 		{
 			name:             "Profile not edited because of the invalid pics uri",
