@@ -315,10 +315,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 			name:         "Registered Reaction not found",
 			existingPost: &post,
 			msg:          types.NewMsgAddPostReaction(post.PostID, ":super-smile:", user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction with short code :super-smile: isn't registered yet "+
-				"and can't be used to react to the post with ID "+
-				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af and subspace "+
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e, please register it before use"),
+			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "short code :super-smile: must be registered before using it"),
 		},
 		{
 			name:               "Valid message works properly (shortcode)",
@@ -784,35 +781,58 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 }
 
 func Test_handleMsgRegisterReaction(t *testing.T) {
-
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	require.NoError(t, err)
 
-	shortCode := ":smile:"
-	const (
-		subspace = "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	)
-	value := "https://smile.jpg"
-	reaction := types.NewReaction(user, shortCode, value, subspace)
-
 	tests := []struct {
-		name             string
-		existingReaction *types.Reaction
-		msg              types.MsgRegisterReaction
-		error            error
+		name              string
+		existingReactions []types.Reaction
+		msg               types.MsgRegisterReaction
+		error             error
 	}{
 		{
-			name:             "Reaction registered without error",
-			existingReaction: nil,
-			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
-			error:            nil,
+			name: "Reaction registered without error",
+			msg: types.NewMsgRegisterReaction(
+				user,
+				":test:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: nil,
 		},
 		{
-			name:             "Already registered reaction returns error",
-			existingReaction: &reaction,
-			msg:              types.NewMsgRegisterReaction(user, shortCode, value, subspace),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-				"reaction with shortcode %s and subspace %s has already been registered", shortCode, subspace)),
+			name: "Emoji reaction returns error",
+			msg: types.NewMsgRegisterReaction(
+				user,
+				":smile:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				`shortcode :smile: represents an emoji and thus can't be used to register a new reaction`,
+			),
+		},
+		{
+			name: "Already registered reaction returns error",
+			existingReactions: []types.Reaction{
+				types.NewReaction(
+					user,
+					":test:",
+					"https://smile.jpg",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			msg: types.NewMsgRegisterReaction(
+				user,
+				":test:",
+				"https://smile.jpg",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			error: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"reaction with shortcode :test: and subspace 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e has already been registered",
+			),
 		},
 	}
 
@@ -822,9 +842,9 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 			ctx, k := SetupTestInput()
 
 			store := ctx.KVStore(k.StoreKey)
-			if test.existingReaction != nil {
-				store.Set(types.ReactionsStoreKey(test.existingReaction.ShortCode, test.existingReaction.Subspace),
-					k.Cdc.MustMarshalBinaryBare(&test.existingReaction))
+			for _, react := range test.existingReactions {
+				react := react
+				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), k.Cdc.MustMarshalBinaryBare(&react))
 			}
 
 			handler := keeper.NewHandler(k)
@@ -841,9 +861,13 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 				))
 
 				var storedReaction types.Reaction
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReactionsStoreKey(shortCode,
-					subspace)), &storedReaction)
-				require.True(t, reaction.Equals(storedReaction))
+				k.Cdc.MustUnmarshalBinaryBare(
+					store.Get(types.ReactionsStoreKey(test.msg.ShortCode, test.msg.Subspace)),
+					&storedReaction,
+				)
+
+				expected := types.NewReaction(user, test.msg.ShortCode, test.msg.Value, test.msg.Subspace)
+				require.True(t, expected.Equals(storedReaction))
 			}
 
 			// Invalid response

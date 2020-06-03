@@ -132,7 +132,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 				Creator:  creator,
 			},
 			existentAccounts: types.Profiles{testProfile},
-			expError:         fmt.Errorf("A profile with moniker: moniker has already been created"),
+			expError:         fmt.Errorf("a profile with moniker: moniker has already been created"),
 		},
 	}
 

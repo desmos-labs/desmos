@@ -2,8 +2,9 @@ package reports
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/x/posts"
 	"math/rand"
+
+	"github.com/desmos-labs/desmos/x/posts"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"

@@ -36,21 +36,21 @@ func TestReaction_Validate(t *testing.T) {
 			name: "Valid reaction returns no error (url on value)",
 			reaction: reactions.NewReaction(
 				testOwner,
-				":smile:",
+				":smile-jpg:",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
 		},
 		{
-			name: "Valid reaction returns no error (unicode on value)",
+			name: "Invalid reaction returns error (unicode on value)",
 			reaction: reactions.NewReaction(
 				testOwner,
-				":smile:",
+				":smiles:",
 				"U+1F600",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: nil,
+			error: errors.New("reaction value should be a URL"),
 		},
 		{
 			name: "Missing creator returns error",
@@ -71,7 +71,7 @@ func TestReaction_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			//nolint - errcheck
-			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'"),
 		},
 		{
 			name: "Invalid short code returns error",
@@ -82,7 +82,7 @@ func TestReaction_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			//nolint - errcheck
-			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error: errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'"),
 		},
 		{
 			name: "Empty value returns error",
@@ -92,7 +92,7 @@ func TestReaction_Validate(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji"),
+			error: errors.New("reaction value should be a URL"),
 		},
 		{
 			name: "invalid value returns error (url)",
@@ -102,7 +102,7 @@ func TestReaction_Validate(t *testing.T) {
 				"smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji"),
+			error: errors.New("reaction value should be a URL"),
 		},
 		{
 			name: "invalid value returns error (unicode)",
@@ -112,7 +112,7 @@ func TestReaction_Validate(t *testing.T) {
 				"U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: errors.New("reaction value should be a URL or an emoji"),
+			error: errors.New("reaction value should be a URL"),
 		},
 		{
 			name: "invalid subspace returns no error",
