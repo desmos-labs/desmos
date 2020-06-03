@@ -1,9 +1,10 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"math/rand"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"

@@ -1,9 +1,10 @@
 package app
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"io"
 	"os"
+
+	"github.com/cosmos/cosmos-sdk/x/gov"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"

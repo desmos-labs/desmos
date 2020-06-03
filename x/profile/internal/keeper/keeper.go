@@ -76,7 +76,7 @@ func (k Keeper) replaceMoniker(ctx sdk.Context, oldMoniker, newMoniker string, c
 func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 
 	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
-		return fmt.Errorf("A profile with moniker: %s has already been created", profile.Moniker)
+		return fmt.Errorf("a profile with moniker: %s has already been created", profile.Moniker)
 	}
 
 	oldMoniker := k.GetMonikerFromAddress(ctx, profile.Creator)

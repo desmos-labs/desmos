@@ -843,6 +843,7 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 
 			store := ctx.KVStore(k.StoreKey)
 			for _, react := range test.existingReactions {
+				react := react
 				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), k.Cdc.MustMarshalBinaryBare(&react))
 			}
 

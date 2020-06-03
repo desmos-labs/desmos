@@ -1,9 +1,10 @@
 package simulation
 
 import (
+	"math/rand"
+
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
-	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
