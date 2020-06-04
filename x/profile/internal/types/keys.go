@@ -24,6 +24,7 @@ const (
 	QuerierRoute  = ModuleName
 	QueryProfile  = "profile"
 	QueryProfiles = "all"
+	QueryParams   = "params"
 )
 
 var (

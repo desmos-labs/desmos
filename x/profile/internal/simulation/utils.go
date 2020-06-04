@@ -149,3 +149,27 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	}
 	return nil
 }
+
+// ProfileParams contains the randomly generated params of profile module
+type ProfileParams struct {
+	NameSurnameParams types.NameSurnameLenParams
+	MonikerParams     types.MonikerLenParams
+	BioParams         types.BioLenParams
+}
+
+// RandomProfileParams return a random set of profile params from some random ints
+func RandomProfileParams(r *rand.Rand) ProfileParams {
+	return ProfileParams{
+		NameSurnameParams: types.NameSurnameLenParams{
+			MinNameSurnameLen: sdk.NewInt(r.Int63()),
+			MaxNameSurnameLen: sdk.NewInt(r.Int63()),
+		},
+		MonikerParams: types.MonikerLenParams{
+			MinMonikerLen: sdk.NewInt(r.Int63()),
+			MaxMonikerLen: sdk.NewInt(r.Int63()),
+		},
+		BioParams: types.BioLenParams{
+			MaxBioLen: sdk.NewInt(r.Int63()),
+		},
+	}
+}

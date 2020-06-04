@@ -11,9 +11,18 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	profiles := types.Profiles{}
-	expGenState := types.GenesisState{Profiles: profiles}
+	nameSurnameParams := types.NameSurnameLenParams{}
+	monikerParams := types.MonikerLenParams{}
+	bioParams := types.BioLenParams{}
 
-	actualGenState := types.NewGenesisState(profiles)
+	expGenState := types.GenesisState{
+		Profiles:             profiles,
+		NameSurnameLenParams: nameSurnameParams,
+		MonikerLenParams:     monikerParams,
+		BioLenParams:         bioParams,
+	}
+
+	actualGenState := types.NewGenesisState(profiles, nameSurnameParams, monikerParams, bioParams)
 
 	require.Equal(t, expGenState, actualGenState)
 }
@@ -37,7 +46,7 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: false,
 		},
 		{
-			name: "Genesis with invalid account errors",
+			name: "Genesis with invalid profile errors",
 			genesis: types.GenesisState{
 				Profiles: types.Profiles{
 					types.Profile{
@@ -48,6 +57,141 @@ func TestValidateGenesis(t *testing.T) {
 						Pictures: testPictures,
 						Creator:  testPostOwner,
 					},
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid profile's name/surname min params",
+			genesis: types.GenesisState{
+				Profiles: types.Profiles{
+					types.Profile{
+						Name:     &name,
+						Surname:  &surname,
+						Moniker:  "moniker",
+						Bio:      &bio,
+						Pictures: testPictures,
+						Creator:  testPostOwner,
+					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(1),
+					MaxNameSurnameLen: sdk.NewInt(800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(5),
+					MaxMonikerLen: sdk.NewInt(50),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(30),
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid profile's name/surname max params",
+			genesis: types.GenesisState{
+				Profiles: types.Profiles{
+					types.Profile{
+						Name:     &name,
+						Surname:  &surname,
+						Moniker:  "moniker",
+						Bio:      &bio,
+						Pictures: testPictures,
+						Creator:  testPostOwner,
+					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(3),
+					MaxNameSurnameLen: sdk.NewInt(1800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(5),
+					MaxMonikerLen: sdk.NewInt(50),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(30),
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid profile's moniker min params",
+			genesis: types.GenesisState{
+				Profiles: types.Profiles{
+					types.Profile{
+						Name:     &name,
+						Surname:  &surname,
+						Moniker:  "moniker",
+						Bio:      &bio,
+						Pictures: testPictures,
+						Creator:  testPostOwner,
+					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(3),
+					MaxNameSurnameLen: sdk.NewInt(800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(1),
+					MaxMonikerLen: sdk.NewInt(50),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(30),
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid profile's moniker max negative params",
+			genesis: types.GenesisState{
+				Profiles: types.Profiles{
+					types.Profile{
+						Name:     &name,
+						Surname:  &surname,
+						Moniker:  "moniker",
+						Bio:      &bio,
+						Pictures: testPictures,
+						Creator:  testPostOwner,
+					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(1),
+					MaxNameSurnameLen: sdk.NewInt(800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(5),
+					MaxMonikerLen: sdk.NewInt(-1),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(30),
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid profile's bio params",
+			genesis: types.GenesisState{
+				Profiles: types.Profiles{
+					types.Profile{
+						Name:     &name,
+						Surname:  &surname,
+						Moniker:  "moniker",
+						Bio:      &bio,
+						Pictures: testPictures,
+						Creator:  testPostOwner,
+					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(5),
+					MaxNameSurnameLen: sdk.NewInt(800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(5),
+					MaxMonikerLen: sdk.NewInt(50),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(-50),
 				},
 			},
 			shouldError: true,
@@ -64,6 +208,17 @@ func TestValidateGenesis(t *testing.T) {
 						Pictures: testPictures,
 						Creator:  testPostOwner,
 					},
+				},
+				NameSurnameLenParams: types.NameSurnameLenParams{
+					MinNameSurnameLen: sdk.NewInt(3),
+					MaxNameSurnameLen: sdk.NewInt(800),
+				},
+				MonikerLenParams: types.MonikerLenParams{
+					MinMonikerLen: sdk.NewInt(5),
+					MaxMonikerLen: sdk.NewInt(50),
+				},
+				BioLenParams: types.BioLenParams{
+					MaxBioLen: sdk.NewInt(30),
 				},
 			},
 			shouldError: false,

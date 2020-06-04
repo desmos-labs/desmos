@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramSubspace "github.com/cosmos/cosmos-sdk/x/params/subspace"
 )
@@ -61,7 +62,10 @@ func DefaultNameSurnameLenParams() NameSurnameLenParams {
 
 // String implements stringer interface
 func (params NameSurnameLenParams) String() string {
-	out, _ := json.Marshal(params)
+	out, err := json.Marshal(params)
+	if err != nil {
+		panic(err)
+	}
 	return string(out)
 }
 
@@ -76,6 +80,7 @@ func validateNameSurnameLenParams(i interface{}) error {
 		return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinNameSurnameLen)
 	}
 
+	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
 	if params.MaxNameSurnameLen.IsNegative() || params.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
 		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxNameSurnameLen)
 	}
@@ -107,7 +112,10 @@ func DefaultMonikerLenParams() MonikerLenParams {
 
 // String implements stringer interface
 func (params MonikerLenParams) String() string {
-	out, _ := json.Marshal(params)
+	out, err := json.Marshal(params)
+	if err != nil {
+		panic(err)
+	}
 	return string(out)
 }
 
@@ -118,11 +126,11 @@ func validateMonikerLenParams(i interface{}) error {
 	}
 
 	if params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
-		return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinMonikerLen)
+		return fmt.Errorf("invalid minimum moniker length param: %s", params.MinMonikerLen)
 	}
 
-	if params.MaxMonikerLen.IsNegative() || params.MaxMonikerLen.GT(DefaultMaxMonikerLength) {
-		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxMonikerLen)
+	if params.MaxMonikerLen.IsNegative() {
+		return fmt.Errorf("invalid max moniker length param: %s", params.MaxMonikerLen)
 	}
 
 	return nil
@@ -149,7 +157,10 @@ func DefaultBioLenParams() BioLenParams {
 
 // String implements stringer interface
 func (params BioLenParams) String() string {
-	out, _ := json.Marshal(params)
+	out, err := json.Marshal(params)
+	if err != nil {
+		panic(err)
+	}
 	return string(out)
 }
 
@@ -159,8 +170,8 @@ func validateBioLenParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MaxBioLen.IsNegative() || params.MaxBioLen.GT(DefaultMaxMonikerLength) {
-		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxBioLen)
+	if params.MaxBioLen.IsNegative() {
+		return fmt.Errorf("invalid max bio length param: %s", params.MaxBioLen)
 	}
 
 	return nil

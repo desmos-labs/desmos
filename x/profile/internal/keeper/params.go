@@ -26,3 +26,14 @@ func (k Keeper) GetMonikerLenParams(ctx sdk.Context) (mParams params.MonikerLenP
 	k.paramSpace.Get(ctx, params.ParamStoreKeyMonikerLen, &mParams)
 	return mParams
 }
+
+// SetBioLenParams sets the BioLenParams to the global param store
+func (k Keeper) SetBioLenParams(ctx sdk.Context, bioParams params.BioLenParams) {
+	k.paramSpace.Set(ctx, params.ParamStoreKeyMaxBioLen, &bioParams)
+}
+
+// GetBioLenParams returns the current BioLenParams from the global param store
+func (k Keeper) GetBioLenParams(ctx sdk.Context) (bioParams params.BioLenParams) {
+	k.paramSpace.Get(ctx, params.ParamStoreKeyMaxBioLen, &bioParams)
+	return bioParams
+}

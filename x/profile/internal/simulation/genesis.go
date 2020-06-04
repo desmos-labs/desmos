@@ -5,10 +5,16 @@ import (
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
-// RandomizedGenState generates a random GenesisState for auth
+// RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
 	accs := randomAccounts(simsState)
-	profileGenesis := types.NewGenesisState(accs)
+	profileParams := randomProfileParams(simsState)
+	profileGenesis := types.NewGenesisState(
+		accs,
+		profileParams.NameSurnameParams,
+		profileParams.MonikerParams,
+		profileParams.BioParams,
+	)
 	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
 }
 
@@ -31,4 +37,9 @@ func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) 
 	}
 
 	return accounts
+}
+
+// randomProfileParams returns randomly generated genesis parameters
+func randomProfileParams(simState *module.SimulationState) ProfileParams {
+	return RandomProfileParams(simState.Rand)
 }

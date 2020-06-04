@@ -26,6 +26,60 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// validateProfile checks if the given profile is valid according to the current profile's module params
+//TODO test this
+func validateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
+	nsParams := keeper.GetNameSurnameLenParams(ctx)
+	monikerParams := keeper.GetMonikerLenParams(ctx)
+	bioParams := keeper.GetBioLenParams(ctx)
+
+	minNameSurnameLen := nsParams.MinNameSurnameLen.Int64()
+	maxNameSurnameLen := nsParams.MaxNameSurnameLen.Int64()
+
+	if profile.Name != nil {
+		nameLen := int64(len(*profile.Name))
+		if nameLen < minNameSurnameLen {
+			return fmt.Errorf("Profile name cannot be less than %d characters", minNameSurnameLen)
+		}
+		if nameLen > maxNameSurnameLen {
+			return fmt.Errorf("Profile name cannot exceed %d characters", maxNameSurnameLen)
+		}
+	}
+
+	if profile.Surname != nil {
+		surNameLen := int64(len(*profile.Surname))
+		if surNameLen < minNameSurnameLen {
+			return fmt.Errorf("Profile surname cannot be less than %d characters", minNameSurnameLen)
+		}
+		if surNameLen > maxNameSurnameLen {
+			return fmt.Errorf("Profile surname cannot exceed %d characters", maxNameSurnameLen)
+		}
+	}
+
+	minMonikerLen := monikerParams.MinMonikerLen.Int64()
+	maxMonikerLen := monikerParams.MaxMonikerLen.Int64()
+	monikerLen := int64(len(profile.Moniker))
+
+	if monikerLen < minMonikerLen {
+		return fmt.Errorf("Profile moniker cannot be less than %d characters", minMonikerLen)
+	}
+
+	if monikerLen > maxMonikerLen {
+		return fmt.Errorf("Profile moniker cannot exceed %d characters", maxMonikerLen)
+	}
+
+	maxBioLen := bioParams.MaxBioLen.Int64()
+	if profile.Bio != nil && int64(len(*profile.Bio)) > maxBioLen {
+		return fmt.Errorf("Profile biography cannot exceed %d characters", maxBioLen)
+	}
+
+	if err := profile.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // handleMsgSaveProfile handles the creation/edit of a profile
 func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
@@ -40,7 +94,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		WithBio(msg.Bio).
 		WithPictures(msg.ProfilePic, msg.ProfileCov)
 
-	err := profile.Validate()
+	err := validateProfile(ctx, keeper, profile)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
