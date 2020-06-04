@@ -1,6 +1,8 @@
 # Version 0.7.0
 - Implemented benchmarks tests (#126)
 - Implemented posts' reports (#50)
+- Re-introduced the on-chain government module (#173)
+- Fixed reactions registration bug (#187)
 
 # Version 0.6.2
 ## Changes

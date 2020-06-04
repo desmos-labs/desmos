@@ -100,10 +100,8 @@ func (reactions PostReactions) ContainsReactionFrom(user sdk.Address, value stri
 // NOTE: The value can be either an emoji or a shortcode.
 func (reactions PostReactions) IndexOfByUserAndValue(owner sdk.Address, value string) int {
 	var reactEmoji *emoji.Emoji
-	if ej, err := emoji.LookupEmoji(value); err == nil {
-		reactEmoji = &ej
-	} else if ej, err := emoji.LookupEmojiByCode(value); err == nil {
-		reactEmoji = &ej
+	if ej, found := common.GetEmojiByShortCodeOrValue(value); found {
+		reactEmoji = ej
 	}
 
 	for index, reaction := range reactions {
