@@ -1,10 +1,10 @@
-package types_test
+package models_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,20 +13,20 @@ func TestPictures_Equals(t *testing.T) {
 	profileCov := "cover"
 	tests := []struct {
 		name     string
-		pictures *types.Pictures
-		otherPic *types.Pictures
+		pictures *models.Pictures
+		otherPic *models.Pictures
 		expBool  bool
 	}{
 		{
 			name:     "Equals pictures returns true",
-			pictures: types.NewPictures(&profilePic, &profileCov),
-			otherPic: types.NewPictures(&profilePic, &profileCov),
+			pictures: models.NewPictures(&profilePic, &profileCov),
+			otherPic: models.NewPictures(&profilePic, &profileCov),
 			expBool:  true,
 		},
 		{
 			name:     "Different pictures returns false",
-			pictures: types.NewPictures(&profileCov, &profilePic),
-			otherPic: types.NewPictures(&profilePic, &profileCov),
+			pictures: models.NewPictures(&profileCov, &profilePic),
+			otherPic: models.NewPictures(&profilePic, &profileCov),
 			expBool:  false,
 		},
 	}
@@ -46,22 +46,22 @@ func TestPictures_Validate(t *testing.T) {
 	invalidURI := "invalid"
 	tests := []struct {
 		name     string
-		pictures *types.Pictures
+		pictures *models.Pictures
 		expErr   error
 	}{
 		{
 			name:     "Valid Pictures",
-			pictures: types.NewPictures(&profilePic, &profileCov),
+			pictures: models.NewPictures(&profilePic, &profileCov),
 			expErr:   nil,
 		},
 		{
 			name:     "Invalid Pictures profile uri",
-			pictures: types.NewPictures(&invalidURI, &profileCov),
+			pictures: models.NewPictures(&invalidURI, &profileCov),
 			expErr:   fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name:     "Invalid Pictures cover uri",
-			pictures: types.NewPictures(&profilePic, &invalidURI),
+			pictures: models.NewPictures(&profilePic, &invalidURI),
 			expErr:   fmt.Errorf("invalid profile cover uri provided"),
 		},
 	}

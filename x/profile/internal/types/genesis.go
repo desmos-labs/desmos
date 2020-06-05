@@ -1,17 +1,20 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+)
 
 // GenesisState contains the data of the genesis state for the profile module
 type GenesisState struct {
-	Profiles             []Profile            `json:"profiles"`
-	NameSurnameLenParams NameSurnameLenParams `json:"name_surname_len_params"`
-	MonikerLenParams     MonikerLenParams     `json:"moniker_len_params"`
-	BioLenParams         BioLenParams         `json:"bio_len_params"`
+	Profiles             []models.Profile            `json:"profiles"`
+	NameSurnameLenParams models.NameSurnameLenParams `json:"name_surname_len_params"`
+	MonikerLenParams     models.MonikerLenParams     `json:"moniker_len_params"`
+	BioLenParams         models.BioLenParams         `json:"bio_len_params"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(profiles []Profile, nsp NameSurnameLenParams, mp MonikerLenParams, bp BioLenParams) GenesisState {
+func NewGenesisState(profiles []models.Profile, nsp models.NameSurnameLenParams, mp models.MonikerLenParams, bp models.BioLenParams) GenesisState {
 	return GenesisState{
 		Profiles:             profiles,
 		NameSurnameLenParams: nsp,
@@ -23,10 +26,10 @@ func NewGenesisState(profiles []Profile, nsp NameSurnameLenParams, mp MonikerLen
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
-		Profiles:             Profiles{},
-		NameSurnameLenParams: DefaultNameSurnameLenParams(),
-		MonikerLenParams:     DefaultMonikerLenParams(),
-		BioLenParams:         DefaultBioLenParams(),
+		Profiles:             models.Profiles{},
+		NameSurnameLenParams: models.DefaultNameSurnameLenParams(),
+		MonikerLenParams:     models.DefaultMonikerLenParams(),
+		BioLenParams:         models.DefaultBioLenParams(),
 	}
 }
 
@@ -39,16 +42,16 @@ func ValidateGenesis(data GenesisState) error {
 	}
 
 	// name/surname params validity checks
-	if data.NameSurnameLenParams.MinNameSurnameLen.IsNegative() || data.NameSurnameLenParams.MinNameSurnameLen.LT(DefaultMinNameSurnameLength) {
+	if data.NameSurnameLenParams.MinNameSurnameLen.IsNegative() || data.NameSurnameLenParams.MinNameSurnameLen.LT(models.DefaultMinNameSurnameLength) {
 		return fmt.Errorf("invalid minimum name/surname length param: %s", data.NameSurnameLenParams.MinNameSurnameLen)
 	}
 
-	if data.NameSurnameLenParams.MaxNameSurnameLen.IsNegative() || data.NameSurnameLenParams.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
+	if data.NameSurnameLenParams.MaxNameSurnameLen.IsNegative() || data.NameSurnameLenParams.MaxNameSurnameLen.GT(models.DefaultMaxNameSurnameLength) {
 		return fmt.Errorf("invalid max name/surname length param: %s", data.NameSurnameLenParams.MaxNameSurnameLen)
 	}
 
 	// moniker validity checks
-	if data.MonikerLenParams.MinMonikerLen.IsNegative() || data.MonikerLenParams.MinMonikerLen.LT(DefaultMinMonikerLength) {
+	if data.MonikerLenParams.MinMonikerLen.IsNegative() || data.MonikerLenParams.MinMonikerLen.LT(models.DefaultMinMonikerLength) {
 		return fmt.Errorf("invalid minimum moniker length param: %s", data.MonikerLenParams.MinMonikerLen)
 	}
 

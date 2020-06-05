@@ -3,6 +3,7 @@ package simulation
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
@@ -15,17 +16,17 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		profileParams.MonikerParams,
 		profileParams.BioParams,
 	)
-	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
+	simsState.GenState[models.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
 }
 
 // randomAccounts returns randomly generated genesis accounts
-func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) {
+func randomAccounts(simState *module.SimulationState) (accounts models.Profiles) {
 	accountsNumber := simState.Rand.Intn(50)
 
-	accounts = make(types.Profiles, accountsNumber)
+	accounts = make(models.Profiles, accountsNumber)
 	for i := 0; i < accountsNumber; i++ {
 		accountData := RandomProfileData(simState.Rand, simState.Accounts)
-		account := types.Profile{
+		account := models.Profile{
 			Moniker: accountData.Moniker,
 			Name:    &accountData.Name,
 			Surname: &accountData.Surname,

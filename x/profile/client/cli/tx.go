@@ -3,6 +3,8 @@ package cli
 import (
 	"bufio"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -13,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -21,7 +22,7 @@ import (
 // GetTxCmd set the tx commands
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd := &cobra.Command{
-		Use:                        types.ModuleName,
+		Use:                        models.ModuleName,
 		Short:                      "Profiles transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -75,7 +76,7 @@ If you are editing an existing profile you should fill all the existent fields o
 			surname := getFlagValueOrNilOnDefault(flagSurname)
 			bio := getFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgSaveProfile(moniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
+			msg := msgs.NewMsgSaveProfile(moniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -102,7 +103,7 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
+			msg := msgs.NewMsgDeleteProfile(cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

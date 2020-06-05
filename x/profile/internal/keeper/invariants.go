@@ -2,14 +2,14 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
-	ir.RegisterRoute(types.ModuleName, "valid-profile",
+	ir.RegisterRoute(models.ModuleName, "valid-profile",
 		ValidProfileInvariant(keeper))
 }
 
@@ -24,7 +24,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 }
 
 // formatOutputProfiles prepare invalid profiles to be displayed correctly
-func formatOutputProfiles(invalidProfiles types.Profiles) (outputProfiles string) {
+func formatOutputProfiles(invalidProfiles models.Profiles) (outputProfiles string) {
 	outputProfiles = "Invalid profiles:\n"
 	for _, invalidProfile := range invalidProfiles {
 		outputProfiles += fmt.Sprintf("[Moniker]: %s, [Creator]: %s\n", invalidProfile.Moniker, invalidProfile.Creator)
@@ -35,15 +35,15 @@ func formatOutputProfiles(invalidProfiles types.Profiles) (outputProfiles string
 // ValidProfileInvariant checks that all registered profiles have a non-empty moniker and a non-empty creator
 func ValidProfileInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidProfiles types.Profiles
-		k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
+		var invalidProfiles models.Profiles
+		k.IterateProfiles(ctx, func(_ int64, profile models.Profile) (stop bool) {
 			if err := profile.Validate(); err != nil {
 				invalidProfiles = append(invalidProfiles, profile)
 			}
 			return false
 		})
 
-		return sdk.FormatInvariant(types.ModuleName, "invalid profiles",
+		return sdk.FormatInvariant(models.ModuleName, "invalid profiles",
 			fmt.Sprintf("The following list contains invalid profiles:\n %s",
 				formatOutputProfiles(invalidProfiles)),
 		), invalidProfiles != nil

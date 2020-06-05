@@ -1,12 +1,13 @@
-package types_test
+package msgs_test
 
 import (
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +18,7 @@ import (
 var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var testProfilePic = "https://shorturl.at/adnX3"
 var testCoverPic = "https://shorturl.at/cgpyF"
-var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
+var testPictures = models.NewPictures(&testProfilePic, &testCoverPic)
 var name = "name"
 var surname = "surname"
 var bio = "biography"
@@ -41,7 +42,7 @@ var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoX
 	"6ou0LSnJMCTq"
 var invalidMinLenField = "l"
 
-var testProfile = types.Profile{
+var testProfile = models.Profile{
 	Name:     &name,
 	Surname:  &surname,
 	Moniker:  "moniker",
@@ -51,7 +52,7 @@ var testProfile = types.Profile{
 }
 
 var newMoniker = "monk"
-var msgEditProfile = types.NewMsgSaveProfile(
+var msgEditProfile = msgs.NewMsgSaveProfile(
 	newMoniker,
 	testProfile.Name,
 	testProfile.Surname,
@@ -61,7 +62,7 @@ var msgEditProfile = types.NewMsgSaveProfile(
 	testProfile.Creator,
 )
 
-var msgDeleteProfile = types.NewMsgDeleteProfile(
+var msgDeleteProfile = msgs.NewMsgDeleteProfile(
 	testProfile.Creator,
 )
 
@@ -79,12 +80,12 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 	invalidMonikerLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
 	tests := []struct {
 		name  string
-		msg   types.MsgSaveProfile
+		msg   msgs.MsgSaveProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -97,7 +98,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Max name length exceeded",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				&invalidMaxLenField,
 				testProfile.Surname,
@@ -110,7 +111,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Min name length not reached",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				&invalidMinLenField,
 				testProfile.Surname,
@@ -123,7 +124,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Max surname length exceeded",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				testProfile.Name,
 				&invalidMaxLenField,
@@ -136,7 +137,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Min surname length not reached",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				testProfile.Name,
 				&invalidMinLenField,
@@ -149,7 +150,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Max bio length exceeded",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -162,7 +163,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Min moniker length not reached",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				"l",
 				testProfile.Name,
 				testProfile.Surname,
@@ -175,7 +176,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Max moniker length exceeded",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				invalidMonikerLen,
 				testProfile.Name,
 				testProfile.Surname,
@@ -188,7 +189,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "No error message",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.Moniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -244,19 +245,19 @@ func TestMsgDeleteProfile_Type(t *testing.T) {
 func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgDeleteProfile
+		msg   msgs.MsgDeleteProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgDeleteProfile(
+			msg: msgs.NewMsgDeleteProfile(
 				nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
 			name: "Valid message returns no error",
-			msg: types.NewMsgDeleteProfile(
+			msg: msgs.NewMsgDeleteProfile(
 				testProfile.Creator,
 			),
 			error: nil,

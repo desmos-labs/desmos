@@ -8,44 +8,43 @@ import (
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/simulation"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 )
 
 const (
-	OpWeightMsgSaveProfile   = simulation.OpWeightMsgSaveProfile
-	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
-	DefaultGasValue          = simulation.DefaultGasValue
-	ModuleName               = types.ModuleName
-	RouterKey                = types.RouterKey
-	StoreKey                 = types.StoreKey
-	MinNameSurnameLength     = types.MinNameSurnameLength
-	MaxNameSurnameLength     = types.MaxNameSurnameLength
-	MinMonikerLength         = types.MinMonikerLength
-	MaxMonikerLength         = types.MaxMonikerLength
-	MaxBioLength             = types.MaxBioLength
-	ActionSaveProfile        = types.ActionSaveProfile
-	ActionDeleteProfile      = types.ActionDeleteProfile
-	QuerierRoute             = types.QuerierRoute
-	QueryProfile             = types.QueryProfile
-	QueryProfiles            = types.QueryProfiles
 	EventTypeProfileSaved    = types.EventTypeProfileSaved
 	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
 	AttributeProfileMoniker  = types.AttributeProfileMoniker
 	AttributeProfileCreator  = types.AttributeProfileCreator
-	DefaultParamspace        = types.DefaultParamspace
+	DefaultParamspace        = models.DefaultParamspace
+	ModuleName               = models.ModuleName
+	RouterKey                = models.RouterKey
+	StoreKey                 = models.StoreKey
+	MinNameSurnameLength     = models.MinNameSurnameLength
+	MaxNameSurnameLength     = models.MaxNameSurnameLength
+	MinMonikerLength         = models.MinMonikerLength
+	MaxMonikerLength         = models.MaxMonikerLength
+	MaxBioLength             = models.MaxBioLength
+	ActionSaveProfile        = models.ActionSaveProfile
+	ActionDeleteProfile      = models.ActionDeleteProfile
+	QuerierRoute             = models.QuerierRoute
+	QueryProfile             = models.QueryProfile
+	QueryProfiles            = models.QueryProfiles
+	QueryParams              = models.QueryParams
+	OpWeightMsgSaveProfile   = simulation.OpWeightMsgSaveProfile
+	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
+	DefaultGasValue          = simulation.DefaultGasValue
 )
 
 var (
 	// functions aliases
+	NewHandler                  = keeper.NewHandler
 	NewKeeper                   = keeper.NewKeeper
 	NewQuerier                  = keeper.NewQuerier
 	RegisterInvariants          = keeper.RegisterInvariants
 	AllInvariants               = keeper.AllInvariants
 	ValidProfileInvariant       = keeper.ValidProfileInvariant
-	NewHandler                  = keeper.NewHandler
-	RandomizedGenState          = simulation.RandomizedGenState
-	DecodeStore                 = simulation.DecodeStore
-	SimulateMsgSaveProfile      = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile    = simulation.SimulateMsgDeleteProfile
 	RandomProfileData           = simulation.RandomProfileData
 	RandomProfile               = simulation.RandomProfile
 	RandomMoniker               = simulation.RandomMoniker
@@ -55,51 +54,63 @@ var (
 	RandomProfilePic            = simulation.RandomProfilePic
 	RandomProfileCover          = simulation.RandomProfileCover
 	GetSimAccount               = simulation.GetSimAccount
+	RandomProfileParams         = simulation.RandomProfileParams
 	WeightedOperations          = simulation.WeightedOperations
-	ProfileStoreKey             = types.ProfileStoreKey
-	MonikerStoreKey             = types.MonikerStoreKey
-	NewProfile                  = types.NewProfile
-	NewPictures                 = types.NewPictures
+	RandomizedGenState          = simulation.RandomizedGenState
+	DecodeStore                 = simulation.DecodeStore
+	SimulateMsgSaveProfile      = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile    = simulation.SimulateMsgDeleteProfile
+	RegisterCodec               = types.RegisterCodec
 	NewGenesisState             = types.NewGenesisState
 	DefaultGenesisState         = types.DefaultGenesisState
 	ValidateGenesis             = types.ValidateGenesis
-	RegisterCodec               = types.RegisterCodec
-	ParamKeyTable               = types.ParamKeyTable
-	NewNameSurnameLenParams     = types.NewNameSurnameLenParams
-	DefaultNameSurnameLenParams = types.DefaultNameSurnameLenParams
-	NewMonikerLenParams         = types.NewMonikerLenParams
-	DefaultMonikerLenParams     = types.DefaultMonikerLenParams
-	NewBioLenParams             = types.NewBioLenParams
-	DefaultBioLenParams         = types.DefaultBioLenParams
-	NewMsgSaveProfile           = types.NewMsgSaveProfile
-	NewMsgDeleteProfile         = types.NewMsgDeleteProfile
+	ParamKeyTable               = models.ParamKeyTable
+	NewNameSurnameLenParams     = models.NewNameSurnameLenParams
+	DefaultNameSurnameLenParams = models.DefaultNameSurnameLenParams
+	NewMonikerLenParams         = models.NewMonikerLenParams
+	DefaultMonikerLenParams     = models.DefaultMonikerLenParams
+	NewBioLenParams             = models.NewBioLenParams
+	DefaultBioLenParams         = models.DefaultBioLenParams
+	NewParamsQueryResponse      = models.NewParamsQueryResponse
+	ProfileStoreKey             = models.ProfileStoreKey
+	MonikerStoreKey             = models.MonikerStoreKey
+	NewProfile                  = models.NewProfile
+	NewPictures                 = models.NewPictures
+	RegisterModelsCodec         = models.RegisterModelsCodec
+	NewMsgSaveProfile           = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	TxHashRegEx                 = types.TxHashRegEx
-	URIRegEx                    = types.URIRegEx
-	ProfileStorePrefix          = types.ProfileStorePrefix
-	MonikerStorePrefix          = types.MonikerStorePrefix
+	MsgsCodec                   = msgs.MsgsCodec
 	ModuleCdc                   = types.ModuleCdc
-	DefaultMinNameSurnameLength = types.DefaultMinNameSurnameLength
-	DefaultMaxNameSurnameLength = types.DefaultMaxNameSurnameLength
-	DefaultMinMonikerLength     = types.DefaultMinMonikerLength
-	DefaultMaxMonikerLength     = types.DefaultMaxMonikerLength
-	DefaultMaxBioLength         = types.DefaultMaxBioLength
-	ParamStoreKeyNameSurnameLen = types.ParamStoreKeyNameSurnameLen
-	ParamStoreKeyMonikerLen     = types.ParamStoreKeyMonikerLen
-	ParamStoreKeyMaxBioLen      = types.ParamStoreKeyMaxBioLen
+	DefaultMinNameSurnameLength = models.DefaultMinNameSurnameLength
+	DefaultMaxNameSurnameLength = models.DefaultMaxNameSurnameLength
+	DefaultMinMonikerLength     = models.DefaultMinMonikerLength
+	DefaultMaxMonikerLength     = models.DefaultMaxMonikerLength
+	DefaultMaxBioLength         = models.DefaultMaxBioLength
+	ParamStoreKeyNameSurnameLen = models.ParamStoreKeyNameSurnameLen
+	ParamStoreKeyMonikerLen     = models.ParamStoreKeyMonikerLen
+	ParamStoreKeyMaxBioLen      = models.ParamStoreKeyMaxBioLen
+	TxHashRegEx                 = models.TxHashRegEx
+	URIRegEx                    = models.URIRegEx
+	ProfileStorePrefix          = models.ProfileStorePrefix
+	MonikerStorePrefix          = models.MonikerStorePrefix
+	ModelsCdc                   = models.ModelsCdc
 )
 
 type (
 	Keeper               = keeper.Keeper
 	ProfileData          = simulation.ProfileData
-	Profile              = types.Profile
-	Profiles             = types.Profiles
-	Pictures             = types.Pictures
+	ProfileParams        = simulation.ProfileParams
 	GenesisState         = types.GenesisState
-	NameSurnameLenParams = types.NameSurnameLenParams
-	MonikerLenParams     = types.MonikerLenParams
-	BioLenParams         = types.BioLenParams
-	MsgSaveProfile       = types.MsgSaveProfile
-	MsgDeleteProfile     = types.MsgDeleteProfile
+	NameSurnameLenParams = models.NameSurnameLenParams
+	MonikerLenParams     = models.MonikerLenParams
+	BioLenParams         = models.BioLenParams
+	ParamsQueryResponse  = models.ParamsQueryResponse
+	Profile              = models.Profile
+	Profiles             = models.Profiles
+	Pictures             = models.Pictures
+	MsgSaveProfile       = msgs.MsgSaveProfile
+	MsgDeleteProfile     = msgs.MsgDeleteProfile
 )

@@ -2,11 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -18,12 +18,12 @@ func Test_queryProfile(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount types.Profile
+		storedAccount models.Profile
 		expErr        error
 	}{
 		{
 			name:          "Profile doesnt exist (address given)",
-			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			path:          []string{models.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("Profile with address %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -31,7 +31,7 @@ func Test_queryProfile(t *testing.T) {
 		},
 		{
 			name:          "Profile doesnt exist (blank path given)",
-			path:          []string{types.QueryProfile, ""},
+			path:          []string{models.QueryProfile, ""},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"Moniker or address cannot be empty or blank",
@@ -39,19 +39,19 @@ func Test_queryProfile(t *testing.T) {
 		},
 		{
 			name:          "Profile doesnt exist (moniker given)",
-			path:          []string{types.QueryProfile, "monk"},
+			path:          []string{models.QueryProfile, "monk"},
 			storedAccount: testProfile,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this moniker: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
-			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			path:          []string{models.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},
 		{
 			name:          "Profile returned correctly (moniker given)",
-			path:          []string{types.QueryProfile, "moniker"},
+			path:          []string{models.QueryProfile, "moniker"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},
@@ -91,20 +91,20 @@ func Test_queryProfiles(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount *types.Profile
-		expResult     types.Profiles
+		storedAccount *models.Profile
+		expResult     models.Profiles
 	}{
 		{
 			name:          "Empty Profiles",
-			path:          []string{types.QueryProfiles},
+			path:          []string{models.QueryProfiles},
 			storedAccount: nil,
-			expResult:     types.Profiles{},
+			expResult:     models.Profiles{},
 		},
 		{
 			name:          "Profile returned correctly",
-			path:          []string{types.QueryProfiles},
+			path:          []string{models.QueryProfiles},
 			storedAccount: &testProfile,
-			expResult:     types.Profiles{testProfile},
+			expResult:     models.Profiles{testProfile},
 		},
 	}
 

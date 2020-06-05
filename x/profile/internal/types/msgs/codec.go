@@ -1,0 +1,15 @@
+package msgs
+
+import "github.com/cosmos/cosmos-sdk/codec"
+
+// MsgsCodec is the codec
+var MsgsCodec = codec.New()
+
+func init() {
+	RegisterMessagesCodec(MsgsCodec)
+}
+
+func RegisterMessagesCodec(cdc *codec.Codec) {
+	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
+	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
+}

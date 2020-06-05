@@ -1,19 +1,19 @@
-package types_test
+package models_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewProfile(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	expProfile := types.Profile{Creator: owner}
-	actProfile := types.NewProfile(owner)
+	expProfile := models.Profile{Creator: owner}
+	actProfile := models.NewProfile(owner)
 
 	require.Equal(t, expProfile, actProfile)
 }
@@ -21,31 +21,31 @@ func TestNewProfile(t *testing.T) {
 func TestProfile_WithMoniker(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	profile := types.NewProfile(owner)
+	profile := models.NewProfile(owner)
 
 	profileWithMoniker := profile.WithMoniker("monik")
 
-	require.Equal(t, types.NewProfile(owner).WithMoniker("monik"), profileWithMoniker)
+	require.Equal(t, models.NewProfile(owner).WithMoniker("monik"), profileWithMoniker)
 }
 
 func TestProfile_WithName(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "monik"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	profile := models.NewProfile(owner).WithMoniker(moniker)
 	name := "name"
 
 	tests := []struct {
 		name       string
-		profile    types.Profile
+		profile    models.Profile
 		profName   string
-		expProfile types.Profile
+		expProfile models.Profile
 	}{
 		{
 			name:       "not nil name value",
 			profile:    profile,
 			profName:   name,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Name: &name},
+			expProfile: models.Profile{Moniker: moniker, Creator: owner, Name: &name},
 		},
 	}
 
@@ -62,20 +62,20 @@ func TestProfile_WithSurname(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "monker"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	profile := models.NewProfile(owner).WithMoniker(moniker)
 	surname := "surname"
 
 	tests := []struct {
 		name        string
-		profile     types.Profile
+		profile     models.Profile
 		profSurname string
-		expProfile  types.Profile
+		expProfile  models.Profile
 	}{
 		{
 			name:        "not nil surname",
 			profile:     profile,
 			profSurname: surname,
-			expProfile:  types.Profile{Moniker: moniker, Creator: owner, Surname: &surname},
+			expProfile:  models.Profile{Moniker: moniker, Creator: owner, Surname: &surname},
 		},
 	}
 
@@ -92,20 +92,20 @@ func TestProfile_WithBio(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "moniker"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	profile := models.NewProfile(owner).WithMoniker(moniker)
 	bio := "surname"
 
 	tests := []struct {
 		name       string
-		profile    types.Profile
+		profile    models.Profile
 		profBio    string
-		expProfile types.Profile
+		expProfile models.Profile
 	}{
 		{
 			name:       "not nil bio",
 			profile:    profile,
 			profBio:    bio,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Bio: &bio},
+			expProfile: models.Profile{Moniker: moniker, Creator: owner, Bio: &bio},
 		},
 	}
 
@@ -122,30 +122,30 @@ func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	moniker := "moniker"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	profile := models.NewProfile(owner).WithMoniker(moniker)
 	var pic = "profile"
 	var cov = "cover"
 
 	tests := []struct {
 		name       string
-		profile    types.Profile
+		profile    models.Profile
 		pic        *string
 		cov        *string
-		expProfile types.Profile
+		expProfile models.Profile
 	}{
 		{
 			name:       "not nil pics",
 			profile:    profile,
 			pic:        &pic,
 			cov:        &cov,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: types.NewPictures(&pic, &cov)},
+			expProfile: models.Profile{Moniker: moniker, Creator: owner, Pictures: models.NewPictures(&pic, &cov)},
 		},
 		{
 			name:       "nil pics",
 			profile:    profile,
 			pic:        nil,
 			cov:        nil,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner},
+			expProfile: models.Profile{Moniker: moniker, Creator: owner},
 		},
 	}
 
@@ -166,7 +166,11 @@ func TestProfile_String(t *testing.T) {
 	var surname = "surname"
 	var bio = "biography"
 
-	var testAccount = types.Profile{
+	var testProfilePic = "https://shorturl.at/adnX3"
+	var testCoverPic = "https://shorturl.at/cgpyF"
+	var testPictures = models.NewPictures(&testProfilePic, &testCoverPic)
+
+	var testAccount = models.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "moniker",
@@ -185,9 +189,13 @@ func TestProfile_Equals(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	var pic = "profile"
 	var cov = "cover"
-	var testPictures = types.NewPictures(&pic, &cov)
+	var testPictures = models.NewPictures(&pic, &cov)
 
-	var testAccount = types.Profile{
+	var name = "name"
+	var surname = "surname"
+	var bio = "biography"
+
+	var testAccount = models.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "moniker",
@@ -196,7 +204,7 @@ func TestProfile_Equals(t *testing.T) {
 		Creator:  testPostOwner,
 	}
 
-	var testAccount2 = types.Profile{
+	var testAccount2 = models.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "oniker",
@@ -207,8 +215,8 @@ func TestProfile_Equals(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		account  types.Profile
-		otherAcc types.Profile
+		account  models.Profile
+		otherAcc models.Profile
 		expBool  bool
 	}{
 		{
@@ -241,18 +249,22 @@ func TestProfile_Validate(t *testing.T) {
 	var name = "name"
 	var surname = "surname"
 	var bio = "biography"
-	var pic = "pic"
-	var cov = "cov"
-	var invalidPics = types.NewPictures(&pic, &cov)
+	var invPic = "pic"
+	var invCov = "cov"
+	var invalidPics = models.NewPictures(&invPic, &invCov)
+
+	var pic = "http://pic.com"
+	var cov = "http://cov.com"
+	var testPictures = models.NewPictures(&pic, &cov)
 
 	tests := []struct {
 		name    string
-		account types.Profile
+		account models.Profile
 		expErr  error
 	}{
 		{
 			name: "Empty profile creator returns error",
-			account: types.Profile{
+			account: models.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",
@@ -264,7 +276,7 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty profile moniker returns error",
-			account: types.Profile{
+			account: models.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "",
@@ -276,7 +288,7 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Valid profile returns no error",
-			account: types.Profile{
+			account: models.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",
@@ -288,7 +300,7 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			account: types.Profile{
+			account: models.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",

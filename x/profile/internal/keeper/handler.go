@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 
@@ -15,9 +17,9 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case types.MsgSaveProfile:
+		case msgs.MsgSaveProfile:
 			return handleMsgSaveProfile(ctx, keeper, msg)
-		case types.MsgDeleteProfile:
+		case msgs.MsgDeleteProfile:
 			return handleMsgDeleteProfile(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
@@ -26,9 +28,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
-// validateProfile checks if the given profile is valid according to the current profile's module params
-//TODO test this
-func validateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
+// ValidateProfile checks if the given profile is valid according to the current profile's module params
+func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) error {
 	nsParams := keeper.GetNameSurnameLenParams(ctx)
 	monikerParams := keeper.GetMonikerLenParams(ctx)
 	bioParams := keeper.GetBioLenParams(ctx)
@@ -81,10 +82,10 @@ func validateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) erro
 }
 
 // handleMsgSaveProfile handles the creation/edit of a profile
-func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfile) (*sdk.Result, error) {
+func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg msgs.MsgSaveProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
 	if !found {
-		profile = types.NewProfile(msg.Creator)
+		profile = models.NewProfile(msg.Creator)
 	}
 	// replace all editable fields (clients should autofill existing values)
 	profile = profile.
@@ -94,7 +95,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		WithBio(msg.Bio).
 		WithPictures(msg.ProfilePic, msg.ProfileCov)
 
-	err := validateProfile(ctx, keeper, profile)
+	err := ValidateProfile(ctx, keeper, profile)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -121,7 +122,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 }
 
 // handleMsgDeleteProfile handles the deletion of a profile
-func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteProfile) (*sdk.Result, error) {
+func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg msgs.MsgDeleteProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
 
 	if !found {

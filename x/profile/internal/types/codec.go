@@ -1,8 +1,10 @@
 package types
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+)
 
-// ModuleCdc is the codec
+// ModuleCdc is the codec used inside the whole posts module
 var ModuleCdc = codec.New()
 
 func init() {
@@ -10,6 +12,6 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
-	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
+	RegisterModelsCodec(cdc)
+	RegisterMessagesCodec(cdc)
 }

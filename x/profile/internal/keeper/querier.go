@@ -2,12 +2,12 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -15,11 +15,11 @@ import (
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
-		case types.QueryProfile:
+		case models.QueryProfile:
 			return queryProfile(ctx, path[1:], req, keeper)
-		case types.QueryProfiles:
+		case models.QueryProfiles:
 			return queryProfiles(ctx, req, keeper)
-		case types.QueryParams:
+		case models.QueryParams:
 			return queryProfileParams(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")
@@ -71,7 +71,7 @@ func queryProfiles(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte,
 
 // queryProfileParams handles the request of listing all the profiles params
 func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	profileParams := types.NewParamsQueryResponse(
+	profileParams := models.NewParamsQueryResponse(
 		keeper.GetNameSurnameLenParams(ctx),
 		keeper.GetMonikerLenParams(ctx),
 		keeper.GetBioLenParams(ctx),

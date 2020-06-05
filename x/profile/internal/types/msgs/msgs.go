@@ -1,10 +1,11 @@
-package types
+package msgs
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 )
 
 // ----------------------
@@ -37,10 +38,10 @@ func NewMsgSaveProfile(moniker string, name, surname, bio, profilePic,
 }
 
 // Route should return the name of the module
-func (msg MsgSaveProfile) Route() string { return RouterKey }
+func (msg MsgSaveProfile) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
+func (msg MsgSaveProfile) Type() string { return models.ActionSaveProfile }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSaveProfile) ValidateBasic() error {
@@ -49,36 +50,36 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 	}
 
 	// Todo remove checks
-	if len(msg.Moniker) < MinMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be less than %d characters", MinMonikerLength))
+	if len(msg.Moniker) < models.MinMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be less than %d characters", models.MinMonikerLength))
 	}
 
-	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
+	if len(msg.Moniker) > models.MaxMonikerLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", models.MaxMonikerLength))
 	}
 
 	if msg.Name != nil {
-		if len(*msg.Name) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
+		if len(*msg.Name) < models.MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", models.MinNameSurnameLength))
 		}
 
-		if len(*msg.Name) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
+		if len(*msg.Name) > models.MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", models.MaxNameSurnameLength))
 		}
 	}
 
 	if msg.Surname != nil {
-		if msg.Surname != nil && len(*msg.Surname) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
+		if msg.Surname != nil && len(*msg.Surname) < models.MinNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", models.MinNameSurnameLength))
 		}
 
-		if len(*msg.Surname) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
+		if len(*msg.Surname) > models.MaxNameSurnameLength {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", models.MaxNameSurnameLength))
 		}
 	}
 
-	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
+	if msg.Bio != nil && len(*msg.Bio) > models.MaxBioLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", models.MaxBioLength))
 	}
 
 	return nil
@@ -86,7 +87,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgSaveProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
@@ -111,10 +112,10 @@ func NewMsgDeleteProfile(creator sdk.AccAddress) MsgDeleteProfile {
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteProfile) Route() string { return RouterKey }
+func (msg MsgDeleteProfile) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
+func (msg MsgDeleteProfile) Type() string { return models.ActionDeleteProfile }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteProfile) ValidateBasic() error {
@@ -127,7 +128,7 @@ func (msg MsgDeleteProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgDeleteProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

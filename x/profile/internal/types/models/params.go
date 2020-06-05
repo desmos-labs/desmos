@@ -1,4 +1,4 @@
-package types
+package models
 
 import (
 	"encoding/json"
@@ -26,15 +26,15 @@ var (
 var (
 	ParamStoreKeyNameSurnameLen = []byte("nameSurnameLenParams")
 	ParamStoreKeyMonikerLen     = []byte("monikerLenParams")
-	ParamStoreKeyMaxBioLen      = []byte("maxBioLenParams")
+	ParamStoreKeyMaxBioLen      = []byte("bioLenParams")
 )
 
 // ParamKeyTable - Key declaration for params
 func ParamKeyTable() paramSubspace.KeyTable {
 	return paramSubspace.NewKeyTable(
-		paramSubspace.NewParamSetPair(ParamStoreKeyNameSurnameLen, NameSurnameLenParams{}, validateNameSurnameLenParams),
-		paramSubspace.NewParamSetPair(ParamStoreKeyMonikerLen, MonikerLenParams{}, validateMonikerLenParams),
-		paramSubspace.NewParamSetPair(ParamStoreKeyMaxBioLen, BioLenParams{}, validateBioLenParams),
+		paramSubspace.NewParamSetPair(ParamStoreKeyNameSurnameLen, NameSurnameLenParams{}, ValidateNameSurnameLenParams),
+		paramSubspace.NewParamSetPair(ParamStoreKeyMonikerLen, MonikerLenParams{}, ValidateMonikerLenParams),
+		paramSubspace.NewParamSetPair(ParamStoreKeyMaxBioLen, BioLenParams{}, ValidateBioLenParams),
 	)
 }
 
@@ -69,7 +69,7 @@ func (params NameSurnameLenParams) String() string {
 	return string(out)
 }
 
-func validateNameSurnameLenParams(i interface{}) error {
+func ValidateNameSurnameLenParams(i interface{}) error {
 	params, isNameSurnParams := i.(NameSurnameLenParams)
 
 	if !isNameSurnParams {
@@ -119,7 +119,7 @@ func (params MonikerLenParams) String() string {
 	return string(out)
 }
 
-func validateMonikerLenParams(i interface{}) error {
+func ValidateMonikerLenParams(i interface{}) error {
 	params, isMonikerParams := i.(MonikerLenParams)
 	if !isMonikerParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
@@ -164,7 +164,7 @@ func (params BioLenParams) String() string {
 	return string(out)
 }
 
-func validateBioLenParams(i interface{}) error {
+func ValidateBioLenParams(i interface{}) error {
 	params, isBioLenParams := i.(BioLenParams)
 	if !isBioLenParams {
 		return fmt.Errorf("invalid parameters type: %s", i)

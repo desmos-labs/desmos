@@ -2,19 +2,19 @@ package cli
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/spf13/cobra"
 )
 
 // GetQueryCmd adds the query commands
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	profileQueryCmd := &cobra.Command{
-		Use:                        types.ModuleName,
+		Use:                        models.ModuleName,
 		Short:                      "Querying commands for the profiles module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -37,14 +37,14 @@ func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, args[0])
+			route := fmt.Sprintf("custom/%s/%s/%s", models.QuerierRoute, models.QueryProfile, args[0])
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				fmt.Printf("Could not find a profile with moniker %s \n", args[0])
 				return nil
 			}
 
-			var out types.Profile
+			var out models.Profile
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -60,14 +60,14 @@ func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryProfiles)
+			route := fmt.Sprintf("custom/%s/%s", models.QuerierRoute, models.QueryProfiles)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				fmt.Printf("Could not find any profile")
 				return nil
 			}
 
-			var out types.Profiles
+			var out models.Profiles
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
@@ -83,14 +83,14 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
+			route := fmt.Sprintf("custom/%s/%s", models.QuerierRoute, models.QueryParams)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				fmt.Printf("Could not find profile params")
 				return nil
 			}
 
-			var out types.ParamsQueryResponse
+			var out models.ParamsQueryResponse
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

@@ -1,11 +1,11 @@
 package simulation
 
 import (
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
 var (
@@ -73,14 +73,14 @@ type ProfileData struct {
 	Name    string
 	Surname string
 	Bio     string
-	Picture types.Pictures
+	Picture models.Pictures
 	Creator sim.Account
 }
 
 // RandomProfileData return a random ProfileData from random data and random accounts list
 func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 	simAccount, _ := sim.RandomAcc(r, accs)
-	pictures := types.Pictures{
+	pictures := models.Pictures{
 		Profile: RandomProfilePic(r),
 		Cover:   RandomProfileCover(r),
 	}
@@ -96,7 +96,7 @@ func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 }
 
 // RandomProfile picks and returns a random profile from an array
-func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
+func RandomProfile(r *rand.Rand, accounts models.Profiles) models.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }
@@ -152,23 +152,23 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 
 // ProfileParams contains the randomly generated params of profile module
 type ProfileParams struct {
-	NameSurnameParams types.NameSurnameLenParams
-	MonikerParams     types.MonikerLenParams
-	BioParams         types.BioLenParams
+	NameSurnameParams models.NameSurnameLenParams
+	MonikerParams     models.MonikerLenParams
+	BioParams         models.BioLenParams
 }
 
 // RandomProfileParams return a random set of profile params from some random ints
 func RandomProfileParams(r *rand.Rand) ProfileParams {
 	return ProfileParams{
-		NameSurnameParams: types.NameSurnameLenParams{
+		NameSurnameParams: models.NameSurnameLenParams{
 			MinNameSurnameLen: sdk.NewInt(r.Int63()),
 			MaxNameSurnameLen: sdk.NewInt(r.Int63()),
 		},
-		MonikerParams: types.MonikerLenParams{
+		MonikerParams: models.MonikerLenParams{
 			MinMonikerLen: sdk.NewInt(r.Int63()),
 			MaxMonikerLen: sdk.NewInt(r.Int63()),
 		},
-		BioParams: types.BioLenParams{
+		BioParams: models.BioLenParams{
 			MaxBioLen: sdk.NewInt(r.Int63()),
 		},
 	}
