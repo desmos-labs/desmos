@@ -112,7 +112,9 @@ module.exports = {
                 title: "Migrations",
                 collapsable: true,
                 children: [
-                    ["migrations/v0.3.0", "Migrate to version 0.3.0"]
+                    ["migrations/v0.3.0", "Migrate to version 0.3.0"],
+                    ["migrations/v0.5.x", "Migrate to version 0.5.x"],
+                    ["migrations/v0.6.x", "Migrate to version 0.6.x"],
                 ]
             }
         ],
