@@ -3,13 +3,13 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"testing"
 
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/desmos/x/magpie"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"

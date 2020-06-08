@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"io"
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"
 	abci "github.com/tendermint/tendermint/abci/types"
