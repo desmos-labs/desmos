@@ -1,6 +1,9 @@
 package models
 
-import "github.com/cosmos/cosmos-sdk/x/gov"
+import (
+	"fmt"
+	"github.com/cosmos/cosmos-sdk/x/gov"
+)
 
 const (
 	ProposalTypeNameSurnameParamsEdit string = "NameSurnameParamsEdit"
@@ -8,17 +11,27 @@ const (
 	ProposalTypeBioParamsEdit         string = "BioParamsEdit"
 )
 
+func init() {
+	gov.RegisterProposalType(ProposalTypeNameSurnameParamsEdit)
+	gov.RegisterProposalTypeCodec(NameSurnameParamsEditProposal{}, "desmos/NameSurnameProfileParamsEditProposal")
+	gov.RegisterProposalType(ProposalTypeMonikerParamsEdit)
+	gov.RegisterProposalTypeCodec(MonikerParamsEditProposal{}, "desmos/MonikerProfileParamsEditProposal")
+	gov.RegisterProposalType(ProposalTypeBioParamsEdit)
+	gov.RegisterProposalTypeCodec(BioParamsEditProposal{}, "desmos/BioParamsEditProposal")
+
+}
+
+/////////////////////////////////////////////
+/////////NameSurnameParamsEditProposal///////
+////////////////////////////////////////////
+
+// Implements Proposal Interface
+var _ gov.Content = NameSurnameParamsEditProposal{}
+
 type NameSurnameParamsEditProposal struct {
 	Title             string               `json:"title" yaml:"title"`
 	Description       string               `json:"description" yaml:"description"`
 	NameSurnameParams NameSurnameLenParams `json:"name_surname_params" yaml:"name_surname_params"`
-}
-
-var _ gov.Content = NameSurnameParamsEditProposal{}
-
-func init() {
-	gov.RegisterProposalType(ProposalTypeNameSurnameParamsEdit)
-	gov.RegisterProposalTypeCodec(NameSurnameParamsEditProposal{}, "desmos/NameSurnameProfileParamsEditProposal")
 }
 
 func (nsp NameSurnameParamsEditProposal) GetTitle() string {
@@ -37,6 +50,113 @@ func (nsp NameSurnameParamsEditProposal) ProposalType() string {
 	return ProposalTypeNameSurnameParamsEdit
 }
 
-func (nsp NameSurnameParamsEditProposal) ValidateBasic() string {
+func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
+	err := ValidateNameSurnameLenParams(nsp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
+func (nsp NameSurnameParamsEditProposal) String() string {
+	return fmt.Sprintf(`Name/Surname Profiles' params edit proposal:
+  Title:       %s
+  Description: %s
+  Proposed name/Surname params lengths:
+  Min: %s
+  Max: %s
+`, nsp.Title, nsp.Description, nsp.NameSurnameParams.MinNameSurnameLen, nsp.NameSurnameParams.MaxNameSurnameLen)
+}
+
+//////////////////////////////////////////
+/////////MonikerParamsEditProposal///////
+////////////////////////////////////////
+
+// Implements Proposal Interface
+var _ gov.Content = MonikerParamsEditProposal{}
+
+type MonikerParamsEditProposal struct {
+	Title         string           `json:"title" yaml:"title"`
+	Description   string           `json:"description" yaml:"description"`
+	MonikerParams MonikerLenParams `json:"moniker_params" yam:"moniker_params"`
+}
+
+func (mp MonikerParamsEditProposal) GetTitle() string {
+	return mp.Title
+}
+
+func (mp MonikerParamsEditProposal) GetDescription() string {
+	return mp.Description
+}
+
+func (mp MonikerParamsEditProposal) ProposalRoute() string {
+	return RouterKey
+}
+
+func (mp MonikerParamsEditProposal) ProposalType() string {
+	return ProposalTypeMonikerParamsEdit
+}
+
+func (mp MonikerParamsEditProposal) ValidateBasic() error {
+	err := ValidateNameSurnameLenParams(mp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (mp MonikerParamsEditProposal) String() string {
+	return fmt.Sprintf(`Moniker Profiles' params edit proposal:
+  Title:       %s
+  Description: %s
+  Proposed moniker params lengths:
+  Min: %s
+  Max: %s
+`, mp.Title, mp.Description, mp.MonikerParams.MinMonikerLen, mp.MonikerParams.MaxMonikerLen)
+}
+
+//////////////////////////////////////////
+/////////BioParamsEditProposal///////////
+////////////////////////////////////////
+
+// Implements Proposal Interface
+var _ gov.Content = BioParamsEditProposal{}
+
+type BioParamsEditProposal struct {
+	Title       string       `json:"title" yaml:"title"`
+	Description string       `json:"description" yaml:"description"`
+	BioParams   BioLenParams `json:"bio_params" yaml:"bio_params"`
+}
+
+func (bp BioParamsEditProposal) GetTitle() string {
+	return bp.Title
+}
+
+func (bp BioParamsEditProposal) GetDescription() string {
+	return bp.Description
+}
+
+func (bp BioParamsEditProposal) ProposalRoute() string {
+	return RouterKey
+}
+
+func (bp BioParamsEditProposal) ProposalType() string {
+	return ProposalTypeBioParamsEdit
+}
+
+func (bp BioParamsEditProposal) ValidateBasic() error {
+	err := ValidateNameSurnameLenParams(bp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (bp BioParamsEditProposal) String() string {
+	return fmt.Sprintf(`Biography Profiles' params edit proposal:
+  Title:       %s
+  Description: %s
+  Proposed biography params lengths:
+  Max: %s
+`, bp.Title, bp.Description, bp.BioParams.MaxBioLen)
 }
