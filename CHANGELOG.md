@@ -1,3 +1,6 @@
+# Version 0.6.3
+- Restored evidence module (#189)
+
 # Version 0.6.2
 ## Changes
 - Updated Cosmos to v0.38.4 (#177)

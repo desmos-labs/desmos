@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -184,6 +185,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[distr.StoreKey], newApp.keys[distr.StoreKey], [][]byte{}},
 		{app.keys[slashing.StoreKey], newApp.keys[slashing.StoreKey], [][]byte{}},
 		{app.keys[params.StoreKey], newApp.keys[params.StoreKey], [][]byte{}},
+		{app.keys[evidence.StoreKey], newApp.keys[evidence.StoreKey], [][]byte{}},
 
 		{app.keys[magpie.StoreKey], newApp.keys[magpie.StoreKey], [][]byte{}},
 		{app.keys[posts.StoreKey], newApp.keys[posts.StoreKey], [][]byte{}},

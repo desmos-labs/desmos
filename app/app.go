@@ -22,6 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
@@ -53,6 +54,7 @@ var (
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
+		evidence.AppModuleBasic{},
 
 		// Custom modules
 		magpie.AppModuleBasic{},
@@ -110,6 +112,7 @@ type DesmosApp struct {
 	DistrKeeper    distr.Keeper
 	CrisisKeeper   crisis.Keeper
 	paramsKeeper   params.Keeper
+	evidenceKeeper evidence.Keeper
 
 	// Custom modules
 	magpieKeeper  magpie.Keeper
@@ -137,7 +140,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	keys := sdk.NewKVStoreKeys(
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
-		params.StoreKey,
+		params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
 		magpie.StoreKey, posts.StoreKey, profile.StoreKey,
@@ -161,6 +164,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
 	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
+	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 
 	// Add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -192,6 +196,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
+	// Create evidence keeper without router
+	evidenceKeeper := evidence.NewKeeper(
+		app.cdc, keys[evidence.StoreKey], app.subspaces[evidence.ModuleName], &app.stakingKeeper, app.SlashingKeeper,
+	)
+
+	app.evidenceKeeper = *evidenceKeeper
+
 	// Register custom modules
 	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
 	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
@@ -208,6 +219,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
 		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
@@ -218,7 +230,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
-	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
+	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName, evidence.ModuleName, staking.ModuleName)
 	app.mm.SetOrderEndBlockers(crisis.ModuleName, staking.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -226,6 +238,16 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.mm.SetOrderInitGenesis(
 		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, supply.ModuleName, crisis.ModuleName, genutil.ModuleName,
+		evidence.ModuleName,
+
+		// Custom modules
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
+	)
+
+	// Remove the crisis to avoid an export error
+	app.mm.SetOrderExportGenesis(
+		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
+		slashing.ModuleName, supply.ModuleName, genutil.ModuleName, evidence.ModuleName,
 
 		// Custom modules
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
@@ -243,7 +265,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
+		//evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
