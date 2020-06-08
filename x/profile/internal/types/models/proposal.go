@@ -46,10 +46,24 @@ func (ep EditParamsProposal) ProposalType() string {
 }
 
 func (ep EditParamsProposal) ValidateBasic() error {
-	err := ValidateNameSurnameLenParams(ep)
-	if err != nil {
-		return err
+	if ep.NameSurnameLenParams != nil {
+		if err := ValidateNameSurnameLenParams(ep.NameSurnameLenParams); err != nil {
+			return err
+		}
 	}
+
+	if ep.MonikerLenParams != nil {
+		if err := ValidateMonikerLenParams(ep.MonikerLenParams); err != nil {
+			return err
+		}
+	}
+
+	if ep.BioLenParams != nil {
+		if err := ValidateBioLenParams(ep.BioLenParams); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -59,12 +73,25 @@ func (ep EditParamsProposal) String() string {
   Description: %s
   Proposed lengths:`, ep.Title, ep.Description)
 
-	return fmt.Sprintf(`Edit Profiles' params proposal:
-  Title:       %s
-  Description: %s
-  Proposed lengths:
-  Name/Surname: Min %s, Max %s,
-  Moniker: Min %s, Max %s,
-  Biography: Max %s,
-`, ep.Title, ep.Description, ep.NameSurnameLenParams.MinNameSurnameLen, ep.NameSurnameLenParams.MaxNameSurnameLen)
+	if ep.NameSurnameLenParams != nil {
+		out = out + fmt.Sprintf(`Name/Surname: Min %s, Max %s,`,
+			ep.NameSurnameLenParams.MinNameSurnameLen,
+			ep.NameSurnameLenParams.MaxNameSurnameLen,
+		)
+	}
+
+	if ep.MonikerLenParams != nil {
+		out = out + fmt.Sprintf(`Moniker: Min %s, Max %s,`,
+			ep.MonikerLenParams.MinMonikerLen,
+			ep.MonikerLenParams.MaxMonikerLen,
+		)
+	}
+
+	if ep.BioLenParams != nil {
+		out = out + fmt.Sprintf(`Biography: Max %s`,
+			ep.BioLenParams.MaxBioLen,
+		)
+	}
+
+	return out
 }
