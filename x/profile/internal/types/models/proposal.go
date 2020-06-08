@@ -6,157 +6,65 @@ import (
 )
 
 const (
-	ProposalTypeNameSurnameParamsEdit string = "NameSurnameParamsEdit"
-	ProposalTypeMonikerParamsEdit     string = "MonikerParamsEdit"
-	ProposalTypeBioParamsEdit         string = "BioParamsEdit"
+	ProposalTypeEditParams string = "ParamsEditProposal"
 )
 
 func init() {
-	gov.RegisterProposalType(ProposalTypeNameSurnameParamsEdit)
-	gov.RegisterProposalTypeCodec(NameSurnameParamsEditProposal{}, "desmos/NameSurnameProfileParamsEditProposal")
-	gov.RegisterProposalType(ProposalTypeMonikerParamsEdit)
-	gov.RegisterProposalTypeCodec(MonikerParamsEditProposal{}, "desmos/MonikerProfileParamsEditProposal")
-	gov.RegisterProposalType(ProposalTypeBioParamsEdit)
-	gov.RegisterProposalTypeCodec(BioParamsEditProposal{}, "desmos/BioParamsEditProposal")
-
+	gov.RegisterProposalType(ProposalTypeEditParams)
+	gov.RegisterProposalTypeCodec(EditParamsProposal{}, "desmos/EditParamsProposal")
 }
 
 /////////////////////////////////////////////
-/////////NameSurnameParamsEditProposal///////
+/////////EditParamsProposal///////
 ////////////////////////////////////////////
 
 // Implements Proposal Interface
-var _ gov.Content = NameSurnameParamsEditProposal{}
+var _ gov.Content = EditParamsProposal{}
 
-type NameSurnameParamsEditProposal struct {
-	Title             string               `json:"title" yaml:"title"`
-	Description       string               `json:"description" yaml:"description"`
-	NameSurnameParams NameSurnameLenParams `json:"name_surname_params" yaml:"name_surname_params"`
+type EditParamsProposal struct {
+	Title                string                `json:"title" yaml:"title"`
+	Description          string                `json:"description" yaml:"description"`
+	NameSurnameLenParams *NameSurnameLenParams `json:"name_surname_len_params" yaml:"name_surname_len_params"`
+	MonikerLenParams     *MonikerLenParams     `json:"moniker_len_params" yaml:"moniker_len_params"`
+	BioLenParams         *BioLenParams         `json:"bio_len_params" yaml:"bio_len_params"`
 }
 
-func (nsp NameSurnameParamsEditProposal) GetTitle() string {
-	return nsp.Title
+func (ep EditParamsProposal) GetTitle() string {
+	return ep.Title
 }
 
-func (nsp NameSurnameParamsEditProposal) GetDescription() string {
-	return nsp.Description
+func (ep EditParamsProposal) GetDescription() string {
+	return ep.Description
 }
 
-func (nsp NameSurnameParamsEditProposal) ProposalRoute() string {
+func (ep EditParamsProposal) ProposalRoute() string {
 	return RouterKey
 }
 
-func (nsp NameSurnameParamsEditProposal) ProposalType() string {
-	return ProposalTypeNameSurnameParamsEdit
+func (ep EditParamsProposal) ProposalType() string {
+	return ProposalTypeEditParams
 }
 
-func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
-	err := ValidateNameSurnameLenParams(nsp)
+func (ep EditParamsProposal) ValidateBasic() error {
+	err := ValidateNameSurnameLenParams(ep)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (nsp NameSurnameParamsEditProposal) String() string {
-	return fmt.Sprintf(`Name/Surname Profiles' params edit proposal:
+func (ep EditParamsProposal) String() string {
+	out := fmt.Sprintf(`Edit Profiles' params proposal:
   Title:       %s
   Description: %s
-  Proposed name/Surname params lengths:
-  Min: %s
-  Max: %s
-`, nsp.Title, nsp.Description, nsp.NameSurnameParams.MinNameSurnameLen, nsp.NameSurnameParams.MaxNameSurnameLen)
-}
+  Proposed lengths:`, ep.Title, ep.Description)
 
-//////////////////////////////////////////
-/////////MonikerParamsEditProposal///////
-////////////////////////////////////////
-
-// Implements Proposal Interface
-var _ gov.Content = MonikerParamsEditProposal{}
-
-type MonikerParamsEditProposal struct {
-	Title         string           `json:"title" yaml:"title"`
-	Description   string           `json:"description" yaml:"description"`
-	MonikerParams MonikerLenParams `json:"moniker_params" yam:"moniker_params"`
-}
-
-func (mp MonikerParamsEditProposal) GetTitle() string {
-	return mp.Title
-}
-
-func (mp MonikerParamsEditProposal) GetDescription() string {
-	return mp.Description
-}
-
-func (mp MonikerParamsEditProposal) ProposalRoute() string {
-	return RouterKey
-}
-
-func (mp MonikerParamsEditProposal) ProposalType() string {
-	return ProposalTypeMonikerParamsEdit
-}
-
-func (mp MonikerParamsEditProposal) ValidateBasic() error {
-	err := ValidateNameSurnameLenParams(mp)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (mp MonikerParamsEditProposal) String() string {
-	return fmt.Sprintf(`Moniker Profiles' params edit proposal:
+	return fmt.Sprintf(`Edit Profiles' params proposal:
   Title:       %s
   Description: %s
-  Proposed moniker params lengths:
-  Min: %s
-  Max: %s
-`, mp.Title, mp.Description, mp.MonikerParams.MinMonikerLen, mp.MonikerParams.MaxMonikerLen)
-}
-
-//////////////////////////////////////////
-/////////BioParamsEditProposal///////////
-////////////////////////////////////////
-
-// Implements Proposal Interface
-var _ gov.Content = BioParamsEditProposal{}
-
-type BioParamsEditProposal struct {
-	Title       string       `json:"title" yaml:"title"`
-	Description string       `json:"description" yaml:"description"`
-	BioParams   BioLenParams `json:"bio_params" yaml:"bio_params"`
-}
-
-func (bp BioParamsEditProposal) GetTitle() string {
-	return bp.Title
-}
-
-func (bp BioParamsEditProposal) GetDescription() string {
-	return bp.Description
-}
-
-func (bp BioParamsEditProposal) ProposalRoute() string {
-	return RouterKey
-}
-
-func (bp BioParamsEditProposal) ProposalType() string {
-	return ProposalTypeBioParamsEdit
-}
-
-func (bp BioParamsEditProposal) ValidateBasic() error {
-	err := ValidateNameSurnameLenParams(bp)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (bp BioParamsEditProposal) String() string {
-	return fmt.Sprintf(`Biography Profiles' params edit proposal:
-  Title:       %s
-  Description: %s
-  Proposed biography params lengths:
-  Max: %s
-`, bp.Title, bp.Description, bp.BioParams.MaxBioLen)
+  Proposed lengths:
+  Name/Surname: Min %s, Max %s,
+  Moniker: Min %s, Max %s,
+  Biography: Max %s,
+`, ep.Title, ep.Description, ep.NameSurnameLenParams.MinNameSurnameLen, ep.NameSurnameLenParams.MaxNameSurnameLen)
 }
