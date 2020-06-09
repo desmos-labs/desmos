@@ -317,10 +317,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
 	)
 
-	// Remove the crisis to avoid an export error
+	// Remove the crisis and evidence to avoid an export error
 	app.mm.SetOrderExportGenesis(
 		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
-		slashing.ModuleName, supply.ModuleName, genutil.ModuleName, evidence.ModuleName,
+		slashing.ModuleName, supply.ModuleName, genutil.ModuleName,
 
 		// Custom modules
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
