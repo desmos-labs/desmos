@@ -40,12 +40,12 @@ func ParamKeyTable() paramSubspace.KeyTable {
 
 // NameSurnameLenParams defines the params around names and surnames len
 type NameSurnameLenParams struct {
-	MinNameSurnameLen sdk.Int `json:"min_name_surname_len" yaml:"min_name_surname_len"`
-	MaxNameSurnameLen sdk.Int `json:"max_name_surname_len" yaml:"max_name_surname_len"`
+	MinNameSurnameLen *sdk.Int `json:"min_name_surname_len" yaml:"min_name_surname_len"`
+	MaxNameSurnameLen *sdk.Int `json:"max_name_surname_len" yaml:"max_name_surname_len"`
 }
 
 // NewNameSurnameLenParams creates a new NameSurnameLenParams obj
-func NewNameSurnameLenParams(minLen, maxLen sdk.Int) NameSurnameLenParams {
+func NewNameSurnameLenParams(minLen, maxLen *sdk.Int) NameSurnameLenParams {
 	return NameSurnameLenParams{
 		MinNameSurnameLen: minLen,
 		MaxNameSurnameLen: maxLen,
@@ -54,10 +54,10 @@ func NewNameSurnameLenParams(minLen, maxLen sdk.Int) NameSurnameLenParams {
 
 // DefaultNameSurnameLenParams return default params
 func DefaultNameSurnameLenParams() NameSurnameLenParams {
-	return NewNameSurnameLenParams(
-		DefaultMinNameSurnameLength,
-		DefaultMaxNameSurnameLength,
-	)
+	return NameSurnameLenParams{
+		&DefaultMinNameSurnameLength,
+		&DefaultMaxNameSurnameLength,
+	}
 }
 
 // String implements stringer interface
@@ -76,12 +76,12 @@ func ValidateNameSurnameLenParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MinNameSurnameLen.IsNegative() || params.MinNameSurnameLen.LT(DefaultMinNameSurnameLength) {
+	if params.MinNameSurnameLen != nil && params.MinNameSurnameLen.IsNegative() || params.MinNameSurnameLen.LT(DefaultMinNameSurnameLength) {
 		return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinNameSurnameLen)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	if params.MaxNameSurnameLen.IsNegative() || params.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
+	if params.MaxNameSurnameLen != nil && params.MaxNameSurnameLen.IsNegative() || params.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
 		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxNameSurnameLen)
 	}
 
@@ -90,12 +90,12 @@ func ValidateNameSurnameLenParams(i interface{}) error {
 
 // MonikerLenParams defines the params around profiles' monikers
 type MonikerLenParams struct {
-	MinMonikerLen sdk.Int `json:"min_moniker_len" yaml:"min_moniker_len"`
-	MaxMonikerLen sdk.Int `json:"max_moniker_len" yaml:"min_moniker_len"`
+	MinMonikerLen *sdk.Int `json:"min_moniker_len" yaml:"min_moniker_len"`
+	MaxMonikerLen *sdk.Int `json:"max_moniker_len" yaml:"min_moniker_len"`
 }
 
 // NewMonikerLenParams creates a new MonikerLenParams obj
-func NewMonikerLenParams(minLen, maxLen sdk.Int) MonikerLenParams {
+func NewMonikerLenParams(minLen, maxLen *sdk.Int) MonikerLenParams {
 	return MonikerLenParams{
 		MinMonikerLen: minLen,
 		MaxMonikerLen: maxLen,
@@ -105,8 +105,8 @@ func NewMonikerLenParams(minLen, maxLen sdk.Int) MonikerLenParams {
 // DefaultMonikerLenParams return default params
 func DefaultMonikerLenParams() MonikerLenParams {
 	return MonikerLenParams{
-		MinMonikerLen: DefaultMinMonikerLength,
-		MaxMonikerLen: DefaultMaxMonikerLength,
+		MinMonikerLen: &DefaultMinMonikerLength,
+		MaxMonikerLen: &DefaultMaxMonikerLength,
 	}
 }
 
@@ -125,11 +125,11 @@ func ValidateMonikerLenParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
+	if params.MinMonikerLen != nil && params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
 		return fmt.Errorf("invalid minimum moniker length param: %s", params.MinMonikerLen)
 	}
 
-	if params.MaxMonikerLen.IsNegative() {
+	if params.MaxMonikerLen != nil && params.MaxMonikerLen.IsNegative() {
 		return fmt.Errorf("invalid max moniker length param: %s", params.MaxMonikerLen)
 	}
 

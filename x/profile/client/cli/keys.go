@@ -7,4 +7,6 @@ const (
 	flagProfilePic   = "picture"
 	flagProfileCover = "cover"
 	flagMoniker      = "moniker"
+	flagMinParamsLen = "min-ns-len"
+	flagMaxParamsLen = "max-ns-len"
 )

@@ -33,10 +33,10 @@ var (
 	// functions aliases
 	NewMsgReportPost       = msgs.NewMsgReportPost
 	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
-	GetQueryCmd            = cli.GetQueryCmd
-	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
 	GetTxCmd               = cli.GetTxCmd
 	GetCmdReportPost       = cli.GetCmdReportPost
+	GetQueryCmd            = cli.GetQueryCmd
+	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
 	RegisterRoutes         = rest.RegisterRoutes
 	NewHandler             = keeper.NewHandler
 	NewKeeper              = keeper.NewKeeper
@@ -44,35 +44,35 @@ var (
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
+	WeightedOperations     = simulation.WeightedOperations
+	RandomizedGenState     = simulation.RandomizedGenState
 	DecodeStore            = simulation.DecodeStore
 	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
 	RandomReportsData      = simulation.RandomReportsData
 	RandomPostID           = simulation.RandomPostID
 	RandomReportMessage    = simulation.RandomReportMessage
 	RandomReportTypes      = simulation.RandomReportTypes
-	WeightedOperations     = simulation.WeightedOperations
-	RandomizedGenState     = simulation.RandomizedGenState
+	RegisterCodec          = types.RegisterCodec
 	NewGenesisState        = types.NewGenesisState
 	DefaultGenesisState    = types.DefaultGenesisState
 	ValidateGenesis        = types.ValidateGenesis
-	RegisterCodec          = types.RegisterCodec
-	ReportStoreKey         = models.ReportStoreKey
-	NewReportResponse      = models.NewReportResponse
 	NewReport              = models.NewReport
 	RegisterModelsCodec    = models.RegisterModelsCodec
+	ReportStoreKey         = models.ReportStoreKey
+	NewReportResponse      = models.NewReportResponse
 
 	// variable aliases
+	MsgsCodec              = msgs.MsgsCodec
 	ModuleCdc              = types.ModuleCdc
 	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
-	MsgsCodec              = msgs.MsgsCodec
 )
 
 type (
-	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	ReportsQueryResponse = models.ReportsQueryResponse
 	MsgReportPost        = msgs.MsgReportPost
 	ReportPostReq        = rest.ReportPostReq
 	Keeper               = keeper.Keeper
