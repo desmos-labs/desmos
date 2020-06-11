@@ -12,6 +12,10 @@ func NewEditParamsProposalHandler(k Keeper) govtypes.Handler {
 		switch c := content.(type) {
 		case models.NameSurnameParamsEditProposal:
 			return handleNameSurnameEditParamsProposal(ctx, k, c)
+		case models.MonikerParamsEditProposal:
+			return handleMonikerEditParamsProposal(ctx, k, c)
+		case models.BioParamsEditProposal:
+			return handleBioEditParamsProposal(ctx, k, c)
 		default:
 			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized profiles module proposal type %T", c)
 		}
