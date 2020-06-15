@@ -334,6 +334,22 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
 	)
 
+	app.mm.SetOrderExportGenesis(
+		distr.ModuleName,
+		staking.ModuleName,
+		auth.ModuleName,
+		bank.ModuleName,
+		slashing.ModuleName,
+		//gov.ModuleName,
+		supply.ModuleName,
+		//crisis.ModuleName,
+		genutil.ModuleName,
+		//evidence.ModuleName,
+
+		// Custom modules
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
+	)
+
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
