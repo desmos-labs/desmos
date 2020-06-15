@@ -175,8 +175,8 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 
 	// Make sure the profile has been edited
 	var emptyField *string
-	require.Equal(t, emptyField, editedProfiles[0].Name)
-	require.Equal(t, emptyField, editedProfiles[0].Surname)
+	require.Equal(t, emptyField, editedProfiles[0].Moniker)
+	require.Equal(t, emptyField, editedProfiles[0].Bio)
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run", "--dtag mrPink")
@@ -252,8 +252,8 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.Equal(t, editedProfile.Moniker, newMoniker)
 
 	// Make sure the profile has been edited
-	require.NotEqual(t, storedProfiles[0].Name, editedProfiles[0].Name)
-	require.NotEqual(t, storedProfiles[0].Surname, editedProfiles[0].Surname)
+	require.NotEqual(t, storedProfiles[0].Moniker, editedProfiles[0].Moniker)
+	require.NotEqual(t, storedProfiles[0].Bio, editedProfiles[0].Bio)
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run",
