@@ -15,15 +15,11 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	var name = "name"
-	var surname = "surname"
 	var bio = "biography"
 	var newMoniker = "newMoniker"
 	var invalidPic = "pic"
 
 	testAcc2 := types.Profile{
-		Name:     &name,
-		Surname:  &surname,
 		Moniker:  "newMoniker",
 		Bio:      &bio,
 		Pictures: testPictures,
@@ -42,8 +38,6 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				newMoniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -56,8 +50,6 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: nil,
 			msg: types.NewMsgSaveProfile(
 				newMoniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -70,8 +62,6 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: types.Profiles{testProfile, testAcc2},
 			msg: types.NewMsgSaveProfile(
 				newMoniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -84,8 +74,6 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				newMoniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				&invalidPic,
 				testProfile.Pictures.Cover,

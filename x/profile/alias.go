@@ -49,8 +49,6 @@ var (
 	RandomProfileData        = simulation.RandomProfileData
 	RandomProfile            = simulation.RandomProfile
 	RandomMoniker            = simulation.RandomMoniker
-	RandomName               = simulation.RandomName
-	RandomSurname            = simulation.RandomSurname
 	RandomBio                = simulation.RandomBio
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover

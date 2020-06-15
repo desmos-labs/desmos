@@ -32,21 +32,15 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 	if !found {
 		profile = types.NewProfile(msg.Creator)
 	}
-	// replace all editable fields (clients should autofill existing values)
-	profile = profile.
-		WithMoniker(msg.Moniker).
-		WithName(msg.Name).
-		WithSurname(msg.Surname).
-		WithBio(msg.Bio).
-		WithPictures(msg.ProfilePic, msg.ProfileCov)
 
-	err := profile.Validate()
-	if err != nil {
+	// Replace all editable fields (clients should autofill existing values)
+	profile = profile.WithMoniker(msg.Moniker).WithBio(msg.Bio).WithPictures(msg.ProfilePic, msg.ProfileCov)
+	if err := profile.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	err = keeper.SaveProfile(ctx, profile)
-	if err != nil {
+	// Save the profile
+	if err := keeper.SaveProfile(ctx, profile); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 

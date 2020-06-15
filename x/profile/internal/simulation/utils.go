@@ -11,32 +11,6 @@ import (
 var (
 	monikersLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
 
-	randomNames = []string{
-		"Drake",
-		"Farah",
-		"Sabrina",
-		"Zoe",
-		"Merlin",
-		"Laura",
-		"Connor",
-		"Brianna",
-		"Federico",
-		"Matt",
-	}
-
-	randomSurnames = []string{
-		"McDonald",
-		"Guy",
-		"Edge",
-		"Cobb",
-		"Baxter",
-		"Mathis",
-		"Bentley",
-		"Metcalfe",
-		"Mcfarland",
-		"Daniels",
-	}
-
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		"Vestibulum a nulla sed purus pellentesque euismod quis ut risus.",
@@ -70,8 +44,6 @@ var (
 // ProfileData contains the randomly generated data of an profile
 type ProfileData struct {
 	Moniker string
-	Name    string
-	Surname string
 	Bio     string
 	Picture types.Pictures
 	Creator sim.Account
@@ -87,8 +59,6 @@ func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 
 	return ProfileData{
 		Moniker: RandomMoniker(r),
-		Name:    RandomName(r),
-		Surname: RandomSurname(r),
 		Bio:     RandomBio(r),
 		Picture: pictures,
 		Creator: simAccount,
@@ -108,18 +78,6 @@ func RandomMoniker(r *rand.Rand) string {
 		b[i] = monikersLetters[r.Intn(len(monikersLetters))]
 	}
 	return string(b)
-}
-
-// RandomName return a random name value from the list of randomNames given
-func RandomName(r *rand.Rand) string {
-	idx := r.Intn(len(randomNames))
-	return randomNames[idx]
-}
-
-// RandomSurname return a random surname value from the list of randomSurnames given
-func RandomSurname(r *rand.Rand) string {
-	idx := r.Intn(len(randomSurnames))
-	return randomSurnames[idx]
 }
 
 // RandomBio return a random bio value from the list of randomBios given

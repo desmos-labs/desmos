@@ -21,8 +21,6 @@ func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) 
 		accountData := RandomProfileData(simState.Rand, simState.Accounts)
 		account := types.Profile{
 			Moniker: accountData.Moniker,
-			Name:    &accountData.Name,
-			Surname: &accountData.Surname,
 			Bio:     &accountData.Bio,
 			Creator: accountData.Creator.Address,
 		}

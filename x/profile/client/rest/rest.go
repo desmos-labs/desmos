@@ -17,8 +17,6 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 type SaveProfileReq struct {
 	BaseReq    rest.BaseReq    `json:"base_req"`
 	NewMoniker string          `json:"moniker"`
-	Name       *string         `json:"name,omitempty"`
-	Surname    *string         `json:"surname,omitempty"`
 	Bio        *string         `json:"bio,omitempty"`
 	Pictures   *types.Pictures `json:"pictures,omitempty"`
 }

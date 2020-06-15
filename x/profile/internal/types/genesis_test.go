@@ -22,10 +22,7 @@ func TestValidateGenesis(t *testing.T) {
 	var testPostOwner, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
-	var name = "name"
-	var surname = "surname"
 	var bio = "biography"
-
 	tests := []struct {
 		name        string
 		genesis     types.GenesisState
@@ -41,8 +38,6 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Profiles: types.Profiles{
 					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
 						Moniker:  "",
 						Bio:      &bio,
 						Pictures: testPictures,
@@ -57,8 +52,6 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Profiles: types.Profiles{
 					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
 						Moniker:  "moniker",
 						Bio:      &bio,
 						Pictures: testPictures,

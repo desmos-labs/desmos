@@ -32,8 +32,6 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 		msg := types.NewMsgSaveProfile(
 			newMoniker,
-			data.Name,
-			data.Surname,
 			data.Bio,
 			nil,
 			nil,

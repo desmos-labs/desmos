@@ -11,8 +11,6 @@ import (
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
 	Moniker  string         `json:"moniker" yaml:"moniker"`
-	Name     *string        `json:"name,omitempty" yaml:"name,omitempty"`
-	Surname  *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
 	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
 	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
 	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
@@ -27,18 +25,6 @@ func NewProfile(creator sdk.AccAddress) Profile {
 //WithMoniker updates profile's moniker with the given one
 func (profile Profile) WithMoniker(moniker string) Profile {
 	profile.Moniker = moniker
-	return profile
-}
-
-// WithSurname updates profile's name with the given one
-func (profile Profile) WithName(name *string) Profile {
-	profile.Name = name
-	return profile
-}
-
-// WithSurname updates profile's surname with the given one
-func (profile Profile) WithSurname(surname *string) Profile {
-	profile.Surname = surname
 	return profile
 }
 
@@ -66,9 +52,7 @@ func (profile Profile) String() string {
 
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
-	return profile.Name == other.Name &&
-		profile.Surname == other.Surname &&
-		profile.Moniker == other.Moniker &&
+	return profile.Moniker == other.Moniker &&
 		profile.Bio == other.Bio &&
 		profile.Pictures.Equals(other.Pictures) &&
 		profile.Creator.Equals(other.Creator)

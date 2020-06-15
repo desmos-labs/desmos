@@ -47,13 +47,9 @@ var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63
 var profilePic = "https://shorturl.at/adnX3"
 var profileCov = "https://shorturl.at/cgpyF"
 var testPictures = types.NewPictures(&profilePic, &profileCov)
-var name = "name"
-var surname = "surname"
 var bio = "biography"
 
 var testProfile = types.Profile{
-	Name:     &name,
-	Surname:  &surname,
 	Moniker:  "moniker",
 	Bio:      &bio,
 	Pictures: testPictures,

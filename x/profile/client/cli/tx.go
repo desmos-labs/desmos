@@ -71,19 +71,15 @@ If you are editing an existing profile you should fill all the existent fields o
 			moniker := viper.GetString(flagMoniker)
 			picture := getFlagValueOrNilOnDefault(flagProfilePic)
 			cover := getFlagValueOrNilOnDefault(flagProfileCover)
-			name := getFlagValueOrNilOnDefault(flagName)
-			surname := getFlagValueOrNilOnDefault(flagSurname)
 			bio := getFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgSaveProfile(moniker, name, surname, bio, picture, cover, cliCtx.FromAddress)
+			msg := types.NewMsgSaveProfile(moniker, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
 	cmd.Flags().String(flagMoniker, "", "Moniker of the profile")
-	cmd.Flags().String(flagName, "", "Name of the profile")
-	cmd.Flags().String(flagSurname, "", "Surname of the profile")
 	cmd.Flags().String(flagBio, "", "Biography of the profile")
 	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
 	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")

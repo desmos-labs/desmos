@@ -18,16 +18,8 @@ var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaarg
 var testProfilePic = "https://shorturl.at/adnX3"
 var testCoverPic = "https://shorturl.at/cgpyF"
 var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
-var name = "name"
-var surname = "surname"
 var bio = "biography"
 
-var invalidMaxLenField = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-	"6ou0LSnJMCTq"
 var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
 	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
 	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
@@ -39,11 +31,8 @@ var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoX
 	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
 	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
 	"6ou0LSnJMCTq"
-var invalidMinLenField = "l"
 
 var testProfile = types.Profile{
-	Name:     &name,
-	Surname:  &surname,
 	Moniker:  "moniker",
 	Bio:      &bio,
 	Pictures: testPictures,
@@ -53,8 +42,6 @@ var testProfile = types.Profile{
 var newMoniker = "monk"
 var msgEditProfile = types.NewMsgSaveProfile(
 	newMoniker,
-	testProfile.Name,
-	testProfile.Surname,
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
@@ -86,8 +73,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgSaveProfile(
 				testProfile.Moniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -96,63 +81,9 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
-			name: "Max name length exceeded",
-			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
-				&invalidMaxLenField,
-				testProfile.Surname,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile name cannot exceed 500 characters"),
-		},
-		{
-			name: "Min name length not reached",
-			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
-				&invalidMinLenField,
-				testProfile.Surname,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile name cannot be less than 2 characters"),
-		},
-		{
-			name: "Max surname length exceeded",
-			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
-				testProfile.Name,
-				&invalidMaxLenField,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile surname cannot exceed 500 characters"),
-		},
-		{
-			name: "Min surname length not reached",
-			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
-				testProfile.Name,
-				&invalidMinLenField,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile surname cannot be less than 2 characters"),
-		},
-		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgSaveProfile(
 				testProfile.Moniker,
-				testProfile.Name,
-				testProfile.Surname,
 				&invalidBio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -164,8 +95,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Min moniker length not reached",
 			msg: types.NewMsgSaveProfile(
 				"l",
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -177,8 +106,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Max moniker length exceeded",
 			msg: types.NewMsgSaveProfile(
 				invalidMonikerLen,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -190,8 +117,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
 				testProfile.Moniker,
-				testProfile.Name,
-				testProfile.Surname,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -217,7 +142,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"monk","name":"name","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3","surname":"surname"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"monk","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
 	require.Equal(t, expected, string(actual))
 }
 

@@ -124,8 +124,6 @@ func TestKeeper_SaveProfile(t *testing.T) {
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				Name:     testProfile.Name,
-				Surname:  testProfile.Surname,
 				Moniker:  testProfile.Moniker,
 				Bio:      testProfile.Bio,
 				Pictures: testProfile.Pictures,
