@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -64,8 +63,8 @@ func (profile Profile) Validate() error {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
 
-	if strings.TrimSpace(profile.DTag) == "" {
-		return fmt.Errorf("profile dtag cannot be empty or blank")
+	if !DTagRegEx.MatchString(profile.DTag) {
+		return fmt.Errorf("invalid profile dtag")
 	}
 
 	if profile.Pictures != nil {

@@ -196,7 +196,7 @@ func TestProfile_Validate(t *testing.T) {
 				Pictures: testPictures,
 				Creator:  testPostOwner,
 			},
-			expErr: fmt.Errorf("profile dtag cannot be empty or blank"),
+			expErr: fmt.Errorf("invalid profile dtag"),
 		},
 		{
 			name: "Valid profile returns no error",

@@ -13,8 +13,6 @@ const (
 
 	MinNameSurnameLength = 2
 	MaxNameSurnameLength = 500
-	MinDtagLength        = 2
-	MaxDtagLength        = 30
 	MaxBioLength         = 1000
 
 	ActionSaveProfile   = "save_profile"
@@ -27,9 +25,8 @@ const (
 )
 
 var (
-	TxHashRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
-	URIRegEx    = regexp.MustCompile(
-		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
+	DTagRegEx = regexp.MustCompile(`^[A-Za-z0-9_]{3,30}$`)
+	URIRegEx  = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
 
 	ProfileStorePrefix = []byte("profile")
 	DtagStorePrefix    = []byte("dtag")

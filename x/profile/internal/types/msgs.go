@@ -43,12 +43,8 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(msg.Dtag) < MinDtagLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile dtag cannot be less than %d characters", MinDtagLength))
-	}
-
-	if len(msg.Dtag) > MaxDtagLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile dtag cannot exceed %d characters", MaxDtagLength))
+	if !DTagRegEx.MatchString(msg.Dtag) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided")
 	}
 
 	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {

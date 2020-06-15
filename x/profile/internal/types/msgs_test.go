@@ -63,7 +63,6 @@ func TestMsgSaveProfile_Type(t *testing.T) {
 }
 
 func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
-	invalidDtagLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
 	tests := []struct {
 		name  string
 		msg   types.MsgSaveProfile
@@ -100,23 +99,34 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile dtag cannot be less than 2 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
 		},
 		{
 			name: "Max dtag length exceeded",
 			msg: types.NewMsgSaveProfile(
-				invalidDtagLen,
+				"abcdefghijklmnopqrstu123456789_",
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile dtag cannot exceed 30 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
+		},
+		{
+			name: "Invalid dtag characters",
+			msg: types.NewMsgSaveProfile(
+				"d.tag",
+				testProfile.Bio,
+				testProfile.Pictures.Profile,
+				testProfile.Pictures.Cover,
+				testProfile.Creator,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
 		},
 		{
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
-				testProfile.DTag,
+				"_crazy_papa_21",
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
