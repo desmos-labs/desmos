@@ -1,9 +1,19 @@
-package v0_8_0
+package v080
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+const (
+	ModuleName = "profiles"
+)
+
+// GenesisState contains the data of a v0.4.0 genesis state for the profile module
+type GenesisState struct {
+	Profiles []Profile `json:"profiles"`
+}
+
+// Profile is a struct for a Profile
 type Profile struct {
 	DTag     string         `json:"dtag" yaml:"dtag"`
 	Moniker  *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
@@ -12,6 +22,7 @@ type Profile struct {
 	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
+// Pictures is a struct for Profile Pictures
 type Pictures struct {
 	Profile *string `json:"profile,omitempty" yaml:"profile,omitempty"`
 	Cover   *string `json:"cover,omitempty" yaml:"cover,omitempty"`
