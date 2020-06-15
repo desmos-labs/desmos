@@ -23,6 +23,10 @@ func NewPictures(profile, cover *string) *Pictures {
 
 // Equals allows to check whether the contents of pic are the same of otherPic
 func (pic Pictures) Equals(otherPic *Pictures) bool {
+	if otherPic == nil {
+		return false
+	}
+
 	return pic.Profile == otherPic.Profile &&
 		pic.Cover == otherPic.Cover
 }

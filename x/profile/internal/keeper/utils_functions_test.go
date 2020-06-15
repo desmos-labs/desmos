@@ -21,10 +21,10 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	require.NoError(t, err)
 
 	profiles := types.Profiles{
-		types.NewProfile(creator).WithDtag("first"),
-		types.NewProfile(creator2).WithDtag("second"),
-		types.NewProfile(creator3).WithDtag("not"),
-		types.NewProfile(creator4).WithDtag("third"),
+		types.NewProfile("first", creator),
+		types.NewProfile("second", creator2),
+		types.NewProfile("not", creator3),
+		types.NewProfile("third", creator4),
 	}
 
 	expProfiles := types.Profiles{

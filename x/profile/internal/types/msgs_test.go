@@ -18,6 +18,7 @@ var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaarg
 var testProfilePic = "https://shorturl.at/adnX3"
 var testCoverPic = "https://shorturl.at/cgpyF"
 var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
+var moniker = "moniker"
 var bio = "biography"
 
 var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
@@ -34,6 +35,7 @@ var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoX
 
 var testProfile = types.Profile{
 	DTag:     "dtag",
+	Moniker:  &moniker,
 	Bio:      &bio,
 	Pictures: testPictures,
 	Creator:  testProfileOwner,
@@ -42,6 +44,7 @@ var testProfile = types.Profile{
 var newDtag = "monk"
 var msgEditProfile = types.NewMsgSaveProfile(
 	newDtag,
+	testProfile.Moniker,
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
@@ -72,6 +75,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgSaveProfile(
 				testProfile.DTag,
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -83,6 +87,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Max bio length exceeded",
 			msg: types.NewMsgSaveProfile(
 				testProfile.DTag,
+				testProfile.Moniker,
 				&invalidBio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -94,6 +99,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Min dtag length not reached",
 			msg: types.NewMsgSaveProfile(
 				"l",
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -105,6 +111,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Max dtag length exceeded",
 			msg: types.NewMsgSaveProfile(
 				"abcdefghijklmnopqrstu123456789_",
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -116,6 +123,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Invalid dtag characters",
 			msg: types.NewMsgSaveProfile(
 				"d.tag",
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -127,6 +135,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
 				"_crazy_papa_21",
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -152,7 +161,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","moniker":"moniker","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
 	require.Equal(t, expected, string(actual))
 }
 

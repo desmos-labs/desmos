@@ -16,7 +16,8 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 // SaveProfileReq defines the properties of a profile save request's body
 type SaveProfileReq struct {
 	BaseReq  rest.BaseReq    `json:"base_req"`
-	NewDtag  string          `json:"dtag"`
+	DTag     string          `json:"dtag"`
+	Moniker  *string         `json:"moniker,omitempty"`
 	Bio      *string         `json:"bio,omitempty"`
 	Pictures *types.Pictures `json:"pictures,omitempty"`
 }

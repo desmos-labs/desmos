@@ -14,6 +14,7 @@ import (
 // MsgSaveProfile defines a SaveProfile message
 type MsgSaveProfile struct {
 	Dtag       string         `json:"dtag" yaml:"dtag"`
+	Moniker    *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
 	Bio        *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
 	ProfilePic *string        `json:"profile_pic,omitempty" yaml:"profile_pic,omitempty"`
 	ProfileCov *string        `json:"profile_cov,omitempty" yaml:"profile_cov,omitempty"`
@@ -21,9 +22,10 @@ type MsgSaveProfile struct {
 }
 
 // NewMsgSaveProfile is a constructor function for MsgSaveProfile
-func NewMsgSaveProfile(dtag string, bio, profilePic, profileCov *string, creator sdk.AccAddress) MsgSaveProfile {
+func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, profileCov *string, creator sdk.AccAddress) MsgSaveProfile {
 	return MsgSaveProfile{
 		Dtag:       dtag,
+		Moniker:    moniker,
 		Bio:        bio,
 		ProfilePic: profilePic,
 		ProfileCov: profileCov,
@@ -45,6 +47,11 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 
 	if !DTagRegEx.MatchString(msg.Dtag) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided")
+	}
+
+	if msg.Moniker != nil && (len(*msg.Moniker) < MinMonikerLength || len(*msg.Moniker) > MaxMonikerLength) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Moniker length should be between %d and %d",
+			MinMonikerLength, MaxMonikerLength))
 	}
 
 	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {

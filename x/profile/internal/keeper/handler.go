@@ -30,11 +30,14 @@ func NewHandler(keeper Keeper) sdk.Handler {
 func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
 	if !found {
-		profile = types.NewProfile(msg.Creator)
+		profile = types.NewProfile(msg.Dtag, msg.Creator)
 	}
 
 	// Replace all editable fields (clients should autofill existing values)
-	profile = profile.WithDtag(msg.Dtag).WithBio(msg.Bio).WithPictures(msg.ProfilePic, msg.ProfileCov)
+	profile = profile.WithDTag(msg.Dtag).
+		WithMoniker(msg.Moniker).
+		WithBio(msg.Bio).
+		WithPictures(msg.ProfilePic, msg.ProfileCov)
 	if err := profile.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -44,13 +47,11 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	createEvent := sdk.NewEvent(
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeProfileSaved,
 		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
-	)
-
-	ctx.EventManager().EmitEvent(createEvent)
+	))
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),

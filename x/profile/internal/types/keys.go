@@ -11,9 +11,9 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	MinNameSurnameLength = 2
-	MaxNameSurnameLength = 500
-	MaxBioLength         = 1000
+	MinMonikerLength = 2
+	MaxMonikerLength = 50
+	MaxBioLength     = 1000
 
 	ActionSaveProfile   = "save_profile"
 	ActionDeleteProfile = "delete_profile"

@@ -21,8 +21,8 @@ const (
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
 	StoreKey                 = types.StoreKey
-	MinNameSurnameLength     = types.MinNameSurnameLength
-	MaxNameSurnameLength     = types.MaxNameSurnameLength
+	MinMonikerLength         = types.MinMonikerLength
+	MaxMonikerLength         = types.MaxMonikerLength
 	MaxBioLength             = types.MaxBioLength
 	ActionSaveProfile        = types.ActionSaveProfile
 	ActionDeleteProfile      = types.ActionDeleteProfile
@@ -33,13 +33,12 @@ const (
 
 var (
 	// functions aliases
-	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	NewHandler               = keeper.NewHandler
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	DecodeStore              = simulation.DecodeStore
+	NewKeeper                = keeper.NewKeeper
 	RandomizedGenState       = simulation.RandomizedGenState
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
@@ -51,6 +50,7 @@ var (
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
+	DecodeStore              = simulation.DecodeStore
 	NewProfile               = types.NewProfile
 	RegisterCodec            = types.RegisterCodec
 	NewGenesisState          = types.NewGenesisState

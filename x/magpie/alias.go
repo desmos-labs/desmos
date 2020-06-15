@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	QuerySessions             = keeper.QuerySessions
-	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 	EventTypeCreateSession    = types.EventTypeCreateSession
 	AttributeKeySessionID     = types.AttributeKeySessionID
 	AttributeKeyNamespace     = types.AttributeKeyNamespace
@@ -23,10 +21,17 @@ const (
 	RouterKey                 = types.RouterKey
 	StoreKey                  = types.StoreKey
 	ActionCreationSession     = types.ActionCreationSession
+	QuerySessions             = keeper.QuerySessions
+	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 )
 
 var (
 	// functions aliases
+	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
+	WeightedOperations       = simulation.WeightedOperations
+	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
+	RandomSessionData        = simulation.RandomSessionData
 	RegisterCodec            = types.RegisterCodec
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
@@ -35,14 +40,9 @@ var (
 	NewMsgCreateSession      = types.NewMsgCreateSession
 	ParseSessionID           = types.ParseSessionID
 	NewSession               = types.NewSession
+	NewQuerier               = keeper.NewQuerier
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
-	RandomizedGenState       = simulation.RandomizedGenState
-	WeightedOperations       = simulation.WeightedOperations
-	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
-	RandomSessionData        = simulation.RandomSessionData
-	DecodeStore              = simulation.DecodeStore
 
 	// variable aliases
 	RandomNamespaces      = simulation.RandomNamespaces
@@ -53,11 +53,11 @@ var (
 )
 
 type (
+	Keeper           = keeper.Keeper
 	SessionData      = simulation.SessionData
 	GenesisState     = types.GenesisState
 	MsgCreateSession = types.MsgCreateSession
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
-	Keeper           = keeper.Keeper
 )

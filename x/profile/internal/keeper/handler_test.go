@@ -19,13 +19,6 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 	var newDtag = "newDtag"
 	var invalidPic = "pic"
 
-	testAcc2 := types.Profile{
-		DTag:     "newDtag",
-		Bio:      &bio,
-		Pictures: testPictures,
-		Creator:  editor,
-	}
-
 	tests := []struct {
 		name             string
 		existentAccounts types.Profiles
@@ -38,6 +31,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				newDtag,
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -50,6 +44,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: nil,
 			msg: types.NewMsgSaveProfile(
 				newDtag,
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -58,10 +53,14 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			expErr: nil,
 		},
 		{
-			name:             "Profile not edited because the new dtag already exists",
-			existentAccounts: types.Profiles{testProfile, testAcc2},
+			name: "Profile not edited because the new dtag already exists",
+			existentAccounts: types.Profiles{
+				testProfile,
+				types.Profile{DTag: "newDtag", Bio: &bio, Pictures: testPictures, Creator: editor},
+			},
 			msg: types.NewMsgSaveProfile(
 				newDtag,
+				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -74,6 +73,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				newDtag,
+				testProfile.Moniker,
 				testProfile.Bio,
 				&invalidPic,
 				testProfile.Pictures.Cover,
@@ -104,8 +104,8 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				require.NotNil(t, err)
 				require.Equal(t, test.expErr.Error(), err.Error())
 			}
-			if res != nil {
 
+			if res != nil {
 				profiles := k.GetProfiles(ctx)
 				require.Len(t, profiles, 1)
 

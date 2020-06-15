@@ -37,7 +37,7 @@ func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgSaveProfile(req.NewDtag, req.Bio, req.Pictures.Profile, req.Pictures.Cover, addr)
+		msg := types.NewMsgSaveProfile(req.DTag, req.Moniker, req.Bio, req.Pictures.Profile, req.Pictures.Cover, addr)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

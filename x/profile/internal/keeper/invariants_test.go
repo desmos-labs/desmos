@@ -22,13 +22,13 @@ func TestInvariants(t *testing.T) {
 	}{
 		{
 			name:        "Invariants not violated",
-			profile:     types.NewProfile(owner).WithDtag(dtag),
+			profile:     types.NewProfile(dtag, owner),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
 			name:        "ValidProfile invariant violated",
-			profile:     types.NewProfile(owner).WithDtag(""),
+			profile:     types.NewProfile("", owner),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[DTag]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:     true,
 		},
@@ -38,8 +38,9 @@ func TestInvariants(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			// nolint: errcheck
-			k.SaveProfile(ctx, test.profile)
+
+			err := k.SaveProfile(ctx, test.profile)
+			require.NoError(t, err)
 
 			res, stop := keeper.AllInvariants(k)(ctx)
 

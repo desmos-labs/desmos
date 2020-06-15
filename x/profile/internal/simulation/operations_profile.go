@@ -30,16 +30,14 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgSaveProfile(
-			newDtag,
-			data.Bio,
-			nil,
-			nil,
-			acc.Address,
-		)
+		var profilePic, coverPic = "", ""
+		if data.Pictures != nil {
+			profilePic = *data.Pictures.Profile
+			coverPic = *data.Pictures.Cover
+		}
 
-		err = sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
-		if err != nil {
+		msg := types.NewMsgSaveProfile(newDtag, data.Moniker, data.Bio, &profilePic, &coverPic, acc.Address)
+		if err := sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -86,10 +84,12 @@ func randomProfileSaveFields(
 	if len(accs) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
+
 	accounts := k.GetProfiles(ctx)
 	if len(accounts) == 0 {
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
+
 	account := RandomProfile(r, accounts)
 	acc := GetSimAccount(account.Creator, accs)
 

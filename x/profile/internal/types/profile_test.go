@@ -12,57 +12,51 @@ import (
 func TestNewProfile(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	expProfile := types.Profile{Creator: owner}
-	actProfile := types.NewProfile(owner)
+	expProfile := types.Profile{DTag: "test", Creator: owner}
+	actProfile := types.NewProfile("test", owner)
 
-	require.Equal(t, expProfile, actProfile)
+	require.True(t, expProfile.Equals(actProfile))
 }
 
-func TestProfile_WithDtag(t *testing.T) {
+func TestProfile_WithDTag(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	profile := types.NewProfile(owner)
 
-	profileWithDtag := profile.WithDtag("monik")
+	profile := types.NewProfile("monik", owner)
+	profileWithDtag := profile.WithDTag("new-dtag")
 
-	require.Equal(t, types.NewProfile(owner).WithDtag("monik"), profileWithDtag)
+	require.Equal(t, "new-dtag", profileWithDtag.DTag)
+}
+
+func TestProfile_WithMoniker(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	profile := types.NewProfile("monik", owner)
+
+	moniker := "test-moniker"
+	profileWithMoniker := profile.WithMoniker(&moniker)
+
+	require.Equal(t, "test-moniker", *profileWithMoniker.Moniker)
 }
 
 func TestProfile_WithBio(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	dtag := "dtag"
-	profile := types.NewProfile(owner).WithDtag(dtag)
+
+	profile := types.NewProfile("dtag", owner)
+
 	bio := "surname"
+	profileWithBio := profile.WithBio(&bio)
 
-	tests := []struct {
-		name       string
-		profile    types.Profile
-		profBio    string
-		expProfile types.Profile
-	}{
-		{
-			name:       "not nil bio",
-			profile:    profile,
-			profBio:    bio,
-			expProfile: types.Profile{DTag: dtag, Creator: owner, Bio: &bio},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actProf := test.profile.WithBio(&test.profBio)
-			require.Equal(t, test.expProfile, actProf)
-		})
-	}
+	require.Equal(t, "surname", *profileWithBio.Bio)
 }
 
 func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	dtag := "dtag"
-	profile := types.NewProfile(owner).WithDtag(dtag)
+	profile := types.NewProfile(dtag, owner)
 	var pic = "profile"
 	var cov = "cover"
 
@@ -93,7 +87,7 @@ func TestProfile_WithPics(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			actProf := test.profile.WithPictures(test.pic, test.cov)
-			require.Equal(t, test.expProfile, actProf)
+			require.True(t, test.expProfile.Equals(actProf))
 		})
 	}
 }
@@ -159,8 +153,7 @@ func TestProfile_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual := test.account.Equals(test.otherAcc)
-			require.Equal(t, test.expBool, actual)
+			require.Equal(t, test.expBool, test.account.Equals(test.otherAcc))
 		})
 	}
 
@@ -168,10 +161,14 @@ func TestProfile_Equals(t *testing.T) {
 
 func TestProfile_Validate(t *testing.T) {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	var bio = "biography"
-	var pic = "pic"
-	var cov = "cov"
-	var invalidPics = types.NewPictures(&pic, &cov)
+
+	shortMoniker := "1"
+	longMoniker := "012345678901234567890123456789012346578901234657890123457890123456789"
+
+	bio := "biography"
+	pic := "pic"
+	cov := "cov"
+	invalidPics := types.NewPictures(&pic, &cov)
 
 	tests := []struct {
 		name    string
@@ -199,6 +196,28 @@ func TestProfile_Validate(t *testing.T) {
 			expErr: fmt.Errorf("invalid profile dtag"),
 		},
 		{
+			name: "Short moniker profile returns error",
+			account: types.Profile{
+				DTag:     "dtag",
+				Moniker:  &shortMoniker,
+				Bio:      &bio,
+				Pictures: testPictures,
+				Creator:  testPostOwner,
+			},
+			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
+		},
+		{
+			name: "Long moniker profile returns error",
+			account: types.Profile{
+				DTag:     "dtag",
+				Moniker:  &longMoniker,
+				Bio:      &bio,
+				Pictures: testPictures,
+				Creator:  testPostOwner,
+			},
+			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
+		},
+		{
 			name: "Valid profile returns no error",
 			account: types.Profile{
 				DTag:     "dtag",
@@ -223,8 +242,7 @@ func TestProfile_Validate(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual := test.account.Validate()
-			require.Equal(t, test.expErr, actual)
+			require.Equal(t, test.expErr, test.account.Validate())
 		})
 	}
 }

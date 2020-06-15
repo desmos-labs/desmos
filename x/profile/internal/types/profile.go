@@ -10,20 +10,25 @@ import (
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
 	DTag     string         `json:"dtag" yaml:"dtag"`
+	Moniker  *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
 	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
 	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
 	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
-func NewProfile(creator sdk.AccAddress) Profile {
-	return Profile{
-		Creator: creator,
-	}
+func NewProfile(dtag string, creator sdk.AccAddress) Profile {
+	return Profile{DTag: dtag, Creator: creator}
 }
 
-// WithDtag updates profile's dtag with the given one
-func (profile Profile) WithDtag(dtag string) Profile {
+// WithDTag updates profile's DTag with the given one
+func (profile Profile) WithDTag(dtag string) Profile {
 	profile.DTag = dtag
+	return profile
+}
+
+// WithMoniker updates profile's moniker with the given one
+func (profile Profile) WithMoniker(moniker *string) Profile {
+	profile.Moniker = moniker
 	return profile
 }
 
@@ -51,9 +56,16 @@ func (profile Profile) String() string {
 
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
+	var arePicturesEquals bool
+	if profile.Pictures == nil {
+		arePicturesEquals = other.Pictures == nil
+	} else {
+		arePicturesEquals = profile.Pictures.Equals(other.Pictures)
+	}
+
 	return profile.DTag == other.DTag &&
 		profile.Bio == other.Bio &&
-		profile.Pictures.Equals(other.Pictures) &&
+		arePicturesEquals &&
 		profile.Creator.Equals(other.Creator)
 }
 
@@ -65,6 +77,10 @@ func (profile Profile) Validate() error {
 
 	if !DTagRegEx.MatchString(profile.DTag) {
 		return fmt.Errorf("invalid profile dtag")
+	}
+
+	if profile.Moniker != nil && (len(*profile.Moniker) < MinMonikerLength || len(*profile.Moniker) > MaxMonikerLength) {
+		return fmt.Errorf("invalid profile moniker. Length should be between %d and %d", MinMonikerLength, MaxMonikerLength)
 	}
 
 	if profile.Pictures != nil {
