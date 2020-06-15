@@ -21,10 +21,10 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	require.NoError(t, err)
 
 	profiles := types.Profiles{
-		types.NewProfile(creator).WithMoniker("first"),
-		types.NewProfile(creator2).WithMoniker("second"),
-		types.NewProfile(creator3).WithMoniker("not"),
-		types.NewProfile(creator4).WithMoniker("third"),
+		types.NewProfile(creator).WithDtag("first"),
+		types.NewProfile(creator2).WithDtag("second"),
+		types.NewProfile(creator3).WithDtag("not"),
+		types.NewProfile(creator4).WithDtag("third"),
 	}
 
 	expProfiles := types.Profiles{
@@ -42,7 +42,7 @@ func TestKeeper_IterateProfile(t *testing.T) {
 
 	var validProfiles types.Profiles
 	k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
-		if profile.Moniker == "not" {
+		if profile.DTag == "not" {
 			return false
 		}
 		validProfiles = append(validProfiles, profile)

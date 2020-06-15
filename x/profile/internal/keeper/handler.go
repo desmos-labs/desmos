@@ -34,7 +34,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 	}
 
 	// Replace all editable fields (clients should autofill existing values)
-	profile = profile.WithMoniker(msg.Moniker).WithBio(msg.Bio).WithPictures(msg.ProfilePic, msg.ProfileCov)
+	profile = profile.WithDtag(msg.Dtag).WithBio(msg.Bio).WithPictures(msg.ProfilePic, msg.ProfileCov)
 	if err := profile.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -46,14 +46,14 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileSaved,
-		sdk.NewAttribute(types.AttributeProfileMoniker, profile.Moniker),
+		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),
 		Events: ctx.EventManager().Events(),
 	}
 
@@ -69,18 +69,18 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 			fmt.Sprintf("No profile associated with this address: %s", msg.Creator))
 	}
 
-	keeper.DeleteProfile(ctx, profile.Creator, profile.Moniker)
+	keeper.DeleteProfile(ctx, profile.Creator, profile.DTag)
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileDeleted,
-		sdk.NewAttribute(types.AttributeProfileMoniker, profile.Moniker),
+		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),
 		Events: ctx.EventManager().Events(),
 	}
 

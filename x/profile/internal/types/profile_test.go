@@ -18,21 +18,21 @@ func TestNewProfile(t *testing.T) {
 	require.Equal(t, expProfile, actProfile)
 }
 
-func TestProfile_WithMoniker(t *testing.T) {
+func TestProfile_WithDtag(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	profile := types.NewProfile(owner)
 
-	profileWithMoniker := profile.WithMoniker("monik")
+	profileWithDtag := profile.WithDtag("monik")
 
-	require.Equal(t, types.NewProfile(owner).WithMoniker("monik"), profileWithMoniker)
+	require.Equal(t, types.NewProfile(owner).WithDtag("monik"), profileWithDtag)
 }
 
 func TestProfile_WithBio(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	moniker := "moniker"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	dtag := "dtag"
+	profile := types.NewProfile(owner).WithDtag(dtag)
 	bio := "surname"
 
 	tests := []struct {
@@ -45,7 +45,7 @@ func TestProfile_WithBio(t *testing.T) {
 			name:       "not nil bio",
 			profile:    profile,
 			profBio:    bio,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Bio: &bio},
+			expProfile: types.Profile{DTag: dtag, Creator: owner, Bio: &bio},
 		},
 	}
 
@@ -61,8 +61,8 @@ func TestProfile_WithBio(t *testing.T) {
 func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	moniker := "moniker"
-	profile := types.NewProfile(owner).WithMoniker(moniker)
+	dtag := "dtag"
+	profile := types.NewProfile(owner).WithDtag(dtag)
 	var pic = "profile"
 	var cov = "cover"
 
@@ -78,14 +78,14 @@ func TestProfile_WithPics(t *testing.T) {
 			profile:    profile,
 			pic:        &pic,
 			cov:        &cov,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner, Pictures: types.NewPictures(&pic, &cov)},
+			expProfile: types.Profile{DTag: dtag, Creator: owner, Pictures: types.NewPictures(&pic, &cov)},
 		},
 		{
 			name:       "nil pics",
 			profile:    profile,
 			pic:        nil,
 			cov:        nil,
-			expProfile: types.Profile{Moniker: moniker, Creator: owner},
+			expProfile: types.Profile{DTag: dtag, Creator: owner},
 		},
 	}
 
@@ -104,14 +104,14 @@ func TestProfile_String(t *testing.T) {
 
 	var bio = "biography"
 	var testAccount = types.Profile{
-		Moniker:  "moniker",
+		DTag:     "dtag",
 		Bio:      &bio,
 		Pictures: testPictures,
 		Creator:  owner,
 	}
 
 	require.Equal(t,
-		`{"moniker":"moniker","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"dtag":"dtag","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
 		testAccount.String(),
 	)
 }
@@ -123,14 +123,14 @@ func TestProfile_Equals(t *testing.T) {
 	var testPictures = types.NewPictures(&pic, &cov)
 
 	var testAccount = types.Profile{
-		Moniker:  "moniker",
+		DTag:     "dtag",
 		Bio:      &bio,
 		Pictures: testPictures,
 		Creator:  testPostOwner,
 	}
 
 	var testAccount2 = types.Profile{
-		Moniker:  "oniker",
+		DTag:     "oniker",
 		Bio:      &bio,
 		Pictures: testPictures,
 		Creator:  testPostOwner,
@@ -181,7 +181,7 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Empty profile creator returns error",
 			account: types.Profile{
-				Moniker:  "moniker",
+				DTag:     "dtag",
 				Bio:      &bio,
 				Pictures: testPictures,
 				Creator:  nil,
@@ -189,19 +189,19 @@ func TestProfile_Validate(t *testing.T) {
 			expErr: fmt.Errorf("profile creator cannot be empty or blank"),
 		},
 		{
-			name: "Empty profile moniker returns error",
+			name: "Empty profile dtag returns error",
 			account: types.Profile{
-				Moniker:  "",
+				DTag:     "",
 				Bio:      &bio,
 				Pictures: testPictures,
 				Creator:  testPostOwner,
 			},
-			expErr: fmt.Errorf("profile moniker cannot be empty or blank"),
+			expErr: fmt.Errorf("profile dtag cannot be empty or blank"),
 		},
 		{
 			name: "Valid profile returns no error",
 			account: types.Profile{
-				Moniker:  "moniker",
+				DTag:     "dtag",
 				Bio:      &bio,
 				Pictures: testPictures,
 				Creator:  testPostOwner,
@@ -211,7 +211,7 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Invalid profile pictures returns error",
 			account: types.Profile{
-				Moniker:  "moniker",
+				DTag:     "dtag",
 				Bio:      &bio,
 				Pictures: invalidPics,
 				Creator:  testPostOwner,

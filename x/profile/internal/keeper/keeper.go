@@ -23,17 +23,17 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	}
 }
 
-// AssociateMonikerWithAddress save the relation of moniker and address on chain
-func (k Keeper) AssociateMonikerWithAddress(ctx sdk.Context, moniker string, address sdk.AccAddress) {
+// AssociateDtagWithAddress save the relation of dtag and address on chain
+func (k Keeper) AssociateDtagWithAddress(ctx sdk.Context, dtag string, address sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.MonikerStoreKey(moniker)
+	key := types.DtagStoreKey(dtag)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&address))
 }
 
-// GetMonikerRelatedAddress returns the address associated to the given moniker or nil if it not exists
-func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr sdk.AccAddress) {
+// GetDtagRelatedAddress returns the address associated to the given dtag or nil if it not exists
+func (k Keeper) GetDtagRelatedAddress(ctx sdk.Context, dtag string) (addr sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-	bz := store.Get(types.MonikerStoreKey(moniker))
+	bz := store.Get(types.DtagStoreKey(dtag))
 	if bz == nil {
 		return nil
 	}
@@ -41,46 +41,46 @@ func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr 
 	return addr
 }
 
-// GetMonikerFromAddress returns the moniker associated with the given address or an empty string if no moniker exists
-func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (moniker string) {
+// GetDtagFromAddress returns the dtag associated with the given address or an empty string if no dtag exists
+func (k Keeper) GetDtagFromAddress(ctx sdk.Context, addr sdk.AccAddress) (dtag string) {
 	store := ctx.KVStore(k.StoreKey)
-	it := sdk.KVStorePrefixIterator(store, types.MonikerStorePrefix)
+	it := sdk.KVStorePrefixIterator(store, types.DtagStorePrefix)
 	defer it.Close()
 
 	for ; it.Valid(); it.Next() {
 		var acc sdk.AccAddress
 		k.Cdc.MustUnmarshalBinaryBare(it.Value(), &acc)
 		if acc.Equals(addr) {
-			return string(bytes.TrimPrefix(it.Key(), types.MonikerStorePrefix))
+			return string(bytes.TrimPrefix(it.Key(), types.DtagStorePrefix))
 		}
 	}
 
 	return ""
 }
 
-// DeleteMonikerAddressAssociation delete the given moniker association with an address
-func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
+// DeleteDtagAddressAssociation delete the given dtag association with an address
+func (k Keeper) DeleteDtagAddressAssociation(ctx sdk.Context, dtag string) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Delete(types.MonikerStoreKey(moniker))
+	store.Delete(types.DtagStoreKey(dtag))
 }
 
-// replaceMoniker delete the oldMoniker related to the creator address and associate the new one to it
-func (k Keeper) replaceMoniker(ctx sdk.Context, oldMoniker, newMoniker string, creator sdk.AccAddress) {
-	k.DeleteMonikerAddressAssociation(ctx, oldMoniker)
-	k.AssociateMonikerWithAddress(ctx, newMoniker, creator)
+// replaceDtag delete the oldDtag related to the creator address and associate the new one to it
+func (k Keeper) replaceDtag(ctx sdk.Context, oldDtag, newDtag string, creator sdk.AccAddress) {
+	k.DeleteDtagAddressAssociation(ctx, oldDtag)
+	k.AssociateDtagWithAddress(ctx, newDtag, creator)
 }
 
 // SaveProfile allows to save the given profile inside the current context.
 // It assumes that the given profile has already been validated.
-// It returns an error if a profile with the same moniker from a different creator already exists
+// It returns an error if a profile with the same dtag from a different creator already exists
 func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 
-	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
-		return fmt.Errorf("a profile with moniker: %s has already been created", profile.Moniker)
+	if addr := k.GetDtagRelatedAddress(ctx, profile.DTag); addr != nil && !addr.Equals(profile.Creator) {
+		return fmt.Errorf("a profile with dtag: %s has already been created", profile.DTag)
 	}
 
-	oldMoniker := k.GetMonikerFromAddress(ctx, profile.Creator)
-	k.replaceMoniker(ctx, oldMoniker, profile.Moniker, profile.Creator)
+	oldDtag := k.GetDtagFromAddress(ctx, profile.Creator)
+	k.replaceDtag(ctx, oldDtag, profile.DTag, profile.Creator)
 
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ProfileStoreKey(profile.Creator)
@@ -93,10 +93,10 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 // DeleteProfile allows to delete a profile associated with the given address inside the current context.
 // It assumes that the address-related profile exists.
 // nolint: interfacer
-func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker string) {
+func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, dtag string) {
 	store := ctx.KVStore(k.StoreKey)
 	store.Delete(types.ProfileStoreKey(address))
-	k.DeleteMonikerAddressAssociation(ctx, moniker)
+	k.DeleteDtagAddressAssociation(ctx, dtag)
 }
 
 // GetProfiles returns all the created profiles inside the current context.

@@ -20,7 +20,7 @@ func randomAccounts(simState *module.SimulationState) (accounts types.Profiles) 
 	for i := 0; i < accountsNumber; i++ {
 		accountData := RandomProfileData(simState.Rand, simState.Accounts)
 		account := types.Profile{
-			Moniker: accountData.Moniker,
+			DTag:    accountData.Dtag,
 			Bio:     &accountData.Bio,
 			Creator: accountData.Creator.Address,
 		}

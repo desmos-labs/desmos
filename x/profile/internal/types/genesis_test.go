@@ -38,7 +38,7 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Profiles: types.Profiles{
 					types.Profile{
-						Moniker:  "",
+						DTag:     "",
 						Bio:      &bio,
 						Pictures: testPictures,
 						Creator:  testPostOwner,
@@ -52,7 +52,7 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Profiles: types.Profiles{
 					types.Profile{
-						Moniker:  "moniker",
+						DTag:     "dtag",
 						Bio:      &bio,
 						Pictures: testPictures,
 						Creator:  testPostOwner,

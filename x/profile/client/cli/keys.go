@@ -6,5 +6,5 @@ const (
 	flagBio          = "bio"
 	flagProfilePic   = "picture"
 	flagProfileCover = "cover"
-	flagMoniker      = "moniker"
+	flagDtag         = "dtag"
 )

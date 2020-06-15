@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	monikersLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
+	dtagsLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
 
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -43,7 +43,7 @@ var (
 
 // ProfileData contains the randomly generated data of an profile
 type ProfileData struct {
-	Moniker string
+	Dtag    string
 	Bio     string
 	Picture types.Pictures
 	Creator sim.Account
@@ -58,7 +58,7 @@ func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 	}
 
 	return ProfileData{
-		Moniker: RandomMoniker(r),
+		Dtag:    RandomDtag(r),
 		Bio:     RandomBio(r),
 		Picture: pictures,
 		Creator: simAccount,
@@ -71,11 +71,11 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
-// RandomMoniker return a random moniker from the randomMonikers list given
-func RandomMoniker(r *rand.Rand) string {
+// RandomDtag return a random dtag from the randomDtags list given
+func RandomDtag(r *rand.Rand) string {
 	b := make([]byte, 30)
 	for i := range b {
-		b[i] = monikersLetters[r.Intn(len(monikersLetters))]
+		b[i] = dtagsLetters[r.Intn(len(dtagsLetters))]
 	}
 	return string(b)
 }

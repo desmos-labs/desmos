@@ -50,12 +50,12 @@ func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
 		Use:   "save",
 		Short: "Save a profile",
 		Long: fmt.Sprintf(`
-Save a new profile or edit an existing one specifying the moniker, name, surname, bio, a profile picture and cover.
-Every data is optional except for the moniker.
+Save a new profile or edit an existing one specifying the dtag, name, surname, bio, a profile picture and cover.
+Every data is optional except for the dtag.
 If you are editing an existing profile you should fill all the existent fields otherwise they will be set as nil.
 
 %s tx profiles save \
-    --moniker "DiCapLeo" \
+    --dtag "DiCapLeo" \
 	--name "Leonardo" \
 	--surname "Di Caprio" \
 	--bio "Hollywood actor. Proud environmentalist" \
@@ -68,18 +68,18 @@ If you are editing an existing profile you should fill all the existent fields o
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			moniker := viper.GetString(flagMoniker)
+			dtag := viper.GetString(flagDtag)
 			picture := getFlagValueOrNilOnDefault(flagProfilePic)
 			cover := getFlagValueOrNilOnDefault(flagProfileCover)
 			bio := getFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgSaveProfile(moniker, bio, picture, cover, cliCtx.FromAddress)
+			msg := types.NewMsgSaveProfile(dtag, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagMoniker, "", "Moniker of the profile")
+	cmd.Flags().String(flagDtag, "", "DTag of the profile")
 	cmd.Flags().String(flagBio, "", "Biography of the profile")
 	cmd.Flags().String(flagProfilePic, "", "Profile related profile picture")
 	cmd.Flags().String(flagProfileCover, "", "Profile related profile cover")

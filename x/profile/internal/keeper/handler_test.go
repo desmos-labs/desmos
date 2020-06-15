@@ -16,11 +16,11 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 	require.NoError(t, err)
 
 	var bio = "biography"
-	var newMoniker = "newMoniker"
+	var newDtag = "newDtag"
 	var invalidPic = "pic"
 
 	testAcc2 := types.Profile{
-		Moniker:  "newMoniker",
+		DTag:     "newDtag",
 		Bio:      &bio,
 		Pictures: testPictures,
 		Creator:  editor,
@@ -37,7 +37,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			name:             "Profile saved (with previous profile created)",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
-				newMoniker,
+				newDtag,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -49,7 +49,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			name:             "Profile saved (with no previous profile created)",
 			existentAccounts: nil,
 			msg: types.NewMsgSaveProfile(
-				newMoniker,
+				newDtag,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -58,22 +58,22 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			expErr: nil,
 		},
 		{
-			name:             "Profile not edited because the new moniker already exists",
+			name:             "Profile not edited because the new dtag already exists",
 			existentAccounts: types.Profiles{testProfile, testAcc2},
 			msg: types.NewMsgSaveProfile(
-				newMoniker,
+				newDtag,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testPostOwner,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with moniker: newMoniker has already been created"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with dtag: newDtag has already been created"),
 		},
 		{
 			name:             "Profile not edited because of the invalid pics uri",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
-				newMoniker,
+				newDtag,
 				testProfile.Bio,
 				&invalidPic,
 				testProfile.Pictures.Cover,
@@ -93,7 +93,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				for _, acc := range test.existentAccounts {
 					key := types.ProfileStoreKey(acc.Creator)
 					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
-					k.AssociateMonikerWithAddress(ctx, acc.Moniker, acc.Creator)
+					k.AssociateDtagWithAddress(ctx, acc.DTag, acc.Creator)
 				}
 			}
 
@@ -110,12 +110,12 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				require.Len(t, profiles, 1)
 
 				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Moniker), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Dtag), res.Data)
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileMoniker, test.msg.Moniker),
+					sdk.NewAttribute(types.AttributeProfileDtag, test.msg.Dtag),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
@@ -158,7 +158,7 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			if test.existentAccount != nil {
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
+				k.AssociateDtagWithAddress(ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
 			handler := keeper.NewHandler(k)
@@ -170,12 +170,12 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			}
 			if res != nil {
 				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("moniker"), res.Data)
+				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
 
 				//Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeProfileDeleted,
-					sdk.NewAttribute(types.AttributeProfileMoniker, "moniker"),
+					sdk.NewAttribute(types.AttributeProfileDtag, "dtag"),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 

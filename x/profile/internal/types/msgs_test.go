@@ -33,15 +33,15 @@ var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoX
 	"6ou0LSnJMCTq"
 
 var testProfile = types.Profile{
-	Moniker:  "moniker",
+	DTag:     "dtag",
 	Bio:      &bio,
 	Pictures: testPictures,
 	Creator:  testProfileOwner,
 }
 
-var newMoniker = "monk"
+var newDtag = "monk"
 var msgEditProfile = types.NewMsgSaveProfile(
-	newMoniker,
+	newDtag,
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
@@ -63,7 +63,7 @@ func TestMsgSaveProfile_Type(t *testing.T) {
 }
 
 func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
-	invalidMonikerLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
+	invalidDtagLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
 	tests := []struct {
 		name  string
 		msg   types.MsgSaveProfile
@@ -72,7 +72,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty owner returns error",
 			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
+				testProfile.DTag,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -83,7 +83,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Max bio length exceeded",
 			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
+				testProfile.DTag,
 				&invalidBio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -92,7 +92,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile biography cannot exceed 1000 characters"),
 		},
 		{
-			name: "Min moniker length not reached",
+			name: "Min dtag length not reached",
 			msg: types.NewMsgSaveProfile(
 				"l",
 				testProfile.Bio,
@@ -100,23 +100,23 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot be less than 2 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile dtag cannot be less than 2 characters"),
 		},
 		{
-			name: "Max moniker length exceeded",
+			name: "Max dtag length exceeded",
 			msg: types.NewMsgSaveProfile(
-				invalidMonikerLen,
+				invalidDtagLen,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
 				testProfile.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile moniker cannot exceed 30 characters"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile dtag cannot exceed 30 characters"),
 		},
 		{
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
-				testProfile.Moniker,
+				testProfile.DTag,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -142,7 +142,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","moniker":"monk","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
 	require.Equal(t, expected, string(actual))
 }
 

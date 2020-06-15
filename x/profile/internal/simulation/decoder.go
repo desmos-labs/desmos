@@ -19,7 +19,7 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &profileA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &profileB)
 		return fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profileA, profileB)
-	case bytes.HasPrefix(kvA.Key, types.MonikerStorePrefix):
+	case bytes.HasPrefix(kvA.Key, types.DtagStorePrefix):
 		var addressA, addressB sdk.AccAddress
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &addressA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)

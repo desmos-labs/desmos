@@ -16,15 +16,15 @@ const (
 	DefaultGasValue          = simulation.DefaultGasValue
 	EventTypeProfileSaved    = types.EventTypeProfileSaved
 	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileMoniker  = types.AttributeProfileMoniker
+	AttributeProfileDtag     = types.AttributeProfileDtag
 	AttributeProfileCreator  = types.AttributeProfileCreator
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
 	StoreKey                 = types.StoreKey
 	MinNameSurnameLength     = types.MinNameSurnameLength
 	MaxNameSurnameLength     = types.MaxNameSurnameLength
-	MinMonikerLength         = types.MinMonikerLength
-	MaxMonikerLength         = types.MaxMonikerLength
+	MinDtagLength            = types.MinDtagLength
+	MaxDtagLength            = types.MaxDtagLength
 	MaxBioLength             = types.MaxBioLength
 	ActionSaveProfile        = types.ActionSaveProfile
 	ActionDeleteProfile      = types.ActionDeleteProfile
@@ -48,7 +48,7 @@ var (
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
 	RandomProfileData        = simulation.RandomProfileData
 	RandomProfile            = simulation.RandomProfile
-	RandomMoniker            = simulation.RandomMoniker
+	RandomDtag               = simulation.RandomDtag
 	RandomBio                = simulation.RandomBio
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
@@ -60,7 +60,7 @@ var (
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	ProfileStoreKey          = types.ProfileStoreKey
-	MonikerStoreKey          = types.MonikerStoreKey
+	DtagStoreKey             = types.DtagStoreKey
 	NewMsgSaveProfile        = types.NewMsgSaveProfile
 	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
 
@@ -69,7 +69,7 @@ var (
 	TxHashRegEx        = types.TxHashRegEx
 	URIRegEx           = types.URIRegEx
 	ProfileStorePrefix = types.ProfileStorePrefix
-	MonikerStorePrefix = types.MonikerStorePrefix
+	DtagStorePrefix    = types.DtagStorePrefix
 )
 
 type (

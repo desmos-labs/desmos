@@ -21,7 +21,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, data, newMoniker, skip, err := randomProfileSaveFields(r, ctx, accs, k)
+		acc, data, newDtag, skip, err := randomProfileSaveFields(r, ctx, accs, k)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -31,7 +31,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgSaveProfile(
-			newMoniker,
+			newDtag,
 			data.Bio,
 			nil,
 			nil,
@@ -98,7 +98,7 @@ func randomProfileSaveFields(
 		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 
-	return *acc, account, RandomMoniker(r), false, nil
+	return *acc, account, RandomDtag(r), false, nil
 }
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists

@@ -50,7 +50,7 @@ var testPictures = types.NewPictures(&profilePic, &profileCov)
 var bio = "biography"
 
 var testProfile = types.Profile{
-	Moniker:  "moniker",
+	DTag:     "dtag",
 	Bio:      &bio,
 	Pictures: testPictures,
 	Creator:  testPostOwner,

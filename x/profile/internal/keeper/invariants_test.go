@@ -12,7 +12,7 @@ import (
 func TestInvariants(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	moniker := "moniker"
+	dtag := "dtag"
 
 	tests := []struct {
 		name        string
@@ -22,14 +22,14 @@ func TestInvariants(t *testing.T) {
 	}{
 		{
 			name:        "Invariants not violated",
-			profile:     types.NewProfile(owner).WithMoniker(moniker),
+			profile:     types.NewProfile(owner).WithDtag(dtag),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
 			name:        "ValidProfile invariant violated",
-			profile:     types.NewProfile(owner).WithMoniker(""),
-			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[Moniker]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
+			profile:     types.NewProfile(owner).WithDtag(""),
+			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[DTag]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:     true,
 		},
 	}

@@ -27,12 +27,12 @@ func AllInvariants(k Keeper) sdk.Invariant {
 func formatOutputProfiles(invalidProfiles types.Profiles) (outputProfiles string) {
 	outputProfiles = "Invalid profiles:\n"
 	for _, invalidProfile := range invalidProfiles {
-		outputProfiles += fmt.Sprintf("[Moniker]: %s, [Creator]: %s\n", invalidProfile.Moniker, invalidProfile.Creator)
+		outputProfiles += fmt.Sprintf("[DTag]: %s, [Creator]: %s\n", invalidProfile.DTag, invalidProfile.Creator)
 	}
 	return outputProfiles
 }
 
-// ValidProfileInvariant checks that all registered profiles have a non-empty moniker and a non-empty creator
+// ValidProfileInvariant checks that all registered profiles have a non-empty dtag and a non-empty creator
 func ValidProfileInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles types.Profiles

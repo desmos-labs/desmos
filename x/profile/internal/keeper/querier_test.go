@@ -34,14 +34,14 @@ func Test_queryProfile(t *testing.T) {
 			path:          []string{types.QueryProfile, ""},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"Moniker or address cannot be empty or blank",
+				"DTag or address cannot be empty or blank",
 			),
 		},
 		{
-			name:          "Profile doesnt exist (moniker given)",
+			name:          "Profile doesnt exist (dtag given)",
 			path:          []string{types.QueryProfile, "monk"},
 			storedAccount: testProfile,
-			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this moniker: monk"),
+			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this dtag: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
@@ -50,8 +50,8 @@ func Test_queryProfile(t *testing.T) {
 			expErr:        nil,
 		},
 		{
-			name:          "Profile returned correctly (moniker given)",
-			path:          []string{types.QueryProfile, "moniker"},
+			name:          "Profile returned correctly (dtag given)",
+			path:          []string{types.QueryProfile, "dtag"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},

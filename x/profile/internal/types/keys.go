@@ -13,8 +13,8 @@ const (
 
 	MinNameSurnameLength = 2
 	MaxNameSurnameLength = 500
-	MinMonikerLength     = 2
-	MaxMonikerLength     = 30
+	MinDtagLength        = 2
+	MaxDtagLength        = 30
 	MaxBioLength         = 1000
 
 	ActionSaveProfile   = "save_profile"
@@ -32,7 +32,7 @@ var (
 		`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`)
 
 	ProfileStorePrefix = []byte("profile")
-	MonikerStorePrefix = []byte("moniker")
+	DtagStorePrefix    = []byte("dtag")
 )
 
 // ProfileStoreKey turns an address to a key used to store a profile into the profiles store
@@ -40,7 +40,7 @@ func ProfileStoreKey(address sdk.AccAddress) []byte {
 	return append(ProfileStorePrefix, address...)
 }
 
-// MonikerStoreKey turns a moniker to a key used to store a moniker -> address couple
-func MonikerStoreKey(moniker string) []byte {
-	return append(MonikerStorePrefix, []byte(moniker)...)
+// DtagStoreKey turns a dtag to a key used to store a dtag -> address couple
+func DtagStoreKey(dtag string) []byte {
+	return append(DtagStorePrefix, []byte(dtag)...)
 }

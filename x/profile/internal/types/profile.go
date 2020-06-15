@@ -10,7 +10,7 @@ import (
 
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
-	Moniker  string         `json:"moniker" yaml:"moniker"`
+	DTag     string         `json:"dtag" yaml:"dtag"`
 	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
 	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
 	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
@@ -22,9 +22,9 @@ func NewProfile(creator sdk.AccAddress) Profile {
 	}
 }
 
-//WithMoniker updates profile's moniker with the given one
-func (profile Profile) WithMoniker(moniker string) Profile {
-	profile.Moniker = moniker
+// WithDtag updates profile's dtag with the given one
+func (profile Profile) WithDtag(dtag string) Profile {
+	profile.DTag = dtag
 	return profile
 }
 
@@ -52,7 +52,7 @@ func (profile Profile) String() string {
 
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
-	return profile.Moniker == other.Moniker &&
+	return profile.DTag == other.DTag &&
 		profile.Bio == other.Bio &&
 		profile.Pictures.Equals(other.Pictures) &&
 		profile.Creator.Equals(other.Creator)
@@ -64,8 +64,8 @@ func (profile Profile) Validate() error {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
 
-	if strings.TrimSpace(profile.Moniker) == "" {
-		return fmt.Errorf("profile moniker cannot be empty or blank")
+	if strings.TrimSpace(profile.DTag) == "" {
+		return fmt.Errorf("profile dtag cannot be empty or blank")
 	}
 
 	if profile.Pictures != nil {

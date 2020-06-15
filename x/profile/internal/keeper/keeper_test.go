@@ -10,96 +10,96 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func TestKeeper_AssociateMonikerWithAddress(t *testing.T) {
+func TestKeeper_AssociateDtagWithAddress(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	moniker := "moniker"
+	dtag := "dtag"
 
-	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+	k.AssociateDtagWithAddress(ctx, dtag, creator)
 
 	store := ctx.KVStore(k.StoreKey)
 
 	var acc sdk.AccAddress
-	key := types.MonikerStoreKey(moniker)
+	key := types.DtagStoreKey(dtag)
 	bz := store.Get(key)
 	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
 	require.Equal(t, creator, acc)
 }
 
-func TestKeeper_GetMonikerRelatedAddress(t *testing.T) {
+func TestKeeper_GetDtagRelatedAddress(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	moniker := "moner"
+	dtag := "moner"
 
-	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+	k.AssociateDtagWithAddress(ctx, dtag, creator)
 
-	addr := k.GetMonikerRelatedAddress(ctx, moniker)
+	addr := k.GetDtagRelatedAddress(ctx, dtag)
 
 	require.Equal(t, creator, addr)
 }
 
-func TestKeeper_DeleteMonikerAddressAssociation(t *testing.T) {
+func TestKeeper_DeleteDtagAddressAssociation(t *testing.T) {
 	ctx, k := SetupTestInput()
 
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	moniker := "monik"
+	dtag := "monik"
 
-	k.AssociateMonikerWithAddress(ctx, moniker, creator)
+	k.AssociateDtagWithAddress(ctx, dtag, creator)
 
-	k.DeleteMonikerAddressAssociation(ctx, moniker)
+	k.DeleteDtagAddressAssociation(ctx, dtag)
 
-	addr := k.GetMonikerRelatedAddress(ctx, moniker)
+	addr := k.GetDtagRelatedAddress(ctx, dtag)
 
 	require.Nil(t, addr)
 
 }
 
-func TestKeeper_GetMonikerFromAddress(t *testing.T) {
+func TestKeeper_GetDtagFromAddress(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
 	tests := []struct {
-		name       string
-		monikers   []string
-		addresses  []sdk.AccAddress
-		expMoniker string
+		name      string
+		dtags     []string
+		addresses []sdk.AccAddress
+		expDtag   string
 	}{
 		{
-			name:       "found right moniker",
-			monikers:   []string{"lol", "oink"},
-			addresses:  []sdk.AccAddress{creator, creator2},
-			expMoniker: "lol",
+			name:      "found right dtag",
+			dtags:     []string{"lol", "oink"},
+			addresses: []sdk.AccAddress{creator, creator2},
+			expDtag:   "lol",
 		},
 		{
-			name:       "no moniker found",
-			monikers:   []string{"lol", "oink"},
-			addresses:  []sdk.AccAddress{creator},
-			expMoniker: "",
+			name:      "no dtag found",
+			dtags:     []string{"lol", "oink"},
+			addresses: []sdk.AccAddress{creator},
+			expDtag:   "",
 		},
 	}
 
 	for _, test := range tests {
 		ctx, k := SetupTestInput()
-		if len(test.addresses) == len(test.monikers) {
-			for i, moniker := range test.monikers {
-				k.AssociateMonikerWithAddress(ctx, moniker, test.addresses[i])
+		if len(test.addresses) == len(test.dtags) {
+			for i, dtag := range test.dtags {
+				k.AssociateDtagWithAddress(ctx, dtag, test.addresses[i])
 			}
 		}
 
-		monk := k.GetMonikerFromAddress(ctx, test.addresses[0])
+		monk := k.GetDtagFromAddress(ctx, test.addresses[0])
 
-		require.Equal(t, test.expMoniker, monk)
+		require.Equal(t, test.expDtag, monk)
 	}
 
 }
@@ -124,13 +124,13 @@ func TestKeeper_SaveProfile(t *testing.T) {
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				Moniker:  testProfile.Moniker,
+				DTag:     testProfile.DTag,
 				Bio:      testProfile.Bio,
 				Pictures: testProfile.Pictures,
 				Creator:  creator,
 			},
 			existentAccounts: types.Profiles{testProfile},
-			expError:         fmt.Errorf("a profile with moniker: moniker has already been created"),
+			expError:         fmt.Errorf("a profile with dtag: dtag has already been created"),
 		},
 	}
 
@@ -143,7 +143,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 				store := ctx.KVStore(k.StoreKey)
 				key := types.ProfileStoreKey(profile.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(profile))
-				k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
+				k.AssociateDtagWithAddress(ctx, profile.DTag, profile.Creator)
 			}
 
 			err := k.SaveProfile(ctx, test.account)
@@ -165,7 +165,7 @@ func TestKeeper_DeleteProfile(t *testing.T) {
 	require.Equal(t, testProfile, res)
 	require.True(t, found)
 
-	k.DeleteProfile(ctx, testProfile.Creator, testProfile.Moniker)
+	k.DeleteProfile(ctx, testProfile.Creator, testProfile.DTag)
 
 	res, found = k.GetProfile(ctx, testProfile.Creator)
 
@@ -200,7 +200,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 				store := ctx.KVStore(k.StoreKey)
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
+				k.AssociateDtagWithAddress(ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
 			res, found := k.GetProfile(ctx, testPostOwner)
