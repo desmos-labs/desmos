@@ -148,9 +148,15 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetAppVersion(version.Version)
 	keys := sdk.NewKVStoreKeys(
-		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
-		gov.StoreKey, params.StoreKey, evidence.StoreKey,
+		bam.MainStoreKey,
+		auth.StoreKey,
+		params.StoreKey,
+		slashing.StoreKey,
+		distr.StoreKey,
+		supply.StoreKey,
+		staking.StoreKey,
+		gov.StoreKey,
+		evidence.StoreKey,
 
 		// Custom modules
 		magpie.StoreKey, posts.StoreKey, profile.StoreKey,
@@ -281,13 +287,16 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		genutil.NewAppModule(app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.AccountKeeper),
 		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		crisis.NewAppModule(&app.CrisisKeeper),
+
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
 		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
+
+		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+
+		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
+		crisis.NewAppModule(&app.CrisisKeeper),
 
 		// Custom modules
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
@@ -302,18 +311,24 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		distr.ModuleName, slashing.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
-		crisis.ModuleName,
-		gov.ModuleName,
 		staking.ModuleName,
+		gov.ModuleName,
+		crisis.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
 	app.mm.SetOrderInitGenesis(
-		auth.ModuleName, distr.ModuleName,
-		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
-		gov.ModuleName, supply.ModuleName, crisis.ModuleName,
-		genutil.ModuleName, evidence.ModuleName,
+		distr.ModuleName,
+		staking.ModuleName,
+		auth.ModuleName,
+		bank.ModuleName,
+		slashing.ModuleName,
+		gov.ModuleName,
+		supply.ModuleName,
+		crisis.ModuleName,
+		genutil.ModuleName,
+		evidence.ModuleName,
 
 		// Custom modules
 		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
@@ -330,10 +345,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		auth.NewAppModule(app.AccountKeeper),
 		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
 		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
 		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
+		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
 
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
