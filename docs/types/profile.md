@@ -18,6 +18,9 @@ In order to be valid it needs to match the following RegEx:
 [A-Za-z0-9_]{2,30}
 ``` 
 
+### `Moniker`
+The `Moniker` represents the name of the user. It can be either a combination of first, second and last name, or a completely invented name. Although we always suggest setting one, this field is completely optional. 
+
 ### `Bio`
 The `Bio` represents the biography of the user. It can be at most `1000` characters long.
 

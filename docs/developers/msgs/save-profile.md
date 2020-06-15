@@ -7,6 +7,7 @@ This message allows you to save a new profile or edit an existent one.
   "type": "desmos/MsgSaveProfile",
   "value": {
     "dtag": "<Profile dtag>",
+    "moniker": "<Profile moniker>",
     "bio": "<Profile biography>",
     "pictures": {
       "profile": "<URI of the profile account's picture>",
@@ -21,6 +22,7 @@ This message allows you to save a new profile or edit an existent one.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `dtag` | String | DTag of the user |
+| `moniker` | String (Optional) | Moniker of the user | 
 | `bio` | String | (Optional) Biography of the user |
 | `pictures` | Object | (Optional) Object containing all the information related to the profile's pictures |
 | `creator` | String | Desmos address of the user that is editing the profile |
@@ -33,9 +35,8 @@ If you are editing an existing profile you should fill all the existent fields o
   "type": "desmos/MsgSaveProfile",
   "value": {
     "dtag": "Eva00",
-    "name": "Rei",
-    "surname": "Ayanami",
-    "bio": "evaPilot",
+    "moniker": "Rei Ayanami",
+    "bio": "The real pilot",
     "pictures": {
       "profile": "https://shorturl.at/adnX3",
       "cover": "https://shorturl.at/cgpyF"
