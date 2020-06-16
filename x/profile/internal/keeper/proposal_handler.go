@@ -24,12 +24,13 @@ func NewEditParamsProposalHandler(k Keeper) govtypes.Handler {
 
 func handleNameSurnameEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.NameSurnameParamsEditProposal) error {
 
+	return nil
 }
 
 func handleMonikerEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.MonikerParamsEditProposal) error {
-
+	return nil
 }
 
 func handleBioEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.BioParamsEditProposal) error {
-
+	return nil
 }

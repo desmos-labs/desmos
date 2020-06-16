@@ -10,9 +10,10 @@ import (
 )
 
 func TestPostQueryResponse_MarshalJSON(t *testing.T) {
-
-	nameSurnameParams := models.NewNameSurnameLenParams(sdk.NewInt(5), sdk.NewInt(10))
-	monikerParams := models.NewMonikerLenParams(sdk.NewInt(5), sdk.NewInt(10))
+	min := sdk.NewInt(5)
+	max := sdk.NewInt(10)
+	nameSurnameParams := models.NewNameSurnameLenParams(&min, &max)
+	monikerParams := models.NewMonikerLenParams(&min, &max)
 	bioParams := models.NewBioLenParams(sdk.NewInt(100))
 
 	paramQueryResponse := models.NewParamsQueryResponse(

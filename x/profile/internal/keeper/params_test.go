@@ -8,8 +8,10 @@ import (
 )
 
 func TestKeeper_SetNameSurnameLenParams(t *testing.T) {
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(1000))
+	nsParams := models.NewNameSurnameLenParams(&min, &max)
 	k.SetNameSurnameLenParams(ctx, nsParams)
 
 	actualParams := k.GetNameSurnameLenParams(ctx)
@@ -18,8 +20,10 @@ func TestKeeper_SetNameSurnameLenParams(t *testing.T) {
 }
 
 func TestKeeper_GetNameSurnameLenParams(t *testing.T) {
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(1000))
+	nsParams := models.NewNameSurnameLenParams(&min, &max)
 	k.SetNameSurnameLenParams(ctx, nsParams)
 
 	actualParams := k.GetNameSurnameLenParams(ctx)
@@ -28,8 +32,10 @@ func TestKeeper_GetNameSurnameLenParams(t *testing.T) {
 }
 
 func TestKeeper_SetMonikerLenParams(t *testing.T) {
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	monikerParams := models.NewMonikerLenParams(sdk.NewInt(5), sdk.NewInt(10))
+	monikerParams := models.NewMonikerLenParams(&min, &max)
 	k.SetMonikerLenParams(ctx, monikerParams)
 
 	actualParams := k.GetMonikerLenParams(ctx)
@@ -38,8 +44,10 @@ func TestKeeper_SetMonikerLenParams(t *testing.T) {
 }
 
 func TestKeeper_GetMonikerLenParams(t *testing.T) {
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	monikerParams := models.NewMonikerLenParams(sdk.NewInt(5), sdk.NewInt(10))
+	monikerParams := models.NewMonikerLenParams(&min, &max)
 	k.SetMonikerLenParams(ctx, monikerParams)
 
 	actualParams := k.GetMonikerLenParams(ctx)

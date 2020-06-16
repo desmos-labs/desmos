@@ -9,13 +9,17 @@ import (
 )
 
 func TestDefaultNameSurnameLenParams(t *testing.T) {
-	nameSurnameParams := models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(1000))
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
+	nameSurnameParams := models.NewNameSurnameLenParams(&min, &max)
 	defaultNSParams := models.DefaultNameSurnameLenParams()
 	require.Equal(t, defaultNSParams, nameSurnameParams)
 }
 
 func TestDefaultMonikerLenParams(t *testing.T) {
-	monikerParams := models.NewMonikerLenParams(sdk.NewInt(2), sdk.NewInt(30))
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(30)
+	monikerParams := models.NewMonikerLenParams(&min, &max)
 	defaultMonikerParams := models.DefaultMonikerLenParams()
 	require.Equal(t, defaultMonikerParams, monikerParams)
 }
@@ -27,13 +31,17 @@ func TestDefaultBioLenParams(t *testing.T) {
 }
 
 func TestNameSurnameLenParams_String(t *testing.T) {
-	nameSurnameParams := models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(1000))
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(1000)
+	nameSurnameParams := models.NewNameSurnameLenParams(&min, &max)
 	actual := nameSurnameParams.String()
 	require.Equal(t, "{\"min_name_surname_len\":\"2\",\"max_name_surname_len\":\"1000\"}", actual)
 }
 
 func TestMonikerLenParams_String(t *testing.T) {
-	monikerParams := models.NewMonikerLenParams(sdk.NewInt(2), sdk.NewInt(30))
+	min := sdk.NewInt(2)
+	max := sdk.NewInt(30)
+	monikerParams := models.NewMonikerLenParams(&min, &max)
 	actual := monikerParams.String()
 	require.Equal(t, "{\"min_moniker_len\":\"2\",\"max_moniker_len\":\"30\"}", actual)
 }
@@ -45,29 +53,29 @@ func TestBioLenParams_String(t *testing.T) {
 }
 
 func TestValidateNameSurnameLenParams(t *testing.T) {
+	invalidNameMin := sdk.NewInt(1)
+	invalidNameMax := sdk.NewInt(-10)
+	validNameMin := sdk.NewInt(2)
+	validNameMax := sdk.NewInt(1000)
+
 	tests := []struct {
 		name   string
 		params interface{}
 		expErr error
 	}{
 		{
-			name:   "Wrong params returns error",
-			params: models.NewBioLenParams(sdk.NewInt(1000)),
-			expErr: fmt.Errorf("invalid parameters type: {\"max_bio_len\":\"1000\"}"),
-		},
-		{
 			name:   "Invalid min param returns error",
-			params: models.NewNameSurnameLenParams(sdk.NewInt(1), sdk.NewInt(1000)),
+			params: models.NewNameSurnameLenParams(&invalidNameMin, &validNameMax),
 			expErr: fmt.Errorf("invalid minimum name/surname length param: 1"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(-10)),
+			params: models.NewNameSurnameLenParams(&validNameMin, &invalidNameMax),
 			expErr: fmt.Errorf("invalid max name/surname length param: -10"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: models.NewNameSurnameLenParams(sdk.NewInt(2), sdk.NewInt(1000)),
+			params: models.NewNameSurnameLenParams(&validNameMin, &validNameMax),
 			expErr: nil,
 		},
 	}
@@ -81,29 +89,30 @@ func TestValidateNameSurnameLenParams(t *testing.T) {
 }
 
 func TestValidateMonikerLenParams(t *testing.T) {
+	validMin := sdk.NewInt(2)
+	validMax := sdk.NewInt(30)
+
+	invalidMin := sdk.NewInt(1)
+	invalidMax := sdk.NewInt(-30)
+
 	tests := []struct {
 		name   string
 		params interface{}
 		expErr error
 	}{
 		{
-			name:   "Wrong params returns error",
-			params: models.NewBioLenParams(sdk.NewInt(1000)),
-			expErr: fmt.Errorf("invalid parameters type: {\"max_bio_len\":\"1000\"}"),
-		},
-		{
 			name:   "Invalid min param return error",
-			params: models.NewMonikerLenParams(sdk.NewInt(1), sdk.NewInt(30)),
+			params: models.NewMonikerLenParams(&invalidMin, &validMax),
 			expErr: fmt.Errorf("invalid minimum moniker length param: 1"),
 		},
 		{
 			name:   "Invalid max param return error",
-			params: models.NewMonikerLenParams(sdk.NewInt(2), sdk.NewInt(-30)),
+			params: models.NewMonikerLenParams(&validMin, &invalidMax),
 			expErr: fmt.Errorf("invalid max moniker length param: -30"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: models.NewMonikerLenParams(sdk.NewInt(3), sdk.NewInt(30)),
+			params: models.NewMonikerLenParams(&validMin, &validMax),
 			expErr: nil,
 		},
 	}
@@ -122,11 +131,6 @@ func TestValidateBioLenParams(t *testing.T) {
 		params interface{}
 		expErr error
 	}{
-		{
-			name:   "Wrong params returns error",
-			params: models.NewMonikerLenParams(sdk.NewInt(3), sdk.NewInt(30)),
-			expErr: fmt.Errorf("invalid parameters type: {\"min_moniker_len\":\"3\",\"max_moniker_len\":\"30\"}"),
-		},
 		{
 			name:   "Invalid max param returns error",
 			params: models.NewBioLenParams(sdk.NewInt(-1000)),

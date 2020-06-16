@@ -40,6 +40,15 @@ func TestValidateGenesis(t *testing.T) {
 	var testCoverPic = "https://shorturl.at/cgpyF"
 	var testPictures = models.NewPictures(&testProfilePic, &testCoverPic)
 
+	validNameMinParam := sdk.NewInt(3)
+	invalidNameMinParam := sdk.NewInt(1)
+	validNameMaxParam := sdk.NewInt(800)
+	invalidNameMaxParam := sdk.NewInt(1800)
+	validMinMonikerParam := sdk.NewInt(5)
+	validMaxMonikerParam := sdk.NewInt(50)
+	invalidMinMonikerParam := sdk.NewInt(1)
+	invalidMaxMonikerParam := sdk.NewInt(-1)
+
 	tests := []struct {
 		name        string
 		genesis     types.GenesisState
@@ -80,12 +89,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(1),
-					MaxNameSurnameLen: sdk.NewInt(800),
+					MinNameSurnameLen: &invalidNameMinParam,
+					MaxNameSurnameLen: &validNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(5),
-					MaxMonikerLen: sdk.NewInt(50),
+					MinMonikerLen: &validMinMonikerParam,
+					MaxMonikerLen: &validMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(30),
@@ -107,12 +116,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(3),
-					MaxNameSurnameLen: sdk.NewInt(1800),
+					MinNameSurnameLen: &validNameMinParam,
+					MaxNameSurnameLen: &invalidNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(5),
-					MaxMonikerLen: sdk.NewInt(50),
+					MinMonikerLen: &validMinMonikerParam,
+					MaxMonikerLen: &validMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(30),
@@ -134,12 +143,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(3),
-					MaxNameSurnameLen: sdk.NewInt(800),
+					MinNameSurnameLen: &validNameMinParam,
+					MaxNameSurnameLen: &validNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(1),
-					MaxMonikerLen: sdk.NewInt(50),
+					MinMonikerLen: &invalidMinMonikerParam,
+					MaxMonikerLen: &validMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(30),
@@ -161,12 +170,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(1),
-					MaxNameSurnameLen: sdk.NewInt(800),
+					MinNameSurnameLen: &validNameMinParam,
+					MaxNameSurnameLen: &validNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(5),
-					MaxMonikerLen: sdk.NewInt(-1),
+					MinMonikerLen: &validNameMinParam,
+					MaxMonikerLen: &invalidMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(30),
@@ -188,12 +197,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(5),
-					MaxNameSurnameLen: sdk.NewInt(800),
+					MinNameSurnameLen: &validNameMinParam,
+					MaxNameSurnameLen: &validNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(5),
-					MaxMonikerLen: sdk.NewInt(50),
+					MinMonikerLen: &validNameMinParam,
+					MaxMonikerLen: &validMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(-50),
@@ -215,12 +224,12 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				},
 				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: sdk.NewInt(3),
-					MaxNameSurnameLen: sdk.NewInt(800),
+					MinNameSurnameLen: &validNameMinParam,
+					MaxNameSurnameLen: &validNameMaxParam,
 				},
 				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: sdk.NewInt(5),
-					MaxMonikerLen: sdk.NewInt(50),
+					MinMonikerLen: &validMinMonikerParam,
+					MaxMonikerLen: &validMaxMonikerParam,
 				},
 				BioLenParams: models.BioLenParams{
 					MaxBioLen: sdk.NewInt(30),
