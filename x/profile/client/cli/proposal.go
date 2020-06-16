@@ -77,7 +77,7 @@ You should specify at least one of the two parameters otherwise the proposal wil
 			var nsLenParams models.NameSurnameLenParams
 
 			if minNSLen == -1 && maxNSLen == -1 {
-				return fmt.Errorf("Invalid proposal. At least one parameter should be specified")
+				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
 			} else {
 				if minNSLen == -1 && maxNSLen != -1 {
 					maxMonikerLenParam := sdk.NewInt(maxNSLen)
@@ -144,7 +144,7 @@ You should specify at least one of the two parameters otherwise the proposal wil
 			var monikerParams models.MonikerLenParams
 
 			if minMonikerLen == -1 && maxMonikerLen == -1 {
-				return fmt.Errorf("Invalid proposal. At least one parameter should be specified")
+				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
 			} else {
 				if minMonikerLen == -1 && maxMonikerLen != -1 {
 					maxMonikerLenParam := sdk.NewInt(maxMonikerLen)
@@ -178,11 +178,10 @@ You should specify at least one of the two parameters otherwise the proposal wil
 func GetCmdSubmitBioParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "bio-params-edit",
-		Short: "Submit an edit proposal for biography params lengths",
+		Short: "Submit an edit proposal for biography param lengths",
 		Long: fmt.Sprintf(`
-		Submit an edit proposal for biography params lengths.
+		Submit an edit proposal for biography param lengths.
 %s bio-params-edit \
---min-len 3 \
 --max-len 500 \
 `, version.ClientName),
 		Args: cobra.NoArgs,
@@ -205,7 +204,7 @@ func GetCmdSubmitBioParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 			var bioParams models.BioLenParams
 
 			if maxBioLen == -1 {
-				return fmt.Errorf("Invalid proposal. No parameters specified")
+				return fmt.Errorf("invalid proposal. No parameters specified")
 			} else {
 				bioParams = models.NewBioLenParams(sdk.NewInt(maxBioLen))
 			}
@@ -223,7 +222,6 @@ func GetCmdSubmitBioParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(cli.FlagTitle, "", "title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "description of proposal")
 	cmd.Flags().String(cli.FlagDeposit, "", "deposit of proposal")
-	cmd.Flags().Int64(flagMinParamsLen, -1, "The min value for a param length")
 	cmd.Flags().Int64(flagMaxParamsLen, -1, "The max value for a param length")
 
 	return cmd

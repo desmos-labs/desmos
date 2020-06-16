@@ -59,7 +59,7 @@ func (nsp NameSurnameParamsEditProposal) ProposalType() string {
 }
 
 func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
-	err := ValidateNameSurnameLenParams(nsp)
+	err := ValidateNameSurnameLenParams(nsp.NameSurnameParams)
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func (mp MonikerParamsEditProposal) ProposalType() string {
 }
 
 func (mp MonikerParamsEditProposal) ValidateBasic() error {
-	err := ValidateMonikerLenParams(mp)
+	err := ValidateMonikerLenParams(mp.MonikerParams)
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func (bp BioParamsEditProposal) ProposalType() string {
 }
 
 func (bp BioParamsEditProposal) ValidateBasic() error {
-	err := ValidateBioLenParams(bp)
+	err := ValidateBioLenParams(bp.BioParams)
 	if err != nil {
 		return err
 	}

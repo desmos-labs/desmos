@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
@@ -131,4 +132,51 @@ func Test_queryProfiles(t *testing.T) {
 		})
 	}
 
+}
+
+func Test_queryParams(t *testing.T) {
+	validMin := sdk.NewInt(2)
+	validMax := sdk.NewInt(30)
+
+	nsParams := models.NewNameSurnameLenParams(&validMin, &validMax)
+	monikerParams := models.NewMonikerLenParams(&validMin, &validMax)
+	bioParams := models.NewBioLenParams(validMax)
+
+	tests := []struct {
+		name                string
+		path                []string
+		nsParamsStored      models.NameSurnameLenParams
+		monikerParamsStored models.MonikerLenParams
+		bioParamStored      models.BioLenParams
+		expResult           models.ParamsQueryResponse
+	}{
+		{
+			name:                "Returning profile parameters correctly",
+			path:                []string{models.QueryParams},
+			nsParamsStored:      nsParams,
+			monikerParamsStored: monikerParams,
+			bioParamStored:      bioParams,
+			expResult:           models.NewParamsQueryResponse(nsParams, monikerParams, bioParams),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetNameSurnameLenParams(ctx, test.nsParamsStored)
+			k.SetMonikerLenParams(ctx, test.monikerParamsStored)
+			k.SetBioLenParams(ctx, test.bioParamStored)
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if result != nil {
+				require.Nil(t, err)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				require.NoError(t, err)
+				require.Equal(t, string(expectedIndented), string(result))
+			}
+
+		})
+	}
 }
