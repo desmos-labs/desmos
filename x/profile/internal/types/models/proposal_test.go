@@ -128,6 +128,7 @@ func TestNameSurnameParamsEditProposal_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			err := test.proposal.ValidateBasic()
 			require.Equal(t, test.expErr, err)
@@ -237,6 +238,7 @@ func TestMonikerParamsEditProposal_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			err := test.proposal.ValidateBasic()
 			require.Equal(t, test.expErr, err)
@@ -340,6 +342,7 @@ func TestBioParamsEditProposal_ValidateBasic(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			err := test.proposal.ValidateBasic()
 			require.Equal(t, test.expErr, err)
