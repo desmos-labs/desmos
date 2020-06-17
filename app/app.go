@@ -138,7 +138,7 @@ type DesmosApp struct {
 
 // NewDesmosApp is a constructor function for DesmosApp
 func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
-	skipUpgradeHeights map[int64]bool, invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
+	_ map[int64]bool, invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
 ) *DesmosApp {
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
@@ -224,15 +224,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		auth.FeeCollectorName,
 	)
 
-	// Register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(
-			app.DistrKeeper.Hooks(),
-			app.SlashingKeeper.Hooks()),
-	)
-
-	// Create evidence keeper without router
+	// Create evidence keeper with router
 	evidenceKeeper := evidence.NewKeeper(
 		app.cdc,
 		keys[evidence.StoreKey],
@@ -240,12 +232,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		&app.stakingKeeper,
 		app.SlashingKeeper,
 	)
-
 	evidenceRouter := evidence.NewRouter()
 	evidenceKeeper.SetRouter(evidenceRouter)
 	app.evidenceKeeper = *evidenceKeeper
 
-	// create gov keeper with router
+	// Create gov keeper with router
 	govRouter := gov.NewRouter()
 	govRouter.
 		AddRoute(gov.RouterKey, gov.ProposalHandler).
@@ -275,6 +266,15 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		keys[profile.StoreKey],
 	)
 
+	// Register the staking hooks
+	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	app.stakingKeeper = *stakingKeeper.SetHooks(
+		staking.NewMultiStakingHooks(
+			app.DistrKeeper.Hooks(),
+			app.SlashingKeeper.Hooks()),
+	)
+
+	// Create the module manager
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -298,41 +298,20 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
-	app.mm.SetOrderBeginBlockers(
-		distr.ModuleName, slashing.ModuleName,
-	)
-	app.mm.SetOrderEndBlockers(
-		crisis.ModuleName,
-		gov.ModuleName,
-		staking.ModuleName,
-	)
+	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
+	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName)
 
-	// NOTE: The genutils module must occur after staking so that pools are
-	// properly initialized with tokens from genesis accounts.
 	app.mm.SetOrderInitGenesis(
-		auth.ModuleName, distr.ModuleName,
-		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
-		gov.ModuleName, supply.ModuleName, crisis.ModuleName,
-		genutil.ModuleName, evidence.ModuleName,
-
-		// Custom modules
-		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
-	)
-
-	app.mm.SetOrderExportGenesis(
+		auth.ModuleName, // loads all accounts - should run before any module with a module account
 		distr.ModuleName,
-		staking.ModuleName,
-		auth.ModuleName,
-		bank.ModuleName,
-		slashing.ModuleName,
-		//gov.ModuleName,
-		supply.ModuleName,
-		//crisis.ModuleName,
-		genutil.ModuleName,
-		//evidence.ModuleName,
+		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
+		gov.ModuleName, evidence.ModuleName,
 
-		// Custom modules
-		magpie.ModuleName, posts.ModuleName, profile.ModuleName,
+		magpie.ModuleName, posts.ModuleName, profile.ModuleName, // custom modules
+
+		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
+		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules
+		genutil.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
