@@ -11,4 +11,6 @@ const (
 	DefaultWeightMsgSaveAccount      int = 100
 	DefaultWeightMsgDeleteAccount    int = 100
 	DefaultWeightMsgReportPost       int = 100
+
+	DefaultWeightEditProfileParamsProposal int = 5
 )

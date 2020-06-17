@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	DefaultParamspace                 = models.DefaultParamspace
 	ProposalTypeNameSurnameParamsEdit = models.ProposalTypeNameSurnameParamsEdit
 	ProposalTypeMonikerParamsEdit     = models.ProposalTypeMonikerParamsEdit
 	ProposalTypeBioParamsEdit         = models.ProposalTypeBioParamsEdit
@@ -28,10 +27,19 @@ const (
 	QueryProfile                      = models.QueryProfile
 	QueryProfiles                     = models.QueryProfiles
 	QueryParams                       = models.QueryParams
+	DefaultParamspace                 = models.DefaultParamspace
 )
 
 var (
 	// functions aliases
+	NewNameSurnameParamsEditProposal = models.NewNameSurnameParamsEditProposal
+	NewMonikerParamsEditProposal     = models.NewMonikerParamsEditProposal
+	NewBioParamsEditProposal         = models.NewBioParamsEditProposal
+	ProfileStoreKey                  = models.ProfileStoreKey
+	MonikerStoreKey                  = models.MonikerStoreKey
+	NewProfile                       = models.NewProfile
+	NewPictures                      = models.NewPictures
+	RegisterModelsCodec              = models.RegisterModelsCodec
 	ParamKeyTable                    = models.ParamKeyTable
 	NewNameSurnameLenParams          = models.NewNameSurnameLenParams
 	DefaultNameSurnameLenParams      = models.DefaultNameSurnameLenParams
@@ -43,19 +51,16 @@ var (
 	DefaultBioLenParams              = models.DefaultBioLenParams
 	ValidateBioLenParams             = models.ValidateBioLenParams
 	NewParamsQueryResponse           = models.NewParamsQueryResponse
-	NewNameSurnameParamsEditProposal = models.NewNameSurnameParamsEditProposal
-	NewMonikerParamsEditProposal     = models.NewMonikerParamsEditProposal
-	NewBioParamsEditProposal         = models.NewBioParamsEditProposal
-	ProfileStoreKey                  = models.ProfileStoreKey
-	MonikerStoreKey                  = models.MonikerStoreKey
-	NewProfile                       = models.NewProfile
-	NewPictures                      = models.NewPictures
-	RegisterModelsCodec              = models.RegisterModelsCodec
 	NewMsgSaveProfile                = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile              = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
 
 	// variable aliases
+	TxHashRegEx                 = models.TxHashRegEx
+	URIRegEx                    = models.URIRegEx
+	ProfileStorePrefix          = models.ProfileStorePrefix
+	MonikerStorePrefix          = models.MonikerStorePrefix
+	ModelsCdc                   = models.ModelsCdc
 	DefaultMinNameSurnameLength = models.DefaultMinNameSurnameLength
 	DefaultMaxNameSurnameLength = models.DefaultMaxNameSurnameLength
 	DefaultMinMonikerLength     = models.DefaultMinMonikerLength
@@ -64,25 +69,20 @@ var (
 	ParamStoreKeyNameSurnameLen = models.ParamStoreKeyNameSurnameLen
 	ParamStoreKeyMonikerLen     = models.ParamStoreKeyMonikerLen
 	ParamStoreKeyMaxBioLen      = models.ParamStoreKeyMaxBioLen
-	TxHashRegEx                 = models.TxHashRegEx
-	URIRegEx                    = models.URIRegEx
-	ProfileStorePrefix          = models.ProfileStorePrefix
-	MonikerStorePrefix          = models.MonikerStorePrefix
-	ModelsCdc                   = models.ModelsCdc
 	MsgsCodec                   = msgs.MsgsCodec
 )
 
 type (
-	NameSurnameLenParams          = models.NameSurnameLenParams
-	MonikerLenParams              = models.MonikerLenParams
-	BioLenParams                  = models.BioLenParams
-	ParamsQueryResponse           = models.ParamsQueryResponse
 	NameSurnameParamsEditProposal = models.NameSurnameParamsEditProposal
 	MonikerParamsEditProposal     = models.MonikerParamsEditProposal
 	BioParamsEditProposal         = models.BioParamsEditProposal
 	Profile                       = models.Profile
 	Profiles                      = models.Profiles
 	Pictures                      = models.Pictures
+	NameSurnameLenParams          = models.NameSurnameLenParams
+	MonikerLenParams              = models.MonikerLenParams
+	BioLenParams                  = models.BioLenParams
+	ParamsQueryResponse           = models.ParamsQueryResponse
 	MsgSaveProfile                = msgs.MsgSaveProfile
 	MsgDeleteProfile              = msgs.MsgDeleteProfile
 )

@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	monikersLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
-
 	randomNames = []string{
 		"Drake",
 		"Farah",
@@ -103,11 +101,7 @@ func RandomProfile(r *rand.Rand, accounts models.Profiles) models.Profile {
 
 // RandomMoniker return a random moniker from the randomMonikers list given
 func RandomMoniker(r *rand.Rand) string {
-	b := make([]byte, 30)
-	for i := range b {
-		b[i] = monikersLetters[r.Intn(len(monikersLetters))]
-	}
-	return string(b)
+	return sim.RandStringOfLength(r, 30)
 }
 
 // RandomName return a random name value from the list of randomNames given
@@ -124,7 +118,7 @@ func RandomSurname(r *rand.Rand) string {
 
 // RandomBio return a random bio value from the list of randomBios given
 func RandomBio(r *rand.Rand) string {
-	idx := r.Intn(len(randomBios))
+	idx := sim.RandIntBetween(r, 10, len(randomBios))
 	return randomBios[idx]
 }
 
@@ -157,21 +151,21 @@ type ProfileParams struct {
 	BioParams         models.BioLenParams
 }
 
-// RandomProfileParams return a random set of profile params from some random ints
-func RandomProfileParams(r *rand.Rand) ProfileParams {
-	randomMin := sdk.NewInt(int64(r.Intn(5)))
-	randomMax := sdk.NewInt(int64(r.Intn(1000)))
-	return ProfileParams{
-		NameSurnameParams: models.NameSurnameLenParams{
-			MinNameSurnameLen: &randomMin,
-			MaxNameSurnameLen: &randomMax,
-		},
-		MonikerParams: models.MonikerLenParams{
-			MinMonikerLen: &randomMin,
-			MaxMonikerLen: &randomMax,
-		},
-		BioParams: models.BioLenParams{
-			MaxBioLen: randomMax,
-		},
-	}
+// RandomNameSurnameParams return a random set of name surname params
+func RandomNameSurnameParams(r *rand.Rand) models.NameSurnameLenParams {
+	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
+	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
+	return models.NewNameSurnameLenParams(&randomMin, &randomMax)
+}
+
+// RandomMonikerParams return a random set of moniker params
+func RandomMonikerParams(r *rand.Rand) models.MonikerLenParams {
+	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
+	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
+	return models.NewMonikerLenParams(&randomMin, &randomMax)
+}
+
+// RandomBioParams return a random biography param
+func RandomBioParams(r *rand.Rand) models.BioLenParams {
+	return models.NewBioLenParams(sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))))
 }

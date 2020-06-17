@@ -2,6 +2,7 @@ package profile
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -93,7 +94,9 @@ func (AppModule) Name() string {
 }
 
 // RegisterInvariants performs a no-op.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
+	keeper.RegisterInvariants(ir, am.keeper)
+}
 
 // Route returns the message routing key for the profile module.
 func (am AppModule) Route() string {
@@ -152,12 +155,12 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
-	return nil
+	return ProposalContents()
 }
 
 // RandomizedParams creates randomized profile param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []sim.ParamChange {
-	return nil
+	return ParamChanges(r)
 }
 
 // RegisterStoreDecoder performs a no-op.

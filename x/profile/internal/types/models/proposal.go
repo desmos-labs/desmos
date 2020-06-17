@@ -63,7 +63,7 @@ func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return gov.ValidateAbstract(nsp)
 }
 
 func (nsp NameSurnameParamsEditProposal) String() string {
@@ -118,7 +118,7 @@ func (mp MonikerParamsEditProposal) ValidateBasic() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return gov.ValidateAbstract(mp)
 }
 
 func (mp MonikerParamsEditProposal) String() string {
@@ -173,7 +173,7 @@ func (bp BioParamsEditProposal) ValidateBasic() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return gov.ValidateAbstract(bp)
 }
 
 func (bp BioParamsEditProposal) String() string {

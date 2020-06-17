@@ -1,21 +1,49 @@
 package simulation
 
 import (
+	"fmt"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"math/rand"
+)
+
+const (
+	NSParamsKey      = "nameSurnameLenParams"
+	monikerParamsKey = "monikerLenParams"
+	bioParamsKey     = "bioLenParams"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
 	accs := randomAccounts(simsState)
-	profileParams := randomProfileParams(simsState)
+
+	var nsParams models.NameSurnameLenParams
+	simsState.AppParams.GetOrGenerate(simsState.Cdc, NSParamsKey, &nsParams, simsState.Rand,
+		func(r *rand.Rand) { nsParams = RandomNameSurnameParams(r) })
+
+	var monikerParams models.MonikerLenParams
+	simsState.AppParams.GetOrGenerate(simsState.Cdc, monikerParamsKey, &monikerParams, simsState.Rand,
+		func(r *rand.Rand) { monikerParams = RandomMonikerParams(r) })
+
+	var bioParams models.BioLenParams
+	simsState.AppParams.GetOrGenerate(simsState.Cdc, bioParamsKey, &bioParams, simsState.Rand,
+		func(r *rand.Rand) { bioParams = RandomBioParams(r) })
+
 	profileGenesis := types.NewGenesisState(
 		accs,
-		profileParams.NameSurnameParams,
-		profileParams.MonikerParams,
-		profileParams.BioParams,
+		nsParams,
+		monikerParams,
+		bioParams,
 	)
+
+	fmt.Printf("Selected randomly generated profile parameters:\n%s\n%s\n%s\n",
+		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.NameSurnameLenParams),
+		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.MonikerLenParams),
+		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.BioLenParams),
+	)
+
 	simsState.GenState[models.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
 }
 
@@ -38,9 +66,4 @@ func randomAccounts(simState *module.SimulationState) (accounts models.Profiles)
 	}
 
 	return accounts
-}
-
-// randomProfileParams returns randomly generated genesis parameters
-func randomProfileParams(simState *module.SimulationState) ProfileParams {
-	return RandomProfileParams(simState.Rand)
 }
