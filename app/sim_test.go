@@ -8,9 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/x/gov"
-
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/desmos/x/magpie"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profile"
@@ -182,11 +181,12 @@ func TestAppImportExport(t *testing.T) {
 			[][]byte{
 				staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,
 			}}, // ordering may change but it doesn't matter
-		{app.keys[supply.StoreKey], newApp.keys[supply.StoreKey], [][]byte{}},
-		{app.keys[distr.StoreKey], newApp.keys[distr.StoreKey], [][]byte{}},
 		{app.keys[slashing.StoreKey], newApp.keys[slashing.StoreKey], [][]byte{}},
+		{app.keys[distr.StoreKey], newApp.keys[distr.StoreKey], [][]byte{}},
+		{app.keys[supply.StoreKey], newApp.keys[supply.StoreKey], [][]byte{}},
 		{app.keys[params.StoreKey], newApp.keys[params.StoreKey], [][]byte{}},
 		{app.keys[gov.StoreKey], newApp.keys[gov.StoreKey], [][]byte{}},
+
 		{app.keys[magpie.StoreKey], newApp.keys[magpie.StoreKey], [][]byte{}},
 		{app.keys[posts.StoreKey], newApp.keys[posts.StoreKey], [][]byte{}},
 		{app.keys[profile.StoreKey], newApp.keys[profile.StoreKey], [][]byte{}},
