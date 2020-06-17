@@ -159,8 +159,8 @@ type ProfileParams struct {
 
 // RandomProfileParams return a random set of profile params from some random ints
 func RandomProfileParams(r *rand.Rand) ProfileParams {
-	randomMin := sdk.NewInt(r.Int63())
-	randomMax := sdk.NewInt(r.Int63())
+	randomMin := sdk.NewInt(int64(r.Intn(5)))
+	randomMax := sdk.NewInt(int64(r.Intn(1000)))
 	return ProfileParams{
 		NameSurnameParams: models.NameSurnameLenParams{
 			MinNameSurnameLen: &randomMin,
@@ -171,7 +171,7 @@ func RandomProfileParams(r *rand.Rand) ProfileParams {
 			MaxMonikerLen: &randomMax,
 		},
 		BioParams: models.BioLenParams{
-			MaxBioLen: sdk.NewInt(r.Int63()),
+			MaxBioLen: randomMax,
 		},
 	}
 }
