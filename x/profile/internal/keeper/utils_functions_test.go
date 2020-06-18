@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
@@ -20,11 +21,16 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	creator4, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
 	require.NoError(t, err)
 
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
 	profiles := types.Profiles{
-		types.NewProfile("first", creator),
-		types.NewProfile("second", creator2),
-		types.NewProfile("not", creator3),
-		types.NewProfile("third", creator4),
+		types.NewProfile("first", creator, date),
+		types.NewProfile("second", creator2, date),
+		types.NewProfile("not", creator3, date),
+		types.NewProfile("third", creator4, date),
 	}
 
 	expProfiles := types.Profiles{

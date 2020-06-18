@@ -37,7 +37,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 
 	// Create a new profile if not found
 	if !found {
-		profile = types.NewProfile(msg.Dtag, msg.Creator)
+		profile = types.NewProfile(msg.Dtag, msg.Creator, ctx.BlockTime())
 	}
 
 	// Replace all editable fields (clients should autofill existing values)

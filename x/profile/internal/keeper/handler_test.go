@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
@@ -17,6 +18,11 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
 	tests := []struct {
 		name             string
@@ -38,7 +44,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				user,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("custom_dtag", user).
+				types.NewProfile("custom_dtag", user, date).
 					WithMoniker(newStrPtr("my-moniker")).
 					WithBio(newStrPtr("my-bio")).
 					WithPictures(
@@ -55,7 +61,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		{
 			name: "Profile saved (with previous profile created)",
 			existentAccounts: types.NewProfiles(
-				types.NewProfile("test_dtag", user).
+				types.NewProfile("test_dtag", user, date).
 					WithMoniker(newStrPtr("old-moniker")).
 					WithBio(newStrPtr("old-biography")).
 					WithPictures(
@@ -72,7 +78,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				user,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("test_dtag", user).
+				types.NewProfile("test_dtag", user, date).
 					WithMoniker(newStrPtr("moniker")).
 					WithBio(newStrPtr("biography")).
 					WithPictures(
@@ -90,7 +96,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			name: "Profile saving fails due to wrong tag",
 			existentAccounts: types.NewProfiles(
 				testProfile,
-				types.NewProfile("editor_dtag", editor).
+				types.NewProfile("editor_dtag", editor, date).
 					WithBio(newStrPtr("biography")),
 			),
 			msg: types.NewMsgSaveProfile(

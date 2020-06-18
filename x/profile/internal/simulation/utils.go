@@ -2,6 +2,7 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
@@ -44,7 +45,7 @@ var (
 
 // NewRandomProfile return a random ProfileData from random data and the given account
 func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
-	return types.NewProfile(RandomDTag(r), account).
+	return types.NewProfile(RandomDTag(r), account, time.Now()).
 		WithBio(RandomBio(r)).
 		WithMoniker(RandomMoniker(r)).
 		WithPictures(

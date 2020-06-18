@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
@@ -13,27 +14,28 @@ import (
 func TestNewProfile(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	expProfile := types.Profile{DTag: "test", Creator: owner}
-	actProfile := types.NewProfile("test", owner)
 
-	require.True(t, expProfile.Equals(actProfile))
-}
-
-func TestProfile_WithDTag(t *testing.T) {
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	profile := types.NewProfile("monik", owner)
-	profileWithDtag := profile.WithDTag("new-dtag")
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	require.Equal(t, "new-dtag", profileWithDtag.DTag)
+	expProfile := types.NewProfile("test", owner, date)
+	actProfile := types.NewProfile("test", owner, date)
+
+	require.True(t, expProfile.Equals(actProfile))
 }
 
 func TestProfile_WithMoniker(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	profile := types.NewProfile("monik", owner)
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	profile := types.NewProfile("monik", owner, date)
 
 	profileWithMoniker := profile.WithMoniker(newStrPtr("test-moniker"))
 	require.Equal(t, "test-moniker", *profileWithMoniker.Moniker)
@@ -43,7 +45,12 @@ func TestProfile_WithBio(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	profile := types.NewProfile("dtag", owner)
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	profile := types.NewProfile("dtag", owner, date)
 
 	profileWithBio := profile.WithBio(newStrPtr("new-biography"))
 	require.Equal(t, "new-biography", *profileWithBio.Bio)
@@ -53,7 +60,12 @@ func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	profile := types.NewProfile("dtag", owner)
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	profile := types.NewProfile("dtag", owner, date)
 
 	tests := []struct {
 		name       string
@@ -67,7 +79,7 @@ func TestProfile_WithPics(t *testing.T) {
 			profile: profile,
 			pic:     newStrPtr("pic"),
 			cov:     newStrPtr("cov"),
-			expProfile: types.NewProfile("dtag", owner).
+			expProfile: types.NewProfile("dtag", owner, date).
 				WithPictures(newStrPtr("pic"), newStrPtr("cov")),
 		},
 		{
@@ -75,7 +87,7 @@ func TestProfile_WithPics(t *testing.T) {
 			profile:    profile,
 			pic:        nil,
 			cov:        nil,
-			expProfile: types.NewProfile("dtag", owner),
+			expProfile: types.NewProfile("dtag", owner, date),
 		},
 	}
 
@@ -92,19 +104,20 @@ func TestProfile_String(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	var bio = "biography"
-	var testAccount = types.Profile{
-		DTag: "dtag",
-		Bio:  &bio,
-		Pictures: types.NewPictures(
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	testAccount := types.NewProfile("dtag", owner, date).
+		WithBio(newStrPtr("biography")).
+		WithPictures(
 			newStrPtr("https://shorturl.at/adnX3"),
 			newStrPtr("https://shorturl.at/cgpyF"),
-		),
-		Creator: owner,
-	}
+		)
 
 	require.Equal(t,
-		`{"dtag":"dtag","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
+		`{"dtag":"dtag","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","creation_date":"2010-10-02T12:10:00Z"}`,
 		testAccount.String(),
 	)
 }

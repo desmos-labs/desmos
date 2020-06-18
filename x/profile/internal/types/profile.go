@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/commons"
@@ -10,21 +11,16 @@ import (
 
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
-	DTag     string         `json:"dtag" yaml:"dtag"`
-	Moniker  *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
-	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
+	DTag         string         `json:"dtag" yaml:"dtag"`
+	Moniker      *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
+	Bio          *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	Pictures     *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
+	Creator      sdk.AccAddress `json:"creator" yaml:"creator"`
+	CreationDate time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
-func NewProfile(dtag string, creator sdk.AccAddress) Profile {
-	return Profile{DTag: dtag, Creator: creator}
-}
-
-// WithDTag updates profile's DTag with the given one
-func (profile Profile) WithDTag(dtag string) Profile {
-	profile.DTag = dtag
-	return profile
+func NewProfile(dtag string, creator sdk.AccAddress, creationDate time.Time) Profile {
+	return Profile{DTag: dtag, Creator: creator, CreationDate: creationDate}
 }
 
 // WithMoniker updates profile's moniker with the given one
