@@ -1,4 +1,5 @@
 # Version 0.7.0
+## Changes
 - Implemented benchmarks tests (#126)
 - Implemented posts' reports (#50)
 - Re-introduced the on-chain government module (#173)
