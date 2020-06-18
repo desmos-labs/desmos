@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"strings"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,36 +15,20 @@ import (
 // --- MsgSaveProfile
 // ----------------------
 
-var testProfileOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testProfilePic = "https://shorturl.at/adnX3"
-var testCoverPic = "https://shorturl.at/cgpyF"
-var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
-var moniker = "moniker"
-var bio = "biography"
-
-var invalidBio = "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-	"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-	"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-	"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-	"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-	"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-	"6ou0LSnJMCTq"
-
+var user, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var testProfile = types.Profile{
-	DTag:     "dtag",
-	Moniker:  &moniker,
-	Bio:      &bio,
-	Pictures: testPictures,
-	Creator:  testProfileOwner,
+	DTag:    "dtag",
+	Moniker: newStrPtr("moniker"),
+	Bio:     newStrPtr("biography"),
+	Pictures: types.NewPictures(
+		newStrPtr("https://shorturl.at/adnX3"),
+		newStrPtr("https://shorturl.at/cgpyF"),
+	),
+	Creator: user,
 }
 
-var newDtag = "monk"
 var msgEditProfile = types.NewMsgSaveProfile(
-	newDtag,
+	"monk",
 	testProfile.Moniker,
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
@@ -87,59 +72,45 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Max bio length exceeded",
 			msg: types.NewMsgSaveProfile(
 				testProfile.DTag,
-				testProfile.Moniker,
-				&invalidBio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
+				nil,
+				newStrPtr(strings.Repeat("a", 2000)),
+				nil,
+				nil,
 				testProfile.Creator,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile biography cannot exceed 1000 characters"),
 		},
 		{
-			name: "Min dtag length not reached",
-			msg: types.NewMsgSaveProfile(
-				"l",
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
+			name:  "Min dtag length not reached",
+			msg:   types.NewMsgSaveProfile("l", nil, nil, nil, nil, testProfile.Creator),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
 		},
 		{
 			name: "Max dtag length exceeded",
 			msg: types.NewMsgSaveProfile(
-				"abcdefghijklmnopqrstu123456789_",
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
+				strings.Repeat("_", 100),
+				nil,
+				nil,
+				nil,
+				nil,
 				testProfile.Creator,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
 		},
 		{
-			name: "Invalid dtag characters",
-			msg: types.NewMsgSaveProfile(
-				"d.tag",
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
-			),
+			name:  "Invalid dtag characters",
+			msg:   types.NewMsgSaveProfile("d.tag", nil, nil, nil, nil, testProfile.Creator),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
 		},
 		{
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
 				"_crazy_papa_21",
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
+				newStrPtr("custom-moniker"),
+				newStrPtr("custom-bio"),
+				newStrPtr("https://test.com/my-custom-profile-pic"),
+				newStrPtr("https://test.com/my-custom-cover-pic"),
+				user,
 			),
 			error: nil,
 		},
@@ -161,7 +132,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","moniker":"moniker","profile_cov":"https://shorturl.at/cgpyF","profile_pic":"https://shorturl.at/adnX3"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","moniker":"moniker","profile_picture":"https://shorturl.at/adnX3"}}`
 	require.Equal(t, expected, string(actual))
 }
 

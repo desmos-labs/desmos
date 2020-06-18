@@ -1,7 +1,14 @@
 # Version 0.8.0
+## Changes
 - Changed the data stored inside the profile objects (#193)
+- Renamed the `profile_cov` field of `MsgSaveProfile` to `cover_picture`
+- Rename the `profile_pic` field of `MsgSaveProfile` to `profile_picture`
+
+## Bug fixes
+- Fixed a bug inside the `Equals` method of the `Pictures` object 
 
 # Version 0.7.0
+## Changes
 - Implemented benchmarks tests (#126)
 - Implemented posts' reports (#50)
 - Re-introduced the on-chain government module (#173)

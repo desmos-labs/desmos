@@ -43,15 +43,19 @@ func testCodec() *codec.Codec {
 	return cdc
 }
 
-var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var profilePic = "https://shorturl.at/adnX3"
-var profileCov = "https://shorturl.at/cgpyF"
-var testPictures = types.NewPictures(&profilePic, &profileCov)
-var bio = "biography"
+// newStrPtr allows to easily create a new string pointer starting
+// from a string value, for easier test setup
+func newStrPtr(value string) *string {
+	return &value
+}
 
+var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var testProfile = types.Profile{
-	DTag:     "dtag",
-	Bio:      &bio,
-	Pictures: testPictures,
-	Creator:  testPostOwner,
+	DTag: "dtag",
+	Bio:  newStrPtr("biography"),
+	Pictures: types.NewPictures(
+		newStrPtr("https://shorturl.at/adnX3"),
+		newStrPtr("https://shorturl.at/cgpyF"),
+	),
+	Creator: testPostOwner,
 }

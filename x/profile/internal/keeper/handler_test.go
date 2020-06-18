@@ -12,12 +12,11 @@ import (
 )
 
 func Test_handleMsgSaveProfile(t *testing.T) {
-	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
 	require.NoError(t, err)
 
-	var bio = "biography"
-	var newDtag = "newDtag"
-	var invalidPic = "pic"
+	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name             string
@@ -25,59 +24,95 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		expAccount       *types.Profile
 		msg              types.MsgSaveProfile
 		expErr           error
+		expProfiles      types.Profiles
+		expEvent         sdk.Event
 	}{
 		{
-			name:             "Profile saved (with previous profile created)",
-			existentAccounts: types.Profiles{testProfile},
+			name: "Profile saved (with no previous profile created)",
 			msg: types.NewMsgSaveProfile(
-				newDtag,
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
+				"custom_dtag",
+				newStrPtr("my-moniker"),
+				newStrPtr("my-bio"),
+				newStrPtr("https://test.com/profile-picture"),
+				newStrPtr("https://test.com/cover-pic"),
+				user,
 			),
-			expErr: nil,
+			expProfiles: types.NewProfiles(
+				types.NewProfile("custom_dtag", user).
+					WithMoniker(newStrPtr("my-moniker")).
+					WithBio(newStrPtr("my-bio")).
+					WithPictures(
+						newStrPtr("https://test.com/profile-picture"),
+						newStrPtr("https://test.com/cover-pic"),
+					),
+			),
+			expEvent: sdk.NewEvent(
+				types.EventTypeProfileSaved,
+				sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
+				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
+			),
 		},
 		{
-			name:             "Profile saved (with no previous profile created)",
-			existentAccounts: nil,
-			msg: types.NewMsgSaveProfile(
-				newDtag,
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
+			name: "Profile saved (with previous profile created)",
+			existentAccounts: types.NewProfiles(
+				types.NewProfile("test_dtag", user).
+					WithMoniker(newStrPtr("old-moniker")).
+					WithBio(newStrPtr("old-biography")).
+					WithPictures(
+						newStrPtr("https://test.com/old-profile-pic"),
+						newStrPtr("https://test.com/old-cover-pic"),
+					),
 			),
-			expErr: nil,
+			msg: types.NewMsgSaveProfile(
+				"test_dtag",
+				newStrPtr("moniker"),
+				newStrPtr("biography"),
+				newStrPtr("https://test.com/profile-pic"),
+				newStrPtr("https://test.com/cover-pic"),
+				user,
+			),
+			expProfiles: types.NewProfiles(
+				types.NewProfile("test_dtag", user).
+					WithMoniker(newStrPtr("moniker")).
+					WithBio(newStrPtr("biography")).
+					WithPictures(
+						newStrPtr("https://test.com/profile-pic"),
+						newStrPtr("https://test.com/cover-pic"),
+					),
+			),
+			expEvent: sdk.NewEvent(
+				types.EventTypeProfileSaved,
+				sdk.NewAttribute(types.AttributeProfileDtag, "test_dtag"),
+				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
+			),
 		},
 		{
-			name: "Profile not edited because the new dtag already exists",
-			existentAccounts: types.Profiles{
+			name: "Profile saving fails due to wrong tag",
+			existentAccounts: types.NewProfiles(
 				testProfile,
-				types.Profile{DTag: "newDtag", Bio: &bio, Pictures: testPictures, Creator: editor},
-			},
-			msg: types.NewMsgSaveProfile(
-				newDtag,
-				testProfile.Moniker,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
-				testPostOwner,
+				types.NewProfile("editor_dtag", editor).
+					WithBio(newStrPtr("biography")),
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with dtag: newDtag has already been created"),
+			msg: types.NewMsgSaveProfile(
+				"editor_tag",
+				newStrPtr("new-moniker"),
+				newStrPtr("new-bio"),
+				nil,
+				nil,
+				editor, // Use the same user
+			),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "wrong dtag provided. Make sure to use the current one"),
 		},
 		{
-			name:             "Profile not edited because of the invalid pics uri",
+			name:             "Profile not edited because of the invalid profile picture",
 			existentAccounts: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
-				newDtag,
-				testProfile.Moniker,
-				testProfile.Bio,
-				&invalidPic,
-				testProfile.Pictures.Cover,
-				testProfile.Creator,
+				"custom_dtag",
+				nil,
+				nil,
+				newStrPtr("invalid-pic"),
+				nil,
+				user,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
 		},
@@ -100,27 +135,23 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 			handler := keeper.NewHandler(k)
 			res, err := handler(ctx, test.msg)
 
-			if res == nil {
-				require.NotNil(t, err)
+			if test.expErr != nil {
+				require.Error(t, err)
 				require.Equal(t, test.expErr.Error(), err.Error())
 			}
 
-			if res != nil {
+			if test.expErr == nil {
+				require.NoError(t, err)
+
 				profiles := k.GetProfiles(ctx)
-				require.Len(t, profiles, 1)
+				require.Len(t, profiles, len(test.expProfiles))
+				for index, profile := range profiles {
+					require.True(t, profile.Equals(test.expProfiles[index]))
+				}
 
-				//Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Dtag), res.Data)
-
-				//Check the events
-				createAccountEv := sdk.NewEvent(
-					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDtag, test.msg.Dtag),
-					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
-				)
-
+				// Check the events
 				require.Len(t, res.Events, 1)
-				require.Contains(t, res.Events, createAccountEv)
+				require.Contains(t, res.Events, test.expEvent)
 			}
 
 		})
@@ -135,11 +166,13 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 		expErr          error
 	}{
 		{
-			name:            "Profile doesnt exists",
+			name:            "Profile doesn't exists",
 			existentAccount: nil,
 			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
 		},
 		{
 			name:            "Profile deleted successfully",
@@ -169,10 +202,10 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 				require.Equal(t, test.expErr.Error(), err.Error())
 			}
 			if res != nil {
-				//Check the data
+				// Check the data
 				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
 
-				//Check the events
+				// Check the events
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeProfileDeleted,
 					sdk.NewAttribute(types.AttributeProfileDtag, "dtag"),

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // Profile represents a generic account on Desmos, containing the information of a single user
@@ -57,14 +58,14 @@ func (profile Profile) String() string {
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
 	var arePicturesEquals bool
-	if profile.Pictures == nil {
-		arePicturesEquals = other.Pictures == nil
+	if profile.Pictures == nil || other.Pictures == nil {
+		arePicturesEquals = profile.Pictures == other.Pictures
 	} else {
 		arePicturesEquals = profile.Pictures.Equals(other.Pictures)
 	}
 
 	return profile.DTag == other.DTag &&
-		profile.Bio == other.Bio &&
+		commons.StringPtrsEqual(profile.Bio, other.Bio) &&
 		arePicturesEquals &&
 		profile.Creator.Equals(other.Creator)
 }
@@ -92,4 +93,10 @@ func (profile Profile) Validate() error {
 	return nil
 }
 
+// Profiles represents a slice of profile objects
 type Profiles []Profile
+
+// NewProfiles allows to easily create a Profiles object from a list of profiles
+func NewProfiles(profiles ...Profile) Profiles {
+	return profiles
+}

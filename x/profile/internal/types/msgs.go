@@ -16,19 +16,19 @@ type MsgSaveProfile struct {
 	Dtag       string         `json:"dtag" yaml:"dtag"`
 	Moniker    *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
 	Bio        *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	ProfilePic *string        `json:"profile_pic,omitempty" yaml:"profile_pic,omitempty"`
-	ProfileCov *string        `json:"profile_cov,omitempty" yaml:"profile_cov,omitempty"`
+	ProfilePic *string        `json:"profile_picture,omitempty" yaml:"profile_pic,omitempty"`
+	CoverPic   *string        `json:"cover_picture,omitempty" yaml:"cover_pic,omitempty"`
 	Creator    sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgSaveProfile is a constructor function for MsgSaveProfile
-func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, profileCov *string, creator sdk.AccAddress) MsgSaveProfile {
+func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, coverPic *string, creator sdk.AccAddress) MsgSaveProfile {
 	return MsgSaveProfile{
 		Dtag:       dtag,
 		Moniker:    moniker,
 		Bio:        bio,
 		ProfilePic: profilePic,
-		ProfileCov: profileCov,
+		CoverPic:   coverPic,
 		Creator:    creator,
 	}
 }

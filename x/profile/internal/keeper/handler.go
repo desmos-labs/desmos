@@ -29,15 +29,23 @@ func NewHandler(keeper Keeper) sdk.Handler {
 // handleMsgSaveProfile handles the creation/edit of a profile
 func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
+
+	// If it's found and the DTag is not the same, return an error
+	if found && profile.DTag != msg.Dtag {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "wrong dtag provided. Make sure to use the current one")
+	}
+
+	// Create a new profile if not found
 	if !found {
 		profile = types.NewProfile(msg.Dtag, msg.Creator)
 	}
 
 	// Replace all editable fields (clients should autofill existing values)
-	profile = profile.WithDTag(msg.Dtag).
+	// We do not replace the tag since we do not want it to be editable
+	profile = profile.
 		WithMoniker(msg.Moniker).
 		WithBio(msg.Bio).
-		WithPictures(msg.ProfilePic, msg.ProfileCov)
+		WithPictures(msg.ProfilePic, msg.CoverPic)
 	if err := profile.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

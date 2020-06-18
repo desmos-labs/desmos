@@ -12,7 +12,6 @@ import (
 func TestInvariants(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	dtag := "dtag"
 
 	tests := []struct {
 		name        string
@@ -22,7 +21,7 @@ func TestInvariants(t *testing.T) {
 	}{
 		{
 			name:        "Invariants not violated",
-			profile:     types.NewProfile(dtag, owner),
+			profile:     types.NewProfile("dtag", owner),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},

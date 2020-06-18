@@ -19,10 +19,9 @@ func TestNewGenesis(t *testing.T) {
 }
 
 func TestValidateGenesis(t *testing.T) {
-	var testPostOwner, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	var user, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
-	var bio = "biography"
 	tests := []struct {
 		name        string
 		genesis     types.GenesisState
@@ -36,28 +35,23 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid account errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						DTag:     "",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("", user), // An empty tag should return an error
+				),
 			},
 			shouldError: true,
 		},
 		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						DTag:     "dtag",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("dtag", user).
+						WithBio(newStrPtr("biography")).
+						WithPictures(
+							newStrPtr("https://test.com/profile-pic"),
+							newStrPtr("https://test.com/cover-pic"),
+						),
+				),
 			},
 			shouldError: false,
 		},

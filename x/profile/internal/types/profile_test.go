@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -34,9 +35,7 @@ func TestProfile_WithMoniker(t *testing.T) {
 
 	profile := types.NewProfile("monik", owner)
 
-	moniker := "test-moniker"
-	profileWithMoniker := profile.WithMoniker(&moniker)
-
+	profileWithMoniker := profile.WithMoniker(newStrPtr("test-moniker"))
 	require.Equal(t, "test-moniker", *profileWithMoniker.Moniker)
 }
 
@@ -46,19 +45,15 @@ func TestProfile_WithBio(t *testing.T) {
 
 	profile := types.NewProfile("dtag", owner)
 
-	bio := "surname"
-	profileWithBio := profile.WithBio(&bio)
-
-	require.Equal(t, "surname", *profileWithBio.Bio)
+	profileWithBio := profile.WithBio(newStrPtr("new-biography"))
+	require.Equal(t, "new-biography", *profileWithBio.Bio)
 }
 
 func TestProfile_WithPics(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-	dtag := "dtag"
-	profile := types.NewProfile(dtag, owner)
-	var pic = "profile"
-	var cov = "cover"
+
+	profile := types.NewProfile("dtag", owner)
 
 	tests := []struct {
 		name       string
@@ -68,18 +63,19 @@ func TestProfile_WithPics(t *testing.T) {
 		expProfile types.Profile
 	}{
 		{
-			name:       "not nil pics",
-			profile:    profile,
-			pic:        &pic,
-			cov:        &cov,
-			expProfile: types.Profile{DTag: dtag, Creator: owner, Pictures: types.NewPictures(&pic, &cov)},
+			name:    "not nil pics",
+			profile: profile,
+			pic:     newStrPtr("pic"),
+			cov:     newStrPtr("cov"),
+			expProfile: types.NewProfile("dtag", owner).
+				WithPictures(newStrPtr("pic"), newStrPtr("cov")),
 		},
 		{
 			name:       "nil pics",
 			profile:    profile,
 			pic:        nil,
 			cov:        nil,
-			expProfile: types.Profile{DTag: dtag, Creator: owner},
+			expProfile: types.NewProfile("dtag", owner),
 		},
 	}
 
@@ -98,10 +94,13 @@ func TestProfile_String(t *testing.T) {
 
 	var bio = "biography"
 	var testAccount = types.Profile{
-		DTag:     "dtag",
-		Bio:      &bio,
-		Pictures: testPictures,
-		Creator:  owner,
+		DTag: "dtag",
+		Bio:  &bio,
+		Pictures: types.NewPictures(
+			newStrPtr("https://shorturl.at/adnX3"),
+			newStrPtr("https://shorturl.at/cgpyF"),
+		),
+		Creator: owner,
 	}
 
 	require.Equal(t,
@@ -111,23 +110,21 @@ func TestProfile_String(t *testing.T) {
 }
 
 func TestProfile_Equals(t *testing.T) {
-	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	var pic = "profile"
-	var cov = "cover"
-	var testPictures = types.NewPictures(&pic, &cov)
+	user, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
 
 	var testAccount = types.Profile{
 		DTag:     "dtag",
-		Bio:      &bio,
-		Pictures: testPictures,
-		Creator:  testPostOwner,
+		Bio:      newStrPtr("bio"),
+		Pictures: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+		Creator:  user,
 	}
 
 	var testAccount2 = types.Profile{
 		DTag:     "oniker",
-		Bio:      &bio,
-		Pictures: testPictures,
-		Creator:  testPostOwner,
+		Bio:      newStrPtr("bio"),
+		Pictures: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+		Creator:  user,
 	}
 
 	tests := []struct {
@@ -160,15 +157,8 @@ func TestProfile_Equals(t *testing.T) {
 }
 
 func TestProfile_Validate(t *testing.T) {
-	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-
-	shortMoniker := "1"
-	longMoniker := "012345678901234567890123456789012346578901234657890123457890123456789"
-
-	bio := "biography"
-	pic := "pic"
-	cov := "cov"
-	invalidPics := types.NewPictures(&pic, &cov)
+	user, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
@@ -178,52 +168,67 @@ func TestProfile_Validate(t *testing.T) {
 		{
 			name: "Empty profile creator returns error",
 			account: types.Profile{
-				DTag:     "dtag",
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  nil,
+				DTag: "dtag",
+				Bio:  newStrPtr("bio"),
+				Pictures: types.NewPictures(
+					newStrPtr("https://shorturl.at/adnX3"),
+					newStrPtr("https://shorturl.at/cgpyF"),
+				),
+				Creator: nil,
 			},
 			expErr: fmt.Errorf("profile creator cannot be empty or blank"),
 		},
 		{
 			name: "Empty profile dtag returns error",
 			account: types.Profile{
-				DTag:     "",
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  testPostOwner,
+				DTag: "",
+				Bio:  newStrPtr("bio"),
+				Pictures: types.NewPictures(
+					newStrPtr("https://shorturl.at/adnX3"),
+					newStrPtr("https://shorturl.at/cgpyF"),
+				),
+				Creator: user,
 			},
 			expErr: fmt.Errorf("invalid profile dtag"),
 		},
 		{
 			name: "Short moniker profile returns error",
 			account: types.Profile{
-				DTag:     "dtag",
-				Moniker:  &shortMoniker,
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  testPostOwner,
+				DTag:    "dtag",
+				Moniker: newStrPtr("1"),
+				Bio:     newStrPtr("bio"),
+				Pictures: types.NewPictures(
+					newStrPtr("https://shorturl.at/adnX3"),
+					newStrPtr("https://shorturl.at/cgpyF"),
+				),
+				Creator: user,
 			},
 			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
 		},
 		{
 			name: "Long moniker profile returns error",
 			account: types.Profile{
-				DTag:     "dtag",
-				Moniker:  &longMoniker,
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  testPostOwner,
+				DTag:    "dtag",
+				Moniker: newStrPtr(strings.Repeat("1", 100)),
+				Bio:     newStrPtr("bio"),
+				Pictures: types.NewPictures(
+					newStrPtr("https://shorturl.at/adnX3"),
+					newStrPtr("https://shorturl.at/cgpyF"),
+				),
+				Creator: user,
 			},
 			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
 		},
 		{
 			name: "Valid profile returns no error",
 			account: types.Profile{
-				DTag:     "dtag",
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  testPostOwner,
+				DTag: "dtag",
+				Bio:  newStrPtr("bio"),
+				Pictures: types.NewPictures(
+					newStrPtr("https://shorturl.at/adnX3"),
+					newStrPtr("https://shorturl.at/cgpyF"),
+				),
+				Creator: user,
 			},
 			expErr: nil,
 		},
@@ -231,9 +236,9 @@ func TestProfile_Validate(t *testing.T) {
 			name: "Invalid profile pictures returns error",
 			account: types.Profile{
 				DTag:     "dtag",
-				Bio:      &bio,
-				Pictures: invalidPics,
-				Creator:  testPostOwner,
+				Bio:      newStrPtr("bio"),
+				Pictures: types.NewPictures(newStrPtr("pic"), newStrPtr("cov")),
+				Creator:  user,
 			},
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},

@@ -12,18 +12,15 @@ import (
 
 func TestKeeper_AssociateDtagWithAddress(t *testing.T) {
 	ctx, k := SetupTestInput()
+	store := ctx.KVStore(k.StoreKey)
 
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	dtag := "dtag"
-
-	k.AssociateDtagWithAddress(ctx, dtag, creator)
-
-	store := ctx.KVStore(k.StoreKey)
+	k.AssociateDtagWithAddress(ctx, "dtag", creator)
 
 	var acc sdk.AccAddress
-	key := types.DtagStoreKey(dtag)
+	key := types.DtagStoreKey("dtag")
 	bz := store.Get(key)
 	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
@@ -36,12 +33,9 @@ func TestKeeper_GetDtagRelatedAddress(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	dtag := "moner"
+	k.AssociateDtagWithAddress(ctx, "moner", creator)
 
-	k.AssociateDtagWithAddress(ctx, dtag, creator)
-
-	addr := k.GetDtagRelatedAddress(ctx, dtag)
-
+	addr := k.GetDtagRelatedAddress(ctx, "moner")
 	require.Equal(t, creator, addr)
 }
 
@@ -51,21 +45,17 @@ func TestKeeper_DeleteDtagAddressAssociation(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	dtag := "monik"
+	k.AssociateDtagWithAddress(ctx, "monik", creator)
+	k.DeleteDtagAddressAssociation(ctx, "monik")
 
-	k.AssociateDtagWithAddress(ctx, dtag, creator)
-
-	k.DeleteDtagAddressAssociation(ctx, dtag)
-
-	addr := k.GetDtagRelatedAddress(ctx, dtag)
-
+	addr := k.GetDtagRelatedAddress(ctx, "monik")
 	require.Nil(t, addr)
-
 }
 
 func TestKeeper_GetDtagFromAddress(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
+
 	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
@@ -106,7 +96,6 @@ func TestKeeper_GetDtagFromAddress(t *testing.T) {
 
 func TestKeeper_SaveProfile(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -161,14 +150,12 @@ func TestKeeper_DeleteProfile(t *testing.T) {
 	require.Nil(t, err)
 
 	res, found := k.GetProfile(ctx, testProfile.Creator)
-
 	require.Equal(t, testProfile, res)
 	require.True(t, found)
 
 	k.DeleteProfile(ctx, testProfile.Creator, testProfile.DTag)
 
 	res, found = k.GetProfile(ctx, testProfile.Creator)
-
 	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
 }
