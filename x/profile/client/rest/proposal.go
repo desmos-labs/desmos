@@ -20,27 +20,27 @@ func registerProposalRoutes(cliCtx context.CLIContext, r *mux.Router) {
 }
 
 type NameSurnameParamsEditRequest struct {
-	BaseReq           rest.BaseReq                `json:"base_req" yaml:"base_req"`
-	Title             string                      `json:"title" yaml:"title"`
-	Description       string                      `json:"description" yaml:"description"`
-	Deposit           sdk.Coins                   `json:"deposit" yaml:"deposit"`
-	NameSurnameParams models.NameSurnameLenParams `json:"name_surname_params" yaml:"name_surname_params"`
+	BaseReq           rest.BaseReq              `json:"base_req" yaml:"base_req"`
+	Title             string                    `json:"title" yaml:"title"`
+	Description       string                    `json:"description" yaml:"description"`
+	Deposit           sdk.Coins                 `json:"deposit" yaml:"deposit"`
+	NameSurnameParams models.NameSurnameLengths `json:"name_surname_params" yaml:"name_surname_params"`
 }
 
 type MonikerParamsEditRequest struct {
-	BaseReq       rest.BaseReq            `json:"base_req" yaml:"base_req"`
-	Title         string                  `json:"title" yaml:"title"`
-	Description   string                  `json:"description" yaml:"description"`
-	Deposit       sdk.Coins               `json:"deposit" yaml:"deposit"`
-	MonikerParams models.MonikerLenParams `json:"moniker_params" yaml:"moniker_params"`
+	BaseReq       rest.BaseReq          `json:"base_req" yaml:"base_req"`
+	Title         string                `json:"title" yaml:"title"`
+	Description   string                `json:"description" yaml:"description"`
+	Deposit       sdk.Coins             `json:"deposit" yaml:"deposit"`
+	MonikerParams models.MonikerLengths `json:"moniker_params" yaml:"moniker_params"`
 }
 
 type BioParamsEditRequest struct {
-	BaseReq      rest.BaseReq        `json:"base_req" yaml:"base_req"`
-	Title        string              `json:"title" yaml:"title"`
-	Description  string              `json:"description" yaml:"description"`
-	Deposit      sdk.Coins           `json:"deposit" yaml:"deposit"`
-	BioLenParams models.BioLenParams `json:"bio_len_params" yaml:"bio_len_params"`
+	BaseReq      rest.BaseReq            `json:"base_req" yaml:"base_req"`
+	Title        string                  `json:"title" yaml:"title"`
+	Description  string                  `json:"description" yaml:"description"`
+	Deposit      sdk.Coins               `json:"deposit" yaml:"deposit"`
+	BioLenParams models.BiographyLengths `json:"bio_len_params" yaml:"bio_len_params"`
 }
 
 func NameSurnameParamsEditProposalRESTHandler(cliCtx context.CLIContext) govrest.ProposalRESTHandler {

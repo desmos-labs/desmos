@@ -118,7 +118,7 @@ func RandomSurname(r *rand.Rand) string {
 
 // RandomBio return a random bio value from the list of randomBios given
 func RandomBio(r *rand.Rand) string {
-	idx := sim.RandIntBetween(r, 10, len(randomBios))
+	idx := r.Intn(len(randomBios))
 	return randomBios[idx]
 }
 
@@ -146,26 +146,26 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 
 // ProfileParams contains the randomly generated params of profile module
 type ProfileParams struct {
-	NameSurnameParams models.NameSurnameLenParams
-	MonikerParams     models.MonikerLenParams
-	BioParams         models.BioLenParams
+	NameSurnameParams models.NameSurnameLengths
+	MonikerParams     models.MonikerLengths
+	BioParams         models.BiographyLengths
 }
 
 // RandomNameSurnameParams return a random set of name surname params
-func RandomNameSurnameParams(r *rand.Rand) models.NameSurnameLenParams {
+func RandomNameSurnameParams(r *rand.Rand) models.NameSurnameLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
 	return models.NewNameSurnameLenParams(&randomMin, &randomMax)
 }
 
 // RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) models.MonikerLenParams {
+func RandomMonikerParams(r *rand.Rand) models.MonikerLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
 	return models.NewMonikerLenParams(&randomMin, &randomMax)
 }
 
 // RandomBioParams return a random biography param
-func RandomBioParams(r *rand.Rand) models.BioLenParams {
+func RandomBioParams(r *rand.Rand) models.BiographyLengths {
 	return models.NewBioLenParams(sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))))
 }

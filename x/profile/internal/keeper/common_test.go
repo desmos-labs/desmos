@@ -37,7 +37,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
 	// define keepers
 	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
-	subspace := paramsKeeper.Subspace(models.DefaultParamspace).WithKeyTable(models.ParamKeyTable())
+	subspace := paramsKeeper.Subspace(models.DefaultParamspace)
 
 	return ctx, keeper.NewKeeper(cdc, profileKey, subspace)
 }

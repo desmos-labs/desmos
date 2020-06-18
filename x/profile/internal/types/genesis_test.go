@@ -12,19 +12,17 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	profiles := models.Profiles{}
-	nameSurnameParams := models.NameSurnameLenParams{}
-	monikerParams := models.MonikerLenParams{}
-	bioParams := models.BioLenParams{}
+	nameSurnameParams := models.NameSurnameLengths{}
+	monikerParams := models.MonikerLengths{}
+	bioParams := models.BiographyLengths{}
+	params := models.NewParams(nameSurnameParams, monikerParams, bioParams)
 
 	expGenState := types.GenesisState{
-		Profiles:             profiles,
-		NameSurnameLenParams: nameSurnameParams,
-		MonikerLenParams:     monikerParams,
-		BioLenParams:         bioParams,
+		Profiles: profiles,
+		Params:   params,
 	}
 
-	actualGenState := types.NewGenesisState(profiles, nameSurnameParams, monikerParams, bioParams)
-
+	actualGenState := types.NewGenesisState(profiles, params)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -41,12 +39,8 @@ func TestValidateGenesis(t *testing.T) {
 	var testPictures = models.NewPictures(&testProfilePic, &testCoverPic)
 
 	validNameMinParam := sdk.NewInt(3)
-	invalidNameMinParam := sdk.NewInt(1)
 	validNameMaxParam := sdk.NewInt(800)
-	invalidNameMaxParam := sdk.NewInt(1800)
 	validMinMonikerParam := sdk.NewInt(5)
-	validMaxMonikerParam := sdk.NewInt(50)
-	invalidMinMonikerParam := sdk.NewInt(1)
 	invalidMaxMonikerParam := sdk.NewInt(-1)
 
 	tests := []struct {
@@ -76,7 +70,7 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid profile's name/surname min params",
+			name: "Genesis with invalid params errors",
 			genesis: types.GenesisState{
 				Profiles: models.Profiles{
 					models.Profile{
@@ -88,124 +82,18 @@ func TestValidateGenesis(t *testing.T) {
 						Creator:  testPostOwner,
 					},
 				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &invalidNameMinParam,
-					MaxNameSurnameLen: &validNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &validMinMonikerParam,
-					MaxMonikerLen: &validMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(30),
-				},
-			},
-			shouldError: true,
-		},
-		{
-			name: "Genesis with invalid profile's name/surname max params",
-			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
+				Params: models.Params{
+					NameSurnameLengths: models.NameSurnameLengths{
+						MinNameSurnameLen: &validNameMinParam,
+						MaxNameSurnameLen: &validNameMaxParam,
 					},
-				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &validNameMinParam,
-					MaxNameSurnameLen: &invalidNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &validMinMonikerParam,
-					MaxMonikerLen: &validMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(30),
-				},
-			},
-			shouldError: true,
-		},
-		{
-			name: "Genesis with invalid profile's moniker min params",
-			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
+					MonikerLengths: models.MonikerLengths{
+						MinMonikerLen: &validMinMonikerParam,
+						MaxMonikerLen: &invalidMaxMonikerParam,
 					},
-				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &validNameMinParam,
-					MaxNameSurnameLen: &validNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &invalidMinMonikerParam,
-					MaxMonikerLen: &validMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(30),
-				},
-			},
-			shouldError: true,
-		},
-		{
-			name: "Genesis with invalid profile's moniker max negative params",
-			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
+					BiographyLengths: models.BiographyLengths{
+						MaxBioLen: sdk.NewInt(30),
 					},
-				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &validNameMinParam,
-					MaxNameSurnameLen: &validNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &validNameMinParam,
-					MaxMonikerLen: &invalidMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(30),
-				},
-			},
-			shouldError: true,
-		},
-		{
-			name: "Genesis with invalid profile's bio params",
-			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &validNameMinParam,
-					MaxNameSurnameLen: &validNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &validNameMinParam,
-					MaxMonikerLen: &validMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(-50),
 				},
 			},
 			shouldError: true,
@@ -223,16 +111,10 @@ func TestValidateGenesis(t *testing.T) {
 						Creator:  testPostOwner,
 					},
 				},
-				NameSurnameLenParams: models.NameSurnameLenParams{
-					MinNameSurnameLen: &validNameMinParam,
-					MaxNameSurnameLen: &validNameMaxParam,
-				},
-				MonikerLenParams: models.MonikerLenParams{
-					MinMonikerLen: &validMinMonikerParam,
-					MaxMonikerLen: &validMaxMonikerParam,
-				},
-				BioLenParams: models.BioLenParams{
-					MaxBioLen: sdk.NewInt(30),
+				Params: models.Params{
+					NameSurnameLengths: models.DefaultNameSurnameLenParams(),
+					MonikerLengths:     models.DefaultMonikerLenParams(),
+					BiographyLengths:   models.DefaultBioLenParams(),
 				},
 			},
 			shouldError: false,

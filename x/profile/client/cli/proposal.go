@@ -74,7 +74,7 @@ You should specify at least one of the two parameters otherwise the proposal wil
 				return err
 			}
 
-			var nsLenParams models.NameSurnameLenParams
+			var nsLenParams models.NameSurnameLengths
 
 			if minNSLen == -1 && maxNSLen == -1 {
 				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
@@ -141,7 +141,7 @@ You should specify at least one of the two parameters otherwise the proposal wil
 				return err
 			}
 
-			var monikerParams models.MonikerLenParams
+			var monikerParams models.MonikerLengths
 
 			if minMonikerLen == -1 && maxMonikerLen == -1 {
 				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
@@ -201,7 +201,7 @@ func GetCmdSubmitBioParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var bioParams models.BioLenParams
+			var bioParams models.BiographyLengths
 
 			if maxBioLen == -1 {
 				return fmt.Errorf("invalid proposal. No parameters specified")

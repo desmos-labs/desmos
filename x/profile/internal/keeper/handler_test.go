@@ -160,9 +160,7 @@ func Test_validateProfile(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			k.SetNameSurnameLenParams(ctx, models.DefaultNameSurnameLenParams())
-			k.SetMonikerLenParams(ctx, models.DefaultMonikerLenParams())
-			k.SetBioLenParams(ctx, models.DefaultBioLenParams())
+			k.SetParams(ctx, models.DefaultParams())
 			actual := keeper.ValidateProfile(ctx, k, test.profile)
 			require.Equal(t, test.expErr, actual)
 		})
@@ -258,10 +256,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
-			k.SetNameSurnameLenParams(ctx, models.DefaultNameSurnameLenParams())
-			k.SetMonikerLenParams(ctx, models.DefaultMonikerLenParams())
-			k.SetBioLenParams(ctx, models.DefaultBioLenParams())
-
+			k.SetParams(ctx, models.DefaultParams())
 			if test.existentProfiles != nil {
 				for _, acc := range test.existentProfiles {
 					key := models.ProfileStoreKey(acc.Creator)

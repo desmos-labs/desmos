@@ -13,7 +13,7 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	// The reference to the ParamsStore to get and set gov specific params
-	paramSpace params.Subspace
+	paramSubspace params.Subspace
 
 	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
 	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
@@ -22,9 +22,9 @@ type Keeper struct {
 // NewKeeper creates new instances of the magpie Keeper
 func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
 	return Keeper{
-		paramSpace: paramSpace,
-		StoreKey:   storeKey,
-		Cdc:        cdc,
+		paramSubspace: paramSpace.WithKeyTable(models.ParamKeyTable()),
+		StoreKey:      storeKey,
+		Cdc:           cdc,
 	}
 }
 

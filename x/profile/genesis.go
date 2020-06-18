@@ -8,18 +8,14 @@ import (
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	return GenesisState{
-		Profiles:             k.GetProfiles(ctx),
-		NameSurnameLenParams: k.GetNameSurnameLenParams(ctx),
-		MonikerLenParams:     k.GetMonikerLenParams(ctx),
-		BioLenParams:         k.GetBioLenParams(ctx),
+		Profiles: k.GetProfiles(ctx),
+		Params:   k.GetParams(ctx),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	keeper.SetNameSurnameLenParams(ctx, data.NameSurnameLenParams)
-	keeper.SetMonikerLenParams(ctx, data.MonikerLenParams)
-	keeper.SetBioLenParams(ctx, data.BioLenParams)
+	keeper.SetParams(ctx, data.Params)
 
 	for _, profile := range data.Profiles {
 		if err := keeper.SaveProfile(ctx, profile); err != nil {

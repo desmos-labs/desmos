@@ -41,6 +41,8 @@ var (
 	NewPictures                      = models.NewPictures
 	RegisterModelsCodec              = models.RegisterModelsCodec
 	ParamKeyTable                    = models.ParamKeyTable
+	NewParams                        = models.NewParams
+	DefaultParams                    = models.DefaultParams
 	NewNameSurnameLenParams          = models.NewNameSurnameLenParams
 	DefaultNameSurnameLenParams      = models.DefaultNameSurnameLenParams
 	ValidateNameSurnameLenParams     = models.ValidateNameSurnameLenParams
@@ -50,7 +52,6 @@ var (
 	NewBioLenParams                  = models.NewBioLenParams
 	DefaultBioLenParams              = models.DefaultBioLenParams
 	ValidateBioLenParams             = models.ValidateBioLenParams
-	NewParamsQueryResponse           = models.NewParamsQueryResponse
 	NewMsgSaveProfile                = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile              = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
@@ -66,9 +67,10 @@ var (
 	DefaultMinMonikerLength     = models.DefaultMinMonikerLength
 	DefaultMaxMonikerLength     = models.DefaultMaxMonikerLength
 	DefaultMaxBioLength         = models.DefaultMaxBioLength
-	ParamStoreKeyNameSurnameLen = models.ParamStoreKeyNameSurnameLen
-	ParamStoreKeyMonikerLen     = models.ParamStoreKeyMonikerLen
-	ParamStoreKeyMaxBioLen      = models.ParamStoreKeyMaxBioLen
+	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
+	MonikerLenParamsKey         = models.MonikerLenParamsKey
+	BioLenParamsKey             = models.BioLenParamsKey
+	ProfileParamsKey            = models.ProfileParamsKey
 	MsgsCodec                   = msgs.MsgsCodec
 )
 
@@ -79,10 +81,10 @@ type (
 	Profile                       = models.Profile
 	Profiles                      = models.Profiles
 	Pictures                      = models.Pictures
-	NameSurnameLenParams          = models.NameSurnameLenParams
-	MonikerLenParams              = models.MonikerLenParams
-	BioLenParams                  = models.BioLenParams
-	ParamsQueryResponse           = models.ParamsQueryResponse
+	Params                        = models.Params
+	NameSurnameLengths            = models.NameSurnameLengths
+	MonikerLengths                = models.MonikerLengths
+	BiographyLengths              = models.BiographyLengths
 	MsgSaveProfile                = msgs.MsgSaveProfile
 	MsgDeleteProfile              = msgs.MsgDeleteProfile
 )

@@ -29,12 +29,12 @@ func init() {
 var _ gov.Content = NameSurnameParamsEditProposal{}
 
 type NameSurnameParamsEditProposal struct {
-	Title             string               `json:"title" yaml:"title"`
-	Description       string               `json:"description" yaml:"description"`
-	NameSurnameParams NameSurnameLenParams `json:"name_surname_params" yaml:"name_surname_params"`
+	Title             string             `json:"title" yaml:"title"`
+	Description       string             `json:"description" yaml:"description"`
+	NameSurnameParams NameSurnameLengths `json:"name_surname_params" yaml:"name_surname_params"`
 }
 
-func NewNameSurnameParamsEditProposal(title, description string, nsParams NameSurnameLenParams) gov.Content {
+func NewNameSurnameParamsEditProposal(title, description string, nsParams NameSurnameLengths) gov.Content {
 	return NameSurnameParamsEditProposal{
 		Title:             title,
 		Description:       description,
@@ -84,12 +84,12 @@ func (nsp NameSurnameParamsEditProposal) String() string {
 var _ gov.Content = MonikerParamsEditProposal{}
 
 type MonikerParamsEditProposal struct {
-	Title         string           `json:"title" yaml:"title"`
-	Description   string           `json:"description" yaml:"description"`
-	MonikerParams MonikerLenParams `json:"moniker_params" yam:"moniker_params"`
+	Title         string         `json:"title" yaml:"title"`
+	Description   string         `json:"description" yaml:"description"`
+	MonikerParams MonikerLengths `json:"moniker_params" yam:"moniker_params"`
 }
 
-func NewMonikerParamsEditProposal(title, description string, mParams MonikerLenParams) gov.Content {
+func NewMonikerParamsEditProposal(title, description string, mParams MonikerLengths) gov.Content {
 	return MonikerParamsEditProposal{
 		Title:         title,
 		Description:   description,
@@ -139,12 +139,12 @@ func (mp MonikerParamsEditProposal) String() string {
 var _ gov.Content = BioParamsEditProposal{}
 
 type BioParamsEditProposal struct {
-	Title       string       `json:"title" yaml:"title"`
-	Description string       `json:"description" yaml:"description"`
-	BioParams   BioLenParams `json:"bio_params" yaml:"bio_params"`
+	Title       string           `json:"title" yaml:"title"`
+	Description string           `json:"description" yaml:"description"`
+	BioParams   BiographyLengths `json:"bio_params" yaml:"bio_params"`
 }
 
-func NewBioParamsEditProposal(title, description string, bParams BioLenParams) gov.Content {
+func NewBioParamsEditProposal(title, description string, bParams BiographyLengths) gov.Content {
 	return BioParamsEditProposal{
 		Title:       title,
 		Description: description,

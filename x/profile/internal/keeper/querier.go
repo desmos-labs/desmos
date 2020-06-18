@@ -71,11 +71,7 @@ func queryProfiles(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte,
 
 // queryProfileParams handles the request of listing all the profiles params
 func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	profileParams := models.NewParamsQueryResponse(
-		keeper.GetNameSurnameLenParams(ctx),
-		keeper.GetMonikerLenParams(ctx),
-		keeper.GetBioLenParams(ctx),
-	)
+	profileParams := keeper.GetParams(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &profileParams)
 	if err != nil {

@@ -7,70 +7,59 @@ import (
 	"testing"
 )
 
-func TestKeeper_SetNameSurnameLenParams(t *testing.T) {
+func TestKeeper_SetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
 	nsParams := models.NewNameSurnameLenParams(&min, &max)
-	k.SetNameSurnameLenParams(ctx, nsParams)
+	monikerParams := models.NewMonikerLenParams(&min, &max)
+	bioParams := models.NewBioLenParams(max)
 
-	actualParams := k.GetNameSurnameLenParams(ctx)
+	params := models.NewParams(nsParams, monikerParams, bioParams)
 
-	require.Equal(t, nsParams, actualParams)
+	k.SetParams(ctx, params)
+
+	actualParams := k.GetParams(ctx)
+
+	require.Equal(t, params, actualParams)
 }
 
-func TestKeeper_GetNameSurnameLenParams(t *testing.T) {
+func TestKeeper_GetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
 	nsParams := models.NewNameSurnameLenParams(&min, &max)
-	k.SetNameSurnameLenParams(ctx, nsParams)
-
-	actualParams := k.GetNameSurnameLenParams(ctx)
-
-	require.Equal(t, nsParams, actualParams)
-}
-
-func TestKeeper_SetMonikerLenParams(t *testing.T) {
-	min := sdk.NewInt(2)
-	max := sdk.NewInt(1000)
-	ctx, k := SetupTestInput()
 	monikerParams := models.NewMonikerLenParams(&min, &max)
-	k.SetMonikerLenParams(ctx, monikerParams)
+	bioParams := models.NewBioLenParams(max)
+	params := models.NewParams(nsParams, monikerParams, bioParams)
 
-	actualParams := k.GetMonikerLenParams(ctx)
+	tests := []struct {
+		name      string
+		params    *models.Params
+		expParams *models.Params
+	}{
+		{
+			name:      "Returning previously set params",
+			params:    &params,
+			expParams: &params,
+		},
+		{
+			name:      "Returning nothing",
+			params:    nil,
+			expParams: nil,
+		},
+	}
 
-	require.Equal(t, monikerParams, actualParams)
-}
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			if test.params != nil {
+				k.SetParams(ctx, *test.params)
+			}
 
-func TestKeeper_GetMonikerLenParams(t *testing.T) {
-	min := sdk.NewInt(2)
-	max := sdk.NewInt(1000)
-	ctx, k := SetupTestInput()
-	monikerParams := models.NewMonikerLenParams(&min, &max)
-	k.SetMonikerLenParams(ctx, monikerParams)
-
-	actualParams := k.GetMonikerLenParams(ctx)
-
-	require.Equal(t, monikerParams, actualParams)
-}
-
-func TestKeeper_SetBioLenParams(t *testing.T) {
-	ctx, k := SetupTestInput()
-	bioParams := models.NewBioLenParams(sdk.NewInt(100))
-	k.SetBioLenParams(ctx, bioParams)
-
-	actualParams := k.GetBioLenParams(ctx)
-
-	require.Equal(t, bioParams, actualParams)
-}
-
-func TestKeeper_GetBioLenParams(t *testing.T) {
-	ctx, k := SetupTestInput()
-	bioParams := models.NewBioLenParams(sdk.NewInt(100))
-	k.SetBioLenParams(ctx, bioParams)
-
-	actualParams := k.GetBioLenParams(ctx)
-
-	require.Equal(t, bioParams, actualParams)
+			if test.expParams != nil {
+				require.Equal(t, *test.expParams, k.GetParams(ctx))
+			}
+		})
+	}
 }

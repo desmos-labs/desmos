@@ -24,38 +24,24 @@ func NewEditParamsProposalHandler(k Keeper) govtypes.Handler {
 
 // handleNameSurnameEditParamsProposal handles the edit of name surname parameters
 func handleNameSurnameEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.NameSurnameParamsEditProposal) error {
-	actualParams := proposal.NameSurnameParams
-
-	if proposal.NameSurnameParams.MinNameSurnameLen == nil {
-		savedParams := k.GetNameSurnameLenParams(ctx)
-		actualParams = models.NewNameSurnameLenParams(savedParams.MinNameSurnameLen, proposal.NameSurnameParams.MaxNameSurnameLen)
-	} else if proposal.NameSurnameParams.MaxNameSurnameLen == nil {
-		savedParams := k.GetNameSurnameLenParams(ctx)
-		actualParams = models.NewNameSurnameLenParams(proposal.NameSurnameParams.MinNameSurnameLen, savedParams.MaxNameSurnameLen)
-	}
-
-	k.SetNameSurnameLenParams(ctx, actualParams)
+	params := k.GetParams(ctx)
+	params = params.WithNameSurnameParams(proposal.NameSurnameParams)
+	k.SetParams(ctx, params)
 	return nil
 }
 
 // handleMonikerEditParamsProposal handles the edit of moniker parameters
 func handleMonikerEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.MonikerParamsEditProposal) error {
-	actualParams := proposal.MonikerParams
-
-	if proposal.MonikerParams.MinMonikerLen == nil {
-		savedParams := k.GetMonikerLenParams(ctx)
-		actualParams = models.NewMonikerLenParams(savedParams.MinMonikerLen, proposal.MonikerParams.MaxMonikerLen)
-	} else if proposal.MonikerParams.MaxMonikerLen == nil {
-		savedParams := k.GetMonikerLenParams(ctx)
-		actualParams = models.NewMonikerLenParams(proposal.MonikerParams.MinMonikerLen, savedParams.MaxMonikerLen)
-	}
-
-	k.SetMonikerLenParams(ctx, actualParams)
+	params := k.GetParams(ctx)
+	params = params.WithMonikerParams(proposal.MonikerParams)
+	k.SetParams(ctx, params)
 	return nil
 }
 
 // handleBioEditParamsProposal handles the edit of biography parameter
 func handleBioEditParamsProposal(ctx sdk.Context, k Keeper, proposal models.BioParamsEditProposal) error {
-	k.SetBioLenParams(ctx, proposal.BioParams)
+	params := k.GetParams(ctx)
+	params.BiographyLengths = proposal.BioParams
+	k.SetParams(ctx, params)
 	return nil
 }

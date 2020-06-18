@@ -145,10 +145,10 @@ func Test_queryParams(t *testing.T) {
 	tests := []struct {
 		name                string
 		path                []string
-		nsParamsStored      models.NameSurnameLenParams
-		monikerParamsStored models.MonikerLenParams
-		bioParamStored      models.BioLenParams
-		expResult           models.ParamsQueryResponse
+		nsParamsStored      models.NameSurnameLengths
+		monikerParamsStored models.MonikerLengths
+		bioParamStored      models.BiographyLengths
+		expResult           models.Params
 	}{
 		{
 			name:                "Returning profile parameters correctly",
@@ -156,7 +156,7 @@ func Test_queryParams(t *testing.T) {
 			nsParamsStored:      nsParams,
 			monikerParamsStored: monikerParams,
 			bioParamStored:      bioParams,
-			expResult:           models.NewParamsQueryResponse(nsParams, monikerParams, bioParams),
+			expResult:           models.NewParams(nsParams, monikerParams, bioParams),
 		},
 	}
 
@@ -164,9 +164,7 @@ func Test_queryParams(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			k.SetNameSurnameLenParams(ctx, test.nsParamsStored)
-			k.SetMonikerLenParams(ctx, test.monikerParamsStored)
-			k.SetBioLenParams(ctx, test.bioParamStored)
+			k.SetParams(ctx, models.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
 			querier := keeper.NewQuerier(k)
 			result, err := querier(ctx, test.path, abci.RequestQuery{})
 

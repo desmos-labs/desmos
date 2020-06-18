@@ -30,12 +30,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // ValidateProfile checks if the given profile is valid according to the current profile's module params
 func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) error {
-	nsParams := keeper.GetNameSurnameLenParams(ctx)
-	monikerParams := keeper.GetMonikerLenParams(ctx)
-	bioParams := keeper.GetBioLenParams(ctx)
+	params := keeper.GetParams(ctx)
 
-	minNameSurnameLen := nsParams.MinNameSurnameLen.Int64()
-	maxNameSurnameLen := nsParams.MaxNameSurnameLen.Int64()
+	minNameSurnameLen := params.NameSurnameLengths.MinNameSurnameLen.Int64()
+	maxNameSurnameLen := params.NameSurnameLengths.MaxNameSurnameLen.Int64()
 
 	if profile.Name != nil {
 		nameLen := int64(len(*profile.Name))
@@ -57,8 +55,8 @@ func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) err
 		}
 	}
 
-	minMonikerLen := monikerParams.MinMonikerLen.Int64()
-	maxMonikerLen := monikerParams.MaxMonikerLen.Int64()
+	minMonikerLen := params.MonikerLengths.MinMonikerLen.Int64()
+	maxMonikerLen := params.MonikerLengths.MaxMonikerLen.Int64()
 	monikerLen := int64(len(profile.Moniker))
 
 	if monikerLen < minMonikerLen {
@@ -69,7 +67,7 @@ func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) err
 		return fmt.Errorf("Profile moniker cannot exceed %d characters", maxMonikerLen)
 	}
 
-	maxBioLen := bioParams.MaxBioLen.Int64()
+	maxBioLen := params.BiographyLengths.MaxBioLen.Int64()
 	if profile.Bio != nil && int64(len(*profile.Bio)) > maxBioLen {
 		return fmt.Errorf("Profile biography cannot exceed %d characters", maxBioLen)
 	}

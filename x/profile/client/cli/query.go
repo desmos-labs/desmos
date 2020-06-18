@@ -90,7 +90,7 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out models.ParamsQueryResponse
+			var out models.Params
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

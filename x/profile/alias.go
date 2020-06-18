@@ -13,17 +13,7 @@ import (
 )
 
 const (
-	OpWeightMsgSaveProfile                      = simulation.OpWeightMsgSaveProfile
-	OpWeightMsgDeleteProfile                    = simulation.OpWeightMsgDeleteProfile
-	DefaultGasValue                             = simulation.DefaultGasValue
-	NSParamsKey                                 = simulation.NSParamsKey
-	OpWeightSubmitNameSurnameParamsEditProposal = simulation.OpWeightSubmitNameSurnameParamsEditProposal
-	OpWeightSubmitMonikerParamsEditProposal     = simulation.OpWeightSubmitMonikerParamsEditProposal
-	OpWeightSubmitBiographyParamsEditProposal   = simulation.OpWeightSubmitBiographyParamsEditProposal
-	EventTypeProfileSaved                       = types.EventTypeProfileSaved
-	EventTypeProfileDeleted                     = types.EventTypeProfileDeleted
-	AttributeProfileMoniker                     = types.AttributeProfileMoniker
-	AttributeProfileCreator                     = types.AttributeProfileCreator
+	DefaultParamspace                           = models.DefaultParamspace
 	ProposalTypeNameSurnameParamsEdit           = models.ProposalTypeNameSurnameParamsEdit
 	ProposalTypeMonikerParamsEdit               = models.ProposalTypeMonikerParamsEdit
 	ProposalTypeBioParamsEdit                   = models.ProposalTypeBioParamsEdit
@@ -41,14 +31,21 @@ const (
 	QueryProfile                                = models.QueryProfile
 	QueryProfiles                               = models.QueryProfiles
 	QueryParams                                 = models.QueryParams
-	DefaultParamspace                           = models.DefaultParamspace
+	OpWeightMsgSaveProfile                      = simulation.OpWeightMsgSaveProfile
+	OpWeightMsgDeleteProfile                    = simulation.OpWeightMsgDeleteProfile
+	DefaultGasValue                             = simulation.DefaultGasValue
+	ParamsKey                                   = simulation.ParamsKey
+	OpWeightSubmitNameSurnameParamsEditProposal = simulation.OpWeightSubmitNameSurnameParamsEditProposal
+	OpWeightSubmitMonikerParamsEditProposal     = simulation.OpWeightSubmitMonikerParamsEditProposal
+	OpWeightSubmitBiographyParamsEditProposal   = simulation.OpWeightSubmitBiographyParamsEditProposal
+	EventTypeProfileSaved                       = types.EventTypeProfileSaved
+	EventTypeProfileDeleted                     = types.EventTypeProfileDeleted
+	AttributeProfileMoniker                     = types.AttributeProfileMoniker
+	AttributeProfileCreator                     = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
-	NewMsgSaveProfile                     = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile                   = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec                 = msgs.RegisterMessagesCodec
 	NewKeeper                             = keeper.NewKeeper
 	NewQuerier                            = keeper.NewQuerier
 	RegisterInvariants                    = keeper.RegisterInvariants
@@ -57,6 +54,9 @@ var (
 	NewHandler                            = keeper.NewHandler
 	ValidateProfile                       = keeper.ValidateProfile
 	NewEditParamsProposalHandler          = keeper.NewEditParamsProposalHandler
+	DecodeStore                           = simulation.DecodeStore
+	SimulateMsgSaveProfile                = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile              = simulation.SimulateMsgDeleteProfile
 	RandomProfileData                     = simulation.RandomProfileData
 	RandomProfile                         = simulation.RandomProfile
 	RandomMoniker                         = simulation.RandomMoniker
@@ -76,23 +76,13 @@ var (
 	SimulateMonikerEditParamsProposal     = simulation.SimulateMonikerEditParamsProposal
 	SimulateBiographyEditParamsProposal   = simulation.SimulateBiographyEditParamsProposal
 	ParamChanges                          = simulation.ParamChanges
-	DecodeStore                           = simulation.DecodeStore
-	SimulateMsgSaveProfile                = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile              = simulation.SimulateMsgDeleteProfile
 	NewGenesisState                       = types.NewGenesisState
 	DefaultGenesisState                   = types.DefaultGenesisState
 	ValidateGenesis                       = types.ValidateGenesis
 	RegisterCodec                         = types.RegisterCodec
-	NewParamsQueryResponse                = models.NewParamsQueryResponse
-	NewNameSurnameParamsEditProposal      = models.NewNameSurnameParamsEditProposal
-	NewMonikerParamsEditProposal          = models.NewMonikerParamsEditProposal
-	NewBioParamsEditProposal              = models.NewBioParamsEditProposal
-	ProfileStoreKey                       = models.ProfileStoreKey
-	MonikerStoreKey                       = models.MonikerStoreKey
-	NewProfile                            = models.NewProfile
-	NewPictures                           = models.NewPictures
-	RegisterModelsCodec                   = models.RegisterModelsCodec
 	ParamKeyTable                         = models.ParamKeyTable
+	NewParams                             = models.NewParams
+	DefaultParams                         = models.DefaultParams
 	NewNameSurnameLenParams               = models.NewNameSurnameLenParams
 	DefaultNameSurnameLenParams           = models.DefaultNameSurnameLenParams
 	ValidateNameSurnameLenParams          = models.ValidateNameSurnameLenParams
@@ -102,40 +92,52 @@ var (
 	NewBioLenParams                       = models.NewBioLenParams
 	DefaultBioLenParams                   = models.DefaultBioLenParams
 	ValidateBioLenParams                  = models.ValidateBioLenParams
+	NewNameSurnameParamsEditProposal      = models.NewNameSurnameParamsEditProposal
+	NewMonikerParamsEditProposal          = models.NewMonikerParamsEditProposal
+	NewBioParamsEditProposal              = models.NewBioParamsEditProposal
+	ProfileStoreKey                       = models.ProfileStoreKey
+	MonikerStoreKey                       = models.MonikerStoreKey
+	NewProfile                            = models.NewProfile
+	NewPictures                           = models.NewPictures
+	RegisterModelsCodec                   = models.RegisterModelsCodec
+	NewMsgSaveProfile                     = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile                   = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec                 = msgs.RegisterMessagesCodec
 
 	// variable aliases
+	MsgsCodec                   = msgs.MsgsCodec
 	ModuleCdc                   = types.ModuleCdc
-	TxHashRegEx                 = models.TxHashRegEx
-	URIRegEx                    = models.URIRegEx
-	ProfileStorePrefix          = models.ProfileStorePrefix
-	MonikerStorePrefix          = models.MonikerStorePrefix
-	ModelsCdc                   = models.ModelsCdc
 	DefaultMinNameSurnameLength = models.DefaultMinNameSurnameLength
 	DefaultMaxNameSurnameLength = models.DefaultMaxNameSurnameLength
 	DefaultMinMonikerLength     = models.DefaultMinMonikerLength
 	DefaultMaxMonikerLength     = models.DefaultMaxMonikerLength
 	DefaultMaxBioLength         = models.DefaultMaxBioLength
-	ParamStoreKeyNameSurnameLen = models.ParamStoreKeyNameSurnameLen
-	ParamStoreKeyMonikerLen     = models.ParamStoreKeyMonikerLen
-	ParamStoreKeyMaxBioLen      = models.ParamStoreKeyMaxBioLen
-	MsgsCodec                   = msgs.MsgsCodec
+	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
+	MonikerLenParamsKey         = models.MonikerLenParamsKey
+	BioLenParamsKey             = models.BioLenParamsKey
+	ProfileParamsKey            = models.ProfileParamsKey
+	TxHashRegEx                 = models.TxHashRegEx
+	URIRegEx                    = models.URIRegEx
+	ProfileStorePrefix          = models.ProfileStorePrefix
+	MonikerStorePrefix          = models.MonikerStorePrefix
+	ModelsCdc                   = models.ModelsCdc
 )
 
 type (
-	MsgSaveProfile                = msgs.MsgSaveProfile
-	MsgDeleteProfile              = msgs.MsgDeleteProfile
 	Keeper                        = keeper.Keeper
 	ProfileData                   = simulation.ProfileData
 	ProfileParams                 = simulation.ProfileParams
 	GenesisState                  = types.GenesisState
-	ParamsQueryResponse           = models.ParamsQueryResponse
+	Params                        = models.Params
+	NameSurnameLengths            = models.NameSurnameLengths
+	MonikerLengths                = models.MonikerLengths
+	BiographyLengths              = models.BiographyLengths
 	NameSurnameParamsEditProposal = models.NameSurnameParamsEditProposal
 	MonikerParamsEditProposal     = models.MonikerParamsEditProposal
 	BioParamsEditProposal         = models.BioParamsEditProposal
 	Profile                       = models.Profile
 	Profiles                      = models.Profiles
 	Pictures                      = models.Pictures
-	NameSurnameLenParams          = models.NameSurnameLenParams
-	MonikerLenParams              = models.MonikerLenParams
-	BioLenParams                  = models.BioLenParams
+	MsgSaveProfile                = msgs.MsgSaveProfile
+	MsgDeleteProfile              = msgs.MsgDeleteProfile
 )
