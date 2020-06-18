@@ -21,7 +21,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, data, newDtag, skip, err := randomProfileSaveFields(r, ctx, accs, k)
+		acc, data, skip, err := randomProfileSaveFields(r, ctx, accs, k)
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -36,7 +36,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			coverPic = *data.Pictures.Cover
 		}
 
-		msg := types.NewMsgSaveProfile(newDtag, data.Moniker, data.Bio, &profilePic, &coverPic, acc.Address)
+		msg := types.NewMsgSaveProfile(data.DTag, data.Moniker, data.Bio, &profilePic, &coverPic, acc.Address)
 		if err := sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -80,25 +80,32 @@ func sendMsgSaveProfile(
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
-) (sim.Account, types.Profile, string, bool, error) {
+) (sim.Account, types.Profile, bool, error) {
 	if len(accs) == 0 {
-		return sim.Account{}, types.Profile{}, "", true, nil
+		return sim.Account{}, types.Profile{}, true, nil
 	}
 
-	accounts := k.GetProfiles(ctx)
-	if len(accounts) == 0 {
-		return sim.Account{}, types.Profile{}, "", true, nil
+	// Get a random account
+	account, _ := sim.RandomAcc(r, accs)
+
+	// See if there is already the profile, otherwise create it from scratch
+	var profile types.Profile
+	existing, found := k.GetProfile(ctx, account.Address)
+	if found {
+		profile = existing
+	} else {
+		profile = NewRandomProfile(r, account.Address)
 	}
 
-	account := RandomProfile(r, accounts)
-	acc := GetSimAccount(account.Creator, accs)
-
-	// Skip the operation without error as the profile is not valid
-	if acc == nil {
-		return sim.Account{}, types.Profile{}, "", true, nil
+	// 50% chance of changing something
+	if r.Intn(101) <= 50 {
+		profile = profile.
+			WithMoniker(RandomMoniker(r)).
+			WithBio(RandomBio(r)).
+			WithPictures(RandomProfilePic(r), RandomProfileCover(r))
 	}
 
-	return *acc, account, RandomDtag(r), false, nil
+	return account, profile, false, nil
 }
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists

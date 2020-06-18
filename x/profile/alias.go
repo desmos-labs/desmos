@@ -43,9 +43,9 @@ var (
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
 	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
-	RandomProfileData        = simulation.RandomProfileData
+	RandomProfileData        = simulation.NewRandomProfile
 	RandomProfile            = simulation.RandomProfile
-	RandomDtag               = simulation.RandomDtag
+	RandomDtag               = simulation.RandomMoniker
 	RandomBio                = simulation.RandomBio
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
@@ -72,7 +72,6 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
-	ProfileData      = simulation.ProfileData
 	Profile          = types.Profile
 	Profiles         = types.Profiles
 	GenesisState     = types.GenesisState

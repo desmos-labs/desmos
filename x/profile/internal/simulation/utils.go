@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	dtagsLetters = "abcdefghijtuvwxyzDUVWXYZ123490"
+	dtagLetters    = "abcdefghijtuvwxyzDUVWXYZ123490_"
+	monikerLetters = "abcdefghijtuvwxyzDUVWXYZ123490_ "
 
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -41,28 +42,14 @@ var (
 	}
 )
 
-// ProfileData contains the randomly generated data of an profile
-type ProfileData struct {
-	Dtag    string
-	Bio     string
-	Picture types.Pictures
-	Creator sim.Account
-}
-
-// RandomProfileData return a random ProfileData from random data and random accounts list
-func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
-	simAccount, _ := sim.RandomAcc(r, accs)
-	pictures := types.Pictures{
-		Profile: RandomProfilePic(r),
-		Cover:   RandomProfileCover(r),
-	}
-
-	return ProfileData{
-		Dtag:    RandomDtag(r),
-		Bio:     RandomBio(r),
-		Picture: pictures,
-		Creator: simAccount,
-	}
+// NewRandomProfile return a random ProfileData from random data and the given account
+func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
+	return types.NewProfile(RandomDTag(r), account).
+		WithBio(RandomBio(r)).
+		WithMoniker(RandomMoniker(r)).
+		WithPictures(
+			RandomProfilePic(r),
+			RandomProfileCover(r))
 }
 
 // RandomProfile picks and returns a random profile from an array
@@ -71,19 +58,35 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
-// RandomDtag return a random dtag from the randomDtags list given
-func RandomDtag(r *rand.Rand) string {
-	b := make([]byte, 30)
+// RandomMoniker return a random dtag
+func RandomDTag(r *rand.Rand) string {
+	// DTag must be at least 3 characters and at most 30
+	dTagLen := r.Intn(27) + 3
+
+	b := make([]byte, dTagLen)
 	for i := range b {
-		b[i] = dtagsLetters[r.Intn(len(dtagsLetters))]
+		b[i] = dtagLetters[r.Intn(len(dtagLetters))]
 	}
 	return string(b)
 }
 
+// RandomMoniker return a random moniker
+func RandomMoniker(r *rand.Rand) *string {
+	// Moniker must be at least 2 and at most 50 characters
+	monikerLen := r.Intn(48) + 2
+
+	b := make([]byte, monikerLen)
+	for i := range b {
+		b[i] = monikerLetters[r.Intn(len(monikerLetters))]
+	}
+	value := string(b)
+	return &value
+}
+
 // RandomBio return a random bio value from the list of randomBios given
-func RandomBio(r *rand.Rand) string {
+func RandomBio(r *rand.Rand) *string {
 	idx := r.Intn(len(randomBios))
-	return randomBios[idx]
+	return &randomBios[idx]
 }
 
 // RandomProfilePic return a random profile pic value from the list of randomProfilePics given

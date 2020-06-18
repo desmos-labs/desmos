@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -83,7 +84,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		{
 			name:  "Min dtag length not reached",
 			msg:   types.NewMsgSaveProfile("l", nil, nil, nil, nil, testProfile.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided: 'l'"),
 		},
 		{
 			name: "Max dtag length exceeded",
@@ -95,12 +96,13 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 				nil,
 				testProfile.Creator,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("Invalid profile dtag provided: '%s'", strings.Repeat("_", 100))),
 		},
 		{
 			name:  "Invalid dtag characters",
 			msg:   types.NewMsgSaveProfile("d.tag", nil, nil, nil, nil, testProfile.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided: 'd.tag'"),
 		},
 		{
 			name: "No error message",

@@ -42,20 +42,24 @@ func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSaveProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress,
+			fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
 	if !DTagRegEx.MatchString(msg.Dtag) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Invalid profile dtag provided: '%s'", msg.Dtag))
 	}
 
 	if msg.Moniker != nil && (len(*msg.Moniker) < MinMonikerLength || len(*msg.Moniker) > MaxMonikerLength) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Moniker length should be between %d and %d",
-			MinMonikerLength, MaxMonikerLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Moniker length should be between %d and %d",
+				MinMonikerLength, MaxMonikerLength))
 	}
 
 	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
 	return nil
