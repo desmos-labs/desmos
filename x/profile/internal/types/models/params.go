@@ -27,8 +27,6 @@ var (
 	NameSurnameLenParamsKey = []byte("nameSurnameLenParams")
 	MonikerLenParamsKey     = []byte("monikerLenParams")
 	BioLenParamsKey         = []byte("bioLenParams")
-
-	ProfileParamsKey = []byte("profileParams")
 )
 
 // ParamKeyTable Key declaration for parameters

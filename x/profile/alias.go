@@ -13,6 +13,17 @@ import (
 )
 
 const (
+	ParamsKey                                   = simulation.ParamsKey
+	OpWeightSubmitNameSurnameParamsEditProposal = simulation.OpWeightSubmitNameSurnameParamsEditProposal
+	OpWeightSubmitMonikerParamsEditProposal     = simulation.OpWeightSubmitMonikerParamsEditProposal
+	OpWeightSubmitBiographyParamsEditProposal   = simulation.OpWeightSubmitBiographyParamsEditProposal
+	OpWeightMsgSaveProfile                      = simulation.OpWeightMsgSaveProfile
+	OpWeightMsgDeleteProfile                    = simulation.OpWeightMsgDeleteProfile
+	DefaultGasValue                             = simulation.DefaultGasValue
+	EventTypeProfileSaved                       = types.EventTypeProfileSaved
+	EventTypeProfileDeleted                     = types.EventTypeProfileDeleted
+	AttributeProfileMoniker                     = types.AttributeProfileMoniker
+	AttributeProfileCreator                     = types.AttributeProfileCreator
 	DefaultParamspace                           = models.DefaultParamspace
 	ProposalTypeNameSurnameParamsEdit           = models.ProposalTypeNameSurnameParamsEdit
 	ProposalTypeMonikerParamsEdit               = models.ProposalTypeMonikerParamsEdit
@@ -31,51 +42,10 @@ const (
 	QueryProfile                                = models.QueryProfile
 	QueryProfiles                               = models.QueryProfiles
 	QueryParams                                 = models.QueryParams
-	OpWeightMsgSaveProfile                      = simulation.OpWeightMsgSaveProfile
-	OpWeightMsgDeleteProfile                    = simulation.OpWeightMsgDeleteProfile
-	DefaultGasValue                             = simulation.DefaultGasValue
-	ParamsKey                                   = simulation.ParamsKey
-	OpWeightSubmitNameSurnameParamsEditProposal = simulation.OpWeightSubmitNameSurnameParamsEditProposal
-	OpWeightSubmitMonikerParamsEditProposal     = simulation.OpWeightSubmitMonikerParamsEditProposal
-	OpWeightSubmitBiographyParamsEditProposal   = simulation.OpWeightSubmitBiographyParamsEditProposal
-	EventTypeProfileSaved                       = types.EventTypeProfileSaved
-	EventTypeProfileDeleted                     = types.EventTypeProfileDeleted
-	AttributeProfileMoniker                     = types.AttributeProfileMoniker
-	AttributeProfileCreator                     = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
-	NewKeeper                             = keeper.NewKeeper
-	NewQuerier                            = keeper.NewQuerier
-	RegisterInvariants                    = keeper.RegisterInvariants
-	AllInvariants                         = keeper.AllInvariants
-	ValidProfileInvariant                 = keeper.ValidProfileInvariant
-	NewHandler                            = keeper.NewHandler
-	ValidateProfile                       = keeper.ValidateProfile
-	NewEditParamsProposalHandler          = keeper.NewEditParamsProposalHandler
-	DecodeStore                           = simulation.DecodeStore
-	SimulateMsgSaveProfile                = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile              = simulation.SimulateMsgDeleteProfile
-	RandomProfileData                     = simulation.RandomProfileData
-	RandomProfile                         = simulation.RandomProfile
-	RandomMoniker                         = simulation.RandomMoniker
-	RandomName                            = simulation.RandomName
-	RandomSurname                         = simulation.RandomSurname
-	RandomBio                             = simulation.RandomBio
-	RandomProfilePic                      = simulation.RandomProfilePic
-	RandomProfileCover                    = simulation.RandomProfileCover
-	GetSimAccount                         = simulation.GetSimAccount
-	RandomNameSurnameParams               = simulation.RandomNameSurnameParams
-	RandomMonikerParams                   = simulation.RandomMonikerParams
-	RandomBioParams                       = simulation.RandomBioParams
-	WeightedOperations                    = simulation.WeightedOperations
-	RandomizedGenState                    = simulation.RandomizedGenState
-	ProposalContents                      = simulation.ProposalContents
-	SimulateNameSurnameEditParamsProposal = simulation.SimulateNameSurnameEditParamsProposal
-	SimulateMonikerEditParamsProposal     = simulation.SimulateMonikerEditParamsProposal
-	SimulateBiographyEditParamsProposal   = simulation.SimulateBiographyEditParamsProposal
-	ParamChanges                          = simulation.ParamChanges
 	NewGenesisState                       = types.NewGenesisState
 	DefaultGenesisState                   = types.DefaultGenesisState
 	ValidateGenesis                       = types.ValidateGenesis
@@ -103,9 +73,38 @@ var (
 	NewMsgSaveProfile                     = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile                   = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec                 = msgs.RegisterMessagesCodec
+	NewKeeper                             = keeper.NewKeeper
+	NewQuerier                            = keeper.NewQuerier
+	RegisterInvariants                    = keeper.RegisterInvariants
+	AllInvariants                         = keeper.AllInvariants
+	ValidProfileInvariant                 = keeper.ValidProfileInvariant
+	NewHandler                            = keeper.NewHandler
+	ValidateProfile                       = keeper.ValidateProfile
+	NewEditParamsProposalHandler          = keeper.NewEditParamsProposalHandler
+	RandomizedGenState                    = simulation.RandomizedGenState
+	ProposalContents                      = simulation.ProposalContents
+	SimulateNameSurnameEditParamsProposal = simulation.SimulateNameSurnameEditParamsProposal
+	SimulateMonikerEditParamsProposal     = simulation.SimulateMonikerEditParamsProposal
+	SimulateBiographyEditParamsProposal   = simulation.SimulateBiographyEditParamsProposal
+	ParamChanges                          = simulation.ParamChanges
+	DecodeStore                           = simulation.DecodeStore
+	SimulateMsgSaveProfile                = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile              = simulation.SimulateMsgDeleteProfile
+	RandomProfileData                     = simulation.RandomProfileData
+	RandomProfile                         = simulation.RandomProfile
+	RandomMoniker                         = simulation.RandomMoniker
+	RandomName                            = simulation.RandomName
+	RandomSurname                         = simulation.RandomSurname
+	RandomBio                             = simulation.RandomBio
+	RandomProfilePic                      = simulation.RandomProfilePic
+	RandomProfileCover                    = simulation.RandomProfileCover
+	GetSimAccount                         = simulation.GetSimAccount
+	RandomNameSurnameParams               = simulation.RandomNameSurnameParams
+	RandomMonikerParams                   = simulation.RandomMonikerParams
+	RandomBioParams                       = simulation.RandomBioParams
+	WeightedOperations                    = simulation.WeightedOperations
 
 	// variable aliases
-	MsgsCodec                   = msgs.MsgsCodec
 	ModuleCdc                   = types.ModuleCdc
 	DefaultMinNameSurnameLength = models.DefaultMinNameSurnameLength
 	DefaultMaxNameSurnameLength = models.DefaultMaxNameSurnameLength
@@ -115,12 +114,12 @@ var (
 	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
 	MonikerLenParamsKey         = models.MonikerLenParamsKey
 	BioLenParamsKey             = models.BioLenParamsKey
-	ProfileParamsKey            = models.ProfileParamsKey
 	TxHashRegEx                 = models.TxHashRegEx
 	URIRegEx                    = models.URIRegEx
 	ProfileStorePrefix          = models.ProfileStorePrefix
 	MonikerStorePrefix          = models.MonikerStorePrefix
 	ModelsCdc                   = models.ModelsCdc
+	MsgsCodec                   = msgs.MsgsCodec
 )
 
 type (

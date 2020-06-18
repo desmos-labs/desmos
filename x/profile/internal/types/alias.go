@@ -52,9 +52,9 @@ var (
 	NewBioLenParams                  = models.NewBioLenParams
 	DefaultBioLenParams              = models.DefaultBioLenParams
 	ValidateBioLenParams             = models.ValidateBioLenParams
+	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
 	NewMsgSaveProfile                = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile              = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	TxHashRegEx                 = models.TxHashRegEx
@@ -70,7 +70,6 @@ var (
 	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
 	MonikerLenParamsKey         = models.MonikerLenParamsKey
 	BioLenParamsKey             = models.BioLenParamsKey
-	ProfileParamsKey            = models.ProfileParamsKey
 	MsgsCodec                   = msgs.MsgsCodec
 )
 
