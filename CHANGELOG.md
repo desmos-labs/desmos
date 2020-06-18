@@ -7,6 +7,10 @@
 - Re-introduced the on-chain government module (#173)
 - Fixed reactions registration bug (#187)
 
+# Version 0.6.3
+## Changes
+- Restored evidence module (#189)
+
 # Version 0.6.2
 ## Changes
 - Updated Cosmos to v0.38.4 (#177)
