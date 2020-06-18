@@ -23,7 +23,6 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Later usage variables
-	moniker := "mrBrown"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -34,11 +33,11 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	//Make sure the profile is saved
+	// Make sure the profile is saved
 	storedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, storedProfiles)
 	profile := storedProfiles[0]
-	require.Equal(t, profile.Moniker, moniker)
+	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run", "--dtag mrBrown")
@@ -73,7 +72,6 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Later usage variables
-	moniker := "mrBrown"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -92,8 +90,7 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	//Make sure the profile is saved
 	storedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, storedProfiles)
-	profile := storedProfiles[0]
-	require.Equal(t, profile.Moniker, moniker)
+	require.Equal(t, *storedProfiles[0].Moniker, "Leonardo")
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run",
@@ -137,8 +134,6 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Later usage variables
-	moniker := "mrBrown"
-	newMoniker := "mrPink"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -147,10 +142,10 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	success, _, sterr := f.TxProfileSave(fooAddr, "-y",
 		"--dtag mrBrown",
 		"--moniker Leonardo",
-		"--surname DiCaprio",
 		"--bio biography",
 		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--cover https://profileCover.jpg",
+	)
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -159,10 +154,10 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	storedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, storedProfiles)
 	profile := storedProfiles[0]
-	require.Equal(t, profile.Moniker, moniker)
+	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave(fooAddr, "-y", "--dtag mrPink")
+	success, _, sterr = f.TxProfileSave(fooAddr, "-y", "--dtag mrBrown")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -170,13 +165,10 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	// Make sure the profile is edited
 	editedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, editedProfiles)
-	editedProfile := editedProfiles[0]
-	require.Equal(t, editedProfile.Moniker, newMoniker)
 
 	// Make sure the profile has been edited
-	var emptyField *string
-	require.Equal(t, emptyField, editedProfiles[0].Moniker)
-	require.Equal(t, emptyField, editedProfiles[0].Bio)
+	require.Nil(t, editedProfiles[0].Moniker)
+	require.Nil(t, editedProfiles[0].Bio)
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run", "--dtag mrPink")
@@ -210,8 +202,6 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Later usage variables
-	moniker := "mrBrown"
-	newMoniker := "mrPink"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -231,11 +221,11 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	storedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, storedProfiles)
 	profile := storedProfiles[0]
-	require.Equal(t, profile.Moniker, moniker)
+	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
 	success, _, sterr = f.TxProfileSave(fooAddr, "-y",
-		"--dtag mrPink",
+		"--dtag mrBrown",
 		"--moniker Leo",
 		"--bio HollywoodActor",
 		"--picture https://profilePic.jpg",
@@ -249,7 +239,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.NotEmpty(t, editedProfiles)
 
 	editedProfile := editedProfiles[0]
-	require.Equal(t, editedProfile.Moniker, newMoniker)
+	require.Equal(t, *editedProfile.Moniker, "Leo")
 
 	// Make sure the profile has been edited
 	require.NotEqual(t, storedProfiles[0].Moniker, editedProfiles[0].Moniker)
@@ -257,7 +247,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 
 	// Test --dry-run
 	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run",
-		"--drat mrPink",
+		"--dtag mrPink",
 		"--moniker Leo",
 		"--bio HollywoodActor",
 		"--picture https://profilePic.jpg",
@@ -297,7 +287,6 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	// Later usage variables
-	moniker := "mrBrown"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -312,7 +301,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	storedProfiles := f.QueryProfiles()
 	require.NotEmpty(t, storedProfiles)
 	profile := storedProfiles[0]
-	require.Equal(t, profile.Moniker, moniker)
+	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Delete the profile
 	success, _, sterr = f.TxProfileDelete(fooAddr, "-y")
