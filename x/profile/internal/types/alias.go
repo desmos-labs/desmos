@@ -74,9 +74,9 @@ var (
 )
 
 type (
-	NameSurnameParamsEditProposal = models.NameSurnameParamsEditProposal
-	MonikerParamsEditProposal     = models.MonikerParamsEditProposal
-	BioParamsEditProposal         = models.BioParamsEditProposal
+	NameSurnameParamsEditProposal = models.EditNameSurnameParamsProposal
+	MonikerParamsEditProposal     = models.EditMonikerParamsProposal
+	BioParamsEditProposal         = models.EditBioParamsProposal
 	Profile                       = models.Profile
 	Profiles                      = models.Profiles
 	Pictures                      = models.Pictures

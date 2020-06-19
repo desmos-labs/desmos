@@ -12,7 +12,7 @@ import (
 func TestNewNameSurnameParamsEditProposal(t *testing.T) {
 	validMin := sdk.NewInt(2)
 	validMax := sdk.NewInt(30)
-	expectedProposal := models.NameSurnameParamsEditProposal{
+	expectedProposal := models.EditNameSurnameParamsProposal{
 		Title:             "proposal",
 		Description:       "description",
 		NameSurnameParams: models.NewNameSurnameLenParams(&validMin, &validMax),
@@ -76,7 +76,7 @@ func TestNameSurnameParamsEditProposal_ProposalType(t *testing.T) {
 		models.NewNameSurnameLenParams(&validMin, &validMax),
 	)
 
-	require.Equal(t, "NameSurnameParamsEdit", proposal.ProposalType())
+	require.Equal(t, "EditNameSurnameParams", proposal.ProposalType())
 }
 
 func TestNameSurnameParamsEditProposal_String(t *testing.T) {
@@ -141,7 +141,7 @@ func TestNewMonikerParamsEditProposal(t *testing.T) {
 	validMax := sdk.NewInt(30)
 	params := models.NewMonikerLenParams(&validMin, &validMax)
 
-	monikerProposal := models.MonikerParamsEditProposal{
+	monikerProposal := models.EditMonikerParamsProposal{
 		Title:         "title",
 		Description:   "description",
 		MonikerParams: params,
@@ -189,7 +189,7 @@ func TestMonikerParamsEditProposal_ProposalType(t *testing.T) {
 
 	proposal := models.NewMonikerParamsEditProposal("title", "description", params)
 
-	require.Equal(t, "MonikerParamsEdit", proposal.ProposalType())
+	require.Equal(t, "EditMonikerParams", proposal.ProposalType())
 }
 
 func TestMonikerParamsEditProposal_String(t *testing.T) {
@@ -249,7 +249,7 @@ func TestMonikerParamsEditProposal_ValidateBasic(t *testing.T) {
 func TestNewBioParamsEditProposal(t *testing.T) {
 	params := models.NewBioLenParams(sdk.NewInt(2000))
 
-	proposal := models.BioParamsEditProposal{
+	proposal := models.EditBioParamsProposal{
 		Title:       "title",
 		Description: "description",
 		BioParams:   params,
@@ -296,7 +296,7 @@ func TestBioParamsEditProposal_ProposalType(t *testing.T) {
 		models.NewBioLenParams(sdk.NewInt(2000)),
 	)
 
-	require.Equal(t, "BioParamsEdit", actualProp.ProposalType())
+	require.Equal(t, "EditBioParams", actualProp.ProposalType())
 }
 
 func TestBioParamsEditProposal_String(t *testing.T) {

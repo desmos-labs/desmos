@@ -22,6 +22,11 @@ func TestDefaultParams(t *testing.T) {
 	require.Equal(t, params, models.DefaultParams())
 }
 
+func TestParams_String(t *testing.T) {
+	params := models.DefaultParams()
+	require.Equal(t, "Profiles parameters:\nName and Surname params lengths:\nMin accepted length: 2\nMax accepted length: 1000\nMoniker params lengths:\nMin accepted length: 2\nMax accepted length: 30\nBiography params lengths:\nMax accepted length: 1000", params.String())
+}
+
 func TestParams_WithNameSurnameParams(t *testing.T) {
 	validMin := sdk.NewInt(2)
 	validMax := sdk.NewInt(30)
@@ -190,7 +195,7 @@ func TestNameSurnameLenParams_String(t *testing.T) {
 	max := sdk.NewInt(1000)
 	nameSurnameParams := models.NewNameSurnameLenParams(&min, &max)
 	actual := nameSurnameParams.String()
-	require.Equal(t, "{\"min_name_surname_len\":\"2\",\"max_name_surname_len\":\"1000\"}", actual)
+	require.Equal(t, "Name and Surname params lengths:\nMin accepted length: 2\nMax accepted length: 1000", actual)
 }
 
 func TestMonikerLenParams_String(t *testing.T) {
@@ -198,13 +203,13 @@ func TestMonikerLenParams_String(t *testing.T) {
 	max := sdk.NewInt(30)
 	monikerParams := models.NewMonikerLenParams(&min, &max)
 	actual := monikerParams.String()
-	require.Equal(t, "{\"min_moniker_len\":\"2\",\"max_moniker_len\":\"30\"}", actual)
+	require.Equal(t, "Moniker params lengths:\nMin accepted length: 2\nMax accepted length: 30", actual)
 }
 
 func TestBioLenParams_String(t *testing.T) {
 	bioParams := models.NewBioLenParams(sdk.NewInt(1000))
 	actual := bioParams.String()
-	require.Equal(t, "{\"max_bio_len\":\"1000\"}", actual)
+	require.Equal(t, "Biography params lengths:\nMax accepted length: 1000", actual)
 }
 
 func TestValidateNameSurnameLenParams(t *testing.T) {

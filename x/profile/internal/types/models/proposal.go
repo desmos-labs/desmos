@@ -6,59 +6,59 @@ import (
 )
 
 const (
-	ProposalTypeNameSurnameParamsEdit string = "NameSurnameParamsEdit"
-	ProposalTypeMonikerParamsEdit     string = "MonikerParamsEdit"
-	ProposalTypeBioParamsEdit         string = "BioParamsEdit"
+	ProposalTypeNameSurnameParamsEdit string = "EditNameSurnameParams"
+	ProposalTypeMonikerParamsEdit     string = "EditMonikerParams"
+	ProposalTypeBioParamsEdit         string = "EditBioParams"
 )
 
 func init() {
 	gov.RegisterProposalType(ProposalTypeNameSurnameParamsEdit)
-	gov.RegisterProposalTypeCodec(NameSurnameParamsEditProposal{}, "desmos/NameSurnameProfileParamsEditProposal")
+	gov.RegisterProposalTypeCodec(EditNameSurnameParamsProposal{}, "desmos/EditNameSurnameParamsProposal")
 	gov.RegisterProposalType(ProposalTypeMonikerParamsEdit)
-	gov.RegisterProposalTypeCodec(MonikerParamsEditProposal{}, "desmos/MonikerProfileParamsEditProposal")
+	gov.RegisterProposalTypeCodec(EditMonikerParamsProposal{}, "desmos/EditMonikerParamsProposal")
 	gov.RegisterProposalType(ProposalTypeBioParamsEdit)
-	gov.RegisterProposalTypeCodec(BioParamsEditProposal{}, "desmos/BioParamsEditProposal")
+	gov.RegisterProposalTypeCodec(EditBioParamsProposal{}, "desmos/EditBioParamsProposal")
 
 }
 
 /////////////////////////////////////////////
-/////////NameSurnameParamsEditProposal//////
+/////////EditNameSurnameParamsProposal//////
 ///////////////////////////////////////////
 
 // Implements Proposal Interface
-var _ gov.Content = NameSurnameParamsEditProposal{}
+var _ gov.Content = EditNameSurnameParamsProposal{}
 
-type NameSurnameParamsEditProposal struct {
+type EditNameSurnameParamsProposal struct {
 	Title             string             `json:"title" yaml:"title"`
 	Description       string             `json:"description" yaml:"description"`
 	NameSurnameParams NameSurnameLengths `json:"name_surname_params" yaml:"name_surname_params"`
 }
 
 func NewNameSurnameParamsEditProposal(title, description string, nsParams NameSurnameLengths) gov.Content {
-	return NameSurnameParamsEditProposal{
+	return EditNameSurnameParamsProposal{
 		Title:             title,
 		Description:       description,
 		NameSurnameParams: nsParams,
 	}
 }
 
-func (nsp NameSurnameParamsEditProposal) GetTitle() string {
+func (nsp EditNameSurnameParamsProposal) GetTitle() string {
 	return nsp.Title
 }
 
-func (nsp NameSurnameParamsEditProposal) GetDescription() string {
+func (nsp EditNameSurnameParamsProposal) GetDescription() string {
 	return nsp.Description
 }
 
-func (nsp NameSurnameParamsEditProposal) ProposalRoute() string {
+func (nsp EditNameSurnameParamsProposal) ProposalRoute() string {
 	return RouterKey
 }
 
-func (nsp NameSurnameParamsEditProposal) ProposalType() string {
+func (nsp EditNameSurnameParamsProposal) ProposalType() string {
 	return ProposalTypeNameSurnameParamsEdit
 }
 
-func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
+func (nsp EditNameSurnameParamsProposal) ValidateBasic() error {
 	err := ValidateNameSurnameLenParams(nsp.NameSurnameParams)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (nsp NameSurnameParamsEditProposal) ValidateBasic() error {
 	return gov.ValidateAbstract(nsp)
 }
 
-func (nsp NameSurnameParamsEditProposal) String() string {
+func (nsp EditNameSurnameParamsProposal) String() string {
 	return fmt.Sprintf(`Name/Surname Profiles' params edit proposal:
   Title:       %s
   Description: %s
@@ -77,43 +77,43 @@ func (nsp NameSurnameParamsEditProposal) String() string {
 }
 
 //////////////////////////////////////////
-/////////MonikerParamsEditProposal///////
+/////////EditMonikerParamsProposal///////
 ////////////////////////////////////////
 
 // Implements Proposal Interface
-var _ gov.Content = MonikerParamsEditProposal{}
+var _ gov.Content = EditMonikerParamsProposal{}
 
-type MonikerParamsEditProposal struct {
+type EditMonikerParamsProposal struct {
 	Title         string         `json:"title" yaml:"title"`
 	Description   string         `json:"description" yaml:"description"`
 	MonikerParams MonikerLengths `json:"moniker_params" yam:"moniker_params"`
 }
 
 func NewMonikerParamsEditProposal(title, description string, mParams MonikerLengths) gov.Content {
-	return MonikerParamsEditProposal{
+	return EditMonikerParamsProposal{
 		Title:         title,
 		Description:   description,
 		MonikerParams: mParams,
 	}
 }
 
-func (mp MonikerParamsEditProposal) GetTitle() string {
+func (mp EditMonikerParamsProposal) GetTitle() string {
 	return mp.Title
 }
 
-func (mp MonikerParamsEditProposal) GetDescription() string {
+func (mp EditMonikerParamsProposal) GetDescription() string {
 	return mp.Description
 }
 
-func (mp MonikerParamsEditProposal) ProposalRoute() string {
+func (mp EditMonikerParamsProposal) ProposalRoute() string {
 	return RouterKey
 }
 
-func (mp MonikerParamsEditProposal) ProposalType() string {
+func (mp EditMonikerParamsProposal) ProposalType() string {
 	return ProposalTypeMonikerParamsEdit
 }
 
-func (mp MonikerParamsEditProposal) ValidateBasic() error {
+func (mp EditMonikerParamsProposal) ValidateBasic() error {
 	err := ValidateMonikerLenParams(mp.MonikerParams)
 	if err != nil {
 		return err
@@ -121,7 +121,7 @@ func (mp MonikerParamsEditProposal) ValidateBasic() error {
 	return gov.ValidateAbstract(mp)
 }
 
-func (mp MonikerParamsEditProposal) String() string {
+func (mp EditMonikerParamsProposal) String() string {
 	return fmt.Sprintf(`Moniker Profiles' params edit proposal:
   Title:       %s
   Description: %s
@@ -132,43 +132,43 @@ func (mp MonikerParamsEditProposal) String() string {
 }
 
 //////////////////////////////////////////
-/////////BioParamsEditProposal///////////
+/////////EditBioParamsProposal///////////
 ////////////////////////////////////////
 
 // Implements Proposal Interface
-var _ gov.Content = BioParamsEditProposal{}
+var _ gov.Content = EditBioParamsProposal{}
 
-type BioParamsEditProposal struct {
+type EditBioParamsProposal struct {
 	Title       string           `json:"title" yaml:"title"`
 	Description string           `json:"description" yaml:"description"`
 	BioParams   BiographyLengths `json:"bio_params" yaml:"bio_params"`
 }
 
 func NewBioParamsEditProposal(title, description string, bParams BiographyLengths) gov.Content {
-	return BioParamsEditProposal{
+	return EditBioParamsProposal{
 		Title:       title,
 		Description: description,
 		BioParams:   bParams,
 	}
 }
 
-func (bp BioParamsEditProposal) GetTitle() string {
+func (bp EditBioParamsProposal) GetTitle() string {
 	return bp.Title
 }
 
-func (bp BioParamsEditProposal) GetDescription() string {
+func (bp EditBioParamsProposal) GetDescription() string {
 	return bp.Description
 }
 
-func (bp BioParamsEditProposal) ProposalRoute() string {
+func (bp EditBioParamsProposal) ProposalRoute() string {
 	return RouterKey
 }
 
-func (bp BioParamsEditProposal) ProposalType() string {
+func (bp EditBioParamsProposal) ProposalType() string {
 	return ProposalTypeBioParamsEdit
 }
 
-func (bp BioParamsEditProposal) ValidateBasic() error {
+func (bp EditBioParamsProposal) ValidateBasic() error {
 	err := ValidateBioLenParams(bp.BioParams)
 	if err != nil {
 		return err
@@ -176,7 +176,7 @@ func (bp BioParamsEditProposal) ValidateBasic() error {
 	return gov.ValidateAbstract(bp)
 }
 
-func (bp BioParamsEditProposal) String() string {
+func (bp EditBioParamsProposal) String() string {
 	return fmt.Sprintf(`Biography Profiles' params edit proposal:
   Title:       %s
   Description: %s

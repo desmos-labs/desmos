@@ -1,9 +1,9 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 	paramsModule "github.com/cosmos/cosmos-sdk/x/params/subspace"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -56,6 +56,17 @@ func DefaultParams() Params {
 		MonikerLengths:     DefaultMonikerLenParams(),
 		BiographyLengths:   DefaultBioLenParams(),
 	}
+}
+
+func (params Params) String() string {
+	out := "Profiles parameters:\n"
+	out += fmt.Sprintf("%s\n%s\n%s\n",
+		params.NameSurnameLengths.String(),
+		params.MonikerLengths.String(),
+		params.BiographyLengths.String(),
+	)
+
+	return strings.TrimSpace(out)
 }
 
 // WithNameSurnameParams replace the given non nil nsParams with the existent one
@@ -127,11 +138,13 @@ func DefaultNameSurnameLenParams() NameSurnameLengths {
 
 // String implements stringer interface
 func (params NameSurnameLengths) String() string {
-	out, err := json.Marshal(params)
-	if err != nil {
-		panic(err)
-	}
-	return string(out)
+	out := "Name and Surname params lengths:\n"
+	out += fmt.Sprintf("Min accepted length: %s\nMax accepted length: %s",
+		params.MinNameSurnameLen,
+		params.MaxNameSurnameLen,
+	)
+
+	return strings.TrimSpace(out)
 }
 
 func ValidateNameSurnameLenParams(i interface{}) error {
@@ -141,13 +154,17 @@ func ValidateNameSurnameLenParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MinNameSurnameLen != nil && params.MinNameSurnameLen.IsNegative() || params.MinNameSurnameLen.LT(DefaultMinNameSurnameLength) {
-		return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinNameSurnameLen)
+	if params.MinNameSurnameLen != nil {
+		if params.MinNameSurnameLen.IsNegative() || params.MinNameSurnameLen.LT(DefaultMinNameSurnameLength) {
+			return fmt.Errorf("invalid minimum name/surname length param: %s", params.MinNameSurnameLen)
+		}
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	if params.MaxNameSurnameLen != nil && params.MaxNameSurnameLen.IsNegative() || params.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
-		return fmt.Errorf("invalid max name/surname length param: %s", params.MaxNameSurnameLen)
+	if params.MaxNameSurnameLen != nil {
+		if params.MaxNameSurnameLen.IsNegative() || params.MaxNameSurnameLen.GT(DefaultMaxNameSurnameLength) {
+			return fmt.Errorf("invalid max name/surname length param: %s", params.MaxNameSurnameLen)
+		}
 	}
 
 	return nil
@@ -156,7 +173,7 @@ func ValidateNameSurnameLenParams(i interface{}) error {
 // MonikerLengths defines the paramsModule around profiles' monikers
 type MonikerLengths struct {
 	MinMonikerLen *sdk.Int `json:"min_moniker_len" yaml:"min_moniker_len"`
-	MaxMonikerLen *sdk.Int `json:"max_moniker_len" yaml:"min_moniker_len"`
+	MaxMonikerLen *sdk.Int `json:"max_moniker_len" yaml:"max_moniker_len"`
 }
 
 // NewMonikerLenParams creates a new MonikerLengths obj
@@ -175,11 +192,13 @@ func DefaultMonikerLenParams() MonikerLengths {
 
 // String implements stringer interface
 func (params MonikerLengths) String() string {
-	out, err := json.Marshal(params)
-	if err != nil {
-		panic(err)
-	}
-	return string(out)
+	out := "Moniker params lengths:\n"
+	out += fmt.Sprintf("Min accepted length: %s\nMax accepted length: %s",
+		params.MinMonikerLen,
+		params.MaxMonikerLen,
+	)
+
+	return strings.TrimSpace(out)
 }
 
 func ValidateMonikerLenParams(i interface{}) error {
@@ -188,12 +207,16 @@ func ValidateMonikerLenParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MinMonikerLen != nil && params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
-		return fmt.Errorf("invalid minimum moniker length param: %s", params.MinMonikerLen)
+	if params.MinMonikerLen != nil {
+		if params.MinMonikerLen.IsNegative() || params.MinMonikerLen.LT(DefaultMinMonikerLength) {
+			return fmt.Errorf("invalid minimum moniker length param: %s", params.MinMonikerLen)
+		}
 	}
 
-	if params.MaxMonikerLen != nil && params.MaxMonikerLen.IsNegative() {
-		return fmt.Errorf("invalid max moniker length param: %s", params.MaxMonikerLen)
+	if params.MaxMonikerLen != nil {
+		if params.MaxMonikerLen.IsNegative() {
+			return fmt.Errorf("invalid max moniker length param: %s", params.MaxMonikerLen)
+		}
 	}
 
 	return nil
@@ -218,11 +241,12 @@ func DefaultBioLenParams() BiographyLengths {
 
 // String implements stringer interface
 func (params BiographyLengths) String() string {
-	out, err := json.Marshal(params)
-	if err != nil {
-		panic(err)
-	}
-	return string(out)
+	out := "Biography params lengths:\n"
+	out += fmt.Sprintf("Max accepted length: %s",
+		params.MaxBioLen,
+	)
+
+	return strings.TrimSpace(out)
 }
 
 func ValidateBioLenParams(i interface{}) error {

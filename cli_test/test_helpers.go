@@ -71,17 +71,17 @@ var (
 
 // Fixtures is used to setup the testing environment
 type Fixtures struct {
-	BuildDir       string
-	RootDir        string
-	DesmosBinary   string
-	DesmosliBinary string
-	ChainID        string
-	RPCAddr        string
-	Port           string
-	DesmosdHome    string
-	DesmoscliHome  string
-	P2PAddr        string
-	T              *testing.T
+	BuildDir        string
+	RootDir         string
+	DesmosBinary    string
+	DesmoscliBinary string
+	ChainID         string
+	RPCAddr         string
+	Port            string
+	DesmosdHome     string
+	DesmoscliHome   string
+	P2PAddr         string
+	T               *testing.T
 }
 
 // NewFixtures creates a new instance of Fixtures with many vars set
@@ -102,16 +102,16 @@ func NewFixtures(t *testing.T) *Fixtures {
 	}
 
 	return &Fixtures{
-		T:              t,
-		BuildDir:       buildDir,
-		RootDir:        tmpDir,
-		DesmosBinary:   filepath.Join(buildDir, "desmosd"),
-		DesmosliBinary: filepath.Join(buildDir, "desmoscli"),
-		DesmosdHome:    filepath.Join(tmpDir, ".desmosd"),
-		DesmoscliHome:  filepath.Join(tmpDir, ".desmoscli"),
-		RPCAddr:        servAddr,
-		P2PAddr:        p2pAddr,
-		Port:           port,
+		T:               t,
+		BuildDir:        buildDir,
+		RootDir:         tmpDir,
+		DesmosBinary:    filepath.Join(buildDir, "desmosd"),
+		DesmoscliBinary: filepath.Join(buildDir, "desmoscli"),
+		DesmosdHome:     filepath.Join(tmpDir, ".desmosd"),
+		DesmoscliHome:   filepath.Join(tmpDir, ".desmoscli"),
+		RPCAddr:         servAddr,
+		P2PAddr:         p2pAddr,
+		Port:            port,
 	}
 }
 
@@ -271,14 +271,14 @@ func (f *Fixtures) ValidateGenesis() {
 
 // KeysDelete is desmoscli keys delete
 func (f *Fixtures) KeysDelete(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s keys delete --keyring-backend=test --home=%s %s", f.DesmosliBinary,
+	cmd := fmt.Sprintf("%s keys delete --keyring-backend=test --home=%s %s", f.DesmoscliBinary,
 		f.DesmoscliHome, name)
 	executeWrite(f.T, addFlags(cmd, append(append(flags, "-y"), "-f")))
 }
 
 // KeysAdd is desmoscli keys add
 func (f *Fixtures) KeysAdd(name string, flags ...string) {
-	cmd := fmt.Sprintf("%s keys add --keyring-backend=test --home=%s %s", f.DesmosliBinary,
+	cmd := fmt.Sprintf("%s keys add --keyring-backend=test --home=%s %s", f.DesmoscliBinary,
 		f.DesmoscliHome, name)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags))
 }
@@ -286,20 +286,20 @@ func (f *Fixtures) KeysAdd(name string, flags ...string) {
 // KeysAddRecover prepares desmoscli keys add --recover
 func (f *Fixtures) KeysAddRecover(name, mnemonic string, flags ...string) (exitSuccess bool, stdout, stderr string) {
 	cmd := fmt.Sprintf("%s keys add --keyring-backend=test --home=%s --recover %s",
-		f.DesmosliBinary, f.DesmoscliHome, name)
+		f.DesmoscliBinary, f.DesmoscliHome, name)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), mnemonic)
 }
 
 // KeysAddRecoverHDPath prepares desmoscli keys add --recover --account --index
 func (f *Fixtures) KeysAddRecoverHDPath(name, mnemonic string, account uint32, index uint32, flags ...string) {
 	cmd := fmt.Sprintf("%s keys add --keyring-backend=test --home=%s --recover %s --account %d"+
-		" --index %d", f.DesmosliBinary, f.DesmoscliHome, name, account, index)
+		" --index %d", f.DesmoscliBinary, f.DesmoscliHome, name, account, index)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags), mnemonic)
 }
 
 // KeysShow is desmoscli keys show
 func (f *Fixtures) KeysShow(name string, flags ...string) keys.KeyOutput {
-	cmd := fmt.Sprintf("%s keys show --keyring-backend=test --home=%s %s", f.DesmosliBinary,
+	cmd := fmt.Sprintf("%s keys show --keyring-backend=test --home=%s %s", f.DesmoscliBinary,
 		f.DesmoscliHome, name)
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var ko keys.KeyOutput
@@ -321,7 +321,7 @@ func (f *Fixtures) KeyAddress(name string) sdk.AccAddress {
 
 // CLIConfig is desmoscli config
 func (f *Fixtures) CLIConfig(key, value string, flags ...string) {
-	cmd := fmt.Sprintf("%s config --home=%s %s %s", f.DesmosliBinary, f.DesmoscliHome, key, value)
+	cmd := fmt.Sprintf("%s config --home=%s %s %s", f.DesmoscliBinary, f.DesmoscliHome, key, value)
 	executeWriteCheckErr(f.T, addFlags(cmd, flags))
 }
 
@@ -330,33 +330,33 @@ func (f *Fixtures) CLIConfig(key, value string, flags ...string) {
 
 // TxSend is desmoscli tx send
 func (f *Fixtures) TxSend(from string, to sdk.AccAddress, amount sdk.Coin, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf("%s tx send --keyring-backend=test %s %s %s %v", f.DesmosliBinary, from,
+	cmd := fmt.Sprintf("%s tx send --keyring-backend=test %s %s %s %v", f.DesmoscliBinary, from,
 		to, amount, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxSign is desmoscli tx sign
 func (f *Fixtures) TxSign(signer, fileName string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf("%s tx sign %v --keyring-backend=test --from=%s %v", f.DesmosliBinary,
+	cmd := fmt.Sprintf("%s tx sign %v --keyring-backend=test --from=%s %v", f.DesmoscliBinary,
 		f.Flags(), signer, fileName)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxBroadcast is desmoscli tx broadcast
 func (f *Fixtures) TxBroadcast(fileName string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf("%s tx broadcast %v %v", f.DesmosliBinary, f.Flags(), fileName)
+	cmd := fmt.Sprintf("%s tx broadcast %v %v", f.DesmoscliBinary, f.Flags(), fileName)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxEncode is desmoscli tx encode
 func (f *Fixtures) TxEncode(fileName string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf("%s tx encode %v %v", f.DesmosliBinary, f.Flags(), fileName)
+	cmd := fmt.Sprintf("%s tx encode %v %v", f.DesmoscliBinary, f.Flags(), fileName)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxMultisign is desmoscli tx multisign
 func (f *Fixtures) TxMultisign(fileName, name string, signaturesFiles []string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf("%s tx multisign --keyring-backend=test %v %s %s %s", f.DesmosliBinary, f.Flags(),
+	cmd := fmt.Sprintf("%s tx multisign --keyring-backend=test %v %s %s %s", f.DesmoscliBinary, f.Flags(),
 		fileName, name, strings.Join(signaturesFiles, " "))
 	return executeWriteRetStdStreams(f.T, cmd)
 }
@@ -367,7 +367,7 @@ func (f *Fixtures) TxMultisign(fileName, name string, signaturesFiles []string, 
 // TxStakingCreateValidator is desmoscli tx staking create-validator
 func (f *Fixtures) TxStakingCreateValidator(from, consPubKey string, amount sdk.Coin, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf("%s tx staking create-validator %v --keyring-backend=test --from=%s"+
-		" --pubkey=%s", f.DesmosliBinary, f.Flags(), from, consPubKey)
+		" --pubkey=%s", f.DesmoscliBinary, f.Flags(), from, consPubKey)
 	cmd += fmt.Sprintf(" --amount=%v --moniker=%v --commission-rate=%v", amount, from, "0.05")
 	cmd += fmt.Sprintf(" --commission-max-rate=%v --commission-max-change-rate=%v", "0.20", "0.10")
 	cmd += fmt.Sprintf(" --min-self-delegation=%v", "1")
@@ -377,7 +377,7 @@ func (f *Fixtures) TxStakingCreateValidator(from, consPubKey string, amount sdk.
 // TxStakingUnbond is desmoscli tx staking unbond
 func (f *Fixtures) TxStakingUnbond(from, shares string, validator sdk.ValAddress, flags ...string) bool {
 	cmd := fmt.Sprintf("%s tx staking unbond --keyring-backend=test %s %v --from=%s %v",
-		f.DesmosliBinary, validator, shares, from, f.Flags())
+		f.DesmoscliBinary, validator, shares, from, f.Flags())
 	return executeWrite(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -387,7 +387,7 @@ func (f *Fixtures) TxStakingUnbond(from, shares string, validator sdk.ValAddress
 // TxGovSubmitProposal is desmoscli tx gov submit-proposal
 func (f *Fixtures) TxGovSubmitProposal(from, typ, title, description string, deposit sdk.Coin, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf("%s tx gov submit-proposal %v --keyring-backend=test --from=%s --type=%s",
-		f.DesmosliBinary, f.Flags(), from, typ)
+		f.DesmoscliBinary, f.Flags(), from, typ)
 	cmd += fmt.Sprintf(" --title=%s --description=%s --deposit=%s", title, description, deposit)
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
@@ -395,14 +395,14 @@ func (f *Fixtures) TxGovSubmitProposal(from, typ, title, description string, dep
 // TxGovDeposit is desmoscli tx gov deposit
 func (f *Fixtures) TxGovDeposit(proposalID int, from string, amount sdk.Coin, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf("%s tx gov deposit %d %s --keyring-backend=test --from=%s %v",
-		f.DesmosliBinary, proposalID, amount, from, f.Flags())
+		f.DesmoscliBinary, proposalID, amount, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxGovVote is desmoscli tx gov vote
 func (f *Fixtures) TxGovVote(proposalID int, option gov.VoteOption, from string, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf("%s tx gov vote %d %s --keyring-backend=test --from=%s %v",
-		f.DesmosliBinary, proposalID, option, from, f.Flags())
+		f.DesmoscliBinary, proposalID, option, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -412,7 +412,7 @@ func (f *Fixtures) TxGovVote(proposalID int, option gov.VoteOption, from string,
 // TxPostsCreate is desmoscli tx posts create
 func (f *Fixtures) TxPostsCreate(subspace, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts create %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, subspace, message, from, f.Flags())
+		f.DesmoscliBinary, subspace, message, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -424,35 +424,35 @@ func (f *Fixtures) TxPostsAnswerPoll(pollID posts.PostID, answers []posts.Answer
 	}
 
 	cmd := fmt.Sprintf(`%s tx posts answer-poll %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, pollID, strings.Join(stringAnswers, " "), from, f.Flags())
+		f.DesmoscliBinary, pollID, strings.Join(stringAnswers, " "), from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsEdit is desmoscli tx posts edit
 func (f *Fixtures) TxPostsEdit(id string, message string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts edit %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, id, message, from, f.Flags())
+		f.DesmoscliBinary, id, message, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsAddReaction is desmoscli tx posts add-reaction
 func (f *Fixtures) TxPostsAddReaction(id string, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts add-reaction %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, id, reaction, from, f.Flags())
+		f.DesmoscliBinary, id, reaction, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsRemoveReaction is desmoscli tx posts remove-reaction
 func (f *Fixtures) TxPostsRemoveReaction(id string, reaction string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts remove-reaction %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, id, reaction, from, f.Flags())
+		f.DesmoscliBinary, id, reaction, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 // TxPostsRegisterReaction is desmoscli tx posts register-reaction
 func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx posts register-reaction %s %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, shortCode, value, subspace, from, f.Flags())
+		f.DesmoscliBinary, shortCode, value, subspace, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -460,13 +460,33 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 // desmoscli tx profile
 func (f *Fixtures) TxProfileSave(from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles save --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, from, f.Flags())
+		f.DesmoscliBinary, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles delete --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, from, f.Flags())
+		f.DesmoscliBinary, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+// desmoscli profile proposals
+
+func (f *Fixtures) TxProfileSubmitNameSurnameEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx gov submit-proposal ns-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, deposit, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileSubmitMonikerEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx gov submit-proposal moniker-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, deposit, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileSubmitBioEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx gov submit-proposal bio-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, deposit, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -475,7 +495,7 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 
 func (f *Fixtures) TxReportPost(id, repType, repMess string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx reports create %s %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmosliBinary, id, repType, repMess, from, f.Flags())
+		f.DesmoscliBinary, id, repType, repMess, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -484,7 +504,7 @@ func (f *Fixtures) TxReportPost(id, repType, repMess string, from sdk.AccAddress
 
 // QueryAccount is desmoscli query account
 func (f *Fixtures) QueryAccount(address sdk.AccAddress, flags ...string) auth.BaseAccount {
-	cmd := fmt.Sprintf("%s query account %s %v", f.DesmosliBinary, address, f.Flags())
+	cmd := fmt.Sprintf("%s query account %s %v", f.DesmoscliBinary, address, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var initRes map[string]json.RawMessage
 	err := json.Unmarshal([]byte(out), &initRes)
@@ -503,7 +523,7 @@ func (f *Fixtures) QueryAccount(address sdk.AccAddress, flags ...string) auth.Ba
 
 // QueryTxs is desmoscli query txs
 func (f *Fixtures) QueryTxs(page, limit int, events ...string) *sdk.SearchTxsResult {
-	cmd := fmt.Sprintf("%s query txs --page=%d --limit=%d --events='%s' %v", f.DesmosliBinary, page, limit, queryEvents(events), f.Flags())
+	cmd := fmt.Sprintf("%s query txs --page=%d --limit=%d --events='%s' %v", f.DesmoscliBinary, page, limit, queryEvents(events), f.Flags())
 	out, _ := tests.ExecuteT(f.T, cmd, "")
 	var result sdk.SearchTxsResult
 	cdc := app.MakeCodec()
@@ -514,7 +534,7 @@ func (f *Fixtures) QueryTxs(page, limit int, events ...string) *sdk.SearchTxsRes
 
 // QueryTxsInvalid query txs with wrong parameters and compare expected error
 func (f *Fixtures) QueryTxsInvalid(expectedErr error, page, limit int, events ...string) {
-	cmd := fmt.Sprintf("%s query txs --page=%d --limit=%d --events='%s' %v", f.DesmosliBinary, page, limit, queryEvents(events), f.Flags())
+	cmd := fmt.Sprintf("%s query txs --page=%d --limit=%d --events='%s' %v", f.DesmoscliBinary, page, limit, queryEvents(events), f.Flags())
 	_, err := tests.ExecuteT(f.T, cmd, "")
 	require.EqualError(f.T, expectedErr, err)
 }
@@ -524,7 +544,7 @@ func (f *Fixtures) QueryTxsInvalid(expectedErr error, page, limit int, events ..
 
 // QueryStakingValidator is desmoscli query staking validator
 func (f *Fixtures) QueryStakingValidator(valAddr sdk.ValAddress, flags ...string) staking.Validator {
-	cmd := fmt.Sprintf("%s query staking validator %s %v", f.DesmosliBinary, valAddr, f.Flags())
+	cmd := fmt.Sprintf("%s query staking validator %s %v", f.DesmoscliBinary, valAddr, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var validator staking.Validator
 	cdc := app.MakeCodec()
@@ -535,7 +555,7 @@ func (f *Fixtures) QueryStakingValidator(valAddr sdk.ValAddress, flags ...string
 
 // QueryStakingUnbondingDelegationsFrom is desmoscli query staking unbonding-delegations-from
 func (f *Fixtures) QueryStakingUnbondingDelegationsFrom(valAddr sdk.ValAddress, flags ...string) []staking.UnbondingDelegation {
-	cmd := fmt.Sprintf("%s query staking unbonding-delegations-from %s %v", f.DesmosliBinary, valAddr, f.Flags())
+	cmd := fmt.Sprintf("%s query staking unbonding-delegations-from %s %v", f.DesmoscliBinary, valAddr, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var ubds []staking.UnbondingDelegation
 	cdc := app.MakeCodec()
@@ -546,7 +566,7 @@ func (f *Fixtures) QueryStakingUnbondingDelegationsFrom(valAddr sdk.ValAddress, 
 
 // QueryStakingDelegationsTo is desmoscli query staking delegations-to
 func (f *Fixtures) QueryStakingDelegationsTo(valAddr sdk.ValAddress, flags ...string) []staking.Delegation {
-	cmd := fmt.Sprintf("%s query staking delegations-to %s %v", f.DesmosliBinary, valAddr, f.Flags())
+	cmd := fmt.Sprintf("%s query staking delegations-to %s %v", f.DesmoscliBinary, valAddr, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var delegations []staking.Delegation
 	cdc := app.MakeCodec()
@@ -557,7 +577,7 @@ func (f *Fixtures) QueryStakingDelegationsTo(valAddr sdk.ValAddress, flags ...st
 
 // QueryStakingPool is desmoscli query staking pool
 func (f *Fixtures) QueryStakingPool(flags ...string) staking.Pool {
-	cmd := fmt.Sprintf("%s query staking pool %v", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query staking pool %v", f.DesmoscliBinary, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var pool staking.Pool
 	cdc := app.MakeCodec()
@@ -568,7 +588,7 @@ func (f *Fixtures) QueryStakingPool(flags ...string) staking.Pool {
 
 // QueryStakingParameters is desmoscli query staking parameters
 func (f *Fixtures) QueryStakingParameters(flags ...string) staking.Params {
-	cmd := fmt.Sprintf("%s query staking params %v", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query staking params %v", f.DesmoscliBinary, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var params staking.Params
 	cdc := app.MakeCodec()
@@ -582,7 +602,7 @@ func (f *Fixtures) QueryStakingParameters(flags ...string) staking.Params {
 
 // QueryGovParamDeposit is desmoscli query gov param deposit
 func (f *Fixtures) QueryGovParamDeposit() gov.DepositParams {
-	cmd := fmt.Sprintf("%s query gov param deposit %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query gov param deposit %s", f.DesmoscliBinary, f.Flags())
 	out, _ := tests.ExecuteT(f.T, cmd, "")
 	var depositParam gov.DepositParams
 	cdc := app.MakeCodec()
@@ -593,7 +613,7 @@ func (f *Fixtures) QueryGovParamDeposit() gov.DepositParams {
 
 // QueryGovParamVoting is desmoscli query gov param voting
 func (f *Fixtures) QueryGovParamVoting() gov.VotingParams {
-	cmd := fmt.Sprintf("%s query gov param voting %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query gov param voting %s", f.DesmoscliBinary, f.Flags())
 	out, _ := tests.ExecuteT(f.T, cmd, "")
 	var votingParam gov.VotingParams
 	cdc := app.MakeCodec()
@@ -604,7 +624,7 @@ func (f *Fixtures) QueryGovParamVoting() gov.VotingParams {
 
 // QueryGovParamTallying is desmoscli query gov param tallying
 func (f *Fixtures) QueryGovParamTallying() gov.TallyParams {
-	cmd := fmt.Sprintf("%s query gov param tallying %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query gov param tallying %s", f.DesmoscliBinary, f.Flags())
 	out, _ := tests.ExecuteT(f.T, cmd, "")
 	var tallyingParam gov.TallyParams
 	cdc := app.MakeCodec()
@@ -615,7 +635,7 @@ func (f *Fixtures) QueryGovParamTallying() gov.TallyParams {
 
 // QueryGovProposals is desmoscli query gov proposals
 func (f *Fixtures) QueryGovProposals(flags ...string) gov.Proposals {
-	cmd := fmt.Sprintf("%s query gov proposals %v", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query gov proposals %v", f.DesmoscliBinary, f.Flags())
 	stdout, stderr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	if strings.Contains(stderr, "no matching proposals found") {
 		return gov.Proposals{}
@@ -630,7 +650,7 @@ func (f *Fixtures) QueryGovProposals(flags ...string) gov.Proposals {
 
 // QueryGovProposal is desmoscli query gov proposal
 func (f *Fixtures) QueryGovProposal(proposalID int, flags ...string) gov.Proposal {
-	cmd := fmt.Sprintf("%s query gov proposal %d %v", f.DesmosliBinary, proposalID, f.Flags())
+	cmd := fmt.Sprintf("%s query gov proposal %d %v", f.DesmoscliBinary, proposalID, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var proposal gov.Proposal
 	cdc := app.MakeCodec()
@@ -641,7 +661,7 @@ func (f *Fixtures) QueryGovProposal(proposalID int, flags ...string) gov.Proposa
 
 // QueryGovVote is desmoscli query gov vote
 func (f *Fixtures) QueryGovVote(proposalID int, voter sdk.AccAddress, flags ...string) gov.Vote {
-	cmd := fmt.Sprintf("%s query gov vote %d %s %v", f.DesmosliBinary, proposalID, voter, f.Flags())
+	cmd := fmt.Sprintf("%s query gov vote %d %s %v", f.DesmoscliBinary, proposalID, voter, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var vote gov.Vote
 	cdc := app.MakeCodec()
@@ -652,7 +672,7 @@ func (f *Fixtures) QueryGovVote(proposalID int, voter sdk.AccAddress, flags ...s
 
 // QueryGovVotes is desmoscli query gov votes
 func (f *Fixtures) QueryGovVotes(proposalID int, flags ...string) []gov.Vote {
-	cmd := fmt.Sprintf("%s query gov votes %d %v", f.DesmosliBinary, proposalID, f.Flags())
+	cmd := fmt.Sprintf("%s query gov votes %d %v", f.DesmoscliBinary, proposalID, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var votes []gov.Vote
 	cdc := app.MakeCodec()
@@ -663,7 +683,7 @@ func (f *Fixtures) QueryGovVotes(proposalID int, flags ...string) []gov.Vote {
 
 // QueryGovDeposit is desmoscli query gov deposit
 func (f *Fixtures) QueryGovDeposit(proposalID int, depositor sdk.AccAddress, flags ...string) gov.Deposit {
-	cmd := fmt.Sprintf("%s query gov deposit %d %s %v", f.DesmosliBinary, proposalID, depositor, f.Flags())
+	cmd := fmt.Sprintf("%s query gov deposit %d %s %v", f.DesmoscliBinary, proposalID, depositor, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var deposit gov.Deposit
 	cdc := app.MakeCodec()
@@ -674,7 +694,7 @@ func (f *Fixtures) QueryGovDeposit(proposalID int, depositor sdk.AccAddress, fla
 
 // QueryGovDeposits is desmoscli query gov deposits
 func (f *Fixtures) QueryGovDeposits(propsalID int, flags ...string) []gov.Deposit {
-	cmd := fmt.Sprintf("%s query gov deposits %d %v", f.DesmosliBinary, propsalID, f.Flags())
+	cmd := fmt.Sprintf("%s query gov deposits %d %v", f.DesmoscliBinary, propsalID, f.Flags())
 	out, _ := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	var deposits []gov.Deposit
 	cdc := app.MakeCodec()
@@ -688,7 +708,7 @@ func (f *Fixtures) QueryGovDeposits(propsalID int, flags ...string) []gov.Deposi
 
 // QuerySigningInfo returns the signing info for a validator
 func (f *Fixtures) QuerySigningInfo(val string) slashing.ValidatorSigningInfo {
-	cmd := fmt.Sprintf("%s query slashing signing-info %s %s", f.DesmosliBinary, val, f.Flags())
+	cmd := fmt.Sprintf("%s query slashing signing-info %s %s", f.DesmoscliBinary, val, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, cmd, "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -700,7 +720,7 @@ func (f *Fixtures) QuerySigningInfo(val string) slashing.ValidatorSigningInfo {
 
 // QuerySlashingParams is desmoscli query slashing params
 func (f *Fixtures) QuerySlashingParams() slashing.Params {
-	cmd := fmt.Sprintf("%s query slashing params %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query slashing params %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, cmd, "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -715,7 +735,7 @@ func (f *Fixtures) QuerySlashingParams() slashing.Params {
 
 // QueryRewards returns the rewards of a delegator
 func (f *Fixtures) QueryRewards(delAddr sdk.AccAddress, flags ...string) distribution.QueryDelegatorTotalRewardsResponse {
-	cmd := fmt.Sprintf("%s query distribution rewards %s %s", f.DesmosliBinary, delAddr, f.Flags())
+	cmd := fmt.Sprintf("%s query distribution rewards %s %s", f.DesmoscliBinary, delAddr, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, cmd, "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -730,7 +750,7 @@ func (f *Fixtures) QueryRewards(delAddr sdk.AccAddress, flags ...string) distrib
 
 // QueryTotalSupply returns the total supply of coins
 func (f *Fixtures) QueryTotalSupply(flags ...string) (totalSupply sdk.Coins) {
-	cmd := fmt.Sprintf("%s query supply total %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query supply total %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, cmd, "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -741,7 +761,7 @@ func (f *Fixtures) QueryTotalSupply(flags ...string) (totalSupply sdk.Coins) {
 
 // QueryTotalSupplyOf returns the total supply of a given coin denom
 func (f *Fixtures) QueryTotalSupplyOf(denom string, flags ...string) sdk.Int {
-	cmd := fmt.Sprintf("%s query supply total %s %s", f.DesmosliBinary, denom, f.Flags())
+	cmd := fmt.Sprintf("%s query supply total %s %s", f.DesmoscliBinary, denom, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, cmd, "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -756,7 +776,7 @@ func (f *Fixtures) QueryTotalSupplyOf(denom string, flags ...string) sdk.Int {
 
 // QueryPosts returns stored posts
 func (f *Fixtures) QueryPosts(flags ...string) posts.Posts {
-	cmd := fmt.Sprintf("%s query posts posts --output=json %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query posts posts --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -768,7 +788,7 @@ func (f *Fixtures) QueryPosts(flags ...string) posts.Posts {
 
 // QueryPost returns a specific stored post
 func (f *Fixtures) QueryPost(id string, flags ...string) posts.PostQueryResponse {
-	cmd := fmt.Sprintf("%s query posts post %s --output=json %s", f.DesmosliBinary, id, f.Flags())
+	cmd := fmt.Sprintf("%s query posts post %s --output=json %s", f.DesmoscliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -780,7 +800,7 @@ func (f *Fixtures) QueryPost(id string, flags ...string) posts.PostQueryResponse
 
 // QueryReactions returns registered reactions
 func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
-	cmd := fmt.Sprintf("%s query posts registered-reactions --output=json %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query posts registered-reactions --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -795,7 +815,7 @@ func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
 
 // QueryProfile returns stored profiles
 func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
-	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmosliBinary, f.Flags())
+	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
@@ -810,7 +830,7 @@ func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
 
 // QueryReports returns stored reports associated to the id given
 func (f *Fixtures) QueryReports(id string, flags ...string) reports.ReportsQueryResponse {
-	cmd := fmt.Sprintf("%s query reports post %s --output=json %s", f.DesmosliBinary, id, f.Flags())
+	cmd := fmt.Sprintf("%s query reports post %s --output=json %s", f.DesmoscliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()

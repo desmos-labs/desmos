@@ -49,9 +49,13 @@ func GetCmdSubmitNameSurnameParamsEditProposal(cdc *codec.Codec) *cobra.Command 
 		Submit an edit proposal for name and surname params lengths.
 You should specify at least one of the two parameters otherwise the proposal will not be considered valid.
 
-%s ns-params-edit \
+%s tx gov submit-proposal ns-params-edit \
+--title editProp  \
+--description="My awesome proposal" \
+--deposit 10desmos \ 
 --min-len 3 \
---max-len 500 \
+--max-len 200 \
+--from leo
 `, version.ClientName),
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -79,12 +83,14 @@ You should specify at least one of the two parameters otherwise the proposal wil
 			if minNSLen == -1 && maxNSLen == -1 {
 				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
 			} else {
+				maxMonikerLenParam := sdk.NewInt(maxNSLen)
+				minMonikerLenParam := sdk.NewInt(minNSLen)
 				if minNSLen == -1 && maxNSLen != -1 {
-					maxMonikerLenParam := sdk.NewInt(maxNSLen)
 					nsLenParams = models.NewNameSurnameLenParams(nil, &maxMonikerLenParam)
-				} else {
-					minMonikerLenParam := sdk.NewInt(minNSLen)
+				} else if minNSLen != -1 && maxNSLen == -1 {
 					nsLenParams = models.NewNameSurnameLenParams(&minMonikerLenParam, nil)
+				} else {
+					nsLenParams = models.NewNameSurnameLenParams(&minMonikerLenParam, &maxMonikerLenParam)
 				}
 			}
 
@@ -116,9 +122,13 @@ func GetCmdSubmitMonikerParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 		Submit an edit proposal for moniker params lengths.
 You should specify at least one of the two parameters otherwise the proposal will not be considered valid.
 
-%s moniker-params-edit \
---min-len 3 \
---max-len 500 \
+%s tx gov submit-proposal moniker-params-edit \
+--title editProp  \
+--description="My awesome proposal" \
+--deposit 10desmos \ 
+--min-len 5 \
+--max-len 40 \
+--from leo
 `, version.ClientName),
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -146,12 +156,14 @@ You should specify at least one of the two parameters otherwise the proposal wil
 			if minMonikerLen == -1 && maxMonikerLen == -1 {
 				return fmt.Errorf("invalid proposal. At least one parameter should be specified")
 			} else {
+				minMonikerLenParam := sdk.NewInt(minMonikerLen)
+				maxMonikerLenParam := sdk.NewInt(maxMonikerLen)
 				if minMonikerLen == -1 && maxMonikerLen != -1 {
-					maxMonikerLenParam := sdk.NewInt(maxMonikerLen)
 					monikerParams = models.NewMonikerLenParams(nil, &maxMonikerLenParam)
-				} else {
-					minMonikerLenParam := sdk.NewInt(minMonikerLen)
+				} else if minMonikerLen != -1 && maxMonikerLen == -1 {
 					monikerParams = models.NewMonikerLenParams(&minMonikerLenParam, nil)
+				} else {
+					monikerParams = models.NewMonikerLenParams(&minMonikerLenParam, &maxMonikerLenParam)
 				}
 			}
 
@@ -181,8 +193,12 @@ func GetCmdSubmitBioParamsEditProposal(cdc *codec.Codec) *cobra.Command {
 		Short: "Submit an edit proposal for biography param lengths",
 		Long: fmt.Sprintf(`
 		Submit an edit proposal for biography param lengths.
-%s bio-params-edit \
---max-len 500 \
+%s tx gov submit-proposal bio-params-edit \
+--title editProp  \
+--description="My awesome proposal" \
+--deposit 10desmos \
+--max-len 200 \
+--from leo
 `, version.ClientName),
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

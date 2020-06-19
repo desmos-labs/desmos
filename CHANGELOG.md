@@ -1,3 +1,6 @@
+# Version 0.8.0
+- Moved profiles' const to chain parameters (#171)
+
 # Version 0.7.0
 - Implemented benchmarks tests (#126)
 - Implemented posts' reports (#50)
