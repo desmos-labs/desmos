@@ -202,6 +202,9 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.subspaces[crisis.ModuleName], invCheckPeriod, app.SupplyKeeper, auth.FeeCollectorName,
 	)
 
+	//Need to be initialized here cause it has proposals that runs on government module
+	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey], app.subspaces[profile.ModuleName])
+
 	// register the proposal types
 	govRouter := gov.NewRouter()
 	govRouter.AddRoute(gov.RouterKey, gov.ProposalHandler).
@@ -218,10 +221,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
-	// Register custom modules
 	app.magpieKeeper = magpie.NewKeeper(app.cdc, keys[magpie.StoreKey])
 	app.postsKeeper = posts.NewKeeper(app.cdc, keys[posts.StoreKey])
-	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey], app.subspaces[profile.ModuleName])
 	app.reportsKeeper = reports.NewKeeper(app.postsKeeper, app.cdc, keys[reports.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified

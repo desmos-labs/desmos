@@ -21,8 +21,12 @@ type Keeper struct {
 
 // NewKeeper creates new instances of the magpie Keeper
 func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
+	if !paramSpace.HasKeyTable() {
+		paramSpace = paramSpace.WithKeyTable(models.ParamKeyTable())
+	}
+
 	return Keeper{
-		paramSubspace: paramSpace.WithKeyTable(models.ParamKeyTable()),
+		paramSubspace: paramSpace,
 		StoreKey:      storeKey,
 		Cdc:           cdc,
 	}
