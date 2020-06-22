@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -15,11 +15,11 @@ import (
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
-		case models.QueryProfile:
+		case types.QueryProfile:
 			return queryProfile(ctx, path[1:], req, keeper)
-		case models.QueryProfiles:
+		case types.QueryProfiles:
 			return queryProfiles(ctx, req, keeper)
-		case models.QueryParams:
+		case types.QueryParams:
 			return queryProfileParams(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")

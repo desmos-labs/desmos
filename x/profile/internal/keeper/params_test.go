@@ -2,7 +2,7 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -11,11 +11,11 @@ func TestKeeper_SetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := models.NewNameSurnameLenParams(&min, &max)
-	monikerParams := models.NewMonikerLenParams(&min, &max)
-	bioParams := models.NewBioLenParams(max)
+	nsParams := types.NewNameSurnameLenParams(&min, &max)
+	monikerParams := types.NewMonikerLenParams(&min, &max)
+	bioParams := types.NewBioLenParams(max)
 
-	params := models.NewParams(nsParams, monikerParams, bioParams)
+	params := types.NewParams(nsParams, monikerParams, bioParams)
 
 	k.SetParams(ctx, params)
 
@@ -28,15 +28,15 @@ func TestKeeper_GetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := models.NewNameSurnameLenParams(&min, &max)
-	monikerParams := models.NewMonikerLenParams(&min, &max)
-	bioParams := models.NewBioLenParams(max)
-	params := models.NewParams(nsParams, monikerParams, bioParams)
+	nsParams := types.NewNameSurnameLenParams(&min, &max)
+	monikerParams := types.NewMonikerLenParams(&min, &max)
+	bioParams := types.NewBioLenParams(max)
+	params := types.NewParams(nsParams, monikerParams, bioParams)
 
 	tests := []struct {
 		name      string
-		params    *models.Params
-		expParams *models.Params
+		params    *types.Params
+		expParams *types.Params
 	}{
 		{
 			name:      "Returning previously set params",

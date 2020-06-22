@@ -202,7 +202,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.subspaces[crisis.ModuleName], invCheckPeriod, app.SupplyKeeper, auth.FeeCollectorName,
 	)
 
-	//Need to be initialized here cause it has proposals that runs on government module
+	// The profile keeper needs to be initialized here cause it will be used from the gov module to handle the proposals
 	app.profileKeeper = profile.NewKeeper(app.cdc, keys[profile.StoreKey], app.subspaces[profile.ModuleName])
 
 	// register the proposal types

@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,14 +20,14 @@ func TestKeeper_IterateProfile(t *testing.T) {
 	creator4, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
 	require.NoError(t, err)
 
-	profiles := models.Profiles{
-		models.NewProfile(creator).WithMoniker("first"),
-		models.NewProfile(creator2).WithMoniker("second"),
-		models.NewProfile(creator3).WithMoniker("not"),
-		models.NewProfile(creator4).WithMoniker("third"),
+	profiles := types.Profiles{
+		types.NewProfile(creator).WithMoniker("first"),
+		types.NewProfile(creator2).WithMoniker("second"),
+		types.NewProfile(creator3).WithMoniker("not"),
+		types.NewProfile(creator4).WithMoniker("third"),
 	}
 
-	expProfiles := models.Profiles{
+	expProfiles := types.Profiles{
 		profiles[0],
 		profiles[1],
 		profiles[3],
@@ -40,8 +40,8 @@ func TestKeeper_IterateProfile(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	var validProfiles models.Profiles
-	k.IterateProfiles(ctx, func(_ int64, profile models.Profile) (stop bool) {
+	var validProfiles types.Profiles
+	k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
 		if profile.Moniker == "not" {
 			return false
 		}

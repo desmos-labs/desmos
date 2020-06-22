@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -35,14 +36,14 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 // AssociateMonikerWithAddress save the relation of moniker and address on chain
 func (k Keeper) AssociateMonikerWithAddress(ctx sdk.Context, moniker string, address sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-	key := models.MonikerStoreKey(moniker)
+	key := types.MonikerStoreKey(moniker)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&address))
 }
 
 // GetMonikerRelatedAddress returns the address associated to the given moniker or nil if it not exists
 func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr sdk.AccAddress) {
 	store := ctx.KVStore(k.StoreKey)
-	bz := store.Get(models.MonikerStoreKey(moniker))
+	bz := store.Get(types.MonikerStoreKey(moniker))
 	if bz == nil {
 		return nil
 	}
@@ -70,7 +71,7 @@ func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (mon
 // DeleteMonikerAddressAssociation delete the given moniker association with an address
 func (k Keeper) DeleteMonikerAddressAssociation(ctx sdk.Context, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Delete(models.MonikerStoreKey(moniker))
+	store.Delete(types.MonikerStoreKey(moniker))
 }
 
 // replaceMoniker delete the oldMoniker related to the creator address and associate the new one to it
@@ -82,7 +83,7 @@ func (k Keeper) replaceMoniker(ctx sdk.Context, oldMoniker, newMoniker string, c
 // SaveProfile allows to save the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same moniker from a different creator already exists
-func (k Keeper) SaveProfile(ctx sdk.Context, profile models.Profile) error {
+func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 
 	if addr := k.GetMonikerRelatedAddress(ctx, profile.Moniker); addr != nil && !addr.Equals(profile.Creator) {
 		return fmt.Errorf("a profile with moniker: %s has already been created", profile.Moniker)
@@ -92,7 +93,7 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile models.Profile) error {
 	k.replaceMoniker(ctx, oldMoniker, profile.Moniker, profile.Creator)
 
 	store := ctx.KVStore(k.StoreKey)
-	key := models.ProfileStoreKey(profile.Creator)
+	key := types.ProfileStoreKey(profile.Creator)
 
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&profile))
 
@@ -104,19 +105,19 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile models.Profile) error {
 // nolint: interfacer
 func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	store.Delete(models.ProfileStoreKey(address))
+	store.Delete(types.ProfileStoreKey(address))
 	k.DeleteMonikerAddressAssociation(ctx, moniker)
 }
 
 // GetProfiles returns all the created profiles inside the current context.
-func (k Keeper) GetProfiles(ctx sdk.Context) (profiles models.Profiles) {
-	profiles = make(models.Profiles, 0)
+func (k Keeper) GetProfiles(ctx sdk.Context) (profiles types.Profiles) {
+	profiles = make(types.Profiles, 0)
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, models.ProfileStorePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var acc models.Profile
+		var acc types.Profile
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &acc)
 		profiles = append(profiles, acc)
 	}
@@ -126,13 +127,13 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (profiles models.Profiles) {
 
 // GetProfile returns the profile corresponding to the given address inside the current context.
 // nolint: interfacer
-func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile models.Profile, found bool) {
+func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
-	key := models.ProfileStoreKey(address)
+	key := types.ProfileStoreKey(address)
 	if bz := store.Get(key); bz != nil {
 		k.Cdc.MustUnmarshalBinaryBare(bz, &profile)
 		return profile, true
 	}
 
-	return models.Profile{}, false
+	return types.Profile{}, false
 }

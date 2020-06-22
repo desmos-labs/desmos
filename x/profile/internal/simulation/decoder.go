@@ -3,9 +3,8 @@ package simulation
 import (
 	"bytes"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/tendermint/tendermint/libs/kv"
@@ -14,12 +13,12 @@ import (
 // DecodeStore unmarshals the KVPair's Value to the corresponding profile type
 func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 	switch {
-	case bytes.HasPrefix(kvA.Key, models.ProfileStorePrefix):
-		var profileA, profileB models.Profile
+	case bytes.HasPrefix(kvA.Key, types.ProfileStorePrefix):
+		var profileA, profileB types.Profile
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &profileA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &profileB)
 		return fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profileA, profileB)
-	case bytes.HasPrefix(kvA.Key, models.MonikerStorePrefix):
+	case bytes.HasPrefix(kvA.Key, types.MonikerStorePrefix):
 		var addressA, addressB sdk.AccAddress
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &addressA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)

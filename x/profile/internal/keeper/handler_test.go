@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"fmt"
 	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
@@ -43,41 +42,41 @@ func Test_validateProfile(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		profile models.Profile
+		profile types.Profile
 		expErr  error
 	}{
 		{
 			name: "Max name length exceeded",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  testProfile.Moniker,
 				Name:     &invalidMaxLenField,
 				Surname:  testProfile.Surname,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile name cannot exceed 1000 characters"),
 		},
 		{
 			name: "Min name length not reached",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  testProfile.Moniker,
 				Name:     &invalidMinLenField,
 				Surname:  testProfile.Surname,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile name cannot be less than 2 characters"),
 		},
 		{
 			name: "Max surname length exceeded",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  testProfile.Moniker,
 				Name:     testProfile.Name,
 				Surname:  &invalidMaxLenField,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile surname cannot exceed 1000 characters"),
@@ -96,55 +95,55 @@ func Test_validateProfile(t *testing.T) {
 		},
 		{
 			name: "Max bio length exceeded",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  testProfile.Moniker,
 				Name:     testProfile.Name,
 				Surname:  testProfile.Surname,
 				Bio:      &invalidBio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile biography cannot exceed 1000 characters"),
 		},
 		{
 			name: "Min moniker length not reached",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  "l",
 				Name:     testProfile.Name,
 				Surname:  testProfile.Surname,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile moniker cannot be less than 2 characters"),
 		},
 		{
 			name: "Max moniker length exceeded",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  invalidMonikerLen,
 				Name:     testProfile.Name,
 				Surname:  testProfile.Surname,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile moniker cannot exceed 30 characters"),
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			profile: models.Profile{
+			profile: types.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",
 				Bio:      &bio,
-				Pictures: models.NewPictures(&invalidPic, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(&invalidPic, testProfile.Pictures.Cover),
 				Creator:  testPostOwner,
 			},
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name: "Valid profile returns no error",
-			profile: models.Profile{
+			profile: types.Profile{
 				Name:     &name,
 				Surname:  &surname,
 				Moniker:  "moniker",
@@ -177,7 +176,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 	var newMoniker = "newMoniker"
 	var invalidPic = "pic"
 
-	testAcc2 := models.Profile{
+	testAcc2 := types.Profile{
 		Name:     &name,
 		Surname:  &surname,
 		Moniker:  "newMoniker",
@@ -188,15 +187,15 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		existentProfiles models.Profiles
-		expAccount       *models.Profile
-		msg              msgs.MsgSaveProfile
+		existentProfiles types.Profiles
+		expAccount       *types.Profile
+		msg              types.MsgSaveProfile
 		expErr           error
 	}{
 		{
 			name:             "Profile saved (with previous profile created)",
-			existentProfiles: models.Profiles{testProfile},
-			msg: msgs.NewMsgSaveProfile(
+			existentProfiles: types.Profiles{testProfile},
+			msg: types.NewMsgSaveProfile(
 				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -210,7 +209,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		{
 			name:             "Profile saved (with no previous profile created)",
 			existentProfiles: nil,
-			msg: msgs.NewMsgSaveProfile(
+			msg: types.NewMsgSaveProfile(
 				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -223,8 +222,8 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name:             "Profile not edited because the new moniker already exists",
-			existentProfiles: models.Profiles{testProfile, testAcc2},
-			msg: msgs.NewMsgSaveProfile(
+			existentProfiles: types.Profiles{testProfile, testAcc2},
+			msg: types.NewMsgSaveProfile(
 				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -237,8 +236,8 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name:             "Profile not edited because of the invalid pics uri",
-			existentProfiles: models.Profiles{testProfile},
-			msg: msgs.NewMsgSaveProfile(
+			existentProfiles: types.Profiles{testProfile},
+			msg: types.NewMsgSaveProfile(
 				newMoniker,
 				testProfile.Name,
 				testProfile.Surname,
@@ -298,21 +297,21 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 func Test_handleMsgDeleteProfile(t *testing.T) {
 	tests := []struct {
 		name            string
-		existentAccount *models.Profile
-		msg             msgs.MsgDeleteProfile
+		existentAccount *types.Profile
+		msg             types.MsgDeleteProfile
 		expErr          error
 	}{
 		{
 			name:            "Profile doesnt exists",
 			existentAccount: nil,
-			msg:             msgs.NewMsgDeleteProfile(testProfile.Creator),
+			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 		},
 		{
 			name:            "Profile deleted successfully",
 			existentAccount: &testProfile,
-			msg:             msgs.NewMsgDeleteProfile(testProfile.Creator),
+			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
 			expErr:          nil,
 		},
 	}
@@ -324,7 +323,7 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 			store := ctx.KVStore(k.StoreKey)
 
 			if test.existentAccount != nil {
-				key := models.ProfileStoreKey(test.existentAccount.Creator)
+				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}

@@ -2,7 +2,6 @@ package simulation
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,7 +19,7 @@ var (
 	surname            = "Di Caprio"
 	bio                = "Hollywood Actor. Proud environmentalist"
 
-	profile = models.Profile{
+	profile = types.Profile{
 		Name:    &name,
 		Surname: &surname,
 		Moniker: "leoDiCap",
@@ -41,8 +40,8 @@ func TestDecodeStore(t *testing.T) {
 	cdc := makeTestCodec()
 
 	kvPairs := kv.Pairs{
-		kv.Pair{Key: models.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
-		kv.Pair{Key: models.MonikerStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
+		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
+		kv.Pair{Key: types.MonikerStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
 	}
 
 	tests := []struct {

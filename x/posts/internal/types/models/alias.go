@@ -36,10 +36,6 @@ const (
 
 var (
 	// functions aliases
-	NewPostMedia               = common.NewPostMedia
-	ValidateURI                = common.ValidateURI
-	NewPostMedias              = common.NewPostMedias
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	ParseAnswerID              = polls.ParseAnswerID
 	NewPollAnswer              = polls.NewPollAnswer
 	NewPollAnswers             = polls.NewPollAnswers
@@ -52,6 +48,10 @@ var (
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	NewPostMedia               = common.NewPostMedia
+	ValidateURI                = common.ValidateURI
+	NewPostMedias              = common.NewPostMedias
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 
 	// variable aliases
 	Sha256RegEx              = common.Sha256RegEx

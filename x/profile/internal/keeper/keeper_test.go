@@ -2,7 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -23,7 +23,7 @@ func TestKeeper_AssociateMonikerWithAddress(t *testing.T) {
 	store := ctx.KVStore(k.StoreKey)
 
 	var acc sdk.AccAddress
-	key := models.MonikerStoreKey(moniker)
+	key := types.MonikerStoreKey(moniker)
 	bz := store.Get(key)
 	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
@@ -111,8 +111,8 @@ func TestKeeper_SaveProfile(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		account          models.Profile
-		existentAccounts models.Profiles
+		account          types.Profile
+		existentAccounts types.Profiles
 		expError         error
 	}{
 		{
@@ -123,7 +123,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 		},
 		{
 			name: "Existent account with different creator returns error",
-			account: models.Profile{
+			account: types.Profile{
 				Name:     testProfile.Name,
 				Surname:  testProfile.Surname,
 				Moniker:  testProfile.Moniker,
@@ -131,7 +131,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 				Pictures: testProfile.Pictures,
 				Creator:  creator,
 			},
-			existentAccounts: models.Profiles{testProfile},
+			existentAccounts: types.Profiles{testProfile},
 			expError:         fmt.Errorf("a profile with moniker: moniker has already been created"),
 		},
 	}
@@ -143,7 +143,7 @@ func TestKeeper_SaveProfile(t *testing.T) {
 
 			for _, profile := range test.existentAccounts {
 				store := ctx.KVStore(k.StoreKey)
-				key := models.ProfileStoreKey(profile.Creator)
+				key := types.ProfileStoreKey(profile.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(profile))
 				k.AssociateMonikerWithAddress(ctx, profile.Moniker, profile.Creator)
 			}
@@ -171,7 +171,7 @@ func TestKeeper_DeleteProfile(t *testing.T) {
 
 	res, found = k.GetProfile(ctx, testProfile.Creator)
 
-	require.Equal(t, models.Profile{}, res)
+	require.Equal(t, types.Profile{}, res)
 	require.False(t, found)
 }
 
@@ -180,7 +180,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		existentAccount *models.Profile
+		existentAccount *types.Profile
 		expFound        bool
 	}{
 		{
@@ -200,7 +200,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 
 			if test.existentAccount != nil {
 				store := ctx.KVStore(k.StoreKey)
-				key := models.ProfileStoreKey(test.existentAccount.Creator)
+				key := types.ProfileStoreKey(test.existentAccount.Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
 				k.AssociateMonikerWithAddress(ctx, test.existentAccount.Moniker, test.existentAccount.Creator)
 			}
@@ -211,7 +211,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 				require.Equal(t, *test.existentAccount, res)
 				require.True(t, found)
 			} else {
-				require.Equal(t, models.Profile{}, res)
+				require.Equal(t, types.Profile{}, res)
 				require.False(t, found)
 			}
 
@@ -222,15 +222,15 @@ func TestKeeper_GetProfile(t *testing.T) {
 func TestKeeper_GetProfiles(t *testing.T) {
 	tests := []struct {
 		name             string
-		existentAccounts models.Profiles
+		existentAccounts types.Profiles
 	}{
 		{
 			name:             "Non empty Profiles list returned",
-			existentAccounts: models.Profiles{testProfile},
+			existentAccounts: types.Profiles{testProfile},
 		},
 		{
 			name:             "Profile not found",
-			existentAccounts: models.Profiles{},
+			existentAccounts: types.Profiles{},
 		},
 	}
 
@@ -241,7 +241,7 @@ func TestKeeper_GetProfiles(t *testing.T) {
 
 			if len(test.existentAccounts) != 0 {
 				store := ctx.KVStore(k.StoreKey)
-				key := models.ProfileStoreKey(test.existentAccounts[0].Creator)
+				key := types.ProfileStoreKey(test.existentAccounts[0].Creator)
 				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
@@ -250,7 +250,7 @@ func TestKeeper_GetProfiles(t *testing.T) {
 			if len(test.existentAccounts) != 0 {
 				require.Equal(t, test.existentAccounts, res)
 			} else {
-				require.Equal(t, models.Profiles{}, res)
+				require.Equal(t, types.Profiles{}, res)
 			}
 
 		})

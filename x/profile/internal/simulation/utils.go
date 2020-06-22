@@ -1,7 +1,7 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -71,14 +71,14 @@ type ProfileData struct {
 	Name    string
 	Surname string
 	Bio     string
-	Picture models.Pictures
+	Picture types.Pictures
 	Creator sim.Account
 }
 
 // RandomProfileData return a random ProfileData from random data and random accounts list
 func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 	simAccount, _ := sim.RandomAcc(r, accs)
-	pictures := models.Pictures{
+	pictures := types.Pictures{
 		Profile: RandomProfilePic(r),
 		Cover:   RandomProfileCover(r),
 	}
@@ -94,7 +94,7 @@ func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
 }
 
 // RandomProfile picks and returns a random profile from an array
-func RandomProfile(r *rand.Rand, accounts models.Profiles) models.Profile {
+func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }
@@ -146,26 +146,26 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 
 // ProfileParams contains the randomly generated params of profile module
 type ProfileParams struct {
-	NameSurnameParams models.NameSurnameLengths
-	MonikerParams     models.MonikerLengths
-	BioParams         models.BiographyLengths
+	NameSurnameParams types.NameSurnameLengths
+	MonikerParams     types.MonikerLengths
+	BioParams         types.BiographyLengths
 }
 
 // RandomNameSurnameParams return a random set of name surname params
-func RandomNameSurnameParams(r *rand.Rand) models.NameSurnameLengths {
+func RandomNameSurnameParams(r *rand.Rand) types.NameSurnameLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
-	return models.NewNameSurnameLenParams(&randomMin, &randomMax)
+	return types.NewNameSurnameLenParams(&randomMin, &randomMax)
 }
 
 // RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) models.MonikerLengths {
+func RandomMonikerParams(r *rand.Rand) types.MonikerLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
-	return models.NewMonikerLenParams(&randomMin, &randomMax)
+	return types.NewMonikerLenParams(&randomMin, &randomMax)
 }
 
 // RandomBioParams return a random biography param
-func RandomBioParams(r *rand.Rand) models.BiographyLengths {
-	return models.NewBioLenParams(sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))))
+func RandomBioParams(r *rand.Rand) types.BiographyLengths {
+	return types.NewBioLenParams(sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))))
 }

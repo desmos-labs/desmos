@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,19 +16,19 @@ func TestInvariants(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		profile     models.Profile
+		profile     types.Profile
 		expResponse string
 		expBool     bool
 	}{
 		{
 			name:        "Invariants not violated",
-			profile:     models.NewProfile(owner).WithMoniker(moniker),
+			profile:     types.NewProfile(owner).WithMoniker(moniker),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
 			name:        "ValidProfile invariant violated",
-			profile:     models.NewProfile(owner).WithMoniker(""),
+			profile:     types.NewProfile(owner).WithMoniker(""),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[Moniker]: , [Creator]: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:     true,
 		},

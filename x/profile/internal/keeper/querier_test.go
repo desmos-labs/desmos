@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,12 +19,12 @@ func Test_queryProfile(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount models.Profile
+		storedAccount types.Profile
 		expErr        error
 	}{
 		{
 			name:          "Profile doesnt exist (address given)",
-			path:          []string{models.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("Profile with address %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -32,7 +32,7 @@ func Test_queryProfile(t *testing.T) {
 		},
 		{
 			name:          "Profile doesnt exist (blank path given)",
-			path:          []string{models.QueryProfile, ""},
+			path:          []string{types.QueryProfile, ""},
 			storedAccount: testProfile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"Moniker or address cannot be empty or blank",
@@ -40,19 +40,19 @@ func Test_queryProfile(t *testing.T) {
 		},
 		{
 			name:          "Profile doesnt exist (moniker given)",
-			path:          []string{models.QueryProfile, "monk"},
+			path:          []string{types.QueryProfile, "monk"},
 			storedAccount: testProfile,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this moniker: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
-			path:          []string{models.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},
 		{
 			name:          "Profile returned correctly (moniker given)",
-			path:          []string{models.QueryProfile, "moniker"},
+			path:          []string{types.QueryProfile, "moniker"},
 			storedAccount: testProfile,
 			expErr:        nil,
 		},
@@ -92,20 +92,20 @@ func Test_queryProfiles(t *testing.T) {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount *models.Profile
-		expResult     models.Profiles
+		storedAccount *types.Profile
+		expResult     types.Profiles
 	}{
 		{
 			name:          "Empty Profiles",
-			path:          []string{models.QueryProfiles},
+			path:          []string{types.QueryProfiles},
 			storedAccount: nil,
-			expResult:     models.Profiles{},
+			expResult:     types.Profiles{},
 		},
 		{
 			name:          "Profile returned correctly",
-			path:          []string{models.QueryProfiles},
+			path:          []string{types.QueryProfiles},
 			storedAccount: &testProfile,
-			expResult:     models.Profiles{testProfile},
+			expResult:     types.Profiles{testProfile},
 		},
 	}
 
@@ -138,25 +138,25 @@ func Test_queryParams(t *testing.T) {
 	validMin := sdk.NewInt(2)
 	validMax := sdk.NewInt(30)
 
-	nsParams := models.NewNameSurnameLenParams(&validMin, &validMax)
-	monikerParams := models.NewMonikerLenParams(&validMin, &validMax)
-	bioParams := models.NewBioLenParams(validMax)
+	nsParams := types.NewNameSurnameLenParams(&validMin, &validMax)
+	monikerParams := types.NewMonikerLenParams(&validMin, &validMax)
+	bioParams := types.NewBioLenParams(validMax)
 
 	tests := []struct {
 		name                string
 		path                []string
-		nsParamsStored      models.NameSurnameLengths
-		monikerParamsStored models.MonikerLengths
-		bioParamStored      models.BiographyLengths
-		expResult           models.Params
+		nsParamsStored      types.NameSurnameLengths
+		monikerParamsStored types.MonikerLengths
+		bioParamStored      types.BiographyLengths
+		expResult           types.Params
 	}{
 		{
 			name:                "Returning profile parameters correctly",
-			path:                []string{models.QueryParams},
+			path:                []string{types.QueryParams},
 			nsParamsStored:      nsParams,
 			monikerParamsStored: monikerParams,
 			bioParamStored:      bioParams,
-			expResult:           models.NewParams(nsParams, monikerParams, bioParams),
+			expResult:           types.NewParams(nsParams, monikerParams, bioParams),
 		},
 	}
 
@@ -164,7 +164,7 @@ func Test_queryParams(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			k.SetParams(ctx, models.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
+			k.SetParams(ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
 			querier := keeper.NewQuerier(k)
 			result, err := querier(ctx, test.path, abci.RequestQuery{})
 

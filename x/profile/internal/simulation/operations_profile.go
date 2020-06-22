@@ -1,8 +1,7 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -24,14 +23,14 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 		acc, data, newMoniker, skip, err := randomProfileSaveFields(r, ctx, accs, k)
 		if err != nil {
-			return sim.NoOpMsg(models.ModuleName), nil, err
+			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
 		if skip {
-			return sim.NoOpMsg(models.ModuleName), nil, nil
+			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := msgs.NewMsgSaveProfile(
+		msg := types.NewMsgSaveProfile(
 			newMoniker,
 			data.Name,
 			data.Surname,
@@ -43,7 +42,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 		err = sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
-			return sim.NoOpMsg(models.ModuleName), nil, err
+			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
 		return sim.NewOperationMsg(msg, true, ""), nil, nil
@@ -53,7 +52,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 // sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
 func sendMsgSaveProfile(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg msgs.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
@@ -85,20 +84,20 @@ func sendMsgSaveProfile(
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
-) (sim.Account, models.Profile, string, bool, error) {
+) (sim.Account, types.Profile, string, bool, error) {
 	if len(accs) == 0 {
-		return sim.Account{}, models.Profile{}, "", true, nil
+		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 	accounts := k.GetProfiles(ctx)
 	if len(accounts) == 0 {
-		return sim.Account{}, models.Profile{}, "", true, nil
+		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 	account := RandomProfile(r, accounts)
 	acc := GetSimAccount(account.Creator, accs)
 
 	// Skip the operation without error as the profile is not valid
 	if acc == nil {
-		return sim.Account{}, models.Profile{}, "", true, nil
+		return sim.Account{}, types.Profile{}, "", true, nil
 	}
 
 	return *acc, account, RandomMoniker(r), false, nil
@@ -112,18 +111,18 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 		acc, skip, err := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if err != nil {
-			return sim.NoOpMsg(models.ModuleName), nil, err
+			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
 		if skip {
-			return sim.NoOpMsg(models.ModuleName), nil, nil
+			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := msgs.NewMsgDeleteProfile(acc.Address)
+		msg := types.NewMsgDeleteProfile(acc.Address)
 
 		err = sendMsgDeleteProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
-			return sim.NoOpMsg(models.ModuleName), nil, err
+			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
 		return sim.NewOperationMsg(msg, true, ""), nil, nil
@@ -133,7 +132,7 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 // sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
 func sendMsgDeleteProfile(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg msgs.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)

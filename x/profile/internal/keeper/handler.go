@@ -2,9 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
-
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,9 +14,9 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case msgs.MsgSaveProfile:
+		case types.MsgSaveProfile:
 			return handleMsgSaveProfile(ctx, keeper, msg)
-		case msgs.MsgDeleteProfile:
+		case types.MsgDeleteProfile:
 			return handleMsgDeleteProfile(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
@@ -29,7 +26,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 }
 
 // ValidateProfile checks if the given profile is valid according to the current profile's module params
-func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) error {
+func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
 	params := keeper.GetParams(ctx)
 
 	minNameSurnameLen := params.NameSurnameLengths.MinNameSurnameLen.Int64()
@@ -80,10 +77,10 @@ func ValidateProfile(ctx sdk.Context, keeper Keeper, profile models.Profile) err
 }
 
 // handleMsgSaveProfile handles the creation/edit of a profile
-func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg msgs.MsgSaveProfile) (*sdk.Result, error) {
+func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
 	if !found {
-		profile = models.NewProfile(msg.Creator)
+		profile = types.NewProfile(msg.Creator)
 	}
 	// replace all editable fields (clients should autofill existing values)
 	profile = profile.
@@ -120,7 +117,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg msgs.MsgSaveProfil
 }
 
 // handleMsgDeleteProfile handles the deletion of a profile
-func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg msgs.MsgDeleteProfile) (*sdk.Result, error) {
+func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteProfile) (*sdk.Result, error) {
 	profile, found := keeper.GetProfile(ctx, msg.Creator)
 
 	if !found {
