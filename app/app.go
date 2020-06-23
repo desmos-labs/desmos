@@ -239,12 +239,6 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	evidenceKeeper.SetRouter(evidenceRouter)
 	app.evidenceKeeper = *evidenceKeeper
 
-	// The profile keeper needs to be initialized here cause it will be used from the gov module to handle the proposals
-	app.profileKeeper = profile.NewKeeper(
-		app.cdc, keys[profile.StoreKey],
-		app.subspaces[profile.ModuleName],
-	)
-
 	// Create gov keeper with router
 	govRouter := gov.NewRouter()
 	govRouter.
@@ -262,6 +256,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	)
 
 	// Register custom modules
+	app.profileKeeper = profile.NewKeeper(
+		app.cdc,
+		keys[profile.StoreKey],
+		app.subspaces[profile.ModuleName],
+	)
 	app.magpieKeeper = magpie.NewKeeper(
 		app.cdc,
 		keys[magpie.StoreKey],
