@@ -101,35 +101,39 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 				return fmt.Errorf("unknown migration function version: %s", target)
 			}
 
-			newGenState := initialState
+			// Get the genesis time
+			// We get this year since that the migrations might want to get it
+			var genesisTime time.Time
+			genesisTimeStr := cmd.Flag(flagGenesisTime).Value.String()
+			if genesisTimeStr != "" {
+				err := genesisTime.UnmarshalText([]byte(genesisTimeStr))
+				if err != nil {
+					return err
+				}
+			}
 
-			// v0.2.0 migration needs to have the previous version's genesis time and the
-			// block interval to convert the block height dates into timestamps
+			// Perform the migration
+			newGenState := initialState
 			if target == "v0.2.0" {
+				// v0.2.0 migration needs to have the previous version's genesis time and the
+				// block interval to convert the block height dates into timestamps
+
 				blockInterval, err := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
 				if err != nil {
 					panic(err)
 				}
-
 				newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
 			} else {
-				newGenState = migration(newGenState)
+				newGenState = migration(newGenState, genesisTime)
 			}
-
 			genDoc.AppState = cdc.MustMarshalJSON(newGenState)
 
-			genesisTime := cmd.Flag(flagGenesisTime).Value.String()
-			if genesisTime != "" {
-				var t time.Time
-
-				err := t.UnmarshalText([]byte(genesisTime))
-				if err != nil {
-					return err
-				}
-
-				genDoc.GenesisTime = t
+			// Set genesis time
+			if !genesisTime.IsZero() {
+				genDoc.GenesisTime = genesisTime
 			}
 
+			// Set chain id
 			chainID := cmd.Flag(flagChainID).Value.String()
 			if chainID != "" {
 				genDoc.ChainID = chainID

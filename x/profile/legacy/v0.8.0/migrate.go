@@ -2,22 +2,24 @@ package v080
 
 import (
 	"strings"
+	"time"
 
 	v060profile "github.com/desmos-labs/desmos/x/profile/legacy/v0.6.0"
 )
 
 // Migrate accepts an exported v0.6.0 profile genesis state and migrates it
 // to a v0.8.0 profile genesis state.
-func Migrate(oldGenState v060profile.GenesisState) GenesisState {
+func Migrate(oldGenState v060profile.GenesisState, genesisTime time.Time) GenesisState {
 	return GenesisState{
-		Profiles: ConvertProfiles(oldGenState.Profiles),
+		Profiles: ConvertProfiles(oldGenState.Profiles, genesisTime),
 	}
 }
 
 // ConvertProfiles take a list of v0.6.0 profiles and converts them to a list
 // of v0.8.0 profiles. To do so it get rids of all the name and surname fields and
-// moves the value of the moniker field to the dtag one.
-func ConvertProfiles(oldProfiles []v060profile.Profile) []Profile {
+// moves the value of the moniker field to the dtag one. It also sets the creation
+// date to the genesis time given.
+func ConvertProfiles(oldProfiles []v060profile.Profile, genesisTime time.Time) []Profile {
 	profiles := make([]Profile, len(oldProfiles))
 	for index, profile := range oldProfiles {
 		// Get the pictures
@@ -29,11 +31,12 @@ func ConvertProfiles(oldProfiles []v060profile.Profile) []Profile {
 
 		// Build the new profile
 		profiles[index] = Profile{
-			DTag:     GetProfileDTag(profile.Moniker),
-			Moniker:  GetProfileMoniker(profile.Name, profile.Surname),
-			Bio:      profile.Bio,
-			Pictures: pictures,
-			Creator:  profile.Creator,
+			DTag:         GetProfileDTag(profile.Moniker),
+			Moniker:      GetProfileMoniker(profile.Name, profile.Surname),
+			Bio:          profile.Bio,
+			Pictures:     pictures,
+			Creator:      profile.Creator,
+			CreationDate: genesisTime,
 		}
 	}
 

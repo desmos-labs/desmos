@@ -1,6 +1,8 @@
 package v080
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -15,11 +17,12 @@ type GenesisState struct {
 
 // Profile is a struct for a Profile
 type Profile struct {
-	DTag     string         `json:"dtag" yaml:"dtag"`
-	Moniker  *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
-	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
+	DTag         string         `json:"dtag" yaml:"dtag"`
+	Moniker      *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
+	Bio          *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	Pictures     *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
+	Creator      sdk.AccAddress `json:"creator" yaml:"creator"`
+	CreationDate time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
 // Pictures is a struct for Profile Pictures
