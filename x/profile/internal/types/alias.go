@@ -10,51 +10,45 @@ import (
 )
 
 const (
-	DefaultParamspace                 = models.DefaultParamspace
-	ProposalTypeNameSurnameParamsEdit = models.ProposalTypeNameSurnameParamsEdit
-	ProposalTypeMonikerParamsEdit     = models.ProposalTypeMonikerParamsEdit
-	ProposalTypeBioParamsEdit         = models.ProposalTypeBioParamsEdit
-	ModuleName                        = models.ModuleName
-	RouterKey                         = models.RouterKey
-	StoreKey                          = models.StoreKey
-	MinNameSurnameLength              = models.MinNameSurnameLength
-	MaxNameSurnameLength              = models.MaxNameSurnameLength
-	MinMonikerLength                  = models.MinMonikerLength
-	MaxMonikerLength                  = models.MaxMonikerLength
-	MaxBioLength                      = models.MaxBioLength
-	ActionSaveProfile                 = models.ActionSaveProfile
-	ActionDeleteProfile               = models.ActionDeleteProfile
-	QuerierRoute                      = models.QuerierRoute
-	QueryProfile                      = models.QueryProfile
-	QueryProfiles                     = models.QueryProfiles
-	QueryParams                       = models.QueryParams
+	DefaultParamspace    = models.DefaultParamspace
+	ModuleName           = models.ModuleName
+	RouterKey            = models.RouterKey
+	StoreKey             = models.StoreKey
+	MinNameSurnameLength = models.MinNameSurnameLength
+	MaxNameSurnameLength = models.MaxNameSurnameLength
+	MinMonikerLength     = models.MinMonikerLength
+	MaxMonikerLength     = models.MaxMonikerLength
+	MaxBioLength         = models.MaxBioLength
+	ActionSaveProfile    = models.ActionSaveProfile
+	ActionDeleteProfile  = models.ActionDeleteProfile
+	QuerierRoute         = models.QuerierRoute
+	QueryProfile         = models.QueryProfile
+	QueryProfiles        = models.QueryProfiles
+	QueryParams          = models.QueryParams
 )
 
 var (
 	// functions aliases
-	RegisterModelsCodec              = models.RegisterModelsCodec
-	ParamKeyTable                    = models.ParamKeyTable
-	NewParams                        = models.NewParams
-	DefaultParams                    = models.DefaultParams
-	NewNameSurnameLenParams          = models.NewNameSurnameLenParams
-	DefaultNameSurnameLenParams      = models.DefaultNameSurnameLenParams
-	ValidateNameSurnameLenParams     = models.ValidateNameSurnameLenParams
-	NewMonikerLenParams              = models.NewMonikerLenParams
-	DefaultMonikerLenParams          = models.DefaultMonikerLenParams
-	ValidateMonikerLenParams         = models.ValidateMonikerLenParams
-	NewBioLenParams                  = models.NewBioLenParams
-	DefaultBioLenParams              = models.DefaultBioLenParams
-	ValidateBioLenParams             = models.ValidateBioLenParams
-	NewNameSurnameParamsEditProposal = models.NewNameSurnameParamsEditProposal
-	NewMonikerParamsEditProposal     = models.NewMonikerParamsEditProposal
-	NewBioParamsEditProposal         = models.NewBioParamsEditProposal
-	ProfileStoreKey                  = models.ProfileStoreKey
-	MonikerStoreKey                  = models.MonikerStoreKey
-	NewProfile                       = models.NewProfile
-	NewPictures                      = models.NewPictures
-	NewMsgSaveProfile                = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile              = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
+	RegisterModelsCodec          = models.RegisterModelsCodec
+	ParamKeyTable                = models.ParamKeyTable
+	NewParams                    = models.NewParams
+	DefaultParams                = models.DefaultParams
+	NewNameSurnameLenParams      = models.NewNameSurnameLenParams
+	DefaultNameSurnameLenParams  = models.DefaultNameSurnameLenParams
+	ValidateNameSurnameLenParams = models.ValidateNameSurnameLenParams
+	NewMonikerLenParams          = models.NewMonikerLenParams
+	DefaultMonikerLenParams      = models.DefaultMonikerLenParams
+	ValidateMonikerLenParams     = models.ValidateMonikerLenParams
+	NewBioLenParams              = models.NewBioLenParams
+	DefaultBioLenParams          = models.DefaultBioLenParams
+	ValidateBioLenParams         = models.ValidateBioLenParams
+	ProfileStoreKey              = models.ProfileStoreKey
+	MonikerStoreKey              = models.MonikerStoreKey
+	NewProfile                   = models.NewProfile
+	NewPictures                  = models.NewPictures
+	NewMsgSaveProfile            = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile          = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	ModelsCdc                   = models.ModelsCdc
@@ -74,16 +68,13 @@ var (
 )
 
 type (
-	Params                        = models.Params
-	NameSurnameLengths            = models.NameSurnameLengths
-	MonikerLengths                = models.MonikerLengths
-	BiographyLengths              = models.BiographyLengths
-	EditNameSurnameParamsProposal = models.EditNameSurnameParamsProposal
-	EditMonikerParamsProposal     = models.EditMonikerParamsProposal
-	EditBioParamsProposal         = models.EditBioParamsProposal
-	Profile                       = models.Profile
-	Profiles                      = models.Profiles
-	Pictures                      = models.Pictures
-	MsgSaveProfile                = msgs.MsgSaveProfile
-	MsgDeleteProfile              = msgs.MsgDeleteProfile
+	Params             = models.Params
+	NameSurnameLengths = models.NameSurnameLengths
+	MonikerLengths     = models.MonikerLengths
+	BiographyLengths   = models.BiographyLengths
+	Profile            = models.Profile
+	Profiles           = models.Profiles
+	Pictures           = models.Pictures
+	MsgSaveProfile     = msgs.MsgSaveProfile
+	MsgDeleteProfile   = msgs.MsgDeleteProfile
 )

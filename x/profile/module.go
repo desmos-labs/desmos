@@ -155,7 +155,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
-	return ProposalContents()
+	return nil
 }
 
 // RandomizedParams creates randomized profile param changes for the simulator.

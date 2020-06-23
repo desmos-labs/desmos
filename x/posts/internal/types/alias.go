@@ -45,6 +45,7 @@ var (
 	NewMsgEditPost             = msgs.NewMsgEditPost
 	NewMsgRegisterReaction     = msgs.NewMsgRegisterReaction
 	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
+	NewPostResponse            = models.NewPostResponse
 	PostStoreKey               = models.PostStoreKey
 	PostCommentsStoreKey       = models.PostCommentsStoreKey
 	PostReactionsStoreKey      = models.PostReactionsStoreKey
@@ -54,7 +55,6 @@ var (
 	ComputeID                  = models.ComputeID
 	ParsePostID                = models.ParsePostID
 	NewPost                    = models.NewPost
-	NewPostResponse            = models.NewPostResponse
 	NewPostMedia               = common.NewPostMedia
 	ValidateURI                = common.ValidateURI
 	NewPostMedias              = common.NewPostMedias
@@ -88,12 +88,12 @@ var (
 )
 
 type (
+	PostQueryResponse        = models.PostQueryResponse
 	PollAnswersQueryResponse = models.PollAnswersQueryResponse
 	PostID                   = models.PostID
 	PostIDs                  = models.PostIDs
 	Post                     = models.Post
 	Posts                    = models.Posts
-	PostQueryResponse        = models.PostQueryResponse
 	PostMedia                = common.PostMedia
 	PostMedias               = common.PostMedias
 	OptionalData             = common.OptionalData

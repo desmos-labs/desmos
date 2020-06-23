@@ -470,26 +470,6 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-// desmoscli profile proposals
-
-func (f *Fixtures) TxProfileSubmitNameSurnameEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx gov submit-proposal ns-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, deposit, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxProfileSubmitMonikerEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx gov submit-proposal moniker-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, deposit, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxProfileSubmitBioEditProposal(from sdk.AccAddress, deposit sdk.Coin, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx gov submit-proposal bio-params-edit --deposit=%s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, deposit, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
 //___________________________________________________________________________________
 // desmoscli tx reports
 

@@ -16,8 +16,6 @@ import (
 )
 
 const (
-	OpWeightMsgReportPost   = simulation.OpWeightMsgReportPost
-	DefaultGasValue         = simulation.DefaultGasValue
 	EventTypePostReported   = types.EventTypePostReported
 	AttributeKeyPostID      = types.AttributeKeyPostID
 	AttributeKeyReportOwner = types.AttributeKeyReportOwner
@@ -27,14 +25,18 @@ const (
 	ActionReportPost        = common.ActionReportPost
 	QuerierRoute            = common.QuerierRoute
 	QueryReports            = common.QueryReports
+	OpWeightMsgReportPost   = simulation.OpWeightMsgReportPost
+	DefaultGasValue         = simulation.DefaultGasValue
 )
 
 var (
 	// functions aliases
-	GetTxCmd               = cli.GetTxCmd
-	GetCmdReportPost       = cli.GetCmdReportPost
+	NewMsgReportPost       = msgs.NewMsgReportPost
+	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
 	GetQueryCmd            = cli.GetQueryCmd
 	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
+	GetTxCmd               = cli.GetTxCmd
+	GetCmdReportPost       = cli.GetCmdReportPost
 	RegisterRoutes         = rest.RegisterRoutes
 	NewHandler             = keeper.NewHandler
 	NewKeeper              = keeper.NewKeeper
@@ -58,24 +60,22 @@ var (
 	NewReportResponse      = models.NewReportResponse
 	NewReport              = models.NewReport
 	RegisterModelsCodec    = models.RegisterModelsCodec
-	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
-	NewMsgReportPost       = msgs.NewMsgReportPost
 
 	// variable aliases
-	ModuleCdc              = types.ModuleCdc
 	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
+	ModuleCdc              = types.ModuleCdc
 )
 
 type (
+	MsgReportPost        = msgs.MsgReportPost
+	ReportPostReq        = rest.ReportPostReq
+	Keeper               = keeper.Keeper
 	ReportsData          = simulation.ReportsData
 	GenesisState         = types.GenesisState
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
-	MsgReportPost        = msgs.MsgReportPost
-	ReportPostReq        = rest.ReportPostReq
-	Keeper               = keeper.Keeper
 )

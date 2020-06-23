@@ -10,7 +10,6 @@ import (
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	registerTxRoutes(cliCtx, r)
-	registerProposalRoutes(cliCtx, r)
 	registerQueryRoutes(cliCtx, r)
 }
 
