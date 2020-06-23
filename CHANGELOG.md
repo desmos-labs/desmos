@@ -2,10 +2,15 @@
 - Moved profile module constants to chain parameters (#171)
 
 # Version 0.7.0
+## Changes
 - Implemented benchmarks tests (#126)
 - Implemented posts' reports (#50)
 - Re-introduced the on-chain government module (#173)
 - Fixed reactions registration bug (#187)
+
+# Version 0.6.3
+## Changes
+- Restored evidence module (#189)
 
 # Version 0.6.2
 ## Changes
