@@ -11,11 +11,10 @@ func TestKeeper_SetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := types.NewNameSurnameLenParams(&min, &max)
-	monikerParams := types.NewMonikerLenParams(&min, &max)
-	bioParams := types.NewBioLenParams(max)
+	nsParams := types.NewNameSurnameLenParams(min, max)
+	monikerParams := types.NewMonikerLenParams(min, max)
 
-	params := types.NewParams(nsParams, monikerParams, bioParams)
+	params := types.NewParams(nsParams, monikerParams, max)
 
 	k.SetParams(ctx, params)
 
@@ -28,10 +27,9 @@ func TestKeeper_GetParams(t *testing.T) {
 	min := sdk.NewInt(2)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
-	nsParams := types.NewNameSurnameLenParams(&min, &max)
-	monikerParams := types.NewMonikerLenParams(&min, &max)
-	bioParams := types.NewBioLenParams(max)
-	params := types.NewParams(nsParams, monikerParams, bioParams)
+	nsParams := types.NewNameSurnameLenParams(min, max)
+	monikerParams := types.NewMonikerLenParams(min, max)
+	params := types.NewParams(nsParams, monikerParams, max)
 
 	tests := []struct {
 		name      string

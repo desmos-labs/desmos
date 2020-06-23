@@ -36,17 +36,17 @@ const (
 
 var (
 	// functions aliases
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	NewPostMedia               = common.NewPostMedia
 	ValidateURI                = common.ValidateURI
 	NewPostMedias              = common.NewPostMedias
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	ParseAnswerID              = polls.ParseAnswerID
+	NewPollAnswer              = polls.NewPollAnswer
+	NewPollAnswers             = polls.NewPollAnswers
 	NewPollData                = polls.NewPollData
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	ParseAnswerID              = polls.ParseAnswerID
-	NewPollAnswer              = polls.NewPollAnswer
-	NewPollAnswers             = polls.NewPollAnswers
 	NewPostReaction            = reactions.NewPostReaction
 	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
@@ -67,18 +67,18 @@ var (
 )
 
 type (
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
+	AnswerID      = polls.AnswerID
+	PollAnswer    = polls.PollAnswer
+	PollAnswers   = polls.PollAnswers
+	PollData      = polls.PollData
+	UserAnswer    = polls.UserAnswer
+	UserAnswers   = polls.UserAnswers
 	PostReaction  = reactions.PostReaction
 	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
 	Reactions     = reactions.Reactions
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
-	PollData      = polls.PollData
-	UserAnswer    = polls.UserAnswer
-	UserAnswers   = polls.UserAnswers
-	AnswerID      = polls.AnswerID
-	PollAnswer    = polls.PollAnswer
-	PollAnswers   = polls.PollAnswers
 )

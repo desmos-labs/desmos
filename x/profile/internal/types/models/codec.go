@@ -13,5 +13,4 @@ func init() {
 func RegisterModelsCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(NameSurnameLengths{}, "desmos/NameSurnameLengths", nil)
 	cdc.RegisterConcrete(MonikerLengths{}, "desmos/MonikerLengths", nil)
-	cdc.RegisterConcrete(BiographyLengths{}, "desmos/BiographyLengths", nil)
 }

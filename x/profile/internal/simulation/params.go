@@ -23,10 +23,10 @@ func ParamChanges(r *rand.Rand) []simulation.ParamChange {
 					params.MinMonikerLen, params.MaxMonikerLen)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.BioLenParamsKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.MaxBioLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomBioParams(r)
-				return fmt.Sprintf(`{"max_bio_len":"%s"}`, params.MaxBioLen)
+				return fmt.Sprintf(`{"max_bio_len":"%s"}`, params)
 			},
 		),
 	}

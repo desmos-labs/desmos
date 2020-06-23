@@ -29,7 +29,9 @@ const (
 
 var (
 	// functions aliases
-	RegisterModelsCodec          = models.RegisterModelsCodec
+	NewMsgSaveProfile            = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile          = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 	ParamKeyTable                = models.ParamKeyTable
 	NewParams                    = models.NewParams
 	DefaultParams                = models.DefaultParams
@@ -39,19 +41,14 @@ var (
 	NewMonikerLenParams          = models.NewMonikerLenParams
 	DefaultMonikerLenParams      = models.DefaultMonikerLenParams
 	ValidateMonikerLenParams     = models.ValidateMonikerLenParams
-	NewBioLenParams              = models.NewBioLenParams
-	DefaultBioLenParams          = models.DefaultBioLenParams
 	ValidateBioLenParams         = models.ValidateBioLenParams
 	ProfileStoreKey              = models.ProfileStoreKey
 	MonikerStoreKey              = models.MonikerStoreKey
 	NewProfile                   = models.NewProfile
 	NewPictures                  = models.NewPictures
-	NewMsgSaveProfile            = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile          = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	RegisterModelsCodec          = models.RegisterModelsCodec
 
 	// variable aliases
-	ModelsCdc                   = models.ModelsCdc
 	DefaultMinNameSurnameLength = models.DefaultMinNameSurnameLength
 	DefaultMaxNameSurnameLength = models.DefaultMaxNameSurnameLength
 	DefaultMinMonikerLength     = models.DefaultMinMonikerLength
@@ -59,22 +56,22 @@ var (
 	DefaultMaxBioLength         = models.DefaultMaxBioLength
 	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
 	MonikerLenParamsKey         = models.MonikerLenParamsKey
-	BioLenParamsKey             = models.BioLenParamsKey
+	MaxBioLenParamsKey          = models.MaxBioLenParamsKey
 	TxHashRegEx                 = models.TxHashRegEx
 	URIRegEx                    = models.URIRegEx
 	ProfileStorePrefix          = models.ProfileStorePrefix
 	MonikerStorePrefix          = models.MonikerStorePrefix
+	ModelsCdc                   = models.ModelsCdc
 	MsgsCodec                   = msgs.MsgsCodec
 )
 
 type (
+	MsgSaveProfile     = msgs.MsgSaveProfile
+	MsgDeleteProfile   = msgs.MsgDeleteProfile
 	Params             = models.Params
 	NameSurnameLengths = models.NameSurnameLengths
 	MonikerLengths     = models.MonikerLengths
-	BiographyLengths   = models.BiographyLengths
 	Profile            = models.Profile
 	Profiles           = models.Profiles
 	Pictures           = models.Pictures
-	MsgSaveProfile     = msgs.MsgSaveProfile
-	MsgDeleteProfile   = msgs.MsgDeleteProfile
 )

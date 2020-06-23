@@ -16,6 +16,8 @@ import (
 )
 
 const (
+	OpWeightMsgReportPost   = simulation.OpWeightMsgReportPost
+	DefaultGasValue         = simulation.DefaultGasValue
 	EventTypePostReported   = types.EventTypePostReported
 	AttributeKeyPostID      = types.AttributeKeyPostID
 	AttributeKeyReportOwner = types.AttributeKeyReportOwner
@@ -25,8 +27,6 @@ const (
 	ActionReportPost        = common.ActionReportPost
 	QuerierRoute            = common.QuerierRoute
 	QueryReports            = common.QueryReports
-	OpWeightMsgReportPost   = simulation.OpWeightMsgReportPost
-	DefaultGasValue         = simulation.DefaultGasValue
 )
 
 var (
@@ -44,6 +44,7 @@ var (
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
+	RandomizedGenState     = simulation.RandomizedGenState
 	DecodeStore            = simulation.DecodeStore
 	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
 	RandomReportsData      = simulation.RandomReportsData
@@ -51,7 +52,6 @@ var (
 	RandomReportMessage    = simulation.RandomReportMessage
 	RandomReportTypes      = simulation.RandomReportTypes
 	WeightedOperations     = simulation.WeightedOperations
-	RandomizedGenState     = simulation.RandomizedGenState
 	NewGenesisState        = types.NewGenesisState
 	DefaultGenesisState    = types.DefaultGenesisState
 	ValidateGenesis        = types.ValidateGenesis
@@ -62,20 +62,20 @@ var (
 	RegisterModelsCodec    = models.RegisterModelsCodec
 
 	// variable aliases
+	MsgsCodec              = msgs.MsgsCodec
+	ModuleCdc              = types.ModuleCdc
 	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
-	MsgsCodec              = msgs.MsgsCodec
-	ModuleCdc              = types.ModuleCdc
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
-	ReportPostReq        = rest.ReportPostReq
-	Keeper               = keeper.Keeper
 	ReportsData          = simulation.ReportsData
 	GenesisState         = types.GenesisState
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
+	ReportPostReq        = rest.ReportPostReq
+	Keeper               = keeper.Keeper
 )

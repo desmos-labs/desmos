@@ -14,7 +14,7 @@ func TestNewGenesis(t *testing.T) {
 	profiles := models.Profiles{}
 	nameSurnameParams := models.NameSurnameLengths{}
 	monikerParams := models.MonikerLengths{}
-	bioParams := models.BiographyLengths{}
+	bioParams := sdk.Int{}
 	params := models.NewParams(nameSurnameParams, monikerParams, bioParams)
 
 	expGenState := types.GenesisState{
@@ -84,16 +84,14 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				Params: models.Params{
 					NameSurnameLengths: models.NameSurnameLengths{
-						MinNameSurnameLen: &validNameMinParam,
-						MaxNameSurnameLen: &validNameMaxParam,
+						MinNameSurnameLen: validNameMinParam,
+						MaxNameSurnameLen: validNameMaxParam,
 					},
 					MonikerLengths: models.MonikerLengths{
-						MinMonikerLen: &validMinMonikerParam,
-						MaxMonikerLen: &invalidMaxMonikerParam,
+						MinMonikerLen: validMinMonikerParam,
+						MaxMonikerLen: invalidMaxMonikerParam,
 					},
-					BiographyLengths: models.BiographyLengths{
-						MaxBioLen: sdk.NewInt(30),
-					},
+					MaxBioLen: sdk.NewInt(30),
 				},
 			},
 			shouldError: true,
@@ -114,7 +112,7 @@ func TestValidateGenesis(t *testing.T) {
 				Params: models.Params{
 					NameSurnameLengths: models.DefaultNameSurnameLenParams(),
 					MonikerLengths:     models.DefaultMonikerLenParams(),
-					BiographyLengths:   models.DefaultBioLenParams(),
+					MaxBioLen:          models.DefaultMaxBioLength,
 				},
 			},
 			shouldError: false,

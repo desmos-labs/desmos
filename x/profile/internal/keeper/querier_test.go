@@ -138,16 +138,15 @@ func Test_queryParams(t *testing.T) {
 	validMin := sdk.NewInt(2)
 	validMax := sdk.NewInt(30)
 
-	nsParams := types.NewNameSurnameLenParams(&validMin, &validMax)
-	monikerParams := types.NewMonikerLenParams(&validMin, &validMax)
-	bioParams := types.NewBioLenParams(validMax)
+	nsParams := types.NewNameSurnameLenParams(validMin, validMax)
+	monikerParams := types.NewMonikerLenParams(validMin, validMax)
 
 	tests := []struct {
 		name                string
 		path                []string
 		nsParamsStored      types.NameSurnameLengths
 		monikerParamsStored types.MonikerLengths
-		bioParamStored      types.BiographyLengths
+		bioParamStored      sdk.Int
 		expResult           types.Params
 	}{
 		{
@@ -155,8 +154,8 @@ func Test_queryParams(t *testing.T) {
 			path:                []string{types.QueryParams},
 			nsParamsStored:      nsParams,
 			monikerParamsStored: monikerParams,
-			bioParamStored:      bioParams,
-			expResult:           types.NewParams(nsParams, monikerParams, bioParams),
+			bioParamStored:      validMax,
+			expResult:           types.NewParams(nsParams, monikerParams, validMax),
 		},
 	}
 

@@ -36,8 +36,8 @@ var (
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
 )

@@ -148,24 +148,24 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 type ProfileParams struct {
 	NameSurnameParams types.NameSurnameLengths
 	MonikerParams     types.MonikerLengths
-	BioParams         types.BiographyLengths
+	BioParams         sdk.Int
 }
 
 // RandomNameSurnameParams return a random set of name surname params
 func RandomNameSurnameParams(r *rand.Rand) types.NameSurnameLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
-	return types.NewNameSurnameLenParams(&randomMin, &randomMax)
+	return types.NewNameSurnameLenParams(randomMin, randomMax)
 }
 
 // RandomMonikerParams return a random set of moniker params
 func RandomMonikerParams(r *rand.Rand) types.MonikerLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
-	return types.NewMonikerLenParams(&randomMin, &randomMax)
+	return types.NewMonikerLenParams(randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param
-func RandomBioParams(r *rand.Rand) types.BiographyLengths {
-	return types.NewBioLenParams(sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))))
+func RandomBioParams(r *rand.Rand) sdk.Int {
+	return sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000)))
 }

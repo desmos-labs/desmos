@@ -13,14 +13,6 @@ import (
 )
 
 const (
-	OpWeightMsgSaveProfile   = simulation.OpWeightMsgSaveProfile
-	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
-	DefaultGasValue          = simulation.DefaultGasValue
-	ParamsKey                = simulation.ParamsKey
-	EventTypeProfileSaved    = types.EventTypeProfileSaved
-	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileMoniker  = types.AttributeProfileMoniker
-	AttributeProfileCreator  = types.AttributeProfileCreator
 	DefaultParamspace        = models.DefaultParamspace
 	ModuleName               = models.ModuleName
 	RouterKey                = models.RouterKey
@@ -36,17 +28,18 @@ const (
 	QueryProfile             = models.QueryProfile
 	QueryProfiles            = models.QueryProfiles
 	QueryParams              = models.QueryParams
+	OpWeightMsgSaveProfile   = simulation.OpWeightMsgSaveProfile
+	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
+	DefaultGasValue          = simulation.DefaultGasValue
+	ParamsKey                = simulation.ParamsKey
+	EventTypeProfileSaved    = types.EventTypeProfileSaved
+	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
+	AttributeProfileMoniker  = types.AttributeProfileMoniker
+	AttributeProfileCreator  = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
-	NewKeeper                    = keeper.NewKeeper
-	NewQuerier                   = keeper.NewQuerier
-	RegisterInvariants           = keeper.RegisterInvariants
-	AllInvariants                = keeper.AllInvariants
-	ValidProfileInvariant        = keeper.ValidProfileInvariant
-	NewHandler                   = keeper.NewHandler
-	ValidateProfile              = keeper.ValidateProfile
 	ParamChanges                 = simulation.ParamChanges
 	DecodeStore                  = simulation.DecodeStore
 	SimulateMsgSaveProfile       = simulation.SimulateMsgSaveProfile
@@ -65,10 +58,10 @@ var (
 	RandomBioParams              = simulation.RandomBioParams
 	WeightedOperations           = simulation.WeightedOperations
 	RandomizedGenState           = simulation.RandomizedGenState
-	RegisterCodec                = types.RegisterCodec
 	NewGenesisState              = types.NewGenesisState
 	DefaultGenesisState          = types.DefaultGenesisState
 	ValidateGenesis              = types.ValidateGenesis
+	RegisterCodec                = types.RegisterCodec
 	RegisterModelsCodec          = models.RegisterModelsCodec
 	ParamKeyTable                = models.ParamKeyTable
 	NewParams                    = models.NewParams
@@ -79,16 +72,21 @@ var (
 	NewMonikerLenParams          = models.NewMonikerLenParams
 	DefaultMonikerLenParams      = models.DefaultMonikerLenParams
 	ValidateMonikerLenParams     = models.ValidateMonikerLenParams
-	NewBioLenParams              = models.NewBioLenParams
-	DefaultBioLenParams          = models.DefaultBioLenParams
 	ValidateBioLenParams         = models.ValidateBioLenParams
 	ProfileStoreKey              = models.ProfileStoreKey
 	MonikerStoreKey              = models.MonikerStoreKey
 	NewProfile                   = models.NewProfile
 	NewPictures                  = models.NewPictures
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 	NewMsgSaveProfile            = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile          = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	NewHandler                   = keeper.NewHandler
+	ValidateProfile              = keeper.ValidateProfile
+	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
+	RegisterInvariants           = keeper.RegisterInvariants
+	AllInvariants                = keeper.AllInvariants
+	ValidProfileInvariant        = keeper.ValidProfileInvariant
 
 	// variable aliases
 	ModuleCdc                   = types.ModuleCdc
@@ -100,7 +98,7 @@ var (
 	DefaultMaxBioLength         = models.DefaultMaxBioLength
 	NameSurnameLenParamsKey     = models.NameSurnameLenParamsKey
 	MonikerLenParamsKey         = models.MonikerLenParamsKey
-	BioLenParamsKey             = models.BioLenParamsKey
+	MaxBioLenParamsKey          = models.MaxBioLenParamsKey
 	TxHashRegEx                 = models.TxHashRegEx
 	URIRegEx                    = models.URIRegEx
 	ProfileStorePrefix          = models.ProfileStorePrefix
@@ -109,17 +107,16 @@ var (
 )
 
 type (
+	Keeper             = keeper.Keeper
+	ProfileData        = simulation.ProfileData
+	ProfileParams      = simulation.ProfileParams
+	GenesisState       = types.GenesisState
 	Params             = models.Params
 	NameSurnameLengths = models.NameSurnameLengths
 	MonikerLengths     = models.MonikerLengths
-	BiographyLengths   = models.BiographyLengths
 	Profile            = models.Profile
 	Profiles           = models.Profiles
 	Pictures           = models.Pictures
 	MsgSaveProfile     = msgs.MsgSaveProfile
 	MsgDeleteProfile   = msgs.MsgDeleteProfile
-	Keeper             = keeper.Keeper
-	ProfileData        = simulation.ProfileData
-	ProfileParams      = simulation.ProfileParams
-	GenesisState       = types.GenesisState
 )
