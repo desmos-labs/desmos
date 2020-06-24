@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -37,7 +37,7 @@ func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := msgs.NewMsgSaveProfile(
+		msg := types.NewMsgSaveProfile(
 			req.NewMoniker,
 			req.Name,
 			req.Surname,
@@ -77,7 +77,7 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := msgs.NewMsgDeleteProfile(addr)
+		msg := types.NewMsgDeleteProfile(addr)
 
 		err = msg.ValidateBasic()
 		if err != nil {
