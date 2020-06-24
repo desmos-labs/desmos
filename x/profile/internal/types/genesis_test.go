@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -19,12 +20,13 @@ func TestNewGenesis(t *testing.T) {
 }
 
 func TestValidateGenesis(t *testing.T) {
-	var testPostOwner, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	var user, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
-	var name = "name"
-	var surname = "surname"
-	var bio = "biography"
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
 	tests := []struct {
 		name        string
@@ -39,32 +41,23 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid account errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("", user, date), // An empty tag should return an error
+				),
 			},
 			shouldError: true,
 		},
 		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("dtag", user, date).
+						WithBio(newStrPtr("biography")).
+						WithPictures(
+							newStrPtr("https://test.com/profile-pic"),
+							newStrPtr("https://test.com/cover-pic"),
+						),
+				),
 			},
 			shouldError: false,
 		},

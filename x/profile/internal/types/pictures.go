@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // Pictures contains the data of a user profile's related pictures
@@ -21,10 +23,14 @@ func NewPictures(profile, cover *string) *Pictures {
 	}
 }
 
-// Equals allows to check whether the contents of pic are the same of otherPic
+// Equals allows to check whether the contents of pic are the same of otherPics
 func (pic Pictures) Equals(otherPic *Pictures) bool {
-	return pic.Profile == otherPic.Profile &&
-		pic.Cover == otherPic.Cover
+	if otherPic == nil {
+		return false
+	}
+
+	return commons.StringPtrsEqual(pic.Profile, otherPic.Profile) &&
+		commons.StringPtrsEqual(pic.Cover, otherPic.Cover)
 }
 
 // Validate check the validity of the Pictures

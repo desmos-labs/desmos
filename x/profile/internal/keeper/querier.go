@@ -25,17 +25,17 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-// queryProfile handles the request to get a profile having a moniker or an address
+// queryProfile handles the request to get a profile having a dtag or an address
 func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	if len(strings.TrimSpace(path[0])) == 0 {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Moniker or address cannot be empty or blank")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank")
 	}
 
 	address, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {
-		address = keeper.GetMonikerRelatedAddress(ctx, path[0])
+		address = keeper.GetDtagRelatedAddress(ctx, path[0])
 		if address == nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No address related to this moniker: %s", path[0]))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No address related to this dtag: %s", path[0]))
 		}
 
 	}

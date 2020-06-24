@@ -13,25 +13,22 @@ import (
 
 // MsgSaveProfile defines a SaveProfile message
 type MsgSaveProfile struct {
-	Moniker    string         `json:"moniker" yaml:"moniker"`
-	Name       *string        `json:"name,omitempty" yaml:"name,omitempty"`
-	Surname    *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
+	Dtag       string         `json:"dtag" yaml:"dtag"`
+	Moniker    *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
 	Bio        *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	ProfilePic *string        `json:"profile_pic,omitempty" yaml:"profile_pic,omitempty"`
-	ProfileCov *string        `json:"profile_cov,omitempty" yaml:"profile_cov,omitempty"`
+	ProfilePic *string        `json:"profile_picture,omitempty" yaml:"profile_pic,omitempty"`
+	CoverPic   *string        `json:"cover_picture,omitempty" yaml:"cover_pic,omitempty"`
 	Creator    sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 // NewMsgSaveProfile is a constructor function for MsgSaveProfile
-func NewMsgSaveProfile(moniker string, name, surname, bio, profilePic,
-	profileCov *string, creator sdk.AccAddress) MsgSaveProfile {
+func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, coverPic *string, creator sdk.AccAddress) MsgSaveProfile {
 	return MsgSaveProfile{
+		Dtag:       dtag,
 		Moniker:    moniker,
-		Name:       name,
-		Surname:    surname,
 		Bio:        bio,
 		ProfilePic: profilePic,
-		ProfileCov: profileCov,
+		CoverPic:   coverPic,
 		Creator:    creator,
 	}
 }
@@ -45,39 +42,24 @@ func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSaveProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress,
+			fmt.Sprintf("Invalid creator address: %s", msg.Creator))
 	}
 
-	if len(msg.Moniker) < MinMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot be less than %d characters", MinMonikerLength))
+	if !DTagRegEx.MatchString(msg.Dtag) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Invalid profile dtag provided: '%s'", msg.Dtag))
 	}
 
-	if len(msg.Moniker) > MaxMonikerLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile moniker cannot exceed %d characters", MaxMonikerLength))
-	}
-
-	if msg.Name != nil {
-		if len(*msg.Name) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot be less than %d characters", MinNameSurnameLength))
-		}
-
-		if len(*msg.Name) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile name cannot exceed %d characters", MaxNameSurnameLength))
-		}
-	}
-
-	if msg.Surname != nil {
-		if msg.Surname != nil && len(*msg.Surname) < MinNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot be less than %d characters", MinNameSurnameLength))
-		}
-
-		if len(*msg.Surname) > MaxNameSurnameLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile surname cannot exceed %d characters", MaxNameSurnameLength))
-		}
+	if msg.Moniker != nil && (len(*msg.Moniker) < MinMonikerLength || len(*msg.Moniker) > MaxMonikerLength) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Moniker length should be between %d and %d",
+				MinMonikerLength, MaxMonikerLength))
 	}
 
 	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
 	return nil
