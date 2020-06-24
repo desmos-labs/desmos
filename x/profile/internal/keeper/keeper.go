@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,7 +22,7 @@ type Keeper struct {
 // NewKeeper creates new instances of the magpie Keeper
 func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(models.ParamKeyTable())
+		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
@@ -54,14 +53,14 @@ func (k Keeper) GetMonikerRelatedAddress(ctx sdk.Context, moniker string) (addr 
 // GetMonikerFromAddress returns the moniker associated with the given address or an empty string if no moniker exists
 func (k Keeper) GetMonikerFromAddress(ctx sdk.Context, addr sdk.AccAddress) (moniker string) {
 	store := ctx.KVStore(k.StoreKey)
-	it := sdk.KVStorePrefixIterator(store, models.MonikerStorePrefix)
+	it := sdk.KVStorePrefixIterator(store, types.MonikerStorePrefix)
 	defer it.Close()
 
 	for ; it.Valid(); it.Next() {
 		var acc sdk.AccAddress
 		k.Cdc.MustUnmarshalBinaryBare(it.Value(), &acc)
 		if acc.Equals(addr) {
-			return string(bytes.TrimPrefix(it.Key(), models.MonikerStorePrefix))
+			return string(bytes.TrimPrefix(it.Key(), types.MonikerStorePrefix))
 		}
 	}
 

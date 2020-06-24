@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
@@ -37,7 +36,7 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
 	// define keepers
 	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
-	subspace := paramsKeeper.Subspace(models.DefaultParamspace)
+	subspace := paramsKeeper.Subspace(types.DefaultParamspace)
 
 	return ctx, keeper.NewKeeper(cdc, profileKey, subspace)
 }
@@ -56,12 +55,12 @@ func testCodec() *codec.Codec {
 var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var profilePic = "https://shorturl.at/adnX3"
 var profileCov = "https://shorturl.at/cgpyF"
-var testPictures = models.NewPictures(&profilePic, &profileCov)
+var testPictures = types.NewPictures(&profilePic, &profileCov)
 var name = "name"
 var surname = "surname"
 var bio = "biography"
 
-var testProfile = models.Profile{
+var testProfile = types.Profile{
 	Name:     &name,
 	Surname:  &surname,
 	Moniker:  "moniker",

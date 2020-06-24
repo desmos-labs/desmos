@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,11 +10,11 @@ import (
 )
 
 func TestNewGenesis(t *testing.T) {
-	profiles := models.Profiles{}
-	nameSurnameParams := models.NameSurnameLengths{}
-	monikerParams := models.MonikerLengths{}
+	profiles := types.Profiles{}
+	nameSurnameParams := types.NameSurnameLengths{}
+	monikerParams := types.MonikerLengths{}
 	bioParams := sdk.Int{}
-	params := models.NewParams(nameSurnameParams, monikerParams, bioParams)
+	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 
 	expGenState := types.GenesisState{
 		Profiles: profiles,
@@ -36,7 +35,7 @@ func TestValidateGenesis(t *testing.T) {
 
 	var testProfilePic = "https://shorturl.at/adnX3"
 	var testCoverPic = "https://shorturl.at/cgpyF"
-	var testPictures = models.NewPictures(&testProfilePic, &testCoverPic)
+	var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
 
 	validNameMinParam := sdk.NewInt(3)
 	validNameMaxParam := sdk.NewInt(800)
@@ -56,8 +55,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid profile errors",
 			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
+				Profiles: types.Profiles{
+					types.Profile{
 						Name:     &name,
 						Surname:  &surname,
 						Moniker:  "",
@@ -72,8 +71,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid params errors",
 			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
+				Profiles: types.Profiles{
+					types.Profile{
 						Name:     &name,
 						Surname:  &surname,
 						Moniker:  "moniker",
@@ -82,12 +81,12 @@ func TestValidateGenesis(t *testing.T) {
 						Creator:  testPostOwner,
 					},
 				},
-				Params: models.Params{
-					NameSurnameLengths: models.NameSurnameLengths{
+				Params: types.Params{
+					NameSurnameLengths: types.NameSurnameLengths{
 						MinNameSurnameLen: validNameMinParam,
 						MaxNameSurnameLen: validNameMaxParam,
 					},
-					MonikerLengths: models.MonikerLengths{
+					MonikerLengths: types.MonikerLengths{
 						MinMonikerLen: validMinMonikerParam,
 						MaxMonikerLen: invalidMaxMonikerParam,
 					},
@@ -99,8 +98,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
-				Profiles: models.Profiles{
-					models.Profile{
+				Profiles: types.Profiles{
+					types.Profile{
 						Name:     &name,
 						Surname:  &surname,
 						Moniker:  "moniker",
@@ -109,10 +108,10 @@ func TestValidateGenesis(t *testing.T) {
 						Creator:  testPostOwner,
 					},
 				},
-				Params: models.Params{
-					NameSurnameLengths: models.DefaultNameSurnameLenParams(),
-					MonikerLengths:     models.DefaultMonikerLenParams(),
-					MaxBioLen:          models.DefaultMaxBioLength,
+				Params: types.Params{
+					NameSurnameLengths: types.DefaultNameSurnameLenParams(),
+					MonikerLengths:     types.DefaultMonikerLenParams(),
+					MaxBioLen:          types.DefaultMaxBioLength,
 				},
 			},
 			shouldError: false,

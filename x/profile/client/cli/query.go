@@ -2,13 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +43,7 @@ func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out models.Profile
+			var out types.Profile
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

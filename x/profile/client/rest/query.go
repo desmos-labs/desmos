@@ -2,7 +2,7 @@ package rest
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -22,7 +22,7 @@ func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		vars := mux.Vars(r)
 		address := vars["address_or_moniker"]
 
-		route := fmt.Sprintf("custom/%s/%s/%s", models.QuerierRoute, models.QueryProfile, address)
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, address)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
@@ -36,7 +36,7 @@ func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 // HTTP request handler to query list of profiles
 func queryProfilesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		route := fmt.Sprintf("custom/%s/%s", models.QuerierRoute, models.QueryProfiles)
+		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryProfiles)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
@@ -50,7 +50,7 @@ func queryProfilesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 // HTTP request handler to query list of profiles' module params
 func queryProfilesParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		route := fmt.Sprintf("custom/%s/%s", models.QuerierRoute, models.QueryParams)
+		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

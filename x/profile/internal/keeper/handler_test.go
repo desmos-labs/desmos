@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
@@ -83,12 +82,12 @@ func Test_validateProfile(t *testing.T) {
 		},
 		{
 			name: "Min surname length not reached",
-			profile: models.Profile{
+			profile: types.Profile{
 				Moniker:  testProfile.Moniker,
 				Name:     testProfile.Name,
 				Surname:  &invalidMinLenField,
 				Bio:      testProfile.Bio,
-				Pictures: models.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
+				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
 				Creator:  testProfile.Creator,
 			},
 			expErr: fmt.Errorf("Profile surname cannot be less than 2 characters"),
@@ -159,7 +158,7 @@ func Test_validateProfile(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
-			k.SetParams(ctx, models.DefaultParams())
+			k.SetParams(ctx, types.DefaultParams())
 			actual := keeper.ValidateProfile(ctx, k, test.profile)
 			require.Equal(t, test.expErr, actual)
 		})
@@ -255,10 +254,10 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
-			k.SetParams(ctx, models.DefaultParams())
+			k.SetParams(ctx, types.DefaultParams())
 			if test.existentProfiles != nil {
 				for _, acc := range test.existentProfiles {
-					key := models.ProfileStoreKey(acc.Creator)
+					key := types.ProfileStoreKey(acc.Creator)
 					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
 					k.AssociateMonikerWithAddress(ctx, acc.Moniker, acc.Creator)
 				}
