@@ -377,6 +377,7 @@ func SetupConfig(config *sdk.Config) {
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 	config.SetCoinType(852)
+	config.SetFullFundraiserPath("44'/852'/0'/0/0")
 }
 
 // BeginBlocker application updates every begin block
