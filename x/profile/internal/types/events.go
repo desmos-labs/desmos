@@ -5,6 +5,6 @@ const (
 	EventTypeProfileDeleted = "profile_deleted"
 
 	// Profile attributes
-	AttributeProfileMoniker = "profile_moniker"
+	AttributeProfileDtag    = "profile_dtag"
 	AttributeProfileCreator = "profile_creator"
 )

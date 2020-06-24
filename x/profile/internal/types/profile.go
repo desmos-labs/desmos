@@ -3,42 +3,29 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // Profile represents a generic account on Desmos, containing the information of a single user
 type Profile struct {
-	Moniker  string         `json:"moniker" yaml:"moniker"`
-	Name     *string        `json:"name,omitempty" yaml:"name,omitempty"`
-	Surname  *string        `json:"surname,omitempty" yaml:"surname,omitempty"`
-	Bio      *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
-	Pictures *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
-	Creator  sdk.AccAddress `json:"creator" yaml:"creator"`
+	DTag         string         `json:"dtag" yaml:"dtag"`
+	Moniker      *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
+	Bio          *string        `json:"bio,omitempty" yaml:"bio,omitempty"`
+	Pictures     *Pictures      `json:"pictures,omitempty" yaml:"pictures,omitempty"`
+	Creator      sdk.AccAddress `json:"creator" yaml:"creator"`
+	CreationDate time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
-func NewProfile(creator sdk.AccAddress) Profile {
-	return Profile{
-		Creator: creator,
-	}
+func NewProfile(dtag string, creator sdk.AccAddress, creationDate time.Time) Profile {
+	return Profile{DTag: dtag, Creator: creator, CreationDate: creationDate}
 }
 
-//WithMoniker updates profile's moniker with the given one
-func (profile Profile) WithMoniker(moniker string) Profile {
+// WithMoniker updates profile's moniker with the given one
+func (profile Profile) WithMoniker(moniker *string) Profile {
 	profile.Moniker = moniker
-	return profile
-}
-
-// WithSurname updates profile's name with the given one
-func (profile Profile) WithName(name *string) Profile {
-	profile.Name = name
-	return profile
-}
-
-// WithSurname updates profile's surname with the given one
-func (profile Profile) WithSurname(surname *string) Profile {
-	profile.Surname = surname
 	return profile
 }
 
@@ -66,11 +53,16 @@ func (profile Profile) String() string {
 
 // Equals allows to check whether the contents of acc are the same of other
 func (profile Profile) Equals(other Profile) bool {
-	return profile.Name == other.Name &&
-		profile.Surname == other.Surname &&
-		profile.Moniker == other.Moniker &&
-		profile.Bio == other.Bio &&
-		profile.Pictures.Equals(other.Pictures) &&
+	var arePicturesEquals bool
+	if profile.Pictures == nil || other.Pictures == nil {
+		arePicturesEquals = profile.Pictures == other.Pictures
+	} else {
+		arePicturesEquals = profile.Pictures.Equals(other.Pictures)
+	}
+
+	return profile.DTag == other.DTag &&
+		commons.StringPtrsEqual(profile.Bio, other.Bio) &&
+		arePicturesEquals &&
 		profile.Creator.Equals(other.Creator)
 }
 
@@ -80,8 +72,12 @@ func (profile Profile) Validate() error {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
 
-	if strings.TrimSpace(profile.Moniker) == "" {
-		return fmt.Errorf("profile moniker cannot be empty or blank")
+	if !DTagRegEx.MatchString(profile.DTag) {
+		return fmt.Errorf("invalid profile dtag")
+	}
+
+	if profile.Moniker != nil && (len(*profile.Moniker) < MinMonikerLength || len(*profile.Moniker) > MaxMonikerLength) {
+		return fmt.Errorf("invalid profile moniker. Length should be between %d and %d", MinMonikerLength, MaxMonikerLength)
 	}
 
 	if profile.Pictures != nil {
@@ -93,4 +89,10 @@ func (profile Profile) Validate() error {
 	return nil
 }
 
+// Profiles represents a slice of profile objects
 type Profiles []Profile
+
+// NewProfiles allows to easily create a Profiles object from a list of profiles
+func NewProfiles(profiles ...Profile) Profiles {
+	return profiles
+}

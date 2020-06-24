@@ -9,32 +9,60 @@ import (
 )
 
 func TestPictures_Equals(t *testing.T) {
-	profilePic := "profile"
-	profileCov := "cover"
 	tests := []struct {
-		name     string
-		pictures *types.Pictures
-		otherPic *types.Pictures
-		expBool  bool
+		name      string
+		pictures  *types.Pictures
+		otherPics *types.Pictures
+		expBool   bool
 	}{
 		{
-			name:     "Equals pictures returns true",
-			pictures: types.NewPictures(&profilePic, &profileCov),
-			otherPic: types.NewPictures(&profilePic, &profileCov),
-			expBool:  true,
+			name:      "Different pictures returns false",
+			pictures:  types.NewPictures(newStrPtr("cover"), newStrPtr("profile")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
 		},
 		{
-			name:     "Different pictures returns false",
-			pictures: types.NewPictures(&profileCov, &profilePic),
-			otherPic: types.NewPictures(&profilePic, &profileCov),
-			expBool:  false,
+			name:      "First picture with nil value returns false (profile)",
+			pictures:  types.NewPictures(nil, newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "First picture with nil value returns false (cover)",
+			pictures:  types.NewPictures(newStrPtr("profile"), nil),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "Second picture with nil value returns false (profile)",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(nil, newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "Second picture with nil value returns false (cover)",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), nil),
+			expBool:   false,
+		},
+		{
+			name:      "Equals pictures returns true",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   true,
+		},
+		{
+			name:      "Same values but different pointers return true",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   true,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual := test.pictures.Equals(test.otherPic)
+			actual := test.pictures.Equals(test.otherPics)
 			require.Equal(t, test.expBool, actual)
 		})
 	}
