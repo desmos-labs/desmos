@@ -37,7 +37,7 @@ func ParamKeyTable() paramsModule.KeyTable {
 type Params struct {
 	NameSurnameLengths NameSurnameLengths `json:"name_surname_lengths" yaml:"name_surname_lengths"`
 	MonikerLengths     MonikerLengths     `json:"moniker_lengths" yaml:"moniker_lengths"`
-	MaxBioLen          sdk.Int            `json:"max_bio_len" yaml:"max_moniker_len"`
+	MaxBioLen          sdk.Int            `json:"max_bio_len" yaml:"max_bio_len"`
 }
 
 // NewParams creates a new ProfileParams obj
