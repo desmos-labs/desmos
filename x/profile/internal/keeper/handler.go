@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
 // NewHandler returns a handler for "profile" type messages.

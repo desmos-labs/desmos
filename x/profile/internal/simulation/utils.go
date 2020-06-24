@@ -1,11 +1,11 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
 var (

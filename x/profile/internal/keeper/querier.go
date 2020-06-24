@@ -2,12 +2,12 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

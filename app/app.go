@@ -257,11 +257,6 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	)
 
 	// Register custom modules
-	app.profileKeeper = profile.NewKeeper(
-		app.cdc,
-		keys[profile.StoreKey],
-		app.subspaces[profile.ModuleName],
-	)
 	app.magpieKeeper = magpie.NewKeeper(
 		app.cdc,
 		keys[magpie.StoreKey],
@@ -269,6 +264,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.postsKeeper = posts.NewKeeper(
 		app.cdc,
 		keys[posts.StoreKey],
+	)
+	app.profileKeeper = profile.NewKeeper(
+		app.cdc,
+		keys[profile.StoreKey],
+		app.subspaces[profile.ModuleName],
 	)
 	app.reportsKeeper = reports.NewKeeper(
 		app.postsKeeper,

@@ -1,13 +1,12 @@
 package msgs_test
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
+	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types/msgs"
 	"github.com/stretchr/testify/require"
 )
 

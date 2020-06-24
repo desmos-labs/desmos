@@ -2,7 +2,6 @@ package profile
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -13,6 +12,7 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/profile/client/cli"
 	"github.com/desmos-labs/desmos/x/profile/client/rest"
+	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"

@@ -1,13 +1,13 @@
 package simulation
 
 import (
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/tendermint/tendermint/crypto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

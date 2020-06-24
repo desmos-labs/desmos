@@ -2,10 +2,10 @@ package models
 
 import (
 	"fmt"
-	paramsModule "github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramsModule "github.com/cosmos/cosmos-sdk/x/params/subspace"
 )
 
 const (
