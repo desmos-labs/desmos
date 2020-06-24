@@ -10,14 +10,16 @@ These data that could be verified later on chain by providing some additional in
 ## Contained data
 A profile contains different fields. Most of them could be omitted and each of them could be edited.
 
-### `Name`
-The `Name` identifies the name of the profile owner. It's omittable. Cannot be longer than `500` characters
+### `DTag`
+The `DTag` is a string of min `3` and max `30` characters that uniquely identifies the user.
+In order to be valid it needs to match the following RegEx:
 
-### `Surname`
-The `Surname` identifies the surname of the profile owner. It's omittable. Cannot be longer than `500` characters
+```
+[A-Za-z0-9_]{2,30}
+``` 
 
 ### `Moniker`
-The `Moniker` identifies the `moniker` of the profile owner. It can be made by at most `30` characters.
+The `Moniker` represents the name of the user. It can be either a combination of first, second and last name, or a completely invented name. Although we always suggest setting one, this field is completely optional. 
 
 ### `Bio`
 The `Bio` represents the biography of the user. It can be at most `1000` characters long.

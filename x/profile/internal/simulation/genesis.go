@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
@@ -34,16 +35,8 @@ func randomProfiles(simState *module.SimulationState) (accounts types.Profiles) 
 
 	accounts = make(types.Profiles, accountsNumber)
 	for i := 0; i < accountsNumber; i++ {
-		accountData := RandomProfileData(simState.Rand, simState.Accounts)
-		account := types.Profile{
-			Moniker: accountData.Moniker,
-			Name:    &accountData.Name,
-			Surname: &accountData.Surname,
-			Bio:     &accountData.Bio,
-			Creator: accountData.Creator.Address,
-		}
-
-		accounts[i] = account
+		simAccount, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
+		accounts[i] = NewRandomProfile(simState.Rand, simAccount.Address)
 	}
 
 	return accounts

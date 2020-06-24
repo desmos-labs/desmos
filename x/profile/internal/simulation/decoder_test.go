@@ -15,14 +15,10 @@ import (
 var (
 	privKey            = ed25519.GenPrivKey().PubKey()
 	accountCreatorAddr = sdk.AccAddress(privKey.Address())
-	name               = "leo"
-	surname            = "Di Caprio"
 	bio                = "Hollywood Actor. Proud environmentalist"
 
 	profile = types.Profile{
-		Name:    &name,
-		Surname: &surname,
-		Moniker: "leoDiCap",
+		DTag:    "leoDiCap",
 		Bio:     &bio,
 		Creator: accountCreatorAddr,
 	}
@@ -41,7 +37,7 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
-		kv.Pair{Key: types.MonikerStoreKey(profile.Moniker), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
+		kv.Pair{Key: types.DtagStoreKey(profile.DTag), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
 	}
 
 	tests := []struct {
@@ -49,7 +45,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
-		{"Moniker", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
+		{"DTag", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
 		{"other", ""},
 	}
 

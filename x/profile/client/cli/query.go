@@ -28,11 +28,11 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	return profileQueryCmd
 }
 
-// GetCmdQueryProfile queries a profile from the given address or moniker
+// GetCmdQueryProfile queries a profile from the given address or dtag
 func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "profile [address_or_moniker]",
-		Short: "Retrieve the profile having the specified user address or profile moniker, if any.",
+		Use:   "profile [address_or_dtag]",
+		Short: "Retrieve the profile having the specified user address or profile dtag, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -40,7 +40,7 @@ func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
 			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, args[0])
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("Could not find a profile with moniker %s \n", args[0])
+				fmt.Printf("Could not find a profile with dtag %s \n", args[0])
 				return nil
 			}
 

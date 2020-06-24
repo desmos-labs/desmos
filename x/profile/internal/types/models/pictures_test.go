@@ -1,40 +1,68 @@
-package models_test
+package types_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPictures_Equals(t *testing.T) {
-	profilePic := "profile"
-	profileCov := "cover"
 	tests := []struct {
-		name     string
-		pictures *models.Pictures
-		otherPic *models.Pictures
-		expBool  bool
+		name      string
+		pictures  *types.Pictures
+		otherPics *types.Pictures
+		expBool   bool
 	}{
 		{
-			name:     "Equals pictures returns true",
-			pictures: models.NewPictures(&profilePic, &profileCov),
-			otherPic: models.NewPictures(&profilePic, &profileCov),
-			expBool:  true,
+			name:      "Different pictures returns false",
+			pictures:  types.NewPictures(newStrPtr("cover"), newStrPtr("profile")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
 		},
 		{
-			name:     "Different pictures returns false",
-			pictures: models.NewPictures(&profileCov, &profilePic),
-			otherPic: models.NewPictures(&profilePic, &profileCov),
-			expBool:  false,
+			name:      "First picture with nil value returns false (profile)",
+			pictures:  types.NewPictures(nil, newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "First picture with nil value returns false (cover)",
+			pictures:  types.NewPictures(newStrPtr("profile"), nil),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "Second picture with nil value returns false (profile)",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(nil, newStrPtr("cover")),
+			expBool:   false,
+		},
+		{
+			name:      "Second picture with nil value returns false (cover)",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), nil),
+			expBool:   false,
+		},
+		{
+			name:      "Equals pictures returns true",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   true,
+		},
+		{
+			name:      "Same values but different pointers return true",
+			pictures:  types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			otherPics: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
+			expBool:   true,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual := test.pictures.Equals(test.otherPic)
+			actual := test.pictures.Equals(test.otherPics)
 			require.Equal(t, test.expBool, actual)
 		})
 	}
@@ -46,22 +74,22 @@ func TestPictures_Validate(t *testing.T) {
 	invalidURI := "invalid"
 	tests := []struct {
 		name     string
-		pictures *models.Pictures
+		pictures *types.Pictures
 		expErr   error
 	}{
 		{
 			name:     "Valid Pictures",
-			pictures: models.NewPictures(&profilePic, &profileCov),
+			pictures: types.NewPictures(&profilePic, &profileCov),
 			expErr:   nil,
 		},
 		{
 			name:     "Invalid Pictures profile uri",
-			pictures: models.NewPictures(&invalidURI, &profileCov),
+			pictures: types.NewPictures(&invalidURI, &profileCov),
 			expErr:   fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name:     "Invalid Pictures cover uri",
-			pictures: models.NewPictures(&profilePic, &invalidURI),
+			pictures: types.NewPictures(&profilePic, &invalidURI),
 			expErr:   fmt.Errorf("invalid profile cover uri provided"),
 		},
 	}

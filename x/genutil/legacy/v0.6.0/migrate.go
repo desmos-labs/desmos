@@ -5,8 +5,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
-	v040profiles "github.com/desmos-labs/desmos/x/profile/legacy/v0.4.0"
-	v060profiles "github.com/desmos-labs/desmos/x/profile/legacy/v0.6.0"
 )
 
 // Migrate migrates exported state from v0.5.0 to a v0.6.0 genesis state.
@@ -24,17 +22,6 @@ func Migrate(appState genutil.AppMap, _ ...interface{}) genutil.AppMap {
 
 		appState[v040posts.ModuleName] = v060Codec.MustMarshalJSON(
 			v060posts.Migrate(genDocs),
-		)
-	}
-
-	// Migrate profile state
-	if appState[v040profiles.ModuleName] != nil {
-		var genDocs v040profiles.GenesisState
-		v050Codec.MustUnmarshalJSON(appState[v040profiles.ModuleName], &genDocs)
-
-		delete(appState, v040profiles.ModuleName)
-		appState[v060profiles.ModuleName] = v060Codec.MustMarshalJSON(
-			genDocs,
 		)
 	}
 

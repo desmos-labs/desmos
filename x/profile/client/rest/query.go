@@ -11,16 +11,16 @@ import (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profiles/params", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/profiles/{address_or_moniker}", queryProfileHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/profiles/params", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 }
 
-// HTTP request handler to query a single profile based on its moniker
+// HTTP request handler to query a single profile based on its dtag
 func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		address := vars["address_or_moniker"]
+		address := vars["address_or_dtag"]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, address)
 		res, _, err := cliCtx.QueryWithData(route, nil)

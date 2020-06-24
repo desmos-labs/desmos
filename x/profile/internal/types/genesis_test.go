@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -26,21 +27,13 @@ func TestNewGenesis(t *testing.T) {
 }
 
 func TestValidateGenesis(t *testing.T) {
-	var testPostOwner, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	var user, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
-	var name = "name"
-	var surname = "surname"
-	var bio = "biography"
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
 
-	var testProfilePic = "https://shorturl.at/adnX3"
-	var testCoverPic = "https://shorturl.at/cgpyF"
-	var testPictures = types.NewPictures(&testProfilePic, &testCoverPic)
-
-	validNameMinParam := sdk.NewInt(3)
-	validNameMaxParam := sdk.NewInt(800)
-	validMinMonikerParam := sdk.NewInt(5)
-	invalidMaxMonikerParam := sdk.NewInt(-1)
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
 	tests := []struct {
 		name        string
@@ -55,64 +48,23 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid profile errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
-			},
-			shouldError: true,
-		},
-		{
-			name: "Genesis with invalid params errors",
-			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
-				Params: types.Params{
-					NameSurnameLengths: types.NameSurnameLengths{
-						MinNameSurnameLen: validNameMinParam,
-						MaxNameSurnameLen: validNameMaxParam,
-					},
-					MonikerLengths: types.MonikerLengths{
-						MinMonikerLen: validMinMonikerParam,
-						MaxMonikerLen: invalidMaxMonikerParam,
-					},
-					MaxBioLen: sdk.NewInt(30),
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("", user, date), // An empty tag should return an error
+				),
 			},
 			shouldError: true,
 		},
 		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
-				Profiles: types.Profiles{
-					types.Profile{
-						Name:     &name,
-						Surname:  &surname,
-						Moniker:  "moniker",
-						Bio:      &bio,
-						Pictures: testPictures,
-						Creator:  testPostOwner,
-					},
-				},
-				Params: types.Params{
-					NameSurnameLengths: types.DefaultNameSurnameLenParams(),
-					MonikerLengths:     types.DefaultMonikerLenParams(),
-					MaxBioLen:          types.DefaultMaxBioLength,
-				},
+				Profiles: types.NewProfiles(
+					types.NewProfile("dtag", user, date).
+						WithBio(newStrPtr("biography")).
+						WithPictures(
+							newStrPtr("https://test.com/profile-pic"),
+							newStrPtr("https://test.com/cover-pic"),
+						),
+				),
 			},
 			shouldError: false,
 		},

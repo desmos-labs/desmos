@@ -2,6 +2,7 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
@@ -9,31 +10,8 @@ import (
 )
 
 var (
-	randomNames = []string{
-		"Drake",
-		"Farah",
-		"Sabrina",
-		"Zoe",
-		"Merlin",
-		"Laura",
-		"Connor",
-		"Brianna",
-		"Federico",
-		"Matt",
-	}
-
-	randomSurnames = []string{
-		"McDonald",
-		"Guy",
-		"Edge",
-		"Cobb",
-		"Baxter",
-		"Mathis",
-		"Bentley",
-		"Metcalfe",
-		"Mcfarland",
-		"Daniels",
-	}
+	dtagLetters    = "abcdefghijtuvwxyzDUVWXYZ123490_"
+	monikerLetters = "abcdefghijtuvwxyzDUVWXYZ123490_ "
 
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -65,32 +43,14 @@ var (
 	}
 )
 
-// ProfileData contains the randomly generated data of an profile
-type ProfileData struct {
-	Moniker string
-	Name    string
-	Surname string
-	Bio     string
-	Picture types.Pictures
-	Creator sim.Account
-}
-
-// RandomProfileData return a random ProfileData from random data and random accounts list
-func RandomProfileData(r *rand.Rand, accs []sim.Account) ProfileData {
-	simAccount, _ := sim.RandomAcc(r, accs)
-	pictures := types.Pictures{
-		Profile: RandomProfilePic(r),
-		Cover:   RandomProfileCover(r),
-	}
-
-	return ProfileData{
-		Moniker: RandomMoniker(r),
-		Name:    RandomName(r),
-		Surname: RandomSurname(r),
-		Bio:     RandomBio(r),
-		Picture: pictures,
-		Creator: simAccount,
-	}
+// NewRandomProfile return a random ProfileData from random data and the given account
+func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
+	return types.NewProfile(RandomDTag(r), account, time.Now()).
+		WithBio(RandomBio(r)).
+		WithMoniker(RandomMoniker(r)).
+		WithPictures(
+			RandomProfilePic(r),
+			RandomProfileCover(r))
 }
 
 // RandomProfile picks and returns a random profile from an array
@@ -99,27 +59,25 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
+// RandomMoniker return a random dtag
+func RandomDTag(r *rand.Rand) string {
+	// DTag must be at least 3 characters and at most 30
+	dTagLen := r.Intn(27) + 3
+
+	b := make([]byte, dTagLen)
+	for i := range b {
+		b[i] = dtagLetters[r.Intn(len(dtagLetters))]
+	}
+	return string(b)
 // RandomMoniker return a random moniker from the randomMonikers list given
 func RandomMoniker(r *rand.Rand) string {
 	return sim.RandStringOfLength(r, 30)
 }
 
-// RandomName return a random name value from the list of randomNames given
-func RandomName(r *rand.Rand) string {
-	idx := r.Intn(len(randomNames))
-	return randomNames[idx]
-}
-
-// RandomSurname return a random surname value from the list of randomSurnames given
-func RandomSurname(r *rand.Rand) string {
-	idx := r.Intn(len(randomSurnames))
-	return randomSurnames[idx]
-}
-
 // RandomBio return a random bio value from the list of randomBios given
-func RandomBio(r *rand.Rand) string {
+func RandomBio(r *rand.Rand) *string {
 	idx := r.Intn(len(randomBios))
-	return randomBios[idx]
+	return &randomBios[idx]
 }
 
 // RandomProfilePic return a random profile pic value from the list of randomProfilePics given

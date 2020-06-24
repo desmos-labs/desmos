@@ -6,7 +6,8 @@ import (
 )
 
 // Migrate accepts exported genesis state from v0.4.0 and migrates it to v0.6.0
-// genesis state. This migration replace all the old post reactions structure with the new one that includes shortcodes.
+// genesis state. This migration replace all the old post reactions structure
+// with the new one that includes shortcodes.
 func Migrate(oldGenState v040posts.GenesisState) GenesisState {
 	return GenesisState{
 		Posts:               oldGenState.Posts,
