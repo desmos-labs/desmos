@@ -10,9 +10,6 @@ import (
 )
 
 var (
-	dtagLetters    = "abcdefghijtuvwxyzDUVWXYZ123490_"
-	monikerLetters = "abcdefghijtuvwxyzDUVWXYZ123490_ "
-
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		"Vestibulum a nulla sed purus pellentesque euismod quis ut risus.",
@@ -62,16 +59,13 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 // RandomMoniker return a random dtag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
-	dTagLen := r.Intn(27) + 3
+	return sim.RandStringOfLength(r, sim.RandIntBetween(r, 3, 30))
+}
 
-	b := make([]byte, dTagLen)
-	for i := range b {
-		b[i] = dtagLetters[r.Intn(len(dtagLetters))]
-	}
-	return string(b)
 // RandomMoniker return a random moniker from the randomMonikers list given
-func RandomMoniker(r *rand.Rand) string {
-	return sim.RandStringOfLength(r, 30)
+func RandomMoniker(r *rand.Rand) *string {
+	randomMoniker := sim.RandStringOfLength(r, 1000)
+	return &randomMoniker
 }
 
 // RandomBio return a random bio value from the list of randomBios given
@@ -104,23 +98,23 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 
 // ProfileParams contains the randomly generated params of profile module
 type ProfileParams struct {
-	NameSurnameParams types.NameSurnameLengths
-	MonikerParams     types.MonikerLengths
+	NameSurnameParams types.MonikerLengths
+	MonikerParams     types.DtagLengths
 	BioParams         sdk.Int
 }
 
 // RandomNameSurnameParams return a random set of name surname params
-func RandomNameSurnameParams(r *rand.Rand) types.NameSurnameLengths {
+func RandomNameSurnameParams(r *rand.Rand) types.MonikerLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
-	return types.NewNameSurnameLenParams(randomMin, randomMax)
+	return types.NewMonikerLenParams(randomMin, randomMax)
 }
 
 // RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) types.MonikerLengths {
+func RandomMonikerParams(r *rand.Rand) types.DtagLengths {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
-	return types.NewMonikerLenParams(randomMin, randomMax)
+	return types.NewDtagLenParams(randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param

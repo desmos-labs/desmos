@@ -21,8 +21,8 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	)
 
 	fmt.Printf("Selected randomly generated profile parameters:\n%s\n%s\n%s\n",
-		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.NameSurnameLengths),
 		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.MonikerLengths),
+		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.DtagLengths),
 		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.MaxBioLen),
 	)
 

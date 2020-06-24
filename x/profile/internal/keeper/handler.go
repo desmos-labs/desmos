@@ -29,44 +29,34 @@ func NewHandler(keeper Keeper) sdk.Handler {
 func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
 	params := keeper.GetParams(ctx)
 
-	minNameSurnameLen := params.NameSurnameLengths.MinNameSurnameLen.Int64()
-	maxNameSurnameLen := params.NameSurnameLengths.MaxNameSurnameLen.Int64()
-
-	if profile.Name != nil {
-		nameLen := int64(len(*profile.Name))
-		if nameLen < minNameSurnameLen {
-			return fmt.Errorf("Profile name cannot be less than %d characters", minNameSurnameLen)
-		}
-		if nameLen > maxNameSurnameLen {
-			return fmt.Errorf("Profile name cannot exceed %d characters", maxNameSurnameLen)
-		}
-	}
-
-	if profile.Surname != nil {
-		surNameLen := int64(len(*profile.Surname))
-		if surNameLen < minNameSurnameLen {
-			return fmt.Errorf("Profile surname cannot be less than %d characters", minNameSurnameLen)
-		}
-		if surNameLen > maxNameSurnameLen {
-			return fmt.Errorf("Profile surname cannot exceed %d characters", maxNameSurnameLen)
-		}
-	}
-
 	minMonikerLen := params.MonikerLengths.MinMonikerLen.Int64()
 	maxMonikerLen := params.MonikerLengths.MaxMonikerLen.Int64()
-	monikerLen := int64(len(profile.Moniker))
 
-	if monikerLen < minMonikerLen {
-		return fmt.Errorf("Profile moniker cannot be less than %d characters", minMonikerLen)
+	if profile.Moniker != nil {
+		nameLen := int64(len(*profile.Moniker))
+		if nameLen < minMonikerLen {
+			return fmt.Errorf("profile moniker cannot be less than %d characters", minMonikerLen)
+		}
+		if nameLen > maxMonikerLen {
+			return fmt.Errorf("profile moniker cannot exceed %d characters", maxMonikerLen)
+		}
 	}
 
-	if monikerLen > maxMonikerLen {
-		return fmt.Errorf("Profile moniker cannot exceed %d characters", maxMonikerLen)
+	minDtagLen := params.DtagLengths.MinDtagLen.Int64()
+	maxDtagLen := params.DtagLengths.MaxDtagLen.Int64()
+	dtagLen := int64(len(profile.DTag))
+
+	if dtagLen < minDtagLen {
+		return fmt.Errorf("rofile dtag cannot be less than %d characters", minDtagLen)
+	}
+
+	if dtagLen > maxDtagLen {
+		return fmt.Errorf("rofile dtag cannot exceed %d characters", maxDtagLen)
 	}
 
 	maxBioLen := params.MaxBioLen.Int64()
 	if profile.Bio != nil && int64(len(*profile.Bio)) > maxBioLen {
-		return fmt.Errorf("Profile biography cannot exceed %d characters", maxBioLen)
+		return fmt.Errorf("profile biography cannot exceed %d characters", maxBioLen)
 	}
 
 	if err := profile.Validate(); err != nil {
@@ -133,14 +123,14 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileDeleted,
-		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
+		sdk.NewAttribute(types.AttributeProfileMoniker, profile.Moniker),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
 	)
 
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
 		Events: ctx.EventManager().Events(),
 	}
 

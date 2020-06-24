@@ -12,8 +12,8 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	profiles := types.Profiles{}
-	nameSurnameParams := types.NameSurnameLengths{}
-	monikerParams := types.MonikerLengths{}
+	nameSurnameParams := types.MonikerLengths{}
+	monikerParams := types.DtagLengths{}
 	bioParams := sdk.Int{}
 	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 

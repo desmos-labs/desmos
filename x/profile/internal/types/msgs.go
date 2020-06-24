@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profile/internal/types/models"
 )
 
 // ----------------------
@@ -50,17 +49,6 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 	if !DTagRegEx.MatchString(msg.Dtag) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("Invalid profile dtag provided: '%s'", msg.Dtag))
-	}
-
-	if msg.Moniker != nil && (len(*msg.Moniker) < MinMonikerLength || len(*msg.Moniker) > MaxMonikerLength) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("Moniker length should be between %d and %d",
-				MinMonikerLength, MaxMonikerLength))
-	}
-
-	if msg.Bio != nil && len(*msg.Bio) > MaxBioLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("Profile biography cannot exceed %d characters", MaxBioLength))
 	}
 
 	return nil

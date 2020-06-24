@@ -31,22 +31,6 @@ const (
 
 var (
 	// functions aliases
-	DecodeStore            = simulation.DecodeStore
-	RandomizedGenState     = simulation.RandomizedGenState
-	WeightedOperations     = simulation.WeightedOperations
-	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
-	RandomReportsData      = simulation.RandomReportsData
-	RandomPostID           = simulation.RandomPostID
-	RandomReportMessage    = simulation.RandomReportMessage
-	RandomReportTypes      = simulation.RandomReportTypes
-	RegisterCodec          = types.RegisterCodec
-	NewGenesisState        = types.NewGenesisState
-	DefaultGenesisState    = types.DefaultGenesisState
-	ValidateGenesis        = types.ValidateGenesis
-	RegisterModelsCodec    = models.RegisterModelsCodec
-	ReportStoreKey         = models.ReportStoreKey
-	NewReport              = models.NewReport
-	NewReportResponse      = models.NewReportResponse
 	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
 	NewMsgReportPost       = msgs.NewMsgReportPost
 	GetQueryCmd            = cli.GetQueryCmd
@@ -54,28 +38,44 @@ var (
 	GetTxCmd               = cli.GetTxCmd
 	GetCmdReportPost       = cli.GetCmdReportPost
 	RegisterRoutes         = rest.RegisterRoutes
-	NewKeeper              = keeper.NewKeeper
-	NewQuerier             = keeper.NewQuerier
-	NewHandler             = keeper.NewHandler
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
+	NewHandler             = keeper.NewHandler
+	NewKeeper              = keeper.NewKeeper
+	NewQuerier             = keeper.NewQuerier
+	DecodeStore            = simulation.DecodeStore
+	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
+	RandomReportsData      = simulation.RandomReportsData
+	RandomPostID           = simulation.RandomPostID
+	RandomReportMessage    = simulation.RandomReportMessage
+	RandomReportTypes      = simulation.RandomReportTypes
+	WeightedOperations     = simulation.WeightedOperations
+	RandomizedGenState     = simulation.RandomizedGenState
+	NewGenesisState        = types.NewGenesisState
+	DefaultGenesisState    = types.DefaultGenesisState
+	ValidateGenesis        = types.ValidateGenesis
+	RegisterCodec          = types.RegisterCodec
+	RegisterModelsCodec    = models.RegisterModelsCodec
+	ReportStoreKey         = models.ReportStoreKey
+	NewReportResponse      = models.NewReportResponse
+	NewReport              = models.NewReport
 
 	// variable aliases
-	ModuleCdc              = types.ModuleCdc
-	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
+	ModuleCdc              = types.ModuleCdc
+	ModelsCdc              = models.ModelsCdc
 )
 
 type (
-	Keeper               = keeper.Keeper
 	ReportsData          = simulation.ReportsData
 	GenesisState         = types.GenesisState
+	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
-	ReportsQueryResponse = models.ReportsQueryResponse
 	MsgReportPost        = msgs.MsgReportPost
 	ReportPostReq        = rest.ReportPostReq
+	Keeper               = keeper.Keeper
 )
