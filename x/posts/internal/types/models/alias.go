@@ -67,10 +67,10 @@ var (
 )
 
 type (
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
 	OptionalData  = common.OptionalData
 	KeyValue      = common.KeyValue
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers

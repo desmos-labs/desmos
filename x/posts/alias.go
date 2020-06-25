@@ -66,17 +66,6 @@ const (
 
 var (
 	// functions aliases
-	NewPostMedia                     = common.NewPostMedia
-	ValidateURI                      = common.ValidateURI
-	NewPostMedias                    = common.NewPostMedias
-	GetEmojiByShortCodeOrValue       = common.GetEmojiByShortCodeOrValue
-	NewPollData                      = polls.NewPollData
-	ArePollDataEquals                = polls.ArePollDataEquals
-	NewUserAnswer                    = polls.NewUserAnswer
-	NewUserAnswers                   = polls.NewUserAnswers
-	ParseAnswerID                    = polls.ParseAnswerID
-	NewPollAnswer                    = polls.NewPollAnswer
-	NewPollAnswers                   = polls.NewPollAnswers
 	NewPostReaction                  = reactions.NewPostReaction
 	NewPostReactions                 = reactions.NewPostReactions
 	NewReaction                      = reactions.NewReaction
@@ -89,6 +78,8 @@ var (
 	NewMsgEditPost                   = msgs.NewMsgEditPost
 	NewMsgRegisterReaction           = msgs.NewMsgRegisterReaction
 	RegisterMessagesCodec            = msgs.RegisterMessagesCodec
+	NewHandler                       = keeper.NewHandler
+	NewKeeper                        = keeper.NewKeeper
 	NewQuerier                       = keeper.NewQuerier
 	RegisterInvariants               = keeper.RegisterInvariants
 	AllInvariants                    = keeper.AllInvariants
@@ -96,11 +87,6 @@ var (
 	ValidCommentsDateInvariant       = keeper.ValidCommentsDateInvariant
 	ValidPostForReactionsInvariant   = keeper.ValidPostForReactionsInvariant
 	ValidPollForPollAnswersInvariant = keeper.ValidPollForPollAnswersInvariant
-	NewHandler                       = keeper.NewHandler
-	NewKeeper                        = keeper.NewKeeper
-	SimulateMsgAddPostReaction       = simulation.SimulateMsgAddPostReaction
-	SimulateMsgRemovePostReaction    = simulation.SimulateMsgRemovePostReaction
-	SimulateMsgRegisterReaction      = simulation.SimulateMsgRegisterReaction
 	SimulateMsgCreatePost            = simulation.SimulateMsgCreatePost
 	SimulateMsgEditPost              = simulation.SimulateMsgEditPost
 	RandomPost                       = simulation.RandomPost
@@ -123,11 +109,14 @@ var (
 	RandomizedGenState               = simulation.RandomizedGenState
 	DecodeStore                      = simulation.DecodeStore
 	SimulateMsgAnswerToPoll          = simulation.SimulateMsgAnswerToPoll
-	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
+	SimulateMsgAddPostReaction       = simulation.SimulateMsgAddPostReaction
+	SimulateMsgRemovePostReaction    = simulation.SimulateMsgRemovePostReaction
+	SimulateMsgRegisterReaction      = simulation.SimulateMsgRegisterReaction
 	NewGenesisState                  = types.NewGenesisState
 	DefaultGenesisState              = types.DefaultGenesisState
 	ValidateGenesis                  = types.ValidateGenesis
 	RegisterCodec                    = types.RegisterCodec
+	DefaultQueryPostsParams          = types.DefaultQueryPostsParams
 	RegisterModelsCodec              = models.RegisterModelsCodec
 	ComputeID                        = models.ComputeID
 	ParsePostID                      = models.ParsePostID
@@ -138,9 +127,19 @@ var (
 	PostReactionsStoreKey            = models.PostReactionsStoreKey
 	ReactionsStoreKey                = models.ReactionsStoreKey
 	PollAnswersStoreKey              = models.PollAnswersStoreKey
+	NewPostMedia                     = common.NewPostMedia
+	ValidateURI                      = common.ValidateURI
+	NewPostMedias                    = common.NewPostMedias
+	GetEmojiByShortCodeOrValue       = common.GetEmojiByShortCodeOrValue
+	ParseAnswerID                    = polls.ParseAnswerID
+	NewPollAnswer                    = polls.NewPollAnswer
+	NewPollAnswers                   = polls.NewPollAnswers
+	NewPollData                      = polls.NewPollData
+	ArePollDataEquals                = polls.ArePollDataEquals
+	NewUserAnswer                    = polls.NewUserAnswer
+	NewUserAnswers                   = polls.NewUserAnswers
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
 	RandomMimeTypes          = simulation.RandomMimeTypes
 	RandomHosts              = simulation.RandomHosts
 	ModuleCdc                = types.ModuleCdc
@@ -155,19 +154,26 @@ var (
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
 	PollAnswersStorePrefix   = common.PollAnswersStorePrefix
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
+	PostID                   = models.PostID
+	PostIDs                  = models.PostIDs
+	Post                     = models.Post
+	Posts                    = models.Posts
+	PostQueryResponse        = models.PostQueryResponse
+	PollAnswersQueryResponse = models.PollAnswersQueryResponse
 	PostMedia                = common.PostMedia
 	PostMedias               = common.PostMedias
 	OptionalData             = common.OptionalData
 	KeyValue                 = common.KeyValue
-	PollData                 = polls.PollData
-	UserAnswer               = polls.UserAnswer
-	UserAnswers              = polls.UserAnswers
 	AnswerID                 = polls.AnswerID
 	PollAnswer               = polls.PollAnswer
 	PollAnswers              = polls.PollAnswers
+	PollData                 = polls.PollData
+	UserAnswer               = polls.UserAnswer
+	UserAnswers              = polls.UserAnswers
 	PostReaction             = reactions.PostReaction
 	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
@@ -182,12 +188,6 @@ type (
 	PostData                 = simulation.PostData
 	PostReactionData         = simulation.PostReactionData
 	ReactionData             = simulation.ReactionData
-	QueryPostsParams         = types.QueryPostsParams
 	GenesisState             = types.GenesisState
-	PostID                   = models.PostID
-	PostIDs                  = models.PostIDs
-	Post                     = models.Post
-	Posts                    = models.Posts
-	PostQueryResponse        = models.PostQueryResponse
-	PollAnswersQueryResponse = models.PollAnswersQueryResponse
+	QueryPostsParams         = types.QueryPostsParams
 )

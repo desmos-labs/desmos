@@ -2,12 +2,12 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"strings"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -202,7 +202,7 @@ func TestProfile_Validate(t *testing.T) {
 				),
 				Creator: user,
 			},
-			expErr: fmt.Errorf("invalid profile dtag"),
+			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]$"),
 		},
 		{
 			name: "Short moniker profile returns error",

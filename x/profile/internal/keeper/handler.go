@@ -47,11 +47,11 @@ func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) erro
 	dtagLen := int64(len(profile.DTag))
 
 	if dtagLen < minDtagLen {
-		return fmt.Errorf("rofile dtag cannot be less than %d characters", minDtagLen)
+		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
 	}
 
 	if dtagLen > maxDtagLen {
-		return fmt.Errorf("rofile dtag cannot exceed %d characters", maxDtagLen)
+		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDtagLen)
 	}
 
 	maxBioLen := params.MaxBioLen.Int64()
@@ -123,7 +123,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 	createEvent := sdk.NewEvent(
 		types.EventTypeProfileDeleted,
-		sdk.NewAttribute(types.AttributeProfileMoniker, profile.Moniker),
+		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
 	)
 

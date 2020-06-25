@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -13,31 +14,13 @@ import (
 )
 
 func Test_validateProfile(t *testing.T) {
-	invalidPic := "pic"
-	invalidMonikerLen := "asdserhrtyjeqrgdfhnr1asdserhrtyjeqrgdfhnr1"
-	invalidMaxLenField := "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-		"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-		"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-		"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-		"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-		"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-		"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-		"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-		"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-		"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-		"6ou0LSnJMCTq"
-	invalidBio := "9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-		"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-		"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-		"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-		"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-		"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz" +
-		"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51" +
-		"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF" +
-		"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd" +
-		"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv" +
-		"6ou0LSnJMCTq"
-	invalidMinLenField := "l"
+	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
 	tests := []struct {
 		name    string
@@ -45,111 +28,80 @@ func Test_validateProfile(t *testing.T) {
 		expErr  error
 	}{
 		{
-			name: "Max name length exceeded",
-			profile: types.Profile{
-				Moniker:  testProfile.Moniker,
-				Name:     &invalidMaxLenField,
-				Surname:  testProfile.Surname,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile name cannot exceed 1000 characters"),
-		},
-		{
-			name: "Min name length not reached",
-			profile: types.Profile{
-				Moniker:  testProfile.Moniker,
-				Name:     &invalidMinLenField,
-				Surname:  testProfile.Surname,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile name cannot be less than 2 characters"),
-		},
-		{
-			name: "Max surname length exceeded",
-			profile: types.Profile{
-				Moniker:  testProfile.Moniker,
-				Name:     testProfile.Name,
-				Surname:  &invalidMaxLenField,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile surname cannot exceed 1000 characters"),
-		},
-		{
-			name: "Min surname length not reached",
-			profile: types.Profile{
-				Moniker:  testProfile.Moniker,
-				Name:     testProfile.Name,
-				Surname:  &invalidMinLenField,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile surname cannot be less than 2 characters"),
-		},
-		{
-			name: "Max bio length exceeded",
-			profile: types.Profile{
-				Moniker:  testProfile.Moniker,
-				Name:     testProfile.Name,
-				Surname:  testProfile.Surname,
-				Bio:      &invalidBio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile biography cannot exceed 1000 characters"),
+			name: "Max moniker exceeded",
+			profile: types.NewProfile("custom-dtag", user, date).
+				WithMoniker(newStrPtr("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile moniker cannot exceed 1000 characters"),
 		},
 		{
 			name: "Min moniker length not reached",
-			profile: types.Profile{
-				Moniker:  "l",
-				Name:     testProfile.Name,
-				Surname:  testProfile.Surname,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile moniker cannot be less than 2 characters"),
+			profile: types.NewProfile("custom-dtag", user, date).
+				WithMoniker(newStrPtr("m")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile moniker cannot be less than 2 characters"),
 		},
 		{
-			name: "Max moniker length exceeded",
-			profile: types.Profile{
-				Moniker:  invalidMonikerLen,
-				Name:     testProfile.Name,
-				Surname:  testProfile.Surname,
-				Bio:      testProfile.Bio,
-				Pictures: types.NewPictures(testProfile.Pictures.Profile, testProfile.Pictures.Cover),
-				Creator:  testProfile.Creator,
-			},
-			expErr: fmt.Errorf("Profile moniker cannot exceed 30 characters"),
+			name: "Max bio length exceeded",
+			profile: types.NewProfile("custom-dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
+		},
+		{
+			name: "Min dtag length not reached",
+			profile: types.NewProfile("d", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile dtag cannot be less than 2 characters"),
+		},
+		{
+			name: "Max dtag length exceeded",
+			profile: types.NewProfile("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXE", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			profile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  "moniker",
-				Bio:      &bio,
-				Pictures: types.NewPictures(&invalidPic, testProfile.Pictures.Cover),
-				Creator:  testPostOwner,
-			},
+			profile: types.NewProfile("dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("pic"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name: "Valid profile returns no error",
-			profile: types.Profile{
-				Name:     &name,
-				Surname:  &surname,
-				Moniker:  "moniker",
-				Bio:      &bio,
-				Pictures: testPictures,
-				Creator:  testPostOwner,
-			},
+			profile: types.NewProfile("dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
 			expErr: nil,
 		},
 	}
@@ -213,7 +165,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name: "Profile saved (with previous profile created)",
-			existentAccounts: types.NewProfiles(
+			existentProfiles: types.NewProfiles(
 				types.NewProfile("test_dtag", user, date).
 					WithMoniker(newStrPtr("old-moniker")).
 					WithBio(newStrPtr("old-biography")).
@@ -247,7 +199,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name: "Profile saving fails due to wrong tag",
-			existentAccounts: types.NewProfiles(
+			existentProfiles: types.NewProfiles(
 				testProfile,
 				types.NewProfile("editor_dtag", editor, date).
 					WithBio(newStrPtr("biography")),
@@ -264,7 +216,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name:             "Profile not edited because of the invalid profile picture",
-			existentAccounts: types.Profiles{testProfile},
+			existentProfiles: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
 				nil,

@@ -28,6 +28,7 @@ func TestUnique(t *testing.T) {
 	}
 
 	for index, test := range tests {
+		test := test
 		t.Run(strconv.Itoa(index), func(t *testing.T) {
 			res := commons.Unique(test.value)
 			require.Len(t, res, len(test.exp))
