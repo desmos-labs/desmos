@@ -38,13 +38,13 @@ type Params struct {
 	MaxBioLen      sdk.Int        `json:"max_bio_len" yaml:"max_bio_len"`
 }
 
-// MonikerLengths defines the paramsModule around moniker len
+// MonikerParams defines the paramsModule around moniker len
 type MonikerLengths struct {
 	MinMonikerLen sdk.Int `json:"min_moniker_len" yaml:"min_moniker_len"`
 	MaxMonikerLen sdk.Int `json:"max_moniker_len" yaml:"max_moniker_len"`
 }
 
-// DtagLengths defines the paramsModule around profiles' dtag
+// DtagParams defines the paramsModule around profiles' dtag
 type DtagLengths struct {
 	MinDtagLen sdk.Int `json:"min_dtag_len" yaml:"min_dtag_len"`
 	MaxDtagLen sdk.Int `json:"max_dtag_len" yaml:"max_dtag_len"`

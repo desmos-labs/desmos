@@ -98,23 +98,23 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 
 // ProfileParams contains the randomly generated params of profile module
 type ProfileParams struct {
-	NameSurnameParams types.MonikerLengths
-	MonikerParams     types.DtagLengths
+	NameSurnameParams types.MonikerParams
+	MonikerParams     types.DtagParams
 	BioParams         sdk.Int
 }
 
 // RandomNameSurnameParams return a random set of name surname params
-func RandomNameSurnameParams(r *rand.Rand) types.MonikerLengths {
+func RandomNameSurnameParams(r *rand.Rand) types.MonikerParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
-	return types.NewMonikerLenParams(randomMin, randomMax)
+	return types.NewMonikerParams(randomMin, randomMax)
 }
 
 // RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) types.DtagLengths {
+func RandomMonikerParams(r *rand.Rand) types.DtagParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
-	return types.NewDtagLenParams(randomMin, randomMax)
+	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param

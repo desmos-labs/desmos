@@ -26,8 +26,7 @@ const (
 )
 
 var (
-	DTagRegEx = regexp.MustCompile(`^[A-Za-z0-9_]{3,30}$`)
-	URIRegEx  = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
+	URIRegEx = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
 
 	ProfileStorePrefix = []byte("profile")
 	DtagStorePrefix    = []byte("dtag")

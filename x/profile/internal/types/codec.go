@@ -12,8 +12,8 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MonikerLengths{}, "desmos/MonikerLengths", nil)
-	cdc.RegisterConcrete(DtagLengths{}, "desmos/DtagLengths", nil)
+	cdc.RegisterConcrete(MonikerParams{}, "desmos/MonikerParams", nil)
+	cdc.RegisterConcrete(DtagParams{}, "desmos/DtagParams", nil)
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 }

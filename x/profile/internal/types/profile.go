@@ -72,15 +72,10 @@ func (profile Profile) Validate() error {
 	if profile.Creator.Empty() {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
-	// TODO replace this with params or vice versa?
 	if strings.TrimSpace(profile.DTag) == "" {
 		return fmt.Errorf("profile dtag cannot be empty or blank")
 	}
-	/*
-		if !DTagRegEx.MatchString(profile.DTag) {
-			return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", DTagRegEx)
-		}
-	*/
+
 	if profile.Pictures != nil {
 		if err := profile.Pictures.Validate(); err != nil {
 			return err

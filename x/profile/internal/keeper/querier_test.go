@@ -139,14 +139,14 @@ func Test_queryParams(t *testing.T) {
 	validMin := sdk.NewInt(2)
 	validMax := sdk.NewInt(30)
 
-	nsParams := types.NewMonikerLenParams(validMin, validMax)
-	monikerParams := types.NewDtagLenParams(validMin, validMax)
+	nsParams := types.NewMonikerParams(validMin, validMax)
+	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", validMin, validMax)
 
 	tests := []struct {
 		name                string
 		path                []string
-		nsParamsStored      types.MonikerLengths
-		monikerParamsStored types.DtagLengths
+		nsParamsStored      types.MonikerParams
+		monikerParamsStored types.DtagParams
 		bioParamStored      sdk.Int
 		expResult           types.Params
 	}{

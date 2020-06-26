@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -29,8 +30,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
 	params := keeper.GetParams(ctx)
 
-	minMonikerLen := params.MonikerLengths.MinMonikerLen.Int64()
-	maxMonikerLen := params.MonikerLengths.MaxMonikerLen.Int64()
+	minMonikerLen := params.MonikerParams.MinMonikerLen.Int64()
+	maxMonikerLen := params.MonikerParams.MaxMonikerLen.Int64()
 
 	if profile.Moniker != nil {
 		nameLen := int64(len(*profile.Moniker))
@@ -42,9 +43,14 @@ func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) erro
 		}
 	}
 
-	minDtagLen := params.DtagLengths.MinDtagLen.Int64()
-	maxDtagLen := params.DtagLengths.MaxDtagLen.Int64()
+	dTagRegEx := regexp.MustCompile(params.DtagParams.RegEx)
+	minDtagLen := params.DtagParams.MinDtagLen.Int64()
+	maxDtagLen := params.DtagParams.MaxDtagLen.Int64()
 	dtagLen := int64(len(profile.DTag))
+
+	if !dTagRegEx.MatchString(profile.DTag) {
+		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
+	}
 
 	if dtagLen < minDtagLen {
 		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
@@ -130,7 +136,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.Moniker),
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),
 		Events: ctx.EventManager().Events(),
 	}
 

@@ -78,6 +78,7 @@ func TestStringPtrsEqual(t *testing.T) {
 	}
 
 	for index, test := range tests {
+		test := test
 		t.Run(strconv.Itoa(index), func(t *testing.T) {
 			require.Equal(t, test.expEquals, commons.StringPtrsEqual(test.first, test.second))
 		})
