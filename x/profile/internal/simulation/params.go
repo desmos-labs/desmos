@@ -12,14 +12,14 @@ func ParamChanges(r *rand.Rand) []simulation.ParamChange {
 	return []simulation.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.MonikerLenParamsKey),
 			func(r *rand.Rand) string {
-				params := RandomNameSurnameParams(r)
+				params := RandomMonikerParams(r)
 				return fmt.Sprintf(`{"min_name_surname_len":"%s","max_name_surname_len":"%s"}`,
 					params.MinMonikerLen, params.MaxMonikerLen)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.DtagLenParamsKey),
 			func(r *rand.Rand) string {
-				params := RandomMonikerParams(r)
+				params := RandomDTagParams(r)
 				return fmt.Sprintf(`{"min_moniker_len":"%s","max_moniker_len":"%s"}`,
 					params.MinDtagLen, params.MaxDtagLen)
 			},

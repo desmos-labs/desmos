@@ -17,7 +17,7 @@ const (
 func RandomizedGenState(simsState *module.SimulationState) {
 	profileGenesis := types.NewGenesisState(
 		randomProfiles(simsState),
-		types.NewParams(RandomNameSurnameParams(simsState.Rand), RandomMonikerParams(simsState.Rand), RandomBioParams(simsState.Rand)),
+		types.NewParams(RandomMonikerParams(simsState.Rand), RandomDTagParams(simsState.Rand), RandomBioParams(simsState.Rand)),
 	)
 
 	fmt.Printf("Selected randomly generated profile parameters:\n%s\n%s\n%s\n",

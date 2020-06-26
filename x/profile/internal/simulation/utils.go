@@ -56,15 +56,15 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
-// RandomMoniker return a random dtag
+// RandomDTag return a random dtag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
-	return sim.RandStringOfLength(r, sim.RandIntBetween(r, 3, 30))
+	return sim.RandStringOfLength(r, sim.RandIntBetween(r, 5, 30))
 }
 
 // RandomMoniker return a random moniker from the randomMonikers list given
 func RandomMoniker(r *rand.Rand) *string {
-	randomMoniker := sim.RandStringOfLength(r, 1000)
+	randomMoniker := sim.RandStringOfLength(r, 30)
 	return &randomMoniker
 }
 
@@ -103,15 +103,15 @@ type ProfileParams struct {
 	BioParams         sdk.Int
 }
 
-// RandomNameSurnameParams return a random set of name surname params
-func RandomNameSurnameParams(r *rand.Rand) types.MonikerParams {
+// RandomMonikerParams return a random set of moniker params
+func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
 	return types.NewMonikerParams(randomMin, randomMax)
 }
 
-// RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) types.DtagParams {
+// RandomDTagParams return a random set of moniker params
+func RandomDTagParams(r *rand.Rand) types.DtagParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 5)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
 	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)

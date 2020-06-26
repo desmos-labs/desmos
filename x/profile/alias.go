@@ -54,8 +54,8 @@ var (
 	RandomProfilePic         = simulation.RandomProfilePic
 	RandomProfileCover       = simulation.RandomProfileCover
 	GetSimAccount            = simulation.GetSimAccount
-	RandomNameSurnameParams  = simulation.RandomNameSurnameParams
-	RandomMonikerParams      = simulation.RandomMonikerParams
+	RandomNameSurnameParams  = simulation.RandomMonikerParams
+	RandomMonikerParams      = simulation.RandomDTagParams
 	RandomBioParams          = simulation.RandomBioParams
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
