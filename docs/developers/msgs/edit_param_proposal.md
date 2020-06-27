@@ -1,5 +1,5 @@
 # `EditParamsProposal`
-Inside Desmos there are some parameters set for the `profiles` module which can be changed by submitting a proposal throught
+Inside Desmos there are some parameters set for the `profiles` module which can be changed by submitting a proposal through
 the `gov` module of the `cosmosSDK`.
 
 ## Structure
@@ -14,7 +14,7 @@ the `gov` module of the `cosmosSDK`.
             "description": "<Proposal's description>",
             "changes": [
               {
-                "subspace": "<Nodule's subspace>",
+                "subspace": "<Module's subspace>",
                 "key": "<Parameter's key>",
                 "value": "<Parameter's value>"
               }

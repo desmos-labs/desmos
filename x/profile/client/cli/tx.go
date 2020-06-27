@@ -80,7 +80,7 @@ If you are editing an existing profile you should fill all the existent fields o
 	}
 
 	cmd.Flags().String(flagDtag, "", "DTag of the user")
-	cmd.Flags().String(flagMoniker, "", "MonikerParams of the user")
+	cmd.Flags().String(flagMoniker, "", "Moniker of the user")
 	cmd.Flags().String(flagBio, "", "Biography of the user")
 	cmd.Flags().String(flagProfilePic, "", "User profile picture")
 	cmd.Flags().String(flagProfileCover, "", "User cover picture")

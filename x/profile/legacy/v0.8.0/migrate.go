@@ -49,7 +49,7 @@ func ConvertProfiles(oldProfiles []v060profile.Profile, genesisTime time.Time) [
 	return profiles
 }
 
-// GetProfileDTag returns the DtagParams for the given profile. To do so, it takes the
+// GetProfileDTag returns the Dtag for the given profile. To do so, it takes the
 // current profile moniker and remove all the whitespaces from it.
 func GetProfileDTag(moniker string) string {
 	return strings.ReplaceAll(moniker, " ", "")

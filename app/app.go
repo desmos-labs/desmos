@@ -284,6 +284,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 			app.SlashingKeeper.Hooks()),
 	)
 
+	// Create the module manager
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(

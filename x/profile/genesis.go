@@ -18,6 +18,9 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	keeper.SetParams(ctx, data.Params)
 
 	for _, profile := range data.Profiles {
+		if err := ValidateProfile(ctx, keeper, profile); err != nil {
+			panic(err)
+		}
 		if err := keeper.SaveProfile(ctx, profile); err != nil {
 			panic(err)
 		}

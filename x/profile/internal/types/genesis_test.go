@@ -59,7 +59,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
-					types.NewProfile("custom-dtag1", user, date).
+					types.NewProfile("custom_dtag1", user, date).
 						WithBio(newStrPtr("biography")).
 						WithPictures(
 							newStrPtr("https://test.com/profile-pic"),

@@ -30,11 +30,12 @@ var (
 	NewHandler               = keeper.NewHandler
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
-	RandomizedGenState       = simulation.RandomizedGenState
 	DecodeStore              = simulation.DecodeStore
 	RandomSessionData        = simulation.RandomSessionData
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
+	RandomizedGenState       = simulation.RandomizedGenState
+	NewMsgCreateSession      = types.NewMsgCreateSession
 	SessionStoreKey          = types.SessionStoreKey
 	ParseSessionID           = types.ParseSessionID
 	NewSession               = types.NewSession
@@ -42,7 +43,6 @@ var (
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	RegisterCodec            = types.RegisterCodec
-	NewMsgCreateSession      = types.NewMsgCreateSession
 
 	// variable aliases
 	SessionLengthKey      = types.SessionLengthKey
@@ -53,11 +53,11 @@ var (
 )
 
 type (
-	Keeper           = keeper.Keeper
 	SessionData      = simulation.SessionData
+	MsgCreateSession = types.MsgCreateSession
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
 	GenesisState     = types.GenesisState
-	MsgCreateSession = types.MsgCreateSession
+	Keeper           = keeper.Keeper
 )
