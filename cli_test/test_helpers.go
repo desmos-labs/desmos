@@ -27,7 +27,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/profile"
+	"github.com/desmos-labs/desmos/x/profiles"
 	"github.com/stretchr/testify/require"
 )
 
@@ -794,12 +794,12 @@ func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
 // query profile
 
 // QueryProfile returns stored profiles
-func (f *Fixtures) QueryProfiles(flags ...string) profile.Profiles {
+func (f *Fixtures) QueryProfiles(flags ...string) profiles.Profiles {
 	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedProfile profile.Profiles
+	var storedProfile profiles.Profiles
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile

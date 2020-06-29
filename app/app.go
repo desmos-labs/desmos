@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/desmos-labs/desmos/x/magpie"
 	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/profile"
+	"github.com/desmos-labs/desmos/x/profiles"
 	"github.com/desmos-labs/desmos/x/reports"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -65,7 +65,7 @@ var (
 		// Custom modules
 		magpie.AppModuleBasic{},
 		posts.AppModuleBasic{},
-		profile.AppModuleBasic{},
+		profiles.AppModuleBasic{},
 		reports.AppModuleBasic{},
 	)
 
@@ -128,7 +128,7 @@ type DesmosApp struct {
 	// Custom modules
 	magpieKeeper  magpie.Keeper
 	postsKeeper   posts.Keeper
-	profileKeeper profile.Keeper
+	profileKeeper profiles.Keeper
 	reportsKeeper reports.Keeper
 
 	// Module Manager
@@ -155,7 +155,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
-		magpie.StoreKey, posts.StoreKey, profile.StoreKey, reports.StoreKey,
+		magpie.StoreKey, posts.StoreKey, profiles.StoreKey, reports.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -179,7 +179,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[profile.ModuleName] = app.paramsKeeper.Subspace(profile.DefaultParamspace)
+	app.subspaces[profiles.ModuleName] = app.paramsKeeper.Subspace(profiles.DefaultParamspace)
 
 	// Add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -265,10 +265,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.cdc,
 		keys[posts.StoreKey],
 	)
-	app.profileKeeper = profile.NewKeeper(
+	app.profileKeeper = profiles.NewKeeper(
 		app.cdc,
-		keys[profile.StoreKey],
-		app.subspaces[profile.ModuleName],
+		keys[profiles.StoreKey],
+		app.subspaces[profiles.ModuleName],
 	)
 	app.reportsKeeper = reports.NewKeeper(
 		app.postsKeeper,
@@ -302,7 +302,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		// Custom modules
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
-		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
 	)
 
@@ -318,7 +318,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
 		gov.ModuleName, evidence.ModuleName,
 
-		magpie.ModuleName, posts.ModuleName, profile.ModuleName, reports.ModuleName, // custom modules
+		magpie.ModuleName, posts.ModuleName, profiles.ModuleName, reports.ModuleName, // custom modules
 
 		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
 		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules
@@ -344,7 +344,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		// Custom modules
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
-		profile.NewAppModule(app.profileKeeper, app.AccountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
 	)
 
