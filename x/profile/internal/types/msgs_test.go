@@ -1,13 +1,10 @@
 package types_test
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 )
@@ -70,39 +67,9 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
-			name: "Max bio length exceeded",
-			msg: types.NewMsgSaveProfile(
-				testProfile.DTag,
-				nil,
-				newStrPtr(strings.Repeat("a", 2000)),
-				nil,
-				nil,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Profile biography cannot exceed 1000 characters"),
-		},
-		{
-			name:  "Min dtag length not reached",
-			msg:   types.NewMsgSaveProfile("l", nil, nil, nil, nil, testProfile.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided: 'l'"),
-		},
-		{
-			name: "Max dtag length exceeded",
-			msg: types.NewMsgSaveProfile(
-				strings.Repeat("_", 100),
-				nil,
-				nil,
-				nil,
-				nil,
-				testProfile.Creator,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("Invalid profile dtag provided: '%s'", strings.Repeat("_", 100))),
-		},
-		{
-			name:  "Invalid dtag characters",
-			msg:   types.NewMsgSaveProfile("d.tag", nil, nil, nil, nil, testProfile.Creator),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid profile dtag provided: 'd.tag'"),
+			name:  "Invalid empty dtag returns error",
+			msg:   types.NewMsgSaveProfile("", nil, nil, nil, nil, testProfile.Creator),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
 		},
 		{
 			name: "No error message",

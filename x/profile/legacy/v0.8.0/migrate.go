@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	v060profile "github.com/desmos-labs/desmos/x/profile/legacy/v0.6.0"
 )
 
@@ -12,6 +13,18 @@ import (
 func Migrate(oldGenState v060profile.GenesisState, genesisTime time.Time) GenesisState {
 	return GenesisState{
 		Profiles: ConvertProfiles(oldGenState.Profiles, genesisTime),
+		Params: Params{
+			MonikerParams: MonikerParams{
+				MinMonikerLen: sdk.NewInt(2),
+				MaxMonikerLen: sdk.NewInt(1000),
+			},
+			DtagParams: DtagParams{
+				RegEx:      `^[A-Za-z0-9_]+$`,
+				MinDtagLen: sdk.NewInt(3),
+				MaxDtagLen: sdk.NewInt(30),
+			},
+			MaxBioLen: sdk.NewInt(1000),
+		},
 	}
 }
 

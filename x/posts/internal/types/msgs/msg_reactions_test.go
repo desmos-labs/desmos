@@ -74,7 +74,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 			name: "Invalid subspace returns error",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
 				"1234"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reaction subspace must be a valid sha-256 hash")),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash"),
 		},
 	}
 

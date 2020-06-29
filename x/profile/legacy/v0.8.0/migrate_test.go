@@ -98,6 +98,7 @@ func TestGetProfileDtag(t *testing.T) {
 	}
 
 	for index, test := range tests {
+		test := test
 		t.Run(strconv.Itoa(index), func(t *testing.T) {
 			require.Equal(t, test.expDTag, v080.GetProfileDTag(test.moniker))
 		})
@@ -117,6 +118,7 @@ func TestGetProfileMoniker(t *testing.T) {
 	}
 
 	for index, test := range tests {
+		test := test
 		t.Run(strconv.Itoa(index), func(t *testing.T) {
 			value := v080.GetProfileMoniker(&test.name, &test.surname)
 

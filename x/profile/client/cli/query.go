@@ -23,6 +23,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	profileQueryCmd.AddCommand(flags.GetCommands(
 		GetCmdQueryProfile(cdc),
 		GetCmdQueryProfiles(cdc),
+		GetCmdQueryProfileParams(cdc),
 	)...)
 	return profileQueryCmd
 }
@@ -67,6 +68,29 @@ func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var out types.Profiles
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+// GetCmdQueryProfileParams queries all the profiles' module params
+func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "params",
+		Short: "Retrieve all the profile module params",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find profile params")
+				return nil
+			}
+
+			var out types.Params
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

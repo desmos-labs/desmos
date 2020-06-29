@@ -74,8 +74,8 @@ var (
 		auth.FeeCollectorName:     nil,
 		distr.ModuleName:          nil,
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
-		gov.ModuleName:            {supply.Burner},
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
+		gov.ModuleName:            {supply.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -179,6 +179,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
+	app.subspaces[profile.ModuleName] = app.paramsKeeper.Subspace(profile.DefaultParamspace)
 
 	// Add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -267,6 +268,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.profileKeeper = profile.NewKeeper(
 		app.cdc,
 		keys[profile.StoreKey],
+		app.subspaces[profile.ModuleName],
 	)
 	app.reportsKeeper = reports.NewKeeper(
 		app.postsKeeper,

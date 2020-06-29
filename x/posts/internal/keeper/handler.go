@@ -276,7 +276,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	if len(msg.UserAnswers) > len(post.PollData.ProvidedAnswers) {
 		return nil, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("user's answers are more than the available ones in Poll"),
+			"user's answers are more than the available ones in Poll",
 		)
 	}
 

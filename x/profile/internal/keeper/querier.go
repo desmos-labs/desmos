@@ -19,6 +19,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryProfile(ctx, path[1:], req, keeper)
 		case types.QueryProfiles:
 			return queryProfiles(ctx, req, keeper)
+		case types.QueryParams:
+			return queryProfileParams(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")
 		}
@@ -60,6 +62,18 @@ func queryProfiles(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte,
 	accounts := keeper.GetProfiles(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &accounts)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+// queryProfileParams handles the request of listing all the profiles params
+func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	profileParams := keeper.GetParams(ctx)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &profileParams)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

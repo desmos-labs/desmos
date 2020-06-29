@@ -2,11 +2,11 @@ package keeper
 
 import (
 	"fmt"
-
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
+	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
 )
 
 // NewHandler returns a handler for "profile" type messages.
@@ -24,6 +24,52 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
+}
+
+// ValidateProfile checks if the given profile is valid according to the current profile's module params
+func ValidateProfile(ctx sdk.Context, keeper Keeper, profile types.Profile) error {
+	params := keeper.GetParams(ctx)
+
+	minMonikerLen := params.MonikerParams.MinMonikerLen.Int64()
+	maxMonikerLen := params.MonikerParams.MaxMonikerLen.Int64()
+
+	if profile.Moniker != nil {
+		nameLen := int64(len(*profile.Moniker))
+		if nameLen < minMonikerLen {
+			return fmt.Errorf("profile moniker cannot be less than %d characters", minMonikerLen)
+		}
+		if nameLen > maxMonikerLen {
+			return fmt.Errorf("profile moniker cannot exceed %d characters", maxMonikerLen)
+		}
+	}
+
+	dTagRegEx := regexp.MustCompile(params.DtagParams.RegEx)
+	minDtagLen := params.DtagParams.MinDtagLen.Int64()
+	maxDtagLen := params.DtagParams.MaxDtagLen.Int64()
+	dtagLen := int64(len(profile.DTag))
+
+	if !dTagRegEx.MatchString(profile.DTag) {
+		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
+	}
+
+	if dtagLen < minDtagLen {
+		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
+	}
+
+	if dtagLen > maxDtagLen {
+		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDtagLen)
+	}
+
+	maxBioLen := params.MaxBioLen.Int64()
+	if profile.Bio != nil && int64(len(*profile.Bio)) > maxBioLen {
+		return fmt.Errorf("profile biography cannot exceed %d characters", maxBioLen)
+	}
+
+	if err := profile.Validate(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // handleMsgSaveProfile handles the creation/edit of a profile
@@ -46,7 +92,8 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		WithMoniker(msg.Moniker).
 		WithBio(msg.Bio).
 		WithPictures(msg.ProfilePic, msg.CoverPic)
-	if err := profile.Validate(); err != nil {
+	err := ValidateProfile(ctx, keeper, profile)
+	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 

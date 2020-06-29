@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -71,13 +72,8 @@ func (profile Profile) Validate() error {
 	if profile.Creator.Empty() {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
-
-	if !DTagRegEx.MatchString(profile.DTag) {
-		return fmt.Errorf("invalid profile dtag")
-	}
-
-	if profile.Moniker != nil && (len(*profile.Moniker) < MinMonikerLength || len(*profile.Moniker) > MaxMonikerLength) {
-		return fmt.Errorf("invalid profile moniker. Length should be between %d and %d", MinMonikerLength, MaxMonikerLength)
+	if len(strings.TrimSpace(profile.DTag)) == 0 {
+		return fmt.Errorf("profile dtag cannot be empty or blank")
 	}
 
 	if profile.Pictures != nil {

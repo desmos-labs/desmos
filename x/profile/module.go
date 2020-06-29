@@ -12,6 +12,7 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/profile/client/cli"
 	"github.com/desmos-labs/desmos/x/profile/client/rest"
+	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -93,7 +94,9 @@ func (AppModule) Name() string {
 }
 
 // RegisterInvariants performs a no-op.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
+	keeper.RegisterInvariants(ir, am.keeper)
+}
 
 // Route returns the message routing key for the profile module.
 func (am AppModule) Route() string {
@@ -157,7 +160,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedPropos
 
 // RandomizedParams creates randomized profile param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []sim.ParamChange {
-	return nil
+	return ParamChanges(r)
 }
 
 // RegisterStoreDecoder performs a no-op.

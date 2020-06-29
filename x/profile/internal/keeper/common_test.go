@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -15,12 +16,16 @@ import (
 func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
 	// define store keys
-	magpieKey := sdk.NewKVStoreKey("magpie")
+	profileKey := sdk.NewKVStoreKey("profiles")
+	paramsKey := sdk.NewKVStoreKey("params")
+	paramsTKey := sdk.NewTransientStoreKey("transient_params")
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(profileKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -29,7 +34,11 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 
-	return ctx, keeper.NewKeeper(cdc, magpieKey)
+	// define keepers
+	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
+	subspace := paramsKeeper.Subspace(types.DefaultParamspace)
+
+	return ctx, keeper.NewKeeper(cdc, profileKey, subspace)
 }
 
 func testCodec() *codec.Codec {

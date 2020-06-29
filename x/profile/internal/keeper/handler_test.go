@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -11,6 +13,121 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
+
+func Test_validateProfile(t *testing.T) {
+	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	tests := []struct {
+		name    string
+		profile types.Profile
+		expErr  error
+	}{
+		{
+			name: "Max moniker length exceeded",
+			profile: types.NewProfile("custom_dtag", user, date).
+				WithMoniker(newStrPtr(strings.Repeat("A", 1005))).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile moniker cannot exceed 1000 characters"),
+		},
+		{
+			name: "Min moniker length not reached",
+			profile: types.NewProfile("custom_dtag", user, date).
+				WithMoniker(newStrPtr("m")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile moniker cannot be less than 2 characters"),
+		},
+		{
+			name: "Max bio length exceeded",
+			profile: types.NewProfile("custom_dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr(strings.Repeat("A", 1005))).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
+		},
+		{
+			name: "Invalid dtag doesn't match regEx",
+			profile: types.NewProfile("custom.", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr(strings.Repeat("A", 1000))).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]+$"),
+		},
+		{
+			name: "Min dtag length not reached",
+			profile: types.NewProfile("d", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
+		},
+		{
+			name: "Max dtag length exceeded",
+			profile: types.NewProfile("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXE", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
+		},
+		{
+			name: "Invalid profile pictures returns error",
+			profile: types.NewProfile("dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("pic"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: fmt.Errorf("invalid profile picture uri provided"),
+		},
+		{
+			name: "Valid profile returns no error",
+			profile: types.NewProfile("dtag", user, date).
+				WithMoniker(newStrPtr("moniker")).
+				WithBio(newStrPtr("my-bio")).
+				WithPictures(
+					newStrPtr("https://test.com/profile-picture"),
+					newStrPtr("https://test.com/cover-pic"),
+				),
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
+			actual := keeper.ValidateProfile(ctx, k, test.profile)
+			require.Equal(t, test.expErr, actual)
+		})
+	}
+}
 
 func Test_handleMsgSaveProfile(t *testing.T) {
 	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
@@ -26,7 +143,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		existentAccounts types.Profiles
+		existentProfiles types.Profiles
 		expAccount       *types.Profile
 		msg              types.MsgSaveProfile
 		expErr           error
@@ -60,7 +177,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name: "Profile saved (with previous profile created)",
-			existentAccounts: types.NewProfiles(
+			existentProfiles: types.NewProfiles(
 				types.NewProfile("test_dtag", user, date).
 					WithMoniker(newStrPtr("old-moniker")).
 					WithBio(newStrPtr("old-biography")).
@@ -94,7 +211,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name: "Profile saving fails due to wrong tag",
-			existentAccounts: types.NewProfiles(
+			existentProfiles: types.NewProfiles(
 				testProfile,
 				types.NewProfile("editor_dtag", editor, date).
 					WithBio(newStrPtr("biography")),
@@ -111,7 +228,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		},
 		{
 			name:             "Profile not edited because of the invalid profile picture",
-			existentAccounts: types.Profiles{testProfile},
+			existentProfiles: types.Profiles{testProfile},
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
 				nil,
@@ -129,9 +246,9 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
 			store := ctx.KVStore(k.StoreKey)
-
-			if test.existentAccounts != nil {
-				for _, acc := range test.existentAccounts {
+			k.SetParams(ctx, types.DefaultParams())
+			if test.existentProfiles != nil {
+				for _, acc := range test.existentProfiles {
 					key := types.ProfileStoreKey(acc.Creator)
 					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
 					k.AssociateDtagWithAddress(ctx, acc.DTag, acc.Creator)

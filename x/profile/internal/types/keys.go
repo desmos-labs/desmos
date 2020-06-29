@@ -11,10 +11,6 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	MinMonikerLength = 2
-	MaxMonikerLength = 50
-	MaxBioLength     = 1000
-
 	ActionSaveProfile   = "save_profile"
 	ActionDeleteProfile = "delete_profile"
 
@@ -22,11 +18,11 @@ const (
 	QuerierRoute  = ModuleName
 	QueryProfile  = "profile"
 	QueryProfiles = "all"
+	QueryParams   = "params"
 )
 
 var (
-	DTagRegEx = regexp.MustCompile(`^[A-Za-z0-9_]{3,30}$`)
-	URIRegEx  = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
+	URIRegEx = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
 
 	ProfileStorePrefix = []byte("profile")
 	DtagStorePrefix    = []byte("dtag")

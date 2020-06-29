@@ -12,10 +12,17 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	profiles := types.Profiles{}
-	expGenState := types.GenesisState{Profiles: profiles}
+	nameSurnameParams := types.MonikerParams{}
+	monikerParams := types.DtagParams{}
+	bioParams := sdk.Int{}
+	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 
-	actualGenState := types.NewGenesisState(profiles)
+	expGenState := types.GenesisState{
+		Profiles: profiles,
+		Params:   params,
+	}
 
+	actualGenState := types.NewGenesisState(profiles, params)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -39,11 +46,12 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: false,
 		},
 		{
-			name: "Genesis with invalid account errors",
+			name: "Genesis with invalid profile errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
 					types.NewProfile("", user, date), // An empty tag should return an error
 				),
+				Params: types.DefaultParams(),
 			},
 			shouldError: true,
 		},
@@ -51,13 +59,14 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
-					types.NewProfile("dtag", user, date).
+					types.NewProfile("custom_dtag1", user, date).
 						WithBio(newStrPtr("biography")).
 						WithPictures(
 							newStrPtr("https://test.com/profile-pic"),
 							newStrPtr("https://test.com/cover-pic"),
 						),
 				),
+				Params: types.DefaultParams(),
 			},
 			shouldError: false,
 		},

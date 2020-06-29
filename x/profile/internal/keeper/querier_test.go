@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/profile/internal/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/desmos/x/profile/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profile/internal/types"
 	"github.com/stretchr/testify/require"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -131,4 +133,48 @@ func Test_queryProfiles(t *testing.T) {
 		})
 	}
 
+}
+
+func Test_queryParams(t *testing.T) {
+	validMin := sdk.NewInt(3)
+	validMax := sdk.NewInt(30)
+
+	nsParams := types.NewMonikerParams(validMin, validMax)
+	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", validMin, validMax)
+
+	tests := []struct {
+		name                string
+		path                []string
+		nsParamsStored      types.MonikerParams
+		monikerParamsStored types.DtagParams
+		bioParamStored      sdk.Int
+		expResult           types.Params
+	}{
+		{
+			name:                "Returning profile parameters correctly",
+			path:                []string{types.QueryParams},
+			nsParamsStored:      nsParams,
+			monikerParamsStored: monikerParams,
+			bioParamStored:      validMax,
+			expResult:           types.NewParams(nsParams, monikerParams, validMax),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if result != nil {
+				require.Nil(t, err)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				require.NoError(t, err)
+				require.Equal(t, string(expectedIndented), string(result))
+			}
+
+		})
+	}
 }

@@ -2,7 +2,6 @@ package types_test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -202,35 +201,7 @@ func TestProfile_Validate(t *testing.T) {
 				),
 				Creator: user,
 			},
-			expErr: fmt.Errorf("invalid profile dtag"),
-		},
-		{
-			name: "Short moniker profile returns error",
-			account: types.Profile{
-				DTag:    "dtag",
-				Moniker: newStrPtr("1"),
-				Bio:     newStrPtr("bio"),
-				Pictures: types.NewPictures(
-					newStrPtr("https://shorturl.at/adnX3"),
-					newStrPtr("https://shorturl.at/cgpyF"),
-				),
-				Creator: user,
-			},
-			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
-		},
-		{
-			name: "Long moniker profile returns error",
-			account: types.Profile{
-				DTag:    "dtag",
-				Moniker: newStrPtr(strings.Repeat("1", 100)),
-				Bio:     newStrPtr("bio"),
-				Pictures: types.NewPictures(
-					newStrPtr("https://shorturl.at/adnX3"),
-					newStrPtr("https://shorturl.at/cgpyF"),
-				),
-				Creator: user,
-			},
-			expErr: fmt.Errorf("invalid profile moniker. Length should be between 2 and 50"),
+			expErr: fmt.Errorf("profile dtag cannot be empty or blank"),
 		},
 		{
 			name: "Valid profile returns no error",

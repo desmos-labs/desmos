@@ -1,8 +1,10 @@
 package types
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+)
 
-// ModuleCdc is the codec
+// ModuleCdc is the codec used inside the whole profile module
 var ModuleCdc = codec.New()
 
 func init() {
@@ -10,6 +12,8 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
+	cdc.RegisterConcrete(MonikerParams{}, "desmos/MonikerParams", nil)
+	cdc.RegisterConcrete(DtagParams{}, "desmos/DtagParams", nil)
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 }

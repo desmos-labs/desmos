@@ -10,9 +10,6 @@ import (
 )
 
 var (
-	dtagLetters    = "abcdefghijtuvwxyzDUVWXYZ123490_"
-	monikerLetters = "abcdefghijtuvwxyzDUVWXYZ123490_ "
-
 	randomBios = []string{
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		"Vestibulum a nulla sed purus pellentesque euismod quis ut risus.",
@@ -59,29 +56,16 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
-// RandomMoniker return a random dtag
+// RandomDTag return a random dtag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
-	dTagLen := r.Intn(27) + 3
-
-	b := make([]byte, dTagLen)
-	for i := range b {
-		b[i] = dtagLetters[r.Intn(len(dtagLetters))]
-	}
-	return string(b)
+	return sim.RandStringOfLength(r, sim.RandIntBetween(r, 3, 30))
 }
 
 // RandomMoniker return a random moniker
 func RandomMoniker(r *rand.Rand) *string {
-	// Moniker must be at least 2 and at most 50 characters
-	monikerLen := r.Intn(48) + 2
-
-	b := make([]byte, monikerLen)
-	for i := range b {
-		b[i] = monikerLetters[r.Intn(len(monikerLetters))]
-	}
-	value := string(b)
-	return &value
+	randomMoniker := sim.RandStringOfLength(r, 30)
+	return &randomMoniker
 }
 
 // RandomBio return a random bio value from the list of randomBios given
@@ -110,4 +94,23 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 		}
 	}
 	return nil
+}
+
+// RandomMonikerParams return a random set of moniker params
+func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
+	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
+	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
+	return types.NewMonikerParams(randomMin, randomMax)
+}
+
+// RandomDTagParams return a random set of moniker params
+func RandomDTagParams(r *rand.Rand) types.DtagParams {
+	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 3, 4)))
+	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
+	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+}
+
+// RandomBioParams return a random biography param
+func RandomBioParams(r *rand.Rand) sdk.Int {
+	return sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000)))
 }

@@ -1,5 +1,5 @@
 # `MsgDeleteProfile`
-This message allows you to delete the a previously created profile.
+This message allows you to delete a previously created profile.
 
 ## Structure
 ````json
