@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/reactions"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

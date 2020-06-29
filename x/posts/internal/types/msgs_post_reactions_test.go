@@ -1,12 +1,11 @@
-package msgs_test
+package types_test
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji2 "github.com/desmos-labs/Go-Emoji-Utils"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/msgs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +16,7 @@ import (
 func TestShortCodeRegEx(t *testing.T) {
 	for _, emoji := range emoji2.Emojis {
 		for _, shortcode := range emoji.Shortcodes {
-			res := models.ShortCodeRegEx.MatchString(shortcode)
+			res := types.ShortCodeRegEx.MatchString(shortcode)
 			if !res {
 				println(shortcode)
 			}
@@ -26,7 +25,7 @@ func TestShortCodeRegEx(t *testing.T) {
 	}
 }
 
-var msgPostReaction = msgs.NewMsgAddPostReaction(id, "like", testOwner)
+var msgPostReaction = types.NewMsgAddPostReaction(id, "like", testOwner)
 
 func TestMsgAddPostReaction_Route(t *testing.T) {
 	actual := msgPostReaction.Route()
@@ -41,32 +40,32 @@ func TestMsgAddPostReaction_Type(t *testing.T) {
 func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgAddPostReaction
+		msg   types.MsgAddPostReaction
 		error error
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgAddPostReaction("", ":like:", testOwner),
+			msg:   types.NewMsgAddPostReaction("", ":like:", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user returns error",
-			msg:   msgs.NewMsgAddPostReaction(id, ":like:", nil),
+			msg:   types.NewMsgAddPostReaction(id, ":like:", nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns error",
-			msg:   msgs.NewMsgAddPostReaction(id, "like", testOwner),
+			msg:   types.NewMsgAddPostReaction(id, "like", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode.If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name:  "Valid message returns no error (with shortcode)",
-			msg:   msgs.NewMsgAddPostReaction(id, ":like:", testOwner),
+			msg:   types.NewMsgAddPostReaction(id, ":like:", testOwner),
 			error: nil,
 		},
 		{
 			name:  "Valid message returns no error (with emoji)",
-			msg:   msgs.NewMsgAddPostReaction(id, "🤩", testOwner),
+			msg:   types.NewMsgAddPostReaction(id, "🤩", testOwner),
 			error: nil,
 		},
 	}
@@ -99,7 +98,7 @@ func TestMsgAddPostReaction_GetSigners(t *testing.T) {
 // --- MsgRemovePostReaction
 // ----------------------
 
-var msgUnlikePost = msgs.NewMsgRemovePostReaction(id, testOwner, "like")
+var msgUnlikePost = types.NewMsgRemovePostReaction(id, testOwner, "like")
 
 func TestMsgRemovePostReaction_Route(t *testing.T) {
 	actual := msgUnlikePost.Route()
@@ -114,33 +113,33 @@ func TestMsgRemovePostReaction_Type(t *testing.T) {
 func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgRemovePostReaction
+		msg   types.MsgRemovePostReaction
 		error error
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgRemovePostReaction("", testOwner, ":+1:"),
+			msg:   types.NewMsgRemovePostReaction("", testOwner, ":+1:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid user address: ",
-			msg:   msgs.NewMsgRemovePostReaction(id, nil, ":like:"),
+			msg:   types.NewMsgRemovePostReaction(id, nil, ":like:"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
 		},
 		{
 			name: "Blank value returns no error",
-			msg:  msgs.NewMsgRemovePostReaction(id, testOwner, ""),
+			msg:  types.NewMsgRemovePostReaction(id, testOwner, ""),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode. "+
 				"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name:  "Valid message returns no error (with shortcode)",
-			msg:   msgs.NewMsgRemovePostReaction(id, testOwner, ":+1:"),
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, ":+1:"),
 			error: nil,
 		},
 		{
 			name:  "Valid message returns no error (with emoji)",
-			msg:   msgs.NewMsgRemovePostReaction(id, testOwner, "🤩"),
+			msg:   types.NewMsgRemovePostReaction(id, testOwner, "🤩"),
 			error: nil,
 		},
 	}

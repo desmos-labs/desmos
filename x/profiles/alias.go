@@ -15,6 +15,10 @@ const (
 	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
 	DefaultGasValue          = simulation.DefaultGasValue
 	ParamsKey                = simulation.ParamsKey
+	EventTypeProfileSaved    = types.EventTypeProfileSaved
+	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
+	AttributeProfileDtag     = types.AttributeProfileDtag
+	AttributeProfileCreator  = types.AttributeProfileCreator
 	DefaultParamspace        = types.DefaultParamspace
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
@@ -25,21 +29,17 @@ const (
 	QueryProfile             = types.QueryProfile
 	QueryProfiles            = types.QueryProfiles
 	QueryParams              = types.QueryParams
-	EventTypeProfileSaved    = types.EventTypeProfileSaved
-	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileDtag     = types.AttributeProfileDtag
-	AttributeProfileCreator  = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
-	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
 	NewHandler               = keeper.NewHandler
 	ValidateProfile          = keeper.ValidateProfile
+	NewKeeper                = keeper.NewKeeper
 	ParamChanges             = simulation.ParamChanges
 	DecodeStore              = simulation.DecodeStore
 	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
@@ -57,6 +57,13 @@ var (
 	RandomBioParams          = simulation.RandomBioParams
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
+	NewProfile               = types.NewProfile
+	NewProfiles              = types.NewProfiles
+	NewPictures              = types.NewPictures
+	NewGenesisState          = types.NewGenesisState
+	DefaultGenesisState      = types.DefaultGenesisState
+	ValidateGenesis          = types.ValidateGenesis
+	RegisterCodec            = types.RegisterCodec
 	ParamKeyTable            = types.ParamKeyTable
 	NewParams                = types.NewParams
 	DefaultParams            = types.DefaultParams
@@ -71,15 +78,9 @@ var (
 	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
 	ProfileStoreKey          = types.ProfileStoreKey
 	DtagStoreKey             = types.DtagStoreKey
-	NewProfile               = types.NewProfile
-	NewProfiles              = types.NewProfiles
-	NewPictures              = types.NewPictures
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
 
 	// variable aliases
+	ModuleCdc               = types.ModuleCdc
 	DefaultMinMonikerLength = types.DefaultMinMonikerLength
 	DefaultMaxMonikerLength = types.DefaultMaxMonikerLength
 	DefaultRegEx            = types.DefaultRegEx
@@ -92,18 +93,17 @@ var (
 	URIRegEx                = types.URIRegEx
 	ProfileStorePrefix      = types.ProfileStorePrefix
 	DtagStorePrefix         = types.DtagStorePrefix
-	ModuleCdc               = types.ModuleCdc
 )
 
 type (
 	Keeper           = keeper.Keeper
+	Profile          = types.Profile
+	Profiles         = types.Profiles
+	Pictures         = types.Pictures
+	GenesisState     = types.GenesisState
 	Params           = types.Params
 	MonikerParams    = types.MonikerParams
 	DtagParams       = types.DtagParams
 	MsgSaveProfile   = types.MsgSaveProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
-	Profile          = types.Profile
-	Profiles         = types.Profiles
-	Pictures         = types.Pictures
-	GenesisState     = types.GenesisState
 )

@@ -1,7 +1,7 @@
 package polls_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/polls"
 	"github.com/stretchr/testify/require"
 
 	"testing"

@@ -1,4 +1,4 @@
-package msgs
+package types
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
 )
 
 // ----------------------
@@ -15,13 +14,13 @@ import (
 
 // MsgAddPostReaction defines the message to be used to add a reaction to a post
 type MsgAddPostReaction struct {
-	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // Id of the post to react to
+	PostID   PostID         `json:"post_id" yaml:"post_id"`   // Id of the post to react to
 	Reaction string         `json:"reaction" yaml:"reaction"` // Reaction of the reaction
 	User     sdk.AccAddress `json:"user" yaml:"user"`         // Address of the user reacting to the post
 }
 
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
-func NewMsgAddPostReaction(postID models.PostID, value string, user sdk.AccAddress) MsgAddPostReaction {
+func NewMsgAddPostReaction(postID PostID, value string, user sdk.AccAddress) MsgAddPostReaction {
 	return MsgAddPostReaction{
 		PostID:   postID,
 		User:     user,
@@ -30,10 +29,10 @@ func NewMsgAddPostReaction(postID models.PostID, value string, user sdk.AccAddre
 }
 
 // Route should return the name of the module
-func (msg MsgAddPostReaction) Route() string { return models.RouterKey }
+func (msg MsgAddPostReaction) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAddPostReaction) Type() string { return models.ActionAddPostReaction }
+func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
@@ -46,7 +45,7 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
-	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+	if !ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode."+
 			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
@@ -56,7 +55,7 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgAddPostReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
@@ -71,13 +70,13 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // MsgRemovePostReaction defines the message to be used when wanting to remove
 // an existing reaction from a specific user having a specific value
 type MsgRemovePostReaction struct {
-	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // Id of the post to unlike
+	PostID   PostID         `json:"post_id" yaml:"post_id"`   // Id of the post to unlike
 	Reaction string         `json:"reaction" yaml:"reaction"` // Reaction of the reaction to be removed
 	User     sdk.AccAddress `json:"user" yaml:"user"`         // Address of the user that has previously liked the post
 }
 
 // MsgUnlikePostPost is the constructor of MsgRemovePostReaction
-func NewMsgRemovePostReaction(postID models.PostID, user sdk.AccAddress, value string) MsgRemovePostReaction {
+func NewMsgRemovePostReaction(postID PostID, user sdk.AccAddress, value string) MsgRemovePostReaction {
 	return MsgRemovePostReaction{
 		PostID:   postID,
 		User:     user,
@@ -86,10 +85,10 @@ func NewMsgRemovePostReaction(postID models.PostID, user sdk.AccAddress, value s
 }
 
 // Route should return the name of the module
-func (msg MsgRemovePostReaction) Route() string { return models.RouterKey }
+func (msg MsgRemovePostReaction) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRemovePostReaction) Type() string { return models.ActionRemovePostReaction }
+func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
@@ -102,7 +101,7 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
-	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+	if !ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode. "+
 			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
 	}
@@ -112,7 +111,7 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRemovePostReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

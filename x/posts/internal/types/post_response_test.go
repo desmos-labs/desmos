@@ -1,13 +1,13 @@
-package models_test
+package types_test
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"strings"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,7 +24,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	post := models.NewPost(
+	post := types.NewPost(
 		"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 		"",
 		"Post",
@@ -35,48 +35,48 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		postOwner,
 	)
 
-	medias := models.NewPostMedias(
-		models.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}),
+	medias := types.NewPostMedias(
+		types.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}),
 	)
 
-	mediasNoTags := models.NewPostMedias(
-		models.NewPostMedia("https://uri.com", "text/plain", nil),
+	mediasNoTags := types.NewPostMedias(
+		types.NewPostMedia("https://uri.com", "text/plain", nil),
 	)
 
-	pollData := models.NewPollData(
+	pollData := types.NewPollData(
 		"poll?",
 		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-		models.PollAnswers{
-			models.NewPollAnswer(models.AnswerID(1), "Yes"),
-			models.NewPollAnswer(models.AnswerID(2), "No"),
+		types.PollAnswers{
+			types.NewPollAnswer(types.AnswerID(1), "Yes"),
+			types.NewPollAnswer(types.AnswerID(2), "No"),
 		},
 		true,
 		false,
 		true,
 	)
 
-	answersDetails := models.NewUserAnswers(
-		models.NewUserAnswer([]models.AnswerID{models.AnswerID(1)}, liker),
+	answersDetails := types.NewUserAnswers(
+		types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, liker),
 	)
 
-	children := models.PostIDs{
+	children := types.PostIDs{
 		"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 		"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	}
 
-	reactionsResponses := []models.PostReaction{
-		models.NewPostReaction(":like:", "https://example.com/like", liker),
-		models.NewPostReaction(":+1:", "👍", otherLiker),
+	reactionsResponses := []types.PostReaction{
+		types.NewPostReaction(":like:", "https://example.com/like", liker),
+		types.NewPostReaction(":+1:", "👍", otherLiker),
 	}
 
 	tests := []struct {
 		name        string
-		response    models.PostQueryResponse
+		response    types.PostQueryResponse
 		expResponse string
 	}{
 		{
 			name: "Post Query Response with Post that contains media and poll",
-			response: models.NewPostResponse(
+			response: types.NewPostResponse(
 				post.WithMedias(medias).WithPollData(pollData),
 				answersDetails,
 				reactionsResponses,
@@ -86,7 +86,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "Post Query Response with Post that contains media without tags",
-			response: models.NewPostResponse(
+			response: types.NewPostResponse(
 				post.WithMedias(mediasNoTags),
 				answersDetails,
 				reactionsResponses,
@@ -96,7 +96,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "Post Query with Post that not contains poll",
-			response: models.NewPostResponse(
+			response: types.NewPostResponse(
 				post.WithMedias(medias),
 				nil,
 				reactionsResponses,
@@ -106,7 +106,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "Post Query Response with Post that not contains media",
-			response: models.NewPostResponse(
+			response: types.NewPostResponse(
 				post.WithPollData(pollData),
 				answersDetails,
 				reactionsResponses,
@@ -139,22 +139,22 @@ func TestPostQueryResponse_String(t *testing.T) {
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	medias := models.NewPostMedias(models.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}))
+	medias := types.NewPostMedias(types.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}))
 
-	pollData := models.NewPollData(
+	pollData := types.NewPollData(
 		"poll?",
 		time.Now().UTC().Add(time.Hour),
-		models.NewPollAnswers(
-			models.NewPollAnswer(models.AnswerID(1), "Yes"),
-			models.NewPollAnswer(models.AnswerID(2), "No"),
+		types.NewPollAnswers(
+			types.NewPollAnswer(types.AnswerID(1), "Yes"),
+			types.NewPollAnswer(types.AnswerID(2), "No"),
 		),
 		true,
 		false,
 		true,
 	)
 
-	postResponse := models.NewPostResponse(
-		models.NewPost(
+	postResponse := types.NewPostResponse(
+		types.NewPost(
 			"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 			"",
 			"Post",
@@ -164,14 +164,14 @@ func TestPostQueryResponse_String(t *testing.T) {
 			time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
 			postOwner,
 		).WithMedias(medias).WithPollData(pollData),
-		models.NewUserAnswers(
-			models.NewUserAnswer([]models.AnswerID{models.AnswerID(1)}, liker),
+		types.NewUserAnswers(
+			types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, liker),
 		),
-		[]models.PostReaction{
-			models.NewPostReaction(":like:", "https://example.com/like", liker),
-			models.NewPostReaction(":+1:", "👍", otherLiker),
+		[]types.PostReaction{
+			types.NewPostReaction(":like:", "https://example.com/like", liker),
+			types.NewPostReaction(":+1:", "👍", otherLiker),
 		},
-		models.PostIDs{
+		types.PostIDs{
 			"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 			"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 		},

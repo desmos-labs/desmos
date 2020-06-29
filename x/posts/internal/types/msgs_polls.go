@@ -1,11 +1,10 @@
-package msgs
+package types
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
 )
 
 // ----------------------
@@ -14,13 +13,13 @@ import (
 
 // MsgAnswerPoll defines the AnswerPoll message
 type MsgAnswerPoll struct {
-	PostID      models.PostID     `json:"post_id" yaml:"post_id"`
-	UserAnswers []models.AnswerID `json:"answers" yaml:"answers"`
-	Answerer    sdk.AccAddress    `json:"answerer" yaml:"answerer"`
+	PostID      PostID         `json:"post_id" yaml:"post_id"`
+	UserAnswers []AnswerID     `json:"answers" yaml:"answers"`
+	Answerer    sdk.AccAddress `json:"answerer" yaml:"answerer"`
 }
 
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
-func NewMsgAnswerPoll(id models.PostID, providedAnswers []models.AnswerID, answerer sdk.AccAddress) MsgAnswerPoll {
+func NewMsgAnswerPoll(id PostID, providedAnswers []AnswerID, answerer sdk.AccAddress) MsgAnswerPoll {
 	return MsgAnswerPoll{
 		PostID:      id,
 		UserAnswers: providedAnswers,
@@ -29,10 +28,10 @@ func NewMsgAnswerPoll(id models.PostID, providedAnswers []models.AnswerID, answe
 }
 
 // Route should return the name of the module
-func (msg MsgAnswerPoll) Route() string { return models.RouterKey }
+func (msg MsgAnswerPoll) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAnswerPoll) Type() string { return models.ActionAnswerPoll }
+func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
@@ -53,7 +52,7 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgAnswerPoll) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
