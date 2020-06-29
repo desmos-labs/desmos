@@ -204,18 +204,21 @@ jobs:
       - run: |
           DESMOSD_VERSION=''
           if [ "${CIRCLE_BRANCH}" = "master" ]; then
-            DESMOSD_VERSION="stable"
+            DESMOSD_VERSION="stable latest"
           elif [ "${CIRCLE_BRANCH}" = "develop" ]; then
             DESMOSD_VERSION="develop"
           elif [[ "${CIRCLE_BRANCH}" == release/v* ]]; then
             DESMOSD_VERSION="${CIRCLE_BRANCH}"
           fi
+
           if [ -z "${DESMOSD_VERSION}" ]; then
             docker build .
           else
-            docker build -t desmoslabs/desmos:$DESMOSD_VERSION .
-            echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USER --password-stdin
-            docker push desmoslabs/desmos:$DESMOSD_VERSION
+            for VERSION in $DESMOSD_VERSION; do
+              docker build -t desmoslabs/desmos:$VERSION .
+              echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USER --password-stdin
+              docker push desmoslabs/desmos:$VERSION
+            done
           fi
   docker-tagged:
     executor: golang
