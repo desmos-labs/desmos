@@ -18,16 +18,16 @@ var (
 	DefaultMinMonikerLength = sdk.NewInt(2)
 	DefaultMaxMonikerLength = sdk.NewInt(1000) //longest name on earth count 954 chars
 	DefaultRegEx            = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength    = sdk.NewInt(2)
+	DefaultMinDTagLength    = sdk.NewInt(3)
 	DefaultMaxDTagLength    = sdk.NewInt(30)
 	DefaultMaxBioLength     = sdk.NewInt(1000)
 )
 
 // Parameters store keys
 var (
-	MonikerLenParamsKey = []byte("monikerParams")
-	DtagLenParamsKey    = []byte("dtagParams")
-	MaxBioLenParamsKey  = []byte("maxBioLen")
+	MonikerLenParamsKey = []byte("MonikerParams")
+	DtagLenParamsKey    = []byte("DtagParams")
+	MaxBioLenParamsKey  = []byte("MaxBioLen")
 )
 
 // ParamKeyTable Key declaration for parameters
@@ -38,7 +38,7 @@ func ParamKeyTable() paramsModule.KeyTable {
 type Params struct {
 	MonikerParams MonikerParams `json:"moniker_params" yaml:"moniker_params"`
 	DtagParams    DtagParams    `json:"dtag_params" yaml:"dtag_params"`
-	MaxBioLen     sdk.Int       `json:"max_bio_len" yaml:"max_bio_len"`
+	MaxBioLen     sdk.Int       `json:"max_bio_length" yaml:"max_bio_length"`
 }
 
 // NewParams creates a new ProfileParams obj
@@ -95,8 +95,8 @@ func (params Params) Validate() error {
 
 // MonikerParams defines the paramsModule around moniker len
 type MonikerParams struct {
-	MinMonikerLen sdk.Int `json:"min_moniker_len" yaml:"min_moniker_len"`
-	MaxMonikerLen sdk.Int `json:"max_moniker_len" yaml:"max_moniker_len"`
+	MinMonikerLen sdk.Int `json:"min_length" yaml:"min_length"`
+	MaxMonikerLen sdk.Int `json:"max_length" yaml:"max_length"`
 }
 
 // NewMonikerParams creates a new MonikerParams obj
@@ -146,8 +146,8 @@ func ValidateMonikerParams(i interface{}) error {
 // DtagParams defines the paramsModule around profiles' dtag
 type DtagParams struct {
 	RegEx      string  `json:"reg_ex" yaml:"reg_ex"`
-	MinDtagLen sdk.Int `json:"min_dtag_len" yaml:"min_dtag_len"`
-	MaxDtagLen sdk.Int `json:"max_dtag_len" yaml:"max_dtag_len"`
+	MinDtagLen sdk.Int `json:"min_length" yaml:"min_length"`
+	MaxDtagLen sdk.Int `json:"max_length" yaml:"max_length"`
 }
 
 // NewDtagParams creates a new DtagParams obj

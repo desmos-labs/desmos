@@ -14,9 +14,16 @@ func Migrate(oldGenState v060profile.GenesisState, genesisTime time.Time) Genesi
 	return GenesisState{
 		Profiles: ConvertProfiles(oldGenState.Profiles, genesisTime),
 		Params: Params{
-			MonikerLengths: MonikerLengths{},
-			DtagLengths:    DtagLengths{},
-			MaxBioLen:      sdk.Int{},
+			MonikerParams: MonikerParams{
+				MinMonikerLen: sdk.NewInt(2),
+				MaxMonikerLen: sdk.NewInt(1000),
+			},
+			DtagParams: DtagParams{
+				RegEx:      `^[A-Za-z0-9_]+$`,
+				MinDtagLen: sdk.NewInt(3),
+				MaxDtagLen: sdk.NewInt(30),
+			},
+			MaxBioLen: sdk.NewInt(1000),
 		},
 	}
 }

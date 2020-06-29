@@ -105,7 +105,7 @@ func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 
 // RandomDTagParams return a random set of moniker params
 func RandomDTagParams(r *rand.Rand) types.DtagParams {
-	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
+	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 3, 4)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 50)))
 	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }

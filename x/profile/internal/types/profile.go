@@ -72,7 +72,7 @@ func (profile Profile) Validate() error {
 	if profile.Creator.Empty() {
 		return fmt.Errorf("profile creator cannot be empty or blank")
 	}
-	if strings.TrimSpace(profile.DTag) == "" {
+	if len(strings.TrimSpace(profile.DTag)) == 0 {
 		return fmt.Errorf("profile dtag cannot be empty or blank")
 	}
 

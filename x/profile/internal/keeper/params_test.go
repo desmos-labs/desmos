@@ -9,7 +9,7 @@ import (
 )
 
 func TestKeeper_SetParams(t *testing.T) {
-	min := sdk.NewInt(2)
+	min := sdk.NewInt(3)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
 	nsParams := types.NewMonikerParams(min, max)
@@ -25,7 +25,7 @@ func TestKeeper_SetParams(t *testing.T) {
 }
 
 func TestKeeper_GetParams(t *testing.T) {
-	min := sdk.NewInt(2)
+	min := sdk.NewInt(3)
 	max := sdk.NewInt(1000)
 	ctx, k := SetupTestInput()
 	nsParams := types.NewMonikerParams(min, max)

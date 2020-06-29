@@ -11,7 +11,7 @@ import (
 
 func TestDefaultParams(t *testing.T) {
 	nameSurnameParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(2), sdk.NewInt(30))
+	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	bioParams := sdk.NewInt(1000)
 
 	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
@@ -21,14 +21,14 @@ func TestDefaultParams(t *testing.T) {
 
 func TestParams_String(t *testing.T) {
 	params := types.DefaultParams()
-	require.Equal(t, "Profiles parameters:\nMoniker params lengths:\nMin accepted length: 2\nMax accepted length: 1000\nDtag params:\nRegEx: ^[A-Za-z0-9_]+$\nMin accepted length: 2\nMax accepted length: 30\nBiography params lengths:\nMax accepted length: 1000", params.String())
+	require.Equal(t, "Profiles parameters:\nMoniker params lengths:\nMin accepted length: 2\nMax accepted length: 1000\nDtag params:\nRegEx: ^[A-Za-z0-9_]+$\nMin accepted length: 3\nMax accepted length: 30\nBiography params lengths:\nMax accepted length: 1000", params.String())
 }
 
 func TestValidateParams(t *testing.T) {
 	invalidNameMin := sdk.NewInt(1)
 	validNameMax := sdk.NewInt(1000)
-	validMonikerMin := sdk.NewInt(2)
-	invalidMonikerMax := sdk.NewInt(-30)
+	validDtagMin := sdk.NewInt(3)
+	invalidDtagMax := sdk.NewInt(-30)
 
 	tests := []struct {
 		name   string
@@ -42,7 +42,7 @@ func TestValidateParams(t *testing.T) {
 		},
 		{
 			name:   "Invalid max dTag param return error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.NewDtagParams("regEx", validMonikerMin, invalidMonikerMax), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultMonikerParams(), types.NewDtagParams("regEx", validDtagMin, invalidDtagMax), types.DefaultMaxBioLength),
 			expErr: fmt.Errorf("invalid max dTag length param: -30"),
 		},
 		{
@@ -72,7 +72,7 @@ func TestDefaultMonikerParams(t *testing.T) {
 }
 
 func TestDefaultDTagParams(t *testing.T) {
-	dTagParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(2), sdk.NewInt(30))
+	dTagParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	defaultDTagParams := types.DefaultDtagParams()
 	require.Equal(t, defaultDTagParams, dTagParams)
 }
@@ -127,7 +127,7 @@ func TestValidateMonikerParams(t *testing.T) {
 
 func TestValidateDTagParams(t *testing.T) {
 	regEx := "regExParam"
-	validMin := sdk.NewInt(2)
+	validMin := sdk.NewInt(3)
 	validMax := sdk.NewInt(30)
 
 	invalidMin := sdk.NewInt(1)

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -30,7 +31,7 @@ func Test_validateProfile(t *testing.T) {
 		{
 			name: "Max moniker length exceeded",
 			profile: types.NewProfile("custom_dtag", user, date).
-				WithMoniker(newStrPtr("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEXeFlAO5qMwjNGvgoiNBtoMfR78J2SNhBz\" +\n\t\t\"wNxlTky9DCJ2F2luh9cTc7umcHl2BDwSepE1Iijn4htrP7vcKWgIgHYh73oNmF7PTiU1gmL2G8W4XB06bpDLFb0eLzPbSGLe51\" +\n\t\t\"25k9tljhFBdgSPtoKuLQUQPGC3IqyyTIqQEpLeNpmbiJUDmbqQ1tyyS8mDC7WQEYv8uuYU90pjBSkGJQs2FI2Q7hIHL202O1SF\" +\n\t\t\"sTkJ5H9v30Jry3HqmjxYv1yG1PWah2Gkg7xP0toSdEXObDE9YWo6LMDO29yyTrohCwG9RHo04l8jfJOUbuer7BrXmWodFuGhIcd\" +\n\t\t\"C43T4R4l5a5P6zWlUkWuhYZCtX1dpfENb4wlDNHd2r1TFCblNs7COKSUINVd8swxR2lEzRO2mwE39mvUEBEHi0S06QtU1m8Chv\" +\n\t\t\"6ou0LSnJMCTq")).
+				WithMoniker(newStrPtr(strings.Repeat("A", 1005))).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
 					newStrPtr("https://test.com/profile-picture"),
@@ -80,7 +81,7 @@ func Test_validateProfile(t *testing.T) {
 					newStrPtr("https://test.com/profile-picture"),
 					newStrPtr("https://test.com/cover-pic"),
 				),
-			expErr: fmt.Errorf("profile dtag cannot be less than 2 characters"),
+			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
 		},
 		{
 			name: "Max dtag length exceeded",

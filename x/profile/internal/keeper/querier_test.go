@@ -136,7 +136,7 @@ func Test_queryProfiles(t *testing.T) {
 }
 
 func Test_queryParams(t *testing.T) {
-	validMin := sdk.NewInt(2)
+	validMin := sdk.NewInt(3)
 	validMax := sdk.NewInt(30)
 
 	nsParams := types.NewMonikerParams(validMin, validMax)

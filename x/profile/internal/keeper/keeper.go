@@ -12,7 +12,7 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	// The reference to the ParamsStore to get and set gov specific params
+	// The reference to the ParamsStore to get and set profile specific params
 	paramSubspace params.Subspace
 
 	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
