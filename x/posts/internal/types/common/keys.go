@@ -11,10 +11,6 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	MaxPostMessageLength            = 500
-	MaxOptionalDataFieldsNumber     = 10
-	MaxOptionalDataFieldValueLength = 200
-
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
 	ActionAnswerPoll         = "answer_poll"
@@ -28,6 +24,7 @@ const (
 	QueryPosts               = "posts"
 	QueryPollAnswers         = "poll-answers"
 	QueryRegisteredReactions = "registered-reactions"
+	QueryParams              = "params"
 
 	// Sorting
 	PostSortByCreationDate  = "created"

@@ -168,10 +168,6 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message or medias required, they cannot be both empty")
 	}
 
-	if len(p.Message) > MaxPostMessageLength {
-		return fmt.Errorf("post message cannot be longer than %d characters", MaxPostMessageLength)
-	}
-
 	if !Sha256RegEx.MatchString(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
@@ -190,19 +186,6 @@ func (p Post) Validate() error {
 
 	if !p.LastEdited.IsZero() && p.LastEdited.After(time.Now().UTC()) {
 		return fmt.Errorf("post last edit date cannot be in the future")
-	}
-
-	if len(p.OptionalData) > MaxOptionalDataFieldsNumber {
-		return fmt.Errorf("post optional data cannot contain more than %d key-value pairs", MaxOptionalDataFieldsNumber)
-	}
-
-	for key, value := range p.OptionalData {
-		if len(value) > MaxOptionalDataFieldValueLength {
-			return fmt.Errorf(
-				"post optional data values cannot exceed %d characters. %s of post with id %s is longer than this",
-				MaxOptionalDataFieldValueLength, key, p.PostID,
-			)
-		}
 	}
 
 	if err := p.Medias.Validate(); err != nil {

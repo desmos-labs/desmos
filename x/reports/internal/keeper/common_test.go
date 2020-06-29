@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
@@ -18,24 +19,32 @@ import (
 
 func SetupTestInput() (sdk.Context, keeper.Keeper, posts.Keeper) {
 
+	cdc := testCodec()
+
 	// define store keys
 	postsKey := sdk.NewKVStoreKey(posts.StoreKey)
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
+	paramsKey := sdk.NewKVStoreKey("params")
+	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+
+	// define keepers
+	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
+	subspace := paramsKeeper.Subspace(posts.DefaultParamspace)
 
 	//post keeper
-	postsK := posts.NewKeeper(testCodec(), postsKey)
+	postsK := posts.NewKeeper(cdc, postsKey, subspace)
 
 	// create an in-memory db for reports
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	ms.MountStoreWithDB(postsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(reportsKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
 
-	// create a cdc and a context
-	cdc := testCodec()
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 
 	return ctx, keeper.NewKeeper(postsK, cdc, reportsKey), postsK

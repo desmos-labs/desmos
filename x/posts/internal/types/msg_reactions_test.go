@@ -2,12 +2,11 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/stretchr/testify/require"
 )
 
 var msgRegisterReaction = types.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",

@@ -3,6 +3,9 @@ package simulation
 // DONTCOVER
 
 import (
+	"fmt"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
@@ -19,7 +22,15 @@ func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	postReactions := randomPostReactions(simState, posts)
 	registeredReactions := registeredReactions(simState)
-	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions)
+	params := randomParams(simState)
+	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions, params)
+
+	fmt.Printf("Selected randomly generated posts parameters:\n%s\n%s\n%s\n",
+		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxPostMessageLength),
+		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxOptionalDataFieldsNumber),
+		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxOptionalDataFieldValueLength),
+	)
+
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
@@ -84,4 +95,8 @@ func registeredReactions(simState *module.SimulationState) types.Reactions {
 		regReactions = append(regReactions, reaction)
 	}
 	return regReactions
+}
+
+func randomParams(simState *module.SimulationState) types.Params {
+	return RandomParams(simState.Rand)
 }

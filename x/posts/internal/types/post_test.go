@@ -1,11 +1,11 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types/common"
 	"github.com/desmos-labs/desmos/x/posts/internal/types/polls"
 
@@ -283,70 +283,6 @@ func TestPost_Validate(t *testing.T) {
 				Medias:         medias,
 			},
 			expError: "post last edit date cannot be in the future",
-		},
-		{
-			name: "Post message cannot be longer than 500 characters",
-			post: types.NewPost(
-				id,
-				id2,
-				`
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
-				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
-				eu nisi porta, eu gravida purus faucibus. Duis commodo sagittis lacus, vitae luctus enim vulputate a. 
-				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
-				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
-				`,
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				date,
-				owner,
-			).WithMedias(medias).WithPollData(pollData),
-			expError: "post message cannot be longer than 500 characters",
-		},
-		{
-			name: "post optional data cannot contain more than 10 key-value",
-			post: types.NewPost(
-				id,
-				id2,
-				"Message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1":  "value",
-					"key2":  "value",
-					"key3":  "value",
-					"key4":  "value",
-					"key5":  "value",
-					"key6":  "value",
-					"key7":  "value",
-					"key8":  "value",
-					"key9":  "value",
-					"key10": "value",
-					"key11": "value",
-				},
-				date,
-				owner,
-			).WithMedias(medias).WithPollData(pollData),
-			expError: "post optional data cannot contain more than 10 key-value pairs",
-		},
-		{
-			name: "post optional data values cannot exceed 200 characters",
-			post: types.NewPost(
-				id,
-				id2,
-				"Message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
-							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
-							sem eget neque metus.`,
-				},
-				date,
-				owner,
-			).WithMedias(medias).WithPollData(pollData),
-			expError: "post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this",
 		},
 		{
 			name:     "Valid post without poll data",

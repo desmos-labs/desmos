@@ -55,7 +55,7 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPostIDs types.PostIDs
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if post.Validate() != nil {
+			if post.Validate() != nil || ValidatePost(ctx, k, post) != nil {
 				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false

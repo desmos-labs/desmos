@@ -35,6 +35,35 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// ValidatePost checks if the given post is valid according to the current posts' module params
+func ValidatePost(ctx sdk.Context, k Keeper, post types.Post) error {
+	params := k.GetParams(ctx)
+	maxMsgLen := params.MaxPostMessageLength.Int64()
+	maxOpFieldNum := params.MaxOptionalDataFieldsNumber.Int64()
+	maxOpFieldValLen := params.MaxOptionalDataFieldValueLength.Int64()
+
+	if len(post.Message) > int(maxMsgLen) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Post message cannot exceed %d characters", maxMsgLen))
+	}
+
+	if len(post.OptionalData) > int(maxOpFieldNum) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("Post optional data cannot contain more than %d key-value pairs",
+				maxOpFieldNum))
+	}
+
+	for key, value := range post.OptionalData {
+		if len(value) > int(maxOpFieldValLen) {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("post optional data values cannot exceed %d characters. %s of post with id %s is longer than this",
+					maxOpFieldValLen, key, post.PostID))
+		}
+	}
+
+	return nil
+}
+
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
@@ -67,6 +96,10 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		if !parentPost.AllowsComments {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s does not allow comments", parentPost.PostID))
 		}
+	}
+
+	if err := ValidatePost(ctx, keeper, post); err != nil {
+		return nil, err
 	}
 
 	keeper.SavePost(ctx, post)
@@ -109,6 +142,10 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	// Edit the post
 	existing.Message = msg.Message
 	existing.LastEdited = msg.EditDate
+
+	if err := ValidatePost(ctx, keeper, existing); err != nil {
+		return nil, err
+	}
 	keeper.SavePost(ctx, existing)
 
 	editEvent := sdk.NewEvent(

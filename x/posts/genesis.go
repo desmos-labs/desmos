@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	params "github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -25,6 +26,9 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	// Sort the posts so that they are inserted based on their IDs
 	sort.Sort(data.Posts)
 	for _, post := range data.Posts {
+		if err := params.ValidatePost(ctx, keeper, post); err != nil {
+			panic(err)
+		}
 		keeper.SavePost(ctx, post)
 	}
 

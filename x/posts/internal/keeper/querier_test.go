@@ -488,3 +488,35 @@ func Test_queryRegisteredReactions(t *testing.T) {
 		})
 	}
 }
+
+func Test_queryParams(t *testing.T) {
+	tests := []struct {
+		name      string
+		path      []string
+		expResult types.Params
+	}{
+		{
+			name:      "Returning profile parameters correctly",
+			path:      []string{types.QueryParams},
+			expResult: types.DefaultParams(),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
+			querier := keeper.NewQuerier(k)
+			result, err := querier(ctx, test.path, abci.RequestQuery{})
+
+			if result != nil {
+				require.Nil(t, err)
+				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
+				require.NoError(t, err)
+				require.Equal(t, string(expectedIndented), string(result))
+			}
+
+		})
+	}
+}

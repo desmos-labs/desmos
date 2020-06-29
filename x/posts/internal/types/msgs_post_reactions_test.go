@@ -1,11 +1,11 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji2 "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
 

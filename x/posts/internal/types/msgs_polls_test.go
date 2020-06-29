@@ -1,10 +1,10 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -163,7 +163,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedPropos
 
 // RandomizedParams creates randomized posts param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []sim.ParamChange {
-	return nil
+	return ParamChanges(r)
 }
 
 // RegisterStoreDecoder performs a no-op.
