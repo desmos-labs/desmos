@@ -1,4 +1,4 @@
-package types
+package msgs
 
 import (
 	"encoding/json"
@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
 )
 
 // ----------------------
@@ -16,21 +17,21 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       PostID            `json:"parent_id" yaml:"parent_id"`
+	ParentID       models.PostID     `json:"parent_id" yaml:"parent_id"`
 	Message        string            `json:"message" yaml:"message"`
 	AllowsComments bool              `json:"allows_comments" yaml:"allows_comments"`
 	Subspace       string            `json:"subspace" yaml:"subspace"`
 	OptionalData   map[string]string `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
 	Creator        sdk.AccAddress    `json:"creator" yaml:"creator"`
 	CreationDate   time.Time         `json:"creation_date" yaml:"creation_date"`
-	Medias         PostMedias        `json:"medias,omitempty" yaml:"medias,omitempty"`
-	PollData       *PollData         `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
+	Medias         models.PostMedias `json:"medias,omitempty" yaml:"medias,omitempty"`
+	PollData       *models.PollData  `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
-func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subspace string,
+func NewMsgCreatePost(message string, parentID models.PostID, allowsComments bool, subspace string,
 	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time,
-	medias PostMedias, pollData *PollData) MsgCreatePost {
+	medias models.PostMedias, pollData *models.PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -45,10 +46,10 @@ func NewMsgCreatePost(message string, parentID PostID, allowsComments bool, subs
 }
 
 // Route should return the name of the module
-func (msg MsgCreatePost) Route() string { return RouterKey }
+func (msg MsgCreatePost) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgCreatePost) Type() string { return ActionCreatePost }
+func (msg MsgCreatePost) Type() string { return models.ActionCreatePost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreatePost) ValidateBasic() error {
@@ -60,7 +61,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message, medias or poll are required and cannot be all blank or empty")
 	}
 
-	if !Sha256RegEx.MatchString(msg.Subspace) {
+	if !models.Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
 	}
 
@@ -92,7 +93,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreatePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
@@ -113,14 +114,14 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID   PostID         `json:"post_id" yaml:"post_id"`
+	PostID   models.PostID  `json:"post_id" yaml:"post_id"`
 	Message  string         `json:"message" yaml:"message"`
 	Editor   sdk.AccAddress `json:"editor" yaml:"editor"`
 	EditDate time.Time      `json:"edit_date" yaml:"edit_date"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress, editDate time.Time) MsgEditPost {
+func NewMsgEditPost(id models.PostID, message string, owner sdk.AccAddress, editDate time.Time) MsgEditPost {
 	return MsgEditPost{
 		PostID:   id,
 		Message:  message,
@@ -130,10 +131,10 @@ func NewMsgEditPost(id PostID, message string, owner sdk.AccAddress, editDate ti
 }
 
 // Route should return the name of the module
-func (msg MsgEditPost) Route() string { return RouterKey }
+func (msg MsgEditPost) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgEditPost) Type() string { return ActionEditPost }
+func (msg MsgEditPost) Type() string { return models.ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
@@ -162,7 +163,7 @@ func (msg MsgEditPost) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgEditPost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

@@ -1,13 +1,13 @@
-package types_test
+package models_test
 
 import (
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/common"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/polls"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
 
 	"github.com/stretchr/testify/require"
 )
@@ -29,20 +29,20 @@ func TestPostID_Equals(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		postID  types.PostID
-		otherID types.PostID
+		postID  models.PostID
+		otherID models.PostID
 		expBool bool
 	}{
 		{
 			name:    "Equal IDs returns true",
-			postID:  types.ComputeID(creationDate, creator, subspace),
-			otherID: types.ComputeID(creationDate, creator, subspace),
+			postID:  models.ComputeID(creationDate, creator, subspace),
+			otherID: models.ComputeID(creationDate, creator, subspace),
 			expBool: true,
 		},
 		{
 			name:    "Non Equal IDs returns false",
-			postID:  types.ComputeID(creationDate, creator, subspace),
-			otherID: types.ComputeID(creationDate, creator, subspace2),
+			postID:  models.ComputeID(creationDate, creator, subspace),
+			otherID: models.ComputeID(creationDate, creator, subspace2),
 			expBool: false,
 		},
 	}
@@ -67,7 +67,7 @@ func TestPostID_String(t *testing.T) {
 	require.NoError(t, err)
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	computedID := types.ComputeID(creationDate, creator, subspace)
+	computedID := models.ComputeID(creationDate, creator, subspace)
 
 	require.Equal(t, "f55d90114d81e70399d6330a57081b86ae1bdf928b78a57e88870f64240009ef", computedID.String())
 }
@@ -81,26 +81,26 @@ func TestPostIDs_Equals(t *testing.T) {
 	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name      string
-		first     types.PostIDs
-		second    types.PostIDs
+		first     models.PostIDs
+		second    models.PostIDs
 		expEquals bool
 	}{
 		{
 			name:      "Different length",
-			first:     types.PostIDs{types.PostID(id), types.PostID(id)},
-			second:    types.PostIDs{types.PostID(id)},
+			first:     models.PostIDs{models.PostID(id), models.PostID(id)},
+			second:    models.PostIDs{models.PostID(id)},
 			expEquals: false,
 		},
 		{
 			name:      "Different order",
-			first:     types.PostIDs{types.PostID(id), types.PostID(id2)},
-			second:    types.PostIDs{types.PostID(id2), types.PostID(id)},
+			first:     models.PostIDs{models.PostID(id), models.PostID(id2)},
+			second:    models.PostIDs{models.PostID(id2), models.PostID(id)},
 			expEquals: false,
 		},
 		{
 			name:      "Same length and order",
-			first:     types.PostIDs{types.PostID(id), types.PostID(id2)},
-			second:    types.PostIDs{types.PostID(id), types.PostID(id2)},
+			first:     models.PostIDs{models.PostID(id), models.PostID(id2)},
+			second:    models.PostIDs{models.PostID(id), models.PostID(id2)},
 			expEquals: true,
 		},
 	}
@@ -118,23 +118,23 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name      string
-		IDs       types.PostIDs
-		newID     types.PostID
-		expIDs    types.PostIDs
+		IDs       models.PostIDs
+		newID     models.PostID
+		expIDs    models.PostIDs
 		expEdited bool
 	}{
 		{
 			name:      "AppendIfMissing dont append anything",
-			IDs:       types.PostIDs{types.PostID(id)},
-			newID:     types.PostID(id),
-			expIDs:    types.PostIDs{types.PostID(id)},
+			IDs:       models.PostIDs{models.PostID(id)},
+			newID:     models.PostID(id),
+			expIDs:    models.PostIDs{models.PostID(id)},
 			expEdited: false,
 		},
 		{
 			name:      "AppendIfMissing append something",
-			IDs:       types.PostIDs{types.PostID(id)},
-			newID:     types.PostID(id2),
-			expIDs:    types.PostIDs{types.PostID(id), types.PostID(id2)},
+			IDs:       models.PostIDs{models.PostID(id)},
+			newID:     models.PostID(id2),
+			expIDs:    models.PostIDs{models.PostID(id), models.PostID(id2)},
 			expEdited: true,
 		},
 	}
@@ -154,8 +154,8 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 // -----------
 
 func TestPost_String(t *testing.T) {
-	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
-	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
+	id := models.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
+	id2 := models.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -163,7 +163,7 @@ func TestPost_String(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	post := types.Post{
+	post := models.Post{
 		PostID:         id,
 		ParentID:       id2,
 		Message:        "My post message",
@@ -182,8 +182,8 @@ func TestPost_String(t *testing.T) {
 }
 
 func TestPost_Validate(t *testing.T) {
-	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
-	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
+	id := models.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
+	id2 := models.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -210,52 +210,52 @@ func TestPost_Validate(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		post     types.Post
+		post     models.Post
 		expError string
 	}{
 		{
 			name:     "Invalid postID",
-			post:     types.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid postID: ",
 		},
 		{
 			name:     "Invalid post owner",
-			post:     types.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
 			name:     "Empty post message and media",
-			post:     types.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
 			name:     "Empty post message (blank) and media",
-			post:     types.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "post message or medias required, they cannot be both empty",
 		},
 		{
 			name:     "Invalid post creation time",
-			post:     types.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
 			name:     "Invalid post last edit time",
-			post:     types.Post{PostID: id, Creator: owner, Message: "Message", Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", Created: date, LastEdited: date.AddDate(0, 0, -1)},
+			post:     models.Post{PostID: id, Creator: owner, Message: "Message", Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", Created: date, LastEdited: date.AddDate(0, 0, -1)},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
 			name:     "Invalid post subspace",
-			post:     types.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name:     "Invalid post subspace(blank)",
-			post:     types.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name: "Post creation data in future",
-			post: types.Post{
+			post: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "Message",
@@ -270,7 +270,7 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name: "Post last edit date in future",
-			post: types.Post{
+			post: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "Message",
@@ -286,12 +286,12 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Valid post without poll data",
-			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias),
+			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias),
 			expError: "",
 		},
 		{
 			name:     "Valid post without medias",
-			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
 	}
@@ -309,8 +309,8 @@ func TestPost_Validate(t *testing.T) {
 }
 
 func TestPost_Equals(t *testing.T) {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -342,13 +342,13 @@ func TestPost_Equals(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		first     types.Post
-		second    types.Post
+		first     models.Post
+		second    models.Post
 		expEquals bool
 	}{
 		{
 			name: "Different post ID",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -360,7 +360,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id2,
 				ParentID:       id,
 				Message:        "My post message",
@@ -376,7 +376,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different parent ID",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id,
 				Message:        "My post message",
@@ -388,7 +388,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -404,7 +404,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different message",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -416,7 +416,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "Another post message",
@@ -432,7 +432,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different creation time",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -444,7 +444,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -460,7 +460,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different last edited",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -472,7 +472,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -488,7 +488,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different allows comments",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -500,7 +500,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -516,7 +516,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different subspace",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -528,7 +528,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -544,7 +544,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different optional data",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -558,7 +558,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator: owner,
 				Medias:  medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -576,7 +576,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different owner",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -588,7 +588,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -604,7 +604,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different medias",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -616,7 +616,7 @@ func TestPost_Equals(t *testing.T) {
 				Creator:        owner,
 				Medias:         medias,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -632,7 +632,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Different polls",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -645,7 +645,7 @@ func TestPost_Equals(t *testing.T) {
 				Medias:         medias,
 				PollData:       nil,
 			},
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -662,7 +662,7 @@ func TestPost_Equals(t *testing.T) {
 		},
 		{
 			name: "Equals posts",
-			first: types.Post{
+			first: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -673,7 +673,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        owner,
 			}.WithMedias(medias).WithPollData(pollData),
-			second: types.Post{
+			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
 				Message:        "My post message",
@@ -697,8 +697,8 @@ func TestPost_Equals(t *testing.T) {
 }
 
 func TestPost_GetPostHashtags(t *testing.T) {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -709,12 +709,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		post        types.Post
+		post        models.Post
 		expHashtags []string
 	}{
 		{
 			name: "Hashtags in message extracted correctly (spaced hashtags)",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with #test #desmos",
 				false,
@@ -727,7 +727,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		},
 		{
 			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with #test#desmos",
 				false,
@@ -740,7 +740,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		},
 		{
 			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with #test_#desmos",
 				false,
@@ -753,7 +753,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		},
 		{
 			name: "Hashtags in message extracted correctly (only number hashtag)",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with #101112",
 				false,
@@ -766,7 +766,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		},
 		{
 			name: "No hashtags in message",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with no hashtag",
 				false,
@@ -779,7 +779,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		},
 		{
 			name: "No same hashtags inside string array",
-			post: types.NewPost(id,
+			post: models.NewPost(id,
 				id2,
 				"Post with double #hashtag #hashtag",
 				false,
@@ -805,8 +805,8 @@ func TestPost_GetPostHashtags(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_String(t *testing.T) {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	id := models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
+	id2 := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
@@ -835,9 +835,9 @@ func TestPosts_String(t *testing.T) {
 
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
-	posts := types.Posts{
-		types.NewPost(id, id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithMedias(medias).WithPollData(pollData),
-		types.NewPost(id, id2, "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithMedias(medias).WithPollData(pollData),
+	posts := models.Posts{
+		models.NewPost(id, id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithMedias(medias).WithPollData(pollData),
+		models.NewPost(id, id2, "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithMedias(medias).WithPollData(pollData),
 	}
 
 	expected := `ID - [Creator] Message

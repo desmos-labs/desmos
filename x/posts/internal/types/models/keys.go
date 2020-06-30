@@ -1,4 +1,4 @@
-package types
+package models
 
 // PostStoreKey turns an id to a key used to store a post into the posts store
 // nolint: interfacer

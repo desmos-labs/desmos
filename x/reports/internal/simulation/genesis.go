@@ -14,7 +14,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 }
 
 func randomReports(simState *module.SimulationState) (reportsMap map[string]types.Reports) {
-	reportsMapLen := simState.Rand.Intn(simState.Rand.Intn(50))
+	reportsMapLen := simState.Rand.Intn(50)
 
 	reportsMap = make(map[string]types.Reports, reportsMapLen)
 	for i := 0; i < reportsMapLen; i++ {

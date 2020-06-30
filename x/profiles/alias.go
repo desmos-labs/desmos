@@ -15,6 +15,10 @@ const (
 	OpWeightMsgDeleteProfile = simulation.OpWeightMsgDeleteProfile
 	DefaultGasValue          = simulation.DefaultGasValue
 	ParamsKey                = simulation.ParamsKey
+	EventTypeProfileSaved    = types.EventTypeProfileSaved
+	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
+	AttributeProfileDtag     = types.AttributeProfileDtag
+	AttributeProfileCreator  = types.AttributeProfileCreator
 	DefaultParamspace        = types.DefaultParamspace
 	ModuleName               = types.ModuleName
 	RouterKey                = types.RouterKey
@@ -25,25 +29,17 @@ const (
 	QueryProfile             = types.QueryProfile
 	QueryProfiles            = types.QueryProfiles
 	QueryParams              = types.QueryParams
-	EventTypeProfileSaved    = types.EventTypeProfileSaved
-	EventTypeProfileDeleted  = types.EventTypeProfileDeleted
-	AttributeProfileDtag     = types.AttributeProfileDtag
-	AttributeProfileCreator  = types.AttributeProfileCreator
 )
 
 var (
 	// functions aliases
-	NewHandler               = keeper.NewHandler
-	ValidateProfile          = keeper.ValidateProfile
-	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	ParamChanges             = simulation.ParamChanges
-	DecodeStore              = simulation.DecodeStore
-	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
+	NewHandler               = keeper.NewHandler
+	ValidateProfile          = keeper.ValidateProfile
+	NewKeeper                = keeper.NewKeeper
 	NewRandomProfile         = simulation.NewRandomProfile
 	RandomProfile            = simulation.RandomProfile
 	RandomDTag               = simulation.RandomDTag
@@ -57,6 +53,13 @@ var (
 	RandomBioParams          = simulation.RandomBioParams
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
+	ParamChanges             = simulation.ParamChanges
+	DecodeStore              = simulation.DecodeStore
+	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
+	NewProfile               = types.NewProfile
+	NewProfiles              = types.NewProfiles
+	NewPictures              = types.NewPictures
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
@@ -75,9 +78,6 @@ var (
 	NewMsgDeleteProfile      = types.NewMsgDeleteProfile
 	ProfileStoreKey          = types.ProfileStoreKey
 	DtagStoreKey             = types.DtagStoreKey
-	NewProfile               = types.NewProfile
-	NewProfiles              = types.NewProfiles
-	NewPictures              = types.NewPictures
 
 	// variable aliases
 	ModuleCdc               = types.ModuleCdc
@@ -97,13 +97,13 @@ var (
 
 type (
 	Keeper           = keeper.Keeper
+	Profile          = types.Profile
+	Profiles         = types.Profiles
+	Pictures         = types.Pictures
 	GenesisState     = types.GenesisState
 	Params           = types.Params
 	MonikerParams    = types.MonikerParams
 	DtagParams       = types.DtagParams
 	MsgSaveProfile   = types.MsgSaveProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
-	Profile          = types.Profile
-	Profiles         = types.Profiles
-	Pictures         = types.Pictures
 )

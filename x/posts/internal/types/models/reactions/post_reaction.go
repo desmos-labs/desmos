@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/common"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 )
 
 // ---------------

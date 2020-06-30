@@ -1,15 +1,15 @@
-package types_test
+package msgs_test
 
 import (
 	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/msgs"
 	"github.com/stretchr/testify/require"
 )
 
-var msgRegisterReaction = types.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
+var msgRegisterReaction = msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 
 func TestMsgRegisterReaction_Route(t *testing.T) {
@@ -25,53 +25,53 @@ func TestMsgRegisterReaction_Type(t *testing.T) {
 func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgRegisterReaction
+		msg   msgs.MsgRegisterReaction
 		error error
 	}{
 		{
 			name: "Invalid creator returns error",
-			msg: types.NewMsgRegisterReaction(nil, ":smile:", "https://smile.jpg",
+			msg: msgs.NewMsgRegisterReaction(nil, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", "")),
 		},
 		{
 			name: "Empty short code returns error",
-			msg: types.NewMsgRegisterReaction(testOwner, "", "https://smile.jpg",
+			msg: msgs.NewMsgRegisterReaction(testOwner, "", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name: "Invalid short code returns error",
-			msg: types.NewMsgRegisterReaction(testOwner, ":smile", "https://smile.jpg",
+			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
 		},
 		{
 			name: "Empty value returns error",
-			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "",
+			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
 		},
 		{
 			name: "Invalid value returns error (url)",
-			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "htp://smile.jpg",
+			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "htp://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
 		},
 		{
 			name: "Invalid value returns error (unicode)",
-			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "U+1",
+			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
 		},
 		{
 			name:  "Valid emoji value returns no error",
-			msg:   types.NewMsgRegisterReaction(testOwner, ":smile:", "💙", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			msg:   msgs.NewMsgRegisterReaction(testOwner, ":smile:", "💙", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
 		},
 		{
 			name: "Invalid subspace returns error",
-			msg: types.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
+			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
 				"1234"),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash"),
 		},
