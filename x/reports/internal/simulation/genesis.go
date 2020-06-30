@@ -1,8 +1,6 @@
 package simulation
 
 import (
-	"math/rand"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
@@ -16,7 +14,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 }
 
 func randomReports(simState *module.SimulationState) (reportsMap map[string]types.Reports) {
-	reportsMapLen := simState.Rand.Intn(rand.Intn(50))
+	reportsMapLen := simState.Rand.Intn(simState.Rand.Intn(50))
 
 	reportsMap = make(map[string]types.Reports, reportsMapLen)
 	for i := 0; i < reportsMapLen; i++ {
