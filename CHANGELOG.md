@@ -2,7 +2,8 @@
 ## Changes
 - Changed the data stored inside the profile objects (#193)
 - Renamed the `profile_cov` field of `MsgSaveProfile` to `cover_picture`
-- Rename the `profile_pic` field of `MsgSaveProfile` to `profile_picture`
+- Renamed the `profile_pic` field of `MsgSaveProfile` to `profile_picture`
+- Renamed the `profile` module to `profiles` (#200)
 - Moved `profiles` module constants to chain parameters (#171)
 - Moved `posts` module constants to chain parameters (#172)
 
