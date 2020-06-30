@@ -17,11 +17,14 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
 		PostReactions:       k.GetReactions(ctx),
 		RegisteredReactions: k.GetRegisteredReactions(ctx),
+		Params:              k.GetParams(ctx),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+
+	keeper.SetParams(ctx, data.Params)
 
 	// Sort the posts so that they are inserted based on their IDs
 	sort.Sort(data.Posts)
