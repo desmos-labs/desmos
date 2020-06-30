@@ -14,5 +14,5 @@ desmoscli query posts registered-reactions
 /reactions
 
 # Example
-# curl https://morpheus4000.desmos.network/reactions
+# curl http://lcd.morpheus.desmos.network:1317/reactions
 ```

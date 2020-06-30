@@ -14,7 +14,7 @@ desmoscli query profiles all
 /profiles
 
 # Example
-# curl https://morpheus7000.desmos.network/profiles
+# curl http://lcd.morpheus.desmos.network:1317/profiles
 ``` 
 
 # Query a profile with the given moniker
@@ -32,23 +32,5 @@ desmoscli query profiles profile bob
 /profiles/{address_or_moniker}
 
 # Example
-# curl https://morpheus7000.desmos.network/profiles/bob
-``` 
-
-# Query profiles module parameters
-This query endpoint returns all the parameters of the profiles module.
-
-**CLI**
- ```bash
-desmoscli query profiles params
-
-# Example
-# desmoscli query profiles params
-``` 
-**REST**
-```
-/profiles/params
-
-# Example
-# curl https://morpheus7000.desmos.network/profiles/params
+# curl http://lcd.morpheus.desmos.network:1317/profiles/bob
 ``` 
