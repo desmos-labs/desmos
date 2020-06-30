@@ -3,10 +3,11 @@
 - Changed the data stored inside the profile objects (#193)
 - Renamed the `profile_cov` field of `MsgSaveProfile` to `cover_picture`
 - Rename the `profile_pic` field of `MsgSaveProfile` to `profile_picture`
-- Moved profile module constants to chain parameters (#171)
+- Moved profile module constants to chain parameters (#171) 
 
 ## Bug fixes
 - Fixed a bug inside the `Equals` method of the `Pictures` object 
+- Changed the `tx profiles save` flags names (fixes #207)
 
 # Version 0.7.0
 ## Changes
