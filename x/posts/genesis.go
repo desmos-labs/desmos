@@ -23,7 +23,6 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-
 	keeper.SetParams(ctx, data.Params)
 
 	// Sort the posts so that they are inserted based on their IDs

@@ -91,7 +91,7 @@ func TestValidatePost(t *testing.T) {
 				"post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this"),
 		},
 		{
-			name:     "Valid post without poll data",
+			name:     "Valid post",
 			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
 			expError: nil,
 		},

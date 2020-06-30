@@ -64,7 +64,7 @@ func TestInvariants(t *testing.T) {
 			expBool:      true,
 		},
 		{
-			name: "Posts Invariants violated",
+			name: "ValidPosts Invariants violated",
 			posts: types.Posts{types.NewPost(
 				"1234",
 				"",
