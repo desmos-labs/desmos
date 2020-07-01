@@ -1,3 +1,7 @@
+# Version 0.9.0
+## Changes
+- Removed all the `internal` folders (#197)
+
 # Version 0.8.0
 ## Changes
 - Changed the data stored inside the profile objects (#193)
