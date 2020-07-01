@@ -61,27 +61,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message, medias or poll are required and cannot be all blank or empty")
 	}
 
-	if len(msg.Message) > models.MaxPostMessageLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("Post message cannot exceed %d characters", models.MaxPostMessageLength))
-	}
-
 	if !models.Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
-	}
-
-	if len(msg.OptionalData) > models.MaxOptionalDataFieldsNumber {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("Post optional data cannot be longer than %d fields",
-				models.MaxOptionalDataFieldsNumber))
-	}
-
-	for key, value := range msg.OptionalData {
-		if len(value) > models.MaxOptionalDataFieldValueLength {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("Post optional data value lengths cannot be longer than %d. %s exceeds the limit",
-					models.MaxOptionalDataFieldValueLength, key))
-		}
 	}
 
 	if msg.CreationDate.IsZero() {

@@ -2,7 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,6 +13,104 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	"github.com/stretchr/testify/require"
 )
+
+func TestValidatePost(t *testing.T) {
+	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
+	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
+
+	tests := []struct {
+		name     string
+		post     types.Post
+		expError error
+	}{
+		{
+			name: "Post message cannot be longer than 500 characters",
+			post: types.NewPost(
+				id,
+				id2,
+				strings.Repeat("a", 550),
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot exceed 500 characters"),
+		},
+		{
+			name: "post optional data cannot contain more than 10 key-value",
+			post: types.NewPost(
+				id,
+				id2,
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{
+					"key1":  "value",
+					"key2":  "value",
+					"key3":  "value",
+					"key4":  "value",
+					"key5":  "value",
+					"key6":  "value",
+					"key7":  "value",
+					"key8":  "value",
+					"key9":  "value",
+					"key10": "value",
+					"key11": "value",
+				},
+				date,
+				owner,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"Post optional data cannot contain more than 10 key-value pairs"),
+		},
+		{
+			name: "post optional data values cannot exceed 200 characters",
+			post: types.NewPost(
+				id,
+				id2,
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{
+					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
+							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
+							sem eget neque metus.`,
+				},
+				date,
+				owner,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this"),
+		},
+		{
+			name:     "Valid post",
+			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			expError: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
+			err := keeper.ValidatePost(ctx, k, test.post)
+			if test.expError != nil {
+				require.Equal(t, test.expError.Error(), err.Error())
+			} else {
+				require.Equal(t, test.expError, err)
+			}
+		})
+	}
+}
 
 // ---------------------------
 // --- handleMsgCreatePost
@@ -157,6 +257,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
 			store := ctx.KVStore(k.StoreKey)
 
 			for _, p := range test.storedPosts {
@@ -252,6 +353,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
 
 			store := ctx.KVStore(k.StoreKey)
 			if test.storedPost != nil {

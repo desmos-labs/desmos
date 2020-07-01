@@ -32,6 +32,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdQueryPosts(cdc),
 		GetCmdQueryPollAnswer(cdc),
 		GetCmdQueryRegisteredReactions(cdc),
+		GetCmdQueryPostsParams(cdc),
 	)...)
 	return postQueryCmd
 }
@@ -221,6 +222,29 @@ func GetCmdQueryRegisteredReactions(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var out types.Reactions
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+// GetCmdQueryPostsParams queries all the posts' module params
+func GetCmdQueryPostsParams(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "params",
+		Short: "Retrieve all the posts module params",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find profile params")
+				return nil
+			}
+
+			var out types.Params
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

@@ -5,6 +5,10 @@ import (
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 )
 
+const (
+	ModuleName = "posts"
+)
+
 // GenesisState contains the data of a v0.6.0 genesis state for the posts module
 type GenesisState struct {
 	Posts               []v040posts.Post                  `json:"posts"`

@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	QuerySessions             = keeper.QuerySessions
-	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 	ModuleName                = types.ModuleName
 	RouterKey                 = types.RouterKey
 	StoreKey                  = types.StoreKey
@@ -23,18 +21,17 @@ const (
 	AttributeKeyExternalOwner = types.AttributeKeyExternalOwner
 	AttributeKeyExpiry        = types.AttributeKeyExpiry
 	AttributeValueCategory    = types.AttributeValueCategory
+	QuerySessions             = keeper.QuerySessions
+	OpWeightMsgCreatePost     = simulation.OpWeightMsgCreatePost
 )
 
 var (
 	// functions aliases
-	NewHandler               = keeper.NewHandler
-	NewKeeper                = keeper.NewKeeper
-	NewQuerier               = keeper.NewQuerier
-	DecodeStore              = simulation.DecodeStore
 	RandomSessionData        = simulation.RandomSessionData
 	WeightedOperations       = simulation.WeightedOperations
 	SimulateMsgCreateSession = simulation.SimulateMsgCreateSession
 	RandomizedGenState       = simulation.RandomizedGenState
+	DecodeStore              = simulation.DecodeStore
 	NewMsgCreateSession      = types.NewMsgCreateSession
 	SessionStoreKey          = types.SessionStoreKey
 	ParseSessionID           = types.ParseSessionID
@@ -43,21 +40,24 @@ var (
 	DefaultGenesisState      = types.DefaultGenesisState
 	ValidateGenesis          = types.ValidateGenesis
 	RegisterCodec            = types.RegisterCodec
+	NewHandler               = keeper.NewHandler
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
 
 	// variable aliases
+	RandomNamespaces      = simulation.RandomNamespaces
 	SessionLengthKey      = types.SessionLengthKey
 	LastSessionIDStoreKey = types.LastSessionIDStoreKey
 	SessionStorePrefix    = types.SessionStorePrefix
 	ModuleCdc             = types.ModuleCdc
-	RandomNamespaces      = simulation.RandomNamespaces
 )
 
 type (
+	Keeper           = keeper.Keeper
 	SessionData      = simulation.SessionData
 	MsgCreateSession = types.MsgCreateSession
 	SessionID        = types.SessionID
 	Session          = types.Session
 	Sessions         = types.Sessions
 	GenesisState     = types.GenesisState
-	Keeper           = keeper.Keeper
 )

@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/types/msgs"
 	"github.com/stretchr/testify/require"
-
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var msgRegisterReaction = msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",

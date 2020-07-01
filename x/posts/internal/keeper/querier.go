@@ -26,6 +26,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 		case types.QueryRegisteredReactions:
 			return queryRegisteredReactions(ctx, req, keeper)
+		case types.QueryParams:
+			return queryParams(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown post query endpoint")
 		}
@@ -138,6 +140,17 @@ func queryRegisteredReactions(ctx sdk.Context, _ abci.RequestQuery, keeper Keepe
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &reactions)
 
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+func queryParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	params := keeper.GetParams(ctx)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &params)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

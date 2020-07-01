@@ -246,3 +246,11 @@ func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
 	rEmoji := emoji.EmojisList[r.Intn(len(emoji.EmojisList))]
 	return types.NewPostReaction(rEmoji.Shortcodes[0], rEmoji.Value, creator)
 }
+
+func RandomParams(r *rand.Rand) types.Params {
+	return types.Params{
+		MaxPostMessageLength:            sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000))),
+		MaxOptionalDataFieldsNumber:     sdk.NewInt(int64(sim.RandIntBetween(r, 10, 20))),
+		MaxOptionalDataFieldValueLength: sdk.NewInt(int64(sim.RandIntBetween(r, 200, 500))),
+	}
+}

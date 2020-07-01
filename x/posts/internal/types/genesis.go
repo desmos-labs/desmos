@@ -6,20 +6,24 @@ type GenesisState struct {
 	UsersPollAnswers    map[string]UserAnswers   `json:"users_poll_answers"`
 	PostReactions       map[string]PostReactions `json:"post_reactions"`
 	RegisteredReactions Reactions                `json:"registered_reactions"`
+	Params              Params                   `json:"params"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(posts Posts, postReactions map[string]PostReactions, registeredR Reactions) GenesisState {
+func NewGenesisState(posts Posts, postReactions map[string]PostReactions, registeredR Reactions, params Params) GenesisState {
 	return GenesisState{
 		Posts:               posts,
 		PostReactions:       postReactions,
 		RegisteredReactions: registeredR,
+		Params:              params,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() GenesisState {
-	return GenesisState{}
+	return GenesisState{
+		Params: DefaultParams(),
+	}
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -50,6 +54,10 @@ func ValidateGenesis(data GenesisState) error {
 				return err
 			}
 		}
+	}
+
+	if err := data.Params.Validate(); err != nil {
+		return err
 	}
 
 	return nil

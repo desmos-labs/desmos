@@ -3,24 +3,32 @@ package keeper
 import (
 	"sort"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
+	// The reference to the ParamsStore to get and set posts specific params
+	paramSubspace params.Subspace
+
 	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
 	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
-// NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+// NewKeeper creates new instances of the posts Keeper
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
+	if !paramSpace.HasKeyTable() {
+		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
+	}
+
 	return Keeper{
-		StoreKey: storeKey,
-		Cdc:      cdc,
+		StoreKey:      storeKey,
+		Cdc:           cdc,
+		paramSubspace: paramSpace,
 	}
 }
 

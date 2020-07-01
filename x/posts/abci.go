@@ -2,7 +2,6 @@ package posts
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // EndBlocker called upon each block end to close expired polls
@@ -10,11 +9,11 @@ import (
 func EndBlocker(ctx sdk.Context, keeper Keeper) {
 
 	store := ctx.KVStore(keeper.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, PostStorePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var post types.Post
+		var post Post
 		keeper.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
 		if ctx.BlockTime().After(post.PollData.EndDate) || ctx.BlockTime().Equal(post.PollData.EndDate) {
 			post.PollData.Open = false
@@ -23,9 +22,9 @@ func EndBlocker(ctx sdk.Context, keeper Keeper) {
 
 			ctx.EventManager().EmitEvent(
 				sdk.NewEvent(
-					types.EventTypeClosePoll,
-					sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator.String()),
+					EventTypeClosePoll,
+					sdk.NewAttribute(AttributeKeyPostID, post.PostID.String()),
+					sdk.NewAttribute(AttributeKeyPostOwner, post.Creator.String()),
 				),
 			)
 		}

@@ -13,27 +13,25 @@ import (
 )
 
 const (
-	ModuleName                      = common.ModuleName
-	RouterKey                       = common.RouterKey
-	StoreKey                        = common.StoreKey
-	MaxPostMessageLength            = common.MaxPostMessageLength
-	MaxOptionalDataFieldsNumber     = common.MaxOptionalDataFieldsNumber
-	MaxOptionalDataFieldValueLength = common.MaxOptionalDataFieldValueLength
-	ActionCreatePost                = common.ActionCreatePost
-	ActionEditPost                  = common.ActionEditPost
-	ActionAnswerPoll                = common.ActionAnswerPoll
-	ActionAddPostReaction           = common.ActionAddPostReaction
-	ActionRemovePostReaction        = common.ActionRemovePostReaction
-	ActionRegisterReaction          = common.ActionRegisterReaction
-	QuerierRoute                    = common.QuerierRoute
-	QueryPost                       = common.QueryPost
-	QueryPosts                      = common.QueryPosts
-	QueryPollAnswers                = common.QueryPollAnswers
-	QueryRegisteredReactions        = common.QueryRegisteredReactions
-	PostSortByCreationDate          = common.PostSortByCreationDate
-	PostSortByID                    = common.PostSortByID
-	PostSortOrderAscending          = common.PostSortOrderAscending
-	PostSortOrderDescending         = common.PostSortOrderDescending
+	ModuleName               = common.ModuleName
+	RouterKey                = common.RouterKey
+	StoreKey                 = common.StoreKey
+	ActionCreatePost         = common.ActionCreatePost
+	ActionEditPost           = common.ActionEditPost
+	ActionAnswerPoll         = common.ActionAnswerPoll
+	ActionAddPostReaction    = common.ActionAddPostReaction
+	ActionRemovePostReaction = common.ActionRemovePostReaction
+	ActionRegisterReaction   = common.ActionRegisterReaction
+	QuerierRoute             = common.QuerierRoute
+	QueryPost                = common.QueryPost
+	QueryPosts               = common.QueryPosts
+	QueryPollAnswers         = common.QueryPollAnswers
+	QueryRegisteredReactions = common.QueryRegisteredReactions
+	QueryParams              = common.QueryParams
+	PostSortByCreationDate   = common.PostSortByCreationDate
+	PostSortByID             = common.PostSortByID
+	PostSortOrderAscending   = common.PostSortOrderAscending
+	PostSortOrderDescending  = common.PostSortOrderDescending
 )
 
 var (
@@ -73,7 +71,6 @@ var (
 	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx
@@ -85,6 +82,7 @@ var (
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
 	PollAnswersStorePrefix   = common.PollAnswersStorePrefix
 	MsgsCodec                = msgs.MsgsCodec
+	ModelsCdc                = models.ModelsCdc
 )
 
 type (

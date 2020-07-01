@@ -124,6 +124,7 @@ func TestInvariants(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
+			k.SetParams(ctx, types.DefaultParams())
 			for _, post := range test.posts {
 				k.SavePost(ctx, post)
 			}

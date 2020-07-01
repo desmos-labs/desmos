@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -16,21 +15,26 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
 		PostReactions:       k.GetReactions(ctx),
 		RegisteredReactions: k.GetRegisteredReactions(ctx),
+		Params:              k.GetParams(ctx),
 	}
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+	keeper.SetParams(ctx, data.Params)
 
 	// Sort the posts so that they are inserted based on their IDs
 	sort.Sort(data.Posts)
 	for _, post := range data.Posts {
+		if err := ValidatePost(ctx, keeper, post); err != nil {
+			panic(err)
+		}
 		keeper.SavePost(ctx, post)
 	}
 
 	for postID, usersAnswersDetails := range data.UsersPollAnswers {
 		for _, userAnswersDetails := range usersAnswersDetails {
-			postID := types.PostID(postID)
+			postID := PostID(postID)
 			if !postID.Valid() {
 				panic(fmt.Errorf("invalid postID: %s", postID))
 			}
@@ -46,7 +50,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 	for postID, postReactions := range data.PostReactions {
 		for _, postReaction := range postReactions {
-			postID := types.PostID(postID)
+			postID := PostID(postID)
 			if !postID.Valid() {
 				panic(fmt.Errorf("invalid postID: %s", postID))
 			}

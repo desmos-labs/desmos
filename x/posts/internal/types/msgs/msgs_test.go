@@ -167,27 +167,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Very long message returns error",
-			msg: msgs.NewMsgCreatePost(
-				`
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque massa felis, aliquam sed ipsum at, 
-				mollis pharetra quam. Vestibulum nec nulla ante. Praesent sed dignissim turpis. Curabitur aliquam nunc 
-				eu nisi porta, eu gravida purus faucibus. Duis commodo sagittis lacus, vitae luctus enim vulputate a. 
-				Nulla tempor eget nunc vitae vulputate. Nulla facilities. Donec sollicitudin odio in arcu efficitur, 
-				sit amet vestibulum diam ullamcorper. Ut ac dolor in velit gravida efficitur et et erat volutpat.
-				`,
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				creator,
-				date,
-				msgCreatePost.Medias,
-				msgCreatePost.PollData,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot exceed 500 characters"),
-		},
-		{
 			name: "Empty subspace returns error",
 			msg: msgs.NewMsgCreatePost(
 				"My message",
@@ -201,50 +180,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash"),
-		},
-		{
-			name: "More than 10 optional data returns error",
-			msg: msgs.NewMsgCreatePost(
-				"My message",
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1":  "value1",
-					"key2":  "value2",
-					"key3":  "value3",
-					"key4":  "value4",
-					"key5":  "value5",
-					"key6":  "value6",
-					"key7":  "value7",
-					"key8":  "value8",
-					"key9":  "value9",
-					"key10": "value10",
-					"key11": "value11",
-				},
-				creator,
-				date,
-				msgCreatePost.Medias,
-				msgCreatePost.PollData,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post optional data cannot be longer than 10 fields"),
-		},
-		{
-			name: "Optional data longer than 200 characters returns error",
-			msg: msgs.NewMsgCreatePost(
-				"My message",
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac ullamcorper dui, a mattis sapien. Vivamus sed massa eget felis hendrerit ultrices. Morbi pretium hendrerit nisi quis faucibus volutpat.",
-				},
-				creator,
-				date,
-				msgCreatePost.Medias,
-				msgCreatePost.PollData,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post optional data value lengths cannot be longer than 200. key1 exceeds the limit"),
 		},
 		{
 			name: "Future creation date returns error",

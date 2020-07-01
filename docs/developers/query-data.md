@@ -17,3 +17,6 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 
 ## Reports
 - [Query the post's related reports](queries/reports.md)
+
+## Modules Parameters
+- [Query parameters](queries/params.md)

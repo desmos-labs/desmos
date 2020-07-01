@@ -33,13 +33,13 @@ const (
 
 var (
 	// functions aliases
+	NewHandler               = keeper.NewHandler
+	ValidateProfile          = keeper.ValidateProfile
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	NewHandler               = keeper.NewHandler
-	ValidateProfile          = keeper.ValidateProfile
 	ParamChanges             = simulation.ParamChanges
 	DecodeStore              = simulation.DecodeStore
 	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
@@ -96,7 +96,6 @@ var (
 )
 
 type (
-	Keeper           = keeper.Keeper
 	Params           = types.Params
 	MonikerParams    = types.MonikerParams
 	DtagParams       = types.DtagParams
@@ -106,4 +105,5 @@ type (
 	Profiles         = types.Profiles
 	Pictures         = types.Pictures
 	GenesisState     = types.GenesisState
+	Keeper           = keeper.Keeper
 )

@@ -179,6 +179,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
+	app.subspaces[posts.ModuleName] = app.paramsKeeper.Subspace(posts.DefaultParamspace)
 	app.subspaces[profiles.ModuleName] = app.paramsKeeper.Subspace(profiles.DefaultParamspace)
 
 	// Add keepers
@@ -264,6 +265,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.postsKeeper = posts.NewKeeper(
 		app.cdc,
 		keys[posts.StoreKey],
+		app.subspaces[posts.ModuleName],
 	)
 	app.profileKeeper = profiles.NewKeeper(
 		app.cdc,

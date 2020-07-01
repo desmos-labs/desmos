@@ -69,6 +69,10 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		}
 	}
 
+	if err := ValidatePost(ctx, keeper, post); err != nil {
+		return nil, err
+	}
+
 	keeper.SavePost(ctx, post)
 
 	createEvent := sdk.NewEvent(
@@ -109,6 +113,10 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	// Edit the post
 	existing.Message = msg.Message
 	existing.LastEdited = msg.EditDate
+
+	if err := ValidatePost(ctx, keeper, existing); err != nil {
+		return nil, err
+	}
 	keeper.SavePost(ctx, existing)
 
 	editEvent := sdk.NewEvent(

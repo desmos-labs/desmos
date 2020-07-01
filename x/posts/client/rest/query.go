@@ -28,6 +28,7 @@ const (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+	r.HandleFunc("/posts/params", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")
@@ -157,6 +158,20 @@ func queryPostPollAnswersHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 func queryRegisteredReactions(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRegisteredReactions)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query list of posts' module params
+func queryPostsParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
