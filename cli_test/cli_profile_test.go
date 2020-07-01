@@ -28,7 +28,7 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(fooAddr, "-y", "--dtag mrBrown")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -40,12 +40,11 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run", "--dtag mrBrown")
+	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileSave(fooAddr, "--generate-only=true",
-		"--moniker mrBrown")
+	success, stdout, stderr := f.TxProfileSave("mrBrown", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -77,12 +76,11 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(fooAddr, "-y",
-		"--dtag mrBrown",
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -93,21 +91,19 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	require.Equal(t, *storedProfiles[0].Moniker, "Leonardo")
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run",
-		"--dtag mrBrown",
+	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, "--dry-run",
 		"--moniker Leonardo",
 		"--bio biography",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileSave(fooAddr, "--generate-only=true",
-		"--dtag mrBrown",
+	success, stdout, stderr := f.TxProfileSave("mrBrown", fooAddr, "--generate-only=true",
 		"--moniker Leonardo",
 		"--bio biography",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -139,12 +135,11 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(fooAddr, "-y",
-		"--dtag mrBrown",
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg",
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg",
 	)
 	require.True(t, success)
 	require.Empty(t, sterr)
@@ -157,7 +152,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave(fooAddr, "-y", "--dtag mrBrown")
+	success, _, sterr = f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -171,11 +166,11 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Nil(t, editedProfiles[0].Bio)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run", "--dtag mrPink")
+	success, _, _ = f.TxProfileSave("mrPink", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileSave(fooAddr, "--moniker mrPink", "--generate-only=true")
+	success, stdout, stderr := f.TxProfileSave("mrPink", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -207,12 +202,11 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(fooAddr, "-y",
-		"--dtag mrBrown",
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -224,12 +218,11 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave(fooAddr, "-y",
-		"--dtag mrBrown",
+	success, _, sterr = f.TxProfileSave("mrBrown", fooAddr, "-y",
 		"--moniker Leo",
 		"--bio HollywoodActor",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -246,21 +239,19 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.NotEqual(t, storedProfiles[0].Bio, editedProfiles[0].Bio)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(fooAddr, "--dry-run",
-		"--dtag mrPink",
+	success, _, _ = f.TxProfileSave("mrPink", fooAddr, "--dry-run",
 		"--moniker Leo",
 		"--bio HollywoodActor",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileSave(fooAddr, "--generate-only=true",
-		"--dtag mrPink",
+	success, stdout, stderr := f.TxProfileSave("mrPink", fooAddr, "--generate-only=true",
 		"--moniker Leo",
 		"--bio HollywoodActor",
-		"--picture https://profilePic.jpg",
-		"--cover https://profileCover.jpg")
+		"--profile-pic https://profilePic.jpg",
+		"--cover-pic https://profileCover.jpg")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -292,7 +283,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(fooAddr, "-y", "--dtag mrBrown")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)

@@ -7,6 +7,7 @@
 
 ## Bug fixes
 - Fixed a bug inside the `Equals` method of the `Pictures` object 
+- Changed the `tx profiles save` flags names (fixes #207)
 
 # Version 0.7.0
 ## Changes

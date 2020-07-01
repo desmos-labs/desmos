@@ -1,9 +1,8 @@
 package cli
 
 const (
-	flagDtag         = "dtag"
-	flagMoniker      = "moniker"
-	flagBio          = "bio"
-	flagProfilePic   = "picture"
-	flagProfileCover = "cover"
+	flagMoniker    = "moniker"
+	flagBio        = "bio"
+	flagProfilePic = "profile-pic"
+	flagCoverPic   = "cover-pic"
 )
