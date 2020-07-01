@@ -496,7 +496,7 @@ func Test_queryParams(t *testing.T) {
 		expResult types.Params
 	}{
 		{
-			name:      "Returning profile parameters correctly",
+			name:      "Returning posts parameters correctly",
 			path:      []string{types.QueryParams},
 			expResult: types.DefaultParams(),
 		},

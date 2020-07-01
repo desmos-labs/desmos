@@ -1,6 +1,8 @@
 package v080_test
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"strconv"
 	"testing"
 	"time"
@@ -14,6 +16,43 @@ import (
 // newStrPtr returns a new string pointer
 func newStrPtr(value string) *string {
 	return &value
+}
+
+func TestMigrate080(t *testing.T) {
+	config := sdk.GetConfig()
+	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
+	config.Seal()
+
+	content, err := ioutil.ReadFile("v060state.json")
+	require.NoError(t, err)
+
+	var v060state v060.GenesisState
+	err = json.Unmarshal(content, &v060state)
+	require.NoError(t, err)
+
+	genesisTime, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
+	require.NoError(t, err)
+
+	v080state := v080.Migrate(v060state, genesisTime)
+
+	// make sure that all profiles are migrated
+	require.Equal(t, len(v080state.Profiles), len(v060state.Profiles))
+
+	// make sure that params are properly set
+	params := v080.Params{
+		MonikerParams: v080.MonikerParams{
+			MinMonikerLen: sdk.NewInt(2),
+			MaxMonikerLen: sdk.NewInt(1000),
+		},
+		DtagParams: v080.DtagParams{
+			RegEx:      `^[A-Za-z0-9_]+$`,
+			MinDtagLen: sdk.NewInt(3),
+			MaxDtagLen: sdk.NewInt(30),
+		},
+		MaxBioLen: sdk.NewInt(1000),
+	}
+
+	require.Equal(t, params, v080state.Params)
 }
 
 func TestConvertProfiles(t *testing.T) {

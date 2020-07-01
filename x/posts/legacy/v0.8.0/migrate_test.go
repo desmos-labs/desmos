@@ -1,4 +1,4 @@
-package v060_test
+package v080_test
 
 import (
 	"encoding/json"
@@ -163,7 +163,7 @@ func TestMigrate(t *testing.T) {
 
 }
 
-func TestMigrate060(t *testing.T) {
+func TestMigrate080(t *testing.T) {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
 	config.Seal()
@@ -186,21 +186,21 @@ func TestMigrate060(t *testing.T) {
 		require.Error(t, err)
 	}
 
-	// Make sure the posts are all the same
+	// Make sure that all the posts are migrated
 	require.Equal(t, len(v080state.Posts), len(v060state.Posts))
-	for index, post := range v080state.Posts {
-		require.Equal(t, post, v060state.Posts[index])
-	}
 
-	// Make sure the reactions are all the same
+	// Make sure all the reactions are migrated
 	require.Equal(t, len(v080state.PostReactions), len(v060state.PostReactions))
-	for index, postReactions := range v080state.PostReactions {
-		require.Contains(t, postReactions, v060state.PostReactions[index])
+
+	// Make sure all the poll answers are migrated
+	require.Equal(t, len(v080state.UsersPollAnswers), len(v060state.UsersPollAnswers))
+
+	params := v080.Params{
+		MaxPostMessageLength:            sdk.NewInt(500),
+		MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
+		MaxOptionalDataFieldValueLength: sdk.NewInt(200),
 	}
 
-	// Make sure the poll answers are all the same
-	require.Equal(t, len(v080state.UsersPollAnswers), len(v060state.UsersPollAnswers))
-	for index, answer := range v080state.UsersPollAnswers {
-		require.Equal(t, answer, v060state.UsersPollAnswers[index])
-	}
+	// make sure params are properly set
+	require.Equal(t, params, v080state.Params)
 }

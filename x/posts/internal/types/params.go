@@ -13,7 +13,7 @@ const (
 	DefaultParamspace = ModuleName
 )
 
-// Default profile paramsModule
+// Default posts params
 var (
 	DefaultMaxPostMessageLength            = sdk.NewInt(500)
 	DefaultMaxOptionalDataFieldsNumber     = sdk.NewInt(10)
@@ -47,7 +47,7 @@ func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen sdk.Int) Par
 	}
 }
 
-// DefaultParams return default paramsModule
+// DefaultParams return default params object
 func DefaultParams() Params {
 	return Params{
 		MaxPostMessageLength:            DefaultMaxPostMessageLength,
