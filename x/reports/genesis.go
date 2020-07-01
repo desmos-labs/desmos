@@ -2,7 +2,7 @@ package reports
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

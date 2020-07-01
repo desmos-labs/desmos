@@ -5,14 +5,14 @@ package posts
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
-	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/msgs"
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+	"github.com/desmos-labs/desmos/x/posts/simulation"
+	"github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/posts/types/models"
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+	"github.com/desmos-labs/desmos/x/posts/types/models/polls"
+	"github.com/desmos-labs/desmos/x/posts/types/models/reactions"
+	"github.com/desmos-labs/desmos/x/posts/types/msgs"
 )
 
 const (
@@ -65,8 +65,9 @@ const (
 
 var (
 	// functions aliases
-	NewKeeper                                    = keeper.NewKeeper
 	ValidatePost                                 = keeper.ValidatePost
+	NewHandler                                   = keeper.NewHandler
+	NewKeeper                                    = keeper.NewKeeper
 	NewQuerier                                   = keeper.NewQuerier
 	RegisterInvariants                           = keeper.RegisterInvariants
 	AllInvariants                                = keeper.AllInvariants
@@ -74,7 +75,8 @@ var (
 	ValidCommentsDateInvariant                   = keeper.ValidCommentsDateInvariant
 	ValidPostForReactionsInvariant               = keeper.ValidPostForReactionsInvariant
 	ValidPollForPollAnswersInvariant             = keeper.ValidPollForPollAnswersInvariant
-	NewHandler                                   = keeper.NewHandler
+	DecodeStore                                  = simulation.DecodeStore
+	SimulateMsgAnswerToPoll                      = simulation.SimulateMsgAnswerToPoll
 	SimulateMsgAddPostReaction                   = simulation.SimulateMsgAddPostReaction
 	SimulateMsgRemovePostReaction                = simulation.SimulateMsgRemovePostReaction
 	SimulateMsgRegisterReaction                  = simulation.SimulateMsgRegisterReaction
@@ -100,9 +102,6 @@ var (
 	WeightedOperations                           = simulation.WeightedOperations
 	RandomizedGenState                           = simulation.RandomizedGenState
 	ParamChanges                                 = simulation.ParamChanges
-	DecodeStore                                  = simulation.DecodeStore
-	SimulateMsgAnswerToPoll                      = simulation.SimulateMsgAnswerToPoll
-	RegisterCodec                                = types.RegisterCodec
 	ParamKeyTable                                = types.ParamKeyTable
 	NewParams                                    = types.NewParams
 	DefaultParams                                = types.DefaultParams
@@ -113,20 +112,21 @@ var (
 	NewGenesisState                              = types.NewGenesisState
 	DefaultGenesisState                          = types.DefaultGenesisState
 	ValidateGenesis                              = types.ValidateGenesis
+	RegisterCodec                                = types.RegisterCodec
+	ComputeID                                    = models.ComputeID
+	ParsePostID                                  = models.ParsePostID
+	NewPost                                      = models.NewPost
+	NewPostResponse                              = models.NewPostResponse
 	PostStoreKey                                 = models.PostStoreKey
 	PostCommentsStoreKey                         = models.PostCommentsStoreKey
 	PostReactionsStoreKey                        = models.PostReactionsStoreKey
 	ReactionsStoreKey                            = models.ReactionsStoreKey
 	PollAnswersStoreKey                          = models.PollAnswersStoreKey
 	RegisterModelsCodec                          = models.RegisterModelsCodec
-	ComputeID                                    = models.ComputeID
-	ParsePostID                                  = models.ParsePostID
-	NewPost                                      = models.NewPost
-	NewPostResponse                              = models.NewPostResponse
-	GetEmojiByShortCodeOrValue                   = common.GetEmojiByShortCodeOrValue
 	NewPostMedia                                 = common.NewPostMedia
 	ValidateURI                                  = common.ValidateURI
 	NewPostMedias                                = common.NewPostMedias
+	GetEmojiByShortCodeOrValue                   = common.GetEmojiByShortCodeOrValue
 	ParseAnswerID                                = polls.ParseAnswerID
 	NewPollAnswer                                = polls.NewPollAnswer
 	NewPollAnswers                               = polls.NewPollAnswers
@@ -139,24 +139,25 @@ var (
 	NewReaction                                  = reactions.NewReaction
 	IsEmoji                                      = reactions.IsEmoji
 	NewReactions                                 = reactions.NewReactions
-	NewMsgCreatePost                             = msgs.NewMsgCreatePost
-	NewMsgEditPost                               = msgs.NewMsgEditPost
-	NewMsgRegisterReaction                       = msgs.NewMsgRegisterReaction
 	RegisterMessagesCodec                        = msgs.RegisterMessagesCodec
 	NewMsgAddPostReaction                        = msgs.NewMsgAddPostReaction
 	NewMsgRemovePostReaction                     = msgs.NewMsgRemovePostReaction
 	NewMsgAnswerPoll                             = msgs.NewMsgAnswerPoll
+	NewMsgCreatePost                             = msgs.NewMsgCreatePost
+	NewMsgEditPost                               = msgs.NewMsgEditPost
+	NewMsgRegisterReaction                       = msgs.NewMsgRegisterReaction
 
 	// variable aliases
+	MsgsCodec                              = msgs.MsgsCodec
 	RandomMimeTypes                        = simulation.RandomMimeTypes
 	RandomHosts                            = simulation.RandomHosts
-	ModuleCdc                              = types.ModuleCdc
 	DefaultMaxPostMessageLength            = types.DefaultMaxPostMessageLength
 	DefaultMaxOptionalDataFieldsNumber     = types.DefaultMaxOptionalDataFieldsNumber
 	DefaultMaxOptionalDataFieldValueLength = types.DefaultMaxOptionalDataFieldValueLength
 	MaxPostMessageLengthKey                = types.MaxPostMessageLengthKey
 	MaxOptionalDataFieldsNumberKey         = types.MaxOptionalDataFieldsNumberKey
 	MaxOptionalDataFieldValueLengthKey     = types.MaxOptionalDataFieldValueLengthKey
+	ModuleCdc                              = types.ModuleCdc
 	ModelsCdc                              = models.ModelsCdc
 	Sha256RegEx                            = common.Sha256RegEx
 	HashtagRegEx                           = common.HashtagRegEx
@@ -168,20 +169,9 @@ var (
 	PostReactionsStorePrefix               = common.PostReactionsStorePrefix
 	ReactionsStorePrefix                   = common.ReactionsStorePrefix
 	PollAnswersStorePrefix                 = common.PollAnswersStorePrefix
-	MsgsCodec                              = msgs.MsgsCodec
 )
 
 type (
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
-	MsgRegisterReaction      = msgs.MsgRegisterReaction
-	MsgAddPostReaction       = msgs.MsgAddPostReaction
-	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
-	Keeper                   = keeper.Keeper
-	PostData                 = simulation.PostData
-	PostReactionData         = simulation.PostReactionData
-	ReactionData             = simulation.ReactionData
 	Params                   = types.Params
 	QueryPostsParams         = types.QueryPostsParams
 	GenesisState             = types.GenesisState
@@ -205,4 +195,14 @@ type (
 	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
 	Reactions                = reactions.Reactions
+	MsgAddPostReaction       = msgs.MsgAddPostReaction
+	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
+	MsgRegisterReaction      = msgs.MsgRegisterReaction
+	Keeper                   = keeper.Keeper
+	PostData                 = simulation.PostData
+	PostReactionData         = simulation.PostReactionData
+	ReactionData             = simulation.ReactionData
 )

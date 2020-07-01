@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/gorilla/mux"
 )
 

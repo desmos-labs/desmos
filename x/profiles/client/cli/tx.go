@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

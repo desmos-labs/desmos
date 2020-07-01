@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/x/posts"
+	posts "github.com/desmos-labs/desmos/x/posts/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,7 +14,7 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/reports/client/cli"
 	"github.com/desmos-labs/desmos/x/reports/client/rest"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
+	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"

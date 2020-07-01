@@ -7,12 +7,12 @@ package reports
 import (
 	"github.com/desmos-labs/desmos/x/reports/client/cli"
 	"github.com/desmos-labs/desmos/x/reports/client/rest"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
-	"github.com/desmos-labs/desmos/x/reports/internal/simulation"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/msgs"
+	"github.com/desmos-labs/desmos/x/reports/keeper"
+	"github.com/desmos-labs/desmos/x/reports/simulation"
+	"github.com/desmos-labs/desmos/x/reports/types"
+	"github.com/desmos-labs/desmos/x/reports/types/models"
+	"github.com/desmos-labs/desmos/x/reports/types/models/common"
+	"github.com/desmos-labs/desmos/x/reports/types/msgs"
 )
 
 const (
@@ -31,12 +31,6 @@ const (
 
 var (
 	// functions aliases
-	NewMsgReportPost       = msgs.NewMsgReportPost
-	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
-	GetQueryCmd            = cli.GetQueryCmd
-	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
-	GetTxCmd               = cli.GetTxCmd
-	GetCmdReportPost       = cli.GetCmdReportPost
 	RegisterRoutes         = rest.RegisterRoutes
 	NewHandler             = keeper.NewHandler
 	NewKeeper              = keeper.NewKeeper
@@ -44,6 +38,7 @@ var (
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
+	WeightedOperations     = simulation.WeightedOperations
 	RandomizedGenState     = simulation.RandomizedGenState
 	DecodeStore            = simulation.DecodeStore
 	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
@@ -51,7 +46,6 @@ var (
 	RandomPostID           = simulation.RandomPostID
 	RandomReportMessage    = simulation.RandomReportMessage
 	RandomReportTypes      = simulation.RandomReportTypes
-	WeightedOperations     = simulation.WeightedOperations
 	NewGenesisState        = types.NewGenesisState
 	DefaultGenesisState    = types.DefaultGenesisState
 	ValidateGenesis        = types.ValidateGenesis
@@ -60,6 +54,12 @@ var (
 	NewReportResponse      = models.NewReportResponse
 	NewReport              = models.NewReport
 	RegisterModelsCodec    = models.RegisterModelsCodec
+	NewMsgReportPost       = msgs.NewMsgReportPost
+	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
+	GetQueryCmd            = cli.GetQueryCmd
+	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
+	GetTxCmd               = cli.GetTxCmd
+	GetCmdReportPost       = cli.GetCmdReportPost
 
 	// variable aliases
 	ModuleCdc              = types.ModuleCdc
@@ -70,12 +70,12 @@ var (
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
-	ReportPostReq        = rest.ReportPostReq
-	Keeper               = keeper.Keeper
-	ReportsData          = simulation.ReportsData
 	GenesisState         = types.GenesisState
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
+	ReportPostReq        = rest.ReportPostReq
+	Keeper               = keeper.Keeper
+	ReportsData          = simulation.ReportsData
 )

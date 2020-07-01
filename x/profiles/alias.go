@@ -5,9 +5,9 @@ package profiles
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/internal/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/desmos-labs/desmos/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 const (
@@ -40,10 +40,6 @@ var (
 	RegisterInvariants       = keeper.RegisterInvariants
 	AllInvariants            = keeper.AllInvariants
 	ValidProfileInvariant    = keeper.ValidProfileInvariant
-	ParamChanges             = simulation.ParamChanges
-	DecodeStore              = simulation.DecodeStore
-	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
 	NewRandomProfile         = simulation.NewRandomProfile
 	RandomProfile            = simulation.RandomProfile
 	RandomDTag               = simulation.RandomDTag
@@ -57,6 +53,10 @@ var (
 	RandomBioParams          = simulation.RandomBioParams
 	WeightedOperations       = simulation.WeightedOperations
 	RandomizedGenState       = simulation.RandomizedGenState
+	ParamChanges             = simulation.ParamChanges
+	DecodeStore              = simulation.DecodeStore
+	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
 	ParamKeyTable            = types.ParamKeyTable
 	NewParams                = types.NewParams
 	DefaultParams            = types.DefaultParams
@@ -96,6 +96,7 @@ var (
 )
 
 type (
+	Keeper           = keeper.Keeper
 	Params           = types.Params
 	MonikerParams    = types.MonikerParams
 	DtagParams       = types.DtagParams
@@ -105,5 +106,4 @@ type (
 	Profiles         = types.Profiles
 	Pictures         = types.Pictures
 	GenesisState     = types.GenesisState
-	Keeper           = keeper.Keeper
 )
