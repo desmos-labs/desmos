@@ -46,44 +46,41 @@ func getFlagValueOrNilOnDefault(flag string) *string {
 // GetCmdSaveProfile is the CLI command for saving an profile
 func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "save",
-		Short: "Save a profile",
+		Use:   "save [dtag]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Save your profile associating to it the given DTag.",
 		Long: fmt.Sprintf(`
-Save a new profile or edit an existing one specifying the dtag, name, surname, bio, a profile picture and cover.
-Every data is optional except for the dtag.
-If you are editing an existing profile you should fill all the existent fields otherwise they will be set as nil.
+Save a new profile or edit the existing one specifying a DTag, a moniker, biography, profile picture and cover picture.
+Every data given through the flags is optional.
+If you are editing an existing profile you should fill all the existent fields otherwise the existing values
+will be removed.
 
-%s tx profiles save \
-    --dtag "DiCapLeo" \
-	--name "Leonardo" \
-	--surname "Di Caprio" \
-	--bio "Hollywood actor. Proud environmentalist" \
-	--picture "https://profilePic.jpg"
-	--cover "https://profileCover.jpg"
-`, version.ClientName),
-		Args: cobra.ExactArgs(0),
+%s tx profiles save LeoDiCap \
+	%s "Leonardo Di Caprio" \
+	%s "Hollywood actor. Proud environmentalist" \
+	%s "https://profilePic.jpg"
+	%s "https://profileCover.jpg"
+`, version.ClientName, flagMoniker, flagBio, flagProfilePic, flagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			dtag := viper.GetString(flagDtag)
 			moniker := getFlagValueOrNilOnDefault(flagMoniker)
 			picture := getFlagValueOrNilOnDefault(flagProfilePic)
-			cover := getFlagValueOrNilOnDefault(flagProfileCover)
+			cover := getFlagValueOrNilOnDefault(flagCoverPic)
 			bio := getFlagValueOrNilOnDefault(flagBio)
 
-			msg := types.NewMsgSaveProfile(dtag, moniker, bio, picture, cover, cliCtx.FromAddress)
+			msg := types.NewMsgSaveProfile(args[0], moniker, bio, picture, cover, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(flagDtag, "", "DTag of the user")
-	cmd.Flags().String(flagMoniker, "", "Moniker of the user")
-	cmd.Flags().String(flagBio, "", "Biography of the user")
-	cmd.Flags().String(flagProfilePic, "", "User profile picture")
-	cmd.Flags().String(flagProfileCover, "", "User cover picture")
+	cmd.Flags().String(flagMoniker, "", "Moniker to be used")
+	cmd.Flags().String(flagBio, "", "Biography to be used")
+	cmd.Flags().String(flagProfilePic, "", "Profile picture")
+	cmd.Flags().String(flagCoverPic, "", "Cover picture")
 
 	return cmd
 }
