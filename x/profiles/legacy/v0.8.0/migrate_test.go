@@ -56,10 +56,10 @@ func TestMigrate080(t *testing.T) {
 }
 
 func TestConvertProfiles(t *testing.T) {
-	user1, err := sdk.AccAddressFromBech32("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+	user1, err := sdk.AccAddressFromBech32("desmos1rzgjtjudpn4ppj0g7lj7vvcd2cxsjcvvyyatkw")
 	require.NoError(t, err)
 
-	user2, err := sdk.AccAddressFromBech32("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	user2, err := sdk.AccAddressFromBech32("desmos18nx27z75wp8xk9j2t73hl6ggpnwpgqa8a423vg")
 	require.NoError(t, err)
 
 	genesisTime, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
