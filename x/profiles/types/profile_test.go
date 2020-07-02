@@ -122,47 +122,84 @@ func TestProfile_String(t *testing.T) {
 }
 
 func TestProfile_Equals(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	user1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 
-	var testAccount = types.Profile{
-		DTag:     "dtag",
-		Bio:      newStrPtr("bio"),
-		Pictures: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
-		Creator:  user,
-	}
+	user2, err := sdk.AccAddressFromBech32("cosmos1a8z4rzhd00eqvknv9dfga5rrh8fxwfs86kesv2")
+	require.NoError(t, err)
 
-	var testAccount2 = types.Profile{
-		DTag:     "oniker",
-		Bio:      newStrPtr("bio"),
-		Pictures: types.NewPictures(newStrPtr("profile"), newStrPtr("cover")),
-		Creator:  user,
-	}
+	time1, err := time.Parse(time.RFC3339, "2020-01-01T01:01:01Z")
+	require.NoError(t, err)
+
+	time2, err := time.Parse(time.RFC3339, "2020-02-02T02:02:02Z")
+	require.NoError(t, err)
 
 	tests := []struct {
-		name     string
-		account  types.Profile
-		otherAcc types.Profile
-		expBool  bool
+		name    string
+		first   types.Profile
+		second  types.Profile
+		expBool bool
 	}{
 		{
-			name:     "Equals accounts returns true",
-			account:  testAccount,
-			otherAcc: testAccount,
-			expBool:  true,
+			name:    "Different DTag returns false",
+			first:   types.NewProfile("dtag-1", user1, time1),
+			second:  types.NewProfile("dtag-2", user1, time1),
+			expBool: false,
 		},
 		{
-			name:     "Non equals account returns false",
-			account:  testAccount,
-			otherAcc: testAccount2,
-			expBool:  false,
+			name: "Different moniker returns false",
+			first: types.NewProfile("dtag", user1, time1).
+				WithMoniker(newStrPtr("moniker-1")),
+			second: types.NewProfile("dtag", user1, time1).
+				WithMoniker(newStrPtr("moniker-2")),
+			expBool: false,
+		},
+		{
+			name: "Different bio returns false",
+			first: types.NewProfile("dtag", user1, time1).
+				WithBio(newStrPtr("bio-1")),
+			second: types.NewProfile("dtag", user1, time1).
+				WithBio(newStrPtr("bio-2")),
+			expBool: false,
+		},
+		{
+			name: "Different pictures returns false",
+			first: types.NewProfile("dtag", user1, time1).
+				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
+			second: types.NewProfile("dtag", user1, time1).
+				WithPictures(newStrPtr("profile-2"), newStrPtr("cover-2")),
+			expBool: false,
+		},
+		{
+			name:    "Different creation dates returns false",
+			first:   types.NewProfile("dtag", user1, time1),
+			second:  types.NewProfile("dtag", user1, time2),
+			expBool: false,
+		},
+		{
+			name:    "Different creators returns false",
+			first:   types.NewProfile("dtag", user1, time1),
+			second:  types.NewProfile("dtag", user2, time1),
+			expBool: false,
+		},
+		{
+			name: "Same profiles return true",
+			first: types.NewProfile("dtag-1", user1, time1).
+				WithMoniker(newStrPtr("moniker-1")).
+				WithBio(newStrPtr("bio-1")).
+				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
+			second: types.NewProfile("dtag-1", user1, time1).
+				WithMoniker(newStrPtr("moniker-1")).
+				WithBio(newStrPtr("bio-1")).
+				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
+			expBool: true,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expBool, test.account.Equals(test.otherAcc))
+			require.Equal(t, test.expBool, test.first.Equals(test.second))
 		})
 	}
 

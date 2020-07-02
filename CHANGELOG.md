@@ -10,6 +10,8 @@
 - Renamed the `profile` module to `profiles` (#200)
 - Moved `profiles` module constants to chain parameters (#171)
 - Moved `posts` module constants to chain parameters (#172)
+- Added the creation date inside the profile saving event (#210)
+- Changed the way times are serialized inside event attributes (#211)
 
 ## Bug fixes
 - Fixed a bug inside the `Equals` method of the `Pictures` object 

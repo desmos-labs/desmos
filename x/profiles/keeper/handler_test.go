@@ -173,6 +173,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				types.EventTypeProfileSaved,
 				sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
 				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
+				sdk.NewAttribute(types.AttributeProfileCreationTime, date.Format(time.RFC3339)),
 			),
 		},
 		{
@@ -207,6 +208,7 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 				types.EventTypeProfileSaved,
 				sdk.NewAttribute(types.AttributeProfileDtag, "test_dtag"),
 				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
+				sdk.NewAttribute(types.AttributeProfileCreationTime, date.Format(time.RFC3339)),
 			),
 		},
 		{
@@ -245,6 +247,8 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			ctx, k := SetupTestInput()
+			ctx = ctx.WithBlockTime(date)
+
 			store := ctx.KVStore(k.StoreKey)
 			k.SetParams(ctx, types.DefaultParams())
 			if test.existentProfiles != nil {
