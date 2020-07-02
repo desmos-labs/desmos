@@ -282,7 +282,7 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					types.EventTypePostCreated,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostCreationTime, test.expPost.Created.String()),
+					sdk.NewAttribute(types.AttributeKeyPostCreationTime, test.expPost.Created.Format(time.RFC3339)),
 					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
 				)
 				require.Len(t, res.Events, 1)
@@ -368,7 +368,7 @@ func Test_handleMsgEditPost(t *testing.T) {
 				require.Contains(t, res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.String()),
+					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.Format(time.RFC3339)),
 				))
 
 				var stored types.Post
