@@ -9,7 +9,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -41,7 +41,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Nil(t, post.Medias)
@@ -95,7 +95,7 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.False(t, post.AllowsComments)
 	require.Nil(t, post.PollData)
@@ -158,13 +158,13 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 2)
-	require.Equal(t, post.Medias, posts.NewPostMedias(
-		posts.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
-		posts.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
+	require.Equal(t, post.Medias, types.NewPostMedias(
+		types.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
+		types.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
@@ -222,14 +222,14 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 3)
-	require.Equal(t, posts.NewPostMedias(
-		posts.NewPostMedia("https://example.com/media1", "text/plain", nil),
-		posts.NewPostMedia("https://example.com/media2", "application/json", nil),
-		posts.NewPostMedia("https://example.com/media3", "text/plain", nil),
+	require.Equal(t, types.NewPostMedias(
+		types.NewPostMedia("https://example.com/media1", "text/plain", nil),
+		types.NewPostMedia("https://example.com/media2", "application/json", nil),
+		types.NewPostMedia("https://example.com/media3", "text/plain", nil),
 	), post.Medias)
 
 	// Test --dry-run
@@ -288,7 +288,7 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Medias, 0)
@@ -345,7 +345,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.Medias)
 	require.NotNil(t, post.PollData)
@@ -361,9 +361,9 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 
 	// Check poll answers
 	require.Len(t, pollData.ProvidedAnswers, 3)
-	require.Equal(t, posts.NewPollAnswer(0, "Beagle"), pollData.ProvidedAnswers[0])
-	require.Equal(t, posts.NewPollAnswer(1, "Pug"), pollData.ProvidedAnswers[1])
-	require.Equal(t, posts.NewPollAnswer(2, "Shiba"), pollData.ProvidedAnswers[2])
+	require.Equal(t, types.NewPollAnswer(0, "Beagle"), pollData.ProvidedAnswers[0])
+	require.Equal(t, types.NewPollAnswer(1, "Pug"), pollData.ProvidedAnswers[1])
+	require.Equal(t, types.NewPollAnswer(2, "Shiba"), pollData.ProvidedAnswers[2])
 
 	// Test --dry-run
 	success, _, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
@@ -428,7 +428,7 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	post := storedPosts[0]
 
 	// Insert an answer
-	success, _, sterr = f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "-y")
+	success, _, sterr = f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -436,15 +436,15 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	// Check that answers have been inserted
 	postQueryResponse := f.QueryPost(post.PostID.String())
 	require.NotEmpty(t, postQueryResponse.PollAnswers)
-	require.Equal(t, posts.NewUserAnswer([]posts.AnswerID{posts.AnswerID(1)}, fooAddr), postQueryResponse.PollAnswers[0])
+	require.Equal(t, types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, fooAddr), postQueryResponse.PollAnswers[0])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--dry-run")
+	success, _, stderr := f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--dry-run")
 	require.Empty(t, sterr)
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAnswerPoll(post.PostID, []posts.AnswerID{posts.AnswerID(1)}, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -524,10 +524,10 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	reactions := posts.Reactions{
-		posts.Reaction{":earth:", "http://earth.jpg", subspace, fooAddr},
-		posts.Reaction{":blush:", "https://gph.is/2p19Zai", subspace, fooAddr},
-		posts.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
+	reactions := types.Reactions{
+		types.Reaction{":earth:", "http://earth.jpg", subspace, fooAddr},
+		types.Reaction{":blush:", "https://gph.is/2p19Zai", subspace, fooAddr},
+		types.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
 	}
 
 	// Create a post
@@ -562,7 +562,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// Make sure the reaction is added
 	storedPost := f.QueryPost(post.PostID.String())
 	require.Len(t, storedPost.Reactions, 1)
-	require.Equal(t, posts.NewPostReaction(":+1:", "👍", fooAddr), storedPost.Reactions[0])
+	require.Equal(t, types.NewPostReaction(":+1:", "👍", fooAddr), storedPost.Reactions[0])
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
@@ -642,7 +642,7 @@ func TestDesmosCLIRegisterReaction(t *testing.T) {
 	// Make sure the reaction is registered
 	registeredReactions := f.QueryReactions()
 	require.NotEmpty(t, registeredReactions)
-	require.Equal(t, registeredReactions, posts.Reactions{posts.NewReaction(fooAddr, shortCode, value, subspace)})
+	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
@@ -693,7 +693,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	// Make sure the reaction is registered
 	registeredReactions := f.QueryReactions()
 	require.NotEmpty(t, registeredReactions)
-	require.Equal(t, registeredReactions, posts.Reactions{posts.NewReaction(fooAddr, shortCode, value, subspace)})
+	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
