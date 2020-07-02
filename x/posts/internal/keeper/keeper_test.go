@@ -13,7 +13,7 @@ import (
 // --- Posts
 // -------------
 
-func TestKeeper_SavePost(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
@@ -176,26 +176,24 @@ func TestKeeper_SavePost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			for _, p := range test.existingPosts {
-				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), suite.cdc.MustMarshalBinaryBare(p))
 			}
 
 			// Save the post
-			k.SavePost(ctx, test.newPost)
+			suite.keeper.SavePost(suite.ctx, test.newPost)
 
 			// Check the stored post
 			var expected types.Post
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
-			require.True(t, expected.Equals(test.newPost))
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
+			suite.True(expected.Equals(test.newPost))
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
-			require.True(t, test.expParentCommentsIDs.Equals(parentCommentsIDs))
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
+			suite.True(test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
 }

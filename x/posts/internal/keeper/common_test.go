@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"github.com/stretchr/testify/suite"
+	"testing"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,8 +18,42 @@ import (
 	db "github.com/tendermint/tm-db"
 )
 
-func SetupTestInput() (sdk.Context, keeper.Keeper) {
+type KeeperTestSuite struct {
+	suite.Suite
 
+	cdc          *codec.Codec
+	ctx          sdk.Context
+	keeper       keeper.Keeper
+	paramsKeeper params.Keeper
+}
+
+func (suite *KeeperTestSuite) SetupTest() {
+	// define store keys
+	postKey := sdk.NewKVStoreKey(common.StoreKey)
+	paramsKey := sdk.NewKVStoreKey("params")
+	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+
+	// create an in-memory db
+	memDB := db.NewMemDB()
+	ms := store.NewCommitMultiStore(memDB)
+	ms.MountStoreWithDB(postKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	if err := ms.LoadLatestVersion(); err != nil {
+		panic(err)
+	}
+
+	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc = testCodec()
+	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.keeper = keeper.NewKeeper(suite.cdc, postKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
+
+func SetupTestInput() (sdk.Context, keeper.Keeper) {
 	// define store keys
 	postKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
