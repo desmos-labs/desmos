@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -79,7 +80,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		types.EventTypePostCreated,
 		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
 		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID.String()),
-		sdk.NewAttribute(types.AttributeKeyPostCreationTime, post.Created.String()),
+		sdk.NewAttribute(types.AttributeKeyPostCreationTime, post.Created.Format(time.RFC3339)),
 		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator.String()),
 	)
 	ctx.EventManager().EmitEvent(createEvent)
@@ -122,7 +123,7 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	editEvent := sdk.NewEvent(
 		types.EventTypePostEdited,
 		sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID.String()),
-		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.String()),
+		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.Format(time.RFC3339)),
 	)
 	ctx.EventManager().EmitEvent(editEvent)
 

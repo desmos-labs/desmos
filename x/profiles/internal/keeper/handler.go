@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 	"regexp"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -106,6 +107,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		types.EventTypeProfileSaved,
 		sdk.NewAttribute(types.AttributeProfileDtag, profile.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, profile.Creator.String()),
+		sdk.NewAttribute(types.AttributeProfileCreationTime, profile.CreationDate.Format(time.RFC3339)),
 	))
 
 	result := sdk.Result{

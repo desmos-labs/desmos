@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
-// Profile represents a generic account on Desmos, containing the information of a single user
+// Profile represents a generic first on Desmos, containing the information of a single user
 type Profile struct {
 	DTag         string         `json:"dtag" yaml:"dtag"`
 	Moniker      *string        `json:"moniker,omitempty" yaml:"moniker,omitempty"`
@@ -62,8 +62,10 @@ func (profile Profile) Equals(other Profile) bool {
 	}
 
 	return profile.DTag == other.DTag &&
+		commons.StringPtrsEqual(profile.Moniker, other.Moniker) &&
 		commons.StringPtrsEqual(profile.Bio, other.Bio) &&
 		arePicturesEquals &&
+		profile.CreationDate.Equal(other.CreationDate) &&
 		profile.Creator.Equals(other.Creator)
 }
 
