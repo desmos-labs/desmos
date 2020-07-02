@@ -131,7 +131,7 @@ func TestProfile_String(t *testing.T) {
 		{
 			name:      "profile with profile pic",
 			profile:   types.NewProfile("my_Tag", owner, date).WithPictures(newStrPtr("pic"), nil),
-			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Profile] pic",
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Profile] pic ",
 		},
 		{
 			name:      "profile with profile cov",
