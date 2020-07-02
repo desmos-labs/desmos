@@ -21,6 +21,7 @@ const (
 
 var (
 	// functions aliases
+
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 	NewMsgReportPost      = msgs.NewMsgReportPost
 	ReportStoreKey        = models.ReportStoreKey
@@ -29,6 +30,7 @@ var (
 	RegisterModelsCodec   = models.RegisterModelsCodec
 
 	// variable aliases
+
 	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix

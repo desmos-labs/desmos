@@ -24,9 +24,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/desmos-labs/desmos/x/magpie"
+	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
+	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/desmos-labs/desmos/x/posts"
+	postsKeeper "github.com/desmos-labs/desmos/x/posts/keeper"
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
+	profilesKeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/reports"
+	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
+	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -126,10 +134,10 @@ type DesmosApp struct {
 	evidenceKeeper evidence.Keeper
 
 	// Custom modules
-	magpieKeeper  magpie.Keeper
-	postsKeeper   posts.Keeper
-	profileKeeper profiles.Keeper
-	reportsKeeper reports.Keeper
+	magpieKeeper  magpieKeeper.Keeper
+	postsKeeper   postsKeeper.Keeper
+	profileKeeper profilesKeeper.Keeper
+	reportsKeeper reportsKeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -155,7 +163,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
-		magpie.StoreKey, posts.StoreKey, profiles.StoreKey, reports.StoreKey,
+		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -179,8 +187,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[posts.ModuleName] = app.paramsKeeper.Subspace(posts.DefaultParamspace)
-	app.subspaces[profiles.ModuleName] = app.paramsKeeper.Subspace(profiles.DefaultParamspace)
+	app.subspaces[postsTypes.ModuleName] = app.paramsKeeper.Subspace(postsTypes.DefaultParamspace)
+	app.subspaces[profilesTypes.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
 
 	// Add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -258,24 +266,24 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	)
 
 	// Register custom modules
-	app.magpieKeeper = magpie.NewKeeper(
+	app.magpieKeeper = magpieKeeper.NewKeeper(
 		app.cdc,
-		keys[magpie.StoreKey],
+		keys[magpieTypes.StoreKey],
 	)
-	app.postsKeeper = posts.NewKeeper(
+	app.postsKeeper = postsKeeper.NewKeeper(
 		app.cdc,
-		keys[posts.StoreKey],
-		app.subspaces[posts.ModuleName],
+		keys[postsTypes.StoreKey],
+		app.subspaces[postsTypes.ModuleName],
 	)
-	app.profileKeeper = profiles.NewKeeper(
+	app.profileKeeper = profilesKeeper.NewKeeper(
 		app.cdc,
-		keys[profiles.StoreKey],
-		app.subspaces[profiles.ModuleName],
+		keys[profilesTypes.StoreKey],
+		app.subspaces[profilesTypes.ModuleName],
 	)
-	app.reportsKeeper = reports.NewKeeper(
+	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.postsKeeper,
 		app.cdc,
-		keys[reports.StoreKey],
+		keys[reportsTypes.StoreKey],
 	)
 
 	// Register the staking hooks
@@ -320,7 +328,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
 		gov.ModuleName, evidence.ModuleName,
 
-		magpie.ModuleName, posts.ModuleName, profiles.ModuleName, reports.ModuleName, // custom modules
+		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName, // custom modules
 
 		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
 		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules

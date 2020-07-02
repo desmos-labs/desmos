@@ -36,6 +36,7 @@ const (
 
 var (
 	// functions aliases
+
 	NewPostReaction            = reactions.NewPostReaction
 	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
@@ -71,6 +72,7 @@ var (
 	NewUserAnswers             = polls.NewUserAnswers
 
 	// variable aliases
+
 	MsgsCodec                = msgs.MsgsCodec
 	ModelsCdc                = models.ModelsCdc
 	Sha256RegEx              = common.Sha256RegEx
