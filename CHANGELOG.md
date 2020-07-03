@@ -8,6 +8,7 @@
 - Moved `posts` module constants to chain parameters (#172)
 - Added the creation date inside the profile saving event (#210)
 - Changed the way times are serialized inside event attributes (#211)
+- Updated Cosmos to `v0.38.5`
 
 ## Bug fixes
 - Fixed a bug inside the `Equals` method of the `Pictures` object 
