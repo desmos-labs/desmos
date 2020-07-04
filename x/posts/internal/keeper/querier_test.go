@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -10,21 +9,20 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func Test_queryPost(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryPost() {
 	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	computedID := types.ComputeID(creationDate, creator, subspace)
 	stringID := computedID.String()
 
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	computedID2 := types.ComputeID(creationDate, otherCreator, subspace)
 
@@ -169,52 +167,50 @@ func Test_queryPost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				k.SavePost(ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			if test.registeredReaction != nil {
-				k.RegisterReaction(ctx, *test.registeredReaction)
+				suite.keeper.RegisterReaction(suite.ctx, *test.registeredReaction)
 			}
 
 			for index, ans := range test.storedAnswers {
-				k.SavePollAnswers(ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for postID, reactions := range test.storedReactions {
 				for _, reaction := range reactions {
-					err = k.SavePostReaction(ctx, types.PostID(postID), reaction)
-					require.NoError(t, err)
+					err = suite.keeper.SavePostReaction(suite.ctx, types.PostID(postID), reaction)
+					suite.NoError(err)
 				}
 			}
 
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expError.Error(), err.Error())
-				require.Nil(t, result)
+				suite.NotNil(err)
+				suite.Equal(test.expError.Error(), err.Error())
+				suite.Nil(result)
 			}
 		})
 	}
 }
 
-func Test_queryPosts(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryPosts() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1)}
 
@@ -301,32 +297,31 @@ func Test_queryPosts(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				k.SavePost(ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				k.SavePollAnswers(ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(k)
-			request := abci.RequestQuery{Data: k.Cdc.MustMarshalJSON(&test.params)}
-			result, err := querier(ctx, []string{types.QueryPosts}, request)
-			require.NoError(t, err)
+			querier := keeper.NewQuerier(suite.keeper)
+			request := abci.RequestQuery{Data: suite.keeper.Cdc.MustMarshalJSON(&test.params)}
+			result, err := querier(suite.ctx, []string{types.QueryPosts}, request)
+			suite.NoError(err)
 
-			expSerialized, err := codec.MarshalJSONIndent(k.Cdc, &test.expResponse)
-			require.NoError(t, err)
-			require.Equal(t, string(expSerialized), string(result))
+			expSerialized, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResponse)
+			suite.NoError(err)
+			suite.Equal(string(expSerialized), string(result))
 		})
 	}
 }
 
-func Test_queryPollAnswers(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	computedID := types.ComputeID(creationDate, creator, subspace)
@@ -398,41 +393,39 @@ func Test_queryPollAnswers(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				k.SavePost(ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				k.SavePollAnswers(ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
 
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expError.Error(), err.Error())
-				require.Nil(t, result)
+				suite.NotNil(err)
+				suite.Equal(test.expError.Error(), err.Error())
+				suite.Nil(result)
 			}
 		})
 	}
 
 }
 
-func Test_queryRegisteredReactions(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name            string
@@ -462,34 +455,32 @@ func Test_queryRegisteredReactions(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, r := range test.storedReactions {
-				k.RegisterReaction(ctx, r)
+				suite.keeper.RegisterReaction(suite.ctx, r)
 			}
 
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
 
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expError.Error(), err.Error())
-				require.Nil(t, result)
+				suite.NotNil(err)
+				suite.Equal(test.expError.Error(), err.Error())
+				suite.Nil(result)
 			}
 		})
 	}
 }
 
-func Test_queryParams(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryParams() {
 	tests := []struct {
 		name      string
 		path      []string
@@ -504,17 +495,16 @@ func Test_queryParams(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+		suite.Run(test.name, func() {
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 		})

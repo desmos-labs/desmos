@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"fmt"
 	"strings"
-	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,17 +10,16 @@ import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestValidatePost(t *testing.T) {
+func (suite *KeeperTestSuite) TestValidatePost() {
 	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
@@ -99,24 +97,19 @@ func TestValidatePost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
-			err := keeper.ValidatePost(ctx, k, test.post)
+		suite.Run(test.name, func() {
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			err := keeper.ValidatePost(suite.ctx, suite.keeper, test.post)
 			if test.expError != nil {
-				require.Equal(t, test.expError.Error(), err.Error())
+				suite.Equal(test.expError.Error(), err.Error())
 			} else {
-				require.Equal(t, test.expError, err)
+				suite.Equal(test.expError, err)
 			}
 		})
 	}
 }
 
-// ---------------------------
-// --- handleMsgCreatePost
-// ---------------------------
-
-func Test_handleMsgCreatePost(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
@@ -255,27 +248,26 @@ func Test_handleMsgCreatePost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			for _, p := range test.storedPosts {
-				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
-				require.True(t, stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
+				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -285,24 +277,24 @@ func Test_handleMsgCreatePost(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyPostCreationTime, test.expPost.Created.Format(time.RFC3339)),
 					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
 				)
-				require.Len(t, res.Events, 1)
-				require.Contains(t, res.Events, creationEvent)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, creationEvent)
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expError.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.expError.Error(), err.Error())
 			}
 		})
 	}
 
 }
 
-func Test_handleMsgEditPost(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	testData := []struct {
 		name       string
@@ -351,41 +343,40 @@ func Test_handleMsgEditPost(t *testing.T) {
 
 	for _, test := range testData {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
+		suite.Run(test.name, func() {
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 
-			store := ctx.KVStore(k.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedPost != nil {
-				store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
+				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, sdk.NewEvent(
+				suite.Contains(res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
 					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.Format(time.RFC3339)),
 				))
 
 				var stored types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
-				require.True(t, test.expPost.Equals(stored))
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
+				suite.True(test.expPost.Equals(stored))
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expError.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.expError.Error(), err.Error())
 			}
 		})
 	}
 }
 
-func Test_handleMsgAddPostReaction(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 	post := types.NewPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"",
@@ -398,7 +389,7 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 	)
 
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name               string
@@ -448,29 +439,27 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.registeredReaction != nil {
-				k.RegisterReaction(ctx, *test.registeredReaction)
+				suite.keeper.RegisterReaction(suite.ctx, *test.registeredReaction)
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, test.expEvent)
+				suite.Contains(res.Events, test.expEvent)
 
 				// Check the post
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
-				require.True(t, test.existingPost.Equals(storedPost))
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
+				suite.True(test.existingPost.Equals(storedPost))
 
 				// Check the post reactions
 				var reactValue, reactShortcode string
@@ -487,32 +476,32 @@ func Test_handleMsgAddPostReaction(t *testing.T) {
 				}
 
 				var storedReactions types.PostReactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.Contains(t, storedReactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.Contains(storedReactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
 
 				// Check the registered reactions
-				registeredReactions := k.GetRegisteredReactions(ctx)
+				registeredReactions := suite.keeper.GetRegisteredReactions(suite.ctx)
 				if test.registeredReaction != nil {
 					found := false
 					for _, reaction := range registeredReactions {
 						found = found || reaction.Equals(*test.registeredReaction)
 					}
-					require.True(t, found)
+					suite.True(found)
 				} else {
-					require.Empty(t, registeredReactions)
+					suite.Empty(registeredReactions)
 				}
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.error.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.error.Error(), err.Error())
 			}
 		})
 	}
 }
 
-func Test_handleMsgRemovePostReaction(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 	post := types.NewPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"",
@@ -525,14 +514,14 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 	)
 
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	regReaction := types.NewReaction(user, ":reaction:", "react", testPost.Subspace)
 	reaction := types.NewPostReaction(":reaction:", "react", user)
 	emojiShortcodeReaction := types.NewPostReaction(":smile:", "😄", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], emoji.Value, user)
 
@@ -603,52 +592,50 @@ func Test_handleMsgRemovePostReaction(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.registeredReaction != nil {
 				store.Set(types.ReactionsStoreKey(test.registeredReaction.ShortCode, test.registeredReaction.Subspace),
-					k.Cdc.MustMarshalBinaryBare(&test.registeredReaction))
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.registeredReaction))
 			}
 
 			if test.existingReaction != nil {
 				store.Set(
 					types.PostReactionsStoreKey(test.existingPost.PostID),
-					k.Cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
 				)
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, test.expEvent)
+				suite.Contains(res.Events, test.expEvent)
 
 				var storedPost types.Post
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
-				require.True(t, test.existingPost.Equals(storedPost))
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(testPost.PostID)), &storedPost)
+				suite.True(test.existingPost.Equals(storedPost))
 
 				var storedReactions types.PostReactions
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				require.NotContains(t, storedReactions, test.existingReaction)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.NotContains(storedReactions, test.existingReaction)
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.error.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.error.Error(), err.Error())
 			}
 		})
 	}
 }
 
-func Test_handleMsgAnswerPollPost(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
@@ -842,29 +829,28 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
-			store.Set(types.PostStoreKey(test.storedPost.PostID), k.Cdc.MustMarshalBinaryBare(&test.storedPost))
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
 
 			if test.storedAnswers != nil {
-				k.SavePollAnswers(ctx, test.storedPost.PostID, *test.storedAnswers)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPost.PostID, *test.storedAnswers)
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
 			}
 
 			// Valid response
 			if res != nil {
 				{
 					// Check the data
-					require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+					suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
 
 					// Check the events
 					answerEvent := sdk.NewEvent(
@@ -873,8 +859,8 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 						sdk.NewAttribute(types.AttributeKeyPollAnswerer, testPostOwner.String()),
 					)
 
-					require.Len(t, res.Events, 1)
-					require.Contains(t, res.Events, answerEvent)
+					suite.Len(res.Events, 1)
+					suite.Contains(res.Events, answerEvent)
 				}
 			}
 		})
@@ -882,9 +868,9 @@ func Test_handleMsgAnswerPollPost(t *testing.T) {
 
 }
 
-func Test_handleMsgRegisterReaction(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name              string
@@ -940,21 +926,19 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			for _, react := range test.existingReactions {
 				react := react
-				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), k.Cdc.MustMarshalBinaryBare(&react))
+				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), suite.keeper.Cdc.MustMarshalBinaryBare(&react))
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
-				require.Contains(t, res.Events, sdk.NewEvent(
+				suite.Contains(res.Events, sdk.NewEvent(
 					types.EventTypeRegisterReaction,
 					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
@@ -963,19 +947,19 @@ func Test_handleMsgRegisterReaction(t *testing.T) {
 				))
 
 				var storedReaction types.Reaction
-				k.Cdc.MustUnmarshalBinaryBare(
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(
 					store.Get(types.ReactionsStoreKey(test.msg.ShortCode, test.msg.Subspace)),
 					&storedReaction,
 				)
 
 				expected := types.NewReaction(user, test.msg.ShortCode, test.msg.Value, test.msg.Subspace)
-				require.True(t, expected.Equals(storedReaction))
+				suite.True(expected.Equals(storedReaction))
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.error.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.error.Error(), err.Error())
 			}
 		})
 	}

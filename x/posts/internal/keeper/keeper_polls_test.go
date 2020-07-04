@@ -1,20 +1,17 @@
 package keeper_test
 
 import (
-	"testing"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_SavePollPostAnswers(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SavePollPostAnswers() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	answers2 := []types.AnswerID{types.AnswerID(1)}
@@ -48,28 +45,27 @@ func TestKeeper_SavePollPostAnswers(t *testing.T) {
 	for _, test := range tests {
 
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			if test.previousUsersAD != nil {
-				store.Set(types.PollAnswersStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
+				store.Set(types.PollAnswersStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
-			k.SavePollAnswers(ctx, test.postID, test.userAnswersDetails)
+			suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.userAnswersDetails)
 
 			var actualUsersAnswersDetails types.UserAnswers
 			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
-			k.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
-			require.Equal(t, test.expUsersAD, actualUsersAnswersDetails)
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
+			suite.Equal(test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}
 }
 
-func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersDetails() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -92,27 +88,25 @@ func TestKeeper_GetPostPollAnswersDetails(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			if test.storedAnswers != nil {
-				k.SavePollAnswers(ctx, test.postID, test.storedAnswers[0])
+				suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers[0])
 			}
 
-			actualPostPollAnswers := k.GetPollAnswers(ctx, test.postID)
+			actualPostPollAnswers := suite.keeper.GetPollAnswers(suite.ctx, test.postID)
 
-			require.Equal(t, test.storedAnswers, actualPostPollAnswers)
+			suite.Equal(test.storedAnswers, actualPostPollAnswers)
 		})
 	}
 }
 
-func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersByUser() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -140,10 +134,9 @@ func TestKeeper_GetPostPollAnswersByUser(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		ctx, k := SetupTestInput()
-		k.SavePollAnswers(ctx, test.postID, test.storedAnswers)
+		suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers)
 
-		actualPostPollAnswers := k.GetPollAnswersByUser(ctx, test.postID, test.user)
-		require.Equal(t, test.expAnswers, actualPostPollAnswers)
+		actualPostPollAnswers := suite.keeper.GetPollAnswersByUser(suite.ctx, test.postID, test.user)
+		suite.Equal(test.expAnswers, actualPostPollAnswers)
 	}
 }

@@ -1,21 +1,19 @@
 package keeper_test
 
 import (
-	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestInvariants(t *testing.T) {
+func (suite *KeeperTestSuite) TestInvariants() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	parentPost := types.NewPost(
 		id,
@@ -122,25 +120,24 @@ func TestInvariants(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
+		suite.Run(test.name, func() {
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			for _, post := range test.posts {
-				k.SavePost(ctx, post)
+				suite.keeper.SavePost(suite.ctx, post)
 			}
 			if test.reaction != nil && test.postReaction != nil {
-				k.RegisterReaction(ctx, *test.reaction)
+				suite.keeper.RegisterReaction(suite.ctx, *test.reaction)
 				// nolint: errcheck
-				k.SavePostReaction(ctx, parentPost.PostID, *test.postReaction)
+				suite.keeper.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
 			}
 			if test.answers != nil {
-				k.SavePollAnswers(ctx, test.posts[0].PostID, *test.answers)
+				suite.keeper.SavePollAnswers(suite.ctx, test.posts[0].PostID, *test.answers)
 			}
 
-			res, stop := keeper.AllInvariants(k)(ctx)
+			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			require.Equal(t, test.expResponse, res)
-			require.Equal(t, test.expBool, stop)
+			suite.Equal(test.expResponse, res)
+			suite.Equal(test.expBool, stop)
 
 		})
 	}

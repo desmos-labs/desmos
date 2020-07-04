@@ -1,12 +1,10 @@
 package keeper_test
 
 import (
-	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
 // -------------
@@ -198,7 +196,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	}
 }
 
-func TestKeeper_GetPost(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 
 	tests := []struct {
@@ -261,24 +259,23 @@ func TestKeeper_GetPost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			if test.postExists {
-				store.Set(types.PostStoreKey(test.expected.PostID), k.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set(types.PostStoreKey(test.expected.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
-			expected, found := k.GetPost(ctx, test.ID)
-			require.Equal(t, test.postExists, found)
+			expected, found := suite.keeper.GetPost(suite.ctx, test.ID)
+			suite.Equal(test.postExists, found)
 			if test.postExists {
-				require.True(t, expected.Equals(test.expected))
+				suite.True(expected.Equals(test.expected))
 			}
 		})
 	}
 }
 
-func TestKeeper_GetPostChildrenIDs(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
@@ -317,24 +314,22 @@ func TestKeeper_GetPostChildrenIDs(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				k.SavePost(ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := k.GetPostChildrenIDs(ctx, test.postID)
-			require.Len(t, storedChildrenIDs, len(test.expChildrenIDs))
+			storedChildrenIDs := suite.keeper.GetPostChildrenIDs(suite.ctx, test.postID)
+			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
-				require.Contains(t, storedChildrenIDs, id)
+				suite.Contains(storedChildrenIDs, id)
 			}
 		})
 	}
 }
 
-func TestKeeper_GetPosts(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name  string
@@ -363,23 +358,21 @@ func TestKeeper_GetPosts(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			for _, p := range test.posts {
-				store.Set(types.PostStoreKey(p.PostID), k.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
 			}
 
-			posts := k.GetPosts(ctx)
+			posts := suite.keeper.GetPosts(suite.ctx)
 			for index, post := range test.posts {
-				require.True(t, post.Equals(posts[index]))
+				suite.True(post.Equals(posts[index]))
 			}
 		})
 	}
 }
 
-func TestKeeper_GetPostsFiltered(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	id3 := types.PostID("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
@@ -388,13 +381,13 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	creator2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 
@@ -505,16 +498,15 @@ func TestKeeper_GetPostsFiltered(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
 			for _, post := range posts {
-				k.SavePost(ctx, post)
+				suite.keeper.SavePost(suite.ctx, post)
 			}
-			result := k.GetPostsFiltered(ctx, test.filter)
+			result := suite.keeper.GetPostsFiltered(suite.ctx, test.filter)
 
-			require.Len(t, result, len(test.expected))
+			suite.Len(result, len(test.expected))
 			for index, post := range result {
-				require.True(t, test.expected[index].Equals(post))
+				suite.True(test.expected[index].Equals(post))
 			}
 		})
 	}

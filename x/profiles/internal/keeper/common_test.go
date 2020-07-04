@@ -7,11 +7,48 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+	"testing"
 )
+
+type KeeperTestSuite struct {
+	suite.Suite
+
+	cdc          *codec.Codec
+	ctx          sdk.Context
+	keeper       keeper.Keeper
+	paramsKeeper params.Keeper
+}
+
+func (suite *KeeperTestSuite) SetupTest() {
+	// define store keys
+	profileKey := sdk.NewKVStoreKey("profiles")
+	paramsKey := sdk.NewKVStoreKey("params")
+	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+
+	// create an in-memory db
+	memDB := db.NewMemDB()
+	ms := store.NewCommitMultiStore(memDB)
+	ms.MountStoreWithDB(profileKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	if err := ms.LoadLatestVersion(); err != nil {
+		panic(err)
+	}
+
+	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc = testCodec()
+	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.keeper = keeper.NewKeeper(suite.cdc, profileKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
 
 func SetupTestInput() (sdk.Context, keeper.Keeper) {
 
