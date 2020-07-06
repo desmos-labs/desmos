@@ -1,16 +1,13 @@
 package keeper_test
 
 import (
-	"testing"
-
 	"github.com/desmos-labs/desmos/x/posts"
 
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
-	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_CheckExistence(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 	existentPost := posts.NewPost(postID,
 		"",
 		"Post",
@@ -43,34 +40,33 @@ func TestKeeper_CheckExistence(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k, pk := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if test.existentPost != nil {
-				pk.SavePost(ctx, *test.existentPost)
+				suite.postsKeeper.SavePost(suite.ctx, *test.existentPost)
 			}
 
-			actualBool := k.CheckPostExistence(ctx, postID)
-			require.Equal(t, test.expBool, actualBool)
+			actualBool := suite.keeper.CheckPostExistence(suite.ctx, postID)
+			suite.Equal(test.expBool, actualBool)
 		})
 	}
 }
 
-func TestKeeper_SaveReport(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	expReports := models.Reports{models.NewReport("type", "message", creator)}
 	report := models.NewReport("type", "message", creator)
 
-	ctx, k, _ := SetupTestInput()
-	store := ctx.KVStore(k.StoreKey)
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
-	k.SaveReport(ctx, postID, report)
+	suite.keeper.SaveReport(suite.ctx, postID, report)
 
 	var reports models.Reports
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(postID)), &reports)
-	require.Equal(t, expReports, reports)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(postID)), &reports)
+	suite.Equal(expReports, reports)
 
 }
 
-func TestKeeper_GetPostReports(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 	tests := []struct {
 		name       string
 		expReports models.Reports
@@ -89,20 +85,20 @@ func TestKeeper_GetPostReports(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k, _ := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.expReports != nil {
-				store.Set(types.ReportStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&test.expReports))
+				store.Set(types.ReportStoreKey(postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expReports))
 			}
 
-			actualRep := k.GetPostReports(ctx, postID)
-			require.Equal(t, test.expReports, actualRep)
+			actualRep := suite.keeper.GetPostReports(suite.ctx, postID)
+			suite.Equal(test.expReports, actualRep)
 		})
 	}
 }
 
-func TestKeeper_GetReportsMap(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
 	reports := models.Reports{
 		{Type: "type", Message: "message", User: creator},
 	}
@@ -127,15 +123,15 @@ func TestKeeper_GetReportsMap(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k, _ := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.existingReports != nil {
-				store.Set(types.ReportStoreKey(postID), k.Cdc.MustMarshalBinaryBare(&test.existingReports))
+				store.Set(types.ReportStoreKey(postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingReports))
 			}
 
-			actualRep := k.GetReportsMap(ctx)
-			require.Equal(t, test.expReportsMap, actualRep)
+			actualRep := suite.keeper.GetReportsMap(suite.ctx)
+			suite.Equal(test.expReportsMap, actualRep)
 		})
 	}
 }

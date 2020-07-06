@@ -2,20 +2,16 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/stretchr/testify/require"
-
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func Test_queryProfile(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryProfile() {
 
 	tests := []struct {
 		name          string
@@ -61,26 +57,25 @@ func Test_queryProfile(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			err := suite.keeper.SaveProfile(suite.ctx, test.storedAccount)
+			suite.Nil(err)
 
-			err := k.SaveProfile(ctx, test.storedAccount)
-			require.Nil(t, err)
-
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.storedAccount)
-				require.NoError(t, err)
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.storedAccount)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
-				require.Nil(t, result)
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Nil(result)
 			}
 
 		})
@@ -88,7 +83,7 @@ func Test_queryProfile(t *testing.T) {
 
 }
 
-func Test_queryProfiles(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryProfiles() {
 
 	tests := []struct {
 		name          string
@@ -112,22 +107,22 @@ func Test_queryProfiles(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 
 			if test.storedAccount != nil {
-				err := k.SaveProfile(ctx, *test.storedAccount)
-				require.Nil(t, err)
+				err := suite.keeper.SaveProfile(suite.ctx, *test.storedAccount)
+				suite.Nil(err)
 			}
 
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 		})
@@ -135,7 +130,7 @@ func Test_queryProfiles(t *testing.T) {
 
 }
 
-func Test_queryParams(t *testing.T) {
+func (suite *KeeperTestSuite) Test_queryParams() {
 	validMin := sdk.NewInt(3)
 	validMax := sdk.NewInt(30)
 
@@ -162,17 +157,17 @@ func Test_queryParams(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.path, abci.RequestQuery{})
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			suite.keeper.SetParams(suite.ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				require.Nil(t, err)
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expResult)
-				require.NoError(t, err)
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 		})

@@ -2,8 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"math"
+
+	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetDefaultSessionLength() {

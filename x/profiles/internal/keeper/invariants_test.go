@@ -1,21 +1,19 @@
 package keeper_test
 
 import (
-	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestInvariants(t *testing.T) {
+func (suite *KeeperTestSuite) TestInvariants() {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
@@ -41,16 +39,16 @@ func TestInvariants(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() //reset
 
-			err := k.SaveProfile(ctx, test.profile)
-			require.NoError(t, err)
+			err := suite.keeper.SaveProfile(suite.ctx, test.profile)
+			suite.NoError(err)
 
-			res, stop := keeper.AllInvariants(k)(ctx)
+			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			require.Equal(t, test.expResponse, res)
-			require.Equal(t, test.expBool, stop)
+			suite.Equal(test.expResponse, res)
+			suite.Equal(test.expBool, stop)
 		})
 	}
 

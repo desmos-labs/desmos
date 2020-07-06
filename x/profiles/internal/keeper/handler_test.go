@@ -3,23 +3,20 @@ package keeper_test
 import (
 	"fmt"
 	"strings"
-	"testing"
 	"time"
-
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
-	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 )
 
-func Test_validateProfile(t *testing.T) {
+func (suite *KeeperTestSuite) Test_validateProfile() {
 	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
@@ -120,24 +117,24 @@ func Test_validateProfile(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			k.SetParams(ctx, types.DefaultParams())
-			actual := keeper.ValidateProfile(ctx, k, test.profile)
-			require.Equal(t, test.expErr, actual)
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			actual := keeper.ValidateProfile(suite.ctx, suite.keeper, test.profile)
+			suite.Equal(test.expErr, actual)
 		})
 	}
 }
 
-func Test_handleMsgSaveProfile(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
@@ -245,47 +242,47 @@ func Test_handleMsgSaveProfile(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			ctx = ctx.WithBlockTime(date)
+		suite.Run(test.name, func() {
+			suite.SetupTest() //reset
+			suite.ctx = suite.ctx.WithBlockTime(date)
 
-			store := ctx.KVStore(k.StoreKey)
-			k.SetParams(ctx, types.DefaultParams())
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			if test.existentProfiles != nil {
 				for _, acc := range test.existentProfiles {
 					key := types.ProfileStoreKey(acc.Creator)
-					store.Set(key, k.Cdc.MustMarshalBinaryBare(acc))
-					k.AssociateDtagWithAddress(ctx, acc.DTag, acc.Creator)
+					store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(acc))
+					suite.keeper.AssociateDtagWithAddress(suite.ctx, acc.DTag, acc.Creator)
 				}
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			if test.expErr != nil {
-				require.Error(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
 			}
 
 			if test.expErr == nil {
-				require.NoError(t, err)
+				suite.NoError(err)
 
-				profiles := k.GetProfiles(ctx)
-				require.Len(t, profiles, len(test.expProfiles))
+				profiles := suite.keeper.GetProfiles(suite.ctx)
+				suite.Len(profiles, len(test.expProfiles))
 				for index, profile := range profiles {
-					require.True(t, profile.Equals(test.expProfiles[index]))
+					suite.True(profile.Equals(test.expProfiles[index]))
 				}
 
 				// Check the events
-				require.Len(t, res.Events, 1)
-				require.Contains(t, res.Events, test.expEvent)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
 			}
 
 		})
 	}
 }
 
-func Test_handleMsgDeleteProfile(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 	tests := []struct {
 		name            string
 		existentAccount *types.Profile
@@ -311,26 +308,26 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			if test.existentAccount != nil {
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateDtagWithAddress(ctx, test.existentAccount.DTag, test.existentAccount.Creator)
+				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				suite.keeper.AssociateDtagWithAddress(suite.ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				require.Equal(t, k.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
@@ -339,8 +336,8 @@ func Test_handleMsgDeleteProfile(t *testing.T) {
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
 				)
 
-				require.Len(t, res.Events, 1)
-				require.Contains(t, res.Events, createAccountEv)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, createAccountEv)
 			}
 
 		})

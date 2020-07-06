@@ -11,28 +11,28 @@ import (
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
 	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
+	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 )
 
-func SetupTestInput() (sdk.Context, keeper.Keeper, posts.Keeper) {
+type KeeperTestSuite struct {
+	suite.Suite
 
-	cdc := testCodec()
+	cdc         *codec.Codec
+	ctx         sdk.Context
+	keeper      keeper.Keeper
+	postsKeeper posts.Keeper
+}
 
+func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
 	postsKey := sdk.NewKVStoreKey(posts.StoreKey)
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
-
-	// define keepers
-	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
-	subspace := paramsKeeper.Subspace(posts.DefaultParamspace)
-
-	//post keeper
-	postsK := posts.NewKeeper(cdc, postsKey, subspace)
 
 	// create an in-memory db for reports
 	memDB := db.NewMemDB()
@@ -45,9 +45,13 @@ func SetupTestInput() (sdk.Context, keeper.Keeper, posts.Keeper) {
 		panic(err)
 	}
 
-	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc = testCodec()
 
-	return ctx, keeper.NewKeeper(postsK, cdc, reportsKey), postsK
+	// define keepers
+	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.postsKeeper = posts.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("posts"))
+	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
 }
 
 func testCodec() *codec.Codec {
