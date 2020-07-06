@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"testing"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -52,6 +53,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
 	suite.postsKeeper = posts.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("posts"))
 	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
 }
 
 func testCodec() *codec.Codec {
