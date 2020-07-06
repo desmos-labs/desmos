@@ -1,3 +1,7 @@
+# Version 0.9.0
+## Changes
+- Replaced `SetupTestInput()` with testify test suite (#198)
+
 # Version 0.8.0
 ## Changes
 - Changed the data stored inside the profile objects (#193)
