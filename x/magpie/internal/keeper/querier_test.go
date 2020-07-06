@@ -48,6 +48,7 @@ func (suite *KeeperTestSuite) Test_querySession_InvalidIdReturnsError() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if !(types.Session{}).Equals(test.storedSession) {
 				suite.keeper.SaveSession(suite.ctx, test.storedSession)
 			}

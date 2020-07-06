@@ -89,6 +89,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if len(test.storedReaction) != 0 {
 				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReaction))

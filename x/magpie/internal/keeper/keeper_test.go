@@ -33,6 +33,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetDefaultSessionLength() {
 		test := test
 
 		suite.Run(fmt.Sprintf("Default session length: %d", test.length), func() {
+			suite.SetupTest() // reset
 			err := suite.keeper.SetDefaultSessionLength(suite.ctx, test.length)
 
 			if test.expErr == nil {
@@ -56,6 +57,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDefaultSessionLength() {
 	for _, length := range tests {
 		length := length
 		suite.Run(fmt.Sprintf("Get default session length: %d", length), func() {
+			suite.SetupTest() // reset
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if length != 0 {
 				store.Set(types.SessionLengthKey, suite.keeper.Cdc.MustMarshalBinaryBare(&length))
@@ -87,6 +89,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetLastSessionID() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if test.existingID.Valid() {
 				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				store.Set(types.LastSessionIDStoreKey, suite.keeper.Cdc.MustMarshalBinaryBare(test.existingID))
@@ -96,6 +99,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetLastSessionID() {
 		})
 	}
 
+	suite.SetupTest() // reset
 	suite.Equal(types.SessionID(0), suite.keeper.GetLastSessionID(suite.ctx))
 }
 
@@ -164,6 +168,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetSession() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if !(types.Session{}).Equals(test.storedSession) {
 				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				store.Set(types.SessionStoreKey(test.id), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedSession))
@@ -213,12 +218,14 @@ func (suite *KeeperTestSuite) TestKeeper_GetSessions() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			for _, s := range test.storedSessions {
 				suite.keeper.SaveSession(suite.ctx, s)
 			}
 
 			sessions := suite.keeper.GetSessions(suite.ctx)
-			suite.True(test.expSessions.Equals(sessions))
+			suite.Equal(test.expSessions, sessions)
+
 		})
 	}
 }

@@ -121,6 +121,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			for _, post := range test.posts {
 				suite.keeper.SavePost(suite.ctx, post)

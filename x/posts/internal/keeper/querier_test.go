@@ -168,6 +168,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			for _, p := range test.storedPosts {
 				suite.keeper.SavePost(suite.ctx, p)
 			}
@@ -298,6 +299,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			for _, p := range test.storedPosts {
 				suite.keeper.SavePost(suite.ctx, p)
 			}

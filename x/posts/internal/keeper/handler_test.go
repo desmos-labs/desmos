@@ -249,6 +249,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
@@ -440,6 +441,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.existingPost != nil {
 				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingPost))

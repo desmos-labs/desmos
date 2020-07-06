@@ -22,6 +22,7 @@ type KeeperTestSuite struct {
 	cdc    *codec.Codec
 	ctx    sdk.Context
 	keeper keeper.Keeper
+	ms     store.CommitMultiStore
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -30,13 +31,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
-	if err := ms.LoadLatestVersion(); err != nil {
+	suite.ms = store.NewCommitMultiStore(memDB)
+	suite.ms.MountStoreWithDB(magpieKey, sdk.StoreTypeIAVL, memDB)
+	if err := suite.ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
 
-	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.ctx = sdk.NewContext(suite.ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc = testCodec()
 	suite.keeper = keeper.NewKeeper(suite.cdc, magpieKey)
 }
