@@ -204,3 +204,38 @@ func TestMigrate080(t *testing.T) {
 	// make sure params are properly set
 	require.Equal(t, params, v080state.Params)
 }
+
+func TestRemoveInvalidEmojiRegisteredReactions(t *testing.T) {
+	user, err := sdk.AccAddressFromBech32("desmos1mmeu5t0j5284p7jkergq9hyejlhdwkzp25y84l")
+	require.NoError(t, err)
+
+	reactions := []v040.Reaction{
+		{
+			ShortCode: ":cool:",
+			Value:     "https://test.com/example",
+			Subspace:  "d4d5e4e8ac7fce379301602dc9c5614dd6fc49f042b1276db226e9de38776a5c",
+			Creator:   user,
+		},
+		{
+			ShortCode: ":new-shortcode:",
+			Value:     "👍",
+			Subspace:  "d4d5e4e8ac7fce379301602dc9c5614dd6fc49f042b1276db226e9de38776a5c",
+			Creator:   user,
+		},
+		{
+			ShortCode: ":new-shortcode:",
+			Value:     "https://test.com/example",
+			Subspace:  "d4d5e4e8ac7fce379301602dc9c5614dd6fc49f042b1276db226e9de38776a5c",
+			Creator:   user,
+		},
+	}
+
+	cleanedReactions := v080.RemoveInvalidEmojiRegisteredReactions(reactions)
+	require.Len(t, cleanedReactions, 1)
+	require.Equal(t, cleanedReactions[0], v040.Reaction{
+		ShortCode: ":new-shortcode:",
+		Value:     "https://test.com/example",
+		Subspace:  "d4d5e4e8ac7fce379301602dc9c5614dd6fc49f042b1276db226e9de38776a5c",
+		Creator:   user,
+	})
+}

@@ -42,7 +42,8 @@ func TestValidatePost(t *testing.T) {
 				date,
 				owner,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot exceed 500 characters"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has more than 500 characters"),
 		},
 		{
 			name: "post optional data cannot contain more than 10 key-value",
@@ -69,7 +70,7 @@ func TestValidatePost(t *testing.T) {
 				owner,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"Post optional data cannot contain more than 10 key-value pairs"),
+				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains optional data with more than 10 key-value pairs"),
 		},
 		{
 			name: "post optional data values cannot exceed 200 characters",
@@ -88,7 +89,7 @@ func TestValidatePost(t *testing.T) {
 				owner,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post optional data values cannot exceed 200 characters. key1 of post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 is longer than this"),
+				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has optional data with key key1 which value exceeds 200 characters."),
 		},
 		{
 			name:     "Valid post",
