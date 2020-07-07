@@ -45,7 +45,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
-		{"DTag", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
+		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
 		{"other", ""},
 	}
 
