@@ -7,7 +7,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -58,26 +57,21 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 		whiteListMap[addr] = true
 	}
 
+	/* Just to be safe, assert the invariants on current state. */
+	app.CrisisKeeper.AssertInvariants(ctx)
+
 	/* Handle fee distribution state. */
 
 	// withdraw all validator commission
 	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
-		_, err := app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
-		// we don't care if the error is telling us there are no commissions, as currently we have no inflation
-		// TODO: remove this once we add inflation (if ever)
-		if err != nil && err != distr.ErrNoValidatorCommission {
-			log.Fatal(err)
-		}
+		_, _ = app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
 		return false
 	})
 
 	// withdraw all delegator rewards
 	dels := app.stakingKeeper.GetAllDelegations(ctx)
 	for _, delegation := range dels {
-		_, err := app.DistrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
-		if err != nil {
-			log.Fatal(err)
-		}
+		_, _ = app.DistrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
 	}
 
 	// clear validator slash events
@@ -133,11 +127,12 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	})
 
 	// Iterate through validators by power descending, reset bond heights, and
-	// update.md bond intra-tx counters.
+	// update bond intra-tx counters.
 	store := ctx.KVStore(app.keys[staking.StoreKey])
 	iter := sdk.KVStoreReversePrefixIterator(store, staking.ValidatorsKey)
 	counter := int16(0)
 
+	var valConsAddrs []sdk.ConsAddress
 	for ; iter.Valid(); iter.Next() {
 		addr := sdk.ValAddress(iter.Key()[1:])
 		validator, found := app.stakingKeeper.GetValidator(ctx, addr)
@@ -146,6 +141,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 		}
 
 		validator.UnbondingHeight = 0
+		valConsAddrs = append(valConsAddrs, validator.ConsAddress())
 		if applyWhiteList && !whiteListMap[addr.String()] {
 			validator.Jailed = true
 		}
