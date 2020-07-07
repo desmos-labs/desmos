@@ -1,3 +1,7 @@
+# Version 0.8.1
+## Bug fixes
+- Fixed the migration process from `v0.6.0` to `v0.8.0`
+
 # Version 0.8.0
 ## Changes
 - Changed the data stored inside the profile objects (#193)
