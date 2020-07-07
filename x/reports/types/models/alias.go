@@ -18,8 +18,11 @@ const (
 )
 
 var (
-	// variable aliases
+	// functions aliases
 
+	// variable aliases
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 )
+
+type ()
