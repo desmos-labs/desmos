@@ -10,19 +10,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func TestReaction_String(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
-
-	reaction := reactions.NewReaction(
-		user,
-		":smile:",
-		"https://smile.jpg",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	)
-	require.Equal(t, `{"shortcode":":smile:","value":"https://smile.jpg","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}`, reaction.String())
-}
-
 func TestReaction_Validate(t *testing.T) {
 	testOwner, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	require.NoError(t, err)

@@ -108,17 +108,49 @@ func TestProfile_String(t *testing.T) {
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	testAccount := types.NewProfile("dtag", owner, date).
-		WithBio(newStrPtr("biography")).
-		WithPictures(
-			newStrPtr("https://shorturl.at/adnX3"),
-			newStrPtr("https://shorturl.at/cgpyF"),
-		)
+	tests := []struct {
+		name      string
+		profile   types.Profile
+		expString string
+	}{
+		{
+			name:      "profile without moniker, bio and pictures",
+			profile:   types.NewProfile("my_Tag", owner, date),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC",
+		},
+		{
+			name:      "profile with moniker",
+			profile:   types.NewProfile("my_Tag", owner, date).WithMoniker(newStrPtr("moniker")),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Moniker] moniker",
+		},
+		{
+			name:      "profile with bio",
+			profile:   types.NewProfile("my_Tag", owner, date).WithBio(newStrPtr("bio")),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Biography] bio",
+		},
+		{
+			name:      "profile with profile pic",
+			profile:   types.NewProfile("my_Tag", owner, date).WithPictures(newStrPtr("pic"), nil),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Profile] pic ",
+		},
+		{
+			name:      "profile with profile cov",
+			profile:   types.NewProfile("my_Tag", owner, date).WithPictures(nil, newStrPtr("cov")),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Cover] cov",
+		},
+		{
+			name:      "profile with moniker, bio, pictures",
+			profile:   types.NewProfile("my_Tag", owner, date).WithMoniker(newStrPtr("moniker")).WithBio(newStrPtr("bio")).WithPictures(newStrPtr("pic"), newStrPtr("cov")),
+			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Moniker] moniker [Biography] bio Pictures:\n[Profile] pic [Cover] cov",
+		},
+	}
 
-	require.Equal(t,
-		`{"dtag":"dtag","bio":"biography","pictures":{"profile":"https://shorturl.at/adnX3","cover":"https://shorturl.at/cgpyF"},"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","creation_date":"2010-10-02T12:10:00Z"}`,
-		testAccount.String(),
-	)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expString, test.profile.String())
+		})
+	}
 }
 
 func TestProfile_Equals(t *testing.T) {

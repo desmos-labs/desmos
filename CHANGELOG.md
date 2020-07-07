@@ -1,5 +1,7 @@
 # Version 0.9.0
 ## Changes
+- Removed the JSON-style `String` methods where it was possible, changed the others to not
+ rely on JSON for `String` representation (#199)
 - Removed all the `internal` folders (#197)
 
 # Version 0.8.0
@@ -12,6 +14,7 @@
 - Moved `posts` module constants to chain parameters (#172)
 - Added the creation date inside the profile saving event (#210)
 - Changed the way times are serialized inside event attributes (#211)
+- Updated Cosmos to `v0.38.5`
 
 ## Bug fixes
 - Fixed a bug inside the `Equals` method of the `Pictures` object 
@@ -48,6 +51,10 @@
 ## Bug fixes
 - Fixed the account query CLI command (#155)
 - Fixed the profile deletion CLI command (#166)
+
+# Version 0.5.3
+## Changes
+- Updated Cosmos to [v0.38.5](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.38.5)
 
 # Version 0.5.2
 ## Bug fixes

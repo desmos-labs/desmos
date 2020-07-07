@@ -5,9 +5,9 @@ package models
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
-	"github.com/desmos-labs/desmos/x/posts/types/models/polls"
-	"github.com/desmos-labs/desmos/x/posts/types/models/reactions"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
+	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
 )
 
 const (
@@ -34,7 +34,6 @@ const (
 
 var (
 	// functions aliases
-
 	NewPostMedia               = common.NewPostMedia
 	ValidateURI                = common.ValidateURI
 	NewPostMedias              = common.NewPostMedias
@@ -46,14 +45,13 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 
 	// variable aliases
-
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx
@@ -77,8 +75,8 @@ type (
 	PollData      = polls.PollData
 	UserAnswer    = polls.UserAnswer
 	UserAnswers   = polls.UserAnswers
-	PostReaction  = reactions.PostReaction
-	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
 	Reactions     = reactions.Reactions
+	PostReaction  = reactions.PostReaction
+	PostReactions = reactions.PostReactions
 )

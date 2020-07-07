@@ -1,7 +1,6 @@
 package reactions
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -32,11 +31,8 @@ func NewPostReaction(shortcode, value string, owner sdk.AccAddress) PostReaction
 
 // String implements fmt.Stringer
 func (reaction PostReaction) String() string {
-	bytes, err := json.Marshal(&reaction)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
+	out := fmt.Sprintf("[Shortcode] %s [Value] %s [Owner] %s", reaction.Shortcode, reaction.Value, reaction.Owner)
+	return strings.TrimSpace(out)
 }
 
 // Validate implements validator

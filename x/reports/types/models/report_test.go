@@ -9,13 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestReport_String(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	report := types.NewReport("scam", "it's a trap", creator)
-	require.Equal(t, `{"type":"scam","message":"it's a trap","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`, report.String())
-}
-
 func TestReport_Validate(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
@@ -54,19 +47,6 @@ func TestReport_Validate(t *testing.T) {
 			require.Equal(t, actualErr, test.expErr)
 		})
 	}
-}
-
-func TestReports_String(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	types.NewReport("type", "message", creator)
-
-	reports := types.Reports{
-		types.NewReport("scam", "message", creator),
-		types.NewReport("violence", "message", creator),
-	}
-
-	require.Equal(t, "Type - Message - User\nscam - message - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\nviolence - message - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", reports.String())
 }
 
 func TestReports_Validate(t *testing.T) {
