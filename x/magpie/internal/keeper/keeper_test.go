@@ -129,7 +129,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetLastSessionID() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveSession() {
-	session := types.Session{Owner: testOwner, SessionID: types.SessionID(1)}
+	session := types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)}
 
 	suite.keeper.SaveSession(suite.ctx, session)
 
@@ -159,10 +159,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetSession() {
 		},
 		{
 			name:          "Valid session is returned",
-			storedSession: types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+			storedSession: types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)},
 			id:            types.SessionID(1),
 			expFound:      true,
-			expSession:    types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+			expSession:    types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)},
 		},
 	}
 

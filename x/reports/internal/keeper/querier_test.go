@@ -9,7 +9,7 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_queryReports() {
-	reports := types.Reports{types.NewReport("type", "message", creator)}
+	reports := types.Reports{types.NewReport("type", "message", suite.testData.creator)}
 	tests := []struct {
 		name          string
 		path          []string
@@ -25,17 +25,17 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 		},
 		{
 			name:          "Non empty reports and valid ID",
-			path:          []string{types.QueryReports, postID.String()},
+			path:          []string{types.QueryReports, suite.testData.postID.String()},
 			storedReports: reports,
 			expErr:        nil,
-			expResponse:   types.NewReportResponse(postID, reports),
+			expResponse:   types.NewReportResponse(suite.testData.postID, reports),
 		},
 		{
 			name:          "Empty reports and valid ID",
-			path:          []string{types.QueryReports, postID.String()},
+			path:          []string{types.QueryReports, suite.testData.postID.String()},
 			storedReports: nil,
 			expErr:        nil,
-			expResponse:   types.NewReportResponse(postID, types.Reports{}),
+			expResponse:   types.NewReportResponse(suite.testData.postID, types.Reports{}),
 		},
 	}
 
@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			for _, rep := range test.storedReports {
-				suite.keeper.SaveReport(suite.ctx, postID, rep)
+				suite.keeper.SaveReport(suite.ctx, suite.testData.postID, rep)
 			}
 
 			querier := keeper.NewQuerier(suite.keeper)

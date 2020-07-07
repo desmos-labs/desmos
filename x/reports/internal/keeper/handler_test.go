@@ -11,15 +11,15 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
-	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
-	existentPost := posts.NewPost(postID,
+	msgReport := types.NewMsgReportPost(suite.testData.postID, "type", "message", suite.testData.creator)
+	existentPost := posts.NewPost(suite.testData.postID,
 		"",
 		"Post",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
-		testPostCreationDate,
-		creator,
+		suite.testData.postCreationDate,
+		suite.testData.creator,
 	)
 
 	tests := []struct {
@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name:         "post not found",
 			msg:          msgReport,
 			existentPost: nil,
-			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", postID)),
+			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", suite.testData.postID)),
 		},
 		{
 			name:         "message handled correctly",
@@ -61,12 +61,12 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			}
 			if res != nil {
 				//Check the data
-				suite.Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", postID)), res.Data)
+				suite.Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", suite.testData.postID)), res.Data)
 
 				//Check the events
 				createReportEv := sdk.NewEvent(
 					types.EventTypePostReported,
-					sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
 					sdk.NewAttribute(types.AttributeKeyReportOwner, test.msg.Report.User.String()),
 				)
 

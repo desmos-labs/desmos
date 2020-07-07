@@ -22,9 +22,9 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
-		testPost.Created,
-		testPostOwner,
-	).WithMedias(testPost.Medias).WithPollData(*testPost.PollData)
+		suite.testData.post.Created,
+		suite.testData.post.Creator,
+	).WithMedias(suite.testData.post.Medias).WithPollData(*suite.testData.post.PollData)
 
 	commentPost := types.Post{
 		PostID:         id2,
@@ -33,15 +33,15 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		AllowsComments: false,
 		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		OptionalData:   map[string]string{},
-		Created:        testPost.Created.Add(time.Hour),
+		Created:        suite.testData.post.Created.Add(time.Hour),
 		Creator:        user,
 	}
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
 	postReaction := types.NewPostReaction(":like:", "+1", user)
-	reaction := types.NewReaction(testPostOwner, ":like:", "+1", testPost.Subspace)
-	answer := types.NewUserAnswer(answers, testPostOwner)
+	reaction := types.NewReaction(suite.testData.post.Creator, ":like:", "+1", suite.testData.post.Subspace)
+	answer := types.NewUserAnswer(answers, suite.testData.post.Creator)
 
 	tests := []struct {
 		name         string
@@ -70,8 +70,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				testPost.Created,
-				testPostOwner,
+				suite.testData.post.Created,
+				suite.testData.post.Creator,
 			)},
 			answers:      nil,
 			postReaction: nil,
@@ -89,8 +89,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
-					testPostEndPollDateExpired,
-					testPostOwner,
+					suite.testData.postEndPollDateExpired,
+					suite.testData.post.Creator,
 				)},
 			answers:      nil,
 			postReaction: nil,

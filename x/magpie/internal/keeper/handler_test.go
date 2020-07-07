@@ -21,10 +21,10 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
 		{
 			name: "Empty signature returns error",
 			msg: types.MsgCreateSession{
-				Owner:         testSession.Owner,
-				Namespace:     testSession.Namespace,
-				ExternalOwner: testSession.ExternalOwner,
-				PubKey:        testSession.PubKey,
+				Owner:         suite.testData.owner,
+				Namespace:     suite.testData.session.Namespace,
+				ExternalOwner: suite.testData.session.ExternalOwner,
+				PubKey:        suite.testData.session.PubKey,
 				Signature:     "",
 			},
 			error: sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "the session signature is not valid"),
@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
 		{
 			name: "Invalid signature returns error",
 			msg: types.MsgCreateSession{
-				Owner:     testSession.Owner,
+				Owner:     suite.testData.owner,
 				PubKey:    "ArDhBMh0X/3Akfc58oF1zFE00L/rLpgMMVvmcj0QlaN1",
 				Signature: "3KXX5DmlsDAyO0pmgDT3pTyyuTfGr9ocJCOcaPwZDilAiwAp6U9egpHr1qOtx4dLLrtIVWE8npHK49BKKyyacg==",
 			},

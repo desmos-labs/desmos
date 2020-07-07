@@ -29,9 +29,9 @@ func (suite *KeeperTestSuite) Test_querySession_InvalidIdReturnsError() {
 		},
 		{
 			name:          "Existing session is returned",
-			storedSession: testSession,
-			query:         []string{keeper.QuerySessions, testSession.SessionID.String()},
-			expRes:        testSession,
+			storedSession: suite.testData.session,
+			query:         []string{keeper.QuerySessions, suite.testData.session.SessionID.String()},
+			expRes:        suite.testData.session,
 		},
 		{
 			name:   "Invalid id",

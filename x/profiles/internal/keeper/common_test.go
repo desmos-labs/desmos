@@ -23,6 +23,12 @@ type KeeperTestSuite struct {
 	ctx          sdk.Context
 	keeper       keeper.Keeper
 	paramsKeeper params.Keeper
+	testData     TestData
+}
+
+type TestData struct {
+	postOwner sdk.AccAddress
+	profile   types.Profile
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -45,6 +51,19 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc = testCodec()
 	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
 	suite.keeper = keeper.NewKeeper(suite.cdc, profileKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+
+	// setup Data
+	// nolint - errcheck
+	suite.testData.postOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.testData.profile = types.Profile{
+		DTag: "dtag",
+		Bio:  newStrPtr("biography"),
+		Pictures: types.NewPictures(
+			newStrPtr("https://shorturl.at/adnX3"),
+			newStrPtr("https://shorturl.at/cgpyF"),
+		),
+		Creator: suite.testData.postOwner,
+	}
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -67,17 +86,3 @@ func testCodec() *codec.Codec {
 func newStrPtr(value string) *string {
 	return &value
 }
-
-var (
-	testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-
-	testProfile = types.Profile{
-		DTag: "dtag",
-		Bio:  newStrPtr("biography"),
-		Pictures: types.NewPictures(
-			newStrPtr("https://shorturl.at/adnX3"),
-			newStrPtr("https://shorturl.at/cgpyF"),
-		),
-		Creator: testPostOwner,
-	}
-)

@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		{
 			name:          "Profile doesnt exist (address given)",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			storedAccount: testProfile,
+			storedAccount: suite.testData.profile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("Profile with address %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			),
@@ -30,7 +30,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		{
 			name:          "Profile doesnt exist (blank path given)",
 			path:          []string{types.QueryProfile, ""},
-			storedAccount: testProfile,
+			storedAccount: suite.testData.profile,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"DTag or address cannot be empty or blank",
 			),
@@ -38,19 +38,19 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		{
 			name:          "Profile doesnt exist (dtag given)",
 			path:          []string{types.QueryProfile, "monk"},
-			storedAccount: testProfile,
+			storedAccount: suite.testData.profile,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this dtag: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			storedAccount: testProfile,
+			storedAccount: suite.testData.profile,
 			expErr:        nil,
 		},
 		{
 			name:          "Profile returned correctly (dtag given)",
 			path:          []string{types.QueryProfile, "dtag"},
-			storedAccount: testProfile,
+			storedAccount: suite.testData.profile,
 			expErr:        nil,
 		},
 	}
@@ -100,8 +100,8 @@ func (suite *KeeperTestSuite) Test_queryProfiles() {
 		{
 			name:          "Profile returned correctly",
 			path:          []string{types.QueryProfiles},
-			storedAccount: &testProfile,
-			expResult:     types.Profiles{testProfile},
+			storedAccount: &suite.testData.profile,
+			expResult:     types.Profiles{suite.testData.profile},
 		},
 	}
 

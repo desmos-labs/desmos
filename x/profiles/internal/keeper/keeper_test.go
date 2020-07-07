@@ -10,34 +10,25 @@ import (
 func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", creator)
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.profile.Creator)
 
 	var acc sdk.AccAddress
 	key := types.DtagStoreKey("dtag")
 	bz := store.Get(key)
 	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
-	suite.Equal(creator, acc)
+	suite.Equal(suite.testData.profile.Creator, acc)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetDtagRelatedAddress() {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	suite.keeper.AssociateDtagWithAddress(suite.ctx, "moner", creator)
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "moner", suite.testData.profile.Creator)
 
 	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "moner")
-	suite.Equal(creator, addr)
+	suite.Equal(suite.testData.profile.Creator, addr)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteDtagAddressAssociation() {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	suite.keeper.AssociateDtagWithAddress(suite.ctx, "monik", creator)
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "monik", suite.testData.profile.Creator)
 	suite.keeper.DeleteDtagAddressAssociation(suite.ctx, "monik")
 
 	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "monik")
@@ -46,9 +37,6 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDtagAddressAssociation() {
 
 func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 
 	tests := []struct {
@@ -60,7 +48,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 		{
 			name:      "found right dtag",
 			dtags:     []string{"lol", "oink"},
-			addresses: []sdk.AccAddress{creator, creator2},
+			addresses: []sdk.AccAddress{creator, suite.testData.profile.Creator},
 			expDtag:   "lol",
 		},
 		{
@@ -90,9 +78,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
+	// nolint - errcheck
+	diffCreator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	tests := []struct {
 		name             string
 		account          types.Profile
@@ -101,19 +88,19 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 	}{
 		{
 			name:             "Non existent Profile saved correctly",
-			account:          testProfile,
+			account:          suite.testData.profile,
 			existentAccounts: nil,
 			expError:         nil,
 		},
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				DTag:     testProfile.DTag,
-				Bio:      testProfile.Bio,
-				Pictures: testProfile.Pictures,
-				Creator:  creator,
+				DTag:     suite.testData.profile.DTag,
+				Bio:      suite.testData.profile.Bio,
+				Pictures: suite.testData.profile.Pictures,
+				Creator:  diffCreator,
 			},
-			existentAccounts: types.Profiles{testProfile},
+			existentAccounts: types.Profiles{suite.testData.profile},
 			expError:         fmt.Errorf("a profile with dtag: dtag has already been created"),
 		},
 	}
@@ -137,16 +124,16 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteProfile() {
-	err := suite.keeper.SaveProfile(suite.ctx, testProfile)
+	err := suite.keeper.SaveProfile(suite.ctx, suite.testData.profile)
 	suite.Nil(err)
 
-	res, found := suite.keeper.GetProfile(suite.ctx, testProfile.Creator)
-	suite.Equal(testProfile, res)
+	res, found := suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
+	suite.Equal(suite.testData.profile, res)
 	suite.True(found)
 
-	suite.keeper.DeleteProfile(suite.ctx, testProfile.Creator, testProfile.DTag)
+	suite.keeper.DeleteProfile(suite.ctx, suite.testData.profile.Creator, suite.testData.profile.DTag)
 
-	res, found = suite.keeper.GetProfile(suite.ctx, testProfile.Creator)
+	res, found = suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
 	suite.Equal(types.Profile{}, res)
 	suite.False(found)
 }
@@ -161,7 +148,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 	}{
 		{
 			name:            "Profile founded",
-			existentAccount: &testProfile,
+			existentAccount: &suite.testData.profile,
 		},
 		{
 			name:            "Profile not found",
@@ -201,7 +188,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 	}{
 		{
 			name:             "Non empty Profiles list returned",
-			existentAccounts: types.Profiles{testProfile},
+			existentAccounts: types.Profiles{suite.testData.profile},
 		},
 		{
 			name:             "Profile not found",

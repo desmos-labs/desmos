@@ -12,14 +12,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_validateProfile() {
-	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
-	suite.NoError(err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	suite.NoError(err)
-
-	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
-
 	tests := []struct {
 		name    string
 		profile types.Profile
@@ -27,7 +19,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 	}{
 		{
 			name: "Max moniker length exceeded",
-			profile: types.NewProfile("custom_dtag", user, date).
+			profile: types.NewProfile("custom_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr(strings.Repeat("A", 1005))).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -38,7 +30,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Min moniker length not reached",
-			profile: types.NewProfile("custom_dtag", user, date).
+			profile: types.NewProfile("custom_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("m")).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -49,7 +41,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Max bio length exceeded",
-			profile: types.NewProfile("custom_dtag", user, date).
+			profile: types.NewProfile("custom_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr(strings.Repeat("A", 1005))).
 				WithPictures(
@@ -60,7 +52,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Invalid dtag doesn't match regEx",
-			profile: types.NewProfile("custom.", user, date).
+			profile: types.NewProfile("custom.", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr(strings.Repeat("A", 1000))).
 				WithPictures(
@@ -71,7 +63,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Min dtag length not reached",
-			profile: types.NewProfile("d", user, date).
+			profile: types.NewProfile("d", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -82,7 +74,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Max dtag length exceeded",
-			profile: types.NewProfile("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXE", user, date).
+			profile: types.NewProfile("9YfrVVi3UEI1ymN7n6isScyHNSt30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXE", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -93,7 +85,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			profile: types.NewProfile("dtag", user, date).
+			profile: types.NewProfile("dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -104,7 +96,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		},
 		{
 			name: "Valid profile returns no error",
-			profile: types.NewProfile("dtag", user, date).
+			profile: types.NewProfile("dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 				WithMoniker(newStrPtr("moniker")).
 				WithBio(newStrPtr("my-bio")).
 				WithPictures(
@@ -127,17 +119,6 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
-	user, err := sdk.AccAddressFromBech32("cosmos1tg8csfcg8m8u7vu5vph9fayhfcw5hyc47mey2e")
-	suite.NoError(err)
-
-	editor, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	suite.NoError(err)
-
-	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
-
 	tests := []struct {
 		name             string
 		existentProfiles types.Profiles
@@ -155,10 +136,10 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				newStrPtr("my-bio"),
 				newStrPtr("https://test.com/profile-picture"),
 				newStrPtr("https://test.com/cover-pic"),
-				user,
+				suite.testData.profile.Creator,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("custom_dtag", user, date).
+				types.NewProfile("custom_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithMoniker(newStrPtr("my-moniker")).
 					WithBio(newStrPtr("my-bio")).
 					WithPictures(
@@ -169,14 +150,14 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expEvent: sdk.NewEvent(
 				types.EventTypeProfileSaved,
 				sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
-				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
-				sdk.NewAttribute(types.AttributeProfileCreationTime, date.Format(time.RFC3339)),
+				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator.String()),
+				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 			),
 		},
 		{
 			name: "Profile saved (with previous profile created)",
 			existentProfiles: types.NewProfiles(
-				types.NewProfile("test_dtag", user, date).
+				types.NewProfile("test_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithMoniker(newStrPtr("old-moniker")).
 					WithBio(newStrPtr("old-biography")).
 					WithPictures(
@@ -190,10 +171,10 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				newStrPtr("biography"),
 				newStrPtr("https://test.com/profile-pic"),
 				newStrPtr("https://test.com/cover-pic"),
-				user,
+				suite.testData.profile.Creator,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("test_dtag", user, date).
+				types.NewProfile("test_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithMoniker(newStrPtr("moniker")).
 					WithBio(newStrPtr("biography")).
 					WithPictures(
@@ -204,15 +185,15 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expEvent: sdk.NewEvent(
 				types.EventTypeProfileSaved,
 				sdk.NewAttribute(types.AttributeProfileDtag, "test_dtag"),
-				sdk.NewAttribute(types.AttributeProfileCreator, user.String()),
-				sdk.NewAttribute(types.AttributeProfileCreationTime, date.Format(time.RFC3339)),
+				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator.String()),
+				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 			),
 		},
 		{
 			name: "Profile saving fails due to wrong tag",
 			existentProfiles: types.NewProfiles(
-				testProfile,
-				types.NewProfile("editor_dtag", editor, date).
+				suite.testData.profile,
+				types.NewProfile("editor_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithBio(newStrPtr("biography")),
 			),
 			msg: types.NewMsgSaveProfile(
@@ -221,20 +202,24 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				newStrPtr("new-bio"),
 				nil,
 				nil,
-				editor, // Use the same user
+				suite.testData.profile.Creator, // Use the same user
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "wrong dtag provided. Make sure to use the current one"),
 		},
 		{
-			name:             "Profile not edited because of the invalid profile picture",
-			existentProfiles: types.Profiles{testProfile},
+			name: "Profile not edited because of the invalid profile picture",
+			existentProfiles: types.NewProfiles(
+				suite.testData.profile,
+				types.NewProfile("custom_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
+					WithBio(newStrPtr("biography")),
+			),
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
 				nil,
 				nil,
 				newStrPtr("invalid-pic"),
 				nil,
-				user,
+				suite.testData.profile.Creator,
 			),
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
 		},
@@ -244,7 +229,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() //reset
-			suite.ctx = suite.ctx.WithBlockTime(date)
+			suite.ctx = suite.ctx.WithBlockTime(suite.testData.profile.CreationDate)
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
@@ -292,7 +277,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		{
 			name:            "Profile doesn't exists",
 			existentAccount: nil,
-			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
+			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
 				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -300,8 +285,8 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		},
 		{
 			name:            "Profile deleted successfully",
-			existentAccount: &testProfile,
-			msg:             types.NewMsgDeleteProfile(testProfile.Creator),
+			existentAccount: &suite.testData.profile,
+			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
 			expErr:          nil,
 		},
 	}

@@ -19,10 +19,16 @@ import (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc    *codec.Codec
-	ctx    sdk.Context
-	keeper keeper.Keeper
-	ms     store.CommitMultiStore
+	cdc      *codec.Codec
+	ctx      sdk.Context
+	keeper   keeper.Keeper
+	ms       store.CommitMultiStore
+	testData TestData
+}
+
+type TestData struct {
+	owner   sdk.AccAddress
+	session types.Session
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -40,6 +46,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(suite.ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc = testCodec()
 	suite.keeper = keeper.NewKeeper(suite.cdc, magpieKey)
+
+	// setup Data
+	// nolint - errcheck
+	suite.testData.owner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.testData.session = types.Session{
+		SessionID: types.SessionID(1),
+		Owner:     suite.testData.owner,
+		Created:   10,
+		Expiry:    15,
+	}
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -57,13 +73,3 @@ func testCodec() *codec.Codec {
 	cdc.Seal()
 	return cdc
 }
-
-var (
-	testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	testSession  = types.Session{
-		SessionID: types.SessionID(1),
-		Owner:     testOwner,
-		Created:   10,
-		Expiry:    15,
-	}
-)

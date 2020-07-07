@@ -8,14 +8,14 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
-	existentPost := posts.NewPost(postID,
+	existentPost := posts.NewPost(suite.testData.postID,
 		"",
 		"Post",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
-		testPostCreationDate,
-		creator,
+		suite.testData.postCreationDate,
+		suite.testData.creator,
 	)
 
 	tests := []struct {
@@ -27,13 +27,13 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 		{
 			name:         "Post not exist",
 			existentPost: nil,
-			postID:       postID,
+			postID:       suite.testData.postID,
 			expBool:      false,
 		},
 		{
 			name:         "Post exist",
 			existentPost: &existentPost,
-			postID:       postID,
+			postID:       suite.testData.postID,
 			expBool:      true,
 		},
 	}
@@ -46,22 +46,22 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 				suite.postsKeeper.SavePost(suite.ctx, *test.existentPost)
 			}
 
-			actualBool := suite.keeper.CheckPostExistence(suite.ctx, postID)
+			actualBool := suite.keeper.CheckPostExistence(suite.ctx, suite.testData.postID)
 			suite.Equal(test.expBool, actualBool)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
-	expReports := models.Reports{models.NewReport("type", "message", creator)}
-	report := models.NewReport("type", "message", creator)
+	expReports := models.Reports{models.NewReport("type", "message", suite.testData.creator)}
+	report := models.NewReport("type", "message", suite.testData.creator)
 
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
-	suite.keeper.SaveReport(suite.ctx, postID, report)
+	suite.keeper.SaveReport(suite.ctx, suite.testData.postID, report)
 
 	var reports models.Reports
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(postID)), &reports)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(suite.testData.postID)), &reports)
 	suite.Equal(expReports, reports)
 
 }
@@ -74,7 +74,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 		{
 			name: "Returns a non-empty reports array",
 			expReports: models.Reports{
-				{Type: "type", Message: "message", User: creator},
+				{Type: "type", Message: "message", User: suite.testData.creator},
 			},
 		},
 		{
@@ -89,10 +89,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			suite.SetupTest() // reset
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.expReports != nil {
-				store.Set(types.ReportStoreKey(postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expReports))
+				store.Set(types.ReportStoreKey(suite.testData.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expReports))
 			}
 
-			actualRep := suite.keeper.GetPostReports(suite.ctx, postID)
+			actualRep := suite.keeper.GetPostReports(suite.ctx, suite.testData.postID)
 			suite.Equal(test.expReports, actualRep)
 		})
 	}
@@ -100,7 +100,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 
 func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
 	reports := models.Reports{
-		{Type: "type", Message: "message", User: creator},
+		{Type: "type", Message: "message", User: suite.testData.creator},
 	}
 	tests := []struct {
 		name            string
@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
 			name:            "Returns a non-empty reports map",
 			existingReports: reports,
 			expReportsMap: map[string]models.Reports{
-				postID.String(): reports,
+				suite.testData.postID.String(): reports,
 			},
 		},
 		{
@@ -127,7 +127,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
 			suite.SetupTest() // reset
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.existingReports != nil {
-				store.Set(types.ReportStoreKey(postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingReports))
+				store.Set(types.ReportStoreKey(suite.testData.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingReports))
 			}
 
 			actualRep := suite.keeper.GetReportsMap(suite.ctx)
