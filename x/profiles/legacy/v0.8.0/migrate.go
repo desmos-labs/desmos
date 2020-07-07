@@ -1,6 +1,7 @@
 package v080
 
 import (
+	"regexp"
 	"strings"
 	"time"
 
@@ -59,7 +60,8 @@ func ConvertProfiles(oldProfiles []v060profile.Profile, genesisTime time.Time) [
 // GetProfileDTag returns the Dtag for the given profile. To do so, it takes the
 // current profile moniker and remove all the whitespaces from it.
 func GetProfileDTag(moniker string) string {
-	return strings.ReplaceAll(moniker, " ", "")
+	parts := regexp.MustCompile(`[A-Za-z0-9_]+`).FindAllString(moniker, -1)
+	return strings.Join(parts, "_")
 }
 
 // GetProfileMoniker returns the moniker for the given profile.
