@@ -74,7 +74,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 			suite.Equal(test.expDtag, monk)
 		})
 	}
-
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
