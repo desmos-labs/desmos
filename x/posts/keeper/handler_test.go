@@ -10,7 +10,6 @@ import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) TestValidatePost() {

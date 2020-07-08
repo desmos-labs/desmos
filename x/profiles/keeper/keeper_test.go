@@ -2,13 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
-
-	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {

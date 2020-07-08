@@ -9,10 +9,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	postsK "github.com/desmos-labs/desmos/x/posts/keeper"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
+	postsT "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/desmos-labs/desmos/x/reports/types/models/common"
+	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
@@ -25,20 +26,20 @@ type KeeperTestSuite struct {
 	cdc         *codec.Codec
 	ctx         sdk.Context
 	keeper      keeper.Keeper
-	postsKeeper posts.Keeper
+	postsKeeper postsK.Keeper
 	testData    TestData
 }
 
 type TestData struct {
 	creator          sdk.AccAddress
-	postID           posts.PostID
+	postID           postsT.PostID
 	timeZone         *time.Location
 	postCreationDate time.Time
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
-	postsKey := sdk.NewKVStoreKey(posts.StoreKey)
+	postsKey := sdk.NewKVStoreKey(postsT.StoreKey)
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
@@ -59,7 +60,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// define keepers
 	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
-	suite.postsKeeper = posts.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("posts"))
+	suite.postsKeeper = postsK.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("postsT"))
 	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
 
 	// setup data

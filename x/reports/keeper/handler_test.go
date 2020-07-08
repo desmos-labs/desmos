@@ -8,7 +8,6 @@ import (
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgReportPost() {

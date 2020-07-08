@@ -2,18 +2,12 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/stretchr/testify/require"
-
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/desmos-labs/desmos/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

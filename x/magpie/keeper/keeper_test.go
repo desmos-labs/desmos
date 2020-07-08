@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/desmos-labs/desmos/x/magpie/types"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetDefaultSessionLength() {

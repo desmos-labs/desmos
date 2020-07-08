@@ -5,14 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/stretchr/testify/require"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
+	"github.com/desmos-labs/desmos/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_validateProfile() {

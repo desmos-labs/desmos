@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {

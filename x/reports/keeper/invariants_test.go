@@ -6,7 +6,6 @@ import (
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/desmos-labs/desmos/x/reports/types/models"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {

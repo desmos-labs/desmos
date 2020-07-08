@@ -7,7 +7,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
-	"github.com/stretchr/testify/require"
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
