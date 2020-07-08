@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"strconv"
-	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_handleMsgCreateSession(t *testing.T) {
+func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
 	owner, err := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	testData := []struct {
 		name  string
@@ -23,10 +22,10 @@ func Test_handleMsgCreateSession(t *testing.T) {
 		{
 			name: "Empty signature returns error",
 			msg: types.MsgCreateSession{
-				Owner:         testSession.Owner,
-				Namespace:     testSession.Namespace,
-				ExternalOwner: testSession.ExternalOwner,
-				PubKey:        testSession.PubKey,
+				Owner:         suite.testData.owner,
+				Namespace:     suite.testData.session.Namespace,
+				ExternalOwner: suite.testData.session.ExternalOwner,
+				PubKey:        suite.testData.session.PubKey,
 				Signature:     "",
 			},
 			error: sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "the session signature is not valid"),
@@ -34,7 +33,7 @@ func Test_handleMsgCreateSession(t *testing.T) {
 		{
 			name: "Invalid signature returns error",
 			msg: types.MsgCreateSession{
-				Owner:     testSession.Owner,
+				Owner:     suite.testData.owner,
 				PubKey:    "ArDhBMh0X/3Akfc58oF1zFE00L/rLpgMMVvmcj0QlaN1",
 				Signature: "3KXX5DmlsDAyO0pmgDT3pTyyuTfGr9ocJCOcaPwZDilAiwAp6U9egpHr1qOtx4dLLrtIVWE8npHK49BKKyyacg==",
 			},
@@ -54,24 +53,22 @@ func Test_handleMsgCreateSession(t *testing.T) {
 
 	for _, test := range testData {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			sessionLength := int64(240)
-			err := k.SetDefaultSessionLength(ctx, sessionLength)
-			require.NoError(t, err)
+			err := suite.keeper.SetDefaultSessionLength(suite.ctx, sessionLength)
+			suite.NoError(err)
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
 				// Check the stored session
-				expectedID := k.GetLastSessionID(ctx)
+				expectedID := suite.keeper.GetLastSessionID(suite.ctx)
 				session := types.Session{
 					SessionID:     expectedID,
-					Created:       ctx.BlockHeight(),
-					Expiry:        ctx.BlockHeight() + sessionLength,
+					Created:       suite.ctx.BlockHeight(),
+					Expiry:        suite.ctx.BlockHeight() + sessionLength,
 					Owner:         test.msg.Owner,
 					Namespace:     test.msg.Namespace,
 					ExternalOwner: test.msg.ExternalOwner,
@@ -80,9 +77,9 @@ func Test_handleMsgCreateSession(t *testing.T) {
 				}
 
 				var stored types.Session
-				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
-				require.Equal(t, session, stored)
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
+				suite.Equal(session, stored)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -93,14 +90,14 @@ func Test_handleMsgCreateSession(t *testing.T) {
 					sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.Expiry, 10)),
 				)
 
-				require.NotNil(t, res)
-				require.Contains(t, res.Events, creationEvent)
+				suite.NotNil(res)
+				suite.Contains(res.Events, creationEvent)
 			}
 
 			// Invalid response
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, err.Error(), test.error.Error())
+				suite.NotNil(err)
+				suite.Equal(err.Error(), test.error.Error())
 			}
 		})
 	}

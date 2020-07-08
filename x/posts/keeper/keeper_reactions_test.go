@@ -8,19 +8,20 @@ import (
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // -------------
 // --- PostReactions
 // -------------
 
-func TestKeeper_SaveReaction(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name           string
@@ -38,13 +39,13 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			reaction:       types.NewPostReaction(":like:", "👍", liker),
 			storedPost: types.NewPost(
 				id,
-				testPost.ParentID,
-				testPost.Message,
-				testPost.AllowsComments,
+				suite.testData.post.ParentID,
+				suite.testData.post.Message,
+				suite.testData.post.AllowsComments,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
+				suite.testData.post.Created,
+				suite.testData.post.Creator,
 			),
 			error:          fmt.Errorf("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 has already reacted with :like: to the post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", "👍", liker)},
@@ -56,13 +57,13 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			reaction:       types.NewPostReaction(":like:", "👍", liker),
 			storedPost: types.NewPost(
 				id,
-				testPost.ParentID,
-				testPost.Message,
-				testPost.AllowsComments,
+				suite.testData.post.ParentID,
+				suite.testData.post.Message,
+				suite.testData.post.AllowsComments,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
+				suite.testData.post.Created,
+				suite.testData.post.Creator,
 			),
 			error:          nil,
 			expectedStored: types.PostReactions{types.NewPostReaction(":like:", "👍", liker)},
@@ -74,13 +75,13 @@ func TestKeeper_SaveReaction(t *testing.T) {
 			reaction:       types.NewPostReaction(":like:", "👍", otherLiker),
 			storedPost: types.NewPost(
 				id,
-				testPost.ParentID,
-				testPost.Message,
-				testPost.AllowsComments,
+				suite.testData.post.ParentID,
+				suite.testData.post.Message,
+				suite.testData.post.AllowsComments,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				testPost.Created,
-				testPost.Creator,
+				suite.testData.post.Created,
+				suite.testData.post.Creator,
 			),
 			error: nil,
 			expectedStored: types.PostReactions{
@@ -92,30 +93,29 @@ func TestKeeper_SaveReaction(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if len(test.storedReaction) != 0 {
-				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedReaction))
+				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReaction))
 			}
 
-			k.SavePost(ctx, test.storedPost)
+			suite.keeper.SavePost(suite.ctx, test.storedPost)
 
-			err := k.SavePostReaction(ctx, test.postID, test.reaction)
-			require.Equal(t, test.error, err)
+			err := suite.keeper.SavePostReaction(suite.ctx, test.postID, test.reaction)
+			suite.Equal(test.error, err)
 
 			var stored types.PostReactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
-			require.Equal(t, test.expectedStored, stored)
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
+			suite.Equal(test.expectedStored, stored)
 		})
 	}
 }
 
-func TestKeeper_RemoveReaction(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_RemoveReaction() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name           string
@@ -161,35 +161,34 @@ func TestKeeper_RemoveReaction(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
+		suite.Run(test.name, func() {
 
-			store := ctx.KVStore(k.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if len(test.storedLikes) != 0 {
-				store.Set(types.PostReactionsStoreKey(test.postID), k.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
-			err := k.RemovePostReaction(ctx, test.postID, types.NewPostReaction(test.shortcode, test.value, test.liker))
-			require.Equal(t, test.error, err)
+			err := suite.keeper.RemovePostReaction(suite.ctx, test.postID, types.NewPostReaction(test.shortcode, test.value, test.liker))
+			suite.Equal(test.error, err)
 
 			var stored types.PostReactions
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
-			require.Len(t, stored, len(test.expectedStored))
+			suite.Len(stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
-				require.Equal(t, like, stored[index])
+				suite.Equal(like, stored[index])
 			}
 		})
 	}
 }
 
-func TestKeeper_GetPostReactions(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name               string
@@ -210,41 +209,39 @@ func TestKeeper_GetPostReactions(t *testing.T) {
 				types.NewPostReaction(":smile:", "😊", liker),
 			},
 			postID:             id,
-			storedPost:         testPost,
-			registeredReaction: testRegisteredReaction,
+			storedPost:         suite.testData.post,
+			registeredReaction: suite.testData.registeredReaction,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, l := range test.likes {
-				k.SavePost(ctx, test.storedPost)
-				k.RegisterReaction(ctx, test.registeredReaction)
-				err := k.SavePostReaction(ctx, test.postID, l)
-				require.NoError(t, err)
+				suite.keeper.SavePost(suite.ctx, test.storedPost)
+				suite.keeper.RegisterReaction(suite.ctx, test.registeredReaction)
+				err := suite.keeper.SavePostReaction(suite.ctx, test.postID, l)
+				suite.NoError(err)
 			}
 
-			stored := k.GetPostReactions(ctx, test.postID)
+			stored := suite.keeper.GetPostReactions(suite.ctx, test.postID)
 
-			require.Len(t, stored, len(test.likes))
+			suite.Len(stored, len(test.likes))
 			for _, l := range test.likes {
-				require.Contains(t, stored, l)
+				suite.Contains(stored, l)
 			}
 		})
 	}
 }
 
-func TestKeeper_GetReactions(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetReactions() {
 	id := "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
 	id2 := "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"
 	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	liker2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name  string
@@ -270,15 +267,14 @@ func TestKeeper_GetReactions(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			for postID, likes := range test.likes {
-				store.Set(types.PostReactionsStoreKey(types.PostID(postID)), k.Cdc.MustMarshalBinaryBare(likes))
+				store.Set(types.PostReactionsStoreKey(types.PostID(postID)), suite.keeper.Cdc.MustMarshalBinaryBare(likes))
 			}
 
-			likesData := k.GetReactions(ctx)
-			require.Equal(t, test.likes, likesData)
+			likesData := suite.keeper.GetReactions(suite.ctx)
+			suite.Equal(test.likes, likesData)
 		})
 	}
 }
@@ -287,8 +283,7 @@ func TestKeeper_GetReactions(t *testing.T) {
 // --- Reactions
 // -------------
 
-func TestKeeper_RegisterReaction(t *testing.T) {
-	ctx, k := SetupTestInput()
+func (suite *KeeperTestSuite) TestKeeper_RegisterReaction() {
 	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	reaction := types.NewReaction(
 		testOwner,
@@ -297,20 +292,20 @@ func TestKeeper_RegisterReaction(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	store := ctx.KVStore(k.StoreKey)
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
 
-	k.RegisterReaction(ctx, reaction)
+	suite.keeper.RegisterReaction(suite.ctx, reaction)
 
 	var actualReaction types.Reaction
 
 	bz := store.Get(key)
-	k.Cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
 
-	require.Equal(t, reaction, actualReaction)
+	suite.Equal(reaction, actualReaction)
 }
 
-func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
 	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
 	reaction := types.NewReaction(
@@ -342,27 +337,25 @@ func TestKeeper_DoesReactionForShortcodeExist(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-			store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.storedReaction))
+			store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReaction))
 
-			actualReaction, exist := k.GetRegisteredReaction(ctx, test.shortCode, reaction.Subspace)
+			actualReaction, exist := suite.keeper.GetRegisteredReaction(suite.ctx, test.shortCode, reaction.Subspace)
 			if test.shortCode == reaction.ShortCode {
-				require.True(t, exist)
-				require.Equal(t, test.storedReaction, actualReaction)
+				suite.True(exist)
+				suite.Equal(test.storedReaction, actualReaction)
 			} else {
-				require.False(t, exist)
-				require.Equal(t, types.Reaction{}, actualReaction)
+				suite.False(exist)
+				suite.Equal(types.Reaction{}, actualReaction)
 			}
 		})
 	}
 }
 
-func TestKeeper_ListReactions(t *testing.T) {
-	ctx, k := SetupTestInput()
-	store := ctx.KVStore(k.StoreKey)
+func (suite *KeeperTestSuite) TestKeeper_ListReactions() {
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	reaction := types.NewReaction(
@@ -381,11 +374,11 @@ func TestKeeper_ListReactions(t *testing.T) {
 
 	for _, reaction := range reactions {
 		key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-		store.Set(key, k.Cdc.MustMarshalBinaryBare(reaction))
+		store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(reaction))
 	}
 
-	actualReactions := k.GetRegisteredReactions(ctx)
+	actualReactions := suite.keeper.GetRegisteredReactions(suite.ctx)
 
-	require.Equal(t, reactions, actualReactions)
+	suite.Equal(reactions, actualReactions)
 
 }

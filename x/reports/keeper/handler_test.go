@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,16 +11,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_handleMsgReportPost(t *testing.T) {
-	msgReport := types.NewMsgReportPost(postID, "type", "message", creator)
-	existentPost := posts.NewPost(postID,
+func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
+	msgReport := types.NewMsgReportPost(suite.testData.postID, "type", "message", suite.testData.creator)
+	existentPost := posts.NewPost(suite.testData.postID,
 		"",
 		"Post",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		map[string]string{},
-		testPostCreationDate,
-		creator,
+		suite.testData.postCreationDate,
+		suite.testData.creator,
 	)
 
 	tests := []struct {
@@ -34,7 +33,7 @@ func Test_handleMsgReportPost(t *testing.T) {
 			name:         "post not found",
 			msg:          msgReport,
 			existentPost: nil,
-			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", postID)),
+			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", suite.testData.postID)),
 		},
 		{
 			name:         "message handled correctly",
@@ -46,34 +45,34 @@ func Test_handleMsgReportPost(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k, pk := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 
 			if test.existentPost != nil {
 				// Save the post
-				pk.SavePost(ctx, *test.existentPost)
+				suite.postsKeeper.SavePost(suite.ctx, *test.existentPost)
 			}
 
-			handler := keeper.NewHandler(k)
-			res, err := handler(ctx, test.msg)
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				//Check the data
-				require.Equal(t, []byte(fmt.Sprintf("post with ID: %s reported correctly", postID)), res.Data)
+				suite.Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", suite.testData.postID)), res.Data)
 
 				//Check the events
 				createReportEv := sdk.NewEvent(
 					types.EventTypePostReported,
-					sdk.NewAttribute(types.AttributeKeyPostID, postID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
 					sdk.NewAttribute(types.AttributeKeyReportOwner, test.msg.Report.User.String()),
 				)
 
-				require.Len(t, res.Events, 1)
-				require.Contains(t, res.Events, createReportEv)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, createReportEv)
 			}
 
 		})

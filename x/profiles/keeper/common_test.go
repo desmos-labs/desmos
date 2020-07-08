@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,8 +15,22 @@ import (
 	db "github.com/tendermint/tm-db"
 )
 
-func SetupTestInput() (sdk.Context, keeper.Keeper) {
+type KeeperTestSuite struct {
+	suite.Suite
 
+	cdc          *codec.Codec
+	ctx          sdk.Context
+	keeper       keeper.Keeper
+	paramsKeeper params.Keeper
+	testData     TestData
+}
+
+type TestData struct {
+	postOwner sdk.AccAddress
+	profile   types.Profile
+}
+
+func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
 	profileKey := sdk.NewKVStoreKey("profiles")
 	paramsKey := sdk.NewKVStoreKey("params")
@@ -30,15 +46,27 @@ func SetupTestInput() (sdk.Context, keeper.Keeper) {
 		panic(err)
 	}
 
-	// create a cdc and a context
-	cdc := testCodec()
-	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc = testCodec()
+	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.keeper = keeper.NewKeeper(suite.cdc, profileKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
 
-	// define keepers
-	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
-	subspace := paramsKeeper.Subspace(types.DefaultParamspace)
+	// setup Data
+	// nolint - errcheck
+	suite.testData.postOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.testData.profile = types.Profile{
+		DTag: "dtag",
+		Bio:  newStrPtr("biography"),
+		Pictures: types.NewPictures(
+			newStrPtr("https://shorturl.at/adnX3"),
+			newStrPtr("https://shorturl.at/cgpyF"),
+		),
+		Creator: suite.testData.postOwner,
+	}
+}
 
-	return ctx, keeper.NewKeeper(cdc, profileKey, subspace)
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
 }
 
 func testCodec() *codec.Codec {
@@ -56,15 +84,4 @@ func testCodec() *codec.Codec {
 // from a string value, for easier test setup
 func newStrPtr(value string) *string {
 	return &value
-}
-
-var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var testProfile = types.Profile{
-	DTag: "dtag",
-	Bio:  newStrPtr("biography"),
-	Pictures: types.NewPictures(
-		newStrPtr("https://shorturl.at/adnX3"),
-		newStrPtr("https://shorturl.at/cgpyF"),
-	),
-	Creator: testPostOwner,
 }

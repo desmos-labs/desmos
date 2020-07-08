@@ -3,13 +3,12 @@ package keeper_test
 import (
 	"fmt"
 	"math"
-	"testing"
 
 	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_SetDefaultSessionLength(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SetDefaultSessionLength() {
 	tests := []struct {
 		length int64
 		expErr error
@@ -35,45 +34,44 @@ func TestKeeper_SetDefaultSessionLength(t *testing.T) {
 	for _, test := range tests {
 		test := test
 
-		t.Run(fmt.Sprintf("Default session length: %d", test.length), func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			err := k.SetDefaultSessionLength(ctx, test.length)
+		suite.Run(fmt.Sprintf("Default session length: %d", test.length), func() {
+			suite.SetupTest() // reset
+			err := suite.keeper.SetDefaultSessionLength(suite.ctx, test.length)
 
 			if test.expErr == nil {
-				require.NoError(t, err)
+				suite.NoError(err)
 				var stored int64
-				store := ctx.KVStore(k.StoreKey)
-				k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &stored)
-				require.Equal(t, test.length, stored)
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &stored)
+				suite.Equal(test.length, stored)
 			}
 
 			if test.expErr != nil {
-				require.Equal(t, test.expErr, err)
+				suite.Equal(test.expErr, err)
 			}
 		})
 	}
 }
 
-func TestKeeper_GetDefaultSessionLength(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetDefaultSessionLength() {
 	tests := []int64{0, 1, 2, math.MaxInt64}
 
 	for _, length := range tests {
 		length := length
-		t.Run(fmt.Sprintf("Get default session length: %d", length), func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(fmt.Sprintf("Get default session length: %d", length), func() {
+			suite.SetupTest() // reset
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if length != 0 {
-				store.Set(types.SessionLengthKey, k.Cdc.MustMarshalBinaryBare(&length))
+				store.Set(types.SessionLengthKey, suite.keeper.Cdc.MustMarshalBinaryBare(&length))
 			}
 
-			recovered := k.GetDefaultSessionLength(ctx)
-			require.Equal(t, length, recovered)
+			recovered := suite.keeper.GetDefaultSessionLength(suite.ctx)
+			suite.Equal(length, recovered)
 		})
 	}
 }
 
-func TestKeeper_GetLastSessionID(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetLastSessionID() {
 	tests := []struct {
 		name       string
 		existingID types.SessionID
@@ -92,64 +90,61 @@ func TestKeeper_GetLastSessionID(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if test.existingID.Valid() {
-				store := ctx.KVStore(k.StoreKey)
-				store.Set(types.LastSessionIDStoreKey, k.Cdc.MustMarshalBinaryBare(test.existingID))
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store.Set(types.LastSessionIDStoreKey, suite.keeper.Cdc.MustMarshalBinaryBare(test.existingID))
 			}
 
-			require.Equal(t, test.expID, k.GetLastSessionID(ctx))
+			suite.Equal(test.expID, suite.keeper.GetLastSessionID(suite.ctx))
 		})
 	}
 
-	ctx, k := SetupTestInput()
-	require.Equal(t, types.SessionID(0), k.GetLastSessionID(ctx))
+	suite.SetupTest() // reset
+	suite.Equal(types.SessionID(0), suite.keeper.GetLastSessionID(suite.ctx))
 }
 
-func TestKeeper_SetLastSessionID(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SetLastSessionID() {
 	tests := []struct {
-		id types.SessionID
+		name string
+		id   types.SessionID
 	}{
-		{id: types.SessionID(0)},
-		{id: types.SessionID(3)},
-		{id: types.SessionID(18446744073709551615)},
+		{name: "set id session to 0", id: types.SessionID(0)},
+		{name: "set id session to 3", id: types.SessionID(3)},
+		{name: "set id session to num", id: types.SessionID(18446744073709551615)},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(t.Name(), func(t *testing.T) {
-			ctx, k := SetupTestInput()
-			store := ctx.KVStore(k.StoreKey)
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
-			k.SetLastSessionID(ctx, test.id)
+			suite.keeper.SetLastSessionID(suite.ctx, test.id)
 
 			var stored types.SessionID
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
-			require.Equal(t, test.id, stored)
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
+			suite.Equal(test.id, stored)
 		})
 	}
 }
 
-func TestKeeper_SaveSession(t *testing.T) {
-	ctx, k := SetupTestInput()
+func (suite *KeeperTestSuite) TestKeeper_SaveSession() {
+	session := types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)}
 
-	session := types.Session{Owner: testOwner, SessionID: types.SessionID(1)}
-
-	k.SaveSession(ctx, session)
+	suite.keeper.SaveSession(suite.ctx, session)
 
 	var stored types.Session
-	store := ctx.KVStore(k.StoreKey)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionID)), &stored)
-	require.Equal(t, session, stored)
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionID)), &stored)
+	suite.Equal(session, stored)
 
 	var storedLastID types.SessionID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
-	require.Equal(t, session.SessionID, storedLastID)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
+	suite.Equal(session.SessionID, storedLastID)
 }
 
-func TestKeeper_GetSession(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetSession() {
 	tests := []struct {
 		name          string
 		storedSession types.Session
@@ -165,31 +160,30 @@ func TestKeeper_GetSession(t *testing.T) {
 		},
 		{
 			name:          "Valid session is returned",
-			storedSession: types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+			storedSession: types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)},
 			id:            types.SessionID(1),
 			expFound:      true,
-			expSession:    types.Session{Owner: testOwner, SessionID: types.SessionID(1)},
+			expSession:    types.Session{Owner: suite.testData.owner, SessionID: types.SessionID(1)},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if !(types.Session{}).Equals(test.storedSession) {
-				store := ctx.KVStore(k.StoreKey)
-				store.Set(types.SessionStoreKey(test.id), k.Cdc.MustMarshalBinaryBare(&test.storedSession))
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store.Set(types.SessionStoreKey(test.id), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedSession))
 			}
 
-			result, found := k.GetSession(ctx, types.SessionID(1))
-			require.Equal(t, test.expSession, result)
-			require.Equal(t, test.expFound, found)
+			result, found := suite.keeper.GetSession(suite.ctx, types.SessionID(1))
+			suite.Equal(test.expSession, result)
+			suite.Equal(test.expFound, found)
 		})
 	}
 }
 
-func TestKeeper_GetSessions(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetSessions() {
 	tests := []struct {
 		name           string
 		storedSessions types.Sessions
@@ -225,15 +219,15 @@ func TestKeeper_GetSessions(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			for _, s := range test.storedSessions {
-				k.SaveSession(ctx, s)
+				suite.keeper.SaveSession(suite.ctx, s)
 			}
 
-			sessions := k.GetSessions(ctx)
-			require.True(t, test.expSessions.Equals(sessions))
+			sessions := suite.keeper.GetSessions(suite.ctx)
+			suite.Equal(test.expSessions, sessions)
+
 		})
 	}
 }

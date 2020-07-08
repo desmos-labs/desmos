@@ -2,6 +2,7 @@
 ## Changes
 - Removed the JSON-style `String` methods where it was possible, changed the others to not
  rely on JSON for `String` representation (#199)
+- Replaced `SetupTestInput()` with testify test suite (#198)
 - Removed all the `internal` folders (#197)
 
 # Version 0.8.0

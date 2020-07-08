@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"testing"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
@@ -11,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInvariants(t *testing.T) {
+func (suite *KeeperTestSuite) TestInvariants() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
+	suite.NoError(err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	report := models.NewReport("type", "message", creator)
 
@@ -42,15 +40,15 @@ func TestInvariants(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k, _ := SetupTestInput()
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			// nolint: errcheck
-			k.SaveReport(ctx, test.postID, test.report)
+			suite.keeper.SaveReport(suite.ctx, test.postID, test.report)
 
-			res, stop := keeper.AllInvariants(k)(ctx)
+			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			require.Equal(t, test.expResponse, res)
-			require.Equal(t, test.expBool, stop)
+			suite.Equal(test.expResponse, res)
+			suite.Equal(test.expBool, stop)
 		})
 	}
 }

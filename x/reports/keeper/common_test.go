@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"testing"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,22 +19,29 @@ import (
 	db "github.com/tendermint/tm-db"
 )
 
-func SetupTestInput() (sdk.Context, keeper.Keeper, postsK.Keeper) {
+type KeeperTestSuite struct {
+	suite.Suite
 
-	cdc := testCodec()
+	cdc         *codec.Codec
+	ctx         sdk.Context
+	keeper      keeper.Keeper
+	postsKeeper posts.Keeper
+	testData    TestData
+}
 
+type TestData struct {
+	creator          sdk.AccAddress
+	postID           posts.PostID
+	timeZone         *time.Location
+	postCreationDate time.Time
+}
+
+func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
 	postsKey := sdk.NewKVStoreKey(posts.StoreKey)
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
-
-	// define keepers
-	paramsKeeper := params.NewKeeper(cdc, paramsKey, paramsTKey)
-	subspace := paramsKeeper.Subspace(posts.DefaultParamspace)
-
-	//post keeper
-	postsK := postsK.NewKeeper(cdc, postsKey, subspace)
 
 	// create an in-memory db for reports
 	memDB := db.NewMemDB()
@@ -46,9 +54,25 @@ func SetupTestInput() (sdk.Context, keeper.Keeper, postsK.Keeper) {
 		panic(err)
 	}
 
-	ctx := sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc = testCodec()
 
-	return ctx, keeper.NewKeeper(postsK, cdc, reportsKey), postsK
+	// define keepers
+	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.postsKeeper = posts.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("posts"))
+	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
+
+	// setup data
+	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
+	// nolint - errcheck
+	suite.testData.creator, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	// nolint - errcheck
+	suite.testData.timeZone, _ = time.LoadLocation("UTC")
+	suite.testData.postCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, suite.testData.timeZone)
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
 }
 
 func testCodec() *codec.Codec {
@@ -61,10 +85,3 @@ func testCodec() *codec.Codec {
 	cdc.Seal()
 	return cdc
 }
-
-var (
-	creator, _           = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	postID               = posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	timeZone, _          = time.LoadLocation("UTC")
-	testPostCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone)
-)
