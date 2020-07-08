@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 
 	"log"
 
@@ -65,7 +66,9 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	// withdraw all validator commission
 	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
 		_, err := app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
-		if err != nil {
+		// we don't care if the error is telling us there are no commissions, as currently we have no inflation
+		// TODO: remove this once we add inflation (if ever)
+		if err != nil && err != distr.ErrNoValidatorCommission {
 			log.Fatal(err)
 		}
 
