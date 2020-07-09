@@ -92,94 +92,89 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	}
 }
 
-func BenchmarkKeeper_SavePost(b *testing.B) {
+func (suite *KeeperTestSuite) BenchmarkKeeper_SavePost(b *testing.B) {
 	fmt.Println("Benchmark: Save a post")
-	ctx, k := SetupTestInput()
 	post := RandomPost()
 
 	b.SetParallelism(10)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		k.SavePost(ctx, post)
+		suite.keeper.SavePost(suite.ctx, post)
 	}
 }
 
-func BenchmarkKeeper_GetPost(b *testing.B) {
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 	fmt.Println("Benchmark: Get a post")
-	ctx, k := SetupTestInput()
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		k.SavePost(ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := k.GetPosts(ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	randomPost := posts[r.Intn(len(posts))]
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		k.GetPost(ctx, randomPost.PostID)
+		suite.keeper.GetPost(suite.ctx, randomPost.PostID)
 	}
 
 }
 
-func BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
 	fmt.Println("Benchmark: Get posts filtered")
-	ctx, k := SetupTestInput()
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		k.SavePost(ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
 	randomQueryParams := RandomQueryParams(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = k.GetPostsFiltered(ctx, randomQueryParams)
+		_ = suite.keeper.GetPostsFiltered(suite.ctx, randomQueryParams)
 	}
 }
 
-func BenchmarkKeeper_SavePostReaction(b *testing.B) {
+func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 	fmt.Println("Benchmark Save a post reaction")
-	ctx, k := SetupTestInput()
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		k.SavePost(ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := k.GetPosts(ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		// nolint: errcheck
-		k.SavePostReaction(ctx, post.PostID, reaction)
+		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 	}
 }
 
-func BenchmarkKeeper_GetPostReactions(b *testing.B) {
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	fmt.Println("Benchmark Get a post reaction")
-	ctx, k := SetupTestInput()
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		k.SavePost(ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := k.GetPosts(ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
 		// nolint: errcheck
-		k.SavePostReaction(ctx, post.PostID, reaction)
+		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		k.GetPostReactions(ctx, post.PostID)
+		suite.keeper.GetPostReactions(suite.ctx, post.PostID)
 	}
 }

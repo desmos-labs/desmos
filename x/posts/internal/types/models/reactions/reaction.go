@@ -1,7 +1,6 @@
 package reactions
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -27,15 +26,6 @@ func NewReaction(creator sdk.AccAddress, shortCode, value, subspace string) Reac
 		Subspace:  subspace,
 		Creator:   creator,
 	}
-}
-
-// String implements fmt.Stringer
-func (reaction Reaction) String() string {
-	bytes, err := json.Marshal(&reaction)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
 }
 
 // Validate implements validator
