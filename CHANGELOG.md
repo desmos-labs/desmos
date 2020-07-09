@@ -1,3 +1,7 @@
+# Version 0.8.2
+## Changes
+- Updated Cosmos to v0.38.5
+
 # Version 0.8.1
 ## Bug fixes
 - Fixed the migration process from `v0.6.0` to `v0.8.0`
