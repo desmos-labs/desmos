@@ -4,6 +4,10 @@
  rely on JSON for `String` representation (#199)
 - Replaced `SetupTestInput()` with testify test suite (#198)
 
+# Version 0.8.2
+## Changes
+- Updated Cosmos to v0.38.5
+
 # Version 0.8.1
 ## Changes
 - Added the removal of invalid registered reactions during `v0.8.0` migration
