@@ -90,13 +90,6 @@ module.exports = {
                     ["validators/update", "Update"],
                     ["validators/halting", "Halting"],
                     ["validators/common-problems", "Common problems"],
-                    {
-                        title: "Updates",
-                        collapsable: true,
-                        children: [
-                            ["validators/updates/v0.3.1", "Version 0.3.1"],
-                        ]
-                    }
                 ]
             },
             {
@@ -108,15 +101,6 @@ module.exports = {
                     ["testnets/join-public", "Join the public testnet"],
                 ],
             },
-            {
-                title: "Migrations",
-                collapsable: true,
-                children: [
-                    ["migrations/v0.3.0", "Migrate to version v0.3.0"],
-                    ["migrations/v0.5.x", "Migrate to version v0.5.x"],
-                    ["migrations/v0.6.x", "Migrate to version v0.6.x"],
-                ]
-            }
         ],
     }
 };
