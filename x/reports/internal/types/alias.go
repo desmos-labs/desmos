@@ -21,12 +21,12 @@ const (
 
 var (
 	// functions aliases
-	ReportStoreKey        = models.ReportStoreKey
-	NewReportResponse     = models.NewReportResponse
-	NewReport             = models.NewReport
-	RegisterModelsCodec   = models.RegisterModelsCodec
-	NewMsgReportPost      = msgs.NewMsgReportPost
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewMsgReportPost      = msgs.NewMsgReportPost
+	RegisterModelsCodec   = models.RegisterModelsCodec
+	ReportStoreKey        = models.ReportStoreKey
+	NewReport             = models.NewReport
+	NewReportResponse     = models.NewReportResponse
 
 	// variable aliases
 	ModelsCdc              = models.ModelsCdc
@@ -36,8 +36,8 @@ var (
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
-	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	ReportsQueryResponse = models.ReportsQueryResponse
+	MsgReportPost        = msgs.MsgReportPost
 )
