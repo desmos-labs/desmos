@@ -2,62 +2,42 @@ package keeper_test
 
 import (
 	"fmt"
-	"testing"
-
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
-	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 )
 
-func TestKeeper_AssociateDtagWithAddress(t *testing.T) {
-	ctx, k := SetupTestInput()
-	store := ctx.KVStore(k.StoreKey)
+func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	k.AssociateDtagWithAddress(ctx, "dtag", creator)
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.profile.Creator)
 
 	var acc sdk.AccAddress
 	key := types.DtagStoreKey("dtag")
 	bz := store.Get(key)
-	k.Cdc.MustUnmarshalBinaryBare(bz, &acc)
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
-	require.Equal(t, creator, acc)
+	suite.Equal(suite.testData.profile.Creator, acc)
 }
 
-func TestKeeper_GetDtagRelatedAddress(t *testing.T) {
-	ctx, k := SetupTestInput()
+func (suite *KeeperTestSuite) TestKeeper_GetDtagRelatedAddress() {
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "moner", suite.testData.profile.Creator)
 
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	k.AssociateDtagWithAddress(ctx, "moner", creator)
-
-	addr := k.GetDtagRelatedAddress(ctx, "moner")
-	require.Equal(t, creator, addr)
+	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "moner")
+	suite.Equal(suite.testData.profile.Creator, addr)
 }
 
-func TestKeeper_DeleteDtagAddressAssociation(t *testing.T) {
-	ctx, k := SetupTestInput()
+func (suite *KeeperTestSuite) TestKeeper_DeleteDtagAddressAssociation() {
+	suite.keeper.AssociateDtagWithAddress(suite.ctx, "monik", suite.testData.profile.Creator)
+	suite.keeper.DeleteDtagAddressAssociation(suite.ctx, "monik")
 
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	k.AssociateDtagWithAddress(ctx, "monik", creator)
-	k.DeleteDtagAddressAssociation(ctx, "monik")
-
-	addr := k.GetDtagRelatedAddress(ctx, "monik")
-	require.Nil(t, addr)
+	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "monik")
+	suite.Nil(addr)
 }
 
-func TestKeeper_GetDtagFromAddress(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	creator2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
+	suite.NoError(err)
 
 	tests := []struct {
 		name      string
@@ -68,7 +48,7 @@ func TestKeeper_GetDtagFromAddress(t *testing.T) {
 		{
 			name:      "found right dtag",
 			dtags:     []string{"lol", "oink"},
-			addresses: []sdk.AccAddress{creator, creator2},
+			addresses: []sdk.AccAddress{creator, suite.testData.profile.Creator},
 			expDtag:   "lol",
 		},
 		{
@@ -80,24 +60,25 @@ func TestKeeper_GetDtagFromAddress(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		ctx, k := SetupTestInput()
-		if len(test.addresses) == len(test.dtags) {
-			for i, dtag := range test.dtags {
-				k.AssociateDtagWithAddress(ctx, dtag, test.addresses[i])
+		suite.SetupTest() //reset
+		test := test
+		suite.Run(test.name, func() {
+			if len(test.addresses) == len(test.dtags) {
+				for i, dtag := range test.dtags {
+					suite.keeper.AssociateDtagWithAddress(suite.ctx, dtag, test.addresses[i])
+				}
 			}
-		}
 
-		monk := k.GetDtagFromAddress(ctx, test.addresses[0])
+			monk := suite.keeper.GetDtagFromAddress(suite.ctx, test.addresses[0])
 
-		require.Equal(t, test.expDtag, monk)
+			suite.Equal(test.expDtag, monk)
+		})
 	}
-
 }
 
-func TestKeeper_SaveProfile(t *testing.T) {
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
+	// nolint - errcheck
+	diffCreator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	tests := []struct {
 		name             string
 		account          types.Profile
@@ -106,61 +87,57 @@ func TestKeeper_SaveProfile(t *testing.T) {
 	}{
 		{
 			name:             "Non existent Profile saved correctly",
-			account:          testProfile,
+			account:          suite.testData.profile,
 			existentAccounts: nil,
 			expError:         nil,
 		},
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				DTag:     testProfile.DTag,
-				Bio:      testProfile.Bio,
-				Pictures: testProfile.Pictures,
-				Creator:  creator,
+				DTag:     suite.testData.profile.DTag,
+				Bio:      suite.testData.profile.Bio,
+				Pictures: suite.testData.profile.Pictures,
+				Creator:  diffCreator,
 			},
-			existentAccounts: types.Profiles{testProfile},
+			existentAccounts: types.Profiles{suite.testData.profile},
 			expError:         fmt.Errorf("a profile with dtag: dtag has already been created"),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
 			for _, profile := range test.existentAccounts {
-				store := ctx.KVStore(k.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				key := types.ProfileStoreKey(profile.Creator)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(profile))
-				k.AssociateDtagWithAddress(ctx, profile.DTag, profile.Creator)
+				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(profile))
+				suite.keeper.AssociateDtagWithAddress(suite.ctx, profile.DTag, profile.Creator)
 			}
 
-			err := k.SaveProfile(ctx, test.account)
+			err := suite.keeper.SaveProfile(suite.ctx, test.account)
 
-			require.Equal(t, test.expError, err)
+			suite.Equal(test.expError, err)
 
 		})
 	}
 }
 
-func TestKeeper_DeleteProfile(t *testing.T) {
-	ctx, k := SetupTestInput()
+func (suite *KeeperTestSuite) TestKeeper_DeleteProfile() {
+	err := suite.keeper.SaveProfile(suite.ctx, suite.testData.profile)
+	suite.Nil(err)
 
-	err := k.SaveProfile(ctx, testProfile)
-	require.Nil(t, err)
+	res, found := suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
+	suite.Equal(suite.testData.profile, res)
+	suite.True(found)
 
-	res, found := k.GetProfile(ctx, testProfile.Creator)
-	require.Equal(t, testProfile, res)
-	require.True(t, found)
+	suite.keeper.DeleteProfile(suite.ctx, suite.testData.profile.Creator, suite.testData.profile.DTag)
 
-	k.DeleteProfile(ctx, testProfile.Creator, testProfile.DTag)
-
-	res, found = k.GetProfile(ctx, testProfile.Creator)
-	require.Equal(t, types.Profile{}, res)
-	require.False(t, found)
+	res, found = suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
+	suite.Equal(types.Profile{}, res)
+	suite.False(found)
 }
 
-func TestKeeper_GetProfile(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 	var testPostOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
 	tests := []struct {
@@ -170,7 +147,7 @@ func TestKeeper_GetProfile(t *testing.T) {
 	}{
 		{
 			name:            "Profile founded",
-			existentAccount: &testProfile,
+			existentAccount: &suite.testData.profile,
 		},
 		{
 			name:            "Profile not found",
@@ -180,38 +157,37 @@ func TestKeeper_GetProfile(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if test.existentAccount != nil {
-				store := ctx.KVStore(k.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccount))
-				k.AssociateDtagWithAddress(ctx, test.existentAccount.DTag, test.existentAccount.Creator)
+				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				suite.keeper.AssociateDtagWithAddress(suite.ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
-			res, found := k.GetProfile(ctx, testPostOwner)
+			res, found := suite.keeper.GetProfile(suite.ctx, testPostOwner)
 
 			if test.existentAccount != nil {
-				require.Equal(t, *test.existentAccount, res)
-				require.True(t, found)
+				suite.Equal(*test.existentAccount, res)
+				suite.True(found)
 			} else {
-				require.Equal(t, types.Profile{}, res)
-				require.False(t, found)
+				suite.Equal(types.Profile{}, res)
+				suite.False(found)
 			}
 
 		})
 	}
 }
 
-func TestKeeper_GetProfiles(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 	tests := []struct {
 		name             string
 		existentAccounts types.Profiles
 	}{
 		{
 			name:             "Non empty Profiles list returned",
-			existentAccounts: types.Profiles{testProfile},
+			existentAccounts: types.Profiles{suite.testData.profile},
 		},
 		{
 			name:             "Profile not found",
@@ -221,21 +197,20 @@ func TestKeeper_GetProfiles(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if len(test.existentAccounts) != 0 {
-				store := ctx.KVStore(k.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				key := types.ProfileStoreKey(test.existentAccounts[0].Creator)
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
+				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
-			res := k.GetProfiles(ctx)
+			res := suite.keeper.GetProfiles(suite.ctx)
 
 			if len(test.existentAccounts) != 0 {
-				require.Equal(t, test.existentAccounts, res)
+				suite.Equal(test.existentAccounts, res)
 			} else {
-				require.Equal(t, types.Profiles{}, res)
+				suite.Equal(types.Profiles{}, res)
 			}
 
 		})

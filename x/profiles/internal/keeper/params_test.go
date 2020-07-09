@@ -1,33 +1,28 @@
 package keeper_test
 
 import (
-	"testing"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_SetParams(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	min := sdk.NewInt(3)
 	max := sdk.NewInt(1000)
-	ctx, k := SetupTestInput()
 	nsParams := types.NewMonikerParams(min, max)
 	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", min, max)
 
 	params := types.NewParams(nsParams, monikerParams, max)
 
-	k.SetParams(ctx, params)
+	suite.keeper.SetParams(suite.ctx, params)
 
-	actualParams := k.GetParams(ctx)
+	actualParams := suite.keeper.GetParams(suite.ctx)
 
-	require.Equal(t, params, actualParams)
+	suite.Equal(params, actualParams)
 }
 
-func TestKeeper_GetParams(t *testing.T) {
+func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	min := sdk.NewInt(3)
 	max := sdk.NewInt(1000)
-	ctx, k := SetupTestInput()
 	nsParams := types.NewMonikerParams(min, max)
 	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", min, max)
 	params := types.NewParams(nsParams, monikerParams, max)
@@ -51,13 +46,13 @@ func TestKeeper_GetParams(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		suite.Run(test.name, func() {
 			if test.params != nil {
-				k.SetParams(ctx, *test.params)
+				suite.keeper.SetParams(suite.ctx, *test.params)
 			}
 
 			if test.expParams != nil {
-				require.Equal(t, *test.expParams, k.GetParams(ctx))
+				suite.Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
 			}
 		})
 	}

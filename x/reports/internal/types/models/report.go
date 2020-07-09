@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -22,16 +21,6 @@ func NewReport(t string, message string, user sdk.AccAddress) Report {
 		Message: message,
 		User:    user,
 	}
-}
-
-// String implements fmt.Stringer
-func (r Report) String() string {
-	bytes, err := json.Marshal(&r)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(bytes)
 }
 
 // Validate implements validator
