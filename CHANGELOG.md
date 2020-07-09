@@ -1,6 +1,10 @@
 # Version 0.8.1
+## Changes
+- Added the removal of invalid registered reactions during `v0.8.0` migration
+
 ## Bug fixes
-- Fixed the migration process from `v0.6.0` to `v0.8.0`
+- Fixed a bug inside the post validation method that did not consider poll-only posts valid
+- Added  the registration of new modules when migrating towards `v0.8.0`
 
 # Version 0.8.0
 ## Changes
