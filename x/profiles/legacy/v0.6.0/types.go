@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	ModuleName = "profiles"
+	ModuleName = "profile"
 )
 
 // GenesisState contains the data of a v0.6.0 genesis state for the profile module

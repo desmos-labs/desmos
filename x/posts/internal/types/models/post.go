@@ -175,8 +175,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 {
-		return fmt.Errorf("post message or medias required, they cannot be both empty")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 && p.PollData == nil {
+		return fmt.Errorf("post message, medias or poll required, they cannot be all empty")
 	}
 
 	if !Sha256RegEx.MatchString(p.Subspace) {

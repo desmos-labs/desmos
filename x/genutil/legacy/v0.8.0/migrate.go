@@ -1,6 +1,10 @@
 package v080
 
 import (
+	"github.com/cosmos/cosmos-sdk/x/crisis"
+	"github.com/cosmos/cosmos-sdk/x/evidence"
+	"github.com/cosmos/cosmos-sdk/x/gov"
+	"github.com/desmos-labs/desmos/x/reports"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,12 +21,19 @@ func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 	codec.RegisterCrypto(v060Codec)
 
 	v080Codec := codec.New()
+	evidence.RegisterCodec(v080Codec)
 	codec.RegisterCrypto(v080Codec)
 
 	genesisTime, ok := values[0].(time.Time)
 	if !ok || genesisTime.IsZero() {
 		panic("no genesis time provided")
 	}
+
+	// Add default modules
+	appState[crisis.ModuleName] = v080Codec.MustMarshalJSON(crisis.DefaultGenesisState())
+	appState[evidence.ModuleName] = v080Codec.MustMarshalJSON(evidence.DefaultGenesisState())
+	appState[gov.ModuleName] = v080Codec.MustMarshalJSON(gov.DefaultGenesisState())
+	appState[reports.ModuleName] = v080Codec.MustMarshalJSON(reports.DefaultGenesisState())
 
 	// Migrate posts state
 	if appState[v060posts.ModuleName] != nil {
@@ -39,6 +50,7 @@ func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 		var genDocs v060profile.GenesisState
 		v060Codec.MustUnmarshalJSON(appState[v060profile.ModuleName], &genDocs)
 
+		delete(appState, v060profile.ModuleName) // delete old key in case the name changed
 		appState[v080profile.ModuleName] = v080Codec.MustMarshalJSON(
 			v080profile.Migrate(genDocs, genesisTime),
 		)

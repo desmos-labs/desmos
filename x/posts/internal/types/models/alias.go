@@ -65,10 +65,6 @@ var (
 )
 
 type (
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
@@ -79,4 +75,8 @@ type (
 	Reactions     = reactions.Reactions
 	PostReaction  = reactions.PostReaction
 	PostReactions = reactions.PostReactions
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
 )

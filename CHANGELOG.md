@@ -4,6 +4,18 @@
  rely on JSON for `String` representation (#199)
 - Replaced `SetupTestInput()` with testify test suite (#198)
 
+# Version 0.8.2
+## Changes
+- Updated Cosmos to v0.38.5
+
+# Version 0.8.1
+## Changes
+- Added the removal of invalid registered reactions during `v0.8.0` migration
+
+## Bug fixes
+- Fixed a bug inside the post validation method that did not consider poll-only posts valid
+- Added  the registration of new modules when migrating towards `v0.8.0`
+
 # Version 0.8.0
 ## Changes
 - Changed the data stored inside the profile objects (#193)

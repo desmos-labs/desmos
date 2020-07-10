@@ -305,14 +305,14 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post owner: ",
 		},
 		{
-			name:     "Empty post message and media",
-			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message or medias required, they cannot be both empty",
+			name:     "Empty post message, media and poll",
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			expError: "post message, medias or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Empty post message (blank) and media",
-			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message or medias required, they cannot be both empty",
+			name:     "Empty post message (blank), media and poll",
+			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			expError: "post message, medias or poll required, they cannot be all empty",
 		},
 		{
 			name:     "Invalid post creation time",
@@ -373,6 +373,11 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name:     "Valid post without medias",
 			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			expError: "",
+		},
+		{
+			name:     "Valid post without text and medias, but with poll",
+			post:     models.NewPost(id, "", "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
 	}
