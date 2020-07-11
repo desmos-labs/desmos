@@ -5,9 +5,9 @@ package types
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/msgs"
+	"github.com/desmos-labs/desmos/x/reports/types/models"
+	"github.com/desmos-labs/desmos/x/reports/types/models/common"
+	"github.com/desmos-labs/desmos/x/reports/types/msgs"
 )
 
 const (

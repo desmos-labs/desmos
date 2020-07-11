@@ -5,9 +5,9 @@ package models
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/polls"
-	"github.com/desmos-labs/desmos/x/posts/internal/types/models/reactions"
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+	"github.com/desmos-labs/desmos/x/posts/types/models/polls"
+	"github.com/desmos-labs/desmos/x/posts/types/models/reactions"
 )
 
 const (
