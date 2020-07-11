@@ -5,9 +5,9 @@ package types
 // based on functionality in github.com/rigelrozanski/multitool
 
 import (
-	"github.com/desmos-labs/desmos/x/reports/types/models"
-	"github.com/desmos-labs/desmos/x/reports/types/models/common"
-	"github.com/desmos-labs/desmos/x/reports/types/msgs"
+	"github.com/desmos-labs/desmos/x/reports/internal/types/models"
+	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
+	"github.com/desmos-labs/desmos/x/reports/internal/types/msgs"
 )
 
 const (
@@ -21,12 +21,12 @@ const (
 
 var (
 	// functions aliases
-	NewReportResponse     = models.NewReportResponse
-	NewReport             = models.NewReport
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewMsgReportPost      = msgs.NewMsgReportPost
 	RegisterModelsCodec   = models.RegisterModelsCodec
 	ReportStoreKey        = models.ReportStoreKey
-	NewMsgReportPost      = msgs.NewMsgReportPost
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewReport             = models.NewReport
+	NewReportResponse     = models.NewReportResponse
 
 	// variable aliases
 	ModelsCdc              = models.ModelsCdc
@@ -36,8 +36,8 @@ var (
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
-	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	ReportsQueryResponse = models.ReportsQueryResponse
+	MsgReportPost        = msgs.MsgReportPost
 )
