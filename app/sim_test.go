@@ -10,10 +10,10 @@ import (
 
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/desmos-labs/desmos/x/magpie"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/profiles"
-	"github.com/desmos-labs/desmos/x/reports"
+	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -187,10 +187,10 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[params.StoreKey], newApp.keys[params.StoreKey], [][]byte{}},
 		{app.keys[gov.StoreKey], newApp.keys[gov.StoreKey], [][]byte{}},
 
-		{app.keys[magpie.StoreKey], newApp.keys[magpie.StoreKey], [][]byte{}},
-		{app.keys[posts.StoreKey], newApp.keys[posts.StoreKey], [][]byte{}},
-		{app.keys[profiles.StoreKey], newApp.keys[profiles.StoreKey], [][]byte{}},
-		{app.keys[reports.StoreKey], newApp.keys[reports.StoreKey], [][]byte{}},
+		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
+		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
+		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
+		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

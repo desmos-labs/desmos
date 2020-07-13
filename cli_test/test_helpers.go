@@ -12,7 +12,6 @@ import (
 
 	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/reports"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,8 +25,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/profiles"
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	profileTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -417,7 +417,7 @@ func (f *Fixtures) TxPostsCreate(subspace, message string, from sdk.AccAddress, 
 }
 
 // TxPostsAnswerPoll is desmoscli tx posts answer-poll
-func (f *Fixtures) TxPostsAnswerPoll(pollID posts.PostID, answers []posts.AnswerID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+func (f *Fixtures) TxPostsAnswerPoll(pollID postsTypes.PostID, answers []postsTypes.AnswerID, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	stringAnswers := make([]string, len(answers))
 	for index, a := range answers {
 		stringAnswers[index] = a.String()
@@ -755,36 +755,36 @@ func (f *Fixtures) QueryTotalSupplyOf(denom string, flags ...string) sdk.Int {
 // query posts
 
 // QueryPosts returns stored posts
-func (f *Fixtures) QueryPosts(flags ...string) posts.Posts {
+func (f *Fixtures) QueryPosts(flags ...string) postsTypes.Posts {
 	cmd := fmt.Sprintf("%s query posts posts --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedPosts posts.Posts
+	var storedPosts postsTypes.Posts
 	err := cdc.UnmarshalJSON([]byte(res), &storedPosts)
 	require.NoError(f.T, err)
 	return storedPosts
 }
 
 // QueryPost returns a specific stored post
-func (f *Fixtures) QueryPost(id string, flags ...string) posts.PostQueryResponse {
+func (f *Fixtures) QueryPost(id string, flags ...string) postsTypes.PostQueryResponse {
 	cmd := fmt.Sprintf("%s query posts post %s --output=json %s", f.DesmoscliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedPost posts.PostQueryResponse
+	var storedPost postsTypes.PostQueryResponse
 	err := cdc.UnmarshalJSON([]byte(res), &storedPost)
 	require.NoError(f.T, err)
 	return storedPost
 }
 
 // QueryReactions returns registered reactions
-func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
+func (f *Fixtures) QueryReactions(flags ...string) postsTypes.Reactions {
 	cmd := fmt.Sprintf("%s query posts registered-reactions --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var registeredReactions posts.Reactions
+	var registeredReactions postsTypes.Reactions
 	err := cdc.UnmarshalJSON([]byte(res), &registeredReactions)
 	require.NoError(f.T, err)
 	return registeredReactions
@@ -794,12 +794,12 @@ func (f *Fixtures) QueryReactions(flags ...string) posts.Reactions {
 // query profile
 
 // QueryProfile returns stored profiles
-func (f *Fixtures) QueryProfiles(flags ...string) profiles.Profiles {
+func (f *Fixtures) QueryProfiles(flags ...string) profileTypes.Profiles {
 	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedProfile profiles.Profiles
+	var storedProfile profileTypes.Profiles
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile
@@ -809,13 +809,13 @@ func (f *Fixtures) QueryProfiles(flags ...string) profiles.Profiles {
 // query reports
 
 // QueryReports returns stored reports associated to the id given
-func (f *Fixtures) QueryReports(id string, flags ...string) reports.ReportsQueryResponse {
+func (f *Fixtures) QueryReports(id string, flags ...string) reportsTypes.ReportsQueryResponse {
 	cmd := fmt.Sprintf("%s query reports post %s --output=json %s", f.DesmoscliBinary, id, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
 
-	var storedReports reports.ReportsQueryResponse
+	var storedReports reportsTypes.ReportsQueryResponse
 	err := cdc.UnmarshalJSON([]byte(res), &storedReports)
 	require.NoError(f.T, err)
 	return storedReports

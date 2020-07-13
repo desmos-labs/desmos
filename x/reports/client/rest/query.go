@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/gorilla/mux"
 )
 

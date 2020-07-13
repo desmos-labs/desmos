@@ -8,8 +8,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/gorilla/mux"
 )
 

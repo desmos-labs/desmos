@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
 )
 
