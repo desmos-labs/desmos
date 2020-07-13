@@ -202,11 +202,7 @@ jobs:
             .go
             .mod
             .sum
-      - name: build-simd
-        run: |
-          make build-simd
-        if: "env.GIT_DIFF != ''"
       - name: cli-test
         run: |
-          make test-integration
+          make test-build
         if: "env.GIT_DIFF != ''"

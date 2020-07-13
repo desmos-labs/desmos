@@ -29,6 +29,8 @@ commands:
           command: |
             make << parameters.target >>
 
+
+
 jobs:
   setup-dependencies:
     executor: golang
@@ -69,35 +71,6 @@ jobs:
           root: "/tmp/bin"
           paths:
             - "."
-
-  test-sim-nondeterminism:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-nondeterminism
-          description: "Test Desmos non-determinism simulations"
-
-  test-sim-import-export:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-import-export
-          description: "Test Desmos import/export simulation"
-
-  test-sim-after-import:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-after-import
-          description: "Test Desmos simulation after importing state"
-
-  test-sim-multi-seed-short:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-short
-          description: "Test Desmos multi-seed simulation (short-lived)"
-
   test-sim-multi-seed-long:
     executor: golang
     steps:
@@ -105,70 +78,6 @@ jobs:
           target: test-sim-multi-seed-long
           description: "Test Desmos multi-seed simulation (long-lived)"
 
-  integration-tests:
-    executor: golang
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - go-mod-v1-{{ checksum "go.sum" }}
-      - run:
-          name: Test CLI integration
-          command: |
-            export BUILDDIR=`pwd`/build
-            make test-build
-
-  test-cover:
-    executor: golang
-    parallelism: 4
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - go-mod-v2-{{ checksum "go.sum" }}
-      - run:
-          name: Run tests
-          command: |
-            export VERSION="$(git describe --tags --long | sed 's/v\(.*\)/\1/')"
-            export GO111MODULE=on
-            mkdir -p /tmp/logs /tmp/workspace/profiles
-            for pkg in $(go list ./... | grep -v '/simulation' | circleci tests split); do
-              id=$(echo "$pkg" | sed 's|[/.]|_|g')
-              go test -mod=readonly -timeout 8m -race -coverprofile=/tmp/workspace/profiles/$id.out -covermode=atomic -tags='ledger test_ledger_mock' "$pkg" | tee "/tmp/logs/$id-$RANDOM.log"
-            done
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - "profiles/*"
-      - store_artifacts:
-          path: /tmp/logs
-  upload-coverage:
-    executor: golang
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - checkout
-      - run:
-          name: gather
-          command: |
-            echo "--> Concatenating profiles:"
-            ls /tmp/workspace/profiles/
-            echo "mode: atomic" > coverage.txt
-            for prof in $(ls /tmp/workspace/profiles/); do
-              tail -n +2 /tmp/workspace/profiles/"$prof" >> coverage.txt
-            done
-      - run:
-          name: filter out DONTCOVER
-          command: |
-            excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
-            for filename in ${excludelist}; do
-              filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
-              echo "Excluding ${filename} from coverage report..."
-              sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
-            done
-      - run:
-          name: upload
-          command: bash <(curl -s https://codecov.io/bash) -f coverage.txt
   docker-image:
     executor: golang
     steps:
@@ -209,6 +118,7 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USER --password-stdin
           docker push desmoslabs/desmos:$CIRCLE_TAG
 
+
 workflows:
   version: 2
   test-suite:
@@ -232,18 +142,6 @@ workflows:
             tags:
               only:
                 - /^v.*/
-      - integration-tests:
-          requires:
-            - setup-dependencies
-      - test-sim-import-export:
-          requires:
-            - setup-dependencies
-      - test-sim-after-import:
-          requires:
-            - setup-dependencies
-      - test-sim-multi-seed-short:
-          requires:
-            - setup-dependencies
       - test-sim-multi-seed-long:
           requires:
             - setup-dependencies
@@ -254,12 +152,3 @@ workflows:
             tags:
               only:
                 - /^v.*/
-      - test-cover:
-          requires:
-            - setup-dependencies
-      - upload-coverage:
-          requires:
-            - test-cover
-      #- test-sim-nondeterminism:
-      #    requires:
-      #      - setup-dependencies
