@@ -31,14 +31,27 @@ const (
 
 var (
 	// functions aliases
+	NewGenesisState        = types.NewGenesisState
+	DefaultGenesisState    = types.DefaultGenesisState
+	ValidateGenesis        = types.ValidateGenesis
+	RegisterCodec          = types.RegisterCodec
+	RegisterModelsCodec    = models.RegisterModelsCodec
+	ReportStoreKey         = models.ReportStoreKey
+	NewReport              = models.NewReport
+	NewReportResponse      = models.NewReportResponse
+	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
+	NewMsgReportPost       = msgs.NewMsgReportPost
+	GetTxCmd               = cli.GetTxCmd
+	GetCmdReportPost       = cli.GetCmdReportPost
+	GetQueryCmd            = cli.GetQueryCmd
+	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
 	RegisterRoutes         = rest.RegisterRoutes
+	NewHandler             = keeper.NewHandler
 	RegisterInvariants     = keeper.RegisterInvariants
 	AllInvariants          = keeper.AllInvariants
 	ValidReportsIDs        = keeper.ValidReportsIDs
 	NewKeeper              = keeper.NewKeeper
 	NewQuerier             = keeper.NewQuerier
-	NewHandler             = keeper.NewHandler
-	DecodeStore            = simulation.DecodeStore
 	RandomizedGenState     = simulation.RandomizedGenState
 	WeightedOperations     = simulation.WeightedOperations
 	SimulateMsgReportPost  = simulation.SimulateMsgReportPost
@@ -46,36 +59,23 @@ var (
 	RandomPostID           = simulation.RandomPostID
 	RandomReportMessage    = simulation.RandomReportMessage
 	RandomReportTypes      = simulation.RandomReportTypes
-	RegisterCodec          = types.RegisterCodec
-	NewGenesisState        = types.NewGenesisState
-	DefaultGenesisState    = types.DefaultGenesisState
-	ValidateGenesis        = types.ValidateGenesis
-	NewReportResponse      = models.NewReportResponse
-	RegisterModelsCodec    = models.RegisterModelsCodec
-	ReportStoreKey         = models.ReportStoreKey
-	NewReport              = models.NewReport
-	RegisterMessagesCodec  = msgs.RegisterMessagesCodec
-	NewMsgReportPost       = msgs.NewMsgReportPost
-	GetTxCmd               = cli.GetTxCmd
-	GetCmdReportPost       = cli.GetCmdReportPost
-	GetQueryCmd            = cli.GetQueryCmd
-	GetCmdQueryPostReports = cli.GetCmdQueryPostReports
+	DecodeStore            = simulation.DecodeStore
 
 	// variable aliases
+	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
 	ModuleCdc              = types.ModuleCdc
-	ModelsCdc              = models.ModelsCdc
 )
 
 type (
-	ReportPostReq        = rest.ReportPostReq
-	Keeper               = keeper.Keeper
 	ReportsData          = simulation.ReportsData
 	GenesisState         = types.GenesisState
-	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	ReportsQueryResponse = models.ReportsQueryResponse
 	MsgReportPost        = msgs.MsgReportPost
+	ReportPostReq        = rest.ReportPostReq
+	Keeper               = keeper.Keeper
 )

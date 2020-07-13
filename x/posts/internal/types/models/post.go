@@ -3,7 +3,6 @@ package models
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -146,12 +145,24 @@ func (p Post) WithPollData(data PollData) Post {
 
 // String implements fmt.Stringer
 func (p Post) String() string {
-	bytes, err := json.Marshal(&p)
-	if err != nil {
-		panic(err)
+	out := fmt.Sprintf("[ID] %s [Parent ID] %s [Message] %s [Creation Time] %s [Edited Time] %s [Allows Comments] %t [Subspace] %s [Creator] %s ",
+		p.PostID.String(), p.ParentID.String(), p.Message, p.Created, p.LastEdited, p.AllowsComments, p.Subspace, p.Creator,
+	)
+
+	if len(p.OptionalData) != 0 {
+		out += fmt.Sprintf("[Optional Data] %s ", p.OptionalData)
 	}
 
-	return string(bytes)
+	if len(p.Medias) != 0 {
+		out += fmt.Sprintf("[Post Medias]:\n %s ", p.Medias.String())
+	}
+	if p.PollData != nil {
+		out += fmt.Sprintf("[Poll Data] %s ", p.PollData.String())
+	}
+
+	out += "\n"
+
+	return strings.TrimSpace(out)
 }
 
 // Validate implements validator
@@ -164,8 +175,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 {
-		return fmt.Errorf("post message or medias required, they cannot be both empty")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 && p.PollData == nil {
+		return fmt.Errorf("post message, medias or poll required, they cannot be all empty")
 	}
 
 	if !Sha256RegEx.MatchString(p.Subspace) {

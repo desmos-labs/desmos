@@ -92,7 +92,7 @@ func TestConvertProfiles(t *testing.T) {
 
 	expected := []v080.Profile{
 		{
-			DTag:    "LeoDC",
+			DTag:    "Leo_DC",
 			Moniker: newStrPtr("Leonardo Di Caprio"),
 			Bio:     newStrPtr("Actor"),
 			Pictures: &v080.Pictures{
@@ -103,7 +103,7 @@ func TestConvertProfiles(t *testing.T) {
 			CreationDate: genesisTime,
 		},
 		{
-			DTag:    "MonBel",
+			DTag:    "Mon_Bel",
 			Moniker: newStrPtr("Monica Bellucci"),
 			Bio:     newStrPtr("Actress"),
 			Pictures: &v080.Pictures{
@@ -132,7 +132,7 @@ func TestGetProfileDtag(t *testing.T) {
 		moniker string
 		expDTag string
 	}{
-		{moniker: "John Doe", expDTag: "JohnDoe"},
+		{moniker: "John Doe", expDTag: "John_Doe"},
 		{moniker: "JDoe", expDTag: "JDoe"},
 	}
 

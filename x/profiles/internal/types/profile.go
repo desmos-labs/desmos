@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -44,12 +43,35 @@ func (profile Profile) WithPictures(profilePic, coverPic *string) Profile {
 
 // String implements fmt.Stringer
 func (profile Profile) String() string {
-	bytes, err := json.Marshal(&profile)
-	if err != nil {
-		panic(err)
+	out := "Profile:\n"
+	out += fmt.Sprintf("[Dtag] %s [Creator] %s [Creation Time] %s ",
+		profile.DTag, profile.Creator, profile.CreationDate,
+	)
+
+	if profile.Moniker != nil {
+		out += fmt.Sprintf("[Moniker] %s ", *profile.Moniker)
 	}
 
-	return string(bytes)
+	if profile.Bio != nil {
+		out += fmt.Sprintf("[Biography] %s ", *profile.Bio)
+	}
+
+	if profile.Pictures != nil {
+		out += "Pictures:\n"
+		switch {
+		case profile.Pictures.Profile != nil && profile.Pictures.Cover == nil:
+			out += fmt.Sprintf("[Profile] %s ", *profile.Pictures.Profile)
+			return out
+		case profile.Pictures.Profile == nil && profile.Pictures.Cover != nil:
+			out += fmt.Sprintf("[Cover] %s", *profile.Pictures.Cover)
+			return out
+		default:
+			out += fmt.Sprintf("[Profile] %s [Cover] %s", *profile.Pictures.Profile, *profile.Pictures.Cover)
+			return out
+		}
+	}
+
+	return strings.TrimSpace(out)
 }
 
 // Equals allows to check whether the contents of acc are the same of other

@@ -34,17 +34,13 @@ const (
 
 var (
 	// functions aliases
-	RegisterInvariants       = keeper.RegisterInvariants
-	AllInvariants            = keeper.AllInvariants
-	ValidProfileInvariant    = keeper.ValidProfileInvariant
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	NewHandler               = keeper.NewHandler
 	ValidateProfile          = keeper.ValidateProfile
-	RandomizedGenState       = simulation.RandomizedGenState
-	WeightedOperations       = simulation.WeightedOperations
-	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
-	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
+	RegisterInvariants       = keeper.RegisterInvariants
+	AllInvariants            = keeper.AllInvariants
+	ValidProfileInvariant    = keeper.ValidProfileInvariant
 	ParamChanges             = simulation.ParamChanges
 	NewRandomProfile         = simulation.NewRandomProfile
 	RandomProfile            = simulation.RandomProfile
@@ -58,6 +54,13 @@ var (
 	RandomDTagParams         = simulation.RandomDTagParams
 	RandomBioParams          = simulation.RandomBioParams
 	DecodeStore              = simulation.DecodeStore
+	RandomizedGenState       = simulation.RandomizedGenState
+	WeightedOperations       = simulation.WeightedOperations
+	SimulateMsgSaveProfile   = simulation.SimulateMsgSaveProfile
+	SimulateMsgDeleteProfile = simulation.SimulateMsgDeleteProfile
+	NewPictures              = types.NewPictures
+	NewProfile               = types.NewProfile
+	NewProfiles              = types.NewProfiles
 	RegisterCodec            = types.RegisterCodec
 	NewGenesisState          = types.NewGenesisState
 	DefaultGenesisState      = types.DefaultGenesisState
@@ -76,9 +79,6 @@ var (
 	DefaultDtagParams        = types.DefaultDtagParams
 	ValidateDtagParams       = types.ValidateDtagParams
 	ValidateBioParams        = types.ValidateBioParams
-	NewPictures              = types.NewPictures
-	NewProfile               = types.NewProfile
-	NewProfiles              = types.NewProfiles
 
 	// variable aliases
 	ModuleCdc               = types.ModuleCdc
@@ -97,14 +97,14 @@ var (
 )
 
 type (
+	Keeper           = keeper.Keeper
+	Pictures         = types.Pictures
+	Profile          = types.Profile
+	Profiles         = types.Profiles
 	GenesisState     = types.GenesisState
 	MsgSaveProfile   = types.MsgSaveProfile
 	MsgDeleteProfile = types.MsgDeleteProfile
 	Params           = types.Params
 	MonikerParams    = types.MonikerParams
 	DtagParams       = types.DtagParams
-	Pictures         = types.Pictures
-	Profile          = types.Profile
-	Profiles         = types.Profiles
-	Keeper           = keeper.Keeper
 )

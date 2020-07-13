@@ -163,22 +163,103 @@ func TestPost_String(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	post := models.Post{
-		PostID:         id,
-		ParentID:       id2,
-		Message:        "My post message",
-		Created:        date,
-		LastEdited:     date.AddDate(0, 0, 1),
-		AllowsComments: true,
-		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData:   map[string]string{},
-		Creator:        owner,
+
+	postMedias := common.PostMedias{
+		common.PostMedia{
+			URI:      "https://uri.com",
+			MimeType: "text/plain",
+			Tags:     []sdk.AccAddress{owner},
+		},
+		common.PostMedia{
+			URI:      "https://another.com",
+			MimeType: "application/json",
+			Tags:     nil,
+		},
 	}
 
-	require.Equal(t,
-		`{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163","message":"My post message","created":"2020-01-01T12:00:00Z","last_edited":"2020-01-02T12:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`,
-		post.String(),
+	var pollEndDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+
+	pollData := polls.NewPollData(
+		"poll?",
+		pollEndDate,
+		polls.NewPollAnswers(
+			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
+			polls.NewPollAnswer(polls.AnswerID(2), "No"),
+		),
+		true,
+		false,
+		true,
 	)
+
+	tests := []struct {
+		name      string
+		post      models.Post
+		expString string
+	}{
+		{
+			name: "Post without medias and poll data",
+			post: models.NewPost(
+				id,
+				id2,
+				"My post message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		},
+		{
+			name: "Post with medias and without poll data",
+			post: models.NewPost(
+				id,
+				id2,
+				"My post message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithMedias(postMedias),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Medias]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
+		},
+		{
+			name: "Post without medias and with poll data",
+			post: models.NewPost(
+				id,
+				id2,
+				"My post message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithPollData(pollData),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+		},
+		{
+			name: "Post with medias and with poll data",
+			post: models.NewPost(
+				id,
+				id2,
+				"My post message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithMedias(postMedias).WithPollData(pollData),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Medias]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expString, test.post.String())
+		})
+	}
 }
 
 func TestPost_Validate(t *testing.T) {
@@ -224,14 +305,14 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post owner: ",
 		},
 		{
-			name:     "Empty post message and media",
-			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message or medias required, they cannot be both empty",
+			name:     "Empty post message, media and poll",
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			expError: "post message, medias or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Empty post message (blank) and media",
-			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
-			expError: "post message or medias required, they cannot be both empty",
+			name:     "Empty post message (blank), media and poll",
+			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			expError: "post message, medias or poll required, they cannot be all empty",
 		},
 		{
 			name:     "Invalid post creation time",
@@ -292,6 +373,11 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name:     "Valid post without medias",
 			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			expError: "",
+		},
+		{
+			name:     "Valid post without text and medias, but with poll",
+			post:     models.NewPost(id, "", "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
 	}

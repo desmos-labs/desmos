@@ -1,13 +1,10 @@
 package keeper_test
 
 import (
-	"testing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/internal/types"
-	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -17,7 +14,7 @@ var request abci.RequestQuery
 // --- Sessions
 // ----------------------------------
 
-func Test_querySession_InvalidIdReturnsError(t *testing.T) {
+func (suite *KeeperTestSuite) Test_querySession_InvalidIdReturnsError() {
 	tests := []struct {
 		name          string
 		storedSession types.Session
@@ -32,9 +29,9 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 		},
 		{
 			name:          "Existing session is returned",
-			storedSession: testSession,
-			query:         []string{keeper.QuerySessions, testSession.SessionID.String()},
-			expRes:        testSession,
+			storedSession: suite.testData.session,
+			query:         []string{keeper.QuerySessions, suite.testData.session.SessionID.String()},
+			expRes:        suite.testData.session,
 		},
 		{
 			name:   "Invalid id",
@@ -50,29 +47,28 @@ func Test_querySession_InvalidIdReturnsError(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
-			ctx, k := SetupTestInput()
-
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
 			if !(types.Session{}).Equals(test.storedSession) {
-				k.SaveSession(ctx, test.storedSession)
+				suite.keeper.SaveSession(suite.ctx, test.storedSession)
 			}
 
-			querier := keeper.NewQuerier(k)
-			result, err := querier(ctx, test.query, request)
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.query, request)
 
 			if result != nil {
-				require.Nil(t, err)
+				suite.Nil(err)
 
-				expectedIndented, err := codec.MarshalJSONIndent(k.Cdc, &test.expRes)
-				require.NoError(t, err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expRes)
+				suite.NoError(err)
 
-				require.Equal(t, string(expectedIndented), string(result))
+				suite.Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
-				require.NotNil(t, err)
-				require.Equal(t, test.expErr.Error(), err.Error())
-				require.Nil(t, result)
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Nil(result)
 			}
 		})
 	}

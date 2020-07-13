@@ -1,32 +1,25 @@
 package keeper_test
 
 import (
-	"testing"
-
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_SetParams(t *testing.T) {
-	ctx, k := SetupTestInput()
-
+func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	params := types.DefaultParams()
-	k.SetParams(ctx, params)
+	suite.keeper.SetParams(suite.ctx, params)
 
-	actualParams := k.GetParams(ctx)
+	actualParams := suite.keeper.GetParams(suite.ctx)
 
-	require.Equal(t, params, actualParams)
+	suite.Equal(params, actualParams)
 }
 
-func TestKeeper_GetParams(t *testing.T) {
-	ctx, k := SetupTestInput()
-
+func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	params := types.DefaultParams()
-	k.SetParams(ctx, params)
+	suite.keeper.SetParams(suite.ctx, params)
 
-	actualParams := k.GetParams(ctx)
+	actualParams := suite.keeper.GetParams(suite.ctx)
 
-	require.Equal(t, params, actualParams)
+	suite.Equal(params, actualParams)
 
 	tests := []struct {
 		name      string
@@ -47,13 +40,13 @@ func TestKeeper_GetParams(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		suite.Run(test.name, func() {
 			if test.params != nil {
-				k.SetParams(ctx, *test.params)
+				suite.keeper.SetParams(suite.ctx, *test.params)
 			}
 
 			if test.expParams != nil {
-				require.Equal(t, *test.expParams, k.GetParams(ctx))
+				suite.Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
 			}
 		})
 	}
