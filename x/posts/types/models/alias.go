@@ -45,11 +45,11 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 
 	// variable aliases
 	Sha256RegEx              = common.Sha256RegEx
@@ -65,18 +65,18 @@ var (
 )
 
 type (
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
 	PollData      = polls.PollData
 	UserAnswer    = polls.UserAnswer
 	UserAnswers   = polls.UserAnswers
-	Reaction      = reactions.Reaction
-	Reactions     = reactions.Reactions
 	PostReaction  = reactions.PostReaction
 	PostReactions = reactions.PostReactions
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
+	Reaction      = reactions.Reaction
+	Reactions     = reactions.Reactions
 )
