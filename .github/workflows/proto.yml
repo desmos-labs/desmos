@@ -6,6 +6,7 @@ on:
   pull_request:
     paths:
       - "**.proto"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
