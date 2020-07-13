@@ -263,4 +263,3 @@ workflows:
       #- test-sim-nondeterminism:
       #    requires:
       #      - setup-dependencies
-      - localnet
