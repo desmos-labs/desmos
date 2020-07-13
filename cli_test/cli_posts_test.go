@@ -1,6 +1,6 @@
 // +build cli_test
 
-// nolint
+//nolint
 package clitest
 
 import (
@@ -9,8 +9,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts"
 )
 
 func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {

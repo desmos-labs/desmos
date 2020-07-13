@@ -8,15 +8,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
-	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/posts"
+	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
+	"github.com/desmos-labs/desmos/x/reports/internal/types"
+	"github.com/desmos-labs/desmos/x/reports/internal/types/models/common"
 )
 
 type KeeperTestSuite struct {
@@ -64,9 +65,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// setup data
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
-	// nolint - errcheck
+	//nolint - errcheck
 	suite.testData.creator, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	// nolint - errcheck
+	//nolint - errcheck
 	suite.testData.timeZone, _ = time.LoadLocation("UTC")
 	suite.testData.postCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, suite.testData.timeZone)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
@@ -73,7 +74,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 
 // GetPostChildrenIDs returns the IDs of all the children posts associated to the post
 // having the given postID
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.PostIDs {
 	store := ctx.KVStore(k.StoreKey)
 

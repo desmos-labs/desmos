@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
@@ -21,7 +22,7 @@ import (
 type PostID string
 
 // ComputeID returns a sha256 hash of the given data concatenated together
-// nolint: interfacer
+//nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return PostID(hex.EncodeToString(hash[:]))

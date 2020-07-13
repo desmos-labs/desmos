@@ -12,8 +12,9 @@ import (
 
 	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/reports"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/desmos-labs/desmos/x/reports"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -25,10 +26,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/profiles"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -44,7 +46,7 @@ const (
 )
 
 var (
-	// nolint:varcheck,deadcode,unused
+	//nolint:varcheck,deadcode,unused
 	totalCoins = sdk.NewCoins(
 		sdk.NewCoin(fee2Denom, sdk.TokensFromConsensusPower(2000000)),
 		sdk.NewCoin(feeDenom, sdk.TokensFromConsensusPower(2000000)),

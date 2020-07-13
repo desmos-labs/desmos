@@ -9,6 +9,7 @@ import (
 	"time"
 
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/simulation"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
@@ -151,7 +152,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		// nolint: errcheck
+		//nolint: errcheck
 		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 	}
 }
@@ -169,7 +170,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		// nolint: errcheck
+		//nolint: errcheck
 		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 	}
 

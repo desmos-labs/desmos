@@ -7,13 +7,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
+	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 )
 
 type KeeperTestSuite struct {
@@ -53,7 +54,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.keeper = keeper.NewKeeper(suite.cdc, profileKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
 
 	// setup Data
-	// nolint - errcheck
+	//nolint - errcheck
 	suite.testData.postOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.testData.profile = types.Profile{
 		DTag: "dtag",

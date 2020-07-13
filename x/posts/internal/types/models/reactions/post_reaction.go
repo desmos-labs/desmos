@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/types/models/common"
 )
 
@@ -46,8 +47,7 @@ func (reaction PostReaction) Validate() error {
 	}
 
 	if !common.ShortCodeRegEx.MatchString(reaction.Shortcode) {
-		//nolint - errcheck
-		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :")
+		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'")
 	}
 
 	return nil

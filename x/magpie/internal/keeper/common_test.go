@@ -7,13 +7,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
-	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/magpie/internal/keeper"
+	"github.com/desmos-labs/desmos/x/magpie/internal/types"
 )
 
 type KeeperTestSuite struct {
@@ -48,7 +49,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.keeper = keeper.NewKeeper(suite.cdc, magpieKey)
 
 	// setup Data
-	// nolint - errcheck
+	//nolint - errcheck
 	suite.testData.owner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.testData.session = types.Session{
 		SessionID: types.SessionID(1),

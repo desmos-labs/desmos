@@ -6,26 +6,23 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/profiles/internal/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
-// nolint: funlen
+//nolint: funlen
 func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, data, skip, err := randomProfileSaveFields(r, ctx, accs, k)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -80,9 +77,9 @@ func sendMsgSaveProfile(
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
-) (sim.Account, types.Profile, bool, error) {
+) (sim.Account, types.Profile, bool) {
 	if len(accs) == 0 {
-		return sim.Account{}, types.Profile{}, true, nil
+		return sim.Account{}, types.Profile{}, true
 	}
 
 	// Get a random account
@@ -105,20 +102,16 @@ func randomProfileSaveFields(
 			WithPictures(RandomProfilePic(r), RandomProfileCover(r))
 	}
 
-	return account, profile, false, nil
+	return account, profile, false
 }
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
-// nolint: funlen
+//nolint: funlen
 func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
-		acc, skip, err := randomProfileDeleteFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		acc, skip := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -168,16 +161,16 @@ func sendMsgDeleteProfile(
 
 // randomProfileDeleteFields returns random profile data
 func randomProfileDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, bool, error) {
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
+) (sim.Account, bool) {
 	if len(accs) == 0 {
-		return sim.Account{}, true, nil
+		return sim.Account{}, true
 	}
 
 	accounts := k.GetProfiles(ctx)
 
 	if len(accounts) == 0 {
-		return sim.Account{}, true, nil
+		return sim.Account{}, true
 	}
 	account := RandomProfile(r, accounts)
 
@@ -185,8 +178,8 @@ func randomProfileDeleteFields(
 
 	// Skip the operation without error as the profile is not valid
 	if acc == nil {
-		return sim.Account{}, true, nil
+		return sim.Account{}, true
 	}
 
-	return *acc, false, nil
+	return *acc, false
 }

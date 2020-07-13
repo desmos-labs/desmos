@@ -16,7 +16,7 @@ import (
 // SavePostReaction allows to save the given reaction inside the store.
 // It assumes that the given reaction is valid and already registered.
 // If another reaction from the same user for the same post and with the same value exists, returns an expError.
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.PostReactionsStoreKey(postID)
@@ -41,7 +41,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID types.PostID, reaction 
 // RemovePostReaction removes the reaction from the given user from the post having the
 // given postID. If no reaction with the same value was previously added from the given user, an expError
 // is returned.
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.PostReactionsStoreKey(postID)
@@ -68,7 +68,7 @@ func (k Keeper) RemovePostReaction(ctx sdk.Context, postID types.PostID, reactio
 }
 
 // GetPostReactions returns the list of reactions that has been associated to the post having the given id
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) GetPostReactions(ctx sdk.Context, postID types.PostID) types.PostReactions {
 	store := ctx.KVStore(k.StoreKey)
 

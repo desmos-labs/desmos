@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/desmos-labs/desmos/x/reports/internal/keeper"
 	"github.com/desmos-labs/desmos/x/reports/internal/types"
@@ -41,7 +42,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			// nolint: errcheck
+			//nolint: errcheck
 			suite.keeper.SaveReport(suite.ctx, test.postID, test.report)
 
 			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)

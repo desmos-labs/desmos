@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
@@ -128,7 +129,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			}
 			if test.reaction != nil && test.postReaction != nil {
 				suite.keeper.RegisterReaction(suite.ctx, *test.reaction)
-				// nolint: errcheck
+				//nolint: errcheck
 				suite.keeper.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
 			}
 			if test.answers != nil {

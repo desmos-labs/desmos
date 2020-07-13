@@ -4,11 +4,13 @@
 package clitest
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	"github.com/desmos-labs/desmos/x/posts"
 )
 
 func TestDesmosCLIReportPost(t *testing.T) {

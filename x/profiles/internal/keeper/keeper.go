@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
+
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 )
 
@@ -101,7 +102,7 @@ func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
 
 // DeleteProfile allows to delete a profile associated with the given address inside the current context.
 // It assumes that the address-related profile exists.
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, dtag string) {
 	store := ctx.KVStore(k.StoreKey)
 	store.Delete(types.ProfileStoreKey(address))
@@ -125,7 +126,7 @@ func (k Keeper) GetProfiles(ctx sdk.Context) (profiles types.Profiles) {
 }
 
 // GetProfile returns the profile corresponding to the given address inside the current context.
-// nolint: interfacer
+//nolint: interfacer
 func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile types.Profile, found bool) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.ProfileStoreKey(address)

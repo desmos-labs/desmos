@@ -8,9 +8,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/posts/internal/keeper"
 	"github.com/desmos-labs/desmos/x/posts/internal/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // ---------------
@@ -18,24 +19,20 @@ import (
 // ---------------
 
 // SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
-// nolint: funlen
+//nolint: funlen
 func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomAddPostReactionFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		data, skip := randomAddPostReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address)
-		err = sendMsgAddPostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgAddPostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -79,7 +76,7 @@ func sendMsgAddPostReaction(
 // randomAddPostReactionFields returns the data used to create a MsgAddReaction message
 func randomAddPostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*PostReactionData, bool, error) {
+) (*PostReactionData, bool) {
 
 	postData := RandomPostData(r, accs)
 	postID := types.ComputeID(postData.CreationDate, postData.Creator.Address, postData.Subspace)
@@ -108,37 +105,33 @@ func randomAddPostReactionFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return nil, true, nil
+		return nil, true
 	}
 
 	// Skip if the reaction already exists
 	reactions := k.GetPostReactions(ctx, reactionData.PostID)
 	if reactions.ContainsReactionFrom(reactionData.User.Address, reactionData.Value) {
-		return nil, true, nil
+		return nil, true
 	}
 
-	return &reactionData, false, nil
+	return &reactionData, false
 }
 
 // SimulateMsgRemovePostReaction tests and runs a single msg remove reaction where the reacting user account already exists
-// nolint: funlen
+//nolint: funlen
 func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomRemovePostReactionFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		data, skip := randomRemovePostReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address, data.Shortcode)
-		err = sendMsgRemovePostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgRemovePostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -182,7 +175,7 @@ func sendMsgRemovePostReaction(
 // randomReactionFields returns the data used to create a MsgAddReaction message
 func randomRemovePostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*PostReactionData, bool, error) {
+) (*PostReactionData, bool) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 
@@ -190,7 +183,7 @@ func randomRemovePostReactionFields(
 
 	// Skip if the post has no reactions
 	if len(reactions) == 0 {
-		return nil, true, nil
+		return nil, true
 	}
 
 	reaction := reactions[r.Intn(len(reactions))]
@@ -199,12 +192,12 @@ func randomRemovePostReactionFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return nil, true, nil
+		return nil, true
 	}
 
 	user := GetAccount(reaction.Owner, accs)
 	data := PostReactionData{Shortcode: reaction.Shortcode, Value: reaction.Value, User: *user, PostID: post.PostID}
-	return &data, false, nil
+	return &data, false
 }
 
 // ---------------
@@ -212,17 +205,13 @@ func randomRemovePostReactionFields(
 // ---------------
 
 // SimulateMsgRegisterReaction tests and runs a single msg register reaction where the registering user account already exist
-// nolint: funlen
+//nolint: funlen
 func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
-		reactionData, skip, err := randomRegisteredReactionFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		reactionData, skip := randomRegisteredReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -230,7 +219,7 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 		msg := types.NewMsgRegisterReaction(reactionData.Creator.Address,
 			reactionData.ShortCode, reactionData.Value, reactionData.Subspace)
 
-		err = sendMsgRegisterReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
+		err := sendMsgRegisterReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -271,20 +260,20 @@ func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.Account
 
 // randomRegisteredReactionFields returns the data used to create a MsgRegisterReaction message
 func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*ReactionData, bool, error) {
+) (*ReactionData, bool) {
 	reactionData := RandomReactionData(r, accs)
 	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return nil, true, nil
+		return nil, true
 	}
 
 	// Skip if the reaction already exists
 	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {
-		return nil, true, nil
+		return nil, true
 	}
 
-	return &reactionData, false, nil
+	return &reactionData, false
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/internal/types"
 )
 
@@ -77,7 +78,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
-	// nolint - errcheck
+	//nolint - errcheck
 	diffCreator, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	tests := []struct {
 		name             string
