@@ -11,8 +11,9 @@ export GO111MODULE = on
 include Makefile.ledger
 include contrib/devtools/Makefile
 
-########################################
-### Build flags
+###############################################################################
+###                                Build flags                              ###
+###############################################################################
 
 # Process linker flags
 ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
@@ -42,22 +43,24 @@ ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags="$(build_tags)" -ldflags="$(ldflags)"
 
-########################################
-### All
+###############################################################################
+###                                   All                                   ###
+###############################################################################
 
 all: lint install
 
-########################################
-### Install
+###############################################################################
+###                                 Install                                 ###
+###############################################################################
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmosd
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoscli
 	# go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoskeyutil
 
-########################################
-### Build
-
+###############################################################################
+###                                  Build                                  ###
+###############################################################################
 build: go.sum
 ifeq ($(OS),Windows_NT)
 	go build -mod=readonly $(BUILD_FLAGS) -o ./build/desmod.exe ./cmd/desmosd
@@ -74,8 +77,9 @@ build-armv8: go.sum
 	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmosd ./cmd/desmosd
 	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmoscli ./cmd/desmoscli
 
-########################################
-### Tools & dependencies
+###############################################################################
+###                          Tools & Dependencies                           ###
+###############################################################################
 
 go-mod-cache: go.sum
 	@echo "--> Download go modules to local cache"
@@ -96,8 +100,9 @@ clean:
 distclean: clean
 	rm -rf vendor/
 
-########################################
-### Testing
+###############################################################################
+###                           Tests & Simulation                            ###
+###############################################################################
 
 test: test-unit test-build
 test-all: test test-race test-cover
@@ -127,8 +132,9 @@ format:
 benchmark:
 	@go test -mod=readonly -bench=. ./...
 
-########################################
-### Local validator nodes using docker and docker-compose
+###############################################################################
+###                                Localnet                                 ###
+###############################################################################
 
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
