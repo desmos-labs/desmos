@@ -51,7 +51,7 @@ STATIK         = $(TOOLS_DESTDIR)/statik
 RUNSIM         = $(TOOLS_DESTDIR)/runsim
 
 tools: tools-stamp
-tools-stamp: proto-tools statik runsim
+tools-stamp: statik runsim # proto-tools TODO: Add later once Protobuf is implemented
 	# Create dummy file to satisfy dependency and avoid
 	# rebuilding when this Makefile target is hit twice
 	# in a row.
