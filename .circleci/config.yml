@@ -29,8 +29,6 @@ commands:
           command: |
             make << parameters.target >>
 
-
-
 jobs:
   setup-dependencies:
     executor: golang
