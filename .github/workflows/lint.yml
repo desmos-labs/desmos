@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  golangci:
+  GolangCI:
     name: golangci-lint
     runs-on: ubuntu-latest
     timeout-minutes: 6

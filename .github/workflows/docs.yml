@@ -1,5 +1,5 @@
 name: Docs
-# Docs build and publishes the Vuepress document website
+# Docs build and publishes the Vuepress documentation website.
 # This workflow is run on every pull request and push on master.
 # The deployment of the docs is made only on each push on master.
 on:

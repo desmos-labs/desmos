@@ -1,21 +1,21 @@
 name: Protobuf
-# Protobuf runs buf (https://buf.build/) lint and check-breakage
+# Protobuf runs buf (https://buf.build/) lint and check-breakage.
 # This workflow is only run when a .proto file has been changed
-# This will be useful when switching to Protobuf serialization
+# This will be useful when switching to Protobuf serialization.
 on:
   pull_request:
     paths:
       - "**.proto"
 
 jobs:
-  lint:
+  Lint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@master
       - name: lint
         run: make proto-lint-docker
-  breakage:
+  Breakage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master

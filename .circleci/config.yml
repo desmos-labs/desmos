@@ -69,12 +69,6 @@ jobs:
           root: "/tmp/bin"
           paths:
             - "."
-  test-sim-multi-seed-long:
-    executor: golang
-    steps:
-      - make:
-          target: test-sim-multi-seed-long
-          description: "Test Desmos multi-seed simulation (long-lived)"
 
   docker-image:
     executor: golang
@@ -140,13 +134,4 @@ workflows:
             tags:
               only:
                 - /^v.*/
-      - test-sim-multi-seed-long:
-          requires:
-            - setup-dependencies
-          # These filters ensure that the long sim only runs during release
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only:
-                - /^v.*/
+
