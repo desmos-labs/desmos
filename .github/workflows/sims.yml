@@ -37,28 +37,28 @@ jobs:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
 
-  Test-Sim-Nondeterminism:
-    runs-on: ubuntu-latest
-    needs: [build, install-runsim]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: technote-space/get-diff-action@v1
-        with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
-      - uses: actions/cache@v1
-        with:
-          path: ~/go/bin
-          key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
-      - name: test-sim-nondeterminism
-        run: |
-          make test-sim-nondeterminism
-        if: "env.GIT_DIFF != ''"
+  #  Test-Sim-Nondeterminism:
+  #    runs-on: ubuntu-latest
+  #    needs: [build, install-runsim]
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - uses: technote-space/get-diff-action@v1
+  #        with:
+  #          SUFFIX_FILTER: |
+  #            .go
+  #            .mod
+  #            .sum
+  #          SET_ENV_NAME_INSERTIONS: 1
+  #          SET_ENV_NAME_LINES: 1
+  #      - uses: actions/cache@v1
+  #        with:
+  #          path: ~/go/bin
+  #          key: ${{ runner.os }}-go-runsim-binary
+  #        if: "env.GIT_DIFF != ''"
+  #      - name: test-sim-nondeterminism
+  #        run: |
+  #          make test-sim-nondeterminism
+  #        if: "env.GIT_DIFF != ''"
 
   Test-Sim-Import-Export:
     runs-on: ubuntu-latest
