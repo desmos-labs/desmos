@@ -20,7 +20,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // GetTxCmd set the tx commands

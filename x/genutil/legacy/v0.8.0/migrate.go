@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 
-	"github.com/desmos-labs/desmos/x/reports"
+	reports "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/genutil"

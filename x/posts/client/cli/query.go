@@ -14,9 +14,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
-
-	"github.com/desmos-labs/desmos/x/posts/internal/types"
 )
 
 // GetQueryCmd adds the query commands
@@ -164,7 +163,7 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			cliCtx = cliCtx.WithHeight(height)
-			return cliCtx.PrintOutput(matchingPosts) //nolint:errcheck
+			return cliCtx.PrintOutput(matchingPosts) // nolint:errcheck
 		},
 	}
 

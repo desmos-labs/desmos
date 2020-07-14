@@ -13,8 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/posts"
-	"github.com/desmos-labs/desmos/x/reports/internal/types"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
 )
 

@@ -2,13 +2,11 @@ package app
 
 import (
 	"encoding/json"
-
-	distr "github.com/cosmos/cosmos-sdk/x/distribution"
-
 	"log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -143,6 +141,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 	iter := sdk.KVStoreReversePrefixIterator(store, staking.ValidatorsKey)
 	counter := int16(0)
 
+	var valConsAddrs []sdk.ConsAddress
 	for ; iter.Valid(); iter.Next() {
 		addr := sdk.ValAddress(iter.Key()[1:])
 		validator, found := app.stakingKeeper.GetValidator(ctx, addr)
@@ -151,6 +150,7 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 		}
 
 		validator.UnbondingHeight = 0
+		valConsAddrs = append(valConsAddrs, validator.ConsAddress())
 		if applyWhiteList && !whiteListMap[addr.String()] {
 			validator.Jailed = true
 		}
