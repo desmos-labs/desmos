@@ -204,5 +204,5 @@ jobs:
             .sum
       - name: cli-test
         run: |
-          make test-build
+          make test-integration
         if: "env.GIT_DIFF != ''"

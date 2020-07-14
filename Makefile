@@ -5,6 +5,7 @@ VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
+BUILDDIR ?= $(CURDIR)/build
 
 export GO111MODULE = on
 
@@ -104,14 +105,14 @@ distclean: clean
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
-test: test-unit test-build
+test: test-unit test-integration
 test-all: test test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
-test-build: build
-	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
+test-integration: build
+	BUILDDIR=$(BUILDDIR) go test -mod=readonly -p 4 `go list ./cli_test/...` -tags='cli_test' -v
 
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
