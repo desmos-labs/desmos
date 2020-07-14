@@ -1,10 +1,13 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 func RandomizedGenState(simState *module.SimulationState) {

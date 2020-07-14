@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"encoding/base64"
 	"math/rand"
@@ -8,8 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/tendermint/tendermint/libs/bech32"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 var (

@@ -1,10 +1,13 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"fmt"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 

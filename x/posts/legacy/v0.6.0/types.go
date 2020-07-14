@@ -1,7 +1,10 @@
 package v060
 
+// DONTCOVER
+
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 )
 

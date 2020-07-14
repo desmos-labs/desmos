@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"math/rand"
 	"time"

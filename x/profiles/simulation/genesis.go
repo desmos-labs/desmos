@@ -1,16 +1,15 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/types"
-)
 
-const (
-	ParamsKey = "profileParams"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
