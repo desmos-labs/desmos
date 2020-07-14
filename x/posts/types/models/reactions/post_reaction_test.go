@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/types/models/reactions"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts/types/models/reactions"
 )
 
 func TestPostReaction_String(t *testing.T) {
@@ -45,7 +46,7 @@ func TestPostReaction_Validate(t *testing.T) {
 		{
 			name:     "Invalid shortcode returns error",
 			reaction: reactions.NewPostReaction("invalid", "reaction", user),
-			error:    errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error:    errors.New("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'"),
 		},
 	}
 
