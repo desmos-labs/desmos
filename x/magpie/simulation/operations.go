@@ -9,10 +9,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // Simulation operation weights constants
@@ -47,11 +48,7 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomSessionFields(r, ctx, accs, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		data, skip := randomSessionFields(r, ctx, accs, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -64,7 +61,7 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 			data.Signature,
 		)
 
-		err = sendMsgCreateSession(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
+		err := sendMsgCreateSession(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -108,14 +105,14 @@ func sendMsgCreateSession(
 // randomSessionFields returns all the random fields that are needed to create a MsgCreateSession
 func randomSessionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
-) (*SessionData, bool, error) {
+) (*SessionData, bool) {
 
 	simAccount, _ := sim.RandomAcc(r, accs)
 	acc := ak.GetAccount(ctx, simAccount.Address)
 	if acc == nil {
-		return nil, true, nil // skip the operation without error as the account is not valid
+		return nil, true
 	}
 
 	sessionData := RandomSessionData(simAccount, r)
-	return &sessionData, false, nil
+	return &sessionData, false
 }

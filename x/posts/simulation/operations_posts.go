@@ -9,9 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists
@@ -22,11 +23,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		data, skip, err := randomPostCreateFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		data, skip := randomPostCreateFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -43,7 +40,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 			data.PollData,
 		)
 
-		err = sendMsgCreatePost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
+		err := sendMsgCreatePost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -87,19 +84,19 @@ func sendMsgCreatePost(
 // randomPostCreateFields returns the creator of the post as well as the parent id
 func randomPostCreateFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (*PostData, bool, error) {
+) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
 	acc := ak.GetAccount(ctx, postData.Creator.Address)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return nil, true, nil
+		return nil, true
 	}
 
 	// Skip the operation as the poll is closed
 	if postData.PollData != nil && !postData.PollData.Open {
-		return nil, true, nil
+		return nil, true
 	}
 
 	posts := k.GetPosts(ctx)
@@ -109,7 +106,7 @@ func randomPostCreateFields(
 		}
 	}
 
-	return &postData, false, nil
+	return &postData, false
 }
 
 // SimulateMsgEditPost tests and runs a single msg edit post where the post creator account already exists
@@ -120,18 +117,14 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		account, id, message, skip, err := randomPostEditFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		account, id, message, skip := randomPostEditFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgEditPost(id, message, account.Address, time.Now().UTC())
 
-		err = sendMsgEditPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
+		err := sendMsgEditPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -174,16 +167,16 @@ func sendMsgEditPost(
 
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, types.PostID, string, bool, error) {
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
+) (sim.Account, types.PostID, string, bool) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 	acc := GetAccount(post.Creator, accs)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, "", "", true, nil
+		return sim.Account{}, "", "", true
 	}
 
-	return *acc, post.PostID, RandomMessage(r), false, nil
+	return *acc, post.PostID, RandomMessage(r), false
 }
