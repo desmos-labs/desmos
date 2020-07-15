@@ -1,4 +1,4 @@
-package simulation
+package simulation_test
 
 import (
 	"fmt"
@@ -6,11 +6,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/kv"
+
+	posts "github.com/desmos-labs/desmos/x/posts/types"
+	sim "github.com/desmos-labs/desmos/x/reports/simulation"
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // nolint
@@ -53,9 +55,9 @@ func TestDecodeStore(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			switch i {
 			case len(tests) - 1:
-				require.Panics(t, func() { DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
+				require.Panics(t, func() { sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
 			default:
-				require.Equal(t, tt.expectedLog, DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
+				require.Equal(t, tt.expectedLog, sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
 			}
 		})
 	}

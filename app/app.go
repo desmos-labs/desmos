@@ -23,6 +23,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tmos "github.com/tendermint/tendermint/libs/os"
+	dbm "github.com/tendermint/tm-db"
+
 	"github.com/desmos-labs/desmos/x/magpie"
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
@@ -35,10 +40,6 @@ import (
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	dbm "github.com/tendermint/tm-db"
 )
 
 const (

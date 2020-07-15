@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"math/rand"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/app/params"
 )
 

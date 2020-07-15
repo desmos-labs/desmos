@@ -10,14 +10,15 @@ import (
 
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/gov"
-	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+
+	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"

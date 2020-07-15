@@ -15,7 +15,7 @@ var (
 )
 
 // SessionStoreKey turns a session id to a key used to store a session into the sessions store
-// nolint: interfacer
+//nolint: interfacer
 func SessionStoreKey(id SessionID) []byte {
 	return append(SessionStorePrefix, []byte(id.String())...)
 }

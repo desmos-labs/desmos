@@ -1,10 +1,13 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"math/rand"
 	"time"
 
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
 

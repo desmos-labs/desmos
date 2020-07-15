@@ -6,10 +6,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+
 	reports "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 	v060profile "github.com/desmos-labs/desmos/x/profiles/legacy/v0.6.0"

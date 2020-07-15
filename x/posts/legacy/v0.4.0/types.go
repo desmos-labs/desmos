@@ -29,7 +29,7 @@ type GenesisState struct {
 type PostID string
 
 // ComputeID returns a sha256 hash of the given data concatenated together
-// nolint: interfacer
+//nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return PostID(hex.EncodeToString(hash[:]))

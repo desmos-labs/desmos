@@ -10,6 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/spf13/cobra"
+	tm "github.com/tendermint/tendermint/types"
+
 	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
 	v030 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.3.0"
 	v040 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.4.0"
@@ -17,8 +20,6 @@ import (
 	v060 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.6.0"
 	v080 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.8.0"
 	"github.com/desmos-labs/desmos/x/genutil/types"
-	"github.com/spf13/cobra"
-	tm "github.com/tendermint/tendermint/types"
 )
 
 // migrationMap contains the list of migrations that should be performed when migrating

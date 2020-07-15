@@ -1,4 +1,4 @@
-package simulation
+package simulation_test
 
 import (
 	"fmt"
@@ -6,10 +6,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/kv"
+
+	sim "github.com/desmos-labs/desmos/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 var (
@@ -54,9 +56,9 @@ func TestDecodeStore(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			switch i {
 			case len(tests) - 1:
-				require.Panics(t, func() { DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
+				require.Panics(t, func() { sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
 			default:
-				require.Equal(t, tt.expectedLog, DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
+				require.Equal(t, tt.expectedLog, sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
 			}
 		})
 	}

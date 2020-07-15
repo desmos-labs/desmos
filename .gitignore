@@ -1,19 +1,53 @@
 # OS
-.DS_Store/
+.DS_Store
 *.swp
 *.swo
-.vscode/
+*.swl
+*.swm
+*.swn
+.vscode
+.idea
+*.pyc
 
 # Build
-vendor/
-.vendor-new/
-build/
-node_modules/
+vendor
+build
+tools/bin/*
+examples/build/*
+docs/**/dist
+docs/tutorial
+docs/node_modules
+docs/modules
+dist
+tools-stamp
+proto-tools-stamp
+buf-stamp
+**/node_modules/
+
+# Data - ideally these don't exist
+baseapp/data/*
+client/lcd/keys/*
+mytestnet
+
+# Testing
 coverage.txt
-node*/
+profile.out
+sim_log_file
+
+# Vagrant
+.vagrant/
+*.box
+*.log
+vagrant
 
 # IDE
 .idea/
 *.iml
 
-examples/
+# Graphviz
+dependency-graph.png
+
+# Latex
+*.aux
+*.out
+*.synctex.gz

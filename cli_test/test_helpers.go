@@ -24,11 +24,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/app"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	profileTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/stretchr/testify/require"
 )
 
 const (

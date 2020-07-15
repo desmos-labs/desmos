@@ -1,6 +1,6 @@
 // +build cli_test
 
-// nolint
+//nolint
 package clitest
 
 import (

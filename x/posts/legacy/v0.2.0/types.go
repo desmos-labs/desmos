@@ -1,5 +1,7 @@
 package v020
 
+// DONTCOVER
+
 import (
 	"strconv"
 	"time"

@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"math/rand"
 
@@ -8,9 +10,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists
@@ -21,17 +24,13 @@ func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operati
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		acc, answers, postID, skip, err := randomPollAnswerFields(r, ctx, accs, k, ak)
-		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
-		}
-
+		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgAnswerPoll(postID, answers, acc.Address)
-		err = sendMsgAnswerPoll(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err := sendMsgAnswerPoll(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -75,13 +74,13 @@ func sendMsgAnswerPoll(
 // randomPollAnswerFields returns the data used to create a MsgAnswerPoll message
 func randomPollAnswerFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
-) (sim.Account, []types.AnswerID, types.PostID, bool, error) {
+) (sim.Account, []types.AnswerID, types.PostID, bool) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || !post.PollData.Open {
-		return sim.Account{}, nil, "", true, nil
+		return sim.Account{}, nil, "", true
 	}
 
 	simAccount, _ := sim.RandomAcc(r, accs)
@@ -89,13 +88,13 @@ func randomPollAnswerFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, nil, "", true, nil
+		return sim.Account{}, nil, "", true
 	}
 
 	// Skip the operation without err as the poll does not allow to edit answers
 	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostID, acc.GetAddress())
 	if len(currentAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
-		return sim.Account{}, nil, "", true, nil
+		return sim.Account{}, nil, "", true
 	}
 
 	providedAnswers := post.PollData.ProvidedAnswers
@@ -110,5 +109,5 @@ func randomPollAnswerFields(
 		answers[i] = providedAnswers[i].ID
 	}
 
-	return simAccount, answers, post.PostID, false, nil
+	return simAccount, answers, post.PostID, false
 }

@@ -1,0 +1,22 @@
+name: Docker
+# Docker workflow allows the creation and publishing of new Desmos Docker tags.
+# This workflow is run only when a new commit is pushed to master, or a new tag is creted.
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  Build-and-Publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: desmoslabs/desmos
+          tag_with_ref: true
+          add_git_labels: true
+          push: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}

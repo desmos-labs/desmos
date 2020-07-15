@@ -1,5 +1,7 @@
 package v060
 
+// DONTCOVER
+
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

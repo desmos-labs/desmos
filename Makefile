@@ -5,14 +5,16 @@ VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
+BUILDDIR ?= $(CURDIR)/build
 
 export GO111MODULE = on
 
 include Makefile.ledger
 include contrib/devtools/Makefile
 
-########################################
-### Build flags
+###############################################################################
+###                                Build flags                              ###
+###############################################################################
 
 # Process linker flags
 ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
@@ -42,22 +44,24 @@ ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags="$(build_tags)" -ldflags="$(ldflags)"
 
-########################################
-### All
+###############################################################################
+###                                   All                                   ###
+###############################################################################
 
 all: lint install
 
-########################################
-### Install
+###############################################################################
+###                                 Install                                 ###
+###############################################################################
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmosd
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoscli
 	# go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmoskeyutil
 
-########################################
-### Build
-
+###############################################################################
+###                                  Build                                  ###
+###############################################################################
 build: go.sum
 ifeq ($(OS),Windows_NT)
 	go build -mod=readonly $(BUILD_FLAGS) -o ./build/desmod.exe ./cmd/desmosd
@@ -74,8 +78,9 @@ build-armv8: go.sum
 	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmosd ./cmd/desmosd
 	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmoscli ./cmd/desmoscli
 
-########################################
-### Tools & dependencies
+###############################################################################
+###                          Tools & Dependencies                           ###
+###############################################################################
 
 go-mod-cache: go.sum
 	@echo "--> Download go modules to local cache"
@@ -96,17 +101,18 @@ clean:
 distclean: clean
 	rm -rf vendor/
 
-########################################
-### Testing
+###############################################################################
+###                           Tests & Simulation                            ###
+###############################################################################
 
-test: test-unit test-build
+test: test-unit test-integration
 test-all: test test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
-test-build: build
-	@go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test -v
+test-integration: build
+	BUILDDIR=$(BUILDDIR) go test -mod=readonly -p 4 `go list ./cli_test/...` -tags='cli_test' -v
 
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
@@ -115,10 +121,9 @@ test-cover:
 	@go test -mod=readonly -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -tags='ledger test_ledger_mock' ./...
 
 
-lint: golangci-lint
-	golangci-lint run
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -d -s
-	go mod verify
+lint:
+	golangci-lint run --out-format=tab --issues-exit-code=0
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs gofmt -d -s
 
 format:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/lcd/statik/statik.go" | xargs gofmt -w -s
@@ -128,8 +133,9 @@ format:
 benchmark:
 	@go test -mod=readonly -bench=. ./...
 
-########################################
-### Local validator nodes using docker and docker-compose
+###############################################################################
+###                                Localnet                                 ###
+###############################################################################
 
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
