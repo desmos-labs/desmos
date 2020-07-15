@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	v030posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.3.0"
 )
 
@@ -57,7 +58,7 @@ func GetReactionShortCodeFromValue(originalValue string) (string, error) {
 	}
 
 	value = strings.Split(value, " ")[0]
-	// nolint: gocritic
+	//nolint: gocritic
 	if value == "like" {
 		value = ":heart:"
 	} else if value == "true" || value == "q" || strings.Contains(value, "nice") || strings.Contains(value, "well") {
@@ -120,7 +121,7 @@ func GetReactionsToRegister(
 			}
 
 			if !containsReactionWithCodeForSubspace(reactionsToRegister, reaction.Value, post.Subspace) {
-				// nolint: errcheck
+				//nolint: errcheck
 				reactionEmoji, _ := emoji.LookupEmojiByCode(reaction.Value)
 
 				reactionsToRegister = append(reactionsToRegister, Reaction{

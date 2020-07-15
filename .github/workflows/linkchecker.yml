@@ -1,0 +1,16 @@
+name: Check Markdown links
+# Check Markdown links checks whether all Markdown links are valid.
+# The check is performed only on .md files inside the docs folder.
+# This workflow is run every 24 hours.
+on:
+  schedule:
+    - cron: '* */24 * * *'
+
+jobs:
+  Markdown-Link-Check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@0.6.0
+        with:
+          folder-path: "docs"

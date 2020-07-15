@@ -4,11 +4,13 @@
 package clitest
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func TestDesmosCLIReportPost(t *testing.T) {
@@ -41,7 +43,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := posts.ComputeID(post.Created, post.Creator, post.Subspace)
+	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Nil(t, post.Medias)

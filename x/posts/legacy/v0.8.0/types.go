@@ -1,10 +1,14 @@
 package v080
 
+// DONTCOVER
+
 import (
+	"regexp"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
-	"regexp"
 )
 
 var URIRegEx = regexp.MustCompile(

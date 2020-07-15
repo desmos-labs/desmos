@@ -1,6 +1,6 @@
 // +build cli_test
 
-// nolint
+//nolint
 package clitest
 
 import (
@@ -13,10 +13,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/desmos-labs/desmos/app"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/tests"
