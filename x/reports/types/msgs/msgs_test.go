@@ -1,13 +1,17 @@
 package msgs_test
 
 import (
-	"fmt"
 	"testing"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMsgReportPost_Route(t *testing.T) {
@@ -40,12 +44,12 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "invalid post ID returns error",
 			msg:   types.NewMsgReportPost("123", "type", "message", creator),
-			error: fmt.Errorf("invalid postID: 123"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, "123"),
 		},
 		{
 			name:  "invalid reports returns error",
 			msg:   types.NewMsgReportPost(postID, "scam", "", creator),
-			error: fmt.Errorf("reports's message cannot be empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "report message cannot be empty"),
 		},
 	}
 
