@@ -5,6 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -36,19 +39,19 @@ func (msg MsgRegisterReaction) Type() string { return models.ActionRegisterReact
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRegisterReaction) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
 	if !models.ShortCodeRegEx.MatchString(msg.ShortCode) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :")
+		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.ShortCode)
 	}
 
 	if !models.URIRegEx.MatchString(msg.Value) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL")
+		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
 	if !models.Sha256RegEx.MatchString(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 
 	return nil

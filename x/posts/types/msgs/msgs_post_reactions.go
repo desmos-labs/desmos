@@ -3,9 +3,12 @@ package msgs
 import (
 	"fmt"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -38,17 +41,16 @@ func (msg MsgAddPostReaction) Type() string { return models.ActionAddPostReactio
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
+		return sdkerrors.Wrap(postserrors.ErrInvalidPostID, msg.PostID.String())
 	}
 
 	if msg.User.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid user address: %s", msg.User))
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
 	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode."+
-			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
+		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.Reaction)
 	}
 
 	return nil
@@ -94,17 +96,16 @@ func (msg MsgRemovePostReaction) Type() string { return models.ActionRemovePostR
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
+		return sdkerrors.Wrap(postserrors.ErrInvalidPostID, msg.PostID.String())
 	}
 
 	if msg.User.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid user address: %s", msg.User))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid user address: %s", msg.User))
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
 	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode. "+
-			"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :")
+		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.Reaction)
 	}
 
 	return nil

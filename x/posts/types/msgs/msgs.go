@@ -6,8 +6,11 @@ import (
 	"strings"
 	"time"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -54,23 +57,24 @@ func (msg MsgCreatePost) Type() string { return models.ActionCreatePost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreatePost) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Medias) == 0 && msg.PollData == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message, medias or poll are required and cannot be all blank or empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			"post message, medias or poll are required and cannot be all blank or empty")
 	}
 
 	if !models.Sha256RegEx.MatchString(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
 	if msg.CreationDate.IsZero() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post creation date")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid post creation date")
 	}
 
 	if msg.CreationDate.After(time.Now().UTC()) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "creation date cannot be in the future")
 	}
 
 	if msg.Medias != nil {
@@ -81,7 +85,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 
 	if msg.PollData != nil {
 		if !msg.PollData.Open {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Poll Post cannot be created closed")
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "poll cannot be created closed")
 		}
 		if err := msg.PollData.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())

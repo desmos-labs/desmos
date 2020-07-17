@@ -37,24 +37,24 @@ func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSession) ValidateBasic() error {
 	if msg.Owner.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid session owner: %s", msg.Owner))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid session owner: %s", msg.Owner))
 	}
 
 	if len(strings.TrimSpace(msg.Namespace)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session namespace cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "session namespace cannot be empty")
 	}
 
 	if len(strings.TrimSpace(msg.PubKey)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Signer public key cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "signer's public key cannot be empty")
 	}
 
 	// The external signer address doesn't have to exist on Desmos
 	if len(strings.TrimSpace(msg.ExternalOwner)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session external owner cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "session external owner cannot be empty")
 	}
 
 	if len(strings.TrimSpace(msg.Signature)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Session signature cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "session signature cannot be empty")
 	}
 
 	return nil
