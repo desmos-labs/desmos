@@ -1,12 +1,12 @@
 package common_test
 
 import (
-	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 )
 
 // -----------
@@ -463,53 +463,6 @@ func TestPostMedia_Equals(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.expEquals, test.first.Equals(test.second))
-		})
-	}
-}
-
-func TestPostMedia_ParseURI(t *testing.T) {
-	tests := []struct {
-		uri    string
-		expErr error
-	}{
-		{
-			uri:    "http://error.com",
-			expErr: nil,
-		},
-		{
-			uri:    "http://",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    "error.com",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    ".com",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    "ttps://",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    "ps://site.com",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    "https://",
-			expErr: fmt.Errorf("invalid uri provided"),
-		},
-		{
-			uri:    "https://example.com",
-			expErr: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.uri, func(t *testing.T) {
-			require.Equal(t, test.expErr, common.ValidateURI(test.uri))
 		})
 	}
 }

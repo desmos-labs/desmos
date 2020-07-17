@@ -1,3 +1,7 @@
+# Version 0.10.0
+## Bug fixes
+- Fixed a bug that caused valid URIs to be considered invalid (#233)
+
 # Version 0.9.0
 ## Changes
 - Removed the JSON-style `String` methods where it was possible, changed the others to not
