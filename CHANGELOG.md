@@ -1,3 +1,7 @@
+# Version 0.10.0
+## Changes
+- Changed the returned error to make them more clear (#237)
+
 # Version 0.9.0
 ## Changes
 - Removed the JSON-style `String` methods where it was possible, changed the others to not
