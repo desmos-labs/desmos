@@ -33,10 +33,10 @@ func NewMsgRegisterReaction(creator sdk.AccAddress, shortCode, value, subspace s
 }
 
 // Route should return the name of the module
-func (msg MsgRegisterReaction) Route() string { return postsModels.RouterKey }
+func (msg MsgRegisterReaction) Route() string { return postsmodels.RouterKey }
 
 // Type should return the action
-func (msg MsgRegisterReaction) Type() string { return postsModels.ActionRegisterReaction }
+func (msg MsgRegisterReaction) Type() string { return postsmodels.ActionRegisterReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRegisterReaction) ValidateBasic() error {
@@ -44,7 +44,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
-	if !postmodels.ShortCodeRegEx.MatchString(msg.ShortCode) {
+	if !postsmodels.ShortCodeRegEx.MatchString(msg.ShortCode) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.ShortCode)
 	}
 
@@ -52,7 +52,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
-	if !postmodels.Sha256RegEx.MatchString(msg.Subspace) {
+	if !postsmodels.Sha256RegEx.MatchString(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 
