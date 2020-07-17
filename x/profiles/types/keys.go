@@ -1,8 +1,6 @@
 package types
 
 import (
-	"regexp"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -22,8 +20,6 @@ const (
 )
 
 var (
-	URIRegEx = regexp.MustCompile(`^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$`)
-
 	ProfileStorePrefix = []byte("profile")
 	DtagStorePrefix    = []byte("dtag")
 )

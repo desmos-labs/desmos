@@ -34,7 +34,6 @@ const (
 var (
 	// functions aliases
 	NewPostMedia               = common.NewPostMedia
-	ValidateURI                = common.ValidateURI
 	NewPostMedias              = common.NewPostMedias
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	ParseAnswerID              = polls.ParseAnswerID
@@ -44,17 +43,16 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 
 	// variable aliases
 	Sha256RegEx              = common.Sha256RegEx
 	HashtagRegEx             = common.HashtagRegEx
 	ShortCodeRegEx           = common.ShortCodeRegEx
-	URIRegEx                 = common.URIRegEx
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
 	PostCommentsStorePrefix  = common.PostCommentsStorePrefix
@@ -74,8 +72,8 @@ type (
 	PollData      = polls.PollData
 	UserAnswer    = polls.UserAnswer
 	UserAnswers   = polls.UserAnswers
-	PostReaction  = reactions.PostReaction
-	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
 	Reactions     = reactions.Reactions
+	PostReaction  = reactions.PostReaction
+	PostReactions = reactions.PostReactions
 )

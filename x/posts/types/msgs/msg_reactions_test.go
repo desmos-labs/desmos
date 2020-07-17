@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/types/msgs"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts/types/msgs"
 )
 
 var msgRegisterReaction = msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
@@ -79,13 +80,14 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		returnedError := test.msg.ValidateBasic()
-		if test.error == nil {
-			require.Nil(t, returnedError)
-		} else {
-			require.NotNil(t, returnedError)
-			require.Equal(t, test.error.Error(), returnedError.Error())
-		}
+		t.Run(test.name, func(t *testing.T) {
+			if test.error == nil {
+				require.Nil(t, test.msg.ValidateBasic())
+			} else {
+				require.NotNil(t, test.msg.ValidateBasic())
+				require.Equal(t, test.error.Error(), test.msg.ValidateBasic().Error())
+			}
+		})
 	}
 }
 
