@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	v090 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.9.0"
 	"sort"
 	"strconv"
 	"time"
@@ -32,6 +33,7 @@ var migrationMap = map[string]types.MigrationCallback{
 	"v0.5.0": v050.Migrate,
 	"v0.6.0": v060.Migrate,
 	"v0.8.0": v080.Migrate,
+	"v0.9.0": v090.Migrate,
 }
 
 const (

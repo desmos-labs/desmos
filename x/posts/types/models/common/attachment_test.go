@@ -10,7 +10,7 @@ import (
 )
 
 // -----------
-// --- PostMedias
+// --- Attachments
 // -----------
 
 func TestPostMedias_String(t *testing.T) {
@@ -19,13 +19,13 @@ func TestPostMedias_String(t *testing.T) {
 	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
 	require.NoError(t, err2)
 
-	postMedias := common.PostMedias{
-		common.PostMedia{
+	postMedias := common.Attachments{
+		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 			Tags:     []sdk.AccAddress{tag, tag2},
 		},
-		common.PostMedia{
+		common.Attachment{
 			URI:      "https://another.com",
 			MimeType: "application/json",
 			Tags:     []sdk.AccAddress{tag},
@@ -47,31 +47,31 @@ func TestPostMedias_Equals(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		first     common.PostMedias
-		second    common.PostMedias
+		first     common.Attachments
+		second    common.Attachments
 		expEquals bool
 	}{
 		{
 			name: "Same data returns true",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag, tag2},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag},
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag, tag2},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag},
@@ -81,14 +81,14 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different data returns false",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
@@ -97,18 +97,18 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different length returns false",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
@@ -117,25 +117,25 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different tags length returns false",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag, tag2},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag},
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag},
@@ -145,25 +145,25 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "different tags returns false",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag2},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag},
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     []sdk.AccAddress{tag},
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     []sdk.AccAddress{tag2},
@@ -173,25 +173,25 @@ func TestPostMedias_Equals(t *testing.T) {
 		},
 		{
 			name: "nil tags returns true",
-			first: common.PostMedias{
-				common.PostMedia{
+			first: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     nil,
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     nil,
 				},
 			},
-			second: common.PostMedias{
-				common.PostMedia{
+			second: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 					Tags:     nil,
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 					Tags:     nil,
@@ -212,29 +212,29 @@ func TestPostMedias_Equals(t *testing.T) {
 func TestPostMedias_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
-		medias      common.PostMedias
-		newMedia    common.PostMedia
-		expMedias   common.PostMedias
+		medias      common.Attachments
+		newMedia    common.Attachment
+		expMedias   common.Attachments
 		expAppended bool
 	}{
 		{
 			name: "append a new media and returns true",
-			medias: common.PostMedias{
-				common.PostMedia{
+			medias: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
 			},
-			newMedia: common.PostMedia{
+			newMedia: common.Attachment{
 				URI:      "uri",
 				MimeType: "application/json",
 			},
-			expMedias: common.PostMedias{
-				common.PostMedia{
+			expMedias: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
-				common.PostMedia{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "application/json",
 				},
@@ -242,18 +242,18 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 		},
 		{
 			name: "not append an existing media and returns false",
-			medias: common.PostMedias{
-				common.PostMedia{
+			medias: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
 			},
-			newMedia: common.PostMedia{
+			newMedia: common.Attachment{
 				URI:      "uri",
 				MimeType: "text/plain",
 			},
-			expMedias: common.PostMedias{
-				common.PostMedia{
+			expMedias: common.Attachments{
+				common.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
 				},
@@ -272,12 +272,12 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 
 func TestPostMedias_Validate(t *testing.T) {
 	tests := []struct {
-		postMedia common.PostMedias
+		postMedia common.Attachments
 		expErr    string
 	}{
 		{
-			postMedia: common.PostMedias{
-				common.PostMedia{
+			postMedia: common.Attachments{
+				common.Attachment{
 					URI:      "",
 					MimeType: "text/plain",
 				},
@@ -286,8 +286,8 @@ func TestPostMedias_Validate(t *testing.T) {
 		},
 
 		{
-			postMedia: common.PostMedias{
-				common.PostMedia{
+			postMedia: common.Attachments{
+				common.Attachment{
 					URI:      "htt://example.com",
 					MimeType: "text/plain",
 				},
@@ -295,8 +295,8 @@ func TestPostMedias_Validate(t *testing.T) {
 			expErr: "invalid uri provided",
 		},
 		{
-			postMedia: common.PostMedias{
-				common.PostMedia{
+			postMedia: common.Attachments{
+				common.Attachment{
 					URI:      "https://example.com",
 					MimeType: "",
 				},
@@ -318,7 +318,7 @@ func TestPostMedias_Validate(t *testing.T) {
 }
 
 // -----------
-// --- PostMedia
+// --- Attachment
 // -----------
 
 func TestPostMedia_Validate(t *testing.T) {
@@ -327,12 +327,12 @@ func TestPostMedia_Validate(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		postMedia common.PostMedia
+		postMedia common.Attachment
 		expErr    string
 	}{
 		{
 			name: "Empty URI",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "",
 				MimeType: "text/plain",
 			},
@@ -340,7 +340,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid URI",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "htt://example.com",
 				MimeType: "text/plain",
 			},
@@ -348,7 +348,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty mime type",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "",
 			},
@@ -356,7 +356,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid Tags",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{{}},
@@ -365,7 +365,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "No errors media (with tags)",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{tag},
@@ -374,7 +374,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "No errors media (without tags)",
-			postMedia: common.PostMedia{
+			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     nil,
@@ -401,18 +401,18 @@ func TestPostMedia_Equals(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		first     common.PostMedia
-		second    common.PostMedia
+		first     common.Attachment
+		second    common.Attachment
 		expEquals bool
 	}{
 		{
 			name: "Same data returns true",
-			first: common.PostMedia{
+			first: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{tag},
 			},
-			second: common.PostMedia{
+			second: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{tag},
@@ -421,11 +421,11 @@ func TestPostMedia_Equals(t *testing.T) {
 		},
 		{
 			name: "Different URI returns false",
-			first: common.PostMedia{
+			first: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
-			second: common.PostMedia{
+			second: common.Attachment{
 				URI:      "https://another.com",
 				MimeType: "text/plain",
 			},
@@ -433,11 +433,11 @@ func TestPostMedia_Equals(t *testing.T) {
 		},
 		{
 			name: "Different mime type returns false",
-			first: common.PostMedia{
+			first: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 			},
-			second: common.PostMedia{
+			second: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "application/json",
 			},
@@ -445,12 +445,12 @@ func TestPostMedia_Equals(t *testing.T) {
 		},
 		{
 			name: "Different tags returns false",
-			first: common.PostMedia{
+			first: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{tag},
 			},
-			second: common.PostMedia{
+			second: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
 				Tags:     []sdk.AccAddress{},

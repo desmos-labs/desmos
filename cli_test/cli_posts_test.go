@@ -45,7 +45,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
@@ -100,7 +100,7 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	require.Equal(t, computedID, post.PostID)
 	require.False(t, post.AllowsComments)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
@@ -162,8 +162,8 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 2)
-	require.Equal(t, post.Medias, types.NewPostMedias(
+	require.Len(t, post.Attachments, 2)
+	require.Equal(t, post.Attachments, types.NewPostMedias(
 		types.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
 		types.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
@@ -226,12 +226,12 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 3)
+	require.Len(t, post.Attachments, 3)
 	require.Equal(t, types.NewPostMedias(
 		types.NewPostMedia("https://example.com/media1", "text/plain", nil),
 		types.NewPostMedia("https://example.com/media2", "application/json", nil),
 		types.NewPostMedia("https://example.com/media3", "text/plain", nil),
-	), post.Medias)
+	), post.Attachments)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
@@ -292,7 +292,7 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 0)
+	require.Len(t, post.Attachments, 0)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
@@ -348,7 +348,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	post := storedPosts[0]
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 	require.NotNil(t, post.PollData)
 
 	// Check poll data

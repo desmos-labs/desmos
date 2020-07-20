@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		map[string]string{},
 		suite.testData.post.Created,
 		suite.testData.post.Creator,
-	).WithMedias(suite.testData.post.Medias).WithPollData(*suite.testData.post.PollData)
+	).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData)
 
 	commentPost := types.Post{
 		PostID:         id2,

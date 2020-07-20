@@ -153,7 +153,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				map[string]string{},
 				suite.testData.post.Created,
 				suite.testData.postOwner,
-			).WithMedias(suite.testData.post.Medias),
+			).WithAttachments(suite.testData.post.Attachments),
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				map[string]string{},
 				suite.testData.post.Created,
 				suite.testData.postOwner,
-			).WithMedias(suite.testData.post.Medias),
+			).WithAttachments(suite.testData.post.Attachments),
 		},
 		{
 			name:       "Existing post with poll is found properly",

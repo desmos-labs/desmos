@@ -65,7 +65,7 @@ type PostData struct {
 	Subspace       string
 	CreationDate   time.Time
 	OptionalData   map[string]string
-	Medias         types.PostMedias
+	Medias         types.Attachments
 	PollData       *types.PollData
 }
 
@@ -132,7 +132,7 @@ func RandomHashtag(r *rand.Rand) string {
 }
 
 // RandomMedias returns a randomly generated list of post medias
-func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
+func RandomMedias(r *rand.Rand, accs []sim.Account) types.Attachments {
 	mediaNumber := r.Intn(20)
 
 	tagsLen := r.Intn(50)
@@ -142,11 +142,11 @@ func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
 		tags[i] = acc.Address
 	}
 
-	postMedias := make(types.PostMedias, mediaNumber)
+	postMedias := make(types.Attachments, mediaNumber)
 	for i := 0; i < mediaNumber; i++ {
 		host := RandomHosts[r.Intn(len(RandomHosts))]
 		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
-		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, tags)
+		postMedias[i] = types.NewAttachment(host+strconv.Itoa(i), mimeType, tags)
 	}
 
 	return postMedias
