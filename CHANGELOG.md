@@ -1,6 +1,7 @@
 # Version 0.10.0
 ## Changes
-- Changed the returned error to make them more clear (#237)
+- Changed application errors to make them more clear (#237)
+- Implemented the `x/upgrade` module (#174)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)

@@ -248,6 +248,9 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		keys[upgrade.StoreKey],
 		app.cdc,
 	)
+	app.upgradeKeeper.SetUpgradeHandler("test", func(ctx sdk.Context, plan upgrade.Plan) {
+
+	})
 
 	// Create evidence keeper with router
 	evidenceKeeper := evidence.NewKeeper(
