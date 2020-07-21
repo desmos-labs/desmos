@@ -5,4 +5,4 @@ Thanks to this module, validators can have an easier time when a new version of 
 
 If you want to know more about setting up the `upgrade_manager` (the binary responsible for handling automatic upgrades), please refer to the [Setup](./setup.md) page. 
 
-If you want to know how proposal-based upgrades will work, please refer to the [Upgrade procedure](./upgrade-procedure.md) page.  
+If you want to know how proposal-based upgrades will work, please refer to the [Workflow](./workflow.md) page.  

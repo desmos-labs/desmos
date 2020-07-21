@@ -81,6 +81,6 @@ In order to make validators lives easier, during our testnet phase we will provi
 ### Automatic binaries download
 When creating upgrade proposals, from time to time we will also try to specify the binaries that should be automatically downloaded during the upgrade. This will be done following the [`cosmosd` specification](https://github.com/regen-network/cosmosd#auto-download). 
 
-If you want, you can enable the `DAEMON_ALLOW_DOWNLOAD_BINARIES` environmental variable during the [setup](docs/validators/upgrades/automatic/setup.md) in order to allow your node to auto download them and perform all the procedure by itself. 
+If you want, you can enable the `DAEMON_ALLOW_DOWNLOAD_BINARIES` environmental variable during the [setup](./setup.md) in order to allow your node to auto download them and perform all the procedure by itself. 
 
 However, please keep in mind that while this is fine to do in a test environment (i.e. the during the testnet phase), it is less OK to be done inside a production environment. You should always be caution with automatic operations and always be ready to manually override them if needed.
