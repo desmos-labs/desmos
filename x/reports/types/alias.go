@@ -28,15 +28,15 @@ var (
 	ReportStoreKey        = models.ReportStoreKey
 
 	// variable aliases
-	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
+	ModelsCdc              = models.ModelsCdc
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
 )
