@@ -67,7 +67,7 @@ If you want to know more about the set variables, here is a brief description:
 |:-------- | :---------- |
 |`DAEMON_HOME` | Location where upgrade binaries should be kept |
 |`DAEMON_NAME` | Name of the binary itself |
-| `DAEMON_RESTART_AFTER_UPGRADE` | (optional) if set to on it will restart a the sub-process with the same args (but new binary) after a successful upgrade. By default, the manager dies afterwards and allows the supervisor to restart it if needed. Note that this will not auto-restart the child if there was an error. |
+| `DAEMON_RESTART_AFTER_UPGRADE` | (optional) if set to on it will restart a sub-process with the same args (but new binary) after a successful upgrade. By default, the manager dies afterwards and allows the supervisor to restart it if needed. Note that this will not auto-restart the child if there was an error. |
 |`DAEMON_ALLOW_DOWNLOAD_BINARIES` | (optional) if set to `on` will enable auto-downloading of new binaries |
 
 
