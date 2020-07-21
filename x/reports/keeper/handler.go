@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -17,8 +18,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case types.MsgReportPost:
 			return handleMsgReportPost(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
+				fmt.Sprintf("unrecognized posts message type: %v", msg.Type()))
 		}
 	}
 }

@@ -43,8 +43,7 @@ func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSaveProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress,
-			fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
 	if strings.TrimSpace(msg.Dtag) == "" {

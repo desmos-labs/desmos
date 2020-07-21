@@ -1,9 +1,12 @@
 package msgs
 
 import (
-	"fmt"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types/models"
 	"github.com/desmos-labs/desmos/x/reports/types/models/common"
@@ -36,11 +39,11 @@ func (msg MsgReportPost) Type() string { return common.ActionReportPost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return fmt.Errorf("invalid postID: %s", msg.PostID)
+		return sdkerrors.Wrap(postserrors.ErrInvalidPostID, msg.PostID.String())
 	}
 
 	if err := msg.Report.Validate(); err != nil {
-		return err
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil

@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/desmos-labs/desmos/x/commons"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+
+	postsCommon "github.com/desmos-labs/desmos/x/posts/types/models/common"
 )
 
 // Reaction represents a registered reaction that can be referenced
@@ -34,19 +37,19 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
-	if !common.ShortCodeRegEx.MatchString(reaction.ShortCode) {
+	if !postsCommon.ShortCodeRegEx.MatchString(reaction.ShortCode) {
 		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'")
 	}
 
-	if !common.URIRegEx.MatchString(reaction.Value) {
+	if !commons.IsURIValid(reaction.Value) {
 		return fmt.Errorf("reaction value should be a URL")
 	}
 
-	if !common.Sha256RegEx.MatchString(reaction.Subspace) {
+	if !postsCommon.Sha256RegEx.MatchString(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 
-	if _, found := common.GetEmojiByShortCodeOrValue(reaction.ShortCode); found {
+	if _, found := postsCommon.GetEmojiByShortCodeOrValue(reaction.ShortCode); found {
 		return fmt.Errorf("reaction has emoji shortcode: %s", reaction.ShortCode)
 	}
 
