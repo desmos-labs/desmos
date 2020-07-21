@@ -39,13 +39,13 @@ func NewHandler(keeper Keeper) sdk.Handler {
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
-		types.ComputeID(msg.CreationDate, msg.Creator, msg.Subspace),
+		types.ComputeID(ctx.BlockTime(), msg.Creator, msg.Subspace),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
 		msg.OptionalData,
-		msg.CreationDate,
+		ctx.BlockTime(),
 		msg.Creator,
 	).WithMedias(msg.Medias)
 
@@ -107,13 +107,13 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if existing.Created.After(msg.EditDate) {
+	if existing.Created.After(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
 
 	// Edit the post
 	existing.Message = msg.Message
-	existing.LastEdited = msg.EditDate
+	existing.LastEdited = ctx.BlockTime()
 
 	if err := ValidatePost(ctx, keeper, existing); err != nil {
 		return nil, err

@@ -116,6 +116,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 
 	computedID := types.ComputeID(suite.testData.post.Created, suite.testData.post.Creator, suite.testData.post.Subspace)
 
+	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
@@ -144,7 +147,6 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Medias,
 				suite.testData.post.PollData,
 			),
@@ -160,7 +162,6 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Medias,
 				suite.testData.post.PollData,
 			),
@@ -184,7 +185,6 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Medias,
 				suite.testData.post.PollData,
 			),
@@ -210,8 +210,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				suite.testData.post.Creator,
-				suite.testData.post.Created.AddDate(0, 0, 1),
+				otherCreator,
 				suite.testData.post.Medias,
 				suite.testData.post.PollData,
 			),
@@ -238,7 +237,6 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Medias,
 				suite.testData.post.PollData,
 			),
@@ -255,7 +253,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			for _, p := range test.storedPosts {
-				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
+				computedID := types.ComputeID(suite.ctx.BlockTime(), p.Creator, p.Subspace)
+				test.msg.ParentID = computedID
+				store.Set(types.PostStoreKey(computedID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			handler := keeper.NewHandler(suite.keeper)
@@ -265,7 +265,11 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
+				computedID := types.ComputeID(suite.ctx.BlockTime(), test.expPost.Creator, test.expPost.Subspace)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(computedID)), &stored)
+				test.expPost.Created = suite.ctx.BlockTime() // make sure that the two posts has the same BlockTime
+				test.expPost.PostID = computedID             // make sure that the two posts has the same ID calculated using the blockTime
+
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
@@ -303,31 +307,31 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 		storedPost *types.Post
 		msg        types.MsgEditPost
 		expError   error
-		expPost    types.Post
+		expPost    *types.Post
 	}{
 		{
 			name:       "Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(id, "Edited message", suite.testData.post.Creator, suite.testData.post.Created),
+			msg:        types.NewMsgEditPost(id, "Edited message", suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editor, suite.testData.post.Created),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editor),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator, suite.testData.post.Created.AddDate(0, 0, -1)),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
 			name:       "Valid request is handled properly",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator, suite.testData.post.Created.AddDate(0, 0, 1)),
-			expPost: types.Post{
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
+			expPost: &types.Post{
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
 				Message:        "Edited message",
@@ -350,7 +354,17 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedPost != nil {
-				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
+				computedID := types.ComputeID(suite.ctx.BlockTime(), test.storedPost.Creator, test.storedPost.Subspace)
+				test.storedPost.PostID = computedID
+				test.msg.PostID = computedID
+				if test.expPost != nil {
+					test.storedPost.Created = suite.ctx.BlockTime()
+					test.expPost.Created = test.storedPost.Created
+					test.expPost.PostID = test.storedPost.PostID
+					suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
+					test.expPost.LastEdited = suite.ctx.BlockTime()
+				}
+				store.Set(types.PostStoreKey(computedID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
 			handler := keeper.NewHandler(suite.keeper)
@@ -361,7 +375,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				suite.Contains(res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.expPost.LastEdited.Format(time.RFC3339)),
 				))
 
 				var stored types.Post
