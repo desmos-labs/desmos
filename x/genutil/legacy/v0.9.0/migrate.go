@@ -1,12 +1,13 @@
 package v090
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 	v090posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.9.0"
-	"time"
 )
 
 // Migrate migrates exported state from v0.8.0 to a v0.9.0 genesis state.

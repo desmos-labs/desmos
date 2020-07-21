@@ -1,6 +1,8 @@
 # Version 0.10.0
 ## Changes
 - Changed the returned error to make them more clear (#237)
+- Renamed `PostMedia` into `Attachment` to fix incorrect singular and plural
+forms of variables (#203)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)

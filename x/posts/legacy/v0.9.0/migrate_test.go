@@ -207,10 +207,10 @@ func TestConvertMediasToAttachments(t *testing.T) {
 }
 
 func TestConvertPosts(t *testing.T) {
-	parentPostCreator, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	parentPostCreator, err := sdk.AccAddressFromBech32("desmos1mmeu5t0j5284p7jkergq9hyejlhdwkzp25y84l")
 	require.NoError(t, err)
 
-	postCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	postCreator, err := sdk.AccAddressFromBech32("desmos1mmeu5t0j5284p7jkergq9hyejlhdwkzp25y84l")
 	require.NoError(t, err)
 
 	parentCreationTime := time.Now().UTC()

@@ -112,9 +112,9 @@ E.g.
 			parentID := types.PostID(viper.GetString(flagParentID))
 
 			// medias' checks
-			mediasStrings, err := cmd.Flags().GetStringArray(flagMedia)
+			mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
 			if err != nil {
-				return fmt.Errorf("invalid flag value: %s", flagMedia)
+				return fmt.Errorf("invalid flag value: %s", flagAttachment)
 			}
 
 			medias := types.Attachments{}
@@ -229,7 +229,7 @@ E.g.
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
 	cmd.Flags().String(flagParentID, "", "Id of the post to which this one should be an answer to")
-	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
+	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's media")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
 

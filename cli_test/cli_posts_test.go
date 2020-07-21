@@ -124,7 +124,7 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
+func TestDesmosCLIPostsCreateWithAttachmentsAndEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -149,8 +149,8 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -163,20 +163,20 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Attachments, 2)
-	require.Equal(t, post.Attachments, types.NewPostMedias(
-		types.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
-		types.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
+	require.Equal(t, post.Attachments, types.NewAttachments(
+		types.NewAttachment("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
+		types.NewAttachment("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -191,7 +191,7 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
+func TestDesmosCLIPostsCreateWithAttachmentsAndNonEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -211,9 +211,9 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
 	require.Empty(t, sterr)
@@ -227,25 +227,25 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
 	require.Len(t, post.Attachments, 3)
-	require.Equal(t, types.NewPostMedias(
-		types.NewPostMedia("https://example.com/media1", "text/plain", nil),
-		types.NewPostMedia("https://example.com/media2", "application/json", nil),
-		types.NewPostMedia("https://example.com/media3", "text/plain", nil),
+	require.Equal(t, types.NewAttachments(
+		types.NewAttachment("https://example.com/media1", "text/plain", nil),
+		types.NewAttachment("https://example.com/media2", "application/json", nil),
+		types.NewAttachment("https://example.com/media3", "text/plain", nil),
 	), post.Attachments)
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.Empty(t, stderr)
 	require.True(t, success)
