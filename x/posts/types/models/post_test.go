@@ -305,12 +305,12 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid post owner: ",
 		},
 		{
-			name:     "Empty post message, media and poll",
+			name:     "Empty post message, attachment and poll",
 			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Empty post message (blank), media and poll",
+			name:     "Empty post message (blank), attachment and poll",
 			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},

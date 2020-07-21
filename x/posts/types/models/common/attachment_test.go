@@ -218,7 +218,7 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 		expAppended bool
 	}{
 		{
-			name: "append a new media and returns true",
+			name: "append a new attachment and returns true",
 			medias: common.Attachments{
 				common.Attachment{
 					URI:      "uri",
@@ -241,7 +241,7 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 			},
 		},
 		{
-			name: "not append an existing media and returns false",
+			name: "not append an existing attachment and returns false",
 			medias: common.Attachments{
 				common.Attachment{
 					URI:      "uri",
@@ -364,7 +364,7 @@ func TestPostMedia_Validate(t *testing.T) {
 			expErr: "invalid empty tag address: ",
 		},
 		{
-			name: "No errors media (with tags)",
+			name: "No errors attachment (with tags)",
 			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
@@ -373,7 +373,7 @@ func TestPostMedia_Validate(t *testing.T) {
 			expErr: "",
 		},
 		{
-			name: "No errors media (without tags)",
+			name: "No errors attachment (without tags)",
 			postMedia: common.Attachment{
 				URI:      "https://example.com",
 				MimeType: "text/plain",
