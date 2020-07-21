@@ -37,13 +37,13 @@ func (pic Pictures) Equals(otherPic *Pictures) bool {
 func (pic Pictures) Validate() error {
 
 	if pic.Profile != nil {
-		if valid := URIRegEx.MatchString(*pic.Profile); !valid {
+		if valid := commons.IsURIValid(*pic.Profile); !valid {
 			return fmt.Errorf("invalid profile picture uri provided")
 		}
 	}
 
 	if pic.Cover != nil {
-		if valid := URIRegEx.MatchString(*pic.Cover); !valid {
+		if valid := commons.IsURIValid(*pic.Cover); !valid {
 			return fmt.Errorf("invalid profile cover uri provided")
 		}
 	}

@@ -8,8 +8,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 // NewHandler returns a handler for "magpie" type messages.
@@ -21,8 +22,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case types.MsgCreateSession:
 			return handleMsgCreateSession(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Magpie message type: %v", msg.Type())
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
+				fmt.Sprintf("unrecognized magpie message type: %v", msg.Type()))
 		}
 	}
 }

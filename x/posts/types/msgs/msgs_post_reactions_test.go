@@ -3,11 +3,14 @@ package msgs_test
 import (
 	"testing"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji2 "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 	"github.com/desmos-labs/desmos/x/posts/types/msgs"
-	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -47,17 +50,17 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   msgs.NewMsgAddPostReaction("", ":like:", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, ""),
 		},
 		{
 			name:  "Invalid user returns error",
 			msg:   msgs.NewMsgAddPostReaction(id, ":like:", nil),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
 		},
 		{
 			name:  "Invalid value returns error",
 			msg:   msgs.NewMsgAddPostReaction(id, "like", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode.If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, "like"),
 		},
 		{
 			name:  "Valid message returns no error (with shortcode)",
@@ -120,18 +123,17 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   msgs.NewMsgRemovePostReaction("", testOwner, ":+1:"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, ""),
 		},
 		{
 			name:  "Invalid user address: ",
 			msg:   msgs.NewMsgRemovePostReaction(id, nil, ":like:"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
 		},
 		{
-			name: "Blank value returns no error",
-			msg:  msgs.NewMsgRemovePostReaction(id, testOwner, ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Reaction value must be an emoji or an emoji shortcode. "+
-				"If a shortcode is provided, it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			name:  "Blank value returns no error",
+			msg:   msgs.NewMsgRemovePostReaction(id, testOwner, ""),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, ""),
 		},
 		{
 			name:  "Valid message returns no error (with shortcode)",

@@ -9,6 +9,14 @@ on:
       - master
 
 jobs:
+  Markdown-Link-Check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@0.6.0
+        with:
+          folder-path: "docs"
+
   Build-and-Deploy:
     runs-on: ubuntu-latest
     steps:
@@ -30,4 +38,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: .vuepress/dist
+          FOLDER: docs/.vuepress/dist

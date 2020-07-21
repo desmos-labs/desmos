@@ -3,10 +3,13 @@ package msgs_test
 import (
 	"testing"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 	"github.com/desmos-labs/desmos/x/posts/types/msgs"
-	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -34,17 +37,17 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id",
 			msg:   msgs.NewMsgAnswerPoll("", []models.AnswerID{1, 2}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, ""),
 		},
 		{
 			name:  "Invalid answerer address",
 			msg:   msgs.NewMsgAnswerPoll(id, []models.AnswerID{1, 2}, nil),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid answerer address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer address: "),
 		},
 		{
 			name:  "Returns error when no answer is provided",
 			msg:   msgs.NewMsgAnswerPoll(id, []models.AnswerID{}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",

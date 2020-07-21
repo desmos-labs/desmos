@@ -4,11 +4,14 @@ import (
 	"testing"
 	"time"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 	"github.com/desmos-labs/desmos/x/posts/types/msgs"
-	"github.com/stretchr/testify/require"
 )
 
 // ----------------------
@@ -74,7 +77,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Medias,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
 			name: "Empty message returns error if medias, poll data and message are empty",
@@ -89,7 +92,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message, medias or poll are required and cannot be all blank or empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post message, medias or poll are required and cannot be all blank or empty"),
 		},
 		{
 			name: "Non-empty message returns no error if medias are empty",
@@ -179,7 +182,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Medias,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post subspace must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash"),
 		},
 		{
 			name: "Future creation date returns error",
@@ -194,7 +197,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Medias,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Creation date cannot be in the future"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "creation date cannot be in the future"),
 		},
 		{
 			name: "Empty URI in medias returns error",

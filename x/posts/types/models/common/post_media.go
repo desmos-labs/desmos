@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/desmos-labs/desmos/x/commons"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -27,8 +29,8 @@ func NewPostMedia(uri, mimeType string, tags []sdk.AccAddress) PostMedia {
 
 // Validate implements validator
 func (pm PostMedia) Validate() error {
-	if err := ValidateURI(pm.URI); err != nil {
-		return err
+	if !commons.IsURIValid(pm.URI) {
+		return fmt.Errorf("invalid uri provided")
 	}
 
 	if len(strings.TrimSpace(pm.MimeType)) == 0 {
@@ -57,15 +59,6 @@ func (pm PostMedia) Equals(other PostMedia) bool {
 	}
 
 	return pm.URI == other.URI && pm.MimeType == other.MimeType
-}
-
-// ValidateURI checks if the given uri string is well-formed according to the regExp and return and error otherwise
-func ValidateURI(uri string) error {
-	if !URIRegEx.MatchString(uri) {
-		return fmt.Errorf("invalid uri provided")
-	}
-
-	return nil
 }
 
 // ---------------
