@@ -38,14 +38,15 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
+	postTime := ctx.BlockTime()
 	post := types.NewPost(
-		types.ComputeID(ctx.BlockTime(), msg.Creator, msg.Subspace),
+		types.ComputeID(postTime, msg.Creator, msg.Subspace),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
 		msg.OptionalData,
-		ctx.BlockTime(),
+		postTime,
 		msg.Creator,
 	).WithMedias(msg.Medias)
 

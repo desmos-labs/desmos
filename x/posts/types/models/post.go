@@ -188,16 +188,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post creation time: %s", p.Created)
 	}
 
-	if p.Created.After(time.Now().UTC()) {
-		return fmt.Errorf("post creation date cannot be in the future")
-	}
-
 	if !p.LastEdited.IsZero() && p.LastEdited.Before(p.Created) {
 		return fmt.Errorf("invalid post last edit time: %s", p.LastEdited)
-	}
-
-	if !p.LastEdited.IsZero() && p.LastEdited.After(time.Now().UTC()) {
-		return fmt.Errorf("post last edit date cannot be in the future")
 	}
 
 	if err := p.Medias.Validate(); err != nil {
