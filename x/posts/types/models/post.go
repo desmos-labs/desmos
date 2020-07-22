@@ -181,7 +181,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message, medias or poll required, they cannot be all empty")
 	}
 
-	if !IsSubspace(p.Subspace) {
+	if !IsValidSubspace(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
