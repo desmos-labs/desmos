@@ -46,7 +46,7 @@ func (reaction PostReaction) Validate() error {
 		return fmt.Errorf("reaction value cannot be empty or blank")
 	}
 
-	if !common.ShortCodeRegEx.MatchString(reaction.Shortcode) {
+	if !common.IsValidReactionCode(reaction.Shortcode) {
 		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'")
 	}
 
