@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 func TestReport_Validate(t *testing.T) {
@@ -26,12 +27,12 @@ func TestReport_Validate(t *testing.T) {
 		{
 			name:   "empty reports's message returns error",
 			report: types.NewReport("scam", "", creator),
-			expErr: fmt.Errorf("reports's message cannot be empty"),
+			expErr: fmt.Errorf("report message cannot be empty"),
 		},
 		{
 			name:   "invalid reports's creator returns error",
 			report: types.NewReport("scam", "message", sdk.AccAddress{}),
-			expErr: fmt.Errorf("invalid user address "),
+			expErr: fmt.Errorf("invalid user address: "),
 		},
 		{
 			name:   "valid reports returns no error",
@@ -66,12 +67,12 @@ func TestReports_Validate(t *testing.T) {
 		{
 			name:    "empty reports's message returns error",
 			reports: types.Reports{types.NewReport("scam", "", creator)},
-			expErr:  fmt.Errorf("reports's message cannot be empty"),
+			expErr:  fmt.Errorf("report message cannot be empty"),
 		},
 		{
 			name:    "invalid reports's creator returns error",
 			reports: types.Reports{types.NewReport("scam", "message", sdk.AccAddress{})},
-			expErr:  fmt.Errorf("invalid user address "),
+			expErr:  fmt.Errorf("invalid user address: "),
 		},
 		{
 			name:    "valid reports returns no error",

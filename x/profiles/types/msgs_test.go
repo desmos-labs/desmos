@@ -5,8 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // ----------------------
@@ -64,7 +65,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 				testProfile.Pictures.Cover,
 				nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
 			name:  "Invalid empty dtag returns error",

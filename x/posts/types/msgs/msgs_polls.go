@@ -3,8 +3,11 @@ package msgs
 import (
 	"fmt"
 
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -37,15 +40,15 @@ func (msg MsgAnswerPoll) Type() string { return models.ActionAnswerPoll }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
 	if !msg.PostID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
+		return sdkerrors.Wrap(postserrors.ErrInvalidPostID, msg.PostID.String())
 	}
 
 	if msg.Answerer.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid answerer address: %s", msg.Answerer))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid answerer address: %s", msg.Answerer))
 	}
 
 	if len(msg.UserAnswers) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Provided answers must contains at least one answer")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answers must contains at least one answer")
 	}
 
 	return nil

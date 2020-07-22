@@ -1,12 +1,15 @@
 package msgs_test
 
 import (
-	"fmt"
 	"testing"
 
+	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/posts/types/msgs"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts/types/msgs"
 )
 
 var msgRegisterReaction = msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
@@ -32,60 +35,61 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 			name: "Invalid creator returns error",
 			msg: msgs.NewMsgRegisterReaction(nil, ":smile:", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", "")),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
 			name: "Empty short code returns error",
 			msg: msgs.NewMsgRegisterReaction(testOwner, "", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, ""),
 		},
 		{
 			name: "Invalid short code returns error",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile", "https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "The specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a :"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, ":smile"),
 		},
 		{
 			name: "Empty value returns error",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
+			error: sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri"),
 		},
 		{
 			name: "Invalid value returns error (url)",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "htp://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
+			error: sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri"),
 		},
 		{
 			name: "Invalid value returns error (unicode)",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
+			error: sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri"),
 		},
 		{
 			name:  "Valid emoji value returns no error",
 			msg:   msgs.NewMsgRegisterReaction(testOwner, ":smile:", "💙", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction value should be a valid URL"),
+			error: sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri"),
 		},
 		{
 			name: "Invalid subspace returns error",
 			msg: msgs.NewMsgRegisterReaction(testOwner, ":smile:", "https://smile.jpg",
 				"1234"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reaction subspace must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash"),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		returnedError := test.msg.ValidateBasic()
-		if test.error == nil {
-			require.Nil(t, returnedError)
-		} else {
-			require.NotNil(t, returnedError)
-			require.Equal(t, test.error.Error(), returnedError.Error())
-		}
+		t.Run(test.name, func(t *testing.T) {
+			if test.error == nil {
+				require.Nil(t, test.msg.ValidateBasic())
+			} else {
+				require.NotNil(t, test.msg.ValidateBasic())
+				require.Equal(t, test.error.Error(), test.msg.ValidateBasic().Error())
+			}
+		})
 	}
 }
 

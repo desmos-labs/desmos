@@ -27,5 +27,5 @@ Local testnets are perfect if you want to quickly setup a Desmos blockchain inst
 They also might be particularly useful to developers that do not want to write on the public net but want first to try out their app's integration locally to make sure everything works properly. 
 
 :::tip Creating a local testnet  
-If you want to know more about how creating a local testnet, please refer to the [_Create a local testnet_](docs/testnets/create-local.md) page.  
+If you want to know more about how creating a local testnet, please refer to the [_Create a local testnet_](create-local.md) page.  
 ::: 

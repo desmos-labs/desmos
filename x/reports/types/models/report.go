@@ -30,11 +30,11 @@ func (r Report) Validate() error {
 	}
 
 	if len(strings.TrimSpace(r.Message)) == 0 {
-		return fmt.Errorf("reports's message cannot be empty")
+		return fmt.Errorf("report message cannot be empty")
 	}
 
 	if r.User.Empty() {
-		return fmt.Errorf("invalid user address %s", r.User)
+		return fmt.Errorf("invalid user address: %s", r.User)
 	}
 
 	return nil
