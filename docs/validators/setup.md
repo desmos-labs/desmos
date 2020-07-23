@@ -23,7 +23,19 @@ rm $HOME/.desmoscli/config/config.toml
 :::
 
 ## 2. Create your validator
-Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
+In order to create a validator, you need to have to create a local wallet first. This will be used in order to hold the tokens that you will later delegate to your validator node, allowing him to properly work. In order to create this wallet, please run: 
+
+```shell
+desmoscli keys add <key_name>
+```  
+
+:::warning Key name  
+Please select a key name that you will easily remember and be able to type fast. This name will be used all over the places inside other commands later.   
+:::
+
+Once that you have created your local wallet, it's time to get some tokens to be used as the initial validator stake so that it can run properly. If you are setting up a validator inside one of our testnets, please refer to our [testnet repo](https://github.com/desmos-labs/morpheus) to know the faucet address. If you are running a validator on our mainnet, you will need to purchase the tokens.
+
+To run a validator node you need to first get your current validator public key that was created when you ran `desmod init`. Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
 
 ```bash
 desmosd tendermint show-validator
@@ -43,7 +55,7 @@ We are going to use `udesmos` as the staking token on Mainnet.
 desmoscli tx staking create-validator \
   --amount=1000000udaric \
   --pubkey=$(desmosd tendermint show-validator) \
-  --moniker="choose a moniker" \
+  --moniker="<Your moniker here>" \
   --chain-id=<chain_id> \
   --commission-rate="0.10" \
   --commission-max-rate="0.20" \
@@ -54,6 +66,10 @@ desmoscli tx staking create-validator \
   --gas-prices="0.025udaric" \
   --from=<key_name>
 ```
+
+::: tip
+When specifying the value of the `moniker` flag, please keep in mind this is going to be the public name associated to your validator. For this reason, it should represent your company name or something else that can easily identify you among all the other validators.  
+:::
 
 ::: tip
 When specifying commission parameters, the `commission-max-change-rate` is used to measure % _point_ change over the `commission-rate`. E.g. 1% to 2% is a 100% rate increase, but only 1 percentage point.
@@ -78,9 +94,9 @@ desmoscli tx staking edit-validator
   --website="https://desmos.network" \
   --identity=6A0D65E29A4CBC8E \
   --details="To infinity and beyond!" \
+  --commission-rate="0.10" \
   --chain-id=<chain_id> \
-  --from=<key_name> \
-  --commission-rate="0.10"
+  --from=<key_name>
 ```
 
 __Note__: The `commission-rate` value must adhere to the following invariants:

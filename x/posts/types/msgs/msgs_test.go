@@ -39,7 +39,7 @@ var msgCreatePost = msgs.NewMsgCreatePost(
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
 	testOwner,
-	models.NewPostMedias(models.NewPostMedia("https://uri.com", "text/plain", nil)),
+	models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil)),
 	&pollData,
 )
 
@@ -71,13 +71,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				nil,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
-			name: "Empty message returns error if medias, poll data and message are empty",
+			name: "Empty message returns error if attachments, poll data and message are empty",
 			msg: msgs.NewMsgCreatePost(
 				"",
 				"",
@@ -88,10 +88,10 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post message, medias or poll are required and cannot be all blank or empty"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post message, attachments or poll are required and cannot be all blank or empty"),
 		},
 		{
-			name: "Non-empty message returns no error if medias are empty",
+			name: "Non-empty message returns no error if attachments are empty",
 			msg: msgs.NewMsgCreatePost(
 				"message",
 				"",
@@ -105,7 +105,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Non-empty message returns no error if medias aren't empty",
+			name: "Non-empty message returns no error if attachments aren't empty",
 			msg: msgs.NewMsgCreatePost(
 				"message",
 				"",
@@ -113,13 +113,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: nil,
 		},
 		{
-			name: "Empty message returns no error if medias aren't empty",
+			name: "Empty message returns no error if attachments aren't empty",
 			msg: msgs.NewMsgCreatePost(
 				"",
 				"",
@@ -127,7 +127,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: nil,
@@ -169,7 +169,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"",
 				map[string]string{},
 				creator,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash"),
@@ -183,8 +183,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "",
 						MimeType: "text/plain",
 					},
@@ -202,7 +202,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				models.PostMedias{models.PostMedia{
+				models.Attachments{models.Attachment{
 					URI:      "invalid-uri",
 					MimeType: "text/plain",
 				}},
@@ -219,8 +219,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://example.com",
 						MimeType: "",
 					},
@@ -246,8 +246,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					"array":  `["first","second"]`,
 				},
 				creator,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://uri.com",
 						MimeType: "text/plain",
 					},
@@ -257,7 +257,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with empty medias non-empty poll and non-empty message returns no error",
+			name: "Message with empty attachments non-empty poll and non-empty message returns no error",
 			msg: msgs.NewMsgCreatePost(
 				"My message",
 				"",
@@ -271,7 +271,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with non-empty medias, non-empty poll and non-empty message returns no error",
+			name: "Message with non-empty attachments, non-empty poll and non-empty message returns no error",
 			msg: msgs.NewMsgCreatePost(
 				"My message",
 				"",
@@ -279,13 +279,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: nil,
 		},
 		{
-			name: "Message with non-empty medias, non empty poll and empty message returns no error",
+			name: "Message with non-empty attachments, non empty poll and empty message returns no error",
 			msg: msgs.NewMsgCreatePost(
 				"",
 				"",
@@ -293,13 +293,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				msgCreatePost.Medias,
+				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: nil,
 		},
 		{
-			name: "Message with empty medias, non empty poll and empty message returns no error",
+			name: "Message with empty attachments, non empty poll and empty message returns no error",
 			msg: msgs.NewMsgCreatePost(
 				"",
 				"",
@@ -313,7 +313,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: nil,
 		},
 		{
-			name: "Message with empty poll, non-empty medias and non empty message returns no error",
+			name: "Message with empty poll, non-empty attachments and non empty message returns no error",
 			msg: msgs.NewMsgCreatePost(
 				"My message",
 				"",
@@ -321,8 +321,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://example.com",
 						MimeType: "text/plain",
 					},
@@ -365,15 +365,15 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{"field": "value"},
 				testOwner,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://uri.com",
 						MimeType: "text/plain",
 					},
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -384,48 +384,48 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://uri.com",
 						MimeType: "text/plain",
 					},
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
-			name: "Message with empty medias",
+			name: "Message with empty attachments",
 			msg: msgs.NewMsgCreatePost(
-				"My Post without medias",
+				"My Post without attachments",
 				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				models.PostMedias{},
+				models.Attachments{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without medias","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty poll data",
 			msg: msgs.NewMsgCreatePost(
-				"My Post without medias",
+				"My Post without attachments",
 				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				models.PostMedias{
-					models.PostMedia{
+				models.Attachments{
+					models.Attachment{
 						URI:      "https://uri.com",
 						MimeType: "text/plain",
 					},
 				},
 				nil,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","medias":[{"mime_type":"text/plain","uri":"https://uri.com"}],"message":"My Post without medias","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 

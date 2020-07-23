@@ -36,7 +36,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 			data.Subspace,
 			data.OptionalData,
 			data.Creator.Address,
-			data.Medias,
+			data.Attachments,
 			data.PollData,
 		)
 

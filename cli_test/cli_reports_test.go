@@ -46,7 +46,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
 	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	//Report a post
 	success, _, sterr = f.TxReportPost(computedID.String(), repType, repMess, fooAddr, "-y")

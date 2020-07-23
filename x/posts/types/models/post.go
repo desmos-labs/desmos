@@ -22,7 +22,7 @@ import (
 type PostID string
 
 // ComputeID returns a sha256 hash of the given data concatenated together
-//nolint: interfacer
+// nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return PostID(hex.EncodeToString(hash[:]))
@@ -30,7 +30,7 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return strings.TrimSpace(id.String()) != "" && Sha256RegEx.MatchString(id.String())
+	return strings.TrimSpace(id.String()) != "" && IsValidPostID(id.String())
 }
 
 // String implements fmt.Stringer
@@ -46,10 +46,11 @@ func (id PostID) Equals(other PostID) bool {
 // ParsePostID takes the given value and returns a PostID from it.
 // If the given value cannot be parse, an error is returned instead.
 func ParsePostID(value string) (PostID, error) {
-	if !Sha256RegEx.MatchString(value) {
+	id := PostID(value)
+	if !id.Valid() {
 		return "", fmt.Errorf("%s is not a valid post id", value)
 	}
-	return PostID(value), nil
+	return id, nil
 }
 
 // ----------------
@@ -113,7 +114,7 @@ type Post struct {
 	Subspace       string         `json:"subspace" yaml:"subspace"`                               // Identifies the application that has posted the message
 	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
-	Medias         PostMedias     `json:"medias,omitempty" yaml:"medias,omitempty"`               // Contains all the medias that are shared with the post
+	Attachments    Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
 }
 
@@ -132,13 +133,13 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 	}
 }
 
-// WithMedias allows to easily set the given medias as the multimedia files associated with the p Post
-func (p Post) WithMedias(medias PostMedias) Post {
-	p.Medias = medias
+// WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
+func (p Post) WithAttachments(attachments Attachments) Post {
+	p.Attachments = attachments
 	return p
 }
 
-// WithMedias allows to easily set the given data as the poll data files associated with the p Post
+// WithPollData allows to easily set the given data as the poll data files associated with the p Post
 func (p Post) WithPollData(data PollData) Post {
 	p.PollData = &data
 	return p
@@ -154,8 +155,8 @@ func (p Post) String() string {
 		out += fmt.Sprintf("[Optional Data] %s ", p.OptionalData)
 	}
 
-	if len(p.Medias) != 0 {
-		out += fmt.Sprintf("[Post Medias]:\n %s ", p.Medias.String())
+	if len(p.Attachments) != 0 {
+		out += fmt.Sprintf("[Post Attachments]:\n %s ", p.Attachments.String())
 	}
 	if p.PollData != nil {
 		out += fmt.Sprintf("[Poll Data] %s ", p.PollData.String())
@@ -176,11 +177,11 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 && p.PollData == nil {
-		return fmt.Errorf("post message, medias or poll required, they cannot be all empty")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Attachments) == 0 && p.PollData == nil {
+		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
-	if !Sha256RegEx.MatchString(p.Subspace) {
+	if !IsValidSubspace(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
@@ -192,7 +193,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post last edit time: %s", p.LastEdited)
 	}
 
-	if err := p.Medias.Validate(); err != nil {
+	if err := p.Attachments.Validate(); err != nil {
 		return err
 	}
 
@@ -227,7 +228,7 @@ func (p Post) ContentsEquals(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) &&
+		p.Attachments.Equals(other.Attachments) &&
 		ArePollDataEquals(p.PollData, other.PollData)
 }
 
@@ -255,7 +256,7 @@ func getTags(s string) []string {
 	res := make([]string, 0)
 	fields := strings.FieldsFunc(s, tagsSplitter)
 	for _, v := range fields {
-		sub := HashtagRegEx.FindStringSubmatch(v)
+		sub := hashtagRegEx.FindStringSubmatch(v)
 		if len(sub) > 1 {
 			res = append(res, sub[1])
 		}

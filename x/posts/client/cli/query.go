@@ -14,8 +14,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // GetQueryCmd adds the query commands
@@ -231,8 +232,8 @@ func GetCmdQueryRegisteredReactions(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryPostsParams queries all the posts' module params
 func GetCmdQueryPostsParams(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "params",
-		Short: "Retrieve all the posts module params",
+		Use:   "parameters",
+		Short: "Retrieve all the posts module parameters",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -240,7 +241,7 @@ func GetCmdQueryPostsParams(cdc *codec.Codec) *cobra.Command {
 			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("Could not find profile params")
+				fmt.Printf("Could not find posts parameters")
 				return nil
 			}
 

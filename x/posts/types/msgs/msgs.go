@@ -18,20 +18,19 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       models.PostID     `json:"parent_id" yaml:"parent_id"`
-	Message        string            `json:"message" yaml:"message"`
-	AllowsComments bool              `json:"allows_comments" yaml:"allows_comments"`
-	Subspace       string            `json:"subspace" yaml:"subspace"`
-	OptionalData   map[string]string `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
-	Creator        sdk.AccAddress    `json:"creator" yaml:"creator"`
-	Medias         models.PostMedias `json:"medias,omitempty" yaml:"medias,omitempty"`
-	PollData       *models.PollData  `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
+	ParentID       models.PostID      `json:"parent_id" yaml:"parent_id"`
+	Message        string             `json:"message" yaml:"message"`
+	AllowsComments bool               `json:"allows_comments" yaml:"allows_comments"`
+	Subspace       string             `json:"subspace" yaml:"subspace"`
+	OptionalData   map[string]string  `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
+	Creator        sdk.AccAddress     `json:"creator" yaml:"creator"`
+	Attachments    models.Attachments `json:"attachments,omitempty" yaml:"attachments,omitempty"`
+	PollData       *models.PollData   `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(message string, parentID models.PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress,
-	medias models.PostMedias, pollData *models.PollData) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -39,7 +38,7 @@ func NewMsgCreatePost(message string, parentID models.PostID, allowsComments boo
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        owner,
-		Medias:         medias,
+		Attachments:    attachments,
 		PollData:       pollData,
 	}
 }
@@ -56,17 +55,17 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Medias) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			"post message, medias or poll are required and cannot be all blank or empty")
+			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !models.Sha256RegEx.MatchString(msg.Subspace) {
+	if !models.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
-	if msg.Medias != nil {
-		if err := msg.Medias.Validate(); err != nil {
+	if msg.Attachments != nil {
+		if err := msg.Attachments.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 	}

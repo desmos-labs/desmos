@@ -24,7 +24,7 @@ type CreatePostReq struct {
 	Subspace       string            `json:"subspace"`
 	OptionalData   map[string]string `json:"optional_data"`
 	CreationTime   time.Time         `json:"creation_time"`
-	Medias         types.PostMedias  `json:"medias,omitempty"`
+	Medias         types.Attachments `json:"attachments,omitempty"`
 	PollData       *types.PollData   `json:"poll_data,omitempty"`
 }
 

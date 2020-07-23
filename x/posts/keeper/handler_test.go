@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -48,7 +49,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				suite.testData.post.Creator,
-				suite.testData.post.Medias,
+				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -63,7 +64,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Medias,
+				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expPost: types.NewPost(
@@ -75,7 +76,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.OptionalData,
 				suite.testData.post.Created,
 				suite.testData.post.Creator,
-			).WithMedias(suite.testData.post.Medias).WithPollData(*suite.testData.post.PollData),
+			).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 		},
 		{
 			name: "Storing a valid post with missing parent id returns expError",
@@ -86,7 +87,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				suite.testData.post.Creator,
-				suite.testData.post.Medias,
+				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd not found"),
@@ -112,7 +113,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				otherCreator,
-				suite.testData.post.Medias,
+				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af does not allow comments"),
@@ -129,7 +130,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					suite.testData.post.OptionalData,
 					suite.testData.post.Created,
 					suite.testData.post.Creator,
-				).WithMedias(suite.testData.post.Medias).WithPollData(*suite.testData.post.PollData),
+				).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 			},
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
@@ -138,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Medias,
+				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -242,7 +243,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				Subspace:       suite.testData.post.Subspace,
 				OptionalData:   suite.testData.post.OptionalData,
 				Creator:        suite.testData.post.Creator,
-				Medias:         suite.testData.post.Medias,
+				Attachments:    suite.testData.post.Attachments,
 				PollData:       suite.testData.post.PollData,
 			},
 		},

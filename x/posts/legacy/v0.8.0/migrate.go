@@ -3,6 +3,7 @@ package v080
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 )
@@ -31,7 +32,7 @@ func RemoveInvalidEmojiRegisteredReactions(reactions []v040posts.Reaction) []v04
 	var newReactions []v040posts.Reaction
 	for _, reaction := range reactions {
 		_, err := emoji.LookupEmojiByCode(reaction.ShortCode)
-		if URIRegEx.MatchString(reaction.Value) && err != nil {
+		if IsValidURI(reaction.Value) && err != nil {
 			newReactions = append(newReactions, reaction)
 		}
 	}

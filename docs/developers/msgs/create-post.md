@@ -12,7 +12,7 @@ This message allows you to create a new public post. If you want to know more ab
     "subspace": "<Subspace of a post>",
     "optional_data": {},
     "creator": "<Desmos address that's creating the post>",
-    "medias": "<Media's array that contains all the medias associated with the post",
+    "attachments": "<Attachment's array that contains all the attachments associated with the post",
     "poll_data": "<Poll data contains all useful data of the poll's post>"
   }
 }
@@ -27,11 +27,11 @@ This message allows you to create a new public post. If you want to know more ab
 | `susbspace` | String | Required string that identifies the posting app |
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
-| `medias` | Array | (Optional) Array containing all the medias related to the post |
+| `attachments` | Array | (Optional) Array containing all the attachments related to the post |
 | `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 
 ## Example
-### With optional data, medias and poll data
+### With optional data, attachments and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",
@@ -44,7 +44,7 @@ This message allows you to create a new public post. If you want to know more ab
       "custom_field": "My custom value"
     },
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "medias": [
+    "attachments": [
       {
         "uri": "https://example.com/media1",
         "mime_type": "text/plain",
@@ -83,7 +83,7 @@ This message allows you to create a new public post. If you want to know more ab
 }
 ``` 
 
-### Without optional data, medias and poll data
+### Without optional data, attachments and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",

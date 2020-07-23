@@ -59,7 +59,7 @@ module.exports = {
                         collapsable: true,
                         children: [
                             ["types/posts/post", "Post"],
-                            ["types/posts/post-media", "PostMedia"],
+                            ["types/posts/attachment", "Attachment"],
                             ["types/posts/post-poll-data", "PollData"],
                             ["types/posts/reaction", "Reactions"],
                         ]
@@ -91,7 +91,7 @@ module.exports = {
                 collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    ["fullnode/installation", "Setup"],
+                    ["fullnode/setup", "Setup"],
                     ["fullnode/rocksdb-installation", "Using RocksDB"],
                     ["fullnode/update", "Update"],
                 ]

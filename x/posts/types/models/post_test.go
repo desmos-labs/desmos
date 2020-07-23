@@ -164,13 +164,13 @@ func TestPost_String(t *testing.T) {
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
-	postMedias := common.PostMedias{
-		common.PostMedia{
+	postMedias := common.Attachments{
+		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 			Tags:     []sdk.AccAddress{owner},
 		},
-		common.PostMedia{
+		common.Attachment{
 			URI:      "https://another.com",
 			MimeType: "application/json",
 			Tags:     nil,
@@ -221,8 +221,8 @@ func TestPost_String(t *testing.T) {
 				map[string]string{},
 				date,
 				owner,
-			).WithMedias(postMedias),
-			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Medias]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
+			).WithAttachments(postMedias),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
 		},
 		{
 			name: "Post without medias and with poll data",
@@ -249,8 +249,8 @@ func TestPost_String(t *testing.T) {
 				map[string]string{},
 				date,
 				owner,
-			).WithMedias(postMedias).WithPollData(pollData),
-			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Medias]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+			).WithAttachments(postMedias).WithPollData(pollData),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 	}
 
@@ -272,8 +272,8 @@ func TestPost_Validate(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := common.PostMedias{
-		common.PostMedia{
+	medias := common.Attachments{
+		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
@@ -296,27 +296,27 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Invalid postID",
-			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
 			expError: "invalid postID: ",
 		},
 		{
 			name:     "Invalid post owner",
-			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(medias).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
-			name:     "Empty post message, media and poll",
+			name:     "Empty post message, attachment and poll",
 			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
-			expError: "post message, medias or poll required, they cannot be all empty",
+			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Empty post message (blank), media and poll",
+			name:     "Empty post message (blank), attachment and poll",
 			post:     models.NewPost(id, id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
-			expError: "post message, medias or poll required, they cannot be all empty",
+			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
 		{
 			name:     "Invalid post creation time",
-			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(medias).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -326,17 +326,17 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Invalid post subspace",
-			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name:     "Invalid post subspace(blank)",
-			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithMedias(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name:     "Valid post without poll data",
-			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithMedias(medias),
+			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias),
 			expError: "",
 		},
 		{
@@ -376,8 +376,8 @@ func TestPost_Equals(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := common.PostMedias{
-		common.PostMedia{
+	medias := common.Attachments{
+		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
@@ -413,7 +413,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id2,
@@ -425,7 +425,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -441,7 +441,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -453,7 +453,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -469,7 +469,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -481,7 +481,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -497,7 +497,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -509,7 +509,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -525,7 +525,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -537,7 +537,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -553,7 +553,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -565,7 +565,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -581,7 +581,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-1",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -593,7 +593,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "desmos-2",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -610,8 +610,8 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData: map[string]string{
 					"field": "value",
 				},
-				Creator: owner,
-				Medias:  medias,
+				Creator:     owner,
+				Attachments: medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -624,8 +624,8 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData: map[string]string{
 					"field": "other-value",
 				},
-				Creator: owner,
-				Medias:  medias,
+				Creator:     owner,
+				Attachments: medias,
 			},
 			expEquals: false,
 		},
@@ -641,7 +641,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -653,7 +653,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			expEquals: false,
 		},
@@ -669,7 +669,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 			},
 			second: models.Post{
 				PostID:         id,
@@ -681,7 +681,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
-				Medias:         common.PostMedias{},
+				Attachments:    common.Attachments{},
 			},
 			expEquals: false,
 		},
@@ -697,7 +697,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-				Medias:         medias,
+				Attachments:    medias,
 				PollData:       nil,
 			},
 			second: models.Post{
@@ -710,7 +710,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
-				Medias:         medias,
+				Attachments:    medias,
 				PollData:       &polls.PollData{},
 			},
 			expEquals: false,
@@ -727,7 +727,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-			}.WithMedias(medias).WithPollData(pollData),
+			}.WithAttachments(medias).WithPollData(pollData),
 			second: models.Post{
 				PostID:         id,
 				ParentID:       id2,
@@ -738,7 +738,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        owner,
-			}.WithMedias(medias).WithPollData(pollData),
+			}.WithAttachments(medias).WithPollData(pollData),
 			expEquals: true,
 		},
 	}
@@ -868,8 +868,8 @@ func TestPosts_String(t *testing.T) {
 	owner2, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 	require.NoError(t, err)
 
-	medias := common.PostMedias{
-		common.PostMedia{
+	medias := common.Attachments{
+		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
@@ -891,8 +891,8 @@ func TestPosts_String(t *testing.T) {
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
 
 	posts := models.Posts{
-		models.NewPost(id, id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithMedias(medias).WithPollData(pollData),
-		models.NewPost(id, id2, "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithMedias(medias).WithPollData(pollData),
+		models.NewPost(id, id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithAttachments(medias).WithPollData(pollData),
+		models.NewPost(id, id2, "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithAttachments(medias).WithPollData(pollData),
 	}
 
 	expected := `ID - [Creator] Message

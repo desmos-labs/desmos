@@ -108,7 +108,7 @@ func migratePosts(posts []v020posts.Post) []Post {
 	// Migrate the posts
 	for index, oldPost := range posts {
 		subspace := oldPost.Subspace
-		if !SubspaceRegEx.MatchString(subspace) {
+		if !IsValidSubspace(subspace) {
 			hash := sha256.Sum256([]byte(subspace))
 			subspace = hex.EncodeToString(hash[:])
 		}

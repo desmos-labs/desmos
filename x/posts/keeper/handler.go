@@ -48,7 +48,7 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		msg.OptionalData,
 		postTime,
 		msg.Creator,
-	).WithMedias(msg.Medias)
+	).WithAttachments(msg.Attachments)
 
 	if msg.PollData != nil {
 		post = post.WithPollData(*msg.PollData)

@@ -20,7 +20,7 @@ import (
 func TestShortCodeRegEx(t *testing.T) {
 	for _, emoji := range emoji2.Emojis {
 		for _, shortcode := range emoji.Shortcodes {
-			res := models.ShortCodeRegEx.MatchString(shortcode)
+			res := models.IsValidReactionCode(shortcode)
 			if !res {
 				println(shortcode)
 			}
