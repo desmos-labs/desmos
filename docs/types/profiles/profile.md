@@ -25,7 +25,7 @@ The `Moniker` represents the name of the user. It can be either a combination of
 The `Bio` represents the biography of the user. It can be at most `1000` characters long.
 
 ### `Pictures`
-The [`Pictures`](profile-pictures.md) contains the pictures of the account. This field is omittable.
+The [`Pictures`](./profile-pictures.md) contains the pictures of the account. This field is omittable.
 
 ### `Creator`
 The `Creator` field is used to specify the Bech32 address of the creator of the profile. 

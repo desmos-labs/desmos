@@ -1,5 +1,5 @@
 # PollData
-The `PollData` object is used to specify the details of a poll that should be associated to a post. Please note that it is **not** necessary to associate a poll to each post. Instead, if you want to create a [`Post`](post.md) without any poll associated to it, you simply have to use the `nil` value for this field.  
+The `PollData` object is used to specify the details of a poll that should be associated to a post. Please note that it is **not** necessary to associate a poll to each post. Instead, if you want to create a [`Post`](./post.md) without any poll associated to it, you simply have to use the `nil` value for this field.  
 
 Following you will find a description for all the contained field of the `PollData` object. 
 
