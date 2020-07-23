@@ -35,13 +35,6 @@ const (
 
 var (
 	// functions aliases
-	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
-	NewMsgCreatePost           = msgs.NewMsgCreatePost
-	NewMsgEditPost             = msgs.NewMsgEditPost
-	NewMsgAnswerPoll           = msgs.NewMsgAnswerPoll
-	NewMsgAddPostReaction      = msgs.NewMsgAddPostReaction
-	NewMsgRemovePostReaction   = msgs.NewMsgRemovePostReaction
-	NewMsgRegisterReaction     = msgs.NewMsgRegisterReaction
 	RegisterModelsCodec        = models.RegisterModelsCodec
 	PostStoreKey               = models.PostStoreKey
 	PostCommentsStoreKey       = models.PostCommentsStoreKey
@@ -52,6 +45,9 @@ var (
 	ParsePostID                = models.ParsePostID
 	NewPost                    = models.NewPost
 	NewPostResponse            = models.NewPostResponse
+	IsValidPostID              = common.IsValidPostID
+	IsValidSubspace            = common.IsValidSubspace
+	IsValidReactionCode        = common.IsValidReactionCode
 	NewPostMedia               = common.NewPostMedia
 	NewPostMedias              = common.NewPostMedias
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
@@ -67,12 +63,16 @@ var (
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	NewMsgCreatePost           = msgs.NewMsgCreatePost
+	NewMsgEditPost             = msgs.NewMsgEditPost
+	NewMsgAnswerPoll           = msgs.NewMsgAnswerPoll
+	NewMsgAddPostReaction      = msgs.NewMsgAddPostReaction
+	NewMsgRemovePostReaction   = msgs.NewMsgRemovePostReaction
+	NewMsgRegisterReaction     = msgs.NewMsgRegisterReaction
+	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	ModelsCdc                = models.ModelsCdc
-	Sha256RegEx              = common.Sha256RegEx
-	HashtagRegEx             = common.HashtagRegEx
-	ShortCodeRegEx           = common.ShortCodeRegEx
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
 	PostCommentsStorePrefix  = common.PostCommentsStorePrefix
@@ -83,6 +83,16 @@ var (
 )
 
 type (
+	PollAnswersQueryResponse = models.PollAnswersQueryResponse
+	PostID                   = models.PostID
+	PostIDs                  = models.PostIDs
+	Post                     = models.Post
+	Posts                    = models.Posts
+	PostQueryResponse        = models.PostQueryResponse
+	PostMedia                = common.PostMedia
+	PostMedias               = common.PostMedias
+	OptionalData             = common.OptionalData
+	KeyValue                 = common.KeyValue
 	AnswerID                 = polls.AnswerID
 	PollAnswer               = polls.PollAnswer
 	PollAnswers              = polls.PollAnswers
@@ -99,14 +109,4 @@ type (
 	MsgAddPostReaction       = msgs.MsgAddPostReaction
 	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
 	MsgRegisterReaction      = msgs.MsgRegisterReaction
-	PollAnswersQueryResponse = models.PollAnswersQueryResponse
-	PostID                   = models.PostID
-	PostIDs                  = models.PostIDs
-	Post                     = models.Post
-	Posts                    = models.Posts
-	PostQueryResponse        = models.PostQueryResponse
-	PostMedia                = common.PostMedia
-	PostMedias               = common.PostMedias
-	OptionalData             = common.OptionalData
-	KeyValue                 = common.KeyValue
 )

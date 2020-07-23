@@ -33,6 +33,9 @@ const (
 
 var (
 	// functions aliases
+	IsValidPostID              = common.IsValidPostID
+	IsValidSubspace            = common.IsValidSubspace
+	IsValidReactionCode        = common.IsValidReactionCode
 	NewPostMedia               = common.NewPostMedia
 	NewPostMedias              = common.NewPostMedias
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
@@ -43,16 +46,13 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 
 	// variable aliases
-	Sha256RegEx              = common.Sha256RegEx
-	HashtagRegEx             = common.HashtagRegEx
-	ShortCodeRegEx           = common.ShortCodeRegEx
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
 	PostCommentsStorePrefix  = common.PostCommentsStorePrefix
@@ -62,18 +62,18 @@ var (
 )
 
 type (
-	PostMedia     = common.PostMedia
-	PostMedias    = common.PostMedias
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
 	PollData      = polls.PollData
 	UserAnswer    = polls.UserAnswer
 	UserAnswers   = polls.UserAnswers
-	Reaction      = reactions.Reaction
-	Reactions     = reactions.Reactions
 	PostReaction  = reactions.PostReaction
 	PostReactions = reactions.PostReactions
+	Reaction      = reactions.Reaction
+	Reactions     = reactions.Reactions
+	PostMedia     = common.PostMedia
+	PostMedias    = common.PostMedias
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
 )
