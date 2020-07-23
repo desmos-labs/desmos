@@ -21,16 +21,14 @@ This query endpoint returns all the parameters of the `profiles` module.
 
 **CLI**
  ```bash
-desmoscli query profiles params
-
-# Example
-# desmoscli query profiles params
+desmoscli query profiles parameters
 ``` 
+
 **REST**
 ```
-/profiles/params
+/profiles/parameters
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/profiles/params
+# curl http://lcd.morpheus.desmos.network:1317/profiles/parameters
 ```  
 
