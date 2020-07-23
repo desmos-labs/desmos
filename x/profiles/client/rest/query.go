@@ -11,9 +11,9 @@ import (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+	r.HandleFunc("/profiles/parameters", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/profiles/params", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single profile based on its dtag
