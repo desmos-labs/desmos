@@ -4,7 +4,6 @@ package v030
 
 import (
 	"encoding/json"
-	"regexp"
 	"strconv"
 	"time"
 
@@ -13,10 +12,6 @@ import (
 
 const (
 	ModuleName = "posts"
-)
-
-var (
-	SubspaceRegEx = regexp.MustCompile("^[a-fA-F0-9]{64}$")
 )
 
 // GenesisState contains the data of a v0.3.0 genesis state for the posts module

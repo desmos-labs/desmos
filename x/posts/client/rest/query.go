@@ -28,7 +28,7 @@ const (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/posts/params", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/posts/parameters", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")

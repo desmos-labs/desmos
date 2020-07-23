@@ -65,7 +65,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 			"post message, medias or poll are required and cannot be all blank or empty")
 	}
 
-	if !models.Sha256RegEx.MatchString(msg.Subspace) {
+	if !models.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
