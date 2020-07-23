@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
-	v090 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.9.0"
+	v090 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 

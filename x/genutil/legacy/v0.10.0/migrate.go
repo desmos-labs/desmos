@@ -15,8 +15,8 @@ func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 	v080Codec := codec.New()
 	codec.RegisterCrypto(v080Codec)
 
-	v090Codec := codec.New()
-	codec.RegisterCrypto(v090Codec)
+	v0100Codec := codec.New()
+	codec.RegisterCrypto(v0100Codec)
 
 	genesisTime, ok := values[0].(time.Time)
 	if !ok || genesisTime.IsZero() {
@@ -26,9 +26,9 @@ func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 	// Migrate posts state
 	if appState[v060posts.ModuleName] != nil {
 		var genDocs v080posts.GenesisState
-		v090Codec.MustUnmarshalJSON(appState[v060posts.ModuleName], &genDocs)
+		v0100Codec.MustUnmarshalJSON(appState[v060posts.ModuleName], &genDocs)
 
-		appState[v060posts.ModuleName] = v090Codec.MustMarshalJSON(
+		appState[v060posts.ModuleName] = v0100Codec.MustMarshalJSON(
 			v0100posts.Migrate(genDocs),
 		)
 	}
