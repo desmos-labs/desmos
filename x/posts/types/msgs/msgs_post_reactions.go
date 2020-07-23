@@ -49,7 +49,7 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
-	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+	if !models.IsValidReactionCode(msg.Reaction) && err != nil {
 		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.Reaction)
 	}
 
@@ -104,7 +104,7 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 	}
 
 	_, err := emoji.LookupEmoji(msg.Reaction)
-	if !models.ShortCodeRegEx.MatchString(msg.Reaction) && err != nil {
+	if !models.IsValidReactionCode(msg.Reaction) && err != nil {
 		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.Reaction)
 	}
 

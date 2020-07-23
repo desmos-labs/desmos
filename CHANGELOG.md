@@ -2,10 +2,12 @@
 ## Changes
 - Changed application errors to make them more clear (#237)
 - Implemented the `x/upgrade` module (#174)
-- Remove user specified post's `creationDate` and `lastEdited` in favor of `blockTime` usage (#215)
+- Removed user specified post's `CreationDate` and `LastEdited` in favor of block time usage (#215)
+- Renamed posts' parameters queries endpoints (#245)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)
+- Fixed a bug that didn't allow querying `x/profile` parameters from REST API (#244) 
 
 # Version 0.9.0
 ## Changes
