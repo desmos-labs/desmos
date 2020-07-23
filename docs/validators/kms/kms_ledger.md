@@ -57,7 +57,7 @@ tmkms start -c ~/.tmkms/tmkms.toml
 
 The output should look similar to:
 
-```text
+```
 07:28:24 [INFO] tmkms 0.3.0 starting up...
 07:28:24 [INFO] [keyring:ledgertm:ledgertm] added validator key cosmosvalconspub1zcjduepqy53m39prgp9dz3nz96kaav3el5e0th8ltwcf8cpavqdvpxgr5slsd6wz6f
 07:28:24 [INFO] KMS node ID: 1BC12314E2E1C29015B66017A397F170C6ECDE4A

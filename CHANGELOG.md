@@ -1,6 +1,7 @@
 # Version 0.10.0
 ## Changes
-- Changed the returned error to make them more clear (#237)
+- Changed application errors to make them more clear (#237)
+- Implemented the `x/upgrade` module (#174)
 - Renamed `PostMedia` into `Attachment` to fix incorrect singular and plural
 forms of variables (#203)
 
