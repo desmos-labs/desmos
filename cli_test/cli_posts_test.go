@@ -367,12 +367,11 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	require.Equal(t, types.NewPollAnswer(2, "Shiba"), pollData.ProvidedAnswers[2])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
 		"--poll-answer Shiba")
-	require.Empty(t, sterr)
 	require.True(t, success)
 
 	// Test --generate-only
@@ -440,8 +439,7 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	require.Equal(t, types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, fooAddr), postQueryResponse.PollAnswers[0])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--dry-run")
-	require.Empty(t, sterr)
+	success, _, _ = f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -585,18 +583,10 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// __________________________________________________________________________________
 	// remove-reaction
 
-	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the reaction has been removed
-	storedPost = f.QueryPost(post.PostID.String())
-	require.Empty(t, storedPost.Reactions)
-
 	// Test --dry-run
-	success, _, _ = f.TxPostsRemoveReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
+	// This is executed before the actual delete since the dry-run performs the proper checks and would fail
+	// telling there is no such added reaction otherwise
+	success, _, _ = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -609,6 +599,16 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
+	storedPost = f.QueryPost(post.PostID.String())
+	require.Len(t, storedPost.Reactions, 1)
+
+	// Remove a reaction
+	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the reaction has been removed
 	storedPost = f.QueryPost(post.PostID.String())
 	require.Empty(t, storedPost.Reactions)
 
@@ -646,11 +646,11 @@ func TestDesmosCLIRegisterReaction(t *testing.T) {
 	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsRegisterReaction(":third:", value, subspace, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -697,7 +697,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only

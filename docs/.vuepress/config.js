@@ -54,9 +54,25 @@ module.exports = {
                 title: "Types",
                 collapsable: true,
                 children: [
-                    ["types/post", "Post"],
-                    ["types/attachment", "Attachment"],
-                    ["types/post-poll-data", "PollData"],
+                    {
+                        title: "Posts",
+                        collapsable: true,
+                        children: [
+                            ["types/posts/post", "Post"],
+                            ["types/posts/attachment", "Attachment"],
+                            ["types/posts/post-poll-data", "PollData"],
+                            ["types/posts/reaction", "Reactions"],
+                        ]
+                    },
+                    {
+                        title: "Profiles",
+                        collapsable: true,
+                        children: [
+                            ["types/profiles/profile", "Profile"],
+                            ["types/profiles/profile-pictures", "Profile pictures"],
+                        ]
+                    },
+                    ["types/reports/report", "Report"]
                 ]
             },
             {

@@ -33,15 +33,14 @@ import (
 )
 
 const (
-	denom        = "desmos"
-	keyFoo       = "foo"
-	keyBar       = "bar"
-	fooDenom     = "footoken"
-	feeDenom     = "feetoken"
-	fee2Denom    = "fee2token"
-	keyBaz       = "baz"
-	keyVesting   = "vesting"
-	keyFooBarBaz = "foobarbaz"
+	denom      = "desmos"
+	keyFoo     = "foo"
+	keyBar     = "bar"
+	fooDenom   = "footoken"
+	feeDenom   = "feetoken"
+	fee2Denom  = "fee2token"
+	keyBaz     = "baz"
+	keyVesting = "vesting"
 )
 
 var (
@@ -150,13 +149,10 @@ func InitFixtures(t *testing.T) (f *Fixtures) {
 	f.KeysDelete(keyFoo)
 	f.KeysDelete(keyBar)
 	f.KeysDelete(keyBar)
-	f.KeysDelete(keyFooBarBaz)
 	f.KeysAdd(keyFoo)
 	f.KeysAdd(keyBar)
 	f.KeysAdd(keyBaz)
 	f.KeysAdd(keyVesting)
-	f.KeysAdd(keyFooBarBaz, "--multisig-threshold=2", fmt.Sprintf(
-		"--multisig=%s,%s,%s", keyFoo, keyBar, keyBaz))
 
 	// ensure that CLI output is in JSON format
 	f.CLIConfig("output", "json")
