@@ -1,5 +1,7 @@
 package v030
 
+// DONTCOVER
+
 import "regexp"
 
 var (
