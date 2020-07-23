@@ -14,8 +14,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // GetQueryCmd adds the query commands
