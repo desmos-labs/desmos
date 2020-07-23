@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -143,6 +144,21 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
+		},
+		{
+			name: "Post message cannot be longer than 500 characters",
+			msg: types.NewMsgCreatePost(
+				strings.Repeat("a", 550),
+				suite.testData.post.ParentID,
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				suite.testData.post.Creator,
+				suite.testData.post.Attachments,
+				suite.testData.post.PollData,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"post with id 2402db62615ca98cb1fafc651eb5748f32b681cba6b8d38c194ed4e8a195b508 has more than 500 characters"),
 		},
 	}
 

@@ -272,12 +272,17 @@ func TestPost_Validate(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := common.Attachments{
+	attachs := common.Attachments{
 		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
 	}
+
+	invalidAttachs := common.Attachments{
+		common.NewAttachment("htp:/uri.com", "text/plain", nil),
+	}
+
 	answer := polls.PollAnswer{
 		ID:   polls.AnswerID(1),
 		Text: "Yes",
@@ -296,12 +301,12 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Invalid postID",
-			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid postID: ",
 		},
 		{
 			name:     "Invalid post owner",
-			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
@@ -316,7 +321,7 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Invalid post creation time",
-			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -326,26 +331,31 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Invalid post subspace",
-			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name:     "Invalid post subspace(blank)",
-			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
+			name:     "Invalid post attachments",
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(invalidAttachs),
+			expError: "invalid uri provided",
+		},
+		{
 			name:     "Valid post without poll data",
-			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias),
+			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(attachs),
 			expError: "",
 		},
 		{
-			name:     "Valid post without medias",
+			name:     "Valid post without attachs",
 			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
 		{
-			name:     "Valid post without text and medias, but with poll",
+			name:     "Valid post without text and attachs, but with poll",
 			post:     models.NewPost(id, "", "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
@@ -353,7 +363,7 @@ func TestPost_Validate(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.expError, func(t *testing.T) {
+		t.Run(test.name, func(t *testing.T) {
 			if len(test.expError) != 0 {
 				require.Equal(t, test.expError, test.post.Validate().Error())
 			} else {
