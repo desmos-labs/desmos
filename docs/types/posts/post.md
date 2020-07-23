@@ -44,9 +44,9 @@ The `Creator` field is used to specify the Bech32 address of the creator of the 
 ### `Medias`
 Starting from version `v0.3.0`, we've introduced the `Medias` field. This contains a (possibly empty) array of media files that can be associated to a post. 
 
-In order to know how a media object must be created, please refer to the [`Media` type documentation](post-media.md)
+In order to know how a media object must be created, please refer to the [`Media` type documentation](./post-media.md)
 
 ### `PollData`
 Along with the [`Medias`](#medias) field, with `v0.3.0` we've introduced the `PollData` field as well. This field allows to specify an optional poll that should be associated with the post itself. 
 
-In order to better understand how the value of this field should be created, please refer to the [`PollData` type documentation](post-poll-data.md) 
+In order to better understand how the value of this field should be created, please refer to the [`PollData` type documentation](./post-poll-data.md) 

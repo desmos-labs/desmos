@@ -1,6 +1,7 @@
 # Version 0.10.0
 ## Changes
-- Changed the returned error to make them more clear (#237)
+- Changed application errors to make them more clear (#237)
+- Implemented the `x/upgrade` module (#174)
 - Remove user specified post's `creationDate` and `lastEdited` in favor of `blockTime` usage (#215)
 
 ## Bug fixes
