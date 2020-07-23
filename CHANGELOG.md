@@ -1,9 +1,12 @@
 # Version 0.10.0
 ## Changes
-- Changed the returned error to make them more clear (#237)
+- Changed application errors to make them more clear (#237)
+- Implemented the `x/upgrade` module (#174)
+- Renamed posts' parameters queries endpoints (#245)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)
+- Fixed a bug that didn't allow querying `x/profile` parameters from REST API (#244) 
 
 # Version 0.9.0
 ## Changes

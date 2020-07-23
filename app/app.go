@@ -28,6 +28,9 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
+
 	"github.com/desmos-labs/desmos/x/magpie"
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
@@ -64,10 +67,12 @@ var (
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler,
 			distr.ProposalHandler,
+			upgradeclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
+		upgrade.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 
@@ -131,6 +136,7 @@ type DesmosApp struct {
 	DistrKeeper    distr.Keeper
 	GovKeeper      gov.Keeper
 	CrisisKeeper   crisis.Keeper
+	upgradeKeeper  upgrade.Keeper
 	paramsKeeper   params.Keeper
 	evidenceKeeper evidence.Keeper
 
@@ -161,7 +167,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	keys := sdk.NewKVStoreKeys(
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
-		gov.StoreKey, params.StoreKey, evidence.StoreKey,
+		gov.StoreKey, upgrade.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
 		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
@@ -237,6 +243,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.SupplyKeeper,
 		auth.FeeCollectorName,
 	)
+	app.upgradeKeeper = upgrade.NewKeeper(
+		skipUpgradeHeights,
+		keys[upgrade.StoreKey],
+		app.cdc,
+	)
 
 	// Create evidence keeper with router
 	evidenceKeeper := evidence.NewKeeper(
@@ -255,7 +266,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	govRouter.
 		AddRoute(gov.RouterKey, gov.ProposalHandler).
 		AddRoute(params.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper))
+		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
+		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
 
 	app.GovKeeper = gov.NewKeeper(
 		app.cdc,
@@ -308,6 +320,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
 		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
@@ -320,7 +333,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
-	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
+	app.mm.SetOrderBeginBlockers(
+		upgrade.ModuleName, distr.ModuleName, slashing.ModuleName,
+		evidence.ModuleName, staking.ModuleName,
+	)
 	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
