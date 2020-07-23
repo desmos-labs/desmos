@@ -65,7 +65,7 @@ type PostData struct {
 	Subspace       string
 	CreationDate   time.Time
 	OptionalData   map[string]string
-	Medias         types.PostMedias
+	Attachments    types.Attachments
 	PollData       *types.PollData
 }
 
@@ -79,7 +79,7 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
 		CreationDate:   time.Now().UTC(),
-		Medias:         RandomMedias(r, accs),
+		Attachments:    RandomAttachments(r, accs),
 		PollData:       RandomPollData(r),
 	}
 }
@@ -131,9 +131,9 @@ func RandomHashtag(r *rand.Rand) string {
 	return hashtags[idx]
 }
 
-// RandomMedias returns a randomly generated list of post medias
-func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
-	mediaNumber := r.Intn(20)
+// RandomAttachments returns a randomly generated list of post attachments
+func RandomAttachments(r *rand.Rand, accs []sim.Account) types.Attachments {
+	attNumber := r.Intn(20)
 
 	tagsLen := r.Intn(50)
 	tags := make([]sdk.AccAddress, tagsLen)
@@ -142,14 +142,14 @@ func RandomMedias(r *rand.Rand, accs []sim.Account) types.PostMedias {
 		tags[i] = acc.Address
 	}
 
-	postMedias := make(types.PostMedias, mediaNumber)
-	for i := 0; i < mediaNumber; i++ {
+	postAttachments := make(types.Attachments, attNumber)
+	for i := 0; i < attNumber; i++ {
 		host := RandomHosts[r.Intn(len(RandomHosts))]
 		mimeType := RandomMimeTypes[r.Intn(len(RandomMimeTypes))]
-		postMedias[i] = types.NewPostMedia(host+strconv.Itoa(i), mimeType, tags)
+		postAttachments[i] = types.NewAttachment(host+strconv.Itoa(i), mimeType, tags)
 	}
 
-	return postMedias
+	return postAttachments
 }
 
 // RandomPollData returns a randomly generated poll data

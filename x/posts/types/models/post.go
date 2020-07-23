@@ -114,7 +114,7 @@ type Post struct {
 	Subspace       string         `json:"subspace" yaml:"subspace"`                               // Identifies the application that has posted the message
 	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
-	Medias         PostMedias     `json:"medias,omitempty" yaml:"medias,omitempty"`               // Contains all the medias that are shared with the post
+	Attachments    Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
 }
 
@@ -133,13 +133,13 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 	}
 }
 
-// WithMedias allows to easily set the given medias as the multimedia files associated with the p Post
-func (p Post) WithMedias(medias PostMedias) Post {
-	p.Medias = medias
+// WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
+func (p Post) WithAttachments(attachments Attachments) Post {
+	p.Attachments = attachments
 	return p
 }
 
-// WithMedias allows to easily set the given data as the poll data files associated with the p Post
+// WithPollData allows to easily set the given data as the poll data files associated with the p Post
 func (p Post) WithPollData(data PollData) Post {
 	p.PollData = &data
 	return p
@@ -155,8 +155,8 @@ func (p Post) String() string {
 		out += fmt.Sprintf("[Optional Data] %s ", p.OptionalData)
 	}
 
-	if len(p.Medias) != 0 {
-		out += fmt.Sprintf("[Post Medias]:\n %s ", p.Medias.String())
+	if len(p.Attachments) != 0 {
+		out += fmt.Sprintf("[Post Attachments]:\n %s ", p.Attachments.String())
 	}
 	if p.PollData != nil {
 		out += fmt.Sprintf("[Poll Data] %s ", p.PollData.String())
@@ -177,8 +177,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", p.Creator)
 	}
 
-	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Medias) == 0 && p.PollData == nil {
-		return fmt.Errorf("post message, medias or poll required, they cannot be all empty")
+	if len(strings.TrimSpace(p.Message)) == 0 && len(p.Attachments) == 0 && p.PollData == nil {
+		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
 	if !IsValidSubspace(p.Subspace) {
@@ -201,7 +201,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post last edit date cannot be in the future")
 	}
 
-	if err := p.Medias.Validate(); err != nil {
+	if err := p.Attachments.Validate(); err != nil {
 		return err
 	}
 
@@ -236,7 +236,7 @@ func (p Post) ContentsEquals(other Post) bool {
 		p.Subspace == other.Subspace &&
 		equalsOptionalData &&
 		p.Creator.Equals(other.Creator) &&
-		p.Medias.Equals(other.Medias) &&
+		p.Attachments.Equals(other.Attachments) &&
 		ArePollDataEquals(p.PollData, other.PollData)
 }
 

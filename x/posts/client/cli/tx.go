@@ -51,8 +51,8 @@ func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
 		Use:   "create [subspace] [[message]]",
 		Short: "Create a new post",
 		Long: fmt.Sprintf(`
-Create a new post specifying the subspace and the message (optional if any kind of media is provided).
-Optional media attachments and polls are also supported. See the below sections to know how to include them.
+Create a new post specifying the subspace and the message (optional if any kind of attachment is provided).
+Optional attachments and polls are also supported. See the below sections to know how to include them.
 
 E.g.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
@@ -63,24 +63,24 @@ By default this field is set to true.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
    --allows-comments false
 
-=== Medias ===
-If you want to add one or more media(s) attachment(s), you have to use the --media flag.
-You need to firstly specify the media URI and then its mime-type separeted by a comma.
-You can also specify the desmos addresses tagged in the media you're sharing by adding as 
+=== Attachments ===
+If you want to add one or more attachment(s), you have to use the --attachment flag.
+You need to firstly specify the attachment URI and then its mime-type separeted by a comma.
+You can also specify the desmos addresses tagged in the attachment you're sharing by adding as 
 many address you want after the mime-type separated by a comma.
 
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single media" \
-  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single attachment" \
+  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --allows-comments false
-%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple medias" \
-  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
-  --media "https://example.com/media2,application/json"
+%s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple attachments" \
+  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
+  --attachment "https://example.com/attachment2,application/json"
 
-If medias are provided, the post could be created even without any message as following:
+If attachments are provided, the post could be created even without any message as following:
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" \
-  --media "https://example.com/media1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
-  --media "https://example.com/media2,application/json" \
+  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
+  --attachment "https://example.com/attachment2,application/json" \
   --allows-comments false
 
 === Polls ===
@@ -111,19 +111,19 @@ E.g.
 			allowsComments := viper.GetBool(flagAllowsComments)
 			parentID := types.PostID(viper.GetString(flagParentID))
 
-			// medias' checks
-			mediasStrings, err := cmd.Flags().GetStringArray(flagMedia)
+			// attachments' checks
+			mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
 			if err != nil {
-				return fmt.Errorf("invalid flag value: %s", flagMedia)
+				return fmt.Errorf("invalid flag value: %s", flagAttachment)
 			}
 
-			medias := types.PostMedias{}
+			attachments := types.Attachments{}
 			for _, mediaString := range mediasStrings {
 				argz := strings.Split(mediaString, ",")
 				var tags []sdk.AccAddress
 				// if some tags are specified
 				if len(argz) < 2 {
-					return fmt.Errorf("if medias are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
+					return fmt.Errorf("if attachments are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
 				} else if len(argz) > 2 {
 					for _, addr := range argz[2:] {
 						tag, err := sdk.AccAddressFromBech32(addr)
@@ -133,8 +133,8 @@ E.g.
 						tags = append(tags, tag)
 					}
 				}
-				media := types.NewPostMedia(argz[0], argz[1], tags)
-				medias = medias.AppendIfMissing(media)
+				attachment := types.NewAttachment(argz[0], argz[1], tags)
+				attachments = attachments.AppendIfMissing(attachment)
 			}
 
 			// polls' checks
@@ -219,7 +219,7 @@ E.g.
 				map[string]string{},
 				cliCtx.GetFromAddress(),
 				time.Now().UTC(),
-				medias,
+				attachments,
 				pollData,
 			)
 
@@ -229,7 +229,7 @@ E.g.
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
 	cmd.Flags().String(flagParentID, "", "Id of the post to which this one should be an answer to")
-	cmd.Flags().StringArray(flagMedia, []string{}, "Current post's media")
+	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
 

@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
+	v090 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 
@@ -32,6 +33,7 @@ var migrationMap = map[string]types.MigrationCallback{
 	"v0.5.0": v050.Migrate,
 	"v0.6.0": v060.Migrate,
 	"v0.8.0": v080.Migrate,
+	"v0.9.0": v090.Migrate,
 }
 
 const (

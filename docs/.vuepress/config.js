@@ -59,7 +59,7 @@ module.exports = {
                         collapsable: true,
                         children: [
                             ["types/posts/post", "Post"],
-                            ["types/posts/post-media", "PostMedia"],
+                            ["types/posts/attachment", "Attachment"],
                             ["types/posts/post-poll-data", "PollData"],
                             ["types/posts/reaction", "Reactions"],
                         ]

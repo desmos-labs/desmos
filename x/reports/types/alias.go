@@ -28,10 +28,10 @@ var (
 	NewReportResponse     = models.NewReportResponse
 
 	// variable aliases
+	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
-	ModelsCdc              = models.ModelsCdc
 )
 
 type (
