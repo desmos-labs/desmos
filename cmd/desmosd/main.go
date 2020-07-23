@@ -9,8 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/desmos-labs/desmos/app"
 	"github.com/spf13/viper"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/server"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
@@ -93,9 +94,14 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 		skipUpgradeHeights[int64(h)] = true
 	}
 
+	pruningOpts, err := server.GetPruningOptionsFromFlags()
+	if err != nil {
+		panic(err)
+	}
+
 	return app.NewDesmosApp(
 		logger, db, traceStore, true, skipUpgradeHeights, invCheckPeriod,
-		baseapp.SetPruning(store.NewPruningOptionsFromString(viper.GetString("pruning"))),
+		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(viper.GetString(server.FlagMinGasPrices)),
 		baseapp.SetHaltHeight(viper.GetUint64(server.FlagHaltHeight)),
 		baseapp.SetHaltTime(viper.GetUint64(server.FlagHaltTime)),
