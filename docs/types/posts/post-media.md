@@ -1,5 +1,5 @@
 # PostMedia
-The `PostMedia` type contains the details of a single media file object that can be associated within a [`Post`](post.md) object. Such type is usually used to add images to posts, but it can also be used to specify multimedia files such as vocals, documents, etc. 
+The `PostMedia` type contains the details of a single media file object that can be associated within a [`Post`](./post.md) object. Such type is usually used to add images to posts, but it can also be used to specify multimedia files such as vocals, documents, etc. 
 
 Following you will find a description of all the fields it is composed of. 
 
