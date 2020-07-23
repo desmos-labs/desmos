@@ -44,7 +44,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
-	if !postsmodels.ShortCodeRegEx.MatchString(msg.ShortCode) {
+	if !postsmodels.IsValidReactionCode(msg.ShortCode) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidReactionCode, msg.ShortCode)
 	}
 
@@ -52,7 +52,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
-	if !postsmodels.Sha256RegEx.MatchString(msg.Subspace) {
+	if !postsmodels.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 

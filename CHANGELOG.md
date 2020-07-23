@@ -2,16 +2,16 @@
 ## Changes
 - Changed application errors to make them more clear (#237)
 - Implemented the `x/upgrade` module (#174)
-- Renamed `PostMedia` into `Attachment` to fix incorrect singular and plural
-forms of variables (#203)
+- Renamed posts' parameters queries endpoints (#245)
+- Renamed `PostMedia` into `Attachment` to fix incorrect singular and plural forms of variables (#203)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)
+- Fixed a bug that didn't allow querying `x/profile` parameters from REST API (#244) 
 
 # Version 0.9.0
 ## Changes
-- Removed the JSON-style `String` methods where it was possible, changed the others to not
- rely on JSON for `String` representation (#199)
+- Removed the JSON-style `String` methods where it was possible, changed the others to not rely on JSON for `String` representation (#199)
 - Replaced `SetupTestInput()` with testify test suite (#198)
 - Removed all the `internal` folders (#197)
 

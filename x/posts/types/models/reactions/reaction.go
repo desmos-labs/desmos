@@ -37,7 +37,7 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("invalid reaction creator: %s", reaction.Creator)
 	}
 
-	if !postsCommon.ShortCodeRegEx.MatchString(reaction.ShortCode) {
+	if !postsCommon.IsValidReactionCode(reaction.ShortCode) {
 		return fmt.Errorf("the specified shortcode is not valid. To be valid it must only contains a-z, 0-9, - and _ and must start and end with a ':'")
 	}
 
@@ -45,7 +45,7 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("reaction value should be a URL")
 	}
 
-	if !postsCommon.Sha256RegEx.MatchString(reaction.Subspace) {
+	if !postsCommon.IsValidSubspace(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

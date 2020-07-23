@@ -22,7 +22,7 @@ import (
 type PostID string
 
 // ComputeID returns a sha256 hash of the given data concatenated together
-//nolint: interfacer
+// nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return PostID(hex.EncodeToString(hash[:]))
@@ -30,7 +30,7 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
-	return strings.TrimSpace(id.String()) != "" && Sha256RegEx.MatchString(id.String())
+	return strings.TrimSpace(id.String()) != "" && IsValidPostID(id.String())
 }
 
 // String implements fmt.Stringer
@@ -46,10 +46,11 @@ func (id PostID) Equals(other PostID) bool {
 // ParsePostID takes the given value and returns a PostID from it.
 // If the given value cannot be parse, an error is returned instead.
 func ParsePostID(value string) (PostID, error) {
-	if !Sha256RegEx.MatchString(value) {
+	id := PostID(value)
+	if !id.Valid() {
 		return "", fmt.Errorf("%s is not a valid post id", value)
 	}
-	return PostID(value), nil
+	return id, nil
 }
 
 // ----------------
@@ -180,7 +181,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
-	if !Sha256RegEx.MatchString(p.Subspace) {
+	if !IsValidSubspace(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
@@ -263,7 +264,7 @@ func getTags(s string) []string {
 	res := make([]string, 0)
 	fields := strings.FieldsFunc(s, tagsSplitter)
 	for _, v := range fields {
-		sub := HashtagRegEx.FindStringSubmatch(v)
+		sub := hashtagRegEx.FindStringSubmatch(v)
 		if len(sub) > 1 {
 			res = append(res, sub[1])
 		}
