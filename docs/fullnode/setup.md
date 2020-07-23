@@ -23,8 +23,9 @@ sudo apt install build-essential --yes
 sudo snap install go --classic
 
 # Export environment variables
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$PATH
+echo 'export GOPATH="$HOME/go"' >> ~/.profile
+echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+source ~/.profile
 ```
 
 :::
@@ -52,8 +53,9 @@ brew install go
 brew install git
 
 # Export environment variables
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$PATH
+echo 'export GOPATH="$HOME/go"' >> ~/.profile
+echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+source ~/.profile
 ```
 
 :::
