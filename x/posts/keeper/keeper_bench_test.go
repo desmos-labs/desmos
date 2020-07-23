@@ -52,7 +52,7 @@ func RandomPost() types.Post {
 	)
 
 	if r.Intn(101) <= 50 {
-		post = post.WithAttachments(simulation.RandomMedias(r, accounts))
+		post = post.WithAttachments(simulation.RandomAttachments(r, accounts))
 	}
 
 	if r.Intn(101) <= 50 {

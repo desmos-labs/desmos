@@ -50,7 +50,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 			postData.OptionalData,
 			postData.CreationDate,
 			postData.Creator.Address,
-		).WithAttachments(postData.Medias)
+		).WithAttachments(postData.Attachments)
 
 		if postData.PollData != nil {
 			posts[index] = posts[index].WithPollData(*postData.PollData)

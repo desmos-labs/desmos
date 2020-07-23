@@ -1,11 +1,11 @@
-package v090
+package v0100
 
 import (
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 )
 
-// Migrate accepts exported genesis state from v0.8.0 and migrates it to v0.9.0
+// Migrate accepts exported genesis state from v0.8.0 and migrates it to v0.10.0
 // genesis state. This migration replace all the old post media structure
 // with the new one renamed to attachment.
 func Migrate(oldGenState v080posts.GenesisState) GenesisState {
@@ -18,7 +18,7 @@ func Migrate(oldGenState v080posts.GenesisState) GenesisState {
 	}
 }
 
-// ConvertPosts v0.8.0 posts into v0.9.0 posts
+// ConvertPosts v0.8.0 posts into v0.10.0 posts
 func ConvertPosts(oldPosts []v040posts.Post) (posts []Post) {
 	for _, post := range oldPosts {
 		np := Post{
@@ -39,7 +39,7 @@ func ConvertPosts(oldPosts []v040posts.Post) (posts []Post) {
 	return posts
 }
 
-// ConvertMediasToAttachments converts v0.8.0 post medias into v0.9.0 attachments
+// ConvertMediasToAttachments converts v0.8.0 post medias into v0.10.0 attachments
 func ConvertMediasToAttachments(medias []v040posts.PostMedia) (atts []Attachment) {
 	for _, media := range medias {
 		attachment := Attachment{

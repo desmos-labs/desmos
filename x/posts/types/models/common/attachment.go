@@ -13,6 +13,8 @@ import (
 // --- Attachment
 // ---------------
 
+// Attachment contains the information representing any type of file provided with a post.
+// This file can be an image or a multimedia file (vocals, video, documents, etc.).
 type Attachment struct {
 	URI      string           `json:"uri" yaml:"uri"`
 	MimeType string           `json:"mime_type" yaml:"mime_type"`

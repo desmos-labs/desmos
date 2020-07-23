@@ -1,4 +1,4 @@
-package v090
+package v0100
 
 // DONTCOVER
 
@@ -11,7 +11,7 @@ import (
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 )
 
-// GenesisState contains the data of a v0.9.0 genesis state for the posts module
+// GenesisState contains the data of a v0.10.0 genesis state for the posts module
 type GenesisState struct {
 	Posts               []Post                            `json:"posts"`
 	UsersPollAnswers    map[string][]v040posts.UserAnswer `json:"users_poll_answers"`

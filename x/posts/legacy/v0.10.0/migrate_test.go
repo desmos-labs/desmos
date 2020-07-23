@@ -1,4 +1,4 @@
-package v090_test
+package v0100_test
 
 import (
 	"encoding/json"
@@ -7,10 +7,10 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	v0100posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.10.0"
 	v040 "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
-	v090posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.9.0"
 	"github.com/stretchr/testify/require"
 )
 
@@ -82,8 +82,8 @@ func TestMigrate(t *testing.T) {
 		},
 	}
 
-	expected := v090posts.GenesisState{
-		Posts: []v090posts.Post{
+	expected := v0100posts.GenesisState{
+		Posts: []v0100posts.Post{
 			{
 				PostID:         parentID,
 				ParentID:       "",
@@ -94,7 +94,7 @@ func TestMigrate(t *testing.T) {
 				Created:        parentCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        parentPostCreator,
-				Attachments:    []v090posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 			{
 				PostID:         postID,
@@ -106,7 +106,7 @@ func TestMigrate(t *testing.T) {
 				Created:        postCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        postCreator,
-				Attachments:    []v090posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 		},
 		UsersPollAnswers: map[string][]v040.UserAnswer{string(postID): {v040.UserAnswer{
@@ -135,7 +135,7 @@ func TestMigrate(t *testing.T) {
 		},
 	}
 
-	migrated := v090posts.Migrate(v080GenState)
+	migrated := v0100posts.Migrate(v080GenState)
 
 	// Check for posts
 	require.Len(t, migrated.Posts, len(expected.Posts))
@@ -165,7 +165,7 @@ func TestMigrate(t *testing.T) {
 	}
 }
 
-func TestMigrate090(t *testing.T) {
+func TestMigrate0100(t *testing.T) {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
 	config.Seal()
@@ -177,31 +177,31 @@ func TestMigrate090(t *testing.T) {
 	err = json.Unmarshal(content, &v080state)
 	require.NoError(t, err)
 
-	v090state := v090posts.Migrate(v080state)
+	v0100state := v0100posts.Migrate(v080state)
 
 	// Make sure that all the posts are migrated
-	require.Equal(t, len(v090state.Posts), len(v080state.Posts))
+	require.Equal(t, len(v0100state.Posts), len(v080state.Posts))
 
 	// Make sure that all the posts' medias are migrated correctly
 	for index, post := range v080state.Posts {
-		require.Equal(t, len(post.Medias), len(v090state.Posts[index].Attachments))
+		require.Equal(t, len(post.Medias), len(v0100state.Posts[index].Attachments))
 	}
 
 	// Make sure all the reactions are migrated
-	require.Equal(t, len(v090state.PostReactions), len(v080state.PostReactions))
+	require.Equal(t, len(v0100state.PostReactions), len(v080state.PostReactions))
 
 	// Make sure all the poll answers are migrated
-	require.Equal(t, len(v090state.UsersPollAnswers), len(v080state.UsersPollAnswers))
+	require.Equal(t, len(v0100state.UsersPollAnswers), len(v080state.UsersPollAnswers))
 
 	// make sure params are properly set
-	require.Equal(t, v080state.Params, v090state.Params)
+	require.Equal(t, v080state.Params, v0100state.Params)
 }
 
 func TestConvertMediasToAttachments(t *testing.T) {
 	postMedias := []v040.PostMedia{{URI: "https://uri.com", MimeType: "text/plain"}}
-	attachments := []v090posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}}
+	attachments := []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}}
 
-	actual := v090posts.ConvertMediasToAttachments(postMedias)
+	actual := v0100posts.ConvertMediasToAttachments(postMedias)
 
 	require.Equal(t, attachments, actual)
 }
@@ -248,7 +248,7 @@ func TestConvertPosts(t *testing.T) {
 		},
 	}
 
-	expectedPosts := []v090posts.Post{
+	expectedPosts := []v0100posts.Post{
 		{
 			PostID:         parentID,
 			ParentID:       "",
@@ -259,7 +259,7 @@ func TestConvertPosts(t *testing.T) {
 			Created:        parentCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        parentPostCreator,
-			Attachments:    []v090posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 		},
 		{
 			PostID:         postID,
@@ -271,11 +271,11 @@ func TestConvertPosts(t *testing.T) {
 			Created:        postCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        postCreator,
-			Attachments:    []v090posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 		},
 	}
 
-	actualPosts := v090posts.ConvertPosts(posts)
+	actualPosts := v0100posts.ConvertPosts(posts)
 
 	require.Equal(t, expectedPosts, actualPosts)
 }
