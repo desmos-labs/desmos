@@ -42,10 +42,24 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
+	// Retrieve the total number of posts
+	var totalPosts sdk.Int
+	if bz := store.Get(types.PostTotalNumberPrefix); bz != nil {
+		k.Cdc.MustUnmarshalBinaryBare(bz, &totalPosts)
+		totalPosts = totalPosts.Add(sdk.NewInt(1))
+	} else {
+		totalPosts = sdk.NewInt(1)
+	}
+
 	// Save the post
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
+	// Save the new incremental ID of a post and update the total number of posts
+	store.Set(types.PostIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&totalPosts))
+	store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&totalPosts))
+
 	// Save the comments to the parent post, if it is valid
+	//TODO ricordati di contare anche i commenti nel totale dei post
 	if post.ParentID.Valid() {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
@@ -82,7 +96,8 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 	return postIDs
 }
 
-// GetPosts returns the list of all the posts that are stored into the current state.
+// GetPosts returns the list of all the posts that are stored into the current state
+//sorted by their sequential ID.
 func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 	posts = types.Posts{}
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
@@ -90,7 +105,16 @@ func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 		return false
 	})
 
-	return posts
+	store := ctx.KVStore(k.StoreKey)
+	postsSorted := make(types.Posts, len(posts))
+	for _, post := range posts {
+		var index sdk.Int
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostIDStoreKey(post.PostID)), &index)
+		println(index.Int64())
+		postsSorted[index.Int64()-1] = post
+	}
+
+	return postsSorted
 }
 
 // GetPostsFiltered retrieves posts filtered by a given set of params which

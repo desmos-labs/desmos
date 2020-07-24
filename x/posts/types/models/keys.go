@@ -12,6 +12,11 @@ func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id)...)
 }
 
+// PostStoreKey turns an id to a key used to store an incremental ID into the posts store
+func PostIDStoreKey(id PostID) []byte {
+	return append(PostIDStorePrefix, []byte(id)...)
+}
+
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
 //nolint: interfacer
 func PostCommentsStoreKey(id PostID) []byte {
