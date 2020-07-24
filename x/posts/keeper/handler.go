@@ -38,7 +38,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
-// ComputeID returns a sha256 hash of the given data concatenated together
+// ComputeID returns a sha256 hash of the msg's json representation
 // nolint: interfacer
 func ComputeID(msg types.MsgCreatePost) types.PostID {
 	bz, err := msg.MarshalJSON()
