@@ -3,6 +3,8 @@ package simulation
 // DONTCOVER
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"math/rand"
 	"strconv"
 	"time"
@@ -107,8 +109,19 @@ func RandomPostReactionValue(r *rand.Rand) string {
 	return postReactValues[r.Intn(len(postReactValues))]
 }
 
-// RandomPostID returns a randomly extracted post id from the list of posts given
-func RandomPostID(r *rand.Rand, posts []types.Post) types.PostID {
+// RandomPostID returns a randomly generated postID
+func RandomPostID(r *rand.Rand) types.PostID {
+	randBytes := make([]byte, 4)
+	_, err := r.Read(randBytes)
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(randBytes)
+	return types.PostID(hex.EncodeToString(hash[:]))
+}
+
+// RandomPostIDFromPosts returns a randomly extracted post id from the list of posts given
+func RandomPostIDFromPosts(r *rand.Rand, posts []types.Post) types.PostID {
 	p, _ := RandomPost(r, posts)
 	return p.PostID
 }

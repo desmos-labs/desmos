@@ -16,10 +16,19 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
-	computedID := types.ComputeID(suite.testData.post.Created, suite.testData.post.Creator, suite.testData.post.Subspace)
-
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.NoError(err)
+
+	createPostMessage := types.NewMsgCreatePost(
+		suite.testData.post.Message,
+		suite.testData.post.ParentID,
+		suite.testData.post.AllowsComments,
+		suite.testData.post.Subspace,
+		suite.testData.post.OptionalData,
+		suite.testData.post.Creator,
+		suite.testData.post.Attachments,
+		suite.testData.post.PollData,
+	)
 
 	tests := []struct {
 		name        string
@@ -32,49 +41,31 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					computedID,
+					keeper.ComputeID(createPostMessage),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					map[string]string{},
+					suite.testData.post.Subspace,
+					suite.testData.post.OptionalData,
 					suite.testData.post.Created,
 					suite.testData.post.Creator,
 				),
 			},
-			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
-				suite.testData.post.ParentID,
-				suite.testData.post.AllowsComments,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				suite.testData.post.Creator,
-				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
-			),
+			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
+				"the provided post conflicts with the one having id f39f0628c16699ba99b7953947ba55c420f6505500af5bf717aae85b8b3cb7b6"),
 		},
 		{
 			name: "Post with new id is stored properly",
-			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
-				suite.testData.post.ParentID,
-				suite.testData.post.AllowsComments,
-				suite.testData.post.Subspace,
-				suite.testData.post.OptionalData,
-				suite.testData.post.Creator,
-				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
-			),
+			msg:  createPostMessage,
 			expPost: types.NewPost(
-				computedID,
+				keeper.ComputeID(createPostMessage),
 				suite.testData.post.ParentID,
 				suite.testData.post.Message,
 				suite.testData.post.AllowsComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
-				suite.testData.post.Created,
+				suite.ctx.BlockTime(),
 				suite.testData.post.Creator,
 			).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 		},
@@ -83,14 +74,14 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				id2,
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("parent post with id %s not found", id2)),
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
@@ -100,8 +91,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					id2,
 					"Parent post",
 					false,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					map[string]string{},
+					suite.testData.post.Subspace,
+					suite.testData.post.OptionalData,
 					suite.testData.post.Created,
 					suite.testData.post.Creator,
 				),
@@ -109,9 +100,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				id,
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
 				otherCreator,
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
@@ -122,7 +113,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Post with exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					computedID,
+					keeper.ComputeID(createPostMessage),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
@@ -132,18 +123,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					suite.testData.post.Creator,
 				).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 			},
-			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
-				suite.testData.post.ParentID,
-				suite.testData.post.AllowsComments,
-				suite.testData.post.Subspace,
-				suite.testData.post.OptionalData,
-				suite.testData.post.Creator,
-				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
-			),
+			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
+				"the provided post conflicts with the one having id f39f0628c16699ba99b7953947ba55c420f6505500af5bf717aae85b8b3cb7b6"),
 		},
 		{
 			name: "Post message cannot be longer than 500 characters",
@@ -158,7 +140,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id 2402db62615ca98cb1fafc651eb5748f32b681cba6b8d38c194ed4e8a195b508 has more than 500 characters"),
+				"post with id f5b82cc124d610d5d48ed5868e41d45d40ee68bfa16f9cd926ff88f2ddb6eabd has more than 500 characters"),
 		},
 	}
 
@@ -170,9 +152,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 
 			for _, p := range test.storedPosts {
-				computedID := types.ComputeID(suite.ctx.BlockTime(), p.Creator, p.Subspace)
-				test.msg.ParentID = computedID
-				store.Set(types.PostStoreKey(computedID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
 			}
 
 			handler := keeper.NewHandler(suite.keeper)
@@ -182,10 +162,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				computedID := types.ComputeID(suite.ctx.BlockTime(), test.expPost.Creator, test.expPost.Subspace)
+				computedID := keeper.ComputeID(createPostMessage)
 				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(computedID)), &stored)
-				test.expPost.Created = suite.ctx.BlockTime() // make sure that the two posts has the same BlockTime
-				test.expPost.PostID = computedID             // make sure that the two posts has the same ID calculated using the blockTime
 
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
@@ -252,7 +230,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
 				Message:        "Edited message",
-				Created:        suite.testData.post.Created,
+				Created:        suite.ctx.BlockTime(),
 				LastEdited:     suite.testData.post.Created.AddDate(0, 0, 1),
 				AllowsComments: suite.testData.post.AllowsComments,
 				Subspace:       suite.testData.post.Subspace,
@@ -271,17 +249,12 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedPost != nil {
-				computedID := types.ComputeID(suite.ctx.BlockTime(), test.storedPost.Creator, test.storedPost.Subspace)
-				test.storedPost.PostID = computedID
-				test.msg.PostID = computedID
 				if test.expPost != nil {
 					test.storedPost.Created = suite.ctx.BlockTime()
-					test.expPost.Created = test.storedPost.Created
-					test.expPost.PostID = test.storedPost.PostID
 					suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
 					test.expPost.LastEdited = suite.ctx.BlockTime()
 				}
-				store.Set(types.PostStoreKey(computedID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
+				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
 			handler := keeper.NewHandler(suite.keeper)

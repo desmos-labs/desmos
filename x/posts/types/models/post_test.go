@@ -17,16 +17,6 @@ import (
 // -------------
 
 func TestPostID_Equals(t *testing.T) {
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	subspace2 := "ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1"
-
 	tests := []struct {
 		name    string
 		postID  models.PostID
@@ -35,14 +25,14 @@ func TestPostID_Equals(t *testing.T) {
 	}{
 		{
 			name:    "Equal IDs returns true",
-			postID:  models.ComputeID(creationDate, creator, subspace),
-			otherID: models.ComputeID(creationDate, creator, subspace),
+			postID:  models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			otherID: models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
 			expBool: true,
 		},
 		{
 			name:    "Non Equal IDs returns false",
-			postID:  models.ComputeID(creationDate, creator, subspace),
-			otherID: models.ComputeID(creationDate, creator, subspace2),
+			postID:  models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			otherID: models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 			expBool: false,
 		},
 	}
@@ -58,18 +48,8 @@ func TestPostID_Equals(t *testing.T) {
 }
 
 func TestPostID_String(t *testing.T) {
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	computedID := models.ComputeID(creationDate, creator, subspace)
-
-	require.Equal(t, "f55d90114d81e70399d6330a57081b86ae1bdf928b78a57e88870f64240009ef", computedID.String())
+	postID := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	require.Equal(t, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd", postID.String())
 }
 
 // -------------

@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -36,17 +38,27 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// ComputeID returns a sha256 hash of the given data concatenated together
+// nolint: interfacer
+func ComputeID(msg types.MsgCreatePost) types.PostID {
+	bz, err := msg.MarshalJSON()
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(bz)
+	return types.PostID(hex.EncodeToString(hash[:]))
+}
+
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
-	postTime := ctx.BlockTime()
 	post := types.NewPost(
-		types.ComputeID(postTime, msg.Creator, msg.Subspace),
+		ComputeID(msg),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
 		msg.OptionalData,
-		postTime,
+		ctx.BlockTime(),
 		msg.Creator,
 	).WithAttachments(msg.Attachments)
 

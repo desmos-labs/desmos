@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,13 +18,6 @@ import (
 
 // PostID represents a unique post id
 type PostID string
-
-// ComputeID returns a sha256 hash of the given data concatenated together
-// nolint: interfacer
-func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
-	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
-	return PostID(hex.EncodeToString(hash[:]))
-}
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {

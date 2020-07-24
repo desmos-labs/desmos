@@ -4,7 +4,6 @@ package simulation
 
 import (
 	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -42,7 +41,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	for index := 0; index < postsNumber; index++ {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
-			types.ComputeID(postData.CreationDate, postData.Creator.Address, postData.Subspace),
+			RandomPostID(simState.Rand),
 			"",
 			postData.Message,
 			postData.AllowsComments,
@@ -73,7 +72,7 @@ func randomPostReactions(simState *module.SimulationState, posts types.Posts) (r
 			reactions[j] = types.NewPostReaction(RandomReactionShortCode(simState.Rand), RandomPostReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
 		}
 
-		reactionsMap[RandomPostID(simState.Rand, posts).String()] = reactions
+		reactionsMap[RandomPostIDFromPosts(simState.Rand, posts).String()] = reactions
 	}
 
 	return reactionsMap

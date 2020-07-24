@@ -3,10 +3,10 @@ package simulation
 // DONTCOVER
 
 import (
-	"math/rand"
-	"time"
-
+	"crypto/sha256"
+	"encoding/hex"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"math/rand"
 
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -59,14 +59,21 @@ func RandomReportsData(r *rand.Rand, accs []sim.Account) ReportsData {
 	simAccount, _ := sim.RandomAcc(r, accs)
 	return ReportsData{
 		Creator: simAccount,
-		PostID:  RandomPostID(r, accs),
+		PostID:  RandomPostID(r),
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}
 }
 
-func RandomPostID(r *rand.Rand, accs []sim.Account) posts.PostID {
-	return posts.ComputeID(time.Now(), accs[r.Intn(len(accs))].Address, subspaces[r.Intn(len(subspaces))])
+// RandomPostID returns a randomly generated postID
+func RandomPostID(r *rand.Rand) posts.PostID {
+	randBytes := make([]byte, 4)
+	_, err := r.Read(randBytes)
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(randBytes)
+	return posts.PostID(hex.EncodeToString(hash[:]))
 }
 
 func RandomReportMessage(r *rand.Rand) string {

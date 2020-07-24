@@ -81,7 +81,7 @@ func randomAddPostReactionFields(
 ) (*PostReactionData, bool) {
 
 	postData := RandomPostData(r, accs)
-	postID := types.ComputeID(postData.CreationDate, postData.Creator.Address, postData.Subspace)
+	postID := RandomPostID(r)
 
 	post := types.NewPost(
 		postID,
