@@ -40,11 +40,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // ComputeID returns a sha256 hash of the msg's json representation
 // nolint: interfacer
-func ComputeID(msg types.MsgCreatePost) types.PostID {
-	bz, err := msg.MarshalJSON()
-	if err != nil {
-		panic(err)
-	}
+func ComputeID(parentID types.PostID, message, subspace string, allowsComment bool,
+	creationTime time.Time, creator sdk.AccAddress) types.PostID {
+	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComment) + creationTime.String() +
+		creator.String())
 	hash := sha256.Sum256(bz)
 	return types.PostID(hex.EncodeToString(hash[:]))
 }
@@ -52,7 +51,7 @@ func ComputeID(msg types.MsgCreatePost) types.PostID {
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
-		ComputeID(msg),
+		ComputeID(msg.ParentID, msg.Message, msg.Subspace, msg.AllowsComments, ctx.BlockTime(), msg.Creator),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,

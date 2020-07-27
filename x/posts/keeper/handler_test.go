@@ -41,7 +41,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					keeper.ComputeID(createPostMessage),
+					keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+						suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+						suite.testData.post.Creator),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
@@ -53,13 +55,15 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id f39f0628c16699ba99b7953947ba55c420f6505500af5bf717aae85b8b3cb7b6"),
+				"the provided post conflicts with the one having id 40faff47bf4b5ad22fe8c61e66e2e3c3b21dc5f596e8c0ef31a588d32bdf43df"),
 		},
 		{
 			name: "Post with new id is stored properly",
 			msg:  createPostMessage,
 			expPost: types.NewPost(
-				keeper.ComputeID(createPostMessage),
+				keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+					suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+					suite.testData.post.Creator),
 				suite.testData.post.ParentID,
 				suite.testData.post.Message,
 				suite.testData.post.AllowsComments,
@@ -113,19 +117,21 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Post with exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					keeper.ComputeID(createPostMessage),
+					keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+						suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+						suite.testData.post.Creator),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
 					suite.testData.post.Subspace,
 					suite.testData.post.OptionalData,
-					suite.testData.post.Created,
+					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
 				).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id f39f0628c16699ba99b7953947ba55c420f6505500af5bf717aae85b8b3cb7b6"),
+				"the provided post conflicts with the one having id 40faff47bf4b5ad22fe8c61e66e2e3c3b21dc5f596e8c0ef31a588d32bdf43df"),
 		},
 		{
 			name: "Post message cannot be longer than 500 characters",
@@ -140,7 +146,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id f5b82cc124d610d5d48ed5868e41d45d40ee68bfa16f9cd926ff88f2ddb6eabd has more than 500 characters"),
+				"post with id bd8660c0b53c085f94221d0f0df0110ebf80523a5774897790a6ecba3212d835 has more than 500 characters"),
 		},
 	}
 
@@ -162,7 +168,9 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				computedID := keeper.ComputeID(createPostMessage)
+				computedID := keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+					suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+					suite.testData.post.Creator)
 				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(computedID)), &stored)
 
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
