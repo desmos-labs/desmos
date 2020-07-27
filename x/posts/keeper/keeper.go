@@ -54,11 +54,11 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Check if the postID got an associated index, if so, don't increment the number of posts
-	if store.Get(types.PostIDStoreKey(post.PostID)) == nil {
+	if store.Get(types.PostIndexedIDStoreKey(post.PostID)) == nil {
 		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 	}
 
@@ -112,7 +112,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 	postsSorted := make(types.Posts, len(posts))
 	for _, post := range posts {
 		var index sdk.Int
-		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostIDStoreKey(post.PostID)), &index)
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
 		postsSorted[index.Int64()-1] = post
 	}
 
