@@ -1,6 +1,9 @@
 package models
 
-import "regexp"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"regexp"
+)
 
 var (
 	hashtagRegEx = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
@@ -13,8 +16,8 @@ func PostStoreKey(id PostID) []byte {
 }
 
 // PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
-func PostIndexedIDStoreKey(id PostID) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id)...)
+func PostIndexedIDStoreKey(id sdk.Int) []byte {
+	return append(PostIndexedIDStorePrefix, []byte(id.String())...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

@@ -42,11 +42,8 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
-	// Save the post
-	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
-
 	// Check if the postID got an associated index, if not, increment the number of posts
-	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
+	if !store.Has(types.PostStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
 		numberOfPosts := sdk.ZeroInt()
 		if store.Has(types.PostTotalNumberPrefix) {
@@ -56,9 +53,12 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostIndexedIDStoreKey(numberOfPosts), k.Cdc.MustMarshalBinaryBare(&post.PostID))
 		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 	}
+
+	// Save the post
+	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
 	// Save the comments to the parent post, if it is valid
 	if post.ParentID.Valid() {
@@ -106,15 +106,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 		return false
 	})
 
-	store := ctx.KVStore(k.StoreKey)
-	postsSorted := make(types.Posts, len(posts))
-	for _, post := range posts {
-		var index sdk.Int
-		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
-		postsSorted[index.Int64()-1] = post
-	}
-
-	return postsSorted
+	return posts
 }
 
 // GetPostsFiltered retrieves posts filtered by a given set of params which

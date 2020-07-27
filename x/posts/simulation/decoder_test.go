@@ -78,7 +78,7 @@ func TestDecodeStore(t *testing.T) {
 		kv.Pair{Key: types.PostCommentsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&comments)},
 		kv.Pair{Key: types.PostReactionsStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&postReactions)},
 		kv.Pair{Key: types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), Value: cdc.MustMarshalBinaryBare(&reaction)},
-		kv.Pair{Key: types.PostIndexedIDStoreKey(testPost.PostID), Value: cdc.MustMarshalBinaryBare(&totalPosts)},
+		kv.Pair{Key: types.PostIndexedIDStoreKey(totalPosts), Value: cdc.MustMarshalBinaryBare(&testPost.PostID)},
 		kv.Pair{Key: types.PostTotalNumberPrefix, Value: cdc.MustMarshalBinaryBare(&totalPosts)},
 	}
 
@@ -90,7 +90,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
 		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
 		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reaction, reaction)},
-		{"PostID", fmt.Sprintf("IndexedIDA: %s\nIndexedIDB: %s\n", totalPosts, totalPosts)},
+		{"PostID", fmt.Sprintf("IndexedIDA: %s\nIndexedIDB: %s\n", testPost.PostID, testPost.PostID)},
 		{"TotalPots", fmt.Sprintf("TotalPostsA: %s\nTotalPostsB: %s\n", totalPosts, totalPosts)},
 		{"other", ""},
 	}

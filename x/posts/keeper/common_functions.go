@@ -11,12 +11,14 @@ import (
 // IteratePosts iterates through the posts set and performs the provided function
 func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostIndexedIDStorePrefix)
 	defer iterator.Close()
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
+		var postID types.PostID
 		var post types.Post
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postID)
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &post)
 		stop := fn(i, post)
 		if stop {
 			break
