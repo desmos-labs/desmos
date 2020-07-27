@@ -42,25 +42,24 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
-	// Retrieve the total number of posts, if null the total number of posts is equal to 0
-	var totalPosts sdk.Int
+	// Retrieve the total number of posts, if null it will be equal to 0
+	var numberOfPosts sdk.Int
 	if bz := store.Get(types.PostTotalNumberPrefix); bz != nil {
-		k.Cdc.MustUnmarshalBinaryBare(bz, &totalPosts)
+		k.Cdc.MustUnmarshalBinaryBare(bz, &numberOfPosts)
 	} else {
-		totalPosts = sdk.NewInt(0)
+		numberOfPosts = sdk.NewInt(0)
 	}
 
 	// Save the post
 	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
 
-	// Check if the postID got an associated index, if so, don't increment the total posts
-	// number
+	// Check if the postID got an associated index, if so, don't increment the number of posts
 	if store.Get(types.PostIDStoreKey(post.PostID)) == nil {
-		totalPosts = totalPosts.Add(sdk.NewInt(1))
+		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&totalPosts))
-		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&totalPosts))
+		store.Set(types.PostIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 	}
 
 	// Save the comments to the parent post, if it is valid
@@ -101,7 +100,7 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state
-//sorted by their sequential ID.
+//sorted by their incremental ID.
 func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 	posts = types.Posts{}
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {

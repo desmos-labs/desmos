@@ -74,7 +74,7 @@ var (
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
-	PostIDStorePrefix        = common.PostIDStorePrefix
+	PostIDStorePrefix        = common.PostIndexedIDStorePrefix
 	PostTotalNumberPrefix    = common.PostTotalNumberPrefix
 	PostCommentsStorePrefix  = common.PostCommentsStorePrefix
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix

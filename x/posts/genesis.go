@@ -24,8 +24,6 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []abci.ValidatorUpdate {
 	k.SetParams(ctx, data.Params)
 
-	// Sort the posts so that they are inserted based on their IDs
-	//sort.Sort(data.Posts)
 	for _, post := range data.Posts {
 		if err := keeper.ValidatePost(ctx, k, post); err != nil {
 			panic(err)
