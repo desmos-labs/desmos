@@ -40,7 +40,7 @@ var (
 	NewPost                    = models.NewPost
 	NewPostResponse            = models.NewPostResponse
 	PostStoreKey               = models.PostStoreKey
-	PostIDStoreKey             = models.PostIDStoreKey
+	PostIDStoreKey             = models.PostIndexedIDStoreKey
 	PostCommentsStoreKey       = models.PostCommentsStoreKey
 	PostReactionsStoreKey      = models.PostReactionsStoreKey
 	ReactionsStoreKey          = models.ReactionsStoreKey
