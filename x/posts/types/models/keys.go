@@ -2,9 +2,9 @@ package models
 
 import (
 	"encoding/binary"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"regexp"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
