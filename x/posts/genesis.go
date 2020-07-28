@@ -2,6 +2,7 @@ package posts
 
 import (
 	"fmt"
+	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -11,8 +12,10 @@ import (
 
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
+	posts := k.GetPosts(ctx)
+	sort.Sort(posts)
 	return types.GenesisState{
-		Posts:               k.GetPosts(ctx),
+		Posts:               posts,
 		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
 		PostReactions:       k.GetReactions(ctx),
 		RegisteredReactions: k.GetRegisteredReactions(ctx),

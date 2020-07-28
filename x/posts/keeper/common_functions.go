@@ -1,12 +1,10 @@
 package keeper
 
 import (
-	"bytes"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"math/big"
 )
 
 // IteratePosts iterates through the posts set and performs the provided function
@@ -19,9 +17,6 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 		var postID types.PostID
 		var post types.Post
 
-		bz := bytes.TrimPrefix(iterator.Key(), types.PostIndexedIDStorePrefix)
-		index := new(big.Int).SetBytes(bz)
-		println(index.String())
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postID)
 		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &post)
 		stop := fn(i, post)
