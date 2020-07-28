@@ -2,6 +2,7 @@ package models
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"regexp"
 )
 
@@ -16,6 +17,7 @@ func PostStoreKey(id PostID) []byte {
 }
 
 // PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
+//nolint: interfacer
 func PostIndexedIDStoreKey(id sdk.Int) []byte {
 	return append(PostIndexedIDStorePrefix, []byte(id.String())...)
 }
