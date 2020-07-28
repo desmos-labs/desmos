@@ -4,14 +4,49 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+	"github.com/stretchr/testify/require"
 )
 
 // -----------
 // --- Attachments
 // -----------
+
+func TestNewAttachment(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	uri := "https://uri.com"
+	mimetype := "text/plain"
+	tags := []sdk.AccAddress{tag, tag2}
+	require.NoError(t, err2)
+	expAtt := common.Attachment{
+		URI:      uri,
+		MimeType: mimetype,
+		Tags:     tags,
+	}
+	att := common.NewAttachment(expAtt.URI, expAtt.MimeType, tags)
+	require.Equal(t, expAtt, att)
+}
+
+func TestNewAttachments(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	uri := "https://uri.com"
+	mimetype := "text/plain"
+	tags := []sdk.AccAddress{tag, tag2}
+	require.NoError(t, err2)
+	expAtts := common.Attachments{
+		common.Attachment{
+			URI:      uri,
+			MimeType: mimetype,
+			Tags:     tags,
+		},
+	}
+	atts := common.NewAttachments(expAtts...)
+	require.Equal(t, expAtts, atts)
+}
 
 func TestPostMedias_String(t *testing.T) {
 	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")

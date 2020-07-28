@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/binary"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"regexp"
@@ -19,7 +20,9 @@ func PostStoreKey(id PostID) []byte {
 // PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
 //nolint: interfacer
 func PostIndexedIDStoreKey(id sdk.Int) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id.String())...)
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(id.Int64()))
+	return append(PostIndexedIDStorePrefix, b...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

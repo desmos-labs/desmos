@@ -342,7 +342,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 			name: "Existing list is returned properly",
 			posts: types.Posts{
 				types.NewPost(
-					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					"63b173547f1079e46885aa3ad4e36d0fe4beea8b7e2ec9c1d71ba3bff1abd909",
 					"",
 					"",
 					false,
@@ -352,7 +352,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 					suite.testData.postOwner,
 				),
 				types.NewPost(
-					"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					"aad15654d10acd67b942ca39afd7a2aa071aed7c3f0b946edd2b666a037026f7",
 					"",
 					"",
 					false,
