@@ -80,21 +80,11 @@ func randomAddPostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*PostReactionData, bool) {
 
-	postData := RandomPostData(r, accs)
-	postID := RandomPostID(r)
-
-	post := types.NewPost(
-		postID,
-		postData.ParentID,
-		postData.Message,
-		postData.AllowsComments,
-		postData.Subspace,
-		postData.OptionalData,
-		postData.CreationDate,
-		postData.Creator.Address,
-	)
-
-	k.SavePost(ctx, post)
+	posts := k.GetPosts(ctx)
+	if posts == nil {
+		return nil, true
+	}
+	post, _ := RandomPost(r, posts)
 
 	var reaction types.Reaction
 	data := RandomReactionData(r, accs)
@@ -102,7 +92,7 @@ func randomAddPostReactionFields(
 
 	k.RegisterReaction(ctx, reaction)
 
-	reactionData := RandomPostReactionData(r, accs, postID, reaction.ShortCode, reaction.Value)
+	reactionData := RandomPostReactionData(r, accs, post.PostID, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid

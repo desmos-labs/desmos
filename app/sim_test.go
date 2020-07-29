@@ -151,6 +151,9 @@ func TestAppImportExport(t *testing.T) {
 	appState, _, err := app.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err)
 
+	file, _ := os.Create("genesis.json")
+	_, _ = file.WriteString(string(appState))
+
 	fmt.Printf("importing genesis...\n")
 
 	_, newDB, newDir, _, _, err := SetupSimulation("leveldb-app-sim-2", "Simulation-2")

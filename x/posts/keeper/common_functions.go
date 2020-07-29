@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -13,13 +14,16 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostIndexedIDStorePrefix)
 	defer iterator.Close()
-	i := int64(0)
-	for ; iterator.Valid(); iterator.Next() {
-		var postID types.PostID
-		var post types.Post
 
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &postID)
-		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &post)
+	var posts types.Posts
+	for ; iterator.Valid(); iterator.Next() {
+		// var post types.PostID
+		// posts = append(posts, )
+		// TODO
+	}
+
+	i := int64(0)
+	for _, post := range posts {
 		stop := fn(i, post)
 		if stop {
 			break

@@ -65,7 +65,6 @@ type PostData struct {
 	Message        string
 	AllowsComments bool
 	Subspace       string
-	CreationDate   time.Time
 	OptionalData   map[string]string
 	Attachments    types.Attachments
 	PollData       *types.PollData
@@ -80,7 +79,6 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 		Message:        RandomMessage(r) + RandomHashtag(r),
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
-		CreationDate:   time.Now().UTC(),
 		Attachments:    RandomAttachments(r, accs),
 		PollData:       RandomPollData(r),
 	}
@@ -138,6 +136,16 @@ func RandomSubspace(r *rand.Rand) string {
 	return subspaces[idx]
 }
 
+// RandomDate returns a random post creation date
+func RandomDate(r *rand.Rand) time.Time {
+	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	delta := max - min
+
+	sec := r.Int63n(delta) + min
+	return time.Unix(sec, 0).Truncate(time.Millisecond)
+}
+
 // RandomHashtag returns a random hashtag from the above random hashtags
 func RandomHashtag(r *rand.Rand) string {
 	idx := r.Intn(len(hashtags))
@@ -178,12 +186,12 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		answers[i] = types.NewPollAnswer(types.AnswerID(i), RandomMessage(r))
 	}
 
-	closingDate := time.Now().UTC()
+	closingDate := RandomDate(r)
 
 	// 30% possibility of closed poll
 	open := r.Intn(100) > 70
 	if open {
-		closingDate = time.Now().UTC().AddDate(1, 0, 0)
+		closingDate = closingDate.AddDate(1, 0, 0)
 	}
 
 	poll := types.NewPollData(

@@ -7,7 +7,10 @@ import (
 	"encoding/hex"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/x/posts/simulation"
+
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -45,12 +48,14 @@ type ReportsData struct {
 	Type    string
 }
 
-// RandomReportsData returns a randomly generated ReportsData based on the given random and accounts list
-func RandomReportsData(r *rand.Rand, accs []sim.Account) ReportsData {
+// RandomReportsData returns a randomly generated ReportsData based on the given random posts and accounts list
+func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []sim.Account) ReportsData {
+	post, _ := simulation.RandomPost(r, posts)
 	simAccount, _ := sim.RandomAcc(r, accs)
+
 	return ReportsData{
 		Creator: simAccount,
-		PostID:  RandomPostID(r),
+		PostID:  post.PostID,
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}

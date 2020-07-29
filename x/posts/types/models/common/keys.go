@@ -41,7 +41,7 @@ var (
 	ModuleAddress = supply.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
-	PostIndexedIDStorePrefix = []byte("id")
+	PostIndexedIDStorePrefix = []byte("p_index")
 	PostTotalNumberPrefix    = []byte("number_of_posts")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("p_reactions")

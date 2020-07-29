@@ -8,8 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 var (
@@ -48,7 +49,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 			postData.AllowsComments,
 			postData.Subspace,
 			postData.OptionalData,
-			postData.CreationDate,
+			RandomDate(simState.Rand),
 			postData.Creator.Address,
 		).WithAttachments(postData.Attachments)
 
