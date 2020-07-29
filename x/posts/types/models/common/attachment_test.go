@@ -48,7 +48,7 @@ func TestNewAttachments(t *testing.T) {
 	require.Equal(t, expAtts, atts)
 }
 
-func TestPostMedias_String(t *testing.T) {
+func TestAttachments_String(t *testing.T) {
 	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
@@ -74,7 +74,7 @@ func TestPostMedias_String(t *testing.T) {
 	require.Equal(t, expected, actual)
 }
 
-func TestPostMedias_Equals(t *testing.T) {
+func TestAttachments_Equals(t *testing.T) {
 	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
@@ -244,7 +244,7 @@ func TestPostMedias_Equals(t *testing.T) {
 	}
 }
 
-func TestPostMedias_AppendIfMissing(t *testing.T) {
+func TestAttachments_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
 		medias      common.Attachments
@@ -305,7 +305,7 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestPostMedias_Validate(t *testing.T) {
+func TestAttachments_Validate(t *testing.T) {
 	tests := []struct {
 		postMedia common.Attachments
 		expErr    string
@@ -337,6 +337,14 @@ func TestPostMedias_Validate(t *testing.T) {
 				},
 			},
 			expErr: "mime type must be specified and cannot be empty",
+		},
+		{
+			postMedia: common.Attachments{
+				common.Attachment{
+					URI:      "https://example.com",
+					MimeType: "text/plain",
+				},
+			},
 		},
 	}
 
