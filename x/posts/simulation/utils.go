@@ -234,10 +234,10 @@ func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
 }
 
 func RandomReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
-	reactionsData := []ReactionData{}
-	limit := r.Intn(sim.RandIntBetween(r, 5, 20))
-	for index := 0; index < limit; index++ {
-		reactionsData = append(reactionsData, RandomReactionData(r, accs))
+	limit := sim.RandIntBetween(r, 5, 20)
+	reactionsData := make([]ReactionData, limit)
+	for index := range reactionsData {
+		reactionsData[index] = RandomReactionData(r, accs)
 	}
 	return reactionsData
 }

@@ -23,7 +23,7 @@ var (
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	reactionsData := RandomReactionsData(simState.Rand, simState.Accounts)
-	print(len(reactionsData))
+
 	postReactions := randomPostReactions(simState, posts, reactionsData[simState.Rand.Intn(len(reactionsData))])
 	registeredReactions := registeredReactions(reactionsData)
 	params := randomParams(simState)
