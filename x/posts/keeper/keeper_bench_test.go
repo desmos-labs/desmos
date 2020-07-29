@@ -121,6 +121,19 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 
 }
 
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
+	fmt.Println("Benchmark: GetPosts")
+
+	for i := 0; i < b.N; i++ {
+		suite.keeper.SavePost(suite.ctx, RandomPost())
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		suite.keeper.GetPosts(suite.ctx)
+	}
+}
+
 func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
 	fmt.Println("Benchmark: Get posts filtered")
 	r := rand.New(rand.NewSource(100))

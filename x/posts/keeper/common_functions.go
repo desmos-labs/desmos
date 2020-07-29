@@ -5,31 +5,46 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // IteratePosts iterates through the posts set and performs the provided function
+// It makes a copy of the posts array which is done only for sorting purposes.
 func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostIndexedIDStorePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 	defer iterator.Close()
 
 	var posts types.Posts
 	for ; iterator.Valid(); iterator.Next() {
-		// var post types.PostID
-		// posts = append(posts, )
-		// TODO
+		var post types.Post
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
+		posts = append(posts, post)
 	}
 
 	i := int64(0)
+	postsSorted := make(types.Posts, len(posts))
 	for _, post := range posts {
+		var index sdk.Int
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
+		postsSorted[index.Int64()-1] = post
+	}
+
+	//freeing up memory
+	//nolint
+	posts = nil
+
+	for _, post := range postsSorted {
 		stop := fn(i, post)
 		if stop {
 			break
 		}
 		i++
 	}
+
+	//freeing up memory
+	//nolint
+	postsSorted = nil
 }
 
 // ValidatePost checks if the given post is valid according to the current posts' module params
