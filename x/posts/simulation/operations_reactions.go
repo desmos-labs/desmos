@@ -101,7 +101,7 @@ func randomAddPostReactionFields(
 	}
 
 	// Skip if the reaction already exists
-	reactions := k.GetPostReactions(ctx, reactionData.PostID)
+	reactions := k.GetPostReactions(ctx, post.PostID)
 	if reactions.ContainsReactionFrom(reactionData.User.Address, reactionData.Value) {
 		return nil, true
 	}

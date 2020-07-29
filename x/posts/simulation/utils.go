@@ -5,8 +5,10 @@ package simulation
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,8 +48,6 @@ var (
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
-	shortCodes      = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues     = []string{"http://earth.jpg", "http://food.jpg", "http://music.jpg", "http://art.jpg"}
 	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
@@ -223,42 +223,22 @@ type ReactionData struct {
 	Subspace  string
 }
 
-// RandomReactionValue returns a random reaction value
-func RandomReactionValue(r *rand.Rand) string {
-	return reactValues[r.Intn(len(reactValues))]
-}
-
-// RandomReactionShortCode return a random reaction shortCode
-func RandomReactionShortCode(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(shortCodes))]
-}
-
 // RandomReactionData returns a randomly generated reaction data object
 func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
 	return ReactionData{
 		Creator:   accs[r.Intn(len(accs))],
-		ShortCode: RandomReactionShortCode(r),
-		Value:     RandomReactionValue(r),
+		ShortCode: fmt.Sprintf(":%s:", strings.ToLower(sim.RandStringOfLength(r, 5))),
+		Value:     fmt.Sprintf("http://%s.jpg", sim.RandStringOfLength(r, 5)),
 		Subspace:  RandomSubspace(r),
 	}
 }
 
-// RegisteredReactionsData returns all the possible registered reactions with given data
-func RegisteredReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
+func RandomReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
 	reactionsData := []ReactionData{}
-
-	for _, subspace := range subspaces {
-		for _, shortCode := range shortCodes {
-			reactionData := ReactionData{
-				Creator:   accs[r.Intn(len(accs))],
-				ShortCode: shortCode,
-				Value:     RandomReactionValue(r),
-				Subspace:  subspace,
-			}
-			reactionsData = append(reactionsData, reactionData)
-		}
+	limit := r.Intn(20)
+	for index := 0; index < limit; index++ {
+		reactionsData = append(reactionsData, RandomReactionData(r, accs))
 	}
-
 	return reactionsData
 }
 
