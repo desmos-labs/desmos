@@ -1,3 +1,7 @@
+# Version 0.11.0
+## Changes
+- Removed `Open` field from `PollData` to make the code easier to handle (#252)
+
 # Version 0.10.0
 ## Changes
 - Changed application errors to make them more clear (#237)
