@@ -745,6 +745,10 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				suite.keeper.SavePollAnswers(suite.ctx, test.storedPost.PostID, *test.storedAnswers)
 			}
 
+			if test.storedPost.PollData != nil && test.storedPost.PollData.EndDate == suite.testData.postEndPollDateExpired {
+				suite.ctx = suite.ctx.WithBlockTime(suite.testData.postEndPollDate)
+			}
+
 			handler := keeper.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
