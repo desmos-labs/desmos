@@ -41,10 +41,6 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 		}
 		i++
 	}
-
-	//freeing up memory
-	//nolint
-	postsSorted = nil
 }
 
 // ValidatePost checks if the given post is valid according to the current posts' module params
