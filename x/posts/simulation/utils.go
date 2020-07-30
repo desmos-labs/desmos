@@ -102,11 +102,6 @@ func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostI
 	}
 }
 
-// RandomPostReactionValue returns a random post reaction value
-func RandomPostReactionValue(r *rand.Rand) string {
-	return postReactValues[r.Intn(len(postReactValues))]
-}
-
 // RandomPostID returns a randomly generated postID
 func RandomPostID(r *rand.Rand) types.PostID {
 	randBytes := make([]byte, 4)
@@ -220,7 +215,7 @@ type ReactionData struct {
 func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
 	return ReactionData{
 		Creator:   accs[r.Intn(len(accs))],
-		ShortCode: fmt.Sprintf(":%s:", strings.ToLower(sim.RandStringOfLength(r, 5))),
+		ShortCode: fmt.Sprintf(":%s:", "x"+strings.ToLower(sim.RandStringOfLength(r, 5))),
 		Value:     fmt.Sprintf("http://%s.jpg", sim.RandStringOfLength(r, 5)),
 		Subspace:  RandomSubspace(r),
 	}
