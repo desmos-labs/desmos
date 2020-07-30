@@ -75,7 +75,6 @@ This message allows you to create a new public post. If you want to know more ab
         }
       ],
       "end_date": "2020-02-10T15:00:00Z",
-      "is_open": true,
       "allows_multiple_answers": true,
       "allows_answer_edits": true
     }
