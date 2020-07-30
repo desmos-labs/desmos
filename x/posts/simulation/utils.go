@@ -47,8 +47,6 @@ var (
 	}
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
-
-	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
