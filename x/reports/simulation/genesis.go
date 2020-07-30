@@ -31,7 +31,7 @@ func randomReports(simState *module.SimulationState) (reportsMap map[string]type
 				sdk.AccAddress(privKey.Address()),
 			)
 		}
-		reportsMap[RandomPostID(simState.Rand, simState.Accounts).String()] = reports
+		reportsMap[RandomPostID(simState.Rand).String()] = reports
 	}
 
 	return reportsMap

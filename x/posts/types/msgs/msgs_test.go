@@ -20,7 +20,6 @@ import (
 
 var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var timeZone, _ = time.LoadLocation("UTC")
-var date = time.Date(2020, 1, 1, 12, 0, 0, 0, timeZone)
 var pollData = models.NewPollData(
 	"poll?",
 	time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
@@ -40,7 +39,6 @@ var msgCreatePost = msgs.NewMsgCreatePost(
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
 	testOwner,
-	date,
 	models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil)),
 	&pollData,
 )
@@ -73,7 +71,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				nil,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
@@ -88,7 +85,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				nil,
 			),
@@ -103,7 +99,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				msgCreatePost.PollData,
 			),
@@ -118,7 +113,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
@@ -133,7 +127,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
@@ -148,7 +141,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				msgCreatePost.PollData,
 			),
@@ -163,7 +155,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				nil,
 			),
@@ -178,14 +169,13 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"",
 				map[string]string{},
 				creator,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash"),
 		},
 		{
-			name: "Future creation date returns error",
+			name: "Empty URI in medias returns error",
 			msg: msgs.NewMsgCreatePost(
 				"future post",
 				"",
@@ -193,22 +183,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				time.Now().UTC().Add(time.Hour),
-				msgCreatePost.Attachments,
-				msgCreatePost.PollData,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "creation date cannot be in the future"),
-		},
-		{
-			name: "Empty URI in attachments returns error",
-			msg: msgs.NewMsgCreatePost(
-				"future post",
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				creator,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "",
@@ -228,7 +202,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				models.Attachments{models.Attachment{
 					URI:      "invalid-uri",
 					MimeType: "text/plain",
@@ -246,7 +219,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://example.com",
@@ -274,7 +246,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					"array":  `["first","second"]`,
 				},
 				creator,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://uri.com",
@@ -294,7 +265,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				msgCreatePost.PollData,
 			),
@@ -309,7 +279,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
@@ -324,7 +293,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
@@ -339,7 +307,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				nil,
 				msgCreatePost.PollData,
 			),
@@ -354,7 +321,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				creator,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://example.com",
@@ -399,7 +365,6 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{"field": "value"},
 				testOwner,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://uri.com",
@@ -408,7 +373,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -419,7 +384,6 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://uri.com",
@@ -428,7 +392,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty attachments",
@@ -439,11 +403,10 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				date,
 				models.Attachments{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty poll data",
@@ -454,7 +417,6 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
 				testOwner,
-				date,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://uri.com",
@@ -463,7 +425,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				nil,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creation_date":"2020-01-01T12:00:00Z","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -485,8 +447,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var editDate = time.Date(2010, 1, 1, 15, 0, 0, 0, timeZone)
-var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner, editDate)
+var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -506,37 +467,27 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner, editDate),
+			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil, editDate),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
 			name:  "Blank message returns error",
-			msg:   msgs.NewMsgEditPost(id, " ", testOwner, editDate),
+			msg:   msgs.NewMsgEditPost(id, " ", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
 			name:  "Empty message returns error",
-			msg:   msgs.NewMsgEditPost(id, "", testOwner, editDate),
+			msg:   msgs.NewMsgEditPost(id, "", testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
 		},
 		{
-			name:  "Empty edit date returns error",
-			msg:   msgs.NewMsgEditPost(id, "My new message", testOwner, time.Time{}),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid edit date"),
-		},
-		{
-			name:  "Future edit date returns error",
-			msg:   msgs.NewMsgEditPost(id, "My new message", testOwner, time.Now().Add(time.Hour)),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Edit date cannot be in the future"),
-		},
-		{
 			name:  "Valid message returns no error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner, editDate),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner),
 			error: nil,
 		},
 	}
@@ -557,7 +508,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"edit_date":"2010-01-01T15:00:00Z","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

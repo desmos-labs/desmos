@@ -3,8 +3,12 @@ package simulation
 // DONTCOVER
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,8 +48,6 @@ var (
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
 
-	shortCodes      = []string{":blue_heart:", ":arrow_down:", ":thumbsdown:", ":thumbsup:", ":dog:", ":cat:"}
-	reactValues     = []string{"http://earth.jpg", "http://food.jpg", "http://music.jpg", "http://art.jpg"}
 	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
@@ -63,7 +65,6 @@ type PostData struct {
 	Message        string
 	AllowsComments bool
 	Subspace       string
-	CreationDate   time.Time
 	OptionalData   map[string]string
 	Attachments    types.Attachments
 	PollData       *types.PollData
@@ -78,7 +79,6 @@ func RandomPostData(r *rand.Rand, accs []sim.Account) PostData {
 		Message:        RandomMessage(r) + RandomHashtag(r),
 		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
 		Subspace:       RandomSubspace(r),
-		CreationDate:   time.Now().UTC(),
 		Attachments:    RandomAttachments(r, accs),
 		PollData:       RandomPollData(r),
 	}
@@ -107,8 +107,19 @@ func RandomPostReactionValue(r *rand.Rand) string {
 	return postReactValues[r.Intn(len(postReactValues))]
 }
 
-// RandomPostID returns a randomly extracted post id from the list of posts given
-func RandomPostID(r *rand.Rand, posts []types.Post) types.PostID {
+// RandomPostID returns a randomly generated postID
+func RandomPostID(r *rand.Rand) types.PostID {
+	randBytes := make([]byte, 4)
+	_, err := r.Read(randBytes)
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(randBytes)
+	return types.PostID(hex.EncodeToString(hash[:]))
+}
+
+// RandomPostIDFromPosts returns a randomly extracted post id from the list of posts given
+func RandomPostIDFromPosts(r *rand.Rand, posts []types.Post) types.PostID {
 	p, _ := RandomPost(r, posts)
 	return p.PostID
 }
@@ -123,6 +134,16 @@ func RandomMessage(r *rand.Rand) string {
 func RandomSubspace(r *rand.Rand) string {
 	idx := r.Intn(len(subspaces))
 	return subspaces[idx]
+}
+
+// RandomDate returns a random post creation date
+func RandomDate(r *rand.Rand) time.Time {
+	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	delta := max - min
+
+	sec := r.Int63n(delta) + min
+	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
 // RandomHashtag returns a random hashtag from the above random hashtags
@@ -165,12 +186,12 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		answers[i] = types.NewPollAnswer(types.AnswerID(i), RandomMessage(r))
 	}
 
-	closingDate := time.Now().UTC()
+	closingDate := RandomDate(r)
 
 	// 30% possibility of closed poll
 	open := r.Intn(100) > 70
 	if open {
-		closingDate = time.Now().UTC().AddDate(1, 0, 0)
+		closingDate = closingDate.AddDate(1, 0, 0)
 	}
 
 	poll := types.NewPollData(
@@ -202,42 +223,22 @@ type ReactionData struct {
 	Subspace  string
 }
 
-// RandomReactionValue returns a random reaction value
-func RandomReactionValue(r *rand.Rand) string {
-	return reactValues[r.Intn(len(reactValues))]
-}
-
-// RandomReactionShortCode return a random reaction shortCode
-func RandomReactionShortCode(r *rand.Rand) string {
-	return shortCodes[r.Intn(len(shortCodes))]
-}
-
 // RandomReactionData returns a randomly generated reaction data object
 func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
 	return ReactionData{
 		Creator:   accs[r.Intn(len(accs))],
-		ShortCode: RandomReactionShortCode(r),
-		Value:     RandomReactionValue(r),
+		ShortCode: fmt.Sprintf(":%s:", strings.ToLower(sim.RandStringOfLength(r, 5))),
+		Value:     fmt.Sprintf("http://%s.jpg", sim.RandStringOfLength(r, 5)),
 		Subspace:  RandomSubspace(r),
 	}
 }
 
-// RegisteredReactionsData returns all the possible registered reactions with given data
-func RegisteredReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
-	reactionsData := []ReactionData{}
-
-	for _, subspace := range subspaces {
-		for _, shortCode := range shortCodes {
-			reactionData := ReactionData{
-				Creator:   accs[r.Intn(len(accs))],
-				ShortCode: shortCode,
-				Value:     RandomReactionValue(r),
-				Subspace:  subspace,
-			}
-			reactionsData = append(reactionsData, reactionData)
-		}
+func RandomReactionsData(r *rand.Rand, accs []sim.Account) []ReactionData {
+	limit := sim.RandIntBetween(r, 5, 20)
+	reactionsData := make([]ReactionData, limit)
+	for index := range reactionsData {
+		reactionsData[index] = RandomReactionData(r, accs)
 	}
-
 	return reactionsData
 }
 

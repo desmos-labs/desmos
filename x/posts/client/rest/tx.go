@@ -47,7 +47,7 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-			addr, req.CreationTime, req.Medias, req.PollData)
+			addr, req.Medias, req.PollData)
 
 		err = msg.ValidateBasic()
 		if err != nil {

@@ -2,8 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -13,18 +11,16 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_queryPost() {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, suite.testData.timeZone)
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	suite.NoError(err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
-	computedID := types.ComputeID(creationDate, creator, subspace)
+	computedID := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	stringID := computedID.String()
 
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 	suite.NoError(err)
 
-	computedID2 := types.ComputeID(creationDate, otherCreator, subspace)
+	computedID2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	answers := []types.AnswerID{types.AnswerID(1)}
 
@@ -56,7 +52,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name:               "Post not found returns error",
 			path:               []string{types.QueryPost, computedID.String()},
 			registeredReaction: nil,
-			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id f29d559522dd14484d38330a4df10115c04814d23cf35aabd9c35c80dbd5268f not found"),
+			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name: "Post without reactions is returned properly",
@@ -321,12 +317,10 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 }
 
 func (suite *KeeperTestSuite) Test_queryPollAnswers() {
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, suite.testData.timeZone)
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	suite.NoError(err)
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
-	computedID := types.ComputeID(creationDate, creator, subspace)
+	computedID := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	stringID := computedID.String()
 
 	answers := []types.AnswerID{types.AnswerID(1)}
@@ -369,7 +363,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 					suite.testData.post.Creator,
 				).WithAttachments(suite.testData.post.Attachments),
 			},
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id f29d559522dd14484d38330a4df10115c04814d23cf35aabd9c35c80dbd5268f has no poll associated"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd has no poll associated"),
 		},
 		{
 			name: "Returns answers details of the post correctly",

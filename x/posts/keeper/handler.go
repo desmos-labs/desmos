@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -36,16 +38,26 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// ComputeID returns a sha256 hash of the msg's json representation
+// nolint: interfacer
+func ComputeID(parentID types.PostID, message, subspace string, allowsComment bool,
+	creationTime time.Time, creator sdk.AccAddress) types.PostID {
+	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComment) + creationTime.String() +
+		creator.String())
+	hash := sha256.Sum256(bz)
+	return types.PostID(hex.EncodeToString(hash[:]))
+}
+
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
-		types.ComputeID(msg.CreationDate, msg.Creator, msg.Subspace),
+		ComputeID(msg.ParentID, msg.Message, msg.Subspace, msg.AllowsComments, ctx.BlockTime(), msg.Creator),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
 		msg.OptionalData,
-		msg.CreationDate,
+		ctx.BlockTime(),
 		msg.Creator,
 	).WithAttachments(msg.Attachments)
 
@@ -107,13 +119,13 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	}
 
 	// Check the validity of the current block height respect to the creation date of the post
-	if existing.Created.After(msg.EditDate) {
+	if existing.Created.After(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
 
 	// Edit the post
 	existing.Message = msg.Message
-	existing.LastEdited = msg.EditDate
+	existing.LastEdited = ctx.BlockTime()
 
 	if err := ValidatePost(ctx, keeper, existing); err != nil {
 		return nil, err

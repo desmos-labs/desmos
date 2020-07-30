@@ -33,12 +33,12 @@ const (
 
 var (
 	// functions aliases
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	NewAttachment              = common.NewAttachment
 	NewAttachments             = common.NewAttachments
 	IsValidPostID              = common.IsValidPostID
 	IsValidSubspace            = common.IsValidSubspace
 	IsValidReactionCode        = common.IsValidReactionCode
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	ParseAnswerID              = polls.ParseAnswerID
 	NewPollAnswer              = polls.NewPollAnswer
 	NewPollAnswers             = polls.NewPollAnswers
@@ -55,6 +55,8 @@ var (
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
+	PostIndexedIDStorePrefix = common.PostIndexedIDStorePrefix
+	PostTotalNumberPrefix    = common.PostTotalNumberPrefix
 	PostCommentsStorePrefix  = common.PostCommentsStorePrefix
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
@@ -62,10 +64,10 @@ var (
 )
 
 type (
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
 	Attachment    = common.Attachment
 	Attachments   = common.Attachments
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers

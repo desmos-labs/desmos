@@ -218,7 +218,6 @@ E.g.
 				args[0],
 				map[string]string{},
 				cliCtx.GetFromAddress(),
-				time.Now().UTC(),
 				attachments,
 				pollData,
 			)
@@ -252,7 +251,7 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress(), time.Now().UTC())
+			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress())
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

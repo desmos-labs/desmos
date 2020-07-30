@@ -17,16 +17,6 @@ import (
 // -------------
 
 func TestPostID_Equals(t *testing.T) {
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	subspace2 := "ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1"
-
 	tests := []struct {
 		name    string
 		postID  models.PostID
@@ -35,14 +25,14 @@ func TestPostID_Equals(t *testing.T) {
 	}{
 		{
 			name:    "Equal IDs returns true",
-			postID:  models.ComputeID(creationDate, creator, subspace),
-			otherID: models.ComputeID(creationDate, creator, subspace),
+			postID:  models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			otherID: models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
 			expBool: true,
 		},
 		{
 			name:    "Non Equal IDs returns false",
-			postID:  models.ComputeID(creationDate, creator, subspace),
-			otherID: models.ComputeID(creationDate, creator, subspace2),
+			postID:  models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			otherID: models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 			expBool: false,
 		},
 	}
@@ -58,18 +48,8 @@ func TestPostID_Equals(t *testing.T) {
 }
 
 func TestPostID_String(t *testing.T) {
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	creationDate := time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone)
-
-	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	computedID := models.ComputeID(creationDate, creator, subspace)
-
-	require.Equal(t, "f55d90114d81e70399d6330a57081b86ae1bdf928b78a57e88870f64240009ef", computedID.String())
+	postID := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
+	require.Equal(t, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd", postID.String())
 }
 
 // -------------
@@ -252,6 +232,24 @@ func TestPost_String(t *testing.T) {
 			).WithAttachments(postMedias).WithPollData(pollData),
 			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
+		{
+			name: "Post with optional data",
+			post: models.NewPost(
+				id,
+				id2,
+				"My post message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{
+					"key1": "value",
+					"key2": "value",
+					"key3": "value",
+				},
+				date,
+				owner,
+			),
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Optional Data] map[key1:value key2:value key3:value]",
+		},
 	}
 
 	for _, test := range tests {
@@ -272,12 +270,17 @@ func TestPost_Validate(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := common.Attachments{
+	attachs := common.Attachments{
 		common.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
 	}
+
+	invalidAttachs := common.Attachments{
+		common.NewAttachment("htp:/uri.com", "text/plain", nil),
+	}
+
 	answer := polls.PollAnswer{
 		ID:   polls.AnswerID(1),
 		Text: "Yes",
@@ -296,12 +299,12 @@ func TestPost_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Invalid postID",
-			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost("", "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid postID: ",
 		},
 		{
 			name:     "Invalid post owner",
-			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid post owner: ",
 		},
 		{
@@ -316,7 +319,7 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Invalid post creation time",
-			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -326,57 +329,31 @@ func TestPost_Validate(t *testing.T) {
 		},
 		{
 			name:     "Invalid post subspace",
-			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name:     "Invalid post subspace(blank)",
-			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(medias).WithPollData(pollData),
+			post:     models.NewPost(id, id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
-			name: "Post creation data in future",
-			post: models.Post{
-				PostID:         id,
-				ParentID:       id2,
-				Message:        "Message",
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
-				Created:        time.Now().UTC().Add(time.Hour),
-				Creator:        owner,
-				Attachments:    medias,
-			},
-			expError: "post creation date cannot be in the future",
-		},
-		{
-			name: "Post last edit date in future",
-			post: models.Post{
-				PostID:         id,
-				ParentID:       id2,
-				Message:        "Message",
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
-				Created:        time.Now().UTC(),
-				LastEdited:     time.Now().UTC().Add(time.Hour),
-				Creator:        owner,
-				Attachments:    medias,
-			},
-			expError: "post last edit date cannot be in the future",
+			name:     "Invalid post attachments",
+			post:     models.NewPost(id, id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(invalidAttachs),
+			expError: "invalid uri provided",
 		},
 		{
 			name:     "Valid post without poll data",
-			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(medias),
+			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(attachs),
 			expError: "",
 		},
 		{
-			name:     "Valid post without medias",
+			name:     "Valid post without attachs",
 			post:     models.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
 		{
-			name:     "Valid post without text and medias, but with poll",
+			name:     "Valid post without text and attachs, but with poll",
 			post:     models.NewPost(id, "", "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
 			expError: "",
 		},
@@ -384,7 +361,7 @@ func TestPost_Validate(t *testing.T) {
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.expError, func(t *testing.T) {
+		t.Run(test.name, func(t *testing.T) {
 			if len(test.expError) != 0 {
 				require.Equal(t, test.expError, test.post.Validate().Error())
 			} else {

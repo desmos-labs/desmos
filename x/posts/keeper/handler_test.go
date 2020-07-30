@@ -12,109 +12,23 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-func (suite *KeeperTestSuite) TestValidatePost() {
-	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
-	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	suite.NoError(err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-
-	tests := []struct {
-		name     string
-		post     types.Post
-		expError error
-	}{
-		{
-			name: "Post message cannot be longer than 500 characters",
-			post: types.NewPost(
-				id,
-				id2,
-				strings.Repeat("a", 550),
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				date,
-				owner,
-			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has more than 500 characters"),
-		},
-		{
-			name: "post optional data cannot contain more than 10 key-value",
-			post: types.NewPost(
-				id,
-				id2,
-				"Message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1":  "value",
-					"key2":  "value",
-					"key3":  "value",
-					"key4":  "value",
-					"key5":  "value",
-					"key6":  "value",
-					"key7":  "value",
-					"key8":  "value",
-					"key9":  "value",
-					"key10": "value",
-					"key11": "value",
-				},
-				date,
-				owner,
-			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains optional data with more than 10 key-value pairs"),
-		},
-		{
-			name: "post optional data values cannot exceed 200 characters",
-			post: types.NewPost(
-				id,
-				id2,
-				"Message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{
-					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
-							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
-							sem eget neque metus.`,
-				},
-				date,
-				owner,
-			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has optional data with key key1 which value exceeds 200 characters."),
-		},
-		{
-			name:     "Valid post",
-			post:     types.NewPost(id, "", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
-			expError: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			err := keeper.ValidatePost(suite.ctx, suite.keeper, test.post)
-			if test.expError != nil {
-				suite.Equal(test.expError.Error(), err.Error())
-			} else {
-				suite.Equal(test.expError, err)
-			}
-		})
-	}
-}
-
 func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
-	computedID := types.ComputeID(suite.testData.post.Created, suite.testData.post.Creator, suite.testData.post.Subspace)
+	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	createPostMessage := types.NewMsgCreatePost(
+		suite.testData.post.Message,
+		suite.testData.post.ParentID,
+		suite.testData.post.AllowsComments,
+		suite.testData.post.Subspace,
+		suite.testData.post.OptionalData,
+		suite.testData.post.Creator,
+		suite.testData.post.Attachments,
+		suite.testData.post.PollData,
+	)
 
 	tests := []struct {
 		name        string
@@ -127,51 +41,35 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.NewPost(
-					computedID,
+					keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+						suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+						suite.testData.post.Creator),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					map[string]string{},
+					suite.testData.post.Subspace,
+					suite.testData.post.OptionalData,
 					suite.testData.post.Created,
 					suite.testData.post.Creator,
 				),
 			},
-			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
-				suite.testData.post.ParentID,
-				suite.testData.post.AllowsComments,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				suite.testData.post.Creator,
-				suite.testData.post.Created,
-				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
-			),
+			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
+				"the provided post conflicts with the one having id 40faff47bf4b5ad22fe8c61e66e2e3c3b21dc5f596e8c0ef31a588d32bdf43df"),
 		},
 		{
 			name: "Post with new id is stored properly",
-			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
-				suite.testData.post.ParentID,
-				suite.testData.post.AllowsComments,
-				suite.testData.post.Subspace,
-				suite.testData.post.OptionalData,
-				suite.testData.post.Creator,
-				suite.testData.post.Created,
-				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
-			),
+			msg:  createPostMessage,
 			expPost: types.NewPost(
-				computedID,
+				keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+					suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+					suite.testData.post.Creator),
 				suite.testData.post.ParentID,
 				suite.testData.post.Message,
 				suite.testData.post.AllowsComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
-				suite.testData.post.Created,
+				suite.ctx.BlockTime(),
 				suite.testData.post.Creator,
 			).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 		},
@@ -180,15 +78,14 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				id2,
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "parent post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd not found"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("parent post with id %s not found", id2)),
 		},
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
@@ -198,8 +95,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					id2,
 					"Parent post",
 					false,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					map[string]string{},
+					suite.testData.post.Subspace,
+					suite.testData.post.OptionalData,
 					suite.testData.post.Created,
 					suite.testData.post.Creator,
 				),
@@ -207,11 +104,10 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				id,
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				suite.testData.post.Creator,
-				suite.testData.post.Created.AddDate(0, 0, 1),
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				otherCreator,
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
@@ -221,29 +117,36 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Post with exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					computedID,
+					keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+						suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+						suite.testData.post.Creator),
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
 					suite.testData.post.Subspace,
 					suite.testData.post.OptionalData,
-					suite.testData.post.Created,
+					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
 				).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 			},
+			msg: createPostMessage,
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"the provided post conflicts with the one having id 40faff47bf4b5ad22fe8c61e66e2e3c3b21dc5f596e8c0ef31a588d32bdf43df"),
+		},
+		{
+			name: "Post message cannot be longer than 500 characters",
 			msg: types.NewMsgCreatePost(
-				suite.testData.post.Message,
+				strings.Repeat("a", 550),
 				suite.testData.post.ParentID,
 				suite.testData.post.AllowsComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				suite.testData.post.Created,
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id 46e61c7ac7016e8dd1d7270b114ecb7d1cf45cc85caa0308de540ccc15676fc7"),
+				"post with id bd8660c0b53c085f94221d0f0df0110ebf80523a5774897790a6ecba3212d835 has more than 500 characters"),
 		},
 	}
 
@@ -265,7 +168,11 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
+				computedID := keeper.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
+					suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
+					suite.testData.post.Creator)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(computedID)), &stored)
+
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
@@ -303,35 +210,35 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 		storedPost *types.Post
 		msg        types.MsgEditPost
 		expError   error
-		expPost    types.Post
+		expPost    *types.Post
 	}{
 		{
 			name:       "Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(id, "Edited message", suite.testData.post.Creator, suite.testData.post.Created),
+			msg:        types.NewMsgEditPost(id, "Edited message", suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editor, suite.testData.post.Created),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editor),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator, suite.testData.post.Created.AddDate(0, 0, -1)),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
 			name:       "Valid request is handled properly",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator, suite.testData.post.Created.AddDate(0, 0, 1)),
-			expPost: types.Post{
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
+			expPost: &types.Post{
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
 				Message:        "Edited message",
-				Created:        suite.testData.post.Created,
+				Created:        suite.ctx.BlockTime(),
 				LastEdited:     suite.testData.post.Created.AddDate(0, 0, 1),
 				AllowsComments: suite.testData.post.AllowsComments,
 				Subspace:       suite.testData.post.Subspace,
@@ -350,6 +257,11 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedPost != nil {
+				if test.expPost != nil {
+					test.storedPost.Created = suite.ctx.BlockTime()
+					suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
+					test.expPost.LastEdited = suite.ctx.BlockTime()
+				}
 				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
@@ -361,7 +273,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				suite.Contains(res.Events, sdk.NewEvent(
 					types.EventTypePostEdited,
 					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.msg.EditDate.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.expPost.LastEdited.Format(time.RFC3339)),
 				))
 
 				var stored types.Post

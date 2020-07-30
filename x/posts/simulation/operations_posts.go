@@ -4,7 +4,6 @@ package simulation
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
@@ -37,7 +36,6 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 			data.Subspace,
 			data.OptionalData,
 			data.Creator.Address,
-			data.CreationDate,
 			data.Attachments,
 			data.PollData,
 		)
@@ -124,7 +122,7 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(id, message, account.Address, time.Now().UTC())
+		msg := types.NewMsgEditPost(id, message, account.Address)
 
 		err := sendMsgEditPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {

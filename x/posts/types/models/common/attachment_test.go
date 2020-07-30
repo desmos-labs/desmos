@@ -4,16 +4,51 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+	"github.com/stretchr/testify/require"
 )
 
 // -----------
 // --- Attachments
 // -----------
 
-func TestPostMedias_String(t *testing.T) {
+func TestNewAttachment(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	uri := "https://uri.com"
+	mimetype := "text/plain"
+	tags := []sdk.AccAddress{tag, tag2}
+	require.NoError(t, err2)
+	expAtt := common.Attachment{
+		URI:      uri,
+		MimeType: mimetype,
+		Tags:     tags,
+	}
+	att := common.NewAttachment(expAtt.URI, expAtt.MimeType, tags)
+	require.Equal(t, expAtt, att)
+}
+
+func TestNewAttachments(t *testing.T) {
+	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	uri := "https://uri.com"
+	mimetype := "text/plain"
+	tags := []sdk.AccAddress{tag, tag2}
+	require.NoError(t, err2)
+	expAtts := common.Attachments{
+		common.Attachment{
+			URI:      uri,
+			MimeType: mimetype,
+			Tags:     tags,
+		},
+	}
+	atts := common.NewAttachments(expAtts...)
+	require.Equal(t, expAtts, atts)
+}
+
+func TestAttachments_String(t *testing.T) {
 	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
@@ -39,7 +74,7 @@ func TestPostMedias_String(t *testing.T) {
 	require.Equal(t, expected, actual)
 }
 
-func TestPostMedias_Equals(t *testing.T) {
+func TestAttachments_Equals(t *testing.T) {
 	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
@@ -209,7 +244,7 @@ func TestPostMedias_Equals(t *testing.T) {
 	}
 }
 
-func TestPostMedias_AppendIfMissing(t *testing.T) {
+func TestAttachments_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
 		medias      common.Attachments
@@ -270,7 +305,7 @@ func TestPostMedias_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestPostMedias_Validate(t *testing.T) {
+func TestAttachments_Validate(t *testing.T) {
 	tests := []struct {
 		postMedia common.Attachments
 		expErr    string
@@ -302,6 +337,14 @@ func TestPostMedias_Validate(t *testing.T) {
 				},
 			},
 			expErr: "mime type must be specified and cannot be empty",
+		},
+		{
+			postMedia: common.Attachments{
+				common.Attachment{
+					URI:      "https://example.com",
+					MimeType: "text/plain",
+				},
+			},
 		},
 	}
 

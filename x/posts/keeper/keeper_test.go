@@ -330,7 +330,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	tests := []struct {
 		name  string
 		posts types.Posts
@@ -343,7 +342,17 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 			name: "Existing list is returned properly",
 			posts: types.Posts{
 				types.NewPost(
-					id,
+					"63b173547f1079e46885aa3ad4e36d0fe4beea8b7e2ec9c1d71ba3bff1abd909",
+					"",
+					"",
+					false,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					map[string]string{},
+					suite.testData.post.Created,
+					suite.testData.postOwner,
+				),
+				types.NewPost(
+					"aad15654d10acd67b942ca39afd7a2aa071aed7c3f0b946edd2b666a037026f7",
 					"",
 					"",
 					false,
@@ -359,9 +368,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			for _, p := range test.posts {
-				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			posts := suite.keeper.GetPosts(suite.ctx)

@@ -4,12 +4,14 @@ package simulation
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 var (
@@ -20,8 +22,10 @@ var (
 // RandomizedGenState generates a random GenesisState for auth
 func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
-	postReactions := randomPostReactions(simState, posts)
-	registeredReactions := registeredReactions(simState)
+	reactionsData := RandomReactionsData(simState.Rand, simState.Accounts)
+
+	postReactions := randomPostReactions(simState, posts, reactionsData[simState.Rand.Intn(len(reactionsData))])
+	registeredReactions := registeredReactions(reactionsData)
 	params := randomParams(simState)
 	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions, params)
 
@@ -42,13 +46,13 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	for index := 0; index < postsNumber; index++ {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
-			types.ComputeID(postData.CreationDate, postData.Creator.Address, postData.Subspace),
+			RandomPostID(simState.Rand),
 			"",
 			postData.Message,
 			postData.AllowsComments,
 			postData.Subspace,
 			postData.OptionalData,
-			postData.CreationDate,
+			time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC),
 			postData.Creator.Address,
 		).WithAttachments(postData.Attachments)
 
@@ -61,7 +65,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 }
 
 // randomPostReactions returns a randomly generated list of reactions
-func randomPostReactions(simState *module.SimulationState, posts types.Posts) (reactionsMap map[string]types.PostReactions) {
+func randomPostReactions(simState *module.SimulationState, posts types.Posts, reactionData ReactionData) (reactionsMap map[string]types.PostReactions) {
 	reactionsNumber := simState.Rand.Intn(len(posts))
 
 	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
@@ -70,19 +74,17 @@ func randomPostReactions(simState *module.SimulationState, posts types.Posts) (r
 		reactions := make(types.PostReactions, reactionsLen)
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
-			reactions[j] = types.NewPostReaction(RandomReactionShortCode(simState.Rand), RandomPostReactionValue(simState.Rand), sdk.AccAddress(privKey.Address()))
+			reactions[j] = types.NewPostReaction(reactionData.ShortCode, reactionData.Value, sdk.AccAddress(privKey.Address()))
 		}
 
-		reactionsMap[RandomPostID(simState.Rand, posts).String()] = reactions
+		reactionsMap[RandomPostIDFromPosts(simState.Rand, posts).String()] = reactions
 	}
 
 	return reactionsMap
 }
 
 // registeredReactions returns all the possible registered reactions
-func registeredReactions(simState *module.SimulationState) types.Reactions {
-	reactionsData := RegisteredReactionsData(simState.Rand, simState.Accounts)
-
+func registeredReactions(reactionsData []ReactionData) types.Reactions {
 	regReactions := types.Reactions{}
 
 	for _, reactionData := range reactionsData {

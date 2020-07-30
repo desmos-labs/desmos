@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,13 +18,6 @@ import (
 
 // PostID represents a unique post id
 type PostID string
-
-// ComputeID returns a sha256 hash of the given data concatenated together
-// nolint: interfacer
-func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) PostID {
-	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
-	return PostID(hex.EncodeToString(hash[:]))
-}
 
 // Valid tells if the id can be used safely
 func (id PostID) Valid() bool {
@@ -189,16 +180,8 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post creation time: %s", p.Created)
 	}
 
-	if p.Created.After(time.Now().UTC()) {
-		return fmt.Errorf("post creation date cannot be in the future")
-	}
-
 	if !p.LastEdited.IsZero() && p.LastEdited.Before(p.Created) {
 		return fmt.Errorf("invalid post last edit time: %s", p.LastEdited)
-	}
-
-	if !p.LastEdited.IsZero() && p.LastEdited.After(time.Now().UTC()) {
-		return fmt.Errorf("post last edit date cannot be in the future")
 	}
 
 	if err := p.Attachments.Validate(); err != nil {
