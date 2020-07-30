@@ -613,7 +613,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				suite.testData.post.Creator,
 			).WithPollData(types.NewPollData(
 				"poll?",
-				suite.testData.postEndPollDate,
+				suite.testData.postEndPollDateExpired,
 				types.PollAnswers{suite.testData.answers[0]},
 				false,
 				true,
