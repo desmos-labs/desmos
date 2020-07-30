@@ -188,17 +188,10 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 
 	closingDate := RandomDate(r)
 
-	// 30% possibility of closed poll
-	open := r.Intn(100) > 70
-	if open {
-		closingDate = closingDate.AddDate(1, 0, 0)
-	}
-
 	poll := types.NewPollData(
 		RandomMessage(r),
 		closingDate,
 		answers,
-		open,
 		r.Intn(100) > 50, // 50% possibility of multiple answers
 		r.Intn(100) > 50, // 50% possibility of allowing answers edits
 	)

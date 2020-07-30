@@ -79,7 +79,7 @@ func randomPollAnswerFields(
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
-	if post.PollData == nil || !post.PollData.Open {
+	if post.PollData == nil {
 		return sim.Account{}, nil, "", true
 	}
 

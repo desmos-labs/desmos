@@ -166,7 +166,6 @@ func TestPost_String(t *testing.T) {
 			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
 			polls.NewPollAnswer(polls.AnswerID(2), "No"),
 		),
-		true,
 		false,
 		true,
 	)
@@ -216,7 +215,7 @@ func TestPost_String(t *testing.T) {
 				date,
 				owner,
 			).WithPollData(pollData),
-			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
 			name: "Post with medias and with poll data",
@@ -230,7 +229,7 @@ func TestPost_String(t *testing.T) {
 				date,
 				owner,
 			).WithAttachments(postMedias).WithPollData(pollData),
-			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+			expString: "[ID] dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
 			name: "Post with optional data",
@@ -290,7 +289,7 @@ func TestPost_Validate(t *testing.T) {
 		ID:   polls.AnswerID(2),
 		Text: "No",
 	}
-	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, true, false, true)
+	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, false, true)
 
 	tests := []struct {
 		name     string
@@ -398,7 +397,6 @@ func TestPost_Equals(t *testing.T) {
 			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
 			polls.NewPollAnswer(polls.AnswerID(2), "No"),
 		),
-		true,
 		false,
 		true,
 	)
@@ -891,7 +889,7 @@ func TestPosts_String(t *testing.T) {
 		ID:   polls.AnswerID(2),
 		Text: "No",
 	}
-	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, true, false, true)
+	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, false, true)
 
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)

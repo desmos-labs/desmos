@@ -44,7 +44,6 @@ var (
 		),
 		true,
 		true,
-		true,
 	))
 )
 

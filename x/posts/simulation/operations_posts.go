@@ -95,7 +95,7 @@ func randomPostCreateFields(
 	}
 
 	// Skip the operation as the poll is closed
-	if postData.PollData != nil && !postData.PollData.Open {
+	if postData.PollData != nil {
 		return nil, true
 	}
 

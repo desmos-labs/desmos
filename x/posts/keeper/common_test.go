@@ -88,7 +88,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 		types.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
 		true,
 		true,
-		true,
 	))
 
 	suite.testData.registeredReaction = types.NewReaction(suite.testData.postOwner, ":smile:", "https://smile.jpg",

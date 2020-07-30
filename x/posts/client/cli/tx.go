@@ -198,7 +198,6 @@ E.g.
 
 				pollData = &types.PollData{
 					Question:              question,
-					Open:                  true,
 					EndDate:               date,
 					ProvidedAnswers:       answers,
 					AllowsMultipleAnswers: allowMultipleAnswers,
