@@ -15,16 +15,17 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.NoError(err)
 
-	parentPost := types.NewPost(
-		id,
-		"",
-		"Post without medias",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		suite.testData.post.Created,
-		suite.testData.post.Creator,
-	).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData)
+	parentPost := types.Post{
+		PostID:       id,
+		Message:      "Post without medias",
+		Created:      suite.testData.post.Created,
+		LastEdited:   suite.testData.post.LastEdited,
+		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		OptionalData: map[string]string{},
+		Creator:      suite.testData.post.Creator,
+		Attachments:  suite.testData.post.Attachments,
+		PollData:     suite.testData.post.PollData,
+	}
 
 	commentPost := types.Post{
 		PostID:         id2,
@@ -63,16 +64,16 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		},
 		{
 			name: "ValidPosts Invariants violated",
-			posts: types.Posts{types.NewPost(
-				"1234",
-				"",
-				"Message",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				suite.testData.post.Created,
-				suite.testData.post.Creator,
-			)},
+			posts: types.Posts{
+				types.Post{
+					PostID:       "1234",
+					Message:      "Message",
+					Created:      suite.testData.post.Created,
+					LastEdited:   suite.testData.post.LastEdited,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: map[string]string{},
+					Creator:      suite.testData.post.Creator,
+				}},
 			answers:      nil,
 			postReaction: nil,
 			reaction:     nil,
@@ -82,16 +83,17 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		{
 			name: "ValidCommentsDate Invariants violated",
 			posts: types.Posts{parentPost,
-				types.NewPost(
-					commentPost.PostID,
-					parentPost.PostID,
-					"Message",
-					false,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					map[string]string{},
-					suite.testData.postEndPollDateExpired,
-					suite.testData.post.Creator,
-				)},
+				types.Post{
+					PostID:       commentPost.PostID,
+					ParentID:     parentPost.PostID,
+					Message:      "Message",
+					Created:      suite.testData.postEndPollDate,
+					LastEdited:   suite.testData.post.LastEdited,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: map[string]string{},
+					Creator:      suite.testData.post.Creator,
+				},
+			},
 			answers:      nil,
 			postReaction: nil,
 			reaction:     nil,

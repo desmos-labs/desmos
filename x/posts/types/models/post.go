@@ -1,7 +1,10 @@
 package models
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"strconv"
 	"strings"
 	"time"
@@ -109,10 +112,20 @@ type Post struct {
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string,
+// ComputeID returns a sha256 hash of the msg's json representation
+// nolint: interfacer
+func ComputeID(parentID types.PostID, message, subspace string, allowsComments bool,
+	creationTime time.Time, creator sdk.AccAddress) types.PostID {
+	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + creationTime.String() +
+		creator.String())
+	hash := sha256.Sum256(bz)
+	return types.PostID(hex.EncodeToString(hash[:]))
+}
+
+func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
 	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
-	return Post{
-		PostID:         id,
+	post := Post{
+		PostID:         "",
 		ParentID:       parentID,
 		Message:        message,
 		Created:        created,
@@ -122,6 +135,10 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		OptionalData:   optionalData,
 		Creator:        creator,
 	}
+
+	post.PostID = ComputeID(parentID, message, subspace, allowsComments, created, creator)
+
+	return post
 }
 
 // WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
