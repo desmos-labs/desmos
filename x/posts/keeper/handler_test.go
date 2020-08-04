@@ -13,7 +13,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -40,15 +39,16 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		{
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(
-					suite.testData.post.ParentID,
-					suite.testData.post.Message,
-					suite.testData.post.AllowsComments,
-					suite.testData.post.Subspace,
-					suite.testData.post.OptionalData,
-					suite.testData.post.Created,
-					suite.testData.post.Creator,
-				),
+				types.Post{
+					PostID:         types.ComputeID(createPostMessage.ParentID, createPostMessage.Message, createPostMessage.Subspace, createPostMessage.AllowsComments, suite.ctx.BlockTime(), createPostMessage.Creator),
+					ParentID:       suite.testData.post.ParentID,
+					Message:        suite.testData.post.Message,
+					Created:        suite.testData.post.Created,
+					AllowsComments: suite.testData.post.AllowsComments,
+					Subspace:       suite.testData.post.Subspace,
+					OptionalData:   suite.testData.post.OptionalData,
+					Creator:        suite.testData.post.Creator,
+				},
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -84,19 +84,20 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		{
 			name: "Storing a valid post with parent stored but not accepting comments returns expError",
 			storedPosts: types.Posts{
-				types.NewPost(
-					id2,
-					"Parent post",
-					false,
-					suite.testData.post.Subspace,
-					suite.testData.post.OptionalData,
-					suite.testData.post.Created,
-					suite.testData.post.Creator,
-				),
+				types.Post{
+					PostID:         id2,
+					ParentID:       "1234",
+					Message:        "Parent post",
+					Created:        suite.testData.post.Created,
+					AllowsComments: false,
+					Subspace:       suite.testData.post.Subspace,
+					OptionalData:   suite.testData.post.OptionalData,
+					Creator:        suite.testData.post.Creator,
+				},
 			},
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
-				id,
+				id2,
 				suite.testData.post.AllowsComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -104,7 +105,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Attachments,
 				suite.testData.post.PollData,
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af does not allow comments"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd does not allow comments"),
 		},
 		{
 			name: "Post with exact same data is not posted again",
@@ -320,7 +321,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 			registeredReaction: &suite.testData.registeredReaction,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				sdk.NewAttribute(types.AttributeKeyPostID, string(types.ComputeID(post.ParentID, post.Message, post.Subspace, post.AllowsComments, post.Created, post.Creator))),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
@@ -332,7 +333,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 			msg:          types.NewMsgAddPostReaction(post.PostID, "🙂", user),
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				sdk.NewAttribute(types.AttributeKeyPostID, string(types.ComputeID(post.ParentID, post.Message, post.Subspace, post.AllowsComments, post.Created, post.Creator))),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "🙂"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
@@ -406,15 +407,14 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
-	post := types.NewPost(
-		"",
-		"Post message",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		suite.testData.post.Created,
-		suite.testData.post.Creator,
-	)
+	post := types.Post{
+		PostID:       suite.testData.postID,
+		Message:      "Post message",
+		Created:      suite.testData.post.Created,
+		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		OptionalData: map[string]string{},
+		Creator:      suite.testData.post.Creator,
+	}
 
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	suite.NoError(err)
@@ -640,11 +640,12 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				OptionalData: map[string]string{},
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
-					Question:          "poll?",
-					ProvidedAnswers:   suite.testData.answers,
-					EndDate:           suite.testData.postEndPollDateExpired,
-					Open:              true,
-					AllowsAnswerEdits: true,
+					Question:              "poll?",
+					ProvidedAnswers:       suite.testData.answers,
+					EndDate:               suite.testData.postEndPollDateExpired,
+					Open:                  true,
+					AllowsAnswerEdits:     true,
+					AllowsMultipleAnswers: true,
 				},
 			},
 			expErr: sdkerrors.Wrap(

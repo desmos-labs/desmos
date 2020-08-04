@@ -1,11 +1,10 @@
 package keeper_test
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
+	"time"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
@@ -19,7 +18,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		PostID:       id,
 		Message:      "Post without medias",
 		Created:      suite.testData.post.Created,
-		LastEdited:   suite.testData.post.LastEdited,
+		LastEdited:   time.Time{},
 		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		OptionalData: map[string]string{},
 		Creator:      suite.testData.post.Creator,
@@ -69,7 +68,6 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					PostID:       "1234",
 					Message:      "Message",
 					Created:      suite.testData.post.Created,
-					LastEdited:   suite.testData.post.LastEdited,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					OptionalData: map[string]string{},
 					Creator:      suite.testData.post.Creator,
@@ -87,8 +85,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					PostID:       commentPost.PostID,
 					ParentID:     parentPost.PostID,
 					Message:      "Message",
-					Created:      suite.testData.postEndPollDate,
-					LastEdited:   suite.testData.post.LastEdited,
+					Created:      suite.testData.postEndPollDateExpired,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					OptionalData: map[string]string{},
 					Creator:      suite.testData.post.Creator,

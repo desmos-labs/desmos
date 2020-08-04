@@ -64,7 +64,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			registeredReaction: nil,
 			path:               []string{types.QueryPost, stringID},
 			expResult: types.NewPostResponse(
-				types.Post{PostID: computedID, Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
+				types.Post{PostID: computedID, Message: "Parent", Created: suite.testData.post.Created, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
 				[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 				[]types.PostReaction{},
 				types.PostIDs{computedID2},
@@ -221,20 +221,20 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 		{
 			name: "Empty params returns all",
 			storedPosts: types.Posts{
-				types.Post{PostID: id, Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
+				types.Post{PostID: id, ParentID: "", Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
 				types.Post{PostID: id2, ParentID: id, Message: "Child", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, PollData: suite.testData.post.PollData},
 			},
 			storedAnswers: []types.UserAnswer{types.NewUserAnswer(answers, creator)},
 			params:        types.QueryPostsParams{},
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.Post{PostID: id, Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
+					types.Post{PostID: id, ParentID: "", Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments, PollData: suite.testData.post.PollData},
 					[]types.UserAnswer{types.NewUserAnswer(answers, creator)},
 					[]types.PostReaction{},
 					types.PostIDs{id2},
 				),
 				types.NewPostResponse(
-					types.Post{PostID: id2, ParentID: id, Message: "Child", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments},
+					types.Post{PostID: id2, ParentID: id, Message: "Child", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, PollData: suite.testData.post.PollData},
 					nil,
 					[]types.PostReaction{},
 					types.PostIDs{},
@@ -266,7 +266,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			params: types.DefaultQueryPostsParams(1, 1),
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
-					types.Post{PostID: id, Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.Created, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments},
+					types.Post{PostID: id, Message: "Parent", Created: suite.testData.post.Created, LastEdited: suite.testData.post.LastEdited, OptionalData: map[string]string{}, Creator: creator, Attachments: suite.testData.post.Attachments},
 					nil,
 					[]types.PostReaction{},
 					types.PostIDs{id2},
