@@ -319,7 +319,7 @@ E.g.
 				text = args[1]
 			}
 
-			msg := types.NewMsgEditPost(postID, text, cliCtx.GetFromAddress(), attachments, pollData)
+			msg := types.NewMsgEditPost(postID, text, attachments, pollData, cliCtx.GetFromAddress())
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

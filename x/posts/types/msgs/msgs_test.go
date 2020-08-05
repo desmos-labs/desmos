@@ -435,7 +435,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner, attachments, &pollData)
+var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, testOwner)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -455,12 +455,12 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner, attachments, &pollData),
+			msg:   msgs.NewMsgEditPost("", "Edited post message", attachments, &pollData, testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil, attachments, &pollData),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
@@ -468,9 +468,9 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"message",
-				testOwner,
 				nil,
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: nil,
 		},
@@ -479,9 +479,9 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"message",
-				testOwner,
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: nil,
 		},
@@ -490,9 +490,9 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"",
-				testOwner,
 				nil,
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: nil,
 		},
@@ -501,9 +501,9 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"message",
+				nil,
+				nil,
 				testOwner,
-				nil,
-				nil,
 			),
 			error: nil,
 		},
@@ -512,7 +512,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"future post",
-				testOwner,
 				models.Attachments{
 					models.Attachment{
 						URI:      "",
@@ -520,6 +519,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					},
 				},
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
@@ -528,12 +528,12 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"My message",
-				testOwner,
 				models.Attachments{models.Attachment{
 					URI:      "invalid-uri",
 					MimeType: "text/plain",
 				}},
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
@@ -542,7 +542,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"My message",
-				testOwner,
 				models.Attachments{
 					models.Attachment{
 						URI:      "https://example.com",
@@ -550,6 +549,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					},
 				},
 				msgCreatePost.PollData,
+				testOwner,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
 		},
@@ -558,7 +558,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgEditPost(
 				id,
 				"My message",
-				testOwner,
 				attachments,
 				&models.PollData{
 					Question: "",
@@ -570,12 +569,13 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					Open:              true,
 					AllowsAnswerEdits: true,
 				},
+				testOwner,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner, attachments, &pollData),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, testOwner),
 			error: nil,
 		},
 	}
@@ -596,7 +596,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

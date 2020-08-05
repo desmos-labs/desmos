@@ -493,6 +493,18 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 	f.Cleanup()
 }
 
+func TestDesmosCLIPostsEditWithAttachmentsAndNonEmptyMessage(t *testing.T) {
+	//TODO
+}
+
+func TestDesmosCLIPostsEditWithAttachmentsAndEmptyMessage(t *testing.T) {
+	//TODO
+}
+
+func TestDesmosCLIPostsEditWithPoll(t *testing.T) {
+	//TODO
+}
+
 func TestDesmosCLIPostsReactions(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/posts/types/models"
 	"strings"
 	"time"
 
@@ -204,6 +205,21 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	suite.NoError(err)
+	timeZone, _ := time.LoadLocation("UTC")
+
+	editedPollData := models.NewPollData(
+		"poll?",
+		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+		models.NewPollAnswers(
+			models.NewPollAnswer(models.AnswerID(1), "No"),
+			models.NewPollAnswer(models.AnswerID(2), "No"),
+		),
+		true,
+		false,
+		true,
+	)
+
+	editedAttachments := models.NewAttachments(models.NewAttachment("https://edited.com", "text/plain", nil))
 
 	testData := []struct {
 		name       string
@@ -215,25 +231,25 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 		{
 			name:       "Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(id, "Edited message", suite.testData.post.Creator),
+			msg:        types.NewMsgEditPost(id, "Edited message", nil, nil, suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editor),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", nil, nil, editor),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", nil, nil, suite.testData.post.Creator),
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
-			name:       "Valid request is handled properly",
+			name:       "Valid request is handled properly without attachments and pollData",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", suite.testData.post.Creator),
+			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editedAttachments, &editedPollData, suite.testData.post.Creator),
 			expPost: &types.Post{
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
@@ -244,8 +260,8 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				Subspace:       suite.testData.post.Subspace,
 				OptionalData:   suite.testData.post.OptionalData,
 				Creator:        suite.testData.post.Creator,
-				Attachments:    suite.testData.post.Attachments,
-				PollData:       suite.testData.post.PollData,
+				Attachments:    editedAttachments,
+				PollData:       &editedPollData,
 			},
 		},
 	}

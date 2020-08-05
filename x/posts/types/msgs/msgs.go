@@ -113,8 +113,8 @@ type MsgEditPost struct {
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id models.PostID, message string, owner sdk.AccAddress,
-	attachments models.Attachments, pollData *models.PollData) MsgEditPost {
+func NewMsgEditPost(id models.PostID, message string,
+	attachments models.Attachments, pollData *models.PollData, owner sdk.AccAddress) MsgEditPost {
 	return MsgEditPost{
 		PostID:      id,
 		Message:     message,
