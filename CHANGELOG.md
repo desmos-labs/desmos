@@ -1,3 +1,7 @@
+# Version 0.11.0
+## Changes
+- Replace ComputeID with inner ID computation (#253)
+
 # Version 0.10.0
 ## Changes
 - Changed application errors to make them more clear (#237)

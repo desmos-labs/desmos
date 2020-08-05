@@ -29,6 +29,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		suite.testData.post.PollData,
 	)
 
+	postID := types.PostID("40faff47bf4b5ad22fe8c61e66e2e3c3b21dc5f596e8c0ef31a588d32bdf43df")
+
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
@@ -40,7 +42,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			name: "Trying to store post with same id returns expError",
 			storedPosts: types.Posts{
 				types.Post{
-					PostID:         types.ComputeID(createPostMessage.ParentID, createPostMessage.Message, createPostMessage.Subspace, createPostMessage.AllowsComments, suite.ctx.BlockTime(), createPostMessage.Creator),
+					PostID:         postID,
 					ParentID:       suite.testData.post.ParentID,
 					Message:        suite.testData.post.Message,
 					Created:        suite.testData.post.Created,
@@ -159,10 +161,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				computedID := types.ComputeID(suite.testData.post.ParentID, suite.testData.post.Message,
-					suite.testData.post.Subspace, suite.testData.post.AllowsComments, suite.ctx.BlockTime(),
-					suite.testData.post.Creator)
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(computedID)), &stored)
+				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &stored)
 
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
@@ -282,16 +281,6 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
-	post := types.NewPost(
-		"",
-		"Post message",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		suite.testData.post.Created,
-		suite.testData.post.Creator,
-	)
-
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
 	suite.NoError(err)
 
@@ -310,18 +299,18 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 		},
 		{
 			name:         "Registered Reaction not found",
-			existingPost: &post,
-			msg:          types.NewMsgAddPostReaction(post.PostID, ":super-smile:", user),
+			existingPost: &suite.testData.post,
+			msg:          types.NewMsgAddPostReaction(suite.testData.post.PostID, ":super-smile:", user),
 			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "short code :super-smile: must be registered before using it"),
 		},
 		{
 			name:               "Valid message works properly (shortcode)",
-			existingPost:       &post,
-			msg:                types.NewMsgAddPostReaction(post.PostID, ":smile:", user),
+			existingPost:       &suite.testData.post,
+			msg:                types.NewMsgAddPostReaction(suite.testData.post.PostID, ":smile:", user),
 			registeredReaction: &suite.testData.registeredReaction,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, string(types.ComputeID(post.ParentID, post.Message, post.Subspace, post.AllowsComments, post.Created, post.Creator))),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
@@ -329,11 +318,11 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 		},
 		{
 			name:         "Valid message works properly (emoji)",
-			existingPost: &post,
-			msg:          types.NewMsgAddPostReaction(post.PostID, "🙂", user),
+			existingPost: &suite.testData.post,
+			msg:          types.NewMsgAddPostReaction(suite.testData.post.PostID, "🙂", user),
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, string(types.ComputeID(post.ParentID, post.Message, post.Subspace, post.AllowsComments, post.Created, post.Creator))),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "🙂"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),

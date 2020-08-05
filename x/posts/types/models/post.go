@@ -111,16 +111,6 @@ type Post struct {
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
 }
 
-// ComputeID returns a sha256 hash of the msg's json representation
-// nolint: interfacer
-func ComputeID(parentID PostID, message, subspace string, allowsComments bool,
-	creationTime time.Time, creator sdk.AccAddress) PostID {
-	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + creationTime.String() +
-		creator.String())
-	hash := sha256.Sum256(bz)
-	return PostID(hex.EncodeToString(hash[:]))
-}
-
 func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
 	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
 	post := Post{
@@ -135,7 +125,12 @@ func NewPost(parentID PostID, message string, allowsComments bool, subspace stri
 		Creator:        creator,
 	}
 
-	post.PostID = ComputeID(parentID, message, subspace, allowsComments, created, creator)
+	// PostID calculation
+	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + created.String() +
+		creator.String())
+	hash := sha256.Sum256(bz)
+
+	post.PostID = PostID(hex.EncodeToString(hash[:]))
 
 	return post
 }
