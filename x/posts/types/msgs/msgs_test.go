@@ -31,6 +31,8 @@ var pollData = models.NewPollData(
 	false,
 	true,
 )
+var attachments = models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil))
+
 var id = models.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 var msgCreatePost = msgs.NewMsgCreatePost(
 	"My new post",
@@ -39,7 +41,7 @@ var msgCreatePost = msgs.NewMsgCreatePost(
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
 	testOwner,
-	models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil)),
+	attachments,
 	&pollData,
 )
 
@@ -108,20 +110,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if attachments aren't empty",
 			msg: msgs.NewMsgCreatePost(
 				"message",
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				creator,
-				msgCreatePost.Attachments,
-				msgCreatePost.PollData,
-			),
-			error: nil,
-		},
-		{
-			name: "Empty message returns no error if attachments aren't empty",
-			msg: msgs.NewMsgCreatePost(
-				"",
 				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -447,7 +435,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner)
+var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner, attachments, &pollData)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -467,27 +455,127 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner),
+			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner, attachments, &pollData),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil, attachments, &pollData),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
-			name:  "Blank message returns error",
-			msg:   msgs.NewMsgEditPost(id, " ", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
+			name: "Non-empty message returns no error if attachments are empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				testOwner,
+				nil,
+				msgCreatePost.PollData,
+			),
+			error: nil,
 		},
 		{
-			name:  "Empty message returns error",
-			msg:   msgs.NewMsgEditPost(id, "", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
+			name: "Non-empty message returns no error if attachments aren't empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				testOwner,
+				msgCreatePost.Attachments,
+				msgCreatePost.PollData,
+			),
+			error: nil,
+		},
+		{
+			name: "Empty message returns no error if poll isn't empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"",
+				testOwner,
+				nil,
+				msgCreatePost.PollData,
+			),
+			error: nil,
+		},
+		{
+			name: "Non-empty message returns no error if poll is empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				testOwner,
+				nil,
+				nil,
+			),
+			error: nil,
+		},
+		{
+			name: "Empty URI in medias returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"future post",
+				testOwner,
+				models.Attachments{
+					models.Attachment{
+						URI:      "",
+						MimeType: "text/plain",
+					},
+				},
+				msgCreatePost.PollData,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
+		},
+		{
+			name: "Invalid URI in message returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				testOwner,
+				models.Attachments{models.Attachment{
+					URI:      "invalid-uri",
+					MimeType: "text/plain",
+				}},
+				msgCreatePost.PollData,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
+		},
+		{
+			name: "Empty mime type in message returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				testOwner,
+				models.Attachments{
+					models.Attachment{
+						URI:      "https://example.com",
+						MimeType: "",
+					},
+				},
+				msgCreatePost.PollData,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
+		},
+		{
+			name: "Invalid pollData returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				testOwner,
+				attachments,
+				&models.PollData{
+					Question: "",
+					ProvidedAnswers: models.NewPollAnswers(
+						models.NewPollAnswer(models.AnswerID(1), "Yes"),
+						models.NewPollAnswer(models.AnswerID(2), "No"),
+					),
+					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+					Open:              true,
+					AllowsAnswerEdits: true,
+				},
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner, attachments, &pollData),
 			error: nil,
 		},
 	}
