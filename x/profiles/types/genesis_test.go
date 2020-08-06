@@ -5,8 +5,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -60,10 +60,10 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
 					types.NewProfile("custom_dtag1", user, date).
-						WithBio(newStrPtr("biography")).
+						WithBio(common.NewStrPtr("biography")).
 						WithPictures(
-							newStrPtr("https://test.com/profile-pic"),
-							newStrPtr("https://test.com/cover-pic"),
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
 						),
 				),
 				Params: types.DefaultParams(),

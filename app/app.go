@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"io"
 	"os"
 
@@ -170,7 +171,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, upgrade.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
+		magpieTypes.StoreKey, postsTypes.StoreKey, models.StoreKey, reportsTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -195,7 +196,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[postsTypes.ModuleName] = app.paramsKeeper.Subspace(postsTypes.DefaultParamspace)
-	app.subspaces[profilesTypes.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
+	app.subspaces[models.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
 
 	// Add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -290,8 +291,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	)
 	app.profileKeeper = profilesKeeper.NewKeeper(
 		app.cdc,
-		keys[profilesTypes.StoreKey],
-		app.subspaces[profilesTypes.ModuleName],
+		keys[models.StoreKey],
+		app.subspaces[models.ModuleName],
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.postsKeeper,
@@ -345,7 +346,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
 		gov.ModuleName, evidence.ModuleName,
 
-		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName, // custom modules
+		magpieTypes.ModuleName, postsTypes.ModuleName, models.ModuleName, reportsTypes.ModuleName, // custom modules
 
 		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
 		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules

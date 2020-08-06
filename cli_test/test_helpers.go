@@ -3,6 +3,7 @@ package clitest
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -28,7 +29,6 @@ import (
 
 	"github.com/desmos-labs/desmos/app"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profileTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -791,12 +791,12 @@ func (f *Fixtures) QueryReactions(flags ...string) postsTypes.Reactions {
 // query profile
 
 // QueryProfile returns stored profiles
-func (f *Fixtures) QueryProfiles(flags ...string) profileTypes.Profiles {
+func (f *Fixtures) QueryProfiles(flags ...string) models.Profiles {
 	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedProfile profileTypes.Profiles
+	var storedProfile models.Profiles
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile

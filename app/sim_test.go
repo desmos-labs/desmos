@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -17,7 +18,6 @@ import (
 
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -192,7 +192,7 @@ func TestAppImportExport(t *testing.T) {
 
 		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
-		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
+		{app.keys[models.StoreKey], newApp.keys[models.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
 	}
 
