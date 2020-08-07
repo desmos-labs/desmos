@@ -27,8 +27,9 @@ const (
 )
 
 var (
-	ProfileStorePrefix = []byte("profile")
-	DtagStorePrefix    = []byte("dtag")
+	ProfileStorePrefix  = []byte("profile")
+	DtagStorePrefix     = []byte("dtag")
+	RelationshipsPrefix = []byte("relationships")
 )
 
 // ProfileStoreKey turns an address to a key used to store a profile into the profiles store
@@ -39,4 +40,8 @@ func ProfileStoreKey(address sdk.AccAddress) []byte {
 // DtagStoreKey turns a dtag to a key used to store a dtag -> address couple
 func DtagStoreKey(dtag string) []byte {
 	return append(DtagStorePrefix, []byte(dtag)...)
+}
+
+func RelationshipsStoreKey(address sdk.AccAddress) []byte {
+	return append(RelationshipsPrefix, address...)
 }

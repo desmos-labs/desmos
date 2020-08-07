@@ -10,40 +10,70 @@ import (
 )
 
 const (
-	ModuleName          = models.ModuleName
-	RouterKey           = models.RouterKey
-	StoreKey            = models.StoreKey
-	ActionSaveProfile   = models.ActionSaveProfile
-	ActionDeleteProfile = models.ActionDeleteProfile
-	QuerierRoute        = models.QuerierRoute
-	QueryProfile        = models.QueryProfile
-	QueryProfiles       = models.QueryProfiles
-	QueryParams         = models.QueryParams
+	Sent                                    = models.Sent
+	Accepted                                = models.Accepted
+	Denied                                  = models.Denied
+	ModuleName                              = models.ModuleName
+	RouterKey                               = models.RouterKey
+	StoreKey                                = models.StoreKey
+	ActionSaveProfile                       = models.ActionSaveProfile
+	ActionDeleteProfile                     = models.ActionDeleteProfile
+	ActionCreateMonoDirectionalRelationship = models.ActionCreateMonoDirectionalRelationship
+	ActionRequestBiDirectionalRelationship  = models.ActionRequestBiDirectionalRelationship
+	ActionAcceptBiDirectionalRelationship   = models.ActionAcceptBiDirectionalRelationship
+	ActionDenyBiDirectionalRelationship     = models.ActionDenyBiDirectionalRelationship
+	ActionDeleteRelationships               = models.ActionDeleteRelationships
+	QuerierRoute                            = models.QuerierRoute
+	QueryProfile                            = models.QueryProfile
+	QueryProfiles                           = models.QueryProfiles
+	QueryParams                             = models.QueryParams
+	QueryMonoDirectionalRelationships       = models.QueryMonoDirectionalRelationships
+	QueryBiDirectionalRelationships         = models.QueryBiDirectionalRelationships
 )
 
 var (
 	// functions aliases
-	ProfileStoreKey       = models.ProfileStoreKey
-	DtagStoreKey          = models.DtagStoreKey
-	NewProfile            = models.NewProfile
-	NewProfiles           = models.NewProfiles
-	NewPictures           = models.NewPictures
-	RegisterModelsCodec   = models.RegisterModelsCodec
-	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewMonodirectionalRelationship          = models.NewMonodirectionalRelationship
+	NewBiDirectionalRelationship            = models.NewBiDirectionalRelationship
+	ProfileStoreKey                         = models.ProfileStoreKey
+	DtagStoreKey                            = models.DtagStoreKey
+	RelationshipsStoreKey                   = models.RelationshipsStoreKey
+	NewProfile                              = models.NewProfile
+	NewProfiles                             = models.NewProfiles
+	NewPictures                             = models.NewPictures
+	RegisterModelsCodec                     = models.RegisterModelsCodec
+	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
+	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
+	NewMsgRequestBidirectionalRelationship  = msgs.NewMsgRequestBidirectionalRelationship
+	NewMsgAcceptBidirectionalRelationship   = msgs.NewMsgAcceptBidirectionalRelationship
+	NewMsgDenyBidirectionalRelationship     = msgs.NewMsgDenyBidirectionalRelationship
+	NewMsgDeleteRelationships               = msgs.NewMsgDeleteRelationships
 
 	// variable aliases
-	ProfileStorePrefix = models.ProfileStorePrefix
-	DtagStorePrefix    = models.DtagStorePrefix
-	ModelsCdc          = models.ModelsCdc
-	MsgsCodec          = msgs.MsgsCodec
+	ProfileStorePrefix  = models.ProfileStorePrefix
+	DtagStorePrefix     = models.DtagStorePrefix
+	RelationshipsPrefix = models.RelationshipsPrefix
+	ModelsCdc           = models.ModelsCdc
+	MsgsCodec           = msgs.MsgsCodec
 )
 
 type (
-	Profile          = models.Profile
-	Profiles         = models.Profiles
-	Pictures         = models.Pictures
-	MsgSaveProfile   = msgs.MsgSaveProfile
-	MsgDeleteProfile = msgs.MsgDeleteProfile
+	Relationship                         = models.Relationship
+	MonodirectionalRelationship          = models.MonodirectionalRelationship
+	MonoDirectionalRelationships         = models.MonoDirectionalRelationships
+	BidirectionalRelationship            = models.BidirectionalRelationship
+	RelationshipStatus                   = models.RelationshipStatus
+	BidirectionalRelationships           = models.BidirectionalRelationships
+	Profile                              = models.Profile
+	Profiles                             = models.Profiles
+	Pictures                             = models.Pictures
+	MsgSaveProfile                       = msgs.MsgSaveProfile
+	MsgDeleteProfile                     = msgs.MsgDeleteProfile
+	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
+	MsgRequestBidirectionalRelationship  = msgs.MsgRequestBidirectionalRelationship
+	MsgAcceptBidirectionalRelationship   = msgs.MsgAcceptBidirectionalRelationship
+	MsgDenyBidirectionalRelationship     = msgs.MsgDenyBidirectionalRelationship
+	MsgDeleteRelationships               = msgs.MsgDeleteRelationships
 )
