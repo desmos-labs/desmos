@@ -9,14 +9,20 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionSaveProfile   = "save_profile"
-	ActionDeleteProfile = "delete_profile"
+	ActionSaveProfile                       = "save_profile"
+	ActionDeleteProfile                     = "delete_profile"
+	ActionCreateMonoDirectionalRelationship = "create_mono_directional_relationship"
+	ActionRequestBiDirectionalRelationship  = "request_bi_directional_relationship"
+	ActionAcceptBiDirectionalRelationship   = "accept_bi_directional_relationship"
+	ActionDenyBiDirectionalRelationship     = "deny_bi_directional_relationship"
 
 	//Queries
-	QuerierRoute  = ModuleName
-	QueryProfile  = "profile"
-	QueryProfiles = "all"
-	QueryParams   = "params"
+	QuerierRoute                      = ModuleName
+	QueryProfile                      = "profile"
+	QueryProfiles                     = "all"
+	QueryParams                       = "params"
+	QueryMonoDirectionalRelationships = "mono_directional_relationships"
+	QueryBiDirectionalRelationships   = "bi_directional_relationships"
 )
 
 var (
