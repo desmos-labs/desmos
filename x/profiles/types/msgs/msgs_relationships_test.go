@@ -22,6 +22,11 @@ var (
 	msgAcceptBiDirectionalRelationship = msgs.MsgAcceptBidirectionalRelationship{Receiver: user}
 
 	msgDenyBiDirectionalRelationship = msgs.MsgDenyBidirectionalRelationship{Receiver: user}
+
+	msgDeleteRelationships = msgs.MsgDeleteRelationships{
+		User:         user,
+		Counterparty: user,
+	}
 )
 
 // MsgCreateMonoDirectionalRelationship
@@ -276,4 +281,71 @@ func TestMsgDenyBidirectionalRelationship_GetSigners(t *testing.T) {
 	actual := msgDenyBiDirectionalRelationship.GetSigners()
 	require.Equal(t, 1, len(actual))
 	require.Equal(t, msgDenyBiDirectionalRelationship.Receiver, actual[0])
+}
+
+// MsgDeleteRelationships
+
+func TestMsgDeleteRelationships_Route(t *testing.T) {
+	actual := msgDeleteRelationships.Route()
+	require.Equal(t, "profiles", actual)
+}
+
+func TestMsgDeleteRelationships_Type(t *testing.T) {
+	actual := msgDeleteRelationships.Type()
+	require.Equal(t, "delete_relationships", actual)
+}
+
+func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgDeleteRelationships
+		error error
+	}{
+		{
+			name: "Empty sender returns error",
+			msg: msgs.NewMsgDeleteRelationships(
+				nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
+		},
+		{
+			name: "Empty receiver returns error",
+			msg: msgs.NewMsgDeleteRelationships(
+				user, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address: "),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgDeleteRelationships(
+				user, user,
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
+	actual := msgDeleteRelationships.GetSignBytes()
+	expected := `{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
+	actual := msgDeleteRelationships.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgDeleteRelationships.User, actual[0])
 }

@@ -179,3 +179,51 @@ func (msg MsgDenyBidirectionalRelationship) GetSignBytes() []byte {
 func (msg MsgDenyBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Receiver}
 }
+
+// MsgDeleteRelationships allows the specified User to cut off the relationship he had prevously
+// created with the specified Counterparty.
+// If the relationship was a monodirectional relationship, the user must be the original Sender of
+// the relationship, otherwise, if it was a bidirectional one, it can be either one of the two users
+// taking part to it.
+type MsgDeleteRelationships struct {
+	User         sdk.AccAddress `json:"user" yaml:"user"`
+	Counterparty sdk.AccAddress `json:"counterparty" yaml:"counterparty"`
+}
+
+func NewMsgDeleteRelationships(user, counterpart sdk.AccAddress) MsgDeleteRelationships {
+	return MsgDeleteRelationships{
+		User:         user,
+		Counterparty: counterpart,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgDeleteRelationships) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgDeleteRelationships) Type() string {
+	return models.ActionDeleteRelationships
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgDeleteRelationships) ValidateBasic() error {
+	if msg.User.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid user address: %s", msg.User))
+	}
+
+	if msg.Counterparty.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid counterparty address: %s", msg.Counterparty))
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgDeleteRelationships) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgDeleteRelationships) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.User}
+}

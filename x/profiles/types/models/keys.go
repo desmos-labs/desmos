@@ -15,6 +15,7 @@ const (
 	ActionRequestBiDirectionalRelationship  = "request_bi_directional_relationship"
 	ActionAcceptBiDirectionalRelationship   = "accept_bi_directional_relationship"
 	ActionDenyBiDirectionalRelationship     = "deny_bi_directional_relationship"
+	ActionDeleteRelationships               = "delete_relationships"
 
 	//Queries
 	QuerierRoute                      = ModuleName
