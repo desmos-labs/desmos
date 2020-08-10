@@ -20,6 +20,16 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgSaveProfile(ctx, keeper, msg)
 		case types.MsgDeleteProfile:
 			return handleMsgDeleteProfile(ctx, keeper, msg)
+		case types.MsgCreateMonoDirectionalRelationship:
+			return handleMsgCreateMonoDirectionalRelationship(ctx, keeper, msg)
+		case types.MsgRequestBidirectionalRelationship:
+			return handleMsgRequestBiDirectionalRelationship(ctx, keeper, msg)
+		case types.MsgAcceptBidirectionalRelationship:
+			return handleMsgAcceptBidirectionalRelationship(ctx, keeper, msg)
+		case types.MsgDenyBidirectionalRelationship:
+			return handleMsgDenyBidirectionalRelationship(ctx, keeper, msg)
+		case types.MsgDeleteRelationships:
+			return handleMsgDeleteRelationships(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -139,6 +149,86 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(profile.DTag),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+///////////////////////
+/////Relationships////
+/////////////////////
+
+func handleMsgCreateMonoDirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateMonoDirectionalRelationship) (*sdk.Result, error) {
+	relationship := types.NewMonodirectionalRelationship(msg.Sender, msg.Receiver)
+
+	// Save the relationship
+	if err := keeper.SaveRelationship(ctx, relationship); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeMonodirectionalRelationshipCreated,
+		sdk.NewAttribute(types.AttributeRelationshipSender, relationship.Sender.String()),
+		sdk.NewAttribute(types.AttributeRelationshipReceiver, relationship.Receiver.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(relationship.Sender),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+
+}
+
+func handleMsgRequestBiDirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgRequestBidirectionalRelationship) (*sdk.Result, error) {
+	relationship := types.NewBiDirectionalRelationship(msg.Sender, msg.Receiver, types.Sent)
+
+	// Save the relationship
+	if err := keeper.SaveRelationship(ctx, relationship); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeBidirectionalRelationshipRequested,
+		sdk.NewAttribute(types.AttributeRelationshipSender, relationship.Sender.String()),
+		sdk.NewAttribute(types.AttributeRelationshipReceiver, relationship.Receiver.String()),
+		sdk.NewAttribute(types.AttributeRelationshipStatus, relationship.Status.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(relationship.Sender),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptBidirectionalRelationship) (*sdk.Result, error) {
+	relationships := keeper.GetUserRelationships(ctx, msg.Receiver)
+	for _, relationship := range relationships {
+		if relationship
+	}
+}
+
+func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDenyBidirectionalRelationship) (*sdk.Result, error) {
+
+}
+
+func handleMsgDeleteRelationships(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationships) (*sdk.Result, error) {
+	if err := keeper.DeleteRelationship(ctx, msg.User, msg.Counterparty); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeRelationshipsDeleted,
+		sdk.NewAttribute(types.AttributeRelationshipSender, msg.User.String()),
+		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Counterparty.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(msg.User),
 		Events: ctx.EventManager().Events(),
 	}
 

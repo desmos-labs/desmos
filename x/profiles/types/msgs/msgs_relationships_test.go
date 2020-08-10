@@ -86,7 +86,7 @@ func TestMsgCreateMonoDirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgCreateMonoDirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgCreateMonoDirectionalRelationship.GetSignBytes()
-	expected := `{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgCreateMonoDirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -153,7 +153,7 @@ func TestMsgRequestBidirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgRequestBidirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgRequestBiDirectionalRelationship.GetSignBytes()
-	expected := `{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgRequestBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -182,16 +182,23 @@ func TestMsgAcceptBidirectionalRelationship_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
+			name: "Empty sender returns error",
+			msg: msgs.NewMsgAcceptBidirectionalRelationship(
+				nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+		},
+		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				nil,
+				user, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				user,
+				user, user,
 			),
 			error: nil,
 		},
@@ -213,7 +220,7 @@ func TestMsgAcceptBidirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgAcceptBidirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgAcceptBiDirectionalRelationship.GetSignBytes()
-	expected := `{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgAcceptBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":""}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -242,16 +249,23 @@ func TestMsgDenyBidirectionalRelationship_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
+			name: "Empty sender returns error",
+			msg: msgs.NewMsgDenyBidirectionalRelationship(
+				nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+		},
+		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				nil,
+				user, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				user,
+				user, user,
 			),
 			error: nil,
 		},
@@ -273,7 +287,7 @@ func TestMsgDenyBidirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgDenyBidirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgDenyBiDirectionalRelationship.GetSignBytes()
-	expected := `{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgDenyBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":""}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -340,7 +354,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgDeleteRelationships","value":{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

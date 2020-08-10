@@ -105,11 +105,13 @@ func (msg MsgRequestBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgAcceptBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to accept that request leading to the effective creation of the relationship itself.
 type MsgAcceptBidirectionalRelationship struct {
+	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgAcceptBidirectionalRelationship(receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
+func NewMsgAcceptBidirectionalRelationship(sender, receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
 	return MsgAcceptBidirectionalRelationship{
+		Sender:   sender,
 		Receiver: receiver,
 	}
 }
@@ -124,6 +126,10 @@ func (msg MsgAcceptBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAcceptBidirectionalRelationship) ValidateBasic() error {
+	if msg.Sender.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	}
+
 	if msg.Receiver.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}
@@ -144,11 +150,13 @@ func (msg MsgAcceptBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgDenyBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to deny that request.
 type MsgDenyBidirectionalRelationship struct {
+	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgDenyBidirectionalRelationship(receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
+func NewMsgDenyBidirectionalRelationship(sender, receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
 	return MsgDenyBidirectionalRelationship{
+		Sender:   sender,
 		Receiver: receiver,
 	}
 }
@@ -163,6 +171,10 @@ func (msg MsgDenyBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDenyBidirectionalRelationship) ValidateBasic() error {
+	if msg.Sender.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	}
+
 	if msg.Receiver.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}

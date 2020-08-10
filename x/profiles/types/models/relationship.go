@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"strconv"
 )
 
 // Relationship represents a single relationship between two users. Creator is the one that first
@@ -11,6 +12,8 @@ type Relationship interface {
 	Creator() sdk.AccAddress
 	Recipient() sdk.AccAddress
 }
+
+type Relationships []Relationship
 
 // MonodirectionalRelationship implements Relationship and represents a monodirectional
 // relationships that does not require the receiver to accept it before being effective.
@@ -88,6 +91,11 @@ type BidirectionalRelationship struct {
 
 // RelationshipStatus represents the status of a bidirectional relationship
 type RelationshipStatus int
+
+// String implements fmt.Stringer
+func (rs RelationshipStatus) String() string {
+	return strconv.Itoa(int(rs))
+}
 
 const (
 	Sent     RelationshipStatus = 0 // Indicates that the relationship has been sent but not yet accepted or denied

@@ -42,14 +42,14 @@ var (
 	NewProfiles                             = models.NewProfiles
 	NewPictures                             = models.NewPictures
 	RegisterModelsCodec                     = models.RegisterModelsCodec
-	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
 	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
 	NewMsgRequestBidirectionalRelationship  = msgs.NewMsgRequestBidirectionalRelationship
 	NewMsgAcceptBidirectionalRelationship   = msgs.NewMsgAcceptBidirectionalRelationship
 	NewMsgDenyBidirectionalRelationship     = msgs.NewMsgDenyBidirectionalRelationship
 	NewMsgDeleteRelationships               = msgs.NewMsgDeleteRelationships
+	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
 
 	// variable aliases
 	ProfileStorePrefix  = models.ProfileStorePrefix
@@ -61,6 +61,7 @@ var (
 
 type (
 	Relationship                         = models.Relationship
+	Relationships                        = models.Relationships
 	MonodirectionalRelationship          = models.MonodirectionalRelationship
 	MonoDirectionalRelationships         = models.MonoDirectionalRelationships
 	BidirectionalRelationship            = models.BidirectionalRelationship
@@ -69,11 +70,11 @@ type (
 	Profile                              = models.Profile
 	Profiles                             = models.Profiles
 	Pictures                             = models.Pictures
-	MsgSaveProfile                       = msgs.MsgSaveProfile
-	MsgDeleteProfile                     = msgs.MsgDeleteProfile
 	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
 	MsgRequestBidirectionalRelationship  = msgs.MsgRequestBidirectionalRelationship
 	MsgAcceptBidirectionalRelationship   = msgs.MsgAcceptBidirectionalRelationship
 	MsgDenyBidirectionalRelationship     = msgs.MsgDenyBidirectionalRelationship
 	MsgDeleteRelationships               = msgs.MsgDeleteRelationships
+	MsgSaveProfile                       = msgs.MsgSaveProfile
+	MsgDeleteProfile                     = msgs.MsgDeleteProfile
 )
