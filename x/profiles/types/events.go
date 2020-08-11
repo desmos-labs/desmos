@@ -17,6 +17,7 @@ const (
 	AttributeProfileCreationTime = "profile_creation_time"
 
 	// Relationships attributes
+	AttributeRelationshipID       = "relationship_id"
 	AttributeRelationshipSender   = "relationship_sender"
 	AttributeRelationshipReceiver = "relationship_receiver"
 	AttributeRelationshipStatus   = "relationship_status"

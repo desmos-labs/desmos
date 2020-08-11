@@ -4,6 +4,7 @@ import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
 )
 
@@ -105,13 +106,13 @@ func (msg MsgRequestBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgAcceptBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to accept that request leading to the effective creation of the relationship itself.
 type MsgAcceptBidirectionalRelationship struct {
-	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
-	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
+	Id       types.RelationshipID `json:"id" yaml:"id"`
+	Receiver sdk.AccAddress       `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgAcceptBidirectionalRelationship(sender, receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
+func NewMsgAcceptBidirectionalRelationship(id types.RelationshipID, receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
 	return MsgAcceptBidirectionalRelationship{
-		Sender:   sender,
+		Id:       id,
 		Receiver: receiver,
 	}
 }
@@ -126,8 +127,8 @@ func (msg MsgAcceptBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAcceptBidirectionalRelationship) ValidateBasic() error {
-	if msg.Sender.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	if msg.Id.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.Id))
 	}
 
 	if msg.Receiver.Empty() {
@@ -150,13 +151,13 @@ func (msg MsgAcceptBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgDenyBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to deny that request.
 type MsgDenyBidirectionalRelationship struct {
-	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
-	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
+	Id       types.RelationshipID `json:"id" yaml:"id"`
+	Receiver sdk.AccAddress       `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgDenyBidirectionalRelationship(sender, receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
+func NewMsgDenyBidirectionalRelationship(id types.RelationshipID, receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
 	return MsgDenyBidirectionalRelationship{
-		Sender:   sender,
+		Id:       id,
 		Receiver: receiver,
 	}
 }
@@ -171,8 +172,8 @@ func (msg MsgDenyBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDenyBidirectionalRelationship) ValidateBasic() error {
-	if msg.Sender.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	if msg.Id.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.Id))
 	}
 
 	if msg.Receiver.Empty() {

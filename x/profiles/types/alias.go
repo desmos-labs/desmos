@@ -33,16 +33,6 @@ const (
 
 var (
 	// functions aliases
-	NewMonodirectionalRelationship          = models.NewMonodirectionalRelationship
-	NewBiDirectionalRelationship            = models.NewBiDirectionalRelationship
-	ProfileStoreKey                         = models.ProfileStoreKey
-	DtagStoreKey                            = models.DtagStoreKey
-	RelationshipsStoreKey                   = models.RelationshipsStoreKey
-	NewProfile                              = models.NewProfile
-	NewProfiles                             = models.NewProfiles
-	NewPictures                             = models.NewPictures
-	RegisterModelsCodec                     = models.RegisterModelsCodec
-	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
 	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
 	NewMsgRequestBidirectionalRelationship  = msgs.NewMsgRequestBidirectionalRelationship
 	NewMsgAcceptBidirectionalRelationship   = msgs.NewMsgAcceptBidirectionalRelationship
@@ -50,16 +40,29 @@ var (
 	NewMsgDeleteRelationships               = msgs.NewMsgDeleteRelationships
 	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
+	RegisterModelsCodec                     = models.RegisterModelsCodec
+	NewMonodirectionalRelationship          = models.NewMonodirectionalRelationship
+	NewBiDirectionalRelationship            = models.NewBiDirectionalRelationship
+	ProfileStoreKey                         = models.ProfileStoreKey
+	DtagStoreKey                            = models.DtagStoreKey
+	RelationshipsStoreKey                   = models.RelationshipsStoreKey
+	UserRelationshipsStoreKey               = models.UserRelationshipsStoreKey
+	NewProfile                              = models.NewProfile
+	NewProfiles                             = models.NewProfiles
+	NewPictures                             = models.NewPictures
 
 	// variable aliases
-	ProfileStorePrefix  = models.ProfileStorePrefix
-	DtagStorePrefix     = models.DtagStorePrefix
-	RelationshipsPrefix = models.RelationshipsPrefix
-	ModelsCdc           = models.ModelsCdc
-	MsgsCodec           = msgs.MsgsCodec
+	ModelsCdc               = models.ModelsCdc
+	ProfileStorePrefix      = models.ProfileStorePrefix
+	DtagStorePrefix         = models.DtagStorePrefix
+	RelationshipsPrefix     = models.RelationshipsPrefix
+	UserRelationshipsPrefix = models.UserRelationshipsPrefix
+	MsgsCodec               = msgs.MsgsCodec
 )
 
 type (
+	RelationshipID                       = models.RelationshipID
 	Relationship                         = models.Relationship
 	Relationships                        = models.Relationships
 	MonodirectionalRelationship          = models.MonodirectionalRelationship

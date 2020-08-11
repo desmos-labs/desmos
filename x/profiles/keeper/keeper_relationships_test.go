@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			store.Set(types.RelationshipsStoreKey(suite.testData.user), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRelationships))
-			err := suite.keeper.SaveRelationship(suite.ctx, test.relationship)
+			err := suite.keeper.StoreRelationship(suite.ctx, test.relationship)
 			suite.Equal(test.expErr, err)
 		})
 	}

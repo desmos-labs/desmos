@@ -1,14 +1,36 @@
 package models
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strconv"
+	"strings"
 )
+
+// RelationshipID represents a unique relationship id
+type RelationshipID string
+
+// Valid tells if the id can be used safely
+func (id RelationshipID) Valid() bool {
+	return strings.TrimSpace(id.String()) != ""
+}
+
+// String implements fmt.Stringer
+func (id RelationshipID) String() string {
+	return string(id)
+}
+
+// Equals compares two RelationshipID instances
+func (id RelationshipID) Equals(other RelationshipID) bool {
+	return id == other
+}
 
 // Relationship represents a single relationship between two users. Creator is the one that first
 // sent the relationship request, and Recipient is the one that received it and (optionally) accepted it.
 type Relationship interface {
+	ID() RelationshipID
 	Creator() sdk.AccAddress
 	Recipient() sdk.AccAddress
 }
@@ -18,15 +40,29 @@ type Relationships []Relationship
 // MonodirectionalRelationship implements Relationship and represents a monodirectional
 // relationships that does not require the receiver to accept it before being effective.
 type MonodirectionalRelationship struct {
+	Id       RelationshipID `json:"id" yaml:"id"`
 	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
 }
 
 func NewMonodirectionalRelationship(sender, receiver sdk.AccAddress) MonodirectionalRelationship {
-	return MonodirectionalRelationship{
+	rel := MonodirectionalRelationship{
+		Id:       "",
 		Sender:   sender,
 		Receiver: receiver,
 	}
+
+	// RelationshipID calculation
+	bz := []byte("monodirectional" + sender.String() + receiver.String())
+	hash := sha256.Sum256(bz)
+
+	rel.Id = RelationshipID(hex.EncodeToString(hash[:]))
+
+	return rel
+}
+
+func (mr MonodirectionalRelationship) ID() RelationshipID {
+	return mr.Id
 }
 
 // Creator implements Relationship.Creator
@@ -42,7 +78,7 @@ func (mr MonodirectionalRelationship) Recipient() sdk.AccAddress {
 // String implement fmt.Stringer
 func (mr MonodirectionalRelationship) String() string {
 	out := "Mono directional Relationship:\n"
-	out += fmt.Sprintf("[Sender] %s -> [Receiver] %s", mr.Sender, mr.Receiver)
+	out += fmt.Sprintf("[Id] %s [Sender] %s -> [Receiver] %s", mr.Id, mr.Sender, mr.Receiver)
 	return out
 }
 
@@ -84,6 +120,7 @@ func (mrs MonoDirectionalRelationships) AppendIfMissing(otherMr MonodirectionalR
 // BidirectionalRelationship implements Relationship and represents a bidirectional relationship
 // that can have different statuses and requires the receiver to accept it before becoming effective.
 type BidirectionalRelationship struct {
+	Id       RelationshipID     `json:"id" yaml:"id"`
 	Sender   sdk.AccAddress     `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress     `json:"receiver" yaml:"receiver"`
 	Status   RelationshipStatus `json:"status" yaml:"status"`
@@ -104,11 +141,24 @@ const (
 )
 
 func NewBiDirectionalRelationship(sender, receiver sdk.AccAddress, status RelationshipStatus) BidirectionalRelationship {
-	return BidirectionalRelationship{
+	rel := BidirectionalRelationship{
+		Id:       "",
 		Sender:   sender,
 		Receiver: receiver,
 		Status:   status,
 	}
+
+	// RelationshipID calculation
+	bz := []byte("bidirectional" + sender.String() + receiver.String())
+	hash := sha256.Sum256(bz)
+
+	rel.Id = RelationshipID(hex.EncodeToString(hash[:]))
+
+	return rel
+}
+
+func (br BidirectionalRelationship) ID() RelationshipID {
+	return br.Id
 }
 
 // Creator implements Relationship.Creator
@@ -124,7 +174,7 @@ func (br BidirectionalRelationship) Recipient() sdk.AccAddress {
 // String implement fmt.Stringer
 func (br BidirectionalRelationship) String() string {
 	out := "Bidirectional Relationship:\n"
-	out += fmt.Sprintf("[Sender] %s <-> [Receiver] %s\n", br.Sender, br.Receiver)
+	out += fmt.Sprintf("[Id] %s [Sender] %s <-> [Receiver] %s\n", br.Id, br.Sender, br.Receiver)
 
 	switch br.Status {
 	case 0:
