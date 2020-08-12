@@ -18,20 +18,20 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 		expResponse   types.ReportsQueryResponse
 	}{
 		{
-			name:          "Invalid ID",
+			name:          "Invalid RelationshipID",
 			path:          []string{types.QueryReports, "1234"},
 			storedReports: nil,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1234"),
 		},
 		{
-			name:          "Non empty reports and valid ID",
+			name:          "Non empty reports and valid RelationshipID",
 			path:          []string{types.QueryReports, suite.testData.postID.String()},
 			storedReports: reports,
 			expErr:        nil,
 			expResponse:   types.NewReportResponse(suite.testData.postID, reports),
 		},
 		{
-			name:          "Empty reports and valid ID",
+			name:          "Empty reports and valid RelationshipID",
 			path:          []string{types.QueryReports, suite.testData.postID.String()},
 			storedReports: nil,
 			expErr:        nil,

@@ -47,7 +47,7 @@ func ParseSessionID(value string) (SessionID, error) {
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionID      `json:"id,string" yaml:"id,string"`                    // Id of the session
+	SessionID     SessionID      `json:"id,string" yaml:"id,string"`                    // RelationshipID of the session
 	Owner         sdk.AccAddress `json:"owner" yaml:"owner"`                            // Desmos owner of this session
 	Created       int64          `json:"creation_time,string" yaml:"creation_time"`     // Block height at which the session has been created
 	Expiry        int64          `json:"expiration_time,string" yaml:"expiration_time"` // Block height at which the session will expire

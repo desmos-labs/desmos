@@ -18,7 +18,7 @@ type PostQueryResponse struct {
 // String implements fmt.Stringer
 func (response PostQueryResponse) String() string {
 	out := fmt.Sprintf(`
-ID: %s
+RelationshipID: %s
 Reactions: %s
 Children: %s
 `, response.Post.PostID, response.Reactions, response.Children)

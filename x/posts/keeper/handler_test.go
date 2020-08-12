@@ -598,7 +598,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				suite.testData.post.Created,
 				suite.testData.post.Creator,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with RelationshipID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
 		},
 		{
 			name: "Answer after poll closure",
@@ -622,7 +622,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 			)),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("the poll associated with ID %s was closed at %s", id, suite.testData.postEndPollDateExpired)),
+				fmt.Sprintf("the poll associated with RelationshipID %s was closed at %s", id, suite.testData.postEndPollDateExpired)),
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
@@ -646,7 +646,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 			),
 			),
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "the poll associated with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow multiple answers"),
+				sdkerrors.ErrInvalidRequest, "the poll associated with RelationshipID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow multiple answers"),
 		},
 		{
 			name: "Creator provide too many answers",
@@ -693,7 +693,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				true,
 			)),
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "answer with ID 3 isn't one of the poll's provided answers"),
+				sdkerrors.ErrInvalidRequest, "answer with RelationshipID 3 isn't one of the poll's provided answers"),
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
@@ -717,7 +717,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 			)),
 			storedAnswers: &userPollAnswers,
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow answers' edits"),
+				sdkerrors.ErrInvalidRequest, "post with RelationshipID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow answers' edits"),
 		},
 		{
 			name: "Answered correctly to post's poll",

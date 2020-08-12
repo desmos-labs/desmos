@@ -2,9 +2,9 @@ package msgs
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
 )
 
@@ -106,13 +106,13 @@ func (msg MsgRequestBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgAcceptBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to accept that request leading to the effective creation of the relationship itself.
 type MsgAcceptBidirectionalRelationship struct {
-	Id       types.RelationshipID `json:"id" yaml:"id"`
-	Receiver sdk.AccAddress       `json:"receiver" yaml:"receiver"`
+	ID       models.RelationshipID `json:"id" yaml:"id"`
+	Receiver sdk.AccAddress        `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgAcceptBidirectionalRelationship(id types.RelationshipID, receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
+func NewMsgAcceptBidirectionalRelationship(id models.RelationshipID, receiver sdk.AccAddress) MsgAcceptBidirectionalRelationship {
 	return MsgAcceptBidirectionalRelationship{
-		Id:       id,
+		ID:       id,
 		Receiver: receiver,
 	}
 }
@@ -127,8 +127,8 @@ func (msg MsgAcceptBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAcceptBidirectionalRelationship) ValidateBasic() error {
-	if msg.Id.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.Id))
+	if msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
 	if msg.Receiver.Empty() {
@@ -151,13 +151,13 @@ func (msg MsgAcceptBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 // MsgDenyBidirectionalRelationship allows the receiver of a bidirectional relationship request
 // to deny that request.
 type MsgDenyBidirectionalRelationship struct {
-	Id       types.RelationshipID `json:"id" yaml:"id"`
-	Receiver sdk.AccAddress       `json:"receiver" yaml:"receiver"`
+	ID       models.RelationshipID `json:"id" yaml:"id"`
+	Receiver sdk.AccAddress        `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgDenyBidirectionalRelationship(id types.RelationshipID, receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
+func NewMsgDenyBidirectionalRelationship(id models.RelationshipID, receiver sdk.AccAddress) MsgDenyBidirectionalRelationship {
 	return MsgDenyBidirectionalRelationship{
-		Id:       id,
+		ID:       id,
 		Receiver: receiver,
 	}
 }
@@ -172,8 +172,8 @@ func (msg MsgDenyBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDenyBidirectionalRelationship) ValidateBasic() error {
-	if msg.Id.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.Id))
+	if msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
 	if msg.Receiver.Empty() {
@@ -193,20 +193,20 @@ func (msg MsgDenyBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Receiver}
 }
 
-// MsgDeleteRelationships allows the specified User to cut off the relationship he had prevously
+// MsgDeleteRelationships allows the specified User to cut off the relationship he had previously
 // created with the specified Counterparty.
 // If the relationship was a monodirectional relationship, the user must be the original Sender of
 // the relationship, otherwise, if it was a bidirectional one, it can be either one of the two users
 // taking part to it.
 type MsgDeleteRelationships struct {
-	User         sdk.AccAddress `json:"user" yaml:"user"`
-	Counterparty sdk.AccAddress `json:"counterparty" yaml:"counterparty"`
+	ID   models.RelationshipID `json:"id" yaml:"id"`
+	User sdk.AccAddress        `json:"user" yaml:"user"`
 }
 
-func NewMsgDeleteRelationships(user, counterpart sdk.AccAddress) MsgDeleteRelationships {
+func NewMsgDeleteRelationships(id models.RelationshipID, user sdk.AccAddress) MsgDeleteRelationships {
 	return MsgDeleteRelationships{
-		User:         user,
-		Counterparty: counterpart,
+		ID:   id,
+		User: user,
 	}
 }
 
@@ -220,12 +220,12 @@ func (msg MsgDeleteRelationships) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteRelationships) ValidateBasic() error {
-	if msg.User.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid user address: %s", msg.User))
+	if msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
-	if msg.Counterparty.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid counterparty address: %s", msg.Counterparty))
+	if msg.User.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid user address: %s", msg.User))
 	}
 
 	return nil

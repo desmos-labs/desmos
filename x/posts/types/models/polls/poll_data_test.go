@@ -33,7 +33,7 @@ func TestPollData_String(t *testing.T) {
 		true,
 	)
 
-	require.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+	require.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[RelationshipID] [Text]\n[1] [Yes]\n[2] [No]",
 		pollData.String())
 }
 

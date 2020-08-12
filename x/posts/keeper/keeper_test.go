@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 		expLastID            types.PostID
 	}{
 		{
-			name: "Post with ID already present",
+			name: "Post with RelationshipID already present",
 			existingPosts: types.Posts{
 				types.NewPost(id,
 					"",
@@ -46,7 +46,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
-			name: "Post which ID is not already present",
+			name: "Post which RelationshipID is not already present",
 			existingPosts: types.Posts{
 				types.NewPost(id,
 					"",
@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
-			name: "Post with valid parent ID",
+			name: "Post with valid parent RelationshipID",
 			existingPosts: []types.Post{
 				types.NewPost(id,
 					"",
@@ -94,7 +94,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			expParentCommentsIDs: []types.PostID{id2},
 		},
 		{
-			name: "Post with ID greater ID than Last ID stored",
+			name: "Post with RelationshipID greater RelationshipID than Last RelationshipID stored",
 			existingPosts: types.Posts{
 				types.NewPost(id,
 					"",
@@ -118,11 +118,11 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			expParentCommentsIDs: []types.PostID{},
 		},
 		{
-			name: "Post with ID lesser ID than Last ID stored",
+			name: "Post with RelationshipID lesser RelationshipID than Last RelationshipID stored",
 			existingPosts: types.Posts{
 				types.NewPost(id,
 					"",
-					"Post ID greater",
+					"Post RelationshipID greater",
 					false,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					map[string]string{},
@@ -132,7 +132,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			},
 			newPost: types.NewPost(id,
 				"",
-				"New post ID lesser",
+				"New post RelationshipID lesser",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
@@ -453,7 +453,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
 			expected: types.Posts{posts[0], posts[1], posts[2]},
 		},
 		{
-			name:     "Parent ID matcher works properly",
+			name:     "Parent RelationshipID matcher works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: &posts[0].ParentID},
 			expected: types.Posts{posts[1], posts[0]},
 		},
@@ -488,12 +488,12 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
 			expected: types.Posts{posts[2], posts[1], posts[0]},
 		},
 		{
-			name:     "Sorting by ID ascending works properly",
+			name:     "Sorting by RelationshipID ascending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
 			expected: types.Posts{posts[1], posts[2], posts[0]},
 		},
 		{
-			name:     "Sorting by ID descending works properly",
+			name:     "Sorting by RelationshipID descending works properly",
 			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
 			expected: types.Posts{posts[0], posts[2], posts[1]},
 		},

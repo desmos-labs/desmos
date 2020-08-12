@@ -72,7 +72,7 @@ func NewPollAnswer(id AnswerID, text string) PollAnswer {
 // String implements fmt.Stringer
 func (pa PollAnswer) String() string {
 	formattedID := strconv.FormatUint(uint64(pa.ID), 10)
-	return fmt.Sprintf("Answer - ID: %s ; Text: %s", formattedID, pa.Text)
+	return fmt.Sprintf("Answer - RelationshipID: %s ; Text: %s", formattedID, pa.Text)
 }
 
 // Validate implements validator
@@ -103,7 +103,7 @@ func NewPollAnswers(answers ...PollAnswer) PollAnswers {
 
 // Strings implements fmt.Stringer
 func (answers PollAnswers) String() string {
-	out := "Provided Answers:\n[ID] [Text]\n"
+	out := "Provided Answers:\n[RelationshipID] [Text]\n"
 	for _, answer := range answers {
 		out += fmt.Sprintf("[%s] [%s]\n",
 			strconv.FormatUint(uint64(answer.ID), 10), answer.Text)
@@ -153,7 +153,7 @@ func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
 	return append(answers, newAnswer)
 }
 
-// ExtractAnswersIDs appends every answer ID to a slice of IDs.
+// ExtractAnswersIDs appends every answer RelationshipID to a slice of IDs.
 //It returns a slice of answers IDs.
 func (answers PollAnswers) ExtractAnswersIDs() (answersIDs []AnswerID) {
 	for _, answer := range answers {

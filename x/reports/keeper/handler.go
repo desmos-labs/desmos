@@ -28,7 +28,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost) (*sdk.Result, error) {
 	// check if the post to reports exists
 	if exist := keeper.CheckPostExistence(ctx, msg.PostID); !exist {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", msg.PostID))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with RelationshipID: %s doesn't exist", msg.PostID))
 	}
 
 	keeper.SaveReport(ctx, msg.PostID, msg.Report)
@@ -41,7 +41,7 @@ func handleMsgReportPost(ctx sdk.Context, keeper Keeper, msg types.MsgReportPost
 	ctx.EventManager().EmitEvent(createEvent)
 
 	result := sdk.Result{
-		Data:   []byte(fmt.Sprintf("post with ID: %s reported correctly", msg.PostID)),
+		Data:   []byte(fmt.Sprintf("post with RelationshipID: %s reported correctly", msg.PostID)),
 		Events: ctx.EventManager().Events(),
 	}
 	return &result, nil

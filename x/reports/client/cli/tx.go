@@ -41,7 +41,7 @@ func GetCmdReportPost(cdc *codec.Codec) *cobra.Command {
 		Use:   "create [post-id] [reports-type] [reports-message]",
 		Short: "reports a post",
 		Long: fmt.Sprintf(`
-Report an existent post specifying its ID, the reports's type and message.
+Report an existent post specifying its RelationshipID, the reports's type and message.
 
 E.g.
 %s tx reports create a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 

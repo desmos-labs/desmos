@@ -77,11 +77,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetLastSessionID() {
 		expID      types.SessionID
 	}{
 		{
-			name:  "First ID is returned properly",
+			name:  "First RelationshipID is returned properly",
 			expID: types.SessionID(0),
 		},
 		{
-			name:       "Existing ID is returned properly",
+			name:       "Existing RelationshipID is returned properly",
 			existingID: types.SessionID(18446744073709551615),
 			expID:      types.SessionID(18446744073709551615),
 		},

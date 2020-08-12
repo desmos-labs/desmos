@@ -90,18 +90,18 @@ func TestParseSessionID(t *testing.T) {
 		expErr bool
 	}{
 		{
-			name:   "ID 0 is parsed correctly",
+			name:   "RelationshipID 0 is parsed correctly",
 			string: "0",
 			expID:  types.SessionID(0),
 		},
 		{
-			name:   "Negative ID returns error",
+			name:   "Negative RelationshipID returns error",
 			string: "-1",
 			expID:  types.SessionID(0),
 			expErr: true,
 		},
 		{
-			name:   "Positive ID is parsed correctly",
+			name:   "Positive RelationshipID is parsed correctly",
 			string: "54624",
 			expID:  types.SessionID(54624),
 		},
@@ -148,7 +148,7 @@ func TestSession_Equals(t *testing.T) {
 		expEquals bool
 	}{
 		{
-			name: "Different session ID",
+			name: "Different session RelationshipID",
 			first: types.Session{
 				SessionID:     0,
 				Owner:         owner,

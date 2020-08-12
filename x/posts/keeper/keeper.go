@@ -38,7 +38,7 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
-// If another post has the same ID of the given post, the old post will be overridden
+// If another post has the same RelationshipID of the given post, the old post will be overridden
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.StoreKey)
 
@@ -55,7 +55,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 
 		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
 
-		// Save the new incremental ID of the post and update the total number of posts
+		// Save the new incremental RelationshipID of the post and update the total number of posts
 		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
 	}
@@ -98,7 +98,7 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state
-//sorted by their incremental ID.
+//sorted by their incremental RelationshipID.
 func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 	posts = types.Posts{}
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {

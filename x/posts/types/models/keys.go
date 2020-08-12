@@ -14,7 +14,7 @@ func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id)...)
 }
 
-// PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
+// PostIndexedIDStoreKey turns an id to a key used to store an incremental RelationshipID into the posts store
 //nolint: interfacer
 func PostIndexedIDStoreKey(id PostID) []byte {
 	return append(PostIndexedIDStorePrefix, []byte(id)...)

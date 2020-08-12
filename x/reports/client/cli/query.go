@@ -30,7 +30,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 func GetCmdQueryPostReports(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [id]",
-		Short: "Returns all the reports of the posts with the given ID",
+		Short: "Returns all the reports of the posts with the given RelationshipID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

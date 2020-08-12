@@ -252,14 +252,14 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 
 	// checks if post has a poll
 	if post.PollData == nil {
-		return &post, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("no poll associated with ID: %s", id))
+		return &post, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("no poll associated with RelationshipID: %s", id))
 	}
 
 	// checks if the poll is already closed or not
 	if !post.PollData.Open {
 		return &post, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate),
+			fmt.Sprintf("the poll associated with RelationshipID %s was closed at %s", post.PostID, post.PollData.EndDate),
 		)
 	}
 
@@ -288,7 +288,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
 		return nil, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("the poll associated with ID %s doesn't allow multiple answers",
+			fmt.Sprintf("the poll associated with RelationshipID %s doesn't allow multiple answers",
 				post.PostID),
 		)
 	}
@@ -306,7 +306,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 			return nil, sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf(
-					"answer with ID %s isn't one of the poll's provided answers",
+					"answer with RelationshipID %s isn't one of the poll's provided answers",
 					strconv.FormatUint(uint64(answer), 10)),
 			)
 		}
@@ -318,7 +318,7 @@ func handleMsgAnswerPollPost(ctx sdk.Context, keeper Keeper, msg types.MsgAnswer
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return nil, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with ID %s doesn't allow answers' edits", post.PostID),
+			fmt.Sprintf("post with RelationshipID %s doesn't allow answers' edits", post.PostID),
 		)
 	}
 

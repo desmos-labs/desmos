@@ -14,7 +14,7 @@ type PollAnswersQueryResponse struct {
 
 // String implements fmt.Stringer
 func (response PollAnswersQueryResponse) String() string {
-	out := fmt.Sprintf("Post ID [%s] - Answers Details:\n", response.PostID)
+	out := fmt.Sprintf("Post RelationshipID [%s] - Answers Details:\n", response.PostID)
 	for _, answerDetails := range response.AnswersDetails {
 		out += fmt.Sprintf("%s\n", answerDetails.String())
 	}

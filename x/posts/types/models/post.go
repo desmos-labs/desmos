@@ -68,7 +68,7 @@ func (ids PostIDs) Equals(other PostIDs) bool {
 }
 
 // AppendIfMissing appends the given postID to the ids slice if it does not exist inside it yet.
-// It returns a new slice of PostIDs containing such ID and a boolean indicating whether or not the original
+// It returns a new slice of PostIDs containing such RelationshipID and a boolean indicating whether or not the original
 // slice has been modified.
 func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
 	for _, ele := range ids {
@@ -138,7 +138,7 @@ func (p Post) WithPollData(data PollData) Post {
 
 // String implements fmt.Stringer
 func (p Post) String() string {
-	out := fmt.Sprintf("[ID] %s [Parent ID] %s [Message] %s [Creation Time] %s [Edited Time] %s [Allows Comments] %t [Subspace] %s [Creator] %s ",
+	out := fmt.Sprintf("[RelationshipID] %s [Parent RelationshipID] %s [Message] %s [Creation Time] %s [Edited Time] %s [Allows Comments] %t [Subspace] %s [Creator] %s ",
 		p.PostID.String(), p.ParentID.String(), p.Message, p.Created, p.LastEdited, p.AllowsComments, p.Subspace, p.Creator,
 	)
 
@@ -202,7 +202,7 @@ func (p Post) Equals(other Post) bool {
 	return p.PostID.Equals(other.PostID) && p.ContentsEquals(other)
 }
 
-// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the RelationshipID
 func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
@@ -292,7 +292,7 @@ type Posts []Post
 
 // String implements stringer interface
 func (p Posts) String() string {
-	out := "ID - [Creator] Message\n"
+	out := "RelationshipID - [Creator] Message\n"
 	for _, post := range p {
 		out += fmt.Sprintf("%s - [%s] %s\n",
 			post.PostID, post.Creator, post.Message)

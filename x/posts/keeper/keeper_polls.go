@@ -56,7 +56,7 @@ func (k Keeper) GetPollAnswersMap(ctx sdk.Context) map[string]types.UserAnswers 
 	return usersAnswersData
 }
 
-// GetPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
+// GetPollAnswersByUser retrieves post poll answers associated to the given RelationshipID and filtered by user
 func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID types.PostID, user sdk.AccAddress) []types.AnswerID {
 	postPollAnswers := k.GetPollAnswers(ctx, postID)
 

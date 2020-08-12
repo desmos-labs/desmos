@@ -13,7 +13,7 @@ import (
 
 func TestPollAnswer_String(t *testing.T) {
 	answer := polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"}
-	require.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
+	require.Equal(t, `Answer - RelationshipID: 1 ; Text: Yes`, answer.String())
 }
 
 func TestPollAnswer_Validate(t *testing.T) {
@@ -29,7 +29,7 @@ func TestPollAnswer_Equals(t *testing.T) {
 		expEquals   bool
 	}{
 		{
-			name:        "Different answers ID",
+			name:        "Different answers RelationshipID",
 			answer:      polls.PollAnswer{ID: polls.AnswerID(1), Text: "Yes"},
 			otherAnswer: polls.PollAnswer{ID: polls.AnswerID(2), Text: "Yes"},
 			expEquals:   false,
@@ -65,7 +65,7 @@ func TestPollAnswers_String(t *testing.T) {
 	answer2 := polls.PollAnswer{ID: polls.AnswerID(2), Text: "No"}
 	answers := polls.PollAnswers{answer, answer2}
 
-	require.Equal(t, "Provided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
+	require.Equal(t, "Provided Answers:\n[RelationshipID] [Text]\n[1] [Yes]\n[2] [No]", answers.String())
 }
 
 func TestPollAnswers_Validate(t *testing.T) {

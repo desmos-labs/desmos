@@ -42,7 +42,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
-			name:  "invalid post ID returns error",
+			name:  "invalid post RelationshipID returns error",
 			msg:   types.NewMsgReportPost("123", "type", "message", creator),
 			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, "123"),
 		},

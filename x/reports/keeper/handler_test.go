@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name:         "post not found",
 			msg:          msgReport,
 			existentPost: nil,
-			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with ID: %s doesn't exist", suite.testData.postID)),
+			expErr:       sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with RelationshipID: %s doesn't exist", suite.testData.postID)),
 		},
 		{
 			name:         "message handled correctly",
@@ -61,7 +61,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			}
 			if res != nil {
 				//Check the data
-				suite.Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", suite.testData.postID)), res.Data)
+				suite.Equal([]byte(fmt.Sprintf("post with RelationshipID: %s reported correctly", suite.testData.postID)), res.Data)
 
 				//Check the events
 				createReportEv := sdk.NewEvent(

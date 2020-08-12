@@ -36,7 +36,7 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/registeredReactions", queryRegisteredReactions(cliCtx)).Methods("GET")
 }
 
-// HTTP request handler to query a single post based on its ID
+// HTTP request handler to query a single post based on its RelationshipID
 func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
