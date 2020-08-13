@@ -280,7 +280,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
-				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"no profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 		},
 		{
@@ -327,4 +327,382 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgCreateMonoDirectionalRelationship() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	rel := types.NewMonodirectionalRelationship(sender, receiver)
+
+	tests := []struct {
+		name               string
+		msg                types.MsgCreateMonoDirectionalRelationship
+		storedRelationship *types.MonodirectionalRelationship
+		expErr             error
+		expEvent           sdk.Event
+	}{
+		{
+			name:               "Relationship already created returns error",
+			msg:                types.NewMsgCreateMonoDirectionalRelationship(sender, receiver),
+			storedRelationship: &rel,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with %s has already been made", receiver)),
+		},
+		{
+			name:               "Relationship has been saved correctly",
+			msg:                types.NewMsgCreateMonoDirectionalRelationship(sender, receiver),
+			storedRelationship: nil,
+			expErr:             nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeMonodirectionalRelationshipCreated,
+				sdk.NewAttribute(types.AttributeRelationshipSender, rel.Sender.String()),
+				sdk.NewAttribute(types.AttributeRelationshipReceiver, rel.Receiver.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedRelationship != nil {
+				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				suite.True(suite.keeper.DoesRelationshipExist(suite.ctx, rel.ID))
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgRequestBiDirectionalRelationship() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	rel := types.NewBiDirectionalRelationship(sender, receiver, types.Sent)
+
+	tests := []struct {
+		name               string
+		msg                types.MsgRequestBidirectionalRelationship
+		storedRelationship *types.BidirectionalRelationship
+		expErr             error
+		expEvent           sdk.Event
+	}{
+		{
+			name:               "Relationship already created returns error",
+			msg:                types.NewMsgRequestBidirectionalRelationship(sender, receiver, "hello"),
+			storedRelationship: &rel,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship request to %s has already been made", receiver)),
+		},
+		{
+			name:               "Relationship has been saved correctly",
+			msg:                types.NewMsgRequestBidirectionalRelationship(sender, receiver, "hello"),
+			storedRelationship: nil,
+			expErr:             nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeBidirectionalRelationshipRequested,
+				sdk.NewAttribute(types.AttributeRelationshipMessage, "hello"),
+				sdk.NewAttribute(types.AttributeRelationshipSender, rel.Sender.String()),
+				sdk.NewAttribute(types.AttributeRelationshipReceiver, rel.Receiver.String()),
+				sdk.NewAttribute(types.AttributeRelationshipStatus, rel.Status.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedRelationship != nil {
+				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				suite.True(suite.keeper.DoesRelationshipExist(suite.ctx, rel.ID))
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgAcceptBiDirectionalRelationship() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	var abstractRelBiAccepted types.Relationship
+	abstractRelBiAccepted = types.NewBiDirectionalRelationship(sender, receiver, types.Accepted)
+
+	var abstractRelBiSent types.Relationship
+	abstractRelBiSent = types.NewBiDirectionalRelationship(sender, receiver, types.Sent)
+
+	var abstractRelMono types.Relationship
+	abstractRelMono = types.NewMonodirectionalRelationship(sender, receiver)
+
+	tests := []struct {
+		name               string
+		msg                types.MsgAcceptBidirectionalRelationship
+		storedRelationship *types.Relationship
+		expErr             error
+		expEvent           sdk.Event
+	}{
+		{
+			name:               "Relationship doesn't exist and returns error",
+			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
+			storedRelationship: nil,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Relationship already accepted returns error",
+			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
+			storedRelationship: &abstractRelBiAccepted,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Relationship with wrong type returns error",
+			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelMono.RelationshipID(), receiver),
+			storedRelationship: &abstractRelMono,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s is not a bidirectional relationship and cannot be accepted", abstractRelMono.RelationshipID())),
+		},
+		{
+			name:               "Relationship has been saved correctly",
+			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelBiSent.RelationshipID(), receiver),
+			storedRelationship: &abstractRelBiSent,
+			expErr:             nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeBidirectionalRelationshipAccepted,
+				sdk.NewAttribute(types.AttributeRelationshipID, abstractRelBiSent.RelationshipID().String()),
+				sdk.NewAttribute(types.AttributeRelationshipReceiver, abstractRelBiSent.Recipient().String()),
+				sdk.NewAttribute(types.AttributeRelationshipStatus, types.Accepted.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedRelationship != nil {
+				rel := *test.storedRelationship
+				if _, ok := rel.(types.BidirectionalRelationship); ok {
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				}
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				suite.True(suite.keeper.DoesRelationshipExist(suite.ctx, abstractRelBiSent.RelationshipID()))
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgDenyBidirectionalRelationship() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	var abstractRelBiAccepted types.Relationship
+	abstractRelBiAccepted = types.NewBiDirectionalRelationship(sender, receiver, types.Accepted)
+
+	var abstractRelBiSent types.Relationship
+	abstractRelBiSent = types.NewBiDirectionalRelationship(sender, receiver, types.Sent)
+
+	var abstractRelMono types.Relationship
+	abstractRelMono = types.NewMonodirectionalRelationship(sender, receiver)
+
+	tests := []struct {
+		name               string
+		msg                types.MsgDenyBidirectionalRelationship
+		storedRelationship *types.Relationship
+		expErr             error
+		expEvent           sdk.Event
+	}{
+		{
+			name:               "Relationship doesn't exist and returns error",
+			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
+			storedRelationship: nil,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Relationship already accepted returns error",
+			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
+			storedRelationship: &abstractRelBiAccepted,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted and cannot be denied now", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Relationship with wrong type returns error",
+			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelMono.RelationshipID(), receiver),
+			storedRelationship: &abstractRelMono,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s is not a bidirectional relationship and cannot be denied", abstractRelMono.RelationshipID())),
+		},
+		{
+			name:               "Relationship has been saved correctly",
+			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelBiSent.RelationshipID(), receiver),
+			storedRelationship: &abstractRelBiSent,
+			expErr:             nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeBidirectionalRelationshipDenied,
+				sdk.NewAttribute(types.AttributeRelationshipID, abstractRelBiSent.RelationshipID().String()),
+				sdk.NewAttribute(types.AttributeRelationshipReceiver, abstractRelBiSent.Recipient().String()),
+				sdk.NewAttribute(types.AttributeRelationshipStatus, types.Denied.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedRelationship != nil {
+				rel := *test.storedRelationship
+				if _, ok := rel.(types.BidirectionalRelationship); ok {
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				}
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				suite.True(suite.keeper.DoesRelationshipExist(suite.ctx, abstractRelBiSent.RelationshipID()))
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	var abstractRelBiAccepted types.Relationship
+	abstractRelBiAccepted = types.NewBiDirectionalRelationship(sender, receiver, types.Accepted)
+
+	var abstractRelMono types.Relationship
+	abstractRelMono = types.NewMonodirectionalRelationship(sender, receiver)
+
+	tests := []struct {
+		name               string
+		msg                types.MsgDeleteRelationships
+		storedRelationship *types.Relationship
+		expErr             error
+		expEvent           sdk.Event
+	}{
+		{
+			name:               "Relationship doesn't exist and returns error",
+			msg:                types.NewMsgDeleteRelationships(abstractRelBiAccepted.RelationshipID(), receiver),
+			storedRelationship: nil,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Unauthorized user returns error",
+			msg:                types.NewMsgDeleteRelationships(abstractRelMono.RelationshipID(), receiver),
+			storedRelationship: &abstractRelMono,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user with address %s isn't the relationship's creator", receiver)),
+		},
+		{
+			name:               "User delete relationship successfully",
+			msg:                types.NewMsgDeleteRelationships(abstractRelMono.RelationshipID(), sender),
+			storedRelationship: &abstractRelMono,
+			expErr:             nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeRelationshipsDeleted,
+				sdk.NewAttribute(types.AttributeRelationshipID, abstractRelMono.RelationshipID().String()),
+				sdk.NewAttribute(types.AttributeRelationshipSender, abstractRelMono.Creator().String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedRelationship != nil {
+				rel := *test.storedRelationship
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				if _, ok := rel.(types.BidirectionalRelationship); ok {
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				}
+				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				suite.False(suite.keeper.DoesRelationshipExist(suite.ctx, abstractRelMono.RelationshipID()))
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+
 }

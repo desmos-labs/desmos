@@ -18,6 +18,7 @@ const (
 
 	// Relationships attributes
 	AttributeRelationshipID       = "relationship_id"
+	AttributeRelationshipMessage  = "relationship_message"
 	AttributeRelationshipSender   = "relationship_sender"
 	AttributeRelationshipReceiver = "relationship_receiver"
 	AttributeRelationshipStatus   = "relationship_status"

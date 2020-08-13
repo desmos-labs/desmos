@@ -3,10 +3,70 @@ package models_test
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
+
+func TestRelationshipID_Valid(t *testing.T) {
+	tests := []struct {
+		name    string
+		id      types.RelationshipID
+		expBool bool
+	}{
+		{
+			name:    "Valid id returns true",
+			id:      types.RelationshipID("1234"),
+			expBool: true,
+		},
+		{
+			name:    "Invalid id returns false",
+			id:      types.RelationshipID(""),
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expBool, test.id.Valid())
+		})
+	}
+}
+
+func TestRelationshipID_String(t *testing.T) {
+	id := types.RelationshipID("12345")
+	idString := id.String()
+	require.Equal(t, "12345", idString)
+}
+
+func TestRelationshipID_Equals(t *testing.T) {
+	tests := []struct {
+		name    string
+		id      types.RelationshipID
+		otherID types.RelationshipID
+		expBool bool
+	}{
+		{
+			name:    "Equals IDs returns true",
+			id:      types.RelationshipID("1234"),
+			otherID: types.RelationshipID("1234"),
+			expBool: true,
+		},
+		{
+			name:    "Non equals IDs returns false",
+			id:      types.RelationshipID("123"),
+			otherID: types.RelationshipID("1234"),
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expBool, test.id.Equals(test.otherID))
+		})
+	}
+}
 
 func TestNewMonodirectionalRelationship(t *testing.T) {
 	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -15,6 +75,7 @@ func TestNewMonodirectionalRelationship(t *testing.T) {
 	require.NoError(t, err)
 
 	expectedMr := models.MonodirectionalRelationship{
+		ID:       "13cf1724ba76d87b1ea55259aa46c44976d9296430ae779a20c9fc51bc28e2ef",
 		Sender:   sender,
 		Receiver: receiver,
 	}
@@ -43,7 +104,7 @@ func TestMonodirectionalRelationship_String(t *testing.T) {
 	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	require.NoError(t, err)
 	actualMr := models.NewMonodirectionalRelationship(sender, sender).String()
-	expectedMr := "Mono directional Relationship:\n[Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 -> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+	expectedMr := "Mono directional Relationship:\n[RelationshipID] 5f575d15aa5cec9c9df0f6fd19a356767b37fef7da8b5f99e2ff891be3e4f174 [Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 -> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 
 	require.Equal(t, expectedMr, actualMr)
 }
@@ -170,6 +231,7 @@ func TestNewBiDirectionalRelationship(t *testing.T) {
 	status := models.RelationshipStatus(0)
 
 	expectedMr := models.BidirectionalRelationship{
+		ID:       "63b66fa545035229b8991bb6553268bfa59d29f4f5e5c345ac470f94613babbf",
 		Sender:   sender,
 		Receiver: receiver,
 		Status:   status,
@@ -210,17 +272,17 @@ func TestBiDirectionalRelationship_String(t *testing.T) {
 		{
 			name:      "String representation with status sent",
 			br:        models.NewBiDirectionalRelationship(sender, sender, models.Sent),
-			expString: "Bidirectional Relationship:\n[Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship not yet accepted or denied",
+			expString: "Bidirectional Relationship:\n[RelationshipID] 77f4b74cb2b4fd89d8a0cd0f044bdbb5e9e300cced95d7c8b8d22c4ec13ac0f8 [Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship not yet accepted or denied",
 		},
 		{
 			name:      "String representation with status accepted",
 			br:        models.NewBiDirectionalRelationship(sender, sender, models.Accepted),
-			expString: "Bidirectional Relationship:\n[Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship accepted",
+			expString: "Bidirectional Relationship:\n[RelationshipID] 77f4b74cb2b4fd89d8a0cd0f044bdbb5e9e300cced95d7c8b8d22c4ec13ac0f8 [Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship accepted",
 		},
 		{
 			name:      "String representation with status denied",
 			br:        models.NewBiDirectionalRelationship(sender, sender, models.Denied),
-			expString: "Bidirectional Relationship:\n[Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship denied",
+			expString: "Bidirectional Relationship:\n[RelationshipID] 77f4b74cb2b4fd89d8a0cd0f044bdbb5e9e300cced95d7c8b8d22c4ec13ac0f8 [Sender] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 <-> [Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\nStatus: Relationship denied",
 		},
 	}
 

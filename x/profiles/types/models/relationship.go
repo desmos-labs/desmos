@@ -79,7 +79,7 @@ func (mr MonodirectionalRelationship) Recipient() sdk.AccAddress {
 // String implement fmt.Stringer
 func (mr MonodirectionalRelationship) String() string {
 	out := "Mono directional Relationship:\n"
-	out += fmt.Sprintf("[RelationshipID] %s [Sender] %s -> [Receiver] %s", mr.ID, mr.Sender, mr.Receiver)
+	out += fmt.Sprintf("[RelationshipID] %s [Sender] %s -> [Receiver] %s", mr.ID, mr.Sender.String(), mr.Receiver.String())
 	return out
 }
 
@@ -175,7 +175,7 @@ func (br BidirectionalRelationship) Recipient() sdk.AccAddress {
 // String implement fmt.Stringer
 func (br BidirectionalRelationship) String() string {
 	out := "Bidirectional Relationship:\n"
-	out += fmt.Sprintf("[RelationshipID] %s [Sender] %s <-> [Receiver] %s\n", br.ID, br.Sender, br.Receiver)
+	out += fmt.Sprintf("[RelationshipID] %s [Sender] %s <-> [Receiver] %s\n", br.ID, br.Sender.String(), br.Receiver.String())
 
 	switch br.Status {
 	case 0:
