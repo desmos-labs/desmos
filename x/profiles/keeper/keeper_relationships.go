@@ -52,20 +52,24 @@ func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types
 }
 
 // deleteRelationshipFromArray remove the relationship with the given relationshipID from the given array
-func deleteRelationshipFromArray(keeper Keeper, store sdk.KVStore, storeKey []byte,
-	relationshipID types.RelationshipID) (relationshipsIDs []types.RelationshipID) {
+func deleteRelationshipFromArray(keeper Keeper, store sdk.KVStore, storeKey []byte, relationshipID types.RelationshipID) {
+	var relationshipsIDs []types.RelationshipID
 	keeper.Cdc.MustUnmarshalBinaryBare(store.Get(storeKey), &relationshipsIDs)
 	for index, id := range relationshipsIDs {
 		if id.Equals(relationshipID) {
 			relationshipsIDs = append(relationshipsIDs[:index], relationshipsIDs[index+1:]...)
-			return relationshipsIDs
+			if len(relationshipsIDs) == 0 {
+				store.Delete(storeKey)
+			} else {
+				store.Set(storeKey, keeper.Cdc.MustMarshalBinaryBare(&relationshipsIDs))
+			}
+			break
 		}
 	}
-	// never reached
-	return relationshipsIDs
 }
 
 // DeleteRelationship allows to delete the relationship between the given user and his counterparty
+// It assumes that the given relationshipID is related to an existent relationship
 func (k Keeper) DeleteRelationship(ctx sdk.Context, relationshipID types.RelationshipID, user sdk.AccAddress) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(relationshipID)
@@ -89,21 +93,18 @@ func (k Keeper) DeleteRelationship(ctx sdk.Context, relationshipID types.Relatio
 		if !relationship.Creator().Equals(user) {
 			// delete creator -> relationship association
 			creatorKey := types.UserRelationshipsStoreKey(relationship.Creator())
-			relIds := deleteRelationshipFromArray(k, store, creatorKey, relationshipID)
-			store.Set(creatorKey, k.Cdc.MustMarshalBinaryBare(&relIds))
+			deleteRelationshipFromArray(k, store, creatorKey, relationshipID)
 		}
 
 		if !relationship.Recipient().Equals(user) {
 			// delete receiver -> relationship association
 			recipientKey := types.UserRelationshipsStoreKey(relationship.Recipient())
-			relIds := deleteRelationshipFromArray(k, store, recipientKey, relationshipID)
-			store.Set(recipientKey, k.Cdc.MustMarshalBinaryBare(&relIds))
+			deleteRelationshipFromArray(k, store, recipientKey, relationshipID)
 		}
 	}
 
 	// delete user -> relationship association
-	relIds := deleteRelationshipFromArray(k, store, userKey, relationshipID)
-	store.Set(userKey, k.Cdc.MustMarshalBinaryBare(&relIds))
+	deleteRelationshipFromArray(k, store, userKey, relationshipID)
 
 	// delete stored relationship
 	store.Delete(key)

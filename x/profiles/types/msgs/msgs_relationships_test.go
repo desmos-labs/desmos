@@ -19,13 +19,13 @@ var (
 		Message:  "",
 	}
 
-	msgAcceptBiDirectionalRelationship = msgs.MsgAcceptBidirectionalRelationship{Receiver: user}
+	msgAcceptBiDirectionalRelationship = msgs.MsgAcceptBidirectionalRelationship{Receiver: user, ID: "1234"}
 
-	msgDenyBiDirectionalRelationship = msgs.MsgDenyBidirectionalRelationship{Receiver: user}
+	msgDenyBiDirectionalRelationship = msgs.MsgDenyBidirectionalRelationship{Receiver: user, ID: "1234"}
 
 	msgDeleteRelationships = msgs.MsgDeleteRelationships{
-		User:         user,
-		Counterparty: user,
+		User: user,
+		ID:   "1234",
 	}
 )
 
@@ -182,23 +182,23 @@ func TestMsgAcceptBidirectionalRelationship_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "Empty ID returns error",
 			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				nil, nil,
+				"", user,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				user, nil,
+				"1234", nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				user, user,
+				"1234", user,
 			),
 			error: nil,
 		},
@@ -220,7 +220,7 @@ func TestMsgAcceptBidirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgAcceptBidirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgAcceptBiDirectionalRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgAcceptBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":""}}`
+	expected := `{"type":"desmos/MsgAcceptBidirectionalRelationship","value":{"id":"1234","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -249,23 +249,23 @@ func TestMsgDenyBidirectionalRelationship_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "Empty id returns error",
 			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				nil, nil,
+				"", user,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				user, nil,
+				"1234", nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				user, user,
+				"1234", user,
 			),
 			error: nil,
 		},
@@ -287,7 +287,7 @@ func TestMsgDenyBidirectionalRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgDenyBidirectionalRelationship_GetSignBytes(t *testing.T) {
 	actual := msgDenyBiDirectionalRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgDenyBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":""}}`
+	expected := `{"type":"desmos/MsgDenyBidirectionalRelationship","value":{"id":"1234","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -316,23 +316,23 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "Empty id returns error",
 			msg: msgs.NewMsgDeleteRelationships(
-				nil, nil,
+				"", user,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgDeleteRelationships(
-				user, nil,
+				"1234", nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgDeleteRelationships(
-				user, user,
+				"1234", user,
 			),
 			error: nil,
 		},
@@ -354,7 +354,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationships","value":{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationships","value":{"id":"1234","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

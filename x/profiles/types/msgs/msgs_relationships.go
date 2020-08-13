@@ -127,8 +127,8 @@ func (msg MsgAcceptBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAcceptBidirectionalRelationship) ValidateBasic() error {
-	if msg.ID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
+	if !msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
 	if msg.Receiver.Empty() {
@@ -172,8 +172,8 @@ func (msg MsgDenyBidirectionalRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDenyBidirectionalRelationship) ValidateBasic() error {
-	if msg.ID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
+	if !msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
 	if msg.Receiver.Empty() {
@@ -220,8 +220,8 @@ func (msg MsgDeleteRelationships) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteRelationships) ValidateBasic() error {
-	if msg.ID.Valid() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
+	if !msg.ID.Valid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
 
 	if msg.User.Empty() {

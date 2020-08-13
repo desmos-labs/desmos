@@ -2,105 +2,168 @@ package keeper_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
-	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
-	biRelationship := types.NewBiDirectionalRelationship(suite.testData.user, suite.testData.otherUser, types.Sent)
+func (suite *KeeperTestSuite) TestKeeper_SaveUserRelationshipAssociation() {
+	id := types.RelationshipID("12345")
+	expIDs := []types.RelationshipID{id}
+
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, id)
+
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	var actualIDs []types.RelationshipID
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.UserRelationshipsStoreKey(suite.testData.user)), &actualIDs)
+
+	suite.Equal(expIDs, actualIDs)
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DoesRelationshipExist() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	relationship := models.NewMonodirectionalRelationship(sender, receiver)
+
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store.Set(types.RelationshipsStoreKey(relationship.ID), suite.keeper.Cdc.MustMarshalBinaryBare(&relationship))
 
 	tests := []struct {
-		name                string
-		storedRelationships types.Relationships
-		relationship        types.Relationship
-		expErr              error
+		name           string
+		relationshipID types.RelationshipID
+		expBool        bool
 	}{
 		{
-			name:                "Storing the same mono relationship returns error",
-			storedRelationships: types.Relationships{monoRelationship},
-			relationship:        monoRelationship,
-			expErr:              fmt.Errorf("relationship between %s and %s has already been done", suite.testData.user, suite.testData.otherUser),
+			name:           "Found relationship returns true",
+			relationshipID: relationship.ID,
+			expBool:        true,
 		},
 		{
-			name:                "Storing the same bidirectional relationship returns error",
-			storedRelationships: types.Relationships{biRelationship},
-			relationship:        biRelationship,
-			expErr:              fmt.Errorf("relationship between %s and %s has already been done", suite.testData.user, suite.testData.otherUser),
-		},
-		{
-			name:                "Storing new relationship returns no error",
-			storedRelationships: types.Relationships{monoRelationship},
-			relationship:        biRelationship,
-			expErr:              nil,
+			name:           "Not found relationship returns false",
+			relationshipID: types.RelationshipID("123"),
+			expBool:        false,
 		},
 	}
 
 	for _, test := range tests {
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
-			store.Set(types.RelationshipsStoreKey(suite.testData.user), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRelationships))
-			err := suite.keeper.StoreRelationship(suite.ctx, test.relationship)
-			suite.Equal(test.expErr, err)
+			res := suite.keeper.DoesRelationshipExist(suite.ctx, test.relationshipID)
+			suite.Equal(test.expBool, res)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
-	relationships := types.Relationships{
-		types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser),
-		types.NewBiDirectionalRelationship(suite.testData.user, suite.testData.otherUser, types.Sent),
-	}
+func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
+	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
+	suite.keeper.StoreRelationship(suite.ctx, monoRelationship)
 
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)
-	store.Set(types.RelationshipsStoreKey(suite.testData.user), suite.keeper.Cdc.MustMarshalBinaryBare(&relationships))
+	var actualRel types.Relationship
+	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.RelationshipsStoreKey(monoRelationship.ID)), &actualRel)
 
-	actualRelationships := suite.keeper.GetUserRelationships(suite.ctx, suite.testData.user)
-	suite.Equal(relationships, actualRelationships)
+	suite.Equal(monoRelationship, actualRel)
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	monoRelationship := models.NewMonodirectionalRelationship(sender, receiver)
+	biRelationship := models.NewBiDirectionalRelationship(sender, receiver, types.Accepted)
+
+	IDs := []types.RelationshipID{monoRelationship.ID, biRelationship.ID}
+
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store.Set(types.UserRelationshipsStoreKey(sender), suite.keeper.Cdc.MustMarshalBinaryBare(&IDs))
+
+	suite.keeper.StoreRelationship(suite.ctx, monoRelationship)
+	suite.keeper.StoreRelationship(suite.ctx, biRelationship)
+
+	expRelationships := types.Relationships{monoRelationship, biRelationship}
+
+	suite.Equal(expRelationships, suite.keeper.GetUserRelationships(suite.ctx, sender))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
-	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
 
-	user, _ := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
-	anotherRelationship := types.NewMonodirectionalRelationship(suite.testData.user, user)
+	anotherUser, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	suite.NoError(err)
+
+	monoRelationship := models.NewMonodirectionalRelationship(sender, receiver)
+	biRelationship := models.NewBiDirectionalRelationship(sender, receiver, types.Accepted)
 
 	tests := []struct {
-		name                string
-		storedRelationships types.Relationships
-		user                sdk.AccAddress
-		counterpart         sdk.AccAddress
-		expErr              error
+		name                     string
+		storedRelationships      types.Relationships
+		user                     sdk.AccAddress
+		relationshipID           types.RelationshipID
+		expErr                   error
+		expRelationshipsSender   types.Relationships
+		expRelationshipsReceiver types.Relationships
 	}{
 		{
-			name:                "Non existent relationship returns error",
-			storedRelationships: types.Relationships{monoRelationship},
-			user:                user,
-			counterpart:         suite.testData.user,
-			expErr:              fmt.Errorf("no relationship found between %s and %s", user, suite.testData.user),
+			name:                "Unauthorized user tries to delete a relationship returns error",
+			storedRelationships: types.Relationships{monoRelationship, biRelationship},
+			user:                anotherUser,
+			relationshipID:      monoRelationship.ID,
+			expErr:              fmt.Errorf("user with address cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h isn't the relationship's creator"),
 		},
 		{
-			name:                "Existent relationship deleted correctly",
-			storedRelationships: types.Relationships{anotherRelationship, monoRelationship},
-			user:                suite.testData.user,
-			counterpart:         user,
-			expErr:              nil,
+			name:                "Unauthorized user tries to delete a relationship(bidirectional) returns error",
+			storedRelationships: types.Relationships{monoRelationship, biRelationship},
+			user:                anotherUser,
+			relationshipID:      biRelationship.ID,
+			expErr:              fmt.Errorf("user with address cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h is neither the creator nor the recipient of the relationship"),
+		},
+		{
+			name:                     "User delete a monodirectionalRelationship successfully",
+			storedRelationships:      types.Relationships{monoRelationship, biRelationship},
+			user:                     sender,
+			relationshipID:           monoRelationship.ID,
+			expErr:                   nil,
+			expRelationshipsSender:   types.Relationships{biRelationship},
+			expRelationshipsReceiver: types.Relationships{biRelationship},
+		},
+		{
+			name:                     "User delete a bidirectionalRelationship successfully",
+			storedRelationships:      types.Relationships{monoRelationship, biRelationship},
+			user:                     sender,
+			relationshipID:           biRelationship.ID,
+			expErr:                   nil,
+			expRelationshipsSender:   types.Relationships{monoRelationship},
+			expRelationshipsReceiver: nil,
 		},
 	}
 
 	for _, test := range tests {
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
-			store.Set(types.RelationshipsStoreKey(suite.testData.user), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRelationships))
+			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, sender, monoRelationship.ID)
+			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, sender, biRelationship.ID)
+			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, receiver, biRelationship.ID)
+			for _, rel := range test.storedRelationships {
+				suite.keeper.StoreRelationship(suite.ctx, rel)
+			}
 
-			err := suite.keeper.DeleteRelationship(suite.ctx, test.user, test.counterpart)
-			suite.Equal(test.expErr, err)
+			actualErr := suite.keeper.DeleteRelationship(suite.ctx, test.relationshipID, test.user)
+			suite.Equal(test.expErr, actualErr)
 
 			if test.expErr == nil {
-				relationships := suite.keeper.GetUserRelationships(suite.ctx, test.user)
-				suite.Len(relationships, 1)
-				suite.Equal(types.Relationships{monoRelationship}, relationships)
+				actualSenderRels := suite.keeper.GetUserRelationships(suite.ctx, sender)
+				actualReceiverRels := suite.keeper.GetUserRelationships(suite.ctx, receiver)
+
+				suite.Equal(test.expRelationshipsSender, actualSenderRels)
+				suite.Equal(test.expRelationshipsReceiver, actualReceiverRels)
 			}
 		})
 	}
