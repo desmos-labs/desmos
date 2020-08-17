@@ -2,12 +2,12 @@ package keeper_test
 
 import (
 	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -172,4 +172,70 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) Test_queryUserRelationships() {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	status := models.RelationshipStatus(0)
+
+	monoRel := models.NewMonodirectionalRelationship(sender, receiver)
+	biDirRel := models.NewBiDirectionalRelationship(sender, receiver, status)
+
+	tests := []struct {
+		name          string
+		path          []string
+		relationships types.Relationships
+		expResult     types.Relationships
+		expErr        error
+	}{
+		{
+			name:          "Invalid bech32 address returns error",
+			path:          []string{types.QueryRelationships, "invalidAddress"},
+			relationships: nil,
+			expResult:     nil,
+			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalidAddress"),
+		},
+		{
+			name:          "Relationships returned correctly",
+			path:          []string{types.QueryRelationships, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			relationships: types.Relationships{monoRel, biDirRel},
+			expResult:     types.Relationships{monoRel, biDirRel},
+			expErr:        nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest() // reset
+			for _, rel := range test.relationships {
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				if _, ok := rel.(types.BidirectionalRelationship); ok {
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				}
+				suite.keeper.StoreRelationship(suite.ctx, rel)
+			}
+
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+
+			if test.expResult != nil {
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Nil(result)
+			}
+		})
+	}
+
 }

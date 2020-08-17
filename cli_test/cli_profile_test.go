@@ -1,9 +1,8 @@
-// +build cli_test
-
 //nolint
 package clitest
 
 import (
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -324,6 +323,56 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	// Make sure the profile is deleted
 	storedProfiles = f.QueryProfiles()
 	require.Empty(t, storedProfiles)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
+	require.NoError(t, err)
+
+	// Create mono directional relationship
+	success, _, sterr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure relationship is created
+	storedRelationships := f.QueryRelationships()
+	require.NotEmpty(t, storedRelationships)
+	expRelationship := types.NewMonodirectionalRelationship(fooAddr, receiver)
+	require.Equal(t, expRelationship, storedRelationships[0])
+
+	// Test --dry-tun
+	success, _, _ = f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedRelationships = f.QueryRelationships()
+	require.Len(t, storedRelationships, 1)
 
 	f.Cleanup()
 }

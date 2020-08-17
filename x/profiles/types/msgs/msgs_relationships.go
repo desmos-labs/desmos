@@ -193,33 +193,33 @@ func (msg MsgDenyBidirectionalRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Receiver}
 }
 
-// MsgDeleteRelationships allows the specified User to cut off the relationship he had previously
+// MsgDeleteRelationship allows the specified User to cut off the relationship he had previously
 // created with the specified Counterparty.
 // If the relationship was a monodirectional relationship, the user must be the original Sender of
 // the relationship, otherwise, if it was a bidirectional one, it can be either one of the two users
 // taking part to it.
-type MsgDeleteRelationships struct {
+type MsgDeleteRelationship struct {
 	ID   models.RelationshipID `json:"id" yaml:"id"`
 	User sdk.AccAddress        `json:"user" yaml:"user"`
 }
 
-func NewMsgDeleteRelationships(id models.RelationshipID, user sdk.AccAddress) MsgDeleteRelationships {
-	return MsgDeleteRelationships{
+func NewMsgDeleteRelationship(id models.RelationshipID, user sdk.AccAddress) MsgDeleteRelationship {
+	return MsgDeleteRelationship{
 		ID:   id,
 		User: user,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteRelationships) Route() string { return models.RouterKey }
+func (msg MsgDeleteRelationship) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteRelationships) Type() string {
-	return models.ActionDeleteRelationships
+func (msg MsgDeleteRelationship) Type() string {
+	return models.ActionDeleteRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDeleteRelationships) ValidateBasic() error {
+func (msg MsgDeleteRelationship) ValidateBasic() error {
 	if !msg.ID.Valid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationship's id: %s", msg.ID))
 	}
@@ -232,11 +232,11 @@ func (msg MsgDeleteRelationships) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDeleteRelationships) GetSignBytes() []byte {
+func (msg MsgDeleteRelationship) GetSignBytes() []byte {
 	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgDeleteRelationships) GetSigners() []sdk.AccAddress {
+func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.User}
 }

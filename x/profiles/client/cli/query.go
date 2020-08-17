@@ -25,6 +25,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdQueryProfile(cdc),
 		GetCmdQueryProfiles(cdc),
 		GetCmdQueryProfileParams(cdc),
+		GetCmdQueryUserRelationships(cdc),
 	)...)
 	return profileQueryCmd
 }
@@ -57,7 +58,7 @@ func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "all",
 		Short: "Retrieve all the registered profiles.",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -80,7 +81,7 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "parameters",
 		Short: "Retrieve all the profile module parameters",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -92,6 +93,29 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var out types.Params
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+// GetCmdQueryUserRelationships queries all the profiles' users' relationships
+func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "relationships",
+		Short: "Retrieve all the user's relationships",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, cliCtx.FromAddress)
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find profile parameters")
+				return nil
+			}
+
+			var out types.Relationships
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

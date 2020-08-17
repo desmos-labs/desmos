@@ -467,6 +467,36 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxCreateMonoDirectionalRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles create-relationship %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, receiver, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxRequestBiDirectionalRelationship(message string, receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles request-relationship %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, message, receiver, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxAcceptBiDirectionalRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles accept-relationship %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, relationshipID, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxDenyBiDirectionalRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles deny-relationship %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, relationshipID, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxDeleteUserRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles delete-relationship %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, relationshipID, from, flags)
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx reports
 
@@ -800,6 +830,18 @@ func (f *Fixtures) QueryProfiles(flags ...string) types.Profiles {
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile
+}
+
+// QueryRelationships returns stored relationships
+func (f *Fixtures) QueryRelationships(flags ...string) types.Relationships {
+	cmd := fmt.Sprintf("%s query relationships --output=json %s", f.DesmoscliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedRelationships types.Relationships
+	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
+	require.NoError(f.T, err)
+	return storedRelationships
 }
 
 //___________________________________________________________________________________

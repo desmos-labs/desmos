@@ -23,7 +23,7 @@ var (
 
 	msgDenyBiDirectionalRelationship = msgs.MsgDenyBidirectionalRelationship{Receiver: user, ID: "1234"}
 
-	msgDeleteRelationships = msgs.MsgDeleteRelationships{
+	msgDeleteRelationships = msgs.MsgDeleteRelationship{
 		User: user,
 		ID:   "1234",
 	}
@@ -297,7 +297,7 @@ func TestMsgDenyBidirectionalRelationship_GetSigners(t *testing.T) {
 	require.Equal(t, msgDenyBiDirectionalRelationship.Receiver, actual[0])
 }
 
-// MsgDeleteRelationships
+// MsgDeleteRelationship
 
 func TestMsgDeleteRelationships_Route(t *testing.T) {
 	actual := msgDeleteRelationships.Route()
@@ -312,26 +312,26 @@ func TestMsgDeleteRelationships_Type(t *testing.T) {
 func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgDeleteRelationships
+		msg   msgs.MsgDeleteRelationship
 		error error
 	}{
 		{
 			name: "Empty id returns error",
-			msg: msgs.NewMsgDeleteRelationships(
+			msg: msgs.NewMsgDeleteRelationship(
 				"", user,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
 		},
 		{
 			name: "Empty receiver returns error",
-			msg: msgs.NewMsgDeleteRelationships(
+			msg: msgs.NewMsgDeleteRelationship(
 				"1234", nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
 		},
 		{
 			name: "No errors message",
-			msg: msgs.NewMsgDeleteRelationships(
+			msg: msgs.NewMsgDeleteRelationship(
 				"1234", user,
 			),
 			error: nil,
@@ -354,7 +354,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationships","value":{"id":"1234","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"id":"1234","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

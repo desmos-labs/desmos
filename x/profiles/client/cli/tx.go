@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fmt"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -30,6 +31,11 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd.AddCommand(flags.PostCommands(
 		GetCmdSaveProfile(cdc),
 		GetCmdDeleteProfile(cdc),
+		GetCmdCreateMonoDirectionalRelationship(cdc),
+		GetCmdRequestBiDirectionalRelationship(cdc),
+		GetCmdAcceptBiDirectionalRequest(cdc),
+		GetCmdDenyBiDirectionalRelationshipRequest(cdc),
+		GetCmdDeleteProfile(cdc),
 	)...)
 
 	return profileTxCmd
@@ -51,7 +57,7 @@ func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
 		Short: "Save your profile associating to it the given DTag.",
 		Long: fmt.Sprintf(`
 Save a new profile or edit the existing one specifying a DTag, a moniker, biography, profile picture and cover picture.
-Every data given through the flags is optional.
+Every data given through the flags is optional.
 If you are editing an existing profile you should fill all the existent fields otherwise the existing values
 will be removed.
 
@@ -98,6 +104,133 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 
 			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
 
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdCreateMonoDirectionalRelationship is the CLI command for creating a monoDirRelationship
+func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-relationship [receiver]",
+		Short: "Create a mono directional relationship with the given receiver address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			receiver, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateMonoDirectionalRelationship(cliCtx.FromAddress, receiver)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdRequestBiDirectionalRelationship is the CLI command for requesting a biDirectionalRelationship
+func GetCmdRequestBiDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "request-relationship [receiver] [[message]]",
+		Short: "Request a bi directional relationship to the given receiver address",
+		Args:  cobra.RangeArgs(1, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			receiver, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			var message string
+			if len(args) > 1 {
+				message = args[1]
+			}
+
+			msg := types.NewMsgRequestBidirectionalRelationship(cliCtx.FromAddress, receiver, message)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdAcceptBiDirectionalRequest is the CLI command for accepting a biDirectionalRelationship
+func GetCmdAcceptBiDirectionalRequest(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "accept-relationship [relationshipID]",
+		Short: "Accept the bi directional relationship with the given ID",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			relationshipID := types.RelationshipID(args[0])
+			if !relationshipID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
+			}
+
+			msg := types.NewMsgAcceptBidirectionalRelationship(relationshipID, cliCtx.FromAddress)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdDenyBiDirectionalRelationshipRequest is the CLI command for denying a biDirectionalRelationship
+func GetCmdDenyBiDirectionalRelationshipRequest(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "deny-relationship [relationshipID]",
+		Short: "Deny the bi directional relationship with the given ID",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			relationshipID := types.RelationshipID(args[0])
+			if !relationshipID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
+			}
+
+			msg := types.NewMsgDenyBidirectionalRelationship(relationshipID, cliCtx.FromAddress)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdDeleteUserRelationship is the CLI command for deleting a relationship
+func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-relationship [relationshipID]",
+		Short: "Delete the relationship with the given ID",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			relationshipID := types.RelationshipID(args[0])
+			if !relationshipID.Valid() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
+			}
+
+			msg := types.NewMsgDeleteRelationship(relationshipID, cliCtx.FromAddress)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

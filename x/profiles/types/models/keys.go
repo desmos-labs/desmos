@@ -15,15 +15,14 @@ const (
 	ActionRequestBiDirectionalRelationship  = "request_bi_directional_relationship"
 	ActionAcceptBiDirectionalRelationship   = "accept_bi_directional_relationship"
 	ActionDenyBiDirectionalRelationship     = "deny_bi_directional_relationship"
-	ActionDeleteRelationships               = "delete_relationships"
+	ActionDeleteRelationship                = "delete_relationship"
 
 	//Queries
-	QuerierRoute                      = ModuleName
-	QueryProfile                      = "profile"
-	QueryProfiles                     = "all"
-	QueryParams                       = "params"
-	QueryMonoDirectionalRelationships = "mono_directional_relationships"
-	QueryBiDirectionalRelationships   = "bi_directional_relationships"
+	QuerierRoute       = ModuleName
+	QueryProfile       = "profile"
+	QueryProfiles      = "all"
+	QueryRelationships = "relationships"
+	QueryParams        = "params"
 )
 
 var (
