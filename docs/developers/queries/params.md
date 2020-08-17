@@ -3,17 +3,15 @@ This query endpoint returns all the parameters of the `posts` module.
 
 **CLI**
  ```bash
-desmoscli query posts params
+desmoscli query posts parameters
+```
 
-# Example
-# desmoscli query posts params
-``` 
 **REST**
 ```
-/posts/params
+/posts/parameters
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/posts/params
+# curl http://lcd.morpheus.desmos.network:1317/posts/parameters
 ``` 
 
 # Query profiles module parameters
@@ -21,16 +19,14 @@ This query endpoint returns all the parameters of the `profiles` module.
 
 **CLI**
  ```bash
-desmoscli query profiles params
-
-# Example
-# desmoscli query profiles params
+desmoscli query profiles parameters
 ``` 
+
 **REST**
 ```
-/profiles/params
+/profiles/parameters
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/profiles/params
+# curl http://lcd.morpheus.desmos.network:1317/profiles/parameters
 ```  
 

@@ -34,15 +34,32 @@ const (
 )
 
 var (
-	Sha256RegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
-	HashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
-	ShortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
+	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
+	subspaceRegEx  = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
+	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
 
 	ModuleAddress = supply.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
+	PostIndexedIDStorePrefix = []byte("p_index")
+	PostTotalNumberPrefix    = []byte("number_of_posts")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
 )
+
+// IsValidPostID tells whether the given value represents a valid post id or not
+func IsValidPostID(value string) bool {
+	return postIDRegEx.MatchString(value)
+}
+
+// IsValidSubspace tells whether the given value is a valid subspace or not
+func IsValidSubspace(value string) bool {
+	return subspaceRegEx.MatchString(value)
+}
+
+// IsValidReactionCode tells whether the given value is a valid emoji shortcode or not
+func IsValidReactionCode(value string) bool {
+	return shortCodeRegEx.MatchString(value)
+}

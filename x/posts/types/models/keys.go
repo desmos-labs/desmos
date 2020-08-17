@@ -1,9 +1,23 @@
 package models
 
+import (
+	"regexp"
+)
+
+var (
+	hashtagRegEx = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
+)
+
 // PostStoreKey turns an id to a key used to store a post into the posts store
 //nolint: interfacer
 func PostStoreKey(id PostID) []byte {
 	return append(PostStorePrefix, []byte(id)...)
+}
+
+// PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
+//nolint: interfacer
+func PostIndexedIDStoreKey(id PostID) []byte {
+	return append(PostIndexedIDStorePrefix, []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

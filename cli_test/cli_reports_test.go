@@ -9,8 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/tests"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-
-	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func TestDesmosCLIReportPost(t *testing.T) {
@@ -43,19 +41,17 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	//Report a post
-	success, _, sterr = f.TxReportPost(computedID.String(), repType, repMess, fooAddr, "-y")
+	success, _, sterr = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	//Make sure the report is saved
-	storedReports := f.QueryReports(computedID.String())
+	storedReports := f.QueryReports(post.PostID.String())
 	require.NotEmpty(t, storedReports.Reports)
 	report := storedReports.Reports[0]
 	require.Equal(t, string(report.Type), repType)
@@ -63,11 +59,11 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	require.Equal(t, report.User, fooAcc.Address)
 
 	// Test --dry-run
-	success, _, _ = f.TxReportPost(computedID.String(), repType, repMess, fooAddr, "--dry-run")
+	success, _, _ = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxReportPost(computedID.String(), repType, repMess, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -76,7 +72,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
-	storedReports = f.QueryReports(computedID.String())
+	storedReports = f.QueryReports(post.PostID.String())
 	require.Len(t, storedReports.Reports, 1)
 
 	f.Cleanup()

@@ -35,12 +35,12 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		postOwner,
 	)
 
-	medias := models.NewPostMedias(
-		models.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}),
+	attachments := models.NewAttachments(
+		models.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}),
 	)
 
-	mediasNoTags := models.NewPostMedias(
-		models.NewPostMedia("https://uri.com", "text/plain", nil),
+	attachmentsNoTags := models.NewAttachments(
+		models.NewAttachment("https://uri.com", "text/plain", nil),
 	)
 
 	pollData := models.NewPollData(
@@ -75,37 +75,37 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		expResponse string
 	}{
 		{
-			name: "Post Query Response with Post that contains media and poll",
+			name: "Post Query Response with Post that contains attachment and poll",
 			response: models.NewPostResponse(
-				post.WithMedias(medias).WithPollData(pollData),
+				post.WithAttachments(attachments).WithPollData(pollData),
 				answersDetails,
 				reactionsResponses,
 				children,
 			),
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","attachments":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
-			name: "Post Query Response with Post that contains media without tags",
+			name: "Post Query Response with Post that contains attachment without tags",
 			response: models.NewPostResponse(
-				post.WithMedias(mediasNoTags),
+				post.WithAttachments(attachmentsNoTags),
 				answersDetails,
 				reactionsResponses,
 				children,
 			),
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain"}],"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","attachments":[{"uri":"https://uri.com","mime_type":"text/plain"}],"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
 			name: "Post Query with Post that not contains poll",
 			response: models.NewPostResponse(
-				post.WithMedias(medias),
+				post.WithAttachments(attachments),
 				nil,
 				reactionsResponses,
 				children,
 			),
-			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","medias":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			expResponse: `{"id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","attachments":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
-			name: "Post Query Response with Post that not contains media",
+			name: "Post Query Response with Post that not contains attachment",
 			response: models.NewPostResponse(
 				post.WithPollData(pollData),
 				answersDetails,
@@ -139,7 +139,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
-	medias := models.NewPostMedias(models.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}))
+	attachments := models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{postOwner}))
 
 	pollData := models.NewPollData(
 		"poll?",
@@ -163,7 +163,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 			map[string]string{},
 			time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
 			postOwner,
-		).WithMedias(medias).WithPollData(pollData),
+		).WithAttachments(attachments).WithPollData(pollData),
 		models.NewUserAnswers(
 			models.NewUserAnswer([]models.AnswerID{models.AnswerID(1)}, liker),
 		),

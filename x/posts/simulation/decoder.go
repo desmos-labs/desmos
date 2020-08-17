@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/tendermint/tendermint/libs/kv"
 )
@@ -32,6 +33,16 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
 		return fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reactionA, reactionB)
+	case bytes.HasPrefix(kvA.Key, types.PostIndexedIDStorePrefix):
+		var indexedIDA, indexedIDB sdk.Int
+		cdc.MustUnmarshalBinaryBare(kvA.Value, &indexedIDA)
+		cdc.MustUnmarshalBinaryBare(kvB.Value, &indexedIDB)
+		return fmt.Sprintf("IndexedIDA: %s\nIndexedIDB: %s\n", indexedIDA, indexedIDB)
+	case bytes.HasPrefix(kvA.Key, types.PostTotalNumberPrefix):
+		var totalPostsA, totalPostsB sdk.Int
+		cdc.MustUnmarshalBinaryBare(kvA.Value, &totalPostsA)
+		cdc.MustUnmarshalBinaryBare(kvB.Value, &totalPostsB)
+		return fmt.Sprintf("TotalPostsA: %s\nTotalPostsB: %s\n", totalPostsA, totalPostsB)
 	default:
 		panic(fmt.Sprintf("invalid account key %X", kvA.Key))
 	}

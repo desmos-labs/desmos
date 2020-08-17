@@ -3,13 +3,13 @@
 :::warning Upgrade-only guide
 The following guide is intended for all validators that are currently operating on a Desmos chain version and would like to upgrade to a new version.
 
-If you wish to run a new validator node instead, please reference the [setup instructions](setup.md).  
+If you wish to run a new validator node instead, please reference the [setup instructions](../setup.md).  
 :::  
 
 ## 1. Stop the currently running node. 
 First of all we need to stop the currently running validator node. To do so you can go inside the console where you have run `desmosd start` and type `Ctrl + C`. This will halt your fullnode gracefully. 
 
-If you have also setup a [background service](../fullnode/installation.md#optional-configure-the-service), please stop that too by executing the following command: 
+If you have also setup a [background service](../../fullnode/setup.md#optional-configure-the-service), please stop that too by executing the following command: 
 
 ```bash
 systemctl stop desmosd
@@ -31,7 +31,7 @@ Before performing such changes make sure the people that tell you to do so are a
 :::
 
 ## 3. Update the underlying fullnode
-Once you have stopped your validator, it is now time to update the Desmos binaries that allow your fullnode to run properly. To do so please reference the [fullnode updating guide](../fullnode/update.md). 
+Once you have stopped your validator, it is now time to update the Desmos binaries that allow your fullnode to run properly. To do so please reference the [fullnode updating guide](../../fullnode/update.md). 
 
 :::warning Do not start the fullnode yet  
 After updating the fullnode software **do not** start it yet. If you have mistakenly started it, please shut it down before continuing.  

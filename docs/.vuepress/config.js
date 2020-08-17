@@ -54,9 +54,25 @@ module.exports = {
                 title: "Types",
                 collapsable: true,
                 children: [
-                    ["types/post", "Post"],
-                    ["types/post-media", "PostMedia"],
-                    ["types/post-poll-data", "PollData"],
+                    {
+                        title: "Posts",
+                        collapsable: true,
+                        children: [
+                            ["types/posts/post", "Post"],
+                            ["types/posts/attachment", "Attachment"],
+                            ["types/posts/post-poll-data", "PollData"],
+                            ["types/posts/reaction", "Reactions"],
+                        ]
+                    },
+                    {
+                        title: "Profiles",
+                        collapsable: true,
+                        children: [
+                            ["types/profiles/profile", "Profile"],
+                            ["types/profiles/profile-pictures", "Profile pictures"],
+                        ]
+                    },
+                    ["types/reports/report", "Report"]
                 ]
             },
             {
@@ -75,7 +91,7 @@ module.exports = {
                 collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    ["fullnode/installation", "Setup"],
+                    ["fullnode/setup", "Setup"],
                     ["fullnode/rocksdb-installation", "Using RocksDB"],
                     ["fullnode/update", "Update"],
                 ]
@@ -87,16 +103,24 @@ module.exports = {
                     ["validators/overview", "Overview"],
                     ["validators/security", "Security"],
                     ["validators/setup", "Setup"],
-                    ["validators/update", "Update"],
-                    ["validators/halting", "Halting"],
-                    ["validators/common-problems", "Common problems"],
                     {
-                        title: "Updates",
+                        title: "Upgrades",
                         collapsable: true,
                         children: [
-                            ["validators/updates/v0.3.1", "Version 0.3.1"],
+                            ["validators/upgrades/manual", "Manual procedure"],
+                            {
+                                title: "Automatic procedure",
+                                collapsable: true,
+                                children: [
+                                    ["validators/upgrades/automatic/overview", "Overview"],
+                                    ["validators/upgrades/automatic/setup", "Setup"],
+                                    ["validators/upgrades/automatic/workflow", "Workflow"],
+                                ]
+                            },
                         ]
-                    }
+                    },
+                    ["validators/halting", "Halting"],
+                    ["validators/common-problems", "Common problems"],
                 ]
             },
             {
@@ -108,15 +132,6 @@ module.exports = {
                     ["testnets/join-public", "Join the public testnet"],
                 ],
             },
-            {
-                title: "Migrations",
-                collapsable: true,
-                children: [
-                    ["migrations/v0.3.0", "Migrate to version v0.3.0"],
-                    ["migrations/v0.5.x", "Migrate to version v0.5.x"],
-                    ["migrations/v0.6.x", "Migrate to version v0.6.x"],
-                ]
-            }
         ],
     }
 };

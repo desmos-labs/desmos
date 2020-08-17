@@ -52,7 +52,7 @@ func RandomPost() types.Post {
 	)
 
 	if r.Intn(101) <= 50 {
-		post = post.WithMedias(simulation.RandomMedias(r, accounts))
+		post = post.WithAttachments(simulation.RandomAttachments(r, accounts))
 	}
 
 	if r.Intn(101) <= 50 {
@@ -119,6 +119,19 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 		suite.keeper.GetPost(suite.ctx, randomPost.PostID)
 	}
 
+}
+
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
+	fmt.Println("Benchmark: GetPosts")
+
+	for i := 0; i < b.N; i++ {
+		suite.keeper.SavePost(suite.ctx, RandomPost())
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		suite.keeper.GetPosts(suite.ctx)
+	}
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {

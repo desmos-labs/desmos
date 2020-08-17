@@ -27,13 +27,12 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message#test"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -42,17 +41,15 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -80,13 +77,12 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message#test"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y",
 		"--allows-comments=false")
 	require.True(t, success)
 	require.Empty(t, sterr)
@@ -96,19 +92,17 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.False(t, post.AllowsComments)
 	require.Nil(t, post.PollData)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run",
 		"--allows-comments=false")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only=true",
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only=true",
 		"--allows-comments=false")
 	require.Empty(t, stderr)
 	require.True(t, success)
@@ -124,7 +118,7 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
+func TestDesmosCLIPostsCreateWithAttachmentsAndEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -137,7 +131,6 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := ""
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
@@ -148,9 +141,9 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	require.NoError(t, err2)
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y",
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -159,24 +152,22 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 2)
-	require.Equal(t, post.Medias, types.NewPostMedias(
-		types.NewPostMedia("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
-		types.NewPostMedia("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
+	require.Len(t, post.Attachments, 2)
+	require.Equal(t, post.Attachments, types.NewAttachments(
+		types.NewAttachment("https://example.com/media1", "text/plain", []sdk.AccAddress{tag}),
+		types.NewAttachment("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run",
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
-		"--media https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only",
+		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -191,7 +182,7 @@ func TestDesmosCLIPostsCreateWithMediasAndEmptyMessage(t *testing.T) {
 	f.Cleanup()
 }
 
-func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
+func TestDesmosCLIPostsCreateWithAttachmentsAndNonEmptyMessage(t *testing.T) {
 	t.Parallel()
 	f := InitFixtures(t)
 
@@ -204,16 +195,15 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
 	require.Empty(t, sterr)
@@ -223,29 +213,27 @@ func TestDesmosCLIPostsCreateWithMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 3)
-	require.Equal(t, types.NewPostMedias(
-		types.NewPostMedia("https://example.com/media1", "text/plain", nil),
-		types.NewPostMedia("https://example.com/media2", "application/json", nil),
-		types.NewPostMedia("https://example.com/media3", "text/plain", nil),
-	), post.Medias)
+	require.Len(t, post.Attachments, 3)
+	require.Equal(t, types.NewAttachments(
+		types.NewAttachment("https://example.com/media1", "text/plain", nil),
+		types.NewAttachment("https://example.com/media2", "application/json", nil),
+		types.NewAttachment("https://example.com/media3", "text/plain", nil),
+	), post.Attachments)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
-		"--media https://example.com/media1,text/plain",
-		"--media https://example.com/media2,application/json",
-		"--media https://example.com/media3,text/plain",
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only",
+		"--attachment https://example.com/media1,text/plain",
+		"--attachment https://example.com/media2,application/json",
+		"--attachment https://example.com/media3,text/plain",
 	)
 	require.Empty(t, stderr)
 	require.True(t, success)
@@ -274,13 +262,12 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y")
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -289,17 +276,15 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
 	require.Nil(t, post.PollData)
-	require.Len(t, post.Medias, 0)
+	require.Len(t, post.Attachments, 0)
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, message, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsCreate(subspace, "message2#test", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message3#test", fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -327,13 +312,12 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 
 	// Later usage variables
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-	message := "message"
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -346,9 +330,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	storedPosts := f.QueryPosts()
 	require.NotEmpty(t, storedPosts)
 	post := storedPosts[0]
-	computedID := types.ComputeID(post.Created, post.Creator, post.Subspace)
-	require.Equal(t, computedID, post.PostID)
-	require.Nil(t, post.Medias)
+	require.Nil(t, post.Attachments)
 	require.NotNil(t, post.PollData)
 
 	// Check poll data
@@ -367,16 +349,15 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	require.Equal(t, types.NewPollAnswer(2, "Shiba"), pollData.ProvidedAnswers[2])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
 		"--poll-answer Shiba")
-	require.Empty(t, sterr)
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, message, fooAddr, "--generate-only",
+	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only",
 		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
 		"--poll-answer Beagle",
 		"--poll-answer Pug",
@@ -440,8 +421,7 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	require.Equal(t, types.NewUserAnswer([]types.AnswerID{types.AnswerID(1)}, fooAddr), postQueryResponse.PollAnswers[0])
 
 	// Test --dry-run
-	success, _, stderr := f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--dry-run")
-	require.Empty(t, sterr)
+	success, _, _ = f.TxPostsAnswerPoll(post.PostID, []types.AnswerID{types.AnswerID(1)}, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -585,18 +565,10 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	// __________________________________________________________________________________
 	// remove-reaction
 
-	// Remove a reaction
-	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the reaction has been removed
-	storedPost = f.QueryPost(post.PostID.String())
-	require.Empty(t, storedPost.Reactions)
-
 	// Test --dry-run
-	success, _, _ = f.TxPostsRemoveReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
+	// This is executed before the actual delete since the dry-run performs the proper checks and would fail
+	// telling there is no such added reaction otherwise
+	success, _, _ = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -609,6 +581,16 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Len(t, msg.GetSignatures(), 0)
 
 	// Check state didn't change
+	storedPost = f.QueryPost(post.PostID.String())
+	require.Len(t, storedPost.Reactions, 1)
+
+	// Remove a reaction
+	success, _, sterr = f.TxPostsRemoveReaction(post.PostID.String(), ":+1:", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the reaction has been removed
 	storedPost = f.QueryPost(post.PostID.String())
 	require.Empty(t, storedPost.Reactions)
 
@@ -646,11 +628,11 @@ func TestDesmosCLIRegisterReaction(t *testing.T) {
 	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--generate-only")
+	success, stdout, stderr := f.TxPostsRegisterReaction(":third:", value, subspace, fooAddr, "--generate-only")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -697,7 +679,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only

@@ -9,7 +9,6 @@ import (
 
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types/models"
-	"github.com/desmos-labs/desmos/x/reports/types/models/common"
 )
 
 // ----------------------
@@ -31,10 +30,10 @@ func NewMsgReportPost(id posts.PostID, repType, message string, user sdk.AccAddr
 }
 
 // Route should return the name of the module
-func (msg MsgReportPost) Route() string { return common.RouterKey }
+func (msg MsgReportPost) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgReportPost) Type() string { return common.ActionReportPost }
+func (msg MsgReportPost) Type() string { return models.ActionReportPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {

@@ -1,5 +1,5 @@
 # `MsgCreatePost`
-This message allows you to create a new public post. If you want to know more about the `Post` type, you can do so inside the [`Post` type documentation page](../../types/post.md).
+This message allows you to create a new public post. If you want to know more about the `Post` type, you can do so inside the [`Post` type documentation page](../../types/posts/post.md).
 
 ## Structure
 ```json
@@ -12,8 +12,7 @@ This message allows you to create a new public post. If you want to know more ab
     "subspace": "<Subspace of a post>",
     "optional_data": {},
     "creator": "<Desmos address that's creating the post>",
-    "creation_date": "<RFC3339-formatted date representing the creation date of the post>",
-    "medias": "<Media's array that contains all the medias associated with the post",
+    "attachments": "<Attachment's array that contains all the attachments associated with the post",
     "poll_data": "<Poll data contains all useful data of the poll's post>"
   }
 }
@@ -28,12 +27,11 @@ This message allows you to create a new public post. If you want to know more ab
 | `susbspace` | String | Required string that identifies the posting app |
 | `optional_data` | Map | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
-| `creation_date` | String | Date in RFC3339 format (e.g. `"2006-01-02T15:04:05Z07:00"`) in which the post has been created. Cannot be a future date. |
-| `medias` | Array | (Optional) Array containing all the medias related to the post |
+| `attachments` | Array | (Optional) Array containing all the attachments related to the post |
 | `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 
 ## Example
-### With optional data, medias and poll data
+### With optional data, attachments and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",
@@ -46,8 +44,7 @@ This message allows you to create a new public post. If you want to know more ab
       "custom_field": "My custom value"
     },
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "creation_date": "2020-01-01T12:00:00Z",
-    "medias": [
+    "attachments": [
       {
         "uri": "https://example.com/media1",
         "mime_type": "text/plain",
@@ -86,7 +83,7 @@ This message allows you to create a new public post. If you want to know more ab
 }
 ``` 
 
-### Without optional data, medias and poll data
+### Without optional data, attachments and poll data
 ```json
 {
   "type": "desmos/MsgCreatePost",
@@ -96,7 +93,6 @@ This message allows you to create a new public post. If you want to know more ab
     "allows_comments": true,
     "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "creation_date": "2020-01-01T12:00:00Z"
   }
 }
 ```

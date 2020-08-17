@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
-
-	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
@@ -20,21 +18,19 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       models.PostID     `json:"parent_id" yaml:"parent_id"`
-	Message        string            `json:"message" yaml:"message"`
-	AllowsComments bool              `json:"allows_comments" yaml:"allows_comments"`
-	Subspace       string            `json:"subspace" yaml:"subspace"`
-	OptionalData   map[string]string `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
-	Creator        sdk.AccAddress    `json:"creator" yaml:"creator"`
-	CreationDate   time.Time         `json:"creation_date" yaml:"creation_date"`
-	Medias         models.PostMedias `json:"medias,omitempty" yaml:"medias,omitempty"`
-	PollData       *models.PollData  `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
+	ParentID       models.PostID      `json:"parent_id" yaml:"parent_id"`
+	Message        string             `json:"message" yaml:"message"`
+	AllowsComments bool               `json:"allows_comments" yaml:"allows_comments"`
+	Subspace       string             `json:"subspace" yaml:"subspace"`
+	OptionalData   map[string]string  `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
+	Creator        sdk.AccAddress     `json:"creator" yaml:"creator"`
+	Attachments    models.Attachments `json:"attachments,omitempty" yaml:"attachments,omitempty"`
+	PollData       *models.PollData   `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(message string, parentID models.PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, creationDate time.Time,
-	medias models.PostMedias, pollData *models.PollData) MsgCreatePost {
+	optionalData map[string]string, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
@@ -42,8 +38,7 @@ func NewMsgCreatePost(message string, parentID models.PostID, allowsComments boo
 		Subspace:       subspace,
 		OptionalData:   optionalData,
 		Creator:        owner,
-		CreationDate:   creationDate,
-		Medias:         medias,
+		Attachments:    attachments,
 		PollData:       pollData,
 	}
 }
@@ -60,25 +55,17 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Medias) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			"post message, medias or poll are required and cannot be all blank or empty")
+			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !models.Sha256RegEx.MatchString(msg.Subspace) {
+	if !models.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
-	if msg.CreationDate.IsZero() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid post creation date")
-	}
-
-	if msg.CreationDate.After(time.Now().UTC()) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "creation date cannot be in the future")
-	}
-
-	if msg.Medias != nil {
-		if err := msg.Medias.Validate(); err != nil {
+	if msg.Attachments != nil {
+		if err := msg.Attachments.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 	}
@@ -118,19 +105,17 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // MsgEditPost defines the EditPostMessage message
 type MsgEditPost struct {
-	PostID   models.PostID  `json:"post_id" yaml:"post_id"`
-	Message  string         `json:"message" yaml:"message"`
-	Editor   sdk.AccAddress `json:"editor" yaml:"editor"`
-	EditDate time.Time      `json:"edit_date" yaml:"edit_date"`
+	PostID  models.PostID  `json:"post_id" yaml:"post_id"`
+	Message string         `json:"message" yaml:"message"`
+	Editor  sdk.AccAddress `json:"editor" yaml:"editor"`
 }
 
 // NewMsgEditPost is the constructor function for MsgEditPost
-func NewMsgEditPost(id models.PostID, message string, owner sdk.AccAddress, editDate time.Time) MsgEditPost {
+func NewMsgEditPost(id models.PostID, message string, owner sdk.AccAddress) MsgEditPost {
 	return MsgEditPost{
-		PostID:   id,
-		Message:  message,
-		Editor:   owner,
-		EditDate: editDate,
+		PostID:  id,
+		Message: message,
+		Editor:  owner,
 	}
 }
 
@@ -152,14 +137,6 @@ func (msg MsgEditPost) ValidateBasic() error {
 
 	if len(strings.TrimSpace(msg.Message)) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank")
-	}
-
-	if msg.EditDate.IsZero() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid edit date")
-	}
-
-	if msg.EditDate.After(time.Now().UTC()) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Edit date cannot be in the future")
 	}
 
 	return nil

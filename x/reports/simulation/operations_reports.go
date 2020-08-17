@@ -4,7 +4,6 @@ package simulation
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 
@@ -15,19 +14,18 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/tendermint/tendermint/crypto"
 
-	postsK "github.com/desmos-labs/desmos/x/posts/keeper"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
-func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postsK.Keeper) sim.Operation {
+func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeeper.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
-		data, skip := randomReportPostFields(r, ctx, accs, ak)
+		data, skip := randomReportPostFields(r, ctx, accs, ak, pk)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
@@ -38,20 +36,6 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postsK.Kee
 			data.Message,
 			data.Creator.Address,
 		)
-
-		post := posts.NewPost(
-			data.PostID,
-			"",
-			"message",
-			true,
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			map[string]string{},
-			time.Now(),
-			data.Creator.Address,
-		)
-
-		// Save the post
-		k.PostKeeper.SavePost(ctx, post)
 
 		err := sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
@@ -94,9 +78,14 @@ func sendMsgReportPost(
 }
 
 func randomReportPostFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper, pk postskeeper.Keeper,
 ) (*ReportsData, bool) {
-	reportsData := RandomReportsData(r, accs)
+	posts := pk.GetPosts(ctx)
+	if posts == nil {
+		return nil, true
+	}
+
+	reportsData := RandomReportsData(r, posts, accs)
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)
 
 	// Skip the operation without error as the account is not valid

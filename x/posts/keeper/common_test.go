@@ -80,8 +80,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 		map[string]string{},
 		suite.testData.postCreationDate,
 		suite.testData.postOwner,
-	).WithMedias(types.NewPostMedias(
-		types.NewPostMedia("https://uri.com", "text/plain", []sdk.AccAddress{suite.testData.postOwner}),
+	).WithAttachments(types.NewAttachments(
+		types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{suite.testData.postOwner}),
 	)).WithPollData(types.NewPollData(
 		"poll?",
 		suite.testData.postEndPollDate,

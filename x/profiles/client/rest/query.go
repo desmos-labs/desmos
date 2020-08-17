@@ -6,14 +6,15 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+	r.HandleFunc("/profiles/parameters", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/profiles/params", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single profile based on its dtag
