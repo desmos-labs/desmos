@@ -10,15 +10,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
-	v090 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 
-	v020 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.2.0"
-	v030 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.3.0"
-	v040 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.4.0"
-	v050 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.5.0"
-	v060 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.6.0"
+	v0100 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
 	v080 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.8.0"
 	"github.com/desmos-labs/desmos/x/genutil/types"
 )
@@ -27,13 +22,8 @@ import (
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
 var migrationMap = map[string]types.MigrationCallback{
-	"v0.2.0": v020.Migrate,
-	"v0.3.0": v030.Migrate,
-	"v0.4.0": v040.Migrate,
-	"v0.5.0": v050.Migrate,
-	"v0.6.0": v060.Migrate,
-	"v0.8.0": v080.Migrate,
-	"v0.9.0": v090.Migrate,
+	"v0.8.0":  v080.Migrate,
+	"v0.10.0": v0100.Migrate,
 }
 
 const (

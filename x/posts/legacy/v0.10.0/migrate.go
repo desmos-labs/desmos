@@ -19,9 +19,10 @@ func Migrate(oldGenState v080posts.GenesisState) GenesisState {
 }
 
 // ConvertPosts v0.8.0 posts into v0.10.0 posts
-func ConvertPosts(oldPosts []v040posts.Post) (posts []Post) {
-	for _, post := range oldPosts {
-		np := Post{
+func ConvertPosts(oldPosts []v040posts.Post) []Post {
+	posts := make([]Post, len(oldPosts))
+	for index, post := range oldPosts {
+		posts[index] = Post{
 			PostID:         post.PostID,
 			ParentID:       post.ParentID,
 			Message:        post.Message,
@@ -34,20 +35,19 @@ func ConvertPosts(oldPosts []v040posts.Post) (posts []Post) {
 			Attachments:    ConvertMediasToAttachments(post.Medias),
 			PollData:       post.PollData,
 		}
-		posts = append(posts, np)
 	}
 	return posts
 }
 
 // ConvertMediasToAttachments converts v0.8.0 post medias into v0.10.0 attachments
-func ConvertMediasToAttachments(medias []v040posts.PostMedia) (atts []Attachment) {
-	for _, media := range medias {
-		attachment := Attachment{
+func ConvertMediasToAttachments(medias []v040posts.PostMedia) []Attachment {
+	attachments := make([]Attachment, len(medias))
+	for index, media := range medias {
+		attachments[index] = Attachment{
 			URI:      media.URI,
 			MimeType: media.MimeType,
 			Tags:     nil,
 		}
-		atts = append(atts, attachment)
 	}
-	return atts
+	return attachments
 }
