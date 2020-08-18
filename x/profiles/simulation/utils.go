@@ -99,7 +99,7 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	return nil
 }
 
-// RandomMonikerParams return a random set of moniker params
+// RandomMonikerParams return a random set of moniker params
 func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))
@@ -116,4 +116,10 @@ func RandomDTagParams(r *rand.Rand) types.DtagParams {
 // RandomBioParams return a random biography param
 func RandomBioParams(r *rand.Rand) sdk.Int {
 	return sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000)))
+}
+
+// RandomRelationship picks and returns a random relationship from an array
+func RandomRelationship(r *rand.Rand, relationships types.Relationships) types.Relationship {
+	idx := r.Intn(len(relationships))
+	return relationships[idx]
 }
