@@ -642,26 +642,26 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 
 	tests := []struct {
 		name               string
-		msg                types.MsgDeleteRelationships
+		msg                types.MsgDeleteRelationship
 		storedRelationship *types.Relationship
 		expErr             error
 		expEvent           sdk.Event
 	}{
 		{
 			name:               "Relationship doesn't exist and returns error",
-			msg:                types.NewMsgDeleteRelationships(abstractRelBiAccepted.RelationshipID(), receiver),
+			msg:                types.NewMsgDeleteRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
 			storedRelationship: nil,
 			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", abstractRelBiAccepted.RelationshipID())),
 		},
 		{
 			name:               "Unauthorized user returns error",
-			msg:                types.NewMsgDeleteRelationships(abstractRelMono.RelationshipID(), receiver),
+			msg:                types.NewMsgDeleteRelationship(abstractRelMono.RelationshipID(), receiver),
 			storedRelationship: &abstractRelMono,
 			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user with address %s isn't the relationship's creator", receiver)),
 		},
 		{
 			name:               "User delete relationship successfully",
-			msg:                types.NewMsgDeleteRelationships(abstractRelMono.RelationshipID(), sender),
+			msg:                types.NewMsgDeleteRelationship(abstractRelMono.RelationshipID(), sender),
 			storedRelationship: &abstractRelMono,
 			expErr:             nil,
 			expEvent: sdk.NewEvent(

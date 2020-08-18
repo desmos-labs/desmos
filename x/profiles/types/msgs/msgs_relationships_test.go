@@ -306,7 +306,7 @@ func TestMsgDeleteRelationships_Route(t *testing.T) {
 
 func TestMsgDeleteRelationships_Type(t *testing.T) {
 	actual := msgDeleteRelationships.Type()
-	require.Equal(t, "delete_relationships", actual)
+	require.Equal(t, "delete_relationship", actual)
 }
 
 func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {

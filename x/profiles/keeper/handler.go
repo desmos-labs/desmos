@@ -28,7 +28,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgAcceptBidirectionalRelationship(ctx, keeper, msg)
 		case types.MsgDenyBidirectionalRelationship:
 			return handleMsgDenyBidirectionalRelationship(ctx, keeper, msg)
-		case types.MsgDeleteRelationships:
+		case types.MsgDeleteRelationship:
 			return handleMsgDeleteRelationship(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
@@ -295,7 +295,7 @@ func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg 
 	return &result, nil
 }
 
-func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationships) (*sdk.Result, error) {
+func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
 	// Check if the relationship exist
 	if !keeper.DoesRelationshipExist(ctx, msg.ID) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", msg.ID))

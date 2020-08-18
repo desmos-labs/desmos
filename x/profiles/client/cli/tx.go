@@ -3,13 +3,13 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
@@ -35,7 +35,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdRequestBiDirectionalRelationship(cdc),
 		GetCmdAcceptBiDirectionalRequest(cdc),
 		GetCmdDenyBiDirectionalRelationshipRequest(cdc),
-		GetCmdDeleteProfile(cdc),
+		GetCmdDeleteUserRelationship(cdc),
 	)...)
 
 	return profileTxCmd

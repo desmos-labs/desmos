@@ -102,13 +102,13 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryUserRelationships queries all the profiles' users' relationships
 func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "relationships",
+		Use:   "relationships [address]",
 		Short: "Retrieve all the user's relationships",
-		Args:  cobra.NoArgs,
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, cliCtx.FromAddress)
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, args[0])
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
 				fmt.Printf("Could not find profile parameters")
