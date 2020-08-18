@@ -108,23 +108,26 @@ type Post struct {
 	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
 	Attachments    Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
-	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
+	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`         // Contains the poll details, if existing
 }
 
 // computeID computes a post ID based on the content of the given post.
+// nolint
 func computeID(parentID PostID, message, subspace string, allowsComments bool, creationTime time.Time, creator sdk.AccAddress,
-	attachments Attachments, poll *PollData) PostID {
+	attachments Attachments, pollData *PollData) PostID {
 	id := parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + creationTime.String() +
 		creator.String()
 
 	if attachments != nil {
 		id += attachments.String()
 	}
-	if poll != nil {
-		id += poll.String()
+
+	if pollData != nil {
+		id += pollData.String()
 	}
 
 	hash := sha256.Sum256([]byte(id))
+
 	return PostID(hex.EncodeToString(hash[:]))
 }
 
