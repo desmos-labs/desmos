@@ -111,6 +111,23 @@ type Post struct {
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
 }
 
+// computeID computes a post ID based on the content of the given post.
+func computeID(parentID PostID, message, subspace string, allowsComments bool, creationTime time.Time, creator sdk.AccAddress,
+	attachments Attachments, poll *PollData) PostID {
+	id := parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + creationTime.String() +
+		creator.String()
+
+	if attachments != nil {
+		id += attachments.String()
+	}
+	if poll != nil {
+		id += poll.String()
+	}
+
+	hash := sha256.Sum256([]byte(id))
+	return PostID(hex.EncodeToString(hash[:]))
+}
+
 func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
 	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
 	post := Post{
@@ -125,12 +142,8 @@ func NewPost(parentID PostID, message string, allowsComments bool, subspace stri
 		Creator:        creator,
 	}
 
-	// PostID calculation
-	bz := []byte(parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + created.String() +
-		creator.String())
-	hash := sha256.Sum256(bz)
-
-	post.PostID = PostID(hex.EncodeToString(hash[:]))
+	// postID calculation
+	post.PostID = computeID(parentID, message, subspace, allowsComments, created, creator, nil, nil)
 
 	return post
 }
@@ -138,12 +151,14 @@ func NewPost(parentID PostID, message string, allowsComments bool, subspace stri
 // WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
 func (p Post) WithAttachments(attachments Attachments) Post {
 	p.Attachments = attachments
+	p.PostID = computeID(p.ParentID, p.Message, p.Subspace, p.AllowsComments, p.Created, p.Creator, p.Attachments, p.PollData)
 	return p
 }
 
 // WithPollData allows to easily set the given data as the poll data files associated with the p Post
 func (p Post) WithPollData(data PollData) Post {
 	p.PollData = &data
+	p.PostID = computeID(p.ParentID, p.Message, p.Subspace, p.AllowsComments, p.Created, p.Creator, p.Attachments, p.PollData)
 	return p
 }
 

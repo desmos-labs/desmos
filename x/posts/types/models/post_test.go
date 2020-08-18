@@ -176,7 +176,7 @@ func TestPost_String(t *testing.T) {
 		expString string
 	}{
 		{
-			name: "Post without medias and poll data",
+			name: "Post without attachments and poll data",
 			post: models.NewPost(
 				id2,
 				"My post message",
@@ -189,7 +189,7 @@ func TestPost_String(t *testing.T) {
 			expString: "[ID] ab6e54c1885db4a4eef2f939152ce5a33a28351c41bf1429ffdb68e36288c2cd [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		},
 		{
-			name: "Post with medias and without poll data",
+			name: "Post with attachments and without poll data",
 			post: models.NewPost(
 				id2,
 				"My post message",
@@ -199,10 +199,10 @@ func TestPost_String(t *testing.T) {
 				date,
 				owner,
 			).WithAttachments(postMedias),
-			expString: "[ID] ab6e54c1885db4a4eef2f939152ce5a33a28351c41bf1429ffdb68e36288c2cd [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
+			expString: "[ID] a2c90d601aa6a872315044fe247c76ef3843e9a5a6f94db48357526787a07f49 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
 		},
 		{
-			name: "Post without medias and with poll data",
+			name: "Post without attachments and with poll data",
 			post: models.NewPost(
 				id2,
 				"My post message",
@@ -212,10 +212,10 @@ func TestPost_String(t *testing.T) {
 				date,
 				owner,
 			).WithPollData(pollData),
-			expString: "[ID] ab6e54c1885db4a4eef2f939152ce5a33a28351c41bf1429ffdb68e36288c2cd [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+			expString: "[ID] b94d19a8e202b0e7839b3f87449edfb48360f14112c6cef34bfd37224b0b2e4b [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
-			name: "Post with medias and with poll data",
+			name: "Post with attachments and with poll data",
 			post: models.NewPost(
 				id2,
 				"My post message",
@@ -225,7 +225,7 @@ func TestPost_String(t *testing.T) {
 				date,
 				owner,
 			).WithAttachments(postMedias).WithPollData(pollData),
-			expString: "[ID] ab6e54c1885db4a4eef2f939152ce5a33a28351c41bf1429ffdb68e36288c2cd [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+			expString: "[ID] a111eefb033b7c9bafae4bd73551ec982a89bfb36cd18527782532cb133a5b6f [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
 			name: "Post with optional data",
@@ -883,12 +883,13 @@ func TestPosts_String(t *testing.T) {
 		ID:   polls.AnswerID(2),
 		Text: "No",
 	}
-	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, true, false, true)
 
 	timeZone, err := time.LoadLocation("UTC")
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
+
+	pollData := polls.NewPollData("poll?", date.Add(time.Hour), polls.PollAnswers{answer, answer2}, true, false, true)
 
 	posts := models.Posts{
 		models.NewPost(id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithAttachments(medias).WithPollData(pollData),
@@ -896,7 +897,7 @@ func TestPosts_String(t *testing.T) {
 	}
 
 	expected := `ID - [Creator] Message
-99c0ec2463feba16ff1644d68e8c70329607a6225681e67067c9cd9ead1fd3d7 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-0305c45aa648146af7e74104839731d7da0b1133e1d682d5e994913ddf91c80d - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
+042c3b1d33478c1c652888d6430200e3b1bcc04be65266317ebccc65285892aa - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
+00a93b0776600b7eea0cdecf93ca84bdbbb3a03e9aab0210608a479bf6e06cbf - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
 	require.Equal(t, expected, posts.String())
 }
