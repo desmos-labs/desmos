@@ -3,6 +3,7 @@ package models
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -112,22 +113,12 @@ type Post struct {
 }
 
 // computeID computes a post ID based on the content of the given post.
-// nolint
-func computeID(parentID PostID, message, subspace string, allowsComments bool, creationTime time.Time, creator sdk.AccAddress,
-	attachments Attachments, pollData *PollData) PostID {
-	id := parentID.String() + message + subspace + strconv.FormatBool(allowsComments) + creationTime.String() +
-		creator.String()
-
-	if attachments != nil {
-		id += attachments.String()
+func computeID(post Post) PostID {
+	jsonPost, err := json.Marshal(post)
+	if err != nil {
+		panic(err)
 	}
-
-	if pollData != nil {
-		id += pollData.String()
-	}
-
-	hash := sha256.Sum256([]byte(id))
-
+	hash := sha256.Sum256(jsonPost)
 	return PostID(hex.EncodeToString(hash[:]))
 }
 
@@ -146,7 +137,7 @@ func NewPost(parentID PostID, message string, allowsComments bool, subspace stri
 	}
 
 	// postID calculation
-	post.PostID = computeID(parentID, message, subspace, allowsComments, created, creator, nil, nil)
+	post.PostID = computeID(post)
 
 	return post
 }
@@ -154,14 +145,14 @@ func NewPost(parentID PostID, message string, allowsComments bool, subspace stri
 // WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
 func (p Post) WithAttachments(attachments Attachments) Post {
 	p.Attachments = attachments
-	p.PostID = computeID(p.ParentID, p.Message, p.Subspace, p.AllowsComments, p.Created, p.Creator, p.Attachments, p.PollData)
+	p.PostID = computeID(p)
 	return p
 }
 
 // WithPollData allows to easily set the given data as the poll data files associated with the p Post
 func (p Post) WithPollData(data PollData) Post {
 	p.PollData = &data
-	p.PostID = computeID(p.ParentID, p.Message, p.Subspace, p.AllowsComments, p.Created, p.Creator, p.Attachments, p.PollData)
+	p.PostID = computeID(p)
 	return p
 }
 

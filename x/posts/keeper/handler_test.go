@@ -29,7 +29,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		suite.testData.post.PollData,
 	)
 
-	postID := types.PostID("c0f29cf64bbf562ff16a9c3239f51cb88bd4f11728d1e7204ed5784520f04eca")
+	postID := types.PostID("f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761")
 
 	tests := []struct {
 		name        string
@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id c0f29cf64bbf562ff16a9c3239f51cb88bd4f11728d1e7204ed5784520f04eca"),
+				"the provided post conflicts with the one having id f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -124,7 +124,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id c0f29cf64bbf562ff16a9c3239f51cb88bd4f11728d1e7204ed5784520f04eca"),
+				"the provided post conflicts with the one having id f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761"),
 		},
 		{
 			name: "Post message cannot be longer than 500 characters",
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd9fceab8af00a7f3cd4b58d3125542b347188580467695325f37827d7651125 has more than 500 characters"),
+				"post with id 76a05418ea91c7db07c16457da755ab860441e06336ff2976d2ad25d977bf7c8 has more than 500 characters"),
 		},
 	}
 
