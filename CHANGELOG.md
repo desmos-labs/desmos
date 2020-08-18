@@ -1,6 +1,6 @@
 # Version 0.11.0
 ## Changes
-- Replace ComputeID with inner ID computation (#253)
+- Changed postIDs computation. Now they are set inside the `NewPost` method instead of being required from it (#253)
 
 # Version 0.10.0
 ## Changes
