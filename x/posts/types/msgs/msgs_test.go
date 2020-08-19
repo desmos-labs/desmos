@@ -1,6 +1,7 @@
 package msgs_test
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 	"time"
 
@@ -55,6 +56,9 @@ func TestMsgCreatePost_Type(t *testing.T) {
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
 	require.NoError(t, err)
+
+	invalidPollData := types.NewPollData("", msgCreatePost.PollData.EndDate,
+		msgCreatePost.PollData.ProvidedAnswers, true, true)
 
 	tests := []struct {
 		name  string
@@ -227,6 +231,20 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.PollData,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
+		},
+		{
+			name: "Message with invalid pollData returns error",
+			msg: msgs.NewMsgCreatePost(
+				"My message",
+				"",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				nil,
+				&invalidPollData,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
 		},
 		{
 			name: "Valid message does not return any error",
