@@ -71,24 +71,23 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.postEndPollDate = time.Date(2050, 1, 1, 15, 15, 00, 000, suite.testData.timeZone)
 	suite.testData.postEndPollDateExpired = time.Date(2019, 1, 1, 1, 15, 00, 000, suite.testData.timeZone)
 	suite.testData.answers = types.PollAnswers{types.PollAnswer{ID: types.AnswerID(1), Text: "Yes"}, types.PollAnswer{ID: types.AnswerID(2), Text: "No"}}
-	suite.testData.post = types.NewPost(
-		suite.testData.postID,
-		"",
-		"Post message",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		suite.testData.postCreationDate,
-		suite.testData.postOwner,
-	).WithAttachments(types.NewAttachments(
-		types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{suite.testData.postOwner}),
-	)).WithPollData(types.NewPollData(
-		"poll?",
-		suite.testData.postEndPollDate,
-		types.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
-		true,
-		true,
-	))
+	suite.testData.post = types.Post{
+		PostID:       suite.testData.postID,
+		Message:      "Post message",
+		Created:      suite.testData.postCreationDate,
+		LastEdited:   suite.testData.postCreationDate.Add(1),
+		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		OptionalData: map[string]string{},
+		Creator:      suite.testData.postOwner,
+		Attachments:  types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{suite.testData.postOwner})),
+		PollData: &types.PollData{
+			Question:              "poll?",
+			ProvidedAnswers:       types.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
+			EndDate:               suite.testData.postEndPollDate,
+			AllowsMultipleAnswers: true,
+			AllowsAnswerEdits:     true,
+		},
+	}
 
 	suite.testData.registeredReaction = types.NewReaction(suite.testData.postOwner, ":smile:", "https://smile.jpg",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")

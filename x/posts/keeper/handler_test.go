@@ -29,7 +29,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		suite.testData.post.PollData,
 	)
 
-	postID := types.PostID("f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761")
+	postID := types.PostID("040b0c16cd541101d24100e4a9c90e4dbaebbee977a94d673f79591cbb5f4465")
 
 	tests := []struct {
 		name        string
@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761"),
+				"the provided post conflicts with the one having id 040b0c16cd541101d24100e4a9c90e4dbaebbee977a94d673f79591cbb5f4465"),
 		},
 		{
 			name: "Post with new id is stored properly",
@@ -124,7 +124,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			},
 			msg: createPostMessage,
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"the provided post conflicts with the one having id f9e6eb052579c6307efae6f348fd45f11154ec0eeddd05e50e8b4a93d6f9d761"),
+				"the provided post conflicts with the one having id 040b0c16cd541101d24100e4a9c90e4dbaebbee977a94d673f79591cbb5f4465"),
 		},
 		{
 			name: "Post message cannot be longer than 500 characters",
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id 76a05418ea91c7db07c16457da755ab860441e06336ff2976d2ad25d977bf7c8 has more than 500 characters"),
+				"post with id 38caeb754684d0173f3e47e45831bd15a23056caa9b64b498a61b67739f6f8a0 has more than 500 characters"),
 		},
 	}
 
@@ -607,7 +607,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				PollData: &types.PollData{
 					Question:              "poll?",
 					ProvidedAnswers:       types.PollAnswers{suite.testData.answers[0]},
-					EndDate:               suite.testData.postEndPollDateExpired,
+					EndDate:               suite.testData.postEndPollDate,
 					AllowsAnswerEdits:     true,
 					AllowsMultipleAnswers: false,
 				},
@@ -628,7 +628,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				PollData: &types.PollData{
 					Question:              "poll?",
 					ProvidedAnswers:       suite.testData.answers,
-					EndDate:               suite.testData.postEndPollDateExpired,
+					EndDate:               suite.testData.postEndPollDate,
 					AllowsAnswerEdits:     true,
 					AllowsMultipleAnswers: true,
 				},

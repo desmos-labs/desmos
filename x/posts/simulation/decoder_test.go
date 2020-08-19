@@ -25,7 +25,6 @@ var (
 
 	timeZone, _ = time.LoadLocation("UTC")
 	testPost    = types.NewPost(
-		id4,
 		"",
 		"Post message",
 		false,
