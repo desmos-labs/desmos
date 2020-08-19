@@ -17,12 +17,17 @@ func TestNewGenesis(t *testing.T) {
 	bioParams := sdk.Int{}
 	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 
+	relationships := types.Relationships{}
+	usersRelationshipIDs := map[string]types.RelationshipIDs{}
+
 	expGenState := types.GenesisState{
-		Profiles: profiles,
-		Params:   params,
+		Profiles:           profiles,
+		Params:             params,
+		Relationships:      relationships,
+		UsersRelationships: usersRelationshipIDs,
 	}
 
-	actualGenState := types.NewGenesisState(profiles, params)
+	actualGenState := types.NewGenesisState(profiles, params, relationships, usersRelationshipIDs)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -34,6 +39,17 @@ func TestValidateGenesis(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	otherUser, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	monoRelationship := types.NewMonodirectionalRelationship(user, otherUser)
+	biRelationship := types.NewBiDirectionalRelationship(user, otherUser, types.Sent)
+
+	relationshipIDsMap := map[string]types.RelationshipIDs{
+		user.String():      {monoRelationship.ID, biRelationship.ID},
+		otherUser.String(): {biRelationship.ID},
+	}
 
 	tests := []struct {
 		name        string
@@ -52,6 +68,49 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewProfile("", user, date), // An empty tag should return an error
 				),
 				Params: types.DefaultParams(),
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid relationship return error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.DefaultParams(),
+				Relationships: types.Relationships{
+					monoRelationship,
+					types.NewBiDirectionalRelationship(sdk.AccAddress{}, monoRelationship.Receiver, types.Sent),
+				},
+				UsersRelationships: relationshipIDsMap,
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid relationshipIDs return error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.DefaultParams(),
+				Relationships: types.Relationships{
+					monoRelationship,
+					biRelationship,
+				},
+				UsersRelationships: map[string]types.RelationshipIDs{
+					user.String():      {monoRelationship.ID, types.RelationshipID("")},
+					otherUser.String(): {biRelationship.ID},
+				},
 			},
 			shouldError: true,
 		},

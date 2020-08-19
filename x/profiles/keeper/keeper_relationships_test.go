@@ -68,6 +68,40 @@ func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
 	suite.Equal(monoRelationship, actualRel)
 }
 
+func (suite *KeeperTestSuite) TestKeeper_GetRelationships() {
+	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
+	biRelationship := types.NewBiDirectionalRelationship(suite.testData.user, suite.testData.otherUser, types.Sent)
+
+	relationships := types.Relationships{monoRelationship, biRelationship}
+
+	for _, rel := range relationships {
+		store := suite.ctx.KVStore(suite.keeper.StoreKey)
+		store.Set(types.RelationshipsStoreKey(rel.RelationshipID()), suite.keeper.Cdc.MustMarshalBinaryBare(&rel))
+	}
+
+	actualRelationships := suite.keeper.GetRelationships(suite.ctx)
+
+	suite.Equal(relationships, actualRelationships)
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserRelationshipsIDsMap() {
+	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
+	biRelationship := types.NewBiDirectionalRelationship(suite.testData.user, suite.testData.otherUser, types.Sent)
+
+	relationshipIDsMap := map[string]types.RelationshipIDs{
+		suite.testData.user.String():      {monoRelationship.ID, biRelationship.ID},
+		suite.testData.otherUser.String(): {biRelationship.ID},
+	}
+
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, monoRelationship.ID)
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, biRelationship.ID)
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.otherUser, biRelationship.ID)
+
+	actualIDsMap := suite.keeper.GetUsersRelationshipsIDMap(suite.ctx)
+
+	suite.Equal(relationshipIDsMap, actualIDsMap)
+}
+
 func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
 	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)

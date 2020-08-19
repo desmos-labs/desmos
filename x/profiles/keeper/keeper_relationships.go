@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"bytes"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,7 +13,7 @@ func (k Keeper) SaveUserRelationshipAssociation(ctx sdk.Context, user sdk.AccAdd
 	store := ctx.KVStore(k.StoreKey)
 	key := types.UserRelationshipsStoreKey(user)
 
-	var ids []types.RelationshipID
+	var ids types.RelationshipIDs
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &ids)
 	ids = append(ids, id)
 
@@ -32,13 +33,29 @@ func (k Keeper) StoreRelationship(ctx sdk.Context, relationship types.Relationsh
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&relationship))
 }
 
+// GetRelationships returns all the relationships inside the current context
+func (k Keeper) GetRelationships(ctx sdk.Context) types.Relationships {
+	relationships := make(types.Relationships, 0)
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var rel types.Relationship
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &rel)
+		relationships = append(relationships, rel)
+	}
+
+	return relationships
+}
+
 // GetUserRelationships allows to list all the relationships that involve the given user.
 func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types.Relationships {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.UserRelationshipsStoreKey(user)
 
 	// Get all the relationshipIDs related to the given user
-	var relationshipsIDs []types.RelationshipID
+	var relationshipsIDs types.RelationshipIDs
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationshipsIDs)
 
 	var relationships types.Relationships
@@ -49,6 +66,23 @@ func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types
 	}
 
 	return relationships
+}
+
+// GetUsersRelationshipsIDMap allows to returns the list of answers that have been stored inside the given context
+func (k Keeper) GetUsersRelationshipsIDMap(ctx sdk.Context) map[string]types.RelationshipIDs {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserRelationshipsStorePrefix)
+
+	usersRelationshipsMap := map[string]types.RelationshipIDs{}
+	for ; iterator.Valid(); iterator.Next() {
+		var relationshipIDs types.RelationshipIDs
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &relationshipIDs)
+		userBytes := bytes.TrimPrefix(iterator.Key(), types.UserRelationshipsStorePrefix)
+		userAddr := sdk.AccAddress(userBytes)
+		usersRelationshipsMap[userAddr.String()] = relationshipIDs
+	}
+
+	return usersRelationshipsMap
 }
 
 // deleteRelationshipFromArray remove the relationship with the given relationshipID from the given array

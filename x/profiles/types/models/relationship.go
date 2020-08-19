@@ -28,12 +28,15 @@ func (id RelationshipID) Equals(other RelationshipID) bool {
 	return id == other
 }
 
+type RelationshipIDs []RelationshipID
+
 // Relationship represents a single relationship between two users. Creator is the one that first
 // sent the relationship request, and Recipient is the one that received it and (optionally) accepted it.
 type Relationship interface {
 	RelationshipID() RelationshipID
 	Creator() sdk.AccAddress
 	Recipient() sdk.AccAddress
+	Validate() error
 }
 
 type Relationships []Relationship

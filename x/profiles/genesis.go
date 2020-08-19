@@ -10,8 +10,10 @@ import (
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 	return types.GenesisState{
-		Profiles: k.GetProfiles(ctx),
-		Params:   k.GetParams(ctx),
+		Profiles:           k.GetProfiles(ctx),
+		Params:             k.GetParams(ctx),
+		Relationships:      k.GetRelationships(ctx),
+		UsersRelationships: k.GetUsersRelationshipsIDMap(ctx),
 	}
 }
 
