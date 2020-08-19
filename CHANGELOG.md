@@ -1,5 +1,6 @@
 # Version 0.11.0
 ## Changes
+- Changed postIDs computation. Now they are set inside the `NewPost` method instead of being required from it (#253)
 - Removed `Open` field from `PollData` to make the code easier to handle (#252)
 
 # Version 0.10.0
@@ -9,6 +10,7 @@
 - Removed user specified post's `CreationDate` and `LastEdited` in favor of block time usage (#215)
 - Renamed posts' parameters queries endpoints (#245)
 - Renamed `PostMedia` into `Attachment` to fix incorrect singular and plural forms of variables (#203)
+- Updated Cosmos to `v.0.39.1` (#257)
 
 ## Bug fixes
 - Fixed a bug that caused valid URIs to be considered invalid (#233)
