@@ -1,6 +1,9 @@
 package models
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -106,13 +109,23 @@ type Post struct {
 	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
 	Attachments    Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
-	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data"`                   // Contains the poll details, if existing
+	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`         // Contains the poll details, if existing
 }
 
-func NewPost(id, parentID PostID, message string, allowsComments bool, subspace string,
+// computeID computes a post ID based on the content of the given post.
+func computeID(post Post) PostID {
+	jsonPost, err := json.Marshal(post)
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(jsonPost)
+	return PostID(hex.EncodeToString(hash[:]))
+}
+
+func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
 	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
-	return Post{
-		PostID:         id,
+	post := Post{
+		PostID:         "",
 		ParentID:       parentID,
 		Message:        message,
 		Created:        created,
@@ -122,17 +135,24 @@ func NewPost(id, parentID PostID, message string, allowsComments bool, subspace 
 		OptionalData:   optionalData,
 		Creator:        creator,
 	}
+
+	// postID calculation
+	post.PostID = computeID(post)
+
+	return post
 }
 
 // WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
 func (p Post) WithAttachments(attachments Attachments) Post {
 	p.Attachments = attachments
+	p.PostID = computeID(p)
 	return p
 }
 
 // WithPollData allows to easily set the given data as the poll data files associated with the p Post
 func (p Post) WithPollData(data PollData) Post {
 	p.PollData = &data
+	p.PostID = computeID(p)
 	return p
 }
 

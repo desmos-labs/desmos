@@ -42,7 +42,6 @@ func RandomPost() types.Post {
 
 	post := types.NewPost(
 		RandomPostIDOrSubspace(),
-		RandomPostIDOrSubspace(),
 		RandomMessage(r),
 		r.Intn(101) <= 50,
 		RandomPostIDOrSubspace().String(),
