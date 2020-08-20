@@ -1,6 +1,8 @@
 package simulation
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,7 +11,6 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/tendermint/tendermint/crypto"
-	"math/rand"
 )
 
 // SimulateMsgCreateMonoDirectionalRelationship tests and runs a single msg create monoDirectional relationship
@@ -228,7 +229,7 @@ func SimulateMsgDenyBidirectionalRelationship(k keeper.Keeper, ak auth.AccountKe
 		}
 
 		msg := types.NewMsgAcceptBidirectionalRelationship(data.ID, data.Receiver)
-		if err := sendMsgAcceptBidirectionalRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
+		if err := sendMsgDenyBidirectionalRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 

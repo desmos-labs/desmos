@@ -30,5 +30,19 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 		}
 	}
 
+	for _, rel := range data.Relationships {
+		k.StoreRelationship(ctx, rel)
+	}
+
+	for userAddr, relationshipIDs := range data.UsersRelationships {
+		addr, err := sdk.AccAddressFromBech32(userAddr)
+		if err != nil {
+			panic(err)
+		}
+		for _, relID := range relationshipIDs {
+			k.SaveUserRelationshipAssociation(ctx, addr, relID)
+		}
+	}
+
 	return nil
 }
