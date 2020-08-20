@@ -43,7 +43,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError:           fmt.Errorf("unknown post query endpoint"),
 		},
 		{
-			name:               "Invalid RelationshipID returns error",
+			name:               "Invalid ID returns error",
 			path:               []string{types.QueryPost, ""},
 			registeredReaction: nil,
 			expError:           sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: "),
@@ -344,7 +344,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1"),
 		},
 		{
-			name:     "No post associated with RelationshipID given",
+			name:     "No post associated with ID given",
 			path:     []string{types.QueryPollAnswers, stringID},
 			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Post with id %s not found", stringID)),
 		},

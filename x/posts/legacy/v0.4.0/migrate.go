@@ -34,7 +34,7 @@ func Migrate(oldGenState v030posts.GenesisState) GenesisState {
 	}
 }
 
-// ComputeParentID get the post related to the given parentID if exists and returns it computed RelationshipID.
+// ComputeParentID get the post related to the given parentID if exists and returns it computed ID.
 // Returns "" otherwise
 func ComputeParentID(posts []v030posts.Post, parentID v030posts.PostID) PostID {
 	if parentID == v030posts.PostID(uint64(0)) {
@@ -76,7 +76,7 @@ func MigratePosts(posts []v030posts.Post) []Post {
 	return migratedPosts
 }
 
-// ConvertID take the given v030 post RelationshipID and convert it to a v040 post RelationshipID
+// ConvertID take the given v030 post ID and convert it to a v040 post ID
 func ConvertID(id string, posts []v030posts.Post) (postID PostID, error error) {
 	for _, post := range posts {
 		convertedID, err := v030posts.ParsePostID(id)

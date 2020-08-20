@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// POST RelationshipID
+// POST ID
 
 func TestParsePostID(t *testing.T) {
 	tests := []struct {
@@ -79,7 +79,7 @@ func TestPost_ContentEquals(t *testing.T) {
 		expEquals bool
 	}{
 		{
-			name: "Different parent RelationshipID",
+			name: "Different parent ID",
 			first: v030posts.Post{
 				PostID:         v030posts.PostID(19),
 				ParentID:       v030posts.PostID(1),
@@ -602,7 +602,7 @@ func TestPollAnswer_Equals(t *testing.T) {
 		expEquals   bool
 	}{
 		{
-			name:        "Different answers RelationshipID",
+			name:        "Different answers ID",
 			answer:      v030posts.PollAnswer{ID: v030posts.AnswerID(1), Text: "Yes"},
 			otherAnswer: v030posts.PollAnswer{ID: v030posts.AnswerID(2), Text: "Yes"},
 			expEquals:   false,

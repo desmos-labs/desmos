@@ -227,7 +227,7 @@ E.g.
 	}
 
 	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(flagParentID, "", "RelationshipID of the post to which this one should be an answer to")
+	cmd.Flags().String(flagParentID, "", "ID of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")

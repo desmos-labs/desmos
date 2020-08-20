@@ -31,6 +31,16 @@ const (
 
 var (
 	// functions aliases
+	NewMonodirectionalRelationship          = models.NewMonodirectionalRelationship
+	NewBiDirectionalRelationship            = models.NewBiDirectionalRelationship
+	ProfileStoreKey                         = models.ProfileStoreKey
+	DtagStoreKey                            = models.DtagStoreKey
+	RelationshipsStoreKey                   = models.RelationshipsStoreKey
+	UserRelationshipsStoreKey               = models.UserRelationshipsStoreKey
+	NewProfile                              = models.NewProfile
+	NewProfiles                             = models.NewProfiles
+	NewPictures                             = models.NewPictures
+	RegisterModelsCodec                     = models.RegisterModelsCodec
 	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
 	NewMsgRequestBidirectionalRelationship  = msgs.NewMsgRequestBidirectionalRelationship
 	NewMsgAcceptBidirectionalRelationship   = msgs.NewMsgAcceptBidirectionalRelationship
@@ -39,30 +49,17 @@ var (
 	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
-	NewProfile                              = models.NewProfile
-	NewProfiles                             = models.NewProfiles
-	NewPictures                             = models.NewPictures
-	RegisterModelsCodec                     = models.RegisterModelsCodec
-	NewMonodirectionalRelationship          = models.NewMonodirectionalRelationship
-	NewBiDirectionalRelationship            = models.NewBiDirectionalRelationship
-	ProfileStoreKey                         = models.ProfileStoreKey
-	DtagStoreKey                            = models.DtagStoreKey
-	RelationshipsStoreKey                   = models.RelationshipsStoreKey
-	UserRelationshipsStoreKey               = models.UserRelationshipsStoreKey
 
 	// variable aliases
-	ModelsCdc                    = models.ModelsCdc
 	ProfileStorePrefix           = models.ProfileStorePrefix
 	DtagStorePrefix              = models.DtagStorePrefix
 	RelationshipsStorePrefix     = models.RelationshipsStorePrefix
 	UserRelationshipsStorePrefix = models.UserRelationshipsStorePrefix
+	ModelsCdc                    = models.ModelsCdc
 	MsgsCodec                    = msgs.MsgsCodec
 )
 
 type (
-	Profile                              = models.Profile
-	Profiles                             = models.Profiles
-	Pictures                             = models.Pictures
 	RelationshipID                       = models.RelationshipID
 	RelationshipIDs                      = models.RelationshipIDs
 	Relationship                         = models.Relationship
@@ -72,6 +69,9 @@ type (
 	BidirectionalRelationship            = models.BidirectionalRelationship
 	RelationshipStatus                   = models.RelationshipStatus
 	BidirectionalRelationships           = models.BidirectionalRelationships
+	Profile                              = models.Profile
+	Profiles                             = models.Profiles
+	Pictures                             = models.Pictures
 	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
 	MsgRequestBidirectionalRelationship  = msgs.MsgRequestBidirectionalRelationship
 	MsgAcceptBidirectionalRelationship   = msgs.MsgAcceptBidirectionalRelationship

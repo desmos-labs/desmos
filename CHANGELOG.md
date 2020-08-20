@@ -1,3 +1,6 @@
+# Version 0.11.0
+- Implemented users `Relationships` (#168)
+
 # Version 0.10.0
 ## Changes
 - Changed application errors to make them more clear (#237)

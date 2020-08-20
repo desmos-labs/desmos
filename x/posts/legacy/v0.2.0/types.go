@@ -48,7 +48,7 @@ func (p Post) ConflictsWith(other Post) bool {
 		p.Creator.Equals(other.Creator)
 }
 
-// ContentsEquals returns true if and only if p and other contain the same data, without considering the RelationshipID
+// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
 func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
