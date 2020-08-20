@@ -275,22 +275,21 @@ func randomBiDirectionalRelationshipSentFields(r *rand.Rand, ctx sdk.Context, ac
 	}
 
 	// Get random accounts
-	user, _ := sim.RandomAcc(r, accs)
+	sender, _ := sim.RandomAcc(r, accs)
+	receiver, _ := sim.RandomAcc(r, accs)
 
-	relationships := k.GetUserRelationships(ctx, user.Address)
-
-	// skip the test if the user has no relationships
-	if len(relationships) == 0 {
+	// skip if the two address are equals
+	if sender.Equals(receiver) {
 		return sim.Account{}, types.BidirectionalRelationship{}, true
 	}
 
-	for _, relationship := range relationships {
-		if rel, ok := relationship.(types.BidirectionalRelationship); ok && rel.Status == types.Sent {
-			return user, rel, false
-		}
-	}
+	// Create a sent relationship between the two accounts
+	relationship := types.NewBiDirectionalRelationship(sender.Address, receiver.Address, types.Sent)
+	k.StoreRelationship(ctx, relationship)
+	k.SaveUserRelationshipAssociation(ctx, sender.Address, relationship.ID)
+	k.SaveUserRelationshipAssociation(ctx, receiver.Address, relationship.ID)
 
-	return sim.Account{}, types.BidirectionalRelationship{}, true
+	return receiver, relationship, false
 }
 
 // SimulateMsgDeleteRelationship tests and runs a single msg delete relationship
