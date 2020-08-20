@@ -46,7 +46,6 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	for index := 0; index < postsNumber; index++ {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
-			RandomPostID(simState.Rand),
 			"",
 			postData.Message,
 			postData.AllowsComments,

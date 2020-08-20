@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	posts "github.com/desmos-labs/desmos/x/posts/types"
@@ -12,15 +11,14 @@ import (
 
 func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 	msgReport := types.NewMsgReportPost(suite.testData.postID, "type", "message", suite.testData.creator)
-	existentPost := posts.NewPost(suite.testData.postID,
-		"",
-		"Post",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		suite.testData.postCreationDate,
-		suite.testData.creator,
-	)
+	existentPost := posts.Post{
+		PostID:       suite.testData.postID,
+		Message:      "Post",
+		Created:      suite.testData.postCreationDate,
+		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		OptionalData: map[string]string{},
+		Creator:      suite.testData.creator,
+	}
 
 	tests := []struct {
 		name         string

@@ -24,28 +24,26 @@ var (
 	postCreatorAddr = sdk.AccAddress(privKey.Address())
 
 	timeZone, _ = time.LoadLocation("UTC")
-	testPost    = types.NewPost(
-		id4,
-		"",
-		"Post message",
-		false,
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
-		time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone),
-		postCreatorAddr,
-	).WithAttachments(types.NewAttachments(
-		types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{postCreatorAddr}),
-	)).WithPollData(types.NewPollData(
-		"title",
-		time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
-		types.NewPollAnswers(
-			types.NewPollAnswer(0, "first"),
-			types.NewPollAnswer(1, "second"),
-		),
-		true,
-		true,
-		true,
-	))
+	testPost    = types.Post{
+		PostID:       id4,
+		Message:      "Post message",
+		Created:      time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone),
+		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		OptionalData: map[string]string{},
+		Creator:      postCreatorAddr,
+		Attachments:  types.Attachments{types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{postCreatorAddr})},
+		PollData: &types.PollData{
+			Question: "title",
+			ProvidedAnswers: types.NewPollAnswers(
+				types.NewPollAnswer(0, "first"),
+				types.NewPollAnswer(1, "second"),
+			),
+			EndDate:               time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
+			Open:                  true,
+			AllowsMultipleAnswers: true,
+			AllowsAnswerEdits:     true,
+		},
+	}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
