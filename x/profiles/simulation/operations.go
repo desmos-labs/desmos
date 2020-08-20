@@ -23,7 +23,7 @@ const (
 	OpWeightMsgDenyRelationship    = "op_weight_msg_deny_relationship"
 	OpWeightMsgDeleteRelationship  = "op_weight_msg_delete_relationship"
 
-	DefaultGasValue = 200000
+	DefaultGasValue = 240000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
