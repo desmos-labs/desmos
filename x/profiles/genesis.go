@@ -40,7 +40,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 			panic(err)
 		}
 		for _, relID := range relationshipIDs {
-			k.SaveUserRelationshipAssociation(ctx, addr, relID)
+			k.SaveUserRelationshipAssociation(ctx, []sdk.AccAddress{addr}, relID)
 		}
 	}
 

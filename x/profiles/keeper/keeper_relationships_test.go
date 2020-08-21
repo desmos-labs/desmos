@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
@@ -12,7 +11,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserRelationshipAssociation() {
 	id := types.RelationshipID("12345")
 	expIDs := []types.RelationshipID{id}
 
-	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, id)
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{suite.testData.user}, id)
 
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 	var actualIDs []types.RelationshipID
@@ -68,6 +67,50 @@ func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
 	suite.Equal(monoRelationship, actualRel)
 }
 
+func (suite *KeeperTestSuite) TestKeeper_GetRelationshipFromID() {
+	var abstractRel types.Relationship
+	abstractRel = types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
+
+	tests := []struct {
+		name               string
+		storedRelationship *types.Relationship
+		relationshipID     types.RelationshipID
+		expRelationship    types.Relationship
+		expErr             error
+	}{
+		{
+			name:               "non existent relationship returns error",
+			storedRelationship: nil,
+			relationshipID:     abstractRel.RelationshipID(),
+			expRelationship:    nil,
+			expErr:             fmt.Errorf("relationship with id %s doesn't exist", abstractRel.RelationshipID()),
+		},
+		{
+			name:               "existent relationship is returned correctly",
+			storedRelationship: &abstractRel,
+			relationshipID:     abstractRel.RelationshipID(),
+			expRelationship:    abstractRel,
+			expErr:             nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		if test.storedRelationship != nil {
+			suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
+		}
+
+		relationship, err := suite.keeper.GetRelationshipFromID(suite.ctx, test.relationshipID)
+		if test.expErr != nil {
+			suite.Error(err)
+			suite.Equal(test.expErr, err)
+		}
+		if test.expErr == nil {
+			suite.Equal(test.expRelationship, relationship)
+		}
+	}
+}
+
 func (suite *KeeperTestSuite) TestKeeper_GetRelationships() {
 	monoRelationship := types.NewMonodirectionalRelationship(suite.testData.user, suite.testData.otherUser)
 	biRelationship := types.NewBiDirectionalRelationship(suite.testData.user, suite.testData.otherUser, types.Sent)
@@ -93,9 +136,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationshipsIDsMap() {
 		suite.testData.otherUser.String(): {biRelationship.ID},
 	}
 
-	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, monoRelationship.ID)
-	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.user, biRelationship.ID)
-	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, suite.testData.otherUser, biRelationship.ID)
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{suite.testData.user}, monoRelationship.ID)
+	suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{suite.testData.user, suite.testData.otherUser}, biRelationship.ID)
 
 	actualIDsMap := suite.keeper.GetUsersRelationshipsIDMap(suite.ctx)
 
@@ -169,9 +211,18 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 			expRelationshipsReceiver: types.Relationships{biRelationship},
 		},
 		{
-			name:                     "User delete a bidirectionalRelationship successfully",
+			name:                     "User delete a bidirectionalRelationship successfully (user equals to the creator)",
 			storedRelationships:      types.Relationships{monoRelationship, biRelationship},
 			user:                     sender,
+			relationshipID:           biRelationship.ID,
+			expErr:                   nil,
+			expRelationshipsSender:   types.Relationships{monoRelationship},
+			expRelationshipsReceiver: nil,
+		},
+		{
+			name:                     "User delete a bidirectionalRelationship successfully (user equals to the recipient)",
+			storedRelationships:      types.Relationships{monoRelationship, biRelationship},
+			user:                     receiver,
 			relationshipID:           biRelationship.ID,
 			expErr:                   nil,
 			expRelationshipsSender:   types.Relationships{monoRelationship},
@@ -182,9 +233,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 	for _, test := range tests {
 		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, sender, monoRelationship.ID)
-			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, sender, biRelationship.ID)
-			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, receiver, biRelationship.ID)
+			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{sender}, monoRelationship.ID)
+			suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{sender, receiver}, biRelationship.ID)
 			for _, rel := range test.storedRelationships {
 				suite.keeper.StoreRelationship(suite.ctx, rel)
 			}

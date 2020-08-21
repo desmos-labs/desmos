@@ -489,6 +489,12 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptBiDirectionalRelationship() {
 			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted", abstractRelBiAccepted.RelationshipID())),
 		},
 		{
+			name:               "Relationship with wrong receiver returns error",
+			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelBiSent.RelationshipID(), sender),
+			storedRelationship: &abstractRelBiSent,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("%s isn't the recipient of the relationship with ID: %s", sender, abstractRelBiSent.RelationshipID())),
+		},
+		{
 			name:               "Relationship with wrong type returns error",
 			msg:                types.NewMsgAcceptBidirectionalRelationship(abstractRelMono.RelationshipID(), receiver),
 			storedRelationship: &abstractRelMono,
@@ -514,9 +520,9 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptBiDirectionalRelationship() {
 			if test.storedRelationship != nil {
 				rel := *test.storedRelationship
 				if _, ok := rel.(types.BidirectionalRelationship); ok {
-					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Creator()}, rel.RelationshipID())
 				}
-				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Recipient()}, rel.RelationshipID())
 				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
 			}
 
@@ -573,7 +579,13 @@ func (suite *KeeperTestSuite) Test_handleMsgDenyBidirectionalRelationship() {
 			name:               "Relationship already accepted returns error",
 			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelBiAccepted.RelationshipID(), receiver),
 			storedRelationship: &abstractRelBiAccepted,
-			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted and cannot be denied now", abstractRelBiAccepted.RelationshipID())),
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted", abstractRelBiAccepted.RelationshipID())),
+		},
+		{
+			name:               "Relationship with wrong receiver returns error",
+			msg:                types.NewMsgDenyBidirectionalRelationship(abstractRelBiSent.RelationshipID(), sender),
+			storedRelationship: &abstractRelBiSent,
+			expErr:             sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("%s isn't the recipient of the relationship with ID: %s", sender, abstractRelBiSent.RelationshipID())),
 		},
 		{
 			name:               "Relationship with wrong type returns error",
@@ -601,9 +613,9 @@ func (suite *KeeperTestSuite) Test_handleMsgDenyBidirectionalRelationship() {
 			if test.storedRelationship != nil {
 				rel := *test.storedRelationship
 				if _, ok := rel.(types.BidirectionalRelationship); ok {
-					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Creator()}, rel.RelationshipID())
 				}
-				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Recipient()}, rel.RelationshipID())
 				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
 			}
 
@@ -677,9 +689,9 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 		suite.Run(test.name, func() {
 			if test.storedRelationship != nil {
 				rel := *test.storedRelationship
-				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Creator()}, rel.RelationshipID())
 				if _, ok := rel.(types.BidirectionalRelationship); ok {
-					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Recipient()}, rel.RelationshipID())
 				}
 				suite.keeper.StoreRelationship(suite.ctx, *test.storedRelationship)
 			}

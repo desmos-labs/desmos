@@ -9,15 +9,17 @@ import (
 )
 
 // SaveUserRelationshipAssociation allows to save the user/relationship association
-func (k Keeper) SaveUserRelationshipAssociation(ctx sdk.Context, user sdk.AccAddress, id types.RelationshipID) {
+func (k Keeper) SaveUserRelationshipAssociation(ctx sdk.Context, users []sdk.AccAddress, id types.RelationshipID) {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.UserRelationshipsStoreKey(user)
 
-	var ids types.RelationshipIDs
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &ids)
-	ids = append(ids, id)
+	for _, user := range users {
+		key := types.UserRelationshipsStoreKey(user)
+		var ids types.RelationshipIDs
+		k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &ids)
+		ids = append(ids, id)
+		store.Set(key, k.Cdc.MustMarshalBinaryBare(&ids))
+	}
 
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&ids))
 }
 
 // DoesRelationshipExist checks if the given id has an associated relationship or not
@@ -47,6 +49,17 @@ func (k Keeper) GetRelationships(ctx sdk.Context) types.Relationships {
 	}
 
 	return relationships
+}
+
+// GetRelationshipFromID returns the relationship associated with the given id
+func (k Keeper) GetRelationshipFromID(ctx sdk.Context, id types.RelationshipID) (rel types.Relationship, err error) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := store.Get(types.RelationshipsStoreKey(id))
+	if bz == nil {
+		return rel, fmt.Errorf("relationship with id %s doesn't exist", id)
+	}
+	k.Cdc.MustUnmarshalBinaryBare(bz, &rel)
+	return rel, nil
 }
 
 // GetUserRelationships allows to list all the relationships that involve the given user.
@@ -87,7 +100,7 @@ func (k Keeper) GetUsersRelationshipsIDMap(ctx sdk.Context) map[string]types.Rel
 
 // deleteRelationshipFromArray remove the relationship with the given relationshipID from the given array
 func deleteRelationshipFromArray(keeper Keeper, store sdk.KVStore, storeKey []byte, relationshipID types.RelationshipID) {
-	var relationshipsIDs []types.RelationshipID
+	var relationshipsIDs types.RelationshipIDs
 	keeper.Cdc.MustUnmarshalBinaryBare(store.Get(storeKey), &relationshipsIDs)
 	for index, id := range relationshipsIDs {
 		if id.Equals(relationshipID) {

@@ -213,9 +213,9 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
-				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Creator(), rel.RelationshipID())
+				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Creator()}, rel.RelationshipID())
 				if _, ok := rel.(types.BidirectionalRelationship); ok {
-					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, rel.Recipient(), rel.RelationshipID())
+					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Recipient()}, rel.RelationshipID())
 				}
 				suite.keeper.StoreRelationship(suite.ctx, rel)
 			}

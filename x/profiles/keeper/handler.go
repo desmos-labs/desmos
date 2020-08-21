@@ -171,7 +171,7 @@ func handleMsgCreateMonoDirectionalRelationship(ctx sdk.Context, keeper Keeper, 
 	keeper.StoreRelationship(ctx, relationship)
 
 	// Save user/relationship association
-	keeper.SaveUserRelationshipAssociation(ctx, relationship.Sender, relationship.ID)
+	keeper.SaveUserRelationshipAssociation(ctx, []sdk.AccAddress{relationship.Sender}, relationship.ID)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeMonodirectionalRelationshipCreated,
@@ -200,8 +200,7 @@ func handleMsgRequestBiDirectionalRelationship(ctx sdk.Context, keeper Keeper, m
 	keeper.StoreRelationship(ctx, relationship)
 
 	// Save users/relationship association
-	keeper.SaveUserRelationshipAssociation(ctx, msg.Sender, relationship.ID)
-	keeper.SaveUserRelationshipAssociation(ctx, msg.Receiver, relationship.ID)
+	keeper.SaveUserRelationshipAssociation(ctx, []sdk.AccAddress{msg.Sender, msg.Receiver}, relationship.ID)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeBidirectionalRelationshipRequested,
@@ -219,27 +218,42 @@ func handleMsgRequestBiDirectionalRelationship(ctx sdk.Context, keeper Keeper, m
 	return &result, nil
 }
 
-func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptBidirectionalRelationship) (*sdk.Result, error) {
-	// Check if the relationship exist
-	if !keeper.DoesRelationshipExist(ctx, msg.ID) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", msg.ID))
+// finalizeRelationship performs actions on the relationship related to the given relationshipID
+// storing it with a new status according to the choice of the user
+func finalizeRelationship(ctx sdk.Context, keeper Keeper, relationshipID types.RelationshipID, user sdk.AccAddress,
+	relationshipStatus types.RelationshipStatus, errorString string) error {
+	// Get the relationship, returns an error if it not exists
+	relationship, err := keeper.GetRelationshipFromID(ctx, relationshipID)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	relationships := keeper.GetUserRelationships(ctx, msg.Receiver)
+	if !relationship.Recipient().Equals(user) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("%s isn't the recipient of the relationship with ID: %s", user, relationshipID))
+	}
 
-	for _, relationship := range relationships {
-		if relationship.RelationshipID() == msg.ID {
-			if rel, ok := relationship.(types.BidirectionalRelationship); ok {
-				if rel.Status == types.Accepted {
-					return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted", rel.ID))
-				}
-				rel.Status = types.Accepted
-				keeper.StoreRelationship(ctx, rel)
-				break
-			} else {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s is not a bidirectional relationship and cannot be accepted", relationship.RelationshipID()))
-			}
+	if rel, ok := relationship.(types.BidirectionalRelationship); ok {
+		if rel.Status == types.Accepted {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("the relationship with id: %s has already been accepted", rel.ID))
 		}
+		rel.Status = relationshipStatus
+		keeper.StoreRelationship(ctx, rel)
+	} else {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("the relationship with id: %s is not a bidirectional relationship and cannot be %s",
+				relationship.RelationshipID(), errorString))
+	}
+
+	return nil
+}
+
+func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptBidirectionalRelationship) (*sdk.Result, error) {
+	// Get the relationship, returns an error if it not exists
+	err := finalizeRelationship(ctx, keeper, msg.ID, msg.Receiver, types.Accepted, "accepted")
+	if err != nil {
+		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -258,26 +272,10 @@ func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, ms
 }
 
 func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDenyBidirectionalRelationship) (*sdk.Result, error) {
-	// Check if the relationship exist
-	if !keeper.DoesRelationshipExist(ctx, msg.ID) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", msg.ID))
-	}
-
-	relationships := keeper.GetUserRelationships(ctx, msg.Receiver)
-
-	for _, relationship := range relationships {
-		if relationship.RelationshipID() == msg.ID {
-			if rel, ok := relationship.(types.BidirectionalRelationship); ok {
-				if rel.Status == types.Accepted {
-					return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s has already been accepted and cannot be denied now", rel.ID))
-				}
-				rel.Status = types.Denied
-				keeper.StoreRelationship(ctx, rel)
-				break
-			} else {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the relationship with id: %s is not a bidirectional relationship and cannot be denied", relationship.RelationshipID()))
-			}
-		}
+	// Get the relationship, returns an error if it not exists
+	err := finalizeRelationship(ctx, keeper, msg.ID, msg.Receiver, types.Denied, "denied")
+	if err != nil {
+		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -298,7 +296,8 @@ func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg 
 func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
 	// Check if the relationship exist
 	if !keeper.DoesRelationshipExist(ctx, msg.ID) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship with id %s doesn't exist", msg.ID))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("relationship with id %s doesn't exist", msg.ID))
 	}
 
 	if err := keeper.DeleteRelationship(ctx, msg.ID, msg.User); err != nil {

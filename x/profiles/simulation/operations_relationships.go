@@ -286,8 +286,7 @@ func randomBiDirectionalRelationshipSentFields(r *rand.Rand, ctx sdk.Context, ac
 	// Create a sent relationship between the two accounts
 	relationship := types.NewBiDirectionalRelationship(sender.Address, receiver.Address, types.Sent)
 	k.StoreRelationship(ctx, relationship)
-	k.SaveUserRelationshipAssociation(ctx, sender.Address, relationship.ID)
-	k.SaveUserRelationshipAssociation(ctx, receiver.Address, relationship.ID)
+	k.SaveUserRelationshipAssociation(ctx, []sdk.AccAddress{sender.Address, receiver.Address}, relationship.ID)
 
 	return receiver, relationship, false
 }

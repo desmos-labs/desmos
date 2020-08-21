@@ -115,6 +115,21 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
+			name: "Invalid params returns error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.NewParams(types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)), types.DefaultDtagParams(), types.DefaultMaxBioLength),
+			},
+			shouldError: true,
+		},
+		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
