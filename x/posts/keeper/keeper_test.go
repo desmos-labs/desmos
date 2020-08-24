@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -72,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 		{
 			name: "Post with valid parent ID",
 			existingPosts: []types.Post{
-				types.Post{
+				{
 					PostID:       id,
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,

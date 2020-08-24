@@ -84,7 +84,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 			Question:              "poll?",
 			ProvidedAnswers:       types.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
 			EndDate:               suite.testData.postEndPollDate,
-			Open:                  true,
 			AllowsMultipleAnswers: true,
 			AllowsAnswerEdits:     true,
 		},

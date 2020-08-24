@@ -49,7 +49,6 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 			models.NewPollAnswer(models.AnswerID(1), "Yes"),
 			models.NewPollAnswer(models.AnswerID(2), "No"),
 		},
-		true,
 		false,
 		true,
 	)
@@ -81,7 +80,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 				reactionsResponses,
 				children,
 			),
-			expResponse: `{"id":"85b84e8e6932d371a7d0cd09ce27c2a857d128daa2a398242bc73662d615fd9b","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","attachments":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			expResponse: `{"id":"230f2001f05281763b866c07badcd7b81e3708daac84db9f7bf9811934dbfa00","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","attachments":[{"uri":"https://uri.com","mime_type":"text/plain","tags":["cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"]}],"poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 		{
 			name: "Post Query Response with Post that contains attachment without tags",
@@ -111,7 +110,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 				reactionsResponses,
 				children,
 			),
-			expResponse: `{"id":"1017d0dff1dc80e206cb50144a9b92a3280a8449a712d69c0219192636b8bf79","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
+			expResponse: `{"id":"3731f8eb41239386f42cd599cc93d06a096a2767d1926ec1915c103a2e7f5ad1","parent_id":"","message":"Post","created":"2020-02-02T15:00:00Z","last_edited":"0001-01-01T00:00:00Z","allows_comments":true,"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","creator":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","poll_data":{"question":"poll?","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"end_date":"2050-01-01T15:15:00Z","allows_multiple_answers":false,"allows_answer_edits":true},"poll_answers":[{"answers":["1"],"user":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}],"reactions":[{"shortcode":":like:","value":"https://example.com/like","owner":"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},{"shortcode":":+1:","value":"👍","owner":"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae"}],"children":["dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"]}`,
 		},
 	}
 
@@ -149,7 +148,6 @@ func TestPostQueryResponse_String(t *testing.T) {
 			models.NewPollAnswer(models.AnswerID(1), "Yes"),
 			models.NewPollAnswer(models.AnswerID(2), "No"),
 		),
-		true,
 		false,
 		true,
 	)
@@ -177,7 +175,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		},
 	)
 
-	expected := "ID: d1f22a07d7b94c8fda9f82108a21e98e5cee558e91f3c2ff5dd2b708334f4e42\nReactions: [[Shortcode] :like: [Value] https://example.com/like [Owner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 [Shortcode] :+1: [Value] 👍 [Owner] cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae]\nChildren: [dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1, dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]"
+	expected := "ID: 93ed93d2f3b3363399c8b7a4509f0530a8c863c16c755bf916901ab55ce33322\nReactions: [[Shortcode] :like: [Value] https://example.com/like [Owner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 [Shortcode] :+1: [Value] 👍 [Owner] cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae]\nChildren: [dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1, dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]"
 	stringResponse := postResponse.String()
 	require.Equal(t, strings.TrimSpace(expected), stringResponse)
 }

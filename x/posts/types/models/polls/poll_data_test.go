@@ -28,12 +28,11 @@ func TestPollData_String(t *testing.T) {
 			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
 			polls.NewPollAnswer(polls.AnswerID(2), "No"),
 		),
-		true,
 		false,
 		true,
 	)
 
-	require.Equal(t, "Question: poll? \nOpen: true \nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
+	require.Equal(t, "Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		pollData.String())
 }
 
@@ -46,15 +45,15 @@ func TestPollData_Validate(t *testing.T) {
 		expError string
 	}{
 		{
-			pollData: polls.NewPollData("", pollEndDate, polls.PollAnswers{}, true, true, true),
+			pollData: polls.NewPollData("", pollEndDate, polls.PollAnswers{}, true, true),
 			expError: "missing poll title",
 		},
 		{
-			pollData: polls.NewPollData("title", time.Time{}, polls.PollAnswers{}, true, true, true),
+			pollData: polls.NewPollData("title", time.Time{}, polls.PollAnswers{}, true, true),
 			expError: "invalid poll's end date",
 		},
 		{
-			pollData: polls.NewPollData("title", pollEndDate, polls.PollAnswers{}, true, true, true),
+			pollData: polls.NewPollData("title", pollEndDate, polls.PollAnswers{}, true, true),
 			expError: "poll answers must be at least two",
 		},
 	}
@@ -78,55 +77,49 @@ func TestArePollDataEquals(t *testing.T) {
 	}{
 		{
 			name:      "Different titles",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			expEquals: false,
-		},
-		{
-			name:      "Different open",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, false, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different end date",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", time.Now().UTC(), polls.NewPollAnswers(answer, answer2), true, false, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", time.Now().UTC(), polls.NewPollAnswers(answer, answer2), false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different provided answers",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Different edits answer option",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, false)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, false)),
 			expEquals: false,
 		},
 		{
 			name:      "Different multiple answers option",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, true, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Equals poll data",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
 			expEquals: true,
 		},
 		{
 			name:      "First nil",
 			first:     nil,
-			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), true, false, true)),
+			second:    pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer, answer2), false, true)),
 			expEquals: false,
 		},
 		{
 			name:      "Second nil",
-			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer), true, false, true)),
+			first:     pollDataPointer(polls.NewPollData("poll?", pollEndDate, polls.NewPollAnswers(answer), false, true)),
 			second:    nil,
 			expEquals: false,
 		},

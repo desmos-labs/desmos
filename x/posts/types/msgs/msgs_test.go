@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/posts/types"
+
 	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,7 +29,6 @@ var pollData = models.NewPollData(
 		models.NewPollAnswer(models.AnswerID(1), "Yes"),
 		models.NewPollAnswer(models.AnswerID(2), "No"),
 	),
-	true,
 	false,
 	true,
 )
@@ -58,6 +59,9 @@ func TestMsgCreatePost_Type(t *testing.T) {
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	creator, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
 	require.NoError(t, err)
+
+	invalidPollData := types.NewPollData("", msgCreatePost.PollData.EndDate,
+		msgCreatePost.PollData.ProvidedAnswers, true, true)
 
 	tests := []struct {
 		name  string
@@ -218,6 +222,20 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
 		},
 		{
+			name: "Message with invalid pollData returns error",
+			msg: msgs.NewMsgCreatePost(
+				"My message",
+				"",
+				false,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				creator,
+				nil,
+				&invalidPollData,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
+		},
+		{
 			name: "Valid message does not return any error",
 			msg: msgs.NewMsgCreatePost(
 				"Message",
@@ -361,7 +379,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":{"field":"value"},"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -380,7 +398,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty attachments",
@@ -394,7 +412,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				models.Attachments{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty poll data",
@@ -578,7 +596,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 						models.NewPollAnswer(models.AnswerID(2), "No"),
 					),
 					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-					Open:              true,
 					AllowsAnswerEdits: true,
 				},
 				testOwner,
@@ -608,7 +625,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

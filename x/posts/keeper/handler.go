@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -252,7 +253,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 	}
 
 	// checks if the poll is already closed or not
-	if !post.PollData.Open {
+	if post.PollData.EndDate.Before(ctx.BlockTime()) {
 		return &post, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate),
