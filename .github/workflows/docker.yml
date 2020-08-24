@@ -1,11 +1,13 @@
 name: Docker
 # Docker workflow allows the creation and publishing of new Desmos Docker tags.
-# This workflow is run only when a new commit is pushed to master, or a new tag is creted.
+# This workflow is run only when a new commit is pushed to master, or a new tag is created.
 on:
   pull_request:
   push:
     branches:
       - master
+    tags:
+      - v*
 
 jobs:
   Build-and-Publish:

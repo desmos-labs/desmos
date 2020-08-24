@@ -1,6 +1,6 @@
 # Version 0.11.0
-## Changes
-- Changed postIDs computation. Now they are set inside the `NewPost` method instead of being required from it (#253)
+##Changes
+- Allowed the possibility to edit a post's attachments and poll data using the `MsgEditPost` type (#202)
 - Removed the `Open` field from within the `PollData` object. Now you should rely on the `CloseDate` field to determine whether a poll is closed or open. (#252)
 
 # Version 0.10.0

@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -112,6 +113,15 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 
 	// Edit the post
 	existing.Message = msg.Message
+
+	if msg.Attachments != nil {
+		existing.Attachments = msg.Attachments
+	}
+
+	if msg.PollData != nil {
+		existing.PollData = msg.PollData
+	}
+
 	existing.LastEdited = ctx.BlockTime()
 
 	if err := ValidatePost(ctx, keeper, existing); err != nil {

@@ -20,6 +20,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -43,6 +44,109 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	)...)
 
 	return postsTxCmd
+}
+
+// getAttachments parse the attachments of a post
+func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
+	mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
+	if err != nil {
+		return nil, fmt.Errorf("invalid flag value: %s", flagAttachment)
+	}
+
+	attachments := types.Attachments{}
+	for _, mediaString := range mediasStrings {
+		argz := strings.Split(mediaString, ",")
+		var tags []sdk.AccAddress
+		// if some tags are specified
+		if len(argz) < 2 {
+			return nil, fmt.Errorf("if attachments are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
+		} else if len(argz) > 2 {
+			for _, addr := range argz[2:] {
+				tag, err := sdk.AccAddressFromBech32(addr)
+				if err != nil {
+					return nil, err
+				}
+				tags = append(tags, tag)
+			}
+		}
+		attachment := types.NewAttachment(argz[0], argz[1], tags)
+		attachments = attachments.AppendIfMissing(attachment)
+	}
+
+	return attachments, nil
+}
+
+// getPollData parse the pollData of a post
+func getPollData(cmd *cobra.Command) (*types.PollData, error) {
+	pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
+	if err != nil {
+		return nil, fmt.Errorf("invalid %s value", flagPollDetails)
+	}
+
+	pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
+	if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
+		return nil, fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", flagPollDetails)
+	}
+
+	if len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
+		return nil, fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
+	}
+
+	var pollData *types.PollData
+	if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
+		date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
+		if err != nil {
+			return nil, fmt.Errorf(
+				"end date should be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z, %s found",
+				pollDetailsMap[keyEndDate],
+			)
+		}
+
+		if date.Before(time.Now().UTC()) {
+			return nil, fmt.Errorf("poll's end date can't be in the past")
+		}
+
+		if len(strings.TrimSpace(pollDetailsMap[keyQuestion])) == 0 {
+			return nil, fmt.Errorf("question should be provided and not be empty")
+		}
+
+		question := pollDetailsMap[keyQuestion]
+
+		allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap[keyMultipleAnswers])
+		if err != nil {
+			return nil, fmt.Errorf("multiple-answers can only be true or false")
+		}
+
+		allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap[keyAllowsAnswerEdits])
+		if err != nil {
+			return nil, fmt.Errorf("allows-answer-edits can only be only true or false")
+		}
+
+		answers := types.PollAnswers{}
+		for index, answer := range pollAnswersSlice {
+			if strings.TrimSpace(answer) == "" {
+				return nil, fmt.Errorf("invalid answer text at index %s", string(index))
+			}
+
+			pollAnswer := types.PollAnswer{
+				ID:   types.AnswerID(index),
+				Text: answer,
+			}
+
+			answers = answers.AppendIfMissing(pollAnswer)
+		}
+
+		pollData = &types.PollData{
+			Question:              question,
+			Open:                  true,
+			EndDate:               date,
+			ProvidedAnswers:       answers,
+			AllowsMultipleAnswers: allowMultipleAnswers,
+			AllowsAnswerEdits:     allowsAnswerEdits,
+		}
+	}
+
+	return pollData, nil
 }
 
 // GetCmdCreatePost is the CLI command for creating a post
@@ -111,98 +215,16 @@ E.g.
 			allowsComments := viper.GetBool(flagAllowsComments)
 			parentID := types.PostID(viper.GetString(flagParentID))
 
-			// attachments' checks
-			mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
+			// check for attachments
+			attachments, err := getAttachments(cmd)
 			if err != nil {
-				return fmt.Errorf("invalid flag value: %s", flagAttachment)
+				return err
 			}
 
-			attachments := types.Attachments{}
-			for _, mediaString := range mediasStrings {
-				argz := strings.Split(mediaString, ",")
-				var tags []sdk.AccAddress
-				// if some tags are specified
-				if len(argz) < 2 {
-					return fmt.Errorf("if attachments are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
-				} else if len(argz) > 2 {
-					for _, addr := range argz[2:] {
-						tag, err := sdk.AccAddressFromBech32(addr)
-						if err != nil {
-							return err
-						}
-						tags = append(tags, tag)
-					}
-				}
-				attachment := types.NewAttachment(argz[0], argz[1], tags)
-				attachments = attachments.AppendIfMissing(attachment)
-			}
-
-			// polls' checks
-			pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
+			// check for poll
+			pollData, err := getPollData(cmd)
 			if err != nil {
-				return fmt.Errorf("invalid %s value", flagPollDetails)
-			}
-
-			pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
-			if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
-				return fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", flagPollDetails)
-			}
-
-			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
-				return fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
-			}
-
-			var pollData *types.PollData
-			if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
-				date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
-				if err != nil {
-					return fmt.Errorf(
-						"end date should be provided in RFC3339 format, e.g 2020-01-01T12:00:00Z, %s found",
-						pollDetailsMap[keyEndDate],
-					)
-				}
-
-				if date.Before(time.Now().UTC()) {
-					return fmt.Errorf("poll's end date can't be in the past")
-				}
-
-				if len(strings.TrimSpace(pollDetailsMap[keyQuestion])) == 0 {
-					return fmt.Errorf("question should be provided and not be empty")
-				}
-
-				question := pollDetailsMap[keyQuestion]
-
-				allowMultipleAnswers, err := strconv.ParseBool(pollDetailsMap[keyMultipleAnswers])
-				if err != nil {
-					return fmt.Errorf("multiple-answers can only be true or false")
-				}
-
-				allowsAnswerEdits, err := strconv.ParseBool(pollDetailsMap[keyAllowsAnswerEdits])
-				if err != nil {
-					return fmt.Errorf("allows-answer-edits can only be only true or false")
-				}
-
-				answers := types.PollAnswers{}
-				for index, answer := range pollAnswersSlice {
-					if strings.TrimSpace(answer) == "" {
-						return fmt.Errorf("invalid answer text at index %s", string(index))
-					}
-
-					pollAnswer := types.PollAnswer{
-						ID:   types.AnswerID(index),
-						Text: answer,
-					}
-
-					answers = answers.AppendIfMissing(pollAnswer)
-				}
-
-				pollData = &types.PollData{
-					Question:              question,
-					EndDate:               date,
-					ProvidedAnswers:       answers,
-					AllowsMultipleAnswers: allowMultipleAnswers,
-					AllowsAnswerEdits:     allowsAnswerEdits,
-				}
+				return err
 			}
 
 			text := ""
@@ -236,10 +258,41 @@ E.g.
 
 // GetCmdEditPost is the CLI command for editing a post
 func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "edit [post-id] [message]",
+	cmd := &cobra.Command{
+		Use:   "edit [post-id] [[message]]",
 		Short: "Edit a post you have previously created",
-		Args:  cobra.ExactArgs(2),
+		Long: fmt.Sprintf(`Edit a post by specifying its ID.
+E.g.
+%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit"
+
+You can also edit post's attachments and pollData by providing the right flags like you do when creating a post.
+
+=== Attachments ===
+If you want to edit attachments, you have to use the --attachment flag.
+
+%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit a post with attachments" \
+  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
+
+=== Polls ===
+If you want to edit post's poll you need to specify it through two flags:
+  1. --poll-details, which accepts a map with the following keys:
+     * question: the question of the poll
+     * date: the end date of your poll after which no further answers will be accepted
+     * multiple-answers: a boolean indicating the possibility of multiple answers from users
+     * allows-answers-edits: a boolean value that indicates the possibility to edit the answers in the future
+  2. --poll-answer, which accepts a slice of answers that will be provided to the users once they want to take part in the poll votations.	
+     Each answer should be identified by the text of the answer itself.
+
+If a poll is provided, the post can be edited even without specifying any message:
+
+E.g.
+%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit a post with attachments" \
+	--poll-details "question=Which dog do you prefer?,multiple-answers=false,allows-answer-edits=true,end-date=2020-01-01T15:00:00.000Z" \
+	--poll-answer "Beagle" \
+	--poll-answer "Pug" \
+	--poll-answer "German Sheperd"
+`, version.ClientName, version.ClientName, version.ClientName),
+		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -250,10 +303,33 @@ func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
-			msg := types.NewMsgEditPost(postID, args[1], cliCtx.GetFromAddress())
+			// check for attachments
+			attachments, err := getAttachments(cmd)
+			if err != nil {
+				return err
+			}
+
+			// check for poll
+			pollData, err := getPollData(cmd)
+			if err != nil {
+				return err
+			}
+
+			text := ""
+			if len(args) > 1 {
+				text = args[1]
+			}
+
+			msg := types.NewMsgEditPost(postID, text, attachments, pollData, cliCtx.GetFromAddress())
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
+
+	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's attachment")
+	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
+	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
+
+	return cmd
 }
 
 // GetCmdAddPostReaction is the CLI command for adding a like to a post

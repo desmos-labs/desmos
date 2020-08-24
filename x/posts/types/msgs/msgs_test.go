@@ -1,9 +1,10 @@
 package msgs_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 
 	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
@@ -31,6 +32,8 @@ var pollData = models.NewPollData(
 	false,
 	true,
 )
+var attachments = models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil))
+
 var id = models.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 var msgCreatePost = msgs.NewMsgCreatePost(
 	"My new post",
@@ -39,7 +42,7 @@ var msgCreatePost = msgs.NewMsgCreatePost(
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	map[string]string{},
 	testOwner,
-	models.NewAttachments(models.NewAttachment("https://uri.com", "text/plain", nil)),
+	attachments,
 	&pollData,
 )
 
@@ -111,20 +114,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			name: "Non-empty message returns no error if attachments aren't empty",
 			msg: msgs.NewMsgCreatePost(
 				"message",
-				"",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				map[string]string{},
-				creator,
-				msgCreatePost.Attachments,
-				msgCreatePost.PollData,
-			),
-			error: nil,
-		},
-		{
-			name: "Empty message returns no error if attachments aren't empty",
-			msg: msgs.NewMsgCreatePost(
-				"",
 				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -464,7 +453,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 // --- MsgEditPost
 // ----------------------
 
-var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", testOwner)
+var msgEditPost = msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, testOwner)
 
 func TestMsgEditPost_Route(t *testing.T) {
 	actual := msgEditPost.Route()
@@ -484,27 +473,139 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   msgs.NewMsgEditPost("", "Edited post message", testOwner),
+			msg:   msgs.NewMsgEditPost("", "Edited post message", attachments, &pollData, testOwner),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
 		},
 		{
 			name:  "Invalid editor returns error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", nil),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
 		},
 		{
-			name:  "Blank message returns error",
-			msg:   msgs.NewMsgEditPost(id, " ", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
+			name: "Non-empty message returns no error if attachments are empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				nil,
+				nil,
+				testOwner,
+			),
+			error: nil,
 		},
 		{
-			name:  "Empty message returns error",
-			msg:   msgs.NewMsgEditPost(id, "", testOwner),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Post message cannot be empty nor blank"),
+			name: "Non-empty message returns no error if attachments aren't empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				msgCreatePost.Attachments,
+				nil,
+				testOwner,
+			),
+			error: nil,
+		},
+		{
+			name: "Empty message returns no error if poll isn't empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"",
+				nil,
+				msgCreatePost.PollData,
+				testOwner,
+			),
+			error: nil,
+		},
+		{
+			name: "Non-empty message returns no error if poll is empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"message",
+				nil,
+				nil,
+				testOwner,
+			),
+			error: nil,
+		},
+		{
+			name: "Empty message returns error if message, attachments and poll are empty",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"",
+				nil,
+				nil,
+				testOwner,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"post message, attachments or poll are required and cannot be all blank or empty"),
+		},
+		{
+			name: "Empty URI in medias returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"future post",
+				models.Attachments{
+					models.Attachment{
+						URI:      "",
+						MimeType: "text/plain",
+					},
+				},
+				msgCreatePost.PollData,
+				testOwner,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
+		},
+		{
+			name: "Invalid URI in message returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				models.Attachments{models.Attachment{
+					URI:      "invalid-uri",
+					MimeType: "text/plain",
+				}},
+				msgCreatePost.PollData,
+				testOwner,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
+		},
+		{
+			name: "Empty mime type in message returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				models.Attachments{
+					models.Attachment{
+						URI:      "https://example.com",
+						MimeType: "",
+					},
+				},
+				msgCreatePost.PollData,
+				testOwner,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
+		},
+		{
+			name: "Invalid pollData returns error",
+			msg: msgs.NewMsgEditPost(
+				id,
+				"My message",
+				attachments,
+				&models.PollData{
+					Question: "",
+					ProvidedAnswers: models.NewPollAnswers(
+						models.NewPollAnswer(models.AnswerID(1), "Yes"),
+						models.NewPollAnswer(models.AnswerID(2), "No"),
+					),
+					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+					Open:              true,
+					AllowsAnswerEdits: true,
+				},
+				testOwner,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   msgs.NewMsgEditPost(id, "Edited post message", testOwner),
+			msg:   msgs.NewMsgEditPost(id, "Edited post message", attachments, &pollData, testOwner),
 			error: nil,
 		},
 	}
@@ -525,7 +626,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
 	actual := msgEditPost.GetSignBytes()
-	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","is_open":true,"provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(actual))
 }
 

@@ -19,7 +19,7 @@ FROM golang:alpine AS build-env
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev py-pip
 
 # Set working directory for the build
-WORKDIR /go/src/github.com/cosmos/desmos
+WORKDIR /go/src/github.com/desmos-labs/desmos
 
 # Add source files
 COPY . .

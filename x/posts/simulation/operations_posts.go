@@ -117,12 +117,12 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 		accs []sim.Account, chainID string,
 	) (sim.OperationMsg, []sim.FutureOperation, error) {
 
-		account, id, message, skip := randomPostEditFields(r, ctx, accs, k, ak)
+		account, id, message, attachments, pollData, skip := randomPostEditFields(r, ctx, accs, k, ak)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(id, message, account.Address)
+		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address)
 
 		err := sendMsgEditPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {
@@ -168,15 +168,15 @@ func sendMsgEditPost(
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
-) (sim.Account, types.PostID, string, bool) {
+) (sim.Account, types.PostID, string, types.Attachments, *types.PollData, bool) {
 
 	post, _ := RandomPost(r, k.GetPosts(ctx))
 	acc := GetAccount(post.Creator, accs)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, "", "", true
+		return sim.Account{}, "", "", nil, nil, true
 	}
 
-	return *acc, post.PostID, RandomMessage(r), false
+	return *acc, post.PostID, RandomMessage(r), RandomAttachments(r, accs), RandomPollData(r), false
 }

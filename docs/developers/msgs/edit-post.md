@@ -8,6 +8,8 @@ This message allows you to edit the message of a previously published public pos
   "value": {
     "post_id": "<ID of the post to be edited>",
     "message": "<New post message>",
+    "attachments": "<Attachment's array that contains all the attachments associated with the post",
+    "poll_data": "<Poll data contains all useful data of the poll's post>", 
     "editor": "<Desmos address of the user editing the message>",
   }
 }
@@ -18,10 +20,12 @@ This message allows you to edit the message of a previously published public pos
 | :-------: | :----: | :-------- |
 | `post_id` | String | ID of the post to edit |
 | `message` | String | New message that should be set as the post message |
+| `attachments` | Array | (Optional) Array containing all the attachments related to the post |
+| `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 | `editor` | String | Desmos address of the user that is editing the post. This must be the same address of the original post creator. |
 
 ## Example
-### With optional data
+### Without attachments and pollData
 ```json
 {
   "type": "desmos/MsgEditPost",
@@ -29,6 +33,53 @@ This message allows you to edit the message of a previously published public pos
     "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
     "message": "Desmos you rock!",
     "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+  }
+}
+```
+
+### With attachments and pollData
+```json
+{
+  "type": "desmos/MsgEditPost",
+  "value": {
+    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+    "message": "Desmos you rock!",
+    "attachments": [
+      {
+        "uri": "https://example.com/media1",
+        "mime_type": "text/plain",
+        "tags": [
+          "desmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+          "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru"
+        ]
+      },
+      {
+        "uri": "https://example.com/media2",
+        "mime_type": "application/json"
+      }
+    ],
+    "poll_data": {
+      "question": "Which dog do you prefer?",
+      "provided_answers": [
+        {
+          "id": 0,
+          "text": "Beagle"
+        },
+        {
+          "id": 1,
+          "text": "Pug"
+        },
+        {
+          "id": 2,
+          "text": "German Sheperd"
+        }
+      ],
+      "end_date": "2020-02-10T15:00:00Z",
+      "is_open": true,
+      "allows_multiple_answers": true,
+      "allows_answer_edits": true
+    },
+    "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
   }
 }
 ```
