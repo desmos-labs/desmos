@@ -1,3 +1,7 @@
+# Version 0.11.0
+##Changes
+- Allowed the possibility to edit a post's attachments and poll data using the `MsgEditPost` type (#202)
+
 # Version 0.10.0
 ## Changes
 - Changed application errors to make them more clear (#237)
