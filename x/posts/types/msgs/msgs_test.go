@@ -596,7 +596,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 						models.NewPollAnswer(models.AnswerID(2), "No"),
 					),
 					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-					Open:              true,
 					AllowsAnswerEdits: true,
 				},
 				testOwner,
