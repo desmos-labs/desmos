@@ -47,8 +47,6 @@ var (
 	}
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
-
-	postReactValues = []string{"👍", "🍔", "❤️", "🙈"}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -100,11 +98,6 @@ func RandomPostReactionData(r *rand.Rand, accs []sim.Account, postID types.PostI
 		User:      accs[r.Intn(len(accs))],
 		PostID:    postID,
 	}
-}
-
-// RandomPostReactionValue returns a random post reaction value
-func RandomPostReactionValue(r *rand.Rand) string {
-	return postReactValues[r.Intn(len(postReactValues))]
 }
 
 // RandomPostID returns a randomly generated postID
@@ -188,17 +181,10 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 
 	closingDate := RandomDate(r)
 
-	// 30% possibility of closed poll
-	open := r.Intn(100) > 70
-	if open {
-		closingDate = closingDate.AddDate(1, 0, 0)
-	}
-
 	poll := types.NewPollData(
 		RandomMessage(r),
 		closingDate,
 		answers,
-		open,
 		r.Intn(100) > 50, // 50% possibility of multiple answers
 		r.Intn(100) > 50, // 50% possibility of allowing answers edits
 	)
@@ -227,7 +213,7 @@ type ReactionData struct {
 func RandomReactionData(r *rand.Rand, accs []sim.Account) ReactionData {
 	return ReactionData{
 		Creator:   accs[r.Intn(len(accs))],
-		ShortCode: fmt.Sprintf(":%s:", strings.ToLower(sim.RandStringOfLength(r, 5))),
+		ShortCode: fmt.Sprintf(":%s:", "x"+strings.ToLower(sim.RandStringOfLength(r, 5))),
 		Value:     fmt.Sprintf("http://%s.jpg", sim.RandStringOfLength(r, 5)),
 		Subspace:  RandomSubspace(r),
 	}

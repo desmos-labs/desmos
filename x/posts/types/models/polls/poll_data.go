@@ -18,19 +18,17 @@ type PollData struct {
 	Question              string      `json:"question" yaml:"question"`                               // Describes what poll is about
 	ProvidedAnswers       PollAnswers `json:"provided_answers" yaml:"provided_answers"`               // Lists of answers provided by the creator
 	EndDate               time.Time   `json:"end_date" yaml:"end_date"`                               // RFC3339 date at which the poll will no longer accept new answers
-	Open                  bool        `json:"is_open" yaml:"is_open"`                                 // Tells if the poll is still accepting answers
 	AllowsMultipleAnswers bool        `json:"allows_multiple_answers" yaml:"allows_multiple_answers"` // Tells if the poll is a single or multiple answers one
 	AllowsAnswerEdits     bool        `json:"allows_answer_edits" yaml:"allows_answer_edits"`         // Tells if the poll allows answer edits
 }
 
 // NewPollData returns a new PollData object pointer containing the given data
 func NewPollData(question string, endDate time.Time, providedAnswers PollAnswers,
-	open, allowMultipleAnswers, allowsAnswerEdits bool) PollData {
+	allowMultipleAnswers, allowsAnswerEdits bool) PollData {
 	return PollData{
 		Question:              question,
 		EndDate:               endDate,
 		ProvidedAnswers:       providedAnswers,
-		Open:                  open,
 		AllowsMultipleAnswers: allowMultipleAnswers,
 		AllowsAnswerEdits:     allowsAnswerEdits,
 	}
@@ -38,9 +36,8 @@ func NewPollData(question string, endDate time.Time, providedAnswers PollAnswers
 
 // String implements fmt.Stringer
 func (pd PollData) String() string {
-	out := fmt.Sprintf("Question: %s \nOpen: %s \nEndDate: %s\nAllow multiple answers: %s \nAllow answer edits: %s \n",
+	out := fmt.Sprintf("Question: %s\nEndDate: %s\nAllow multiple answers: %s \nAllow answer edits: %s \n",
 		pd.Question,
-		strconv.FormatBool(pd.Open),
 		pd.EndDate,
 		strconv.FormatBool(pd.AllowsMultipleAnswers),
 		strconv.FormatBool(pd.AllowsAnswerEdits),
@@ -83,7 +80,6 @@ func ArePollDataEquals(first, second *PollData) bool {
 // To check the equality between possibly null values use ArePollDataEquals instead.
 func (pd PollData) Equals(other PollData) bool {
 	return pd.Question == other.Question &&
-		pd.Open == other.Open &&
 		pd.EndDate == other.EndDate &&
 		pd.ProvidedAnswers.Equals(other.ProvidedAnswers) &&
 		pd.AllowsMultipleAnswers == other.AllowsMultipleAnswers &&
