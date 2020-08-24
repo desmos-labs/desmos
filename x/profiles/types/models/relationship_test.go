@@ -9,6 +9,12 @@ import (
 	"testing"
 )
 
+func TestRelationshipStatus_String(t *testing.T) {
+	relStatus := types.Sent
+
+	require.Equal(t, "0", relStatus.String())
+}
+
 func TestRelationshipID_Valid(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -98,6 +104,14 @@ func TestMonodirectionalRelationship_Recipient(t *testing.T) {
 	actualMr := models.NewMonodirectionalRelationship(sender, sender)
 
 	require.Equal(t, sender, actualMr.Recipient())
+}
+
+func TestMonodirectionalRelationship_RelationshipID(t *testing.T) {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+	actualMr := models.NewMonodirectionalRelationship(sender, sender)
+
+	require.Equal(t, types.RelationshipID("5f575d15aa5cec9c9df0f6fd19a356767b37fef7da8b5f99e2ff891be3e4f174"), actualMr.RelationshipID())
 }
 
 func TestMonodirectionalRelationship_String(t *testing.T) {
@@ -255,9 +269,19 @@ func TestBiDirectionalRelationship_Recipient(t *testing.T) {
 	require.NoError(t, err)
 	status := models.RelationshipStatus(0)
 
-	actualMr := models.NewBiDirectionalRelationship(sender, sender, status)
+	actualBr := models.NewBiDirectionalRelationship(sender, sender, status)
 
-	require.Equal(t, sender, actualMr.Recipient())
+	require.Equal(t, sender, actualBr.Recipient())
+}
+
+func TestBidirectionalRelationship_RelationshipID(t *testing.T) {
+	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+	status := models.RelationshipStatus(0)
+
+	actualBr := models.NewBiDirectionalRelationship(sender, sender, status)
+
+	require.Equal(t, types.RelationshipID("77f4b74cb2b4fd89d8a0cd0f044bdbb5e9e300cced95d7c8b8d22c4ec13ac0f8"), actualBr.RelationshipID())
 }
 
 func TestBiDirectionalRelationship_String(t *testing.T) {
