@@ -141,7 +141,7 @@ func TestDesmosCLIPostsCreateWithAttachmentsAndEmptyMessage(t *testing.T) {
 	require.NoError(t, err2)
 
 	// Create a post
-	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, "-y",
+	success, _, sterr := f.TxPostsCreate(subspace, "", fooAddr, "-y",
 		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
 		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
@@ -159,13 +159,13 @@ func TestDesmosCLIPostsCreateWithAttachmentsAndEmptyMessage(t *testing.T) {
 		types.NewAttachment("https://example.com/media2", "application/json", []sdk.AccAddress{tag2})))
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsCreate(subspace, "message1#test", fooAddr, "--dry-run",
+	success, _, _ = f.TxPostsCreate(subspace, "", fooAddr, "--dry-run",
 		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
 		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsCreate(subspace, "message2#test", fooAddr, "--generate-only",
+	success, stdout, stderr := f.TxPostsCreate(subspace, "", fooAddr, "--generate-only",
 		"--attachment https://example.com/media1,text/plain,desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
 		"--attachment https://example.com/media2,application/json,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr")
 	require.Empty(t, stderr)
@@ -479,6 +479,206 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsEditWithAttachmentsAndNonEmptyMessage(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "message", fooAddr, "-y",
+		"--attachment https://example.com/media1,text/plain",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
+	// Edit the message
+	success, _, sterr = f.TxPostsEdit(post.PostID.String(), "NewMessage", fooAddr, "-y",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the message is edited
+	storedPost := f.QueryPost(post.PostID.String())
+	require.Equal(t, post.PostID, storedPost.PostID)
+	require.Equal(t, "NewMessage", storedPost.Message)
+	require.Len(t, storedPost.Attachments, 1)
+	require.Equal(t, storedPost.Attachments[0].URI, "https://edited.com/media1")
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--dry-run",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--generate-only=true",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsEditWithAttachmentsAndEmptyMessage(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "", fooAddr, "-y",
+		"--attachment https://example.com/media1,text/plain",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
+	// Edit the message
+	success, _, sterr = f.TxPostsEdit(post.PostID.String(), "", fooAddr, "-y",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the message is edited
+	storedPost := f.QueryPost(post.PostID.String())
+	require.Equal(t, post.PostID, storedPost.PostID)
+	require.Equal(t, "", storedPost.Message)
+	require.Len(t, storedPost.Attachments, 1)
+	require.Equal(t, storedPost.Attachments[0].URI, "https://edited.com/media1")
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsEdit(post.PostID.String(), "", fooAddr, "--dry-run",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsEdit(post.PostID.String(), "", fooAddr, "--generate-only=true",
+		"--attachment https://edited.com/media1,text/plain",
+	)
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	// Check state didn't change
+	storedPosts = f.QueryPosts()
+	require.Len(t, storedPosts, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIPostsEditWithPoll(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Create a post
+	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "message", fooAddr, "-y",
+		"--poll-details question=Dog?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
+		"--poll-answer Beagle",
+		"--poll-answer Pug",
+		"--poll-answer Shiba",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the post is saved
+	storedPosts := f.QueryPosts()
+	require.NotEmpty(t, storedPosts)
+	post := storedPosts[0]
+
+	// Edit the message
+	success, _, sterr = f.TxPostsEdit(post.PostID.String(), "NewMessage", fooAddr, "-y",
+		"--poll-details question=Food?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
+		"--poll-answer Hamburger",
+		"--poll-answer Pasta",
+		"--poll-answer Pizza",
+	)
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the message is edited
+	storedPost := f.QueryPost(post.PostID.String())
+	require.Equal(t, post.PostID, storedPost.PostID)
+	require.Equal(t, "NewMessage", storedPost.Message)
+	require.Equal(t, storedPost.PollData.Question, "Food?")
+
+	// Test --dry-run
+	success, _, _ = f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--dry-run",
+		"--poll-details question=Food?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
+		"--poll-answer Hamburger",
+		"--poll-answer Pasta",
+		"--poll-answer Pizza",
+	)
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxPostsEdit(post.PostID.String(), "OtherMessage", fooAddr, "--generate-only=true",
+		"--poll-details question=Food?,multiple-answers=false,allows-answer-edits=true,end-date=2100-01-01T15:00:00.000Z",
+		"--poll-answer Hamburger",
+		"--poll-answer Pasta",
+		"--poll-answer Pizza",
+	)
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
