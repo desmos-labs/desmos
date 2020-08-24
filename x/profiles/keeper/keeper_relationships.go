@@ -11,7 +11,6 @@ import (
 // SaveUserRelationshipAssociation allows to save the user/relationship association
 func (k Keeper) SaveUserRelationshipAssociation(ctx sdk.Context, users []sdk.AccAddress, id types.RelationshipID) {
 	store := ctx.KVStore(k.StoreKey)
-
 	for _, user := range users {
 		key := types.UserRelationshipsStoreKey(user)
 		var ids types.RelationshipIDs
@@ -19,7 +18,6 @@ func (k Keeper) SaveUserRelationshipAssociation(ctx sdk.Context, users []sdk.Acc
 		ids = append(ids, id)
 		store.Set(key, k.Cdc.MustMarshalBinaryBare(&ids))
 	}
-
 }
 
 // DoesRelationshipExist checks if the given id has an associated relationship or not
@@ -137,14 +135,14 @@ func (k Keeper) DeleteRelationship(ctx sdk.Context, relationshipID types.Relatio
 			return fmt.Errorf("user with address %s is neither the creator nor the recipient of the relationship", user)
 		}
 
+		// delete creator -> relationship association
 		if !relationship.Creator().Equals(user) {
-			// delete creator -> relationship association
 			creatorKey := types.UserRelationshipsStoreKey(relationship.Creator())
 			deleteRelationshipFromArray(k, store, creatorKey, relationshipID)
 		}
 
+		// delete receiver -> relationship association
 		if !relationship.Recipient().Equals(user) {
-			// delete receiver -> relationship association
 			recipientKey := types.UserRelationshipsStoreKey(relationship.Recipient())
 			deleteRelationshipFromArray(k, store, recipientKey, relationshipID)
 		}

@@ -159,6 +159,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 /////Relationships////
 /////////////////////
 
+// handleMsgCreateMonoDirectionalRelationship handles the creation of a mono directional relationship
 func handleMsgCreateMonoDirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateMonoDirectionalRelationship) (*sdk.Result, error) {
 	relationship := types.NewMonodirectionalRelationship(msg.Sender, msg.Receiver)
 
@@ -188,6 +189,7 @@ func handleMsgCreateMonoDirectionalRelationship(ctx sdk.Context, keeper Keeper, 
 
 }
 
+// handleMsgRequestBiDirectionalRelationship handles the creation of a request for a bi directional relationship
 func handleMsgRequestBiDirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgRequestBidirectionalRelationship) (*sdk.Result, error) {
 	relationship := types.NewBiDirectionalRelationship(msg.Sender, msg.Receiver, types.Sent)
 
@@ -218,10 +220,10 @@ func handleMsgRequestBiDirectionalRelationship(ctx sdk.Context, keeper Keeper, m
 	return &result, nil
 }
 
-// finalizeRelationship performs actions on the relationship related to the given relationshipID
+// finalizeRelationship performs actions on the relationship associated with the given relationshipID
 // storing it with a new status according to the choice of the user
 func finalizeRelationship(ctx sdk.Context, keeper Keeper, relationshipID types.RelationshipID, user sdk.AccAddress,
-	relationshipStatus types.RelationshipStatus, errorString string) error {
+	updatedStatus types.RelationshipStatus, errorString string) error {
 	// Get the relationship, returns an error if it not exists
 	relationship, err := keeper.GetRelationshipFromID(ctx, relationshipID)
 	if err != nil {
@@ -238,7 +240,7 @@ func finalizeRelationship(ctx sdk.Context, keeper Keeper, relationshipID types.R
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("the relationship with id: %s has already been accepted", rel.ID))
 		}
-		rel.Status = relationshipStatus
+		rel.Status = updatedStatus
 		keeper.StoreRelationship(ctx, rel)
 	} else {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -249,8 +251,9 @@ func finalizeRelationship(ctx sdk.Context, keeper Keeper, relationshipID types.R
 	return nil
 }
 
+// handleMsgAcceptBidirectionalRelationship handles the acceptance of a bi directional relationship request
 func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptBidirectionalRelationship) (*sdk.Result, error) {
-	// Get the relationship, returns an error if it not exists
+	// edit the relation according to the given status
 	err := finalizeRelationship(ctx, keeper, msg.ID, msg.Receiver, types.Accepted, "accepted")
 	if err != nil {
 		return nil, err
@@ -271,8 +274,9 @@ func handleMsgAcceptBidirectionalRelationship(ctx sdk.Context, keeper Keeper, ms
 	return &result, nil
 }
 
+// handleMsgDenyBidirectionalRelationship handles the denial of a bi directional relationship request
 func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDenyBidirectionalRelationship) (*sdk.Result, error) {
-	// Get the relationship, returns an error if it not exists
+	// edit the relation according to the given status
 	err := finalizeRelationship(ctx, keeper, msg.ID, msg.Receiver, types.Denied, "denied")
 	if err != nil {
 		return nil, err
@@ -293,6 +297,7 @@ func handleMsgDenyBidirectionalRelationship(ctx sdk.Context, keeper Keeper, msg 
 	return &result, nil
 }
 
+// handleMsgDeleteRelationship handles the relationship's deletion
 func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
 	// Check if the relationship exist
 	if !keeper.DoesRelationshipExist(ctx, msg.ID) {
