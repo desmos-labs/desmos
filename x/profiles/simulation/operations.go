@@ -15,15 +15,12 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgSaveProfile         = "op_weight_msg_save_profile"
-	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
-	OpWeightMsgCreateRelationship  = "op_weight_msg_create_relationship"
-	OpWeightMsgRequestRelationship = "op_weight_msg_request_relationship"
-	OpWeightMsgAcceptRelationship  = "op_weight_msg_request_relationship"
-	OpWeightMsgDenyRelationship    = "op_weight_msg_deny_relationship"
-	OpWeightMsgDeleteRelationship  = "op_weight_msg_delete_relationship"
+	OpWeightMsgSaveProfile        = "op_weight_msg_save_profile"
+	OpWeightMsgDeleteProfile      = "op_weight_msg_delete_profile"
+	OpWeightMsgCreateRelationship = "op_weight_msg_create_relationship"
+	OpWeightMsgDeleteRelationship = "op_weight_msg_delete_relationship"
 
-	DefaultGasValue = 350000
+	DefaultGasValue = 200000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
@@ -49,31 +46,10 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
-	var weightMsgRequestRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRequestRelationship, &weightMsgRequestRelationship, nil,
-		func(_ *rand.Rand) {
-			weightMsgRequestRelationship = params.DefaultWeightMsgRequestRelationship
-		},
-	)
-
-	var weightMsgAcceptRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptRelationship, &weightMsgAcceptRelationship, nil,
-		func(_ *rand.Rand) {
-			weightMsgAcceptRelationship = params.DefaultWeightMsgAcceptRelationship
-		},
-	)
-
-	var weightMsgDenyRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDenyRelationship, &weightMsgDenyRelationship, nil,
-		func(_ *rand.Rand) {
-			weightMsgDenyRelationship = params.DefaultWeightMsgDenyRelationship
-		},
-	)
-
 	var weightMsgDeleteRelationship int
 	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteRelationship, &weightMsgDeleteRelationship, nil,
 		func(_ *rand.Rand) {
-			weightMsgDenyRelationship = params.DefaultWeightMsgDeleteRelationship
+			weightMsgDeleteRelationship = params.DefaultWeightMsgDeleteRelationship
 		},
 	)
 
@@ -89,18 +65,6 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
 			SimulateMsgCreateMonoDirectionalRelationship(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgRequestRelationship,
-			SimulateMsgRequestBidirectionalRelationship(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgAcceptRelationship,
-			SimulateMsgAcceptBidirectionalRelationship(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgDenyRelationship,
-			SimulateMsgDenyBidirectionalRelationship(k, ak),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,

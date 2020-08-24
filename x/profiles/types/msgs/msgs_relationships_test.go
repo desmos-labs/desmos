@@ -13,24 +13,12 @@ var (
 		Receiver: user,
 	}
 
-	msgRequestBiDirectionalRelationship = msgs.MsgRequestBidirectionalRelationship{
-		Sender:   user,
-		Receiver: user,
-		Message:  "",
-	}
-
-	msgAcceptBiDirectionalRelationship = msgs.MsgAcceptBidirectionalRelationship{Receiver: user, ID: "1234"}
-
-	msgDenyBiDirectionalRelationship = msgs.MsgDenyBidirectionalRelationship{Receiver: user, ID: "1234"}
-
 	msgDeleteRelationships = msgs.MsgDeleteRelationship{
-		User: user,
-		ID:   "1234",
+		Sender: user,
 	}
 )
 
 // MsgCreateMonoDirectionalRelationship
-
 func TestMsgCreateMonoDirectionalRelationship_Route(t *testing.T) {
 	actual := msgCreateMonoDirectionalRelationship.Route()
 	require.Equal(t, "profiles", actual)
@@ -38,7 +26,7 @@ func TestMsgCreateMonoDirectionalRelationship_Route(t *testing.T) {
 
 func TestMsgCreateMonoDirectionalRelationship_Type(t *testing.T) {
 	actual := msgCreateMonoDirectionalRelationship.Type()
-	require.Equal(t, "create_mono_directional_relationship", actual)
+	require.Equal(t, "create_relationship", actual)
 }
 
 func TestMsgCreateMonoDirectionalRelationship_ValidateBasic(t *testing.T) {
@@ -62,9 +50,16 @@ func TestMsgCreateMonoDirectionalRelationship_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
-			name: "No errors message",
+			name: "Equals sender and receiver",
 			msg: msgs.NewMsgCreateMonoDirectionalRelationship(
 				user, user,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgCreateMonoDirectionalRelationship(
+				user, otherUser,
 			),
 			error: nil,
 		},
@@ -96,207 +91,6 @@ func TestMsgCreateMonoDirectionalRelationship_GetSigners(t *testing.T) {
 	require.Equal(t, msgCreateMonoDirectionalRelationship.Sender, actual[0])
 }
 
-// MsgRequestBiDirectionalRelationship
-
-func TestMsgRequestBidirectionalRelationship_Route(t *testing.T) {
-	actual := msgRequestBiDirectionalRelationship.Route()
-	require.Equal(t, "profiles", actual)
-}
-
-func TestMsgRequestBidirectionalRelationship_Type(t *testing.T) {
-	actual := msgRequestBiDirectionalRelationship.Type()
-	require.Equal(t, "request_bi_directional_relationship", actual)
-}
-
-func TestMsgRequestBidirectionalRelationship_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   msgs.MsgRequestBidirectionalRelationship
-		error error
-	}{
-		{
-			name: "Empty sender returns error",
-			msg: msgs.NewMsgRequestBidirectionalRelationship(
-				nil, nil, "",
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
-		},
-		{
-			name: "Empty receiver returns error",
-			msg: msgs.NewMsgRequestBidirectionalRelationship(
-				user, nil, "",
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
-		},
-		{
-			name: "No errors message",
-			msg: msgs.NewMsgRequestBidirectionalRelationship(
-				user, user, "",
-			),
-			error: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
-			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
-			}
-		})
-	}
-}
-
-func TestMsgRequestBidirectionalRelationship_GetSignBytes(t *testing.T) {
-	actual := msgRequestBiDirectionalRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgRequestBidirectionalRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
-}
-
-func TestMsgRequestBidirectionalRelationship_GetSigners(t *testing.T) {
-	actual := msgRequestBiDirectionalRelationship.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgRequestBiDirectionalRelationship.Sender, actual[0])
-}
-
-// MsgAcceptBiDirectionalRelationship
-
-func TestMsgAcceptBidirectionalRelationship_Route(t *testing.T) {
-	actual := msgAcceptBiDirectionalRelationship.Route()
-	require.Equal(t, "profiles", actual)
-}
-
-func TestMsgAcceptBidirectionalRelationship_Type(t *testing.T) {
-	actual := msgAcceptBiDirectionalRelationship.Type()
-	require.Equal(t, "accept_bi_directional_relationship", actual)
-}
-
-func TestMsgAcceptBidirectionalRelationship_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   msgs.MsgAcceptBidirectionalRelationship
-		error error
-	}{
-		{
-			name: "Empty ID returns error",
-			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				"", user,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
-		},
-		{
-			name: "Empty receiver returns error",
-			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				"1234", nil,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
-		},
-		{
-			name: "No errors message",
-			msg: msgs.NewMsgAcceptBidirectionalRelationship(
-				"1234", user,
-			),
-			error: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
-			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
-			}
-		})
-	}
-}
-
-func TestMsgAcceptBidirectionalRelationship_GetSignBytes(t *testing.T) {
-	actual := msgAcceptBiDirectionalRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgAcceptBidirectionalRelationship","value":{"id":"1234","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
-}
-
-func TestMsgAcceptBidirectionalRelationship_GetSigners(t *testing.T) {
-	actual := msgAcceptBiDirectionalRelationship.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgAcceptBiDirectionalRelationship.Receiver, actual[0])
-}
-
-// MsgDenyBidirectionalRelationship
-
-func TestMsgDenyBidirectionalRelationship_Route(t *testing.T) {
-	actual := msgDenyBiDirectionalRelationship.Route()
-	require.Equal(t, "profiles", actual)
-}
-
-func TestMsgDenyBidirectionalRelationship_Type(t *testing.T) {
-	actual := msgDenyBiDirectionalRelationship.Type()
-	require.Equal(t, "deny_bi_directional_relationship", actual)
-}
-
-func TestMsgDenyBidirectionalRelationship_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   msgs.MsgDenyBidirectionalRelationship
-		error error
-	}{
-		{
-			name: "Empty id returns error",
-			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				"", user,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
-		},
-		{
-			name: "Empty receiver returns error",
-			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				"1234", nil,
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
-		},
-		{
-			name: "No errors message",
-			msg: msgs.NewMsgDenyBidirectionalRelationship(
-				"1234", user,
-			),
-			error: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
-			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
-			}
-		})
-	}
-}
-
-func TestMsgDenyBidirectionalRelationship_GetSignBytes(t *testing.T) {
-	actual := msgDenyBiDirectionalRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgDenyBidirectionalRelationship","value":{"id":"1234","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
-}
-
-func TestMsgDenyBidirectionalRelationship_GetSigners(t *testing.T) {
-	actual := msgDenyBiDirectionalRelationship.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgDenyBiDirectionalRelationship.Receiver, actual[0])
-}
-
 // MsgDeleteRelationship
 
 func TestMsgDeleteRelationships_Route(t *testing.T) {
@@ -316,23 +110,30 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 		error error
 	}{
 		{
-			name: "Empty id returns error",
+			name: "Empty sender returns error",
 			msg: msgs.NewMsgDeleteRelationship(
-				"", user,
+				nil, user,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid relationship's id: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgDeleteRelationship(
-				"1234", nil,
+				user, nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address: "),
+		},
+		{
+			name: "Equals sender and receiver",
+			msg: msgs.NewMsgDeleteRelationship(
+				user, user,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
 		},
 		{
 			name: "No errors message",
 			msg: msgs.NewMsgDeleteRelationship(
-				"1234", user,
+				user, otherUser,
 			),
 			error: nil,
 		},
@@ -354,12 +155,12 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"id":"1234","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
 	actual := msgDeleteRelationships.GetSigners()
 	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgDeleteRelationships.User, actual[0])
+	require.Equal(t, msgDeleteRelationships.Sender, actual[0])
 }

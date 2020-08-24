@@ -7,7 +7,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -175,21 +174,16 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 }
 
 func (suite *KeeperTestSuite) Test_queryUserRelationships() {
-	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
-	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.NoError(err)
-
-	status := models.RelationshipStatus(0)
-
-	monoRel := models.NewMonodirectionalRelationship(sender, receiver)
-	biDirRel := models.NewBiDirectionalRelationship(sender, receiver, status)
 
 	tests := []struct {
 		name          string
 		path          []string
-		relationships types.Relationships
-		expResult     types.Relationships
+		relationships []sdk.AccAddress
+		expResult     []sdk.AccAddress
 		expErr        error
 	}{
 		{
@@ -201,9 +195,9 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 		},
 		{
 			name:          "Relationships returned correctly",
-			path:          []string{types.QueryRelationships, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			relationships: types.Relationships{monoRel, biDirRel},
-			expResult:     types.Relationships{monoRel, biDirRel},
+			path:          []string{types.QueryRelationships, suite.testData.user.String()},
+			relationships: []sdk.AccAddress{addr1, addr2},
+			expResult:     []sdk.AccAddress{addr1, addr2},
 			expErr:        nil,
 		},
 	}
@@ -213,11 +207,7 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
-				suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Creator()}, rel.RelationshipID())
-				if _, ok := rel.(types.BidirectionalRelationship); ok {
-					suite.keeper.SaveUserRelationshipAssociation(suite.ctx, []sdk.AccAddress{rel.Recipient()}, rel.RelationshipID())
-				}
-				suite.keeper.StoreRelationship(suite.ctx, rel)
+				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
 			}
 
 			querier := keeper.NewQuerier(suite.keeper)

@@ -12,8 +12,4 @@ func init() {
 }
 
 // RegisterModelsCodec registers concrete types on the Amino codec
-func RegisterModelsCodec(cdc *codec.Codec) {
-	cdc.RegisterInterface((*Relationship)(nil), nil)
-	cdc.RegisterConcrete(MonodirectionalRelationship{}, "desmos/MonodirectionalRelationship", nil)
-	cdc.RegisterConcrete(BidirectionalRelationship{}, "desmos/BidirectionalRelationship", nil)
-}
+func RegisterModelsCodec(cdc *codec.Codec) {}

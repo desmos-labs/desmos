@@ -83,7 +83,7 @@ func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]
 	return bz, nil
 }
 
-// queryUserRelationships handles the request of listing all the users' relationships
+// queryUserRelationships handles the request of listing all the users' storedRelationships
 func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	user, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {

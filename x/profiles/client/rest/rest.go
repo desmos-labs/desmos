@@ -27,13 +27,7 @@ type DeleteProfileReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 }
 
-// CommonRelationshipReq defines the properties of some commons relationships-related operations request's body
+// CommonRelationshipReq defines the properties of a create relationship operation request's body
 type CommonRelationshipReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-}
-
-// RequestBiDirectionalRelationshipReq defines the properties of a bi directional relationship request request's body
-type RequestBiDirectionalRelationshipReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	Message string       `json:"message,omitempty"`
 }

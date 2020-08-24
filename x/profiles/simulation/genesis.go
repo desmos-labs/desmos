@@ -6,21 +6,20 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
-	relationships, userRelationshipsIDsMap := randomRelationships(simsState)
+	userRelationshipsMap := randomRelationships(simsState)
 
 	profileGenesis := types.NewGenesisState(
 		randomProfiles(simsState),
 		types.NewParams(RandomMonikerParams(simsState.Rand), RandomDTagParams(simsState.Rand), RandomBioParams(simsState.Rand)),
-		relationships,
-		userRelationshipsIDsMap,
+		userRelationshipsMap,
 	)
 
 	fmt.Printf("Selected randomly generated profile parameters:\n%s\n%s\n%s\n",
@@ -46,26 +45,15 @@ func randomProfiles(simState *module.SimulationState) (accounts types.Profiles) 
 }
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
-func randomRelationships(simState *module.SimulationState) (types.Relationships, map[string]types.RelationshipIDs) {
+func randomRelationships(simState *module.SimulationState) map[string][]sdk.AccAddress {
 	relationshipsNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 100))
-	relationships := make(types.Relationships, relationshipsNumber)
-	usersRelationships := map[string]types.RelationshipIDs{}
+	usersRelationships := map[string][]sdk.AccAddress{}
 
 	for index := 0; index < relationshipsNumber; index++ {
 		sender, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		receiver, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		var rel types.Relationship
-		if simState.Rand.Float32() < 0.5 {
-			rel = types.NewMonodirectionalRelationship(sender.Address, receiver.Address)
-			usersRelationships[sender.Address.String()] = types.RelationshipIDs{rel.RelationshipID()}
-		} else {
-			rel = types.NewBiDirectionalRelationship(sender.Address, receiver.Address, types.Sent)
-			usersRelationships[sender.Address.String()] = types.RelationshipIDs{rel.RelationshipID()}
-			usersRelationships[receiver.Address.String()] = types.RelationshipIDs{rel.RelationshipID()}
-		}
-
-		relationships[index] = rel
+		usersRelationships[sender.Address.String()] = []sdk.AccAddress{receiver.Address}
 	}
 
-	return relationships, usersRelationships
+	return usersRelationships
 }

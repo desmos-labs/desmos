@@ -28,7 +28,7 @@ var (
 		Creator: accountCreatorAddr,
 	}
 
-	relationship = types.NewMonodirectionalRelationship(accountCreatorAddr, anotherUserAddr)
+	relationships = []sdk.AccAddress{accountCreatorAddr, anotherUserAddr}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
@@ -45,8 +45,7 @@ func TestDecodeStore(t *testing.T) {
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
 		kv.Pair{Key: types.DtagStoreKey(profile.DTag), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
-		kv.Pair{Key: types.RelationshipsStoreKey(relationship.ID), Value: cdc.MustMarshalBinaryBare(&relationship)},
-		kv.Pair{Key: types.UserRelationshipsStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&relationship.ID)},
+		kv.Pair{Key: types.RelationshipsStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&relationships)},
 	}
 
 	tests := []struct {
@@ -55,8 +54,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
-		{"Relationship", fmt.Sprintf("RelationshipA: %s\nRelationshipB: %s\n", relationship, relationship)},
-		{"RelationshipID", fmt.Sprintf("RelationshipIDA: %s\nRelationshipIDB: %s\n", relationship.ID, relationship.ID)},
+		{"Relationships", fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationships, relationships)},
 		{"other", ""},
 	}
 

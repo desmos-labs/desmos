@@ -5,10 +5,7 @@ const (
 	EventTypeProfileDeleted = "profile_deleted"
 
 	// Relationships events
-	EventTypeMonodirectionalRelationshipCreated = "monodirectional_relationship_created"
-	EventTypeBidirectionalRelationshipRequested = "bidirectional_relationship_requested"
-	EventTypeBidirectionalRelationshipAccepted  = "bidirectional_relationship_accepted"
-	EventTypeBidirectionalRelationshipDenied    = "bidirectional_relationship_denied"
+	EventTypeMonoDirectionalRelationshipCreated = "relationship_created"
 	EventTypeRelationshipsDeleted               = "relationships_deleted"
 
 	// Profile attributes
@@ -17,9 +14,6 @@ const (
 	AttributeProfileCreationTime = "profile_creation_time"
 
 	// Relationships attributes
-	AttributeRelationshipID       = "relationship_id"
-	AttributeRelationshipMessage  = "relationship_message"
 	AttributeRelationshipSender   = "relationship_sender"
 	AttributeRelationshipReceiver = "relationship_receiver"
-	AttributeRelationshipStatus   = "relationship_status"
 )

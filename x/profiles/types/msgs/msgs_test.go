@@ -16,6 +16,7 @@ import (
 // ----------------------
 
 var user, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+var otherUser, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var testProfile = models.Profile{
 	DTag:    "dtag",
 	Moniker: common.NewStrPtr("moniker"),

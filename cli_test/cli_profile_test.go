@@ -1,8 +1,9 @@
+// +build cli_test
+
 //nolint
 package clitest
 
 import (
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -354,13 +355,11 @@ func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
 	// Make sure relationship is created
 	storedRelationships := f.QueryRelationships(fooAddr)
 	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.NewMonodirectionalRelationship(fooAddr, receiver)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	relationshipID := storedRelationships[0].RelationshipID()
+	expRelationship := []sdk.AccAddress{receiver}
+	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(relationshipID, fooAddr, "-y")
+	success, _, sterr = f.TxDeleteUserRelationship(receiver, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -371,208 +370,6 @@ func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg := unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	f.Cleanup()
-}
-
-func TestDesmosCLIRequestBiDirectionalRelationship(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// Start Desmosd server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	// Save key addresses for later use
-	fooAddr := f.KeyAddress(keyFoo)
-
-	// Later usage variables
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
-	require.NoError(t, err)
-
-	// Create request for bidirectional relationship
-	success, _, sterr := f.TxRequestBiDirectionalRelationship(receiver, fooAddr, "hello", "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure relationship is created
-	storedRelationships := f.QueryRelationships(fooAddr)
-	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.NewBiDirectionalRelationship(fooAddr, receiver, types.Sent)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	relationshipID := storedRelationships[0].RelationshipID()
-
-	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(relationshipID, fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Test --dry-tun
-	success, _, _ = f.TxRequestBiDirectionalRelationship(receiver, fooAddr, "hello", "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr := f.TxRequestBiDirectionalRelationship(receiver, fooAddr, "hello", "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg := unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	f.Cleanup()
-}
-
-func TestDesmosCLIAcceptBiDirectionalRelationship(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// Start Desmosd server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	// Save key addresses for later use
-	fooAddr := f.KeyAddress(keyFoo)
-	barAddr := f.KeyAddress(keyBar)
-
-	// Later usage variables
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-
-	sendTokens := sdk.TokensFromConsensusPower(10)
-	success, _, sterr := f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-
-	// Create request for bidirectional relationship
-	success, _, sterr = f.TxRequestBiDirectionalRelationship(fooAddr, barAddr, "hello", "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the request is made
-	storedRelationships := f.QueryRelationships(barAddr)
-	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.NewBiDirectionalRelationship(barAddr, fooAddr, types.Sent)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	relationshipID := storedRelationships[0].RelationshipID()
-
-	// Accept the previously made request
-	success, _, sterr = f.TxAcceptBiDirectionalRelationship(relationshipID, fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the request is accepted
-	storedRelationships = f.QueryRelationships(fooAddr)
-	require.NotEmpty(t, storedRelationships)
-	expRelationship = types.NewBiDirectionalRelationship(barAddr, fooAddr, types.Accepted)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(relationshipID, barAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Create Request for dry-run test
-	success, _, _ = f.TxRequestBiDirectionalRelationship(fooAddr, barAddr, "hello", "-y")
-	require.True(t, success)
-
-	// Test --dry-tun
-	success, _, _ = f.TxAcceptBiDirectionalRelationship(relationshipID, fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr := f.TxAcceptBiDirectionalRelationship(relationshipID, fooAddr, "--generate-only=true")
-	require.Empty(t, stderr)
-	require.True(t, success)
-	msg := unmarshalStdTx(f.T, stdout)
-	require.NotZero(t, msg.Fee.Gas)
-	require.Len(t, msg.Msgs, 1)
-	require.Len(t, msg.GetSignatures(), 0)
-
-	f.Cleanup()
-}
-
-func TestDesmosCLIDenyBiDirectionalRelationship(t *testing.T) {
-	t.Parallel()
-	f := InitFixtures(t)
-
-	// Start Desmosd server
-	proc := f.GDStart()
-	defer proc.Stop(false)
-
-	// Save key addresses for later use
-	fooAddr := f.KeyAddress(keyFoo)
-	barAddr := f.KeyAddress(keyBar)
-
-	// Later usage variables
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-
-	sendTokens := sdk.TokensFromConsensusPower(10)
-	success, _, sterr := f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-
-	// Create request for bidirectional relationship
-	success, _, sterr = f.TxRequestBiDirectionalRelationship(fooAddr, barAddr, "hello", "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the request is made
-	storedRelationships := f.QueryRelationships(barAddr)
-	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.NewBiDirectionalRelationship(barAddr, fooAddr, types.Sent)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	relationshipID := storedRelationships[0].RelationshipID()
-
-	// Accept the previously made request
-	success, _, sterr = f.TxDenyBiDirectionalRelationship(relationshipID, fooAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Make sure the request is accepted
-	storedRelationships = f.QueryRelationships(fooAddr)
-	require.NotEmpty(t, storedRelationships)
-	expRelationship = types.NewBiDirectionalRelationship(barAddr, fooAddr, types.Denied)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(relationshipID, barAddr, "-y")
-	require.True(t, success)
-	require.Empty(t, sterr)
-	tests.WaitForNextNBlocksTM(1, f.Port)
-
-	// Create Request for dry-run test
-	success, _, _ = f.TxRequestBiDirectionalRelationship(fooAddr, barAddr, "hello", "-y")
-	require.True(t, success)
-
-	// Test --dry-tun
-	success, _, _ = f.TxDenyBiDirectionalRelationship(relationshipID, fooAddr, "--dry-run")
-	require.True(t, success)
-
-	// Test --generate-only
-	success, stdout, stderr := f.TxDenyBiDirectionalRelationship(relationshipID, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -610,13 +407,11 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	// Make sure relationship is created
 	storedRelationships := f.QueryRelationships(fooAddr)
 	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.NewMonodirectionalRelationship(fooAddr, receiver)
-	require.Equal(t, expRelationship, storedRelationships[0])
-
-	relationshipID := storedRelationships[0].RelationshipID()
+	expRelationship := []sdk.AccAddress{receiver}
+	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(relationshipID, fooAddr, "-y")
+	success, _, sterr = f.TxDeleteUserRelationship(receiver, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -629,11 +424,11 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	success, _, sterr = f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "-y")
 
 	// Test --dry-tun
-	success, _, _ = f.TxDeleteUserRelationship(relationshipID, fooAddr, "--dry-run")
+	success, _, _ = f.TxDeleteUserRelationship(receiver, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxDeleteUserRelationship(relationshipID, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxDeleteUserRelationship(receiver, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)

@@ -148,7 +148,7 @@ type Post struct {
 
 // Reaction is a struct of a user reaction to a post
 type Reaction struct {
-	Owner sdk.AccAddress `json:"owner"` // User that has created the reaction
+	Owner sdk.AccAddress `json:"owner"` // Sender that has created the reaction
 	Value string         `json:"value"` // Value of the reaction
 }
 

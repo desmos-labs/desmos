@@ -473,27 +473,9 @@ func (f *Fixtures) TxCreateMonoDirectionalRelationship(receiver, from sdk.AccAdd
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-func (f *Fixtures) TxRequestBiDirectionalRelationship(receiver, from sdk.AccAddress, message string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles request-relationship %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, receiver, message, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxAcceptBiDirectionalRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles accept-relationship %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, relationshipID, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxDenyBiDirectionalRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles deny-relationship %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, relationshipID, from, f.Flags())
-	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
-}
-
-func (f *Fixtures) TxDeleteUserRelationship(relationshipID types.RelationshipID, from sdk.AccAddress, flags ...string) (bool, string, string) {
+func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles delete-relationship %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, relationshipID, from, f.Flags())
+		f.DesmoscliBinary, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -833,12 +815,12 @@ func (f *Fixtures) QueryProfiles(flags ...string) types.Profiles {
 }
 
 // QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) types.Relationships {
+func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) []sdk.AccAddress {
 	cmd := fmt.Sprintf("%s query profiles relationships %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedRelationships types.Relationships
+	var storedRelationships []sdk.AccAddress
 	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
 	require.NoError(f.T, err)
 	return storedRelationships

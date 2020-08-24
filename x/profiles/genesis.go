@@ -12,8 +12,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 	return types.GenesisState{
 		Profiles:           k.GetProfiles(ctx),
 		Params:             k.GetParams(ctx),
-		Relationships:      k.GetRelationships(ctx),
-		UsersRelationships: k.GetUsersRelationshipsIDMap(ctx),
+		UsersRelationships: k.GetUsersRelationshipsMap(ctx),
 	}
 }
 
@@ -30,17 +29,16 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 		}
 	}
 
-	for _, rel := range data.Relationships {
-		k.StoreRelationship(ctx, rel)
-	}
-
-	for userAddr, relationshipIDs := range data.UsersRelationships {
+	for userAddr, relationships := range data.UsersRelationships {
 		addr, err := sdk.AccAddressFromBech32(userAddr)
 		if err != nil {
 			panic(err)
 		}
-		for _, relID := range relationshipIDs {
-			k.SaveUserRelationshipAssociation(ctx, []sdk.AccAddress{addr}, relID)
+		for _, receiver := range relationships {
+			err := k.StoreRelationship(ctx, addr, receiver)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 

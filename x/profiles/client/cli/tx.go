@@ -32,9 +32,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdSaveProfile(cdc),
 		GetCmdDeleteProfile(cdc),
 		GetCmdCreateMonoDirectionalRelationship(cdc),
-		GetCmdRequestBiDirectionalRelationship(cdc),
-		GetCmdAcceptBiDirectionalRequest(cdc),
-		GetCmdDenyBiDirectionalRelationshipRequest(cdc),
 		GetCmdDeleteUserRelationship(cdc),
 	)...)
 
@@ -136,98 +133,20 @@ func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
-// GetCmdRequestBiDirectionalRelationship is the CLI command for requesting a biDirectionalRelationship
-func GetCmdRequestBiDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "request-relationship [receiver] [[message]]",
-		Short: "Request a bi directional relationship to the given receiver address",
-		Args:  cobra.RangeArgs(1, 2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			receiver, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
-
-			var message string
-			if len(args) > 1 {
-				message = args[1]
-			}
-
-			msg := types.NewMsgRequestBidirectionalRelationship(cliCtx.FromAddress, receiver, message)
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdAcceptBiDirectionalRequest is the CLI command for accepting a biDirectionalRelationship
-func GetCmdAcceptBiDirectionalRequest(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "accept-relationship [relationshipID]",
-		Short: "Accept the bi directional relationship with the given ID",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			relationshipID := types.RelationshipID(args[0])
-			if !relationshipID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
-			}
-
-			msg := types.NewMsgAcceptBidirectionalRelationship(relationshipID, cliCtx.FromAddress)
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdDenyBiDirectionalRelationshipRequest is the CLI command for denying a biDirectionalRelationship
-func GetCmdDenyBiDirectionalRelationshipRequest(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "deny-relationship [relationshipID]",
-		Short: "Deny the bi directional relationship with the given ID",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			relationshipID := types.RelationshipID(args[0])
-			if !relationshipID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
-			}
-
-			msg := types.NewMsgDenyBidirectionalRelationship(relationshipID, cliCtx.FromAddress)
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
 // GetCmdDeleteUserRelationship is the CLI command for deleting a relationship
 func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-relationship [relationshipID]",
-		Short: "Delete the relationship with the given ID",
+		Use:   "delete-relationship [receiver]",
+		Short: "Delete the relationship with the given user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			relationshipID := types.RelationshipID(args[0])
-			if !relationshipID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid relationshipID: %s", relationshipID))
+			relationshipID, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", relationshipID))
 			}
 
 			msg := types.NewMsgDeleteRelationship(relationshipID, cliCtx.FromAddress)
