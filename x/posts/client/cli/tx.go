@@ -46,7 +46,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	return postsTxCmd
 }
 
-// getAttachments parse the attachments of a post
+// getAttachments parses the attachments of a post.
+// If one or more attachments are found, it returns them. Otherwise returns `nil` instead.
 func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 	mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
 	if err != nil {
@@ -76,7 +77,7 @@ func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 	return attachments, nil
 }
 
-// getPollData parse the pollData of a post
+// getPollData parses the pollData of a post. If no poll data is found returns `nil` instead.
 func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 	pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
 	if err != nil {
@@ -138,7 +139,6 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 
 		pollData = &types.PollData{
 			Question:              question,
-			Open:                  true,
 			EndDate:               date,
 			ProvidedAnswers:       answers,
 			AllowsMultipleAnswers: allowMultipleAnswers,
