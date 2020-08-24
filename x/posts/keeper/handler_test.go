@@ -206,7 +206,6 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			models.NewPollAnswer(models.AnswerID(1), "No"),
 			models.NewPollAnswer(models.AnswerID(2), "No"),
 		),
-		true,
 		false,
 		true,
 	)
