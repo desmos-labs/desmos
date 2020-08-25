@@ -25,24 +25,25 @@ const (
 
 var (
 	// functions aliases
-	RegisterModelsCodec                     = models.RegisterModelsCodec
 	ProfileStoreKey                         = models.ProfileStoreKey
 	DtagStoreKey                            = models.DtagStoreKey
 	RelationshipsStoreKey                   = models.RelationshipsStoreKey
 	NewProfile                              = models.NewProfile
 	NewProfiles                             = models.NewProfiles
 	NewPictures                             = models.NewPictures
+	NewRelationshipResponse                 = models.NewRelationshipResponse
+	RegisterModelsCodec                     = models.RegisterModelsCodec
+	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
+	NewMsgDeleteRelationship                = msgs.NewMsgDeleteRelationship
 	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
 	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
-	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
-	NewMsgDeleteRelationship                = msgs.NewMsgDeleteRelationship
 
 	// variable aliases
-	ModelsCdc                = models.ModelsCdc
 	ProfileStorePrefix       = models.ProfileStorePrefix
 	DtagStorePrefix          = models.DtagStorePrefix
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
+	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 
@@ -50,8 +51,9 @@ type (
 	Profile                              = models.Profile
 	Profiles                             = models.Profiles
 	Pictures                             = models.Pictures
-	MsgSaveProfile                       = msgs.MsgSaveProfile
-	MsgDeleteProfile                     = msgs.MsgDeleteProfile
+	RelationshipsResponse                = models.RelationshipsResponse
 	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
 	MsgDeleteRelationship                = msgs.MsgDeleteRelationship
+	MsgSaveProfile                       = msgs.MsgSaveProfile
+	MsgDeleteProfile                     = msgs.MsgDeleteProfile
 )

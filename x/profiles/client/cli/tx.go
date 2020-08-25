@@ -144,12 +144,12 @@ func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			relationshipID, err := sdk.AccAddressFromBech32(args[0])
+			receiver, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", relationshipID))
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", receiver))
 			}
 
-			msg := types.NewMsgDeleteRelationship(relationshipID, cliCtx.FromAddress)
+			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

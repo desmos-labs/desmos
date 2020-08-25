@@ -52,7 +52,9 @@ func randomRelationships(simState *module.SimulationState) map[string][]sdk.AccA
 	for index := 0; index < relationshipsNumber; index++ {
 		sender, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		receiver, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		usersRelationships[sender.Address.String()] = []sdk.AccAddress{receiver.Address}
+		if !sender.Equals(receiver) {
+			usersRelationships[sender.Address.String()] = []sdk.AccAddress{receiver.Address}
+		}
 	}
 
 	return usersRelationships

@@ -815,12 +815,12 @@ func (f *Fixtures) QueryProfiles(flags ...string) types.Profiles {
 }
 
 // QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) []sdk.AccAddress {
+func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) types.RelationshipsResponse {
 	cmd := fmt.Sprintf("%s query profiles relationships %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedRelationships []sdk.AccAddress
+	var storedRelationships types.RelationshipsResponse
 	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
 	require.NoError(f.T, err)
 	return storedRelationships

@@ -179,11 +179,13 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.NoError(err)
 
+	expRelationships := types.NewRelationshipResponse([]sdk.AccAddress{addr1, addr2})
+
 	tests := []struct {
 		name          string
 		path          []string
 		relationships []sdk.AccAddress
-		expResult     []sdk.AccAddress
+		expResult     *types.RelationshipsResponse
 		expErr        error
 	}{
 		{
@@ -197,7 +199,7 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 			name:          "Relationships returned correctly",
 			path:          []string{types.QueryRelationships, suite.testData.user.String()},
 			relationships: []sdk.AccAddress{addr1, addr2},
-			expResult:     []sdk.AccAddress{addr1, addr2},
+			expResult:     &expRelationships,
 			expErr:        nil,
 		},
 	}

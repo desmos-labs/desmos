@@ -4,6 +4,7 @@
 package clitest
 
 import (
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -355,7 +356,7 @@ func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
 	// Make sure relationship is created
 	storedRelationships := f.QueryRelationships(fooAddr)
 	require.NotEmpty(t, storedRelationships)
-	expRelationship := []sdk.AccAddress{receiver}
+	expRelationship := types.NewRelationshipResponse([]sdk.AccAddress{receiver})
 	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
@@ -407,7 +408,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	// Make sure relationship is created
 	storedRelationships := f.QueryRelationships(fooAddr)
 	require.NotEmpty(t, storedRelationships)
-	expRelationship := []sdk.AccAddress{receiver}
+	expRelationship := types.NewRelationshipResponse([]sdk.AccAddress{receiver})
 	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests

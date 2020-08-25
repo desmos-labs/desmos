@@ -35,7 +35,6 @@ const (
 
 var (
 	// functions aliases
-	RegisterModelsCodec        = models.RegisterModelsCodec
 	ParsePostID                = models.ParsePostID
 	NewPost                    = models.NewPost
 	NewPostResponse            = models.NewPostResponse
@@ -45,6 +44,7 @@ var (
 	PostReactionsStoreKey      = models.PostReactionsStoreKey
 	ReactionsStoreKey          = models.ReactionsStoreKey
 	PollAnswersStoreKey        = models.PollAnswersStoreKey
+	RegisterModelsCodec        = models.RegisterModelsCodec
 	IsValidPostID              = common.IsValidPostID
 	IsValidSubspace            = common.IsValidSubspace
 	IsValidReactionCode        = common.IsValidReactionCode

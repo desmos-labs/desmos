@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/spf13/cobra"
 )
@@ -115,7 +114,7 @@ func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out []sdk.AccAddress
+			var out types.RelationshipsResponse
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

@@ -90,7 +90,7 @@ func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery,
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
 	}
 
-	relationships := keeper.GetUserRelationships(ctx, user)
+	relationships := types.NewRelationshipResponse(keeper.GetUserRelationships(ctx, user))
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
 	if err != nil {
