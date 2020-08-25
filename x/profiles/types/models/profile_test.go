@@ -2,6 +2,7 @@ package models_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"testing"
@@ -304,4 +305,20 @@ func TestProfile_Validate(t *testing.T) {
 			require.Equal(t, test.expErr, test.account.Validate())
 		})
 	}
+}
+
+func TestNewProfiles(t *testing.T) {
+	profile := models.Profile{
+		DTag: "dtag",
+		Bio:  common.NewStrPtr("bio"),
+		Pictures: models.NewPictures(
+			common.NewStrPtr("https://shorturl.at/adnX3"),
+			common.NewStrPtr("https://shorturl.at/cgpyF"),
+		),
+		Creator: nil,
+	}
+
+	profiles := types.NewProfiles(profile)
+
+	require.Equal(t, types.Profiles{profile}, profiles)
 }
