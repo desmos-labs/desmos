@@ -21,13 +21,13 @@ func SimulateMsgCreateMonoDirectionalRelationship(k keeper.Keeper, ak auth.Accou
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, addresses, skip := randomMonoRelationshipFields(r, ctx, accs, k)
+		sender, receiver, skip := randomMonoRelationshipFields(r, ctx, accs, k)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgCreateMonoDirectionalRelationship(addresses[0], addresses[1])
-		if err := sendMsgCreateMonoDirectionalRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
+		msg := types.NewMsgCreateMonoDirectionalRelationship(sender.Address, receiver)
+		if err := sendMsgCreateMonoDirectionalRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -68,7 +68,7 @@ func sendMsgCreateMonoDirectionalRelationship(r *rand.Rand, app *baseapp.BaseApp
 // randomMonoRelationshipFields returns random monoDirectional relationships fields
 func randomMonoRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
-) (sim.Account, []sdk.AccAddress, bool) {
+) (sim.Account, sdk.AccAddress, bool) {
 	if len(accs) == 0 {
 		return sim.Account{}, nil, true
 	}
@@ -82,8 +82,6 @@ func randomMonoRelationshipFields(
 		return sim.Account{}, nil, true
 	}
 
-	relationship := []sdk.AccAddress{sender.Address, receiver.Address}
-
 	// skip if relationships already exists
 	relationships := k.GetUserRelationships(ctx, sender.Address)
 	for _, address := range relationships {
@@ -92,7 +90,7 @@ func randomMonoRelationshipFields(
 		}
 	}
 
-	return sender, relationship, false
+	return sender, receiver.Address, false
 }
 
 // SimulateMsgDeleteRelationship tests and runs a single msg delete relationships
@@ -101,13 +99,13 @@ func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		acc, relationshipID, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
+		sender, receiver, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgDeleteRelationship(relationshipID, acc.Address)
-		if err := sendMsgDeleteRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
+		msg := types.NewMsgDeleteRelationship(sender.Address, receiver)
+		if err := sendMsgDeleteRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -154,12 +152,6 @@ func randomDeleteRelationshipFields(r *rand.Rand, ctx sdk.Context, accs []sim.Ac
 
 	// Get random accounts
 	user, _ := sim.RandomAcc(r, accs)
-	counterparty, _ := sim.RandomAcc(r, accs)
-
-	// skip if the two address are equals
-	if user.Equals(counterparty) {
-		return sim.Account{}, nil, true
-	}
 
 	relationships := k.GetUserRelationships(ctx, user.Address)
 
@@ -168,5 +160,5 @@ func randomDeleteRelationshipFields(r *rand.Rand, ctx sdk.Context, accs []sim.Ac
 		return sim.Account{}, nil, true
 	}
 
-	return sim.Account{}, RandomRelationship(r, relationships), false
+	return user, RandomRelationship(r, relationships), false
 }
