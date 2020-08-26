@@ -110,7 +110,7 @@ func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, args[0])
 			res, _, err := cliCtx.QueryWithData(route, nil)
 			if err != nil {
-				fmt.Printf("Could not find profile parameters")
+				fmt.Printf("Could not find any relationship associated with the given address %s", args[0])
 				return nil
 			}
 

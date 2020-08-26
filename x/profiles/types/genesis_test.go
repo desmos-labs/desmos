@@ -17,15 +17,15 @@ func TestNewGenesis(t *testing.T) {
 	bioParams := sdk.Int{}
 	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 
-	usersRelationshipIDs := map[string][]sdk.AccAddress{}
+	usersRelationships := map[string][]sdk.AccAddress{}
 
 	expGenState := types.GenesisState{
 		Profiles:           profiles,
 		Params:             params,
-		UsersRelationships: usersRelationshipIDs,
+		UsersRelationships: usersRelationships,
 	}
 
-	actualGenState := types.NewGenesisState(profiles, params, usersRelationshipIDs)
+	actualGenState := types.NewGenesisState(profiles, params, usersRelationships)
 	require.Equal(t, expGenState, actualGenState)
 }
 

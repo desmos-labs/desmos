@@ -22,7 +22,7 @@ func NewReportResponse(postID posts.PostID, reports Reports) ReportsQueryRespons
 
 // String implements fmt.Stringer
 func (response ReportsQueryResponse) String() string {
-	out := fmt.Sprintf("Post RelationshipID: %s\n Reports: %s\n", response.PostID, response.Reports)
+	out := fmt.Sprintf("Post ID: %s\n Reports: %s\n", response.PostID, response.Reports)
 	return strings.TrimSpace(out)
 }
 

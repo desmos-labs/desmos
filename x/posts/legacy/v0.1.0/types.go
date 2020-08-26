@@ -32,5 +32,5 @@ type Post struct {
 // Reaction is a struct of a user like
 type Like struct {
 	Created sdk.Int        `json:"created"` // Block height at which the like was created
-	Owner   sdk.AccAddress `json:"owner"`   // Sender that has inserted the like
+	Owner   sdk.AccAddress `json:"owner"`   // User that has inserted the like
 }

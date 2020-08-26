@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetUserRelationshipsMap() {
-	relationshipIDsMap := map[string][]sdk.AccAddress{
+	relationshipsMap := map[string][]sdk.AccAddress{
 		suite.testData.user.String():      {suite.testData.otherUser},
 		suite.testData.otherUser.String(): {suite.testData.user},
 	}
@@ -53,7 +53,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationshipsMap() {
 	_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, suite.testData.user)
 
 	actualIDsMap := suite.keeper.GetUsersRelationshipsMap(suite.ctx)
-	suite.Equal(relationshipIDsMap, actualIDsMap)
+	suite.Equal(relationshipsMap, actualIDsMap)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
