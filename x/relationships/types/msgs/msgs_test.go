@@ -1,13 +1,16 @@
 package msgs_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/types/msgs"
+	msgs "github.com/desmos-labs/desmos/x/relationships/types/msgs"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 var (
+	user, _                              = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	otherUser, _                         = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	msgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship{
 		Sender:   user,
 		Receiver: user,
@@ -21,7 +24,7 @@ var (
 // MsgCreateMonoDirectionalRelationship
 func TestMsgCreateMonoDirectionalRelationship_Route(t *testing.T) {
 	actual := msgCreateMonoDirectionalRelationship.Route()
-	require.Equal(t, "profiles", actual)
+	require.Equal(t, "relationships", actual)
 }
 
 func TestMsgCreateMonoDirectionalRelationship_Type(t *testing.T) {
@@ -95,7 +98,7 @@ func TestMsgCreateMonoDirectionalRelationship_GetSigners(t *testing.T) {
 
 func TestMsgDeleteRelationships_Route(t *testing.T) {
 	actual := msgDeleteRelationships.Route()
-	require.Equal(t, "profiles", actual)
+	require.Equal(t, "relationships", actual)
 }
 
 func TestMsgDeleteRelationships_Type(t *testing.T) {

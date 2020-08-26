@@ -10,8 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 

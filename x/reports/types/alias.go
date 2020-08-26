@@ -22,21 +22,21 @@ var (
 	// functions aliases
 	NewMsgReportPost      = msgs.NewMsgReportPost
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
-	RegisterModelsCodec   = models.RegisterModelsCodec
 	ReportStoreKey        = models.ReportStoreKey
 	NewReportResponse     = models.NewReportResponse
 	NewReport             = models.NewReport
+	RegisterModelsCodec   = models.RegisterModelsCodec
 
 	// variable aliases
-	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
 	MsgsCodec              = msgs.MsgsCodec
+	ModelsCdc              = models.ModelsCdc
 )
 
 type (
-	MsgReportPost        = msgs.MsgReportPost
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
+	MsgReportPost        = msgs.MsgReportPost
 )

@@ -26,8 +26,3 @@ type SaveProfileReq struct {
 type DeleteProfileReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 }
-
-// CommonRelationshipReq defines the properties of a create relationship operation request's body
-type CommonRelationshipReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-}

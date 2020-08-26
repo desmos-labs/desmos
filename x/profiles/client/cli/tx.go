@@ -9,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
@@ -31,8 +30,6 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd.AddCommand(flags.PostCommands(
 		GetCmdSaveProfile(cdc),
 		GetCmdDeleteProfile(cdc),
-		GetCmdCreateMonoDirectionalRelationship(cdc),
-		GetCmdDeleteUserRelationship(cdc),
 	)...)
 
 	return profileTxCmd
@@ -101,55 +98,6 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 
 			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdCreateMonoDirectionalRelationship is the CLI command for creating a monoDirRelationship
-func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "create-relationship [receiver]",
-		Short: "Create a mono directional relationship with the given receiver address",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			receiver, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgCreateMonoDirectionalRelationship(cliCtx.FromAddress, receiver)
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdDeleteUserRelationship is the CLI command for deleting a relationship
-func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-relationship [receiver]",
-		Short: "Delete the relationship with the given user",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			receiver, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", receiver))
-			}
-
-			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

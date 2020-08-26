@@ -15,10 +15,8 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgSaveProfile        = "op_weight_msg_save_profile"
-	OpWeightMsgDeleteProfile      = "op_weight_msg_delete_profile"
-	OpWeightMsgCreateRelationship = "op_weight_msg_create_relationship"
-	OpWeightMsgDeleteRelationship = "op_weight_msg_delete_relationship"
+	OpWeightMsgSaveProfile   = "op_weight_msg_save_profile"
+	OpWeightMsgDeleteProfile = "op_weight_msg_delete_profile"
 
 	DefaultGasValue = 200000
 )
@@ -39,20 +37,6 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
-	var weightMsgCreateRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateRelationship, &weightMsgCreateRelationship, nil,
-		func(_ *rand.Rand) {
-			weightMsgCreateRelationship = params.DefaultWeightMsgCreateRelationship
-		},
-	)
-
-	var weightMsgDeleteRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteRelationship, &weightMsgDeleteRelationship, nil,
-		func(_ *rand.Rand) {
-			weightMsgDeleteRelationship = params.DefaultWeightMsgDeleteRelationship
-		},
-	)
-
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
@@ -61,14 +45,6 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
 			SimulateMsgDeleteProfile(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgCreateRelationship,
-			SimulateMsgCreateMonoDirectionalRelationship(k, ak),
-		),
-		sim.NewWeightedOperation(
-			weightMsgDeleteRelationship,
-			SimulateMsgDeleteRelationship(k, ak),
 		),
 	}
 }

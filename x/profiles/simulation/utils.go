@@ -117,9 +117,3 @@ func RandomDTagParams(r *rand.Rand) types.DtagParams {
 func RandomBioParams(r *rand.Rand) sdk.Int {
 	return sdk.NewInt(int64(sim.RandIntBetween(r, 500, 1000)))
 }
-
-// RandomRelationship picks and returns a random relationships from an array
-func RandomRelationship(r *rand.Rand, relationships []sdk.AccAddress) sdk.AccAddress {
-	idx := r.Intn(len(relationships))
-	return relationships[idx]
-}

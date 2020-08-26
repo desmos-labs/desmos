@@ -7,19 +7,19 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/gorilla/mux"
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
-	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles/relationship/{address}", createMonoDirectionalRelationshipHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/relationship/delete/{address}", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
 }
 
-func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func createMonoDirectionalRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		var req SaveProfileReq
+		var req CommonRelationshipReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -31,13 +31,19 @@ func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(vars["address"])
+		sender, err := sdk.AccAddressFromBech32(baseReq.From)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgSaveProfile(req.DTag, req.Moniker, req.Bio, req.Pictures.Profile, req.Pictures.Cover, addr)
+		receiver, err := sdk.AccAddressFromBech32(vars["address"])
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgCreateMonoDirectionalRelationship(sender, receiver)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -47,10 +53,10 @@ func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		var req DeleteProfileReq
+		var req CommonRelationshipReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -62,16 +68,20 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(vars["address"])
+		user, err := sdk.AccAddressFromBech32(baseReq.From)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgDeleteProfile(addr)
-
-		err = msg.ValidateBasic()
+		receiver, err := sdk.AccAddressFromBech32(vars["address"])
 		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid receiver given")
+		}
+
+		msg := types.NewMsgDeleteRelationship(receiver, user)
+
+		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}

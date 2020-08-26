@@ -4,9 +4,24 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships/types"
 )
+
+// Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
+type Keeper struct {
+	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
+	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
+}
+
+// NewKeeper creates new instances of the magpie Keeper
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+	return Keeper{
+		StoreKey: storeKey,
+		Cdc:      cdc,
+	}
+}
 
 // StoreRelationship allows to store the given receiver returning an error if he's already present.
 func (k Keeper) StoreRelationship(ctx sdk.Context, user, receiver sdk.AccAddress) error {
@@ -38,8 +53,8 @@ func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) []sdk
 	return relationships
 }
 
-// GetUsersRelationshipsMap allows to returns the map of all the users and their associated storedRelationships
-func (k Keeper) GetUsersRelationshipsMap(ctx sdk.Context) map[string][]sdk.AccAddress {
+// GetUsersRelationships allows to returns the map of all the users and their associated storedRelationships
+func (k Keeper) GetUsersRelationships(ctx sdk.Context) map[string][]sdk.AccAddress {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
 

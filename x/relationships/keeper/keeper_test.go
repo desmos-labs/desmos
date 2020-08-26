@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
@@ -52,7 +52,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationshipsMap() {
 	_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, suite.testData.otherUser)
 	_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, suite.testData.user)
 
-	actualIDsMap := suite.keeper.GetUsersRelationshipsMap(suite.ctx)
+	actualIDsMap := suite.keeper.GetUsersRelationships(suite.ctx)
 	suite.Equal(relationshipsMap, actualIDsMap)
 }
 

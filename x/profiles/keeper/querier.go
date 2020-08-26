@@ -19,8 +19,6 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryProfile(ctx, path[1:], req, keeper)
 		case types.QueryProfiles:
 			return queryProfiles(ctx, req, keeper)
-		case types.QueryRelationships:
-			return queryUserRelationships(ctx, path[1:], req, keeper)
 		case types.QueryParams:
 			return queryProfileParams(ctx, req, keeper)
 		default:
@@ -76,23 +74,6 @@ func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]
 	profileParams := keeper.GetParams(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &profileParams)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
-
-	return bz, nil
-}
-
-// queryUserRelationships handles the request of listing all the users' storedRelationships
-func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	user, err := sdk.AccAddressFromBech32(path[0])
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
-	}
-
-	relationships := types.NewRelationshipResponse(keeper.GetUserRelationships(ctx, user))
-
-	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

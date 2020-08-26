@@ -19,16 +19,11 @@ var (
 	accountCreatorAddr = sdk.AccAddress(privKey.Address())
 	bio                = "Hollywood Actor. Proud environmentalist"
 
-	anotherKey      = ed25519.GenPrivKey().PubKey()
-	anotherUserAddr = sdk.AccAddress(anotherKey.Address())
-
 	profile = types.Profile{
 		DTag:    "leoDiCap",
 		Bio:     &bio,
 		Creator: accountCreatorAddr,
 	}
-
-	relationships = []sdk.AccAddress{accountCreatorAddr, anotherUserAddr}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
@@ -45,7 +40,6 @@ func TestDecodeStore(t *testing.T) {
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
 		kv.Pair{Key: types.DtagStoreKey(profile.DTag), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
-		kv.Pair{Key: types.RelationshipsStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&relationships)},
 	}
 
 	tests := []struct {
@@ -54,7 +48,6 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
-		{"Relationships", fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationships, relationships)},
 		{"other", ""},
 	}
 

@@ -15,6 +15,4 @@ func init() {
 func RegisterMessagesCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
-	cdc.RegisterConcrete(MsgCreateMonoDirectionalRelationship{}, "desmos/MsgCreateMonoDirectionalRelationship", nil)
-	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
 }

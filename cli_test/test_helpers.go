@@ -29,6 +29,7 @@ import (
 	"github.com/desmos-labs/desmos/app"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -454,7 +455,7 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 }
 
 //___________________________________________________________________________________
-// desmoscli tx profile
+// desmoscli tx profiles
 func (f *Fixtures) TxProfileSave(dTag string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles save %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, dTag, from, f.Flags())
@@ -467,14 +468,16 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+//___________________________________________________________________________________
+// desmoscli tx relationships
 func (f *Fixtures) TxCreateMonoDirectionalRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles create-relationship %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx relationships create-relationship %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles delete-relationship %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx relationships delete-relationship %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
@@ -814,13 +817,14 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	return storedProfile
 }
 
+//___________________________________________________________________________________
 // QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) profilesTypes.RelationshipsResponse {
-	cmd := fmt.Sprintf("%s query profiles relationships %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
+func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.RelationshipsResponse {
+	cmd := fmt.Sprintf("%s query relationships relationships %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedRelationships profilesTypes.RelationshipsResponse
+	var storedRelationships relationshipsTypes.RelationshipsResponse
 	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
 	require.NoError(f.T, err)
 	return storedRelationships

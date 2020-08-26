@@ -9,51 +9,40 @@ import (
 )
 
 const (
-	ModuleName               = models.ModuleName
-	RouterKey                = models.RouterKey
-	StoreKey                 = models.StoreKey
-	ActionSaveProfile        = models.ActionSaveProfile
-	ActionDeleteProfile      = models.ActionDeleteProfile
-	ActionCreateRelationship = models.ActionCreateRelationship
-	ActionDeleteRelationship = models.ActionDeleteRelationship
-	QuerierRoute             = models.QuerierRoute
-	QueryProfile             = models.QueryProfile
-	QueryProfiles            = models.QueryProfiles
-	QueryRelationships       = models.QueryRelationships
-	QueryParams              = models.QueryParams
+	ModuleName          = models.ModuleName
+	RouterKey           = models.RouterKey
+	StoreKey            = models.StoreKey
+	ActionSaveProfile   = models.ActionSaveProfile
+	ActionDeleteProfile = models.ActionDeleteProfile
+	QuerierRoute        = models.QuerierRoute
+	QueryProfile        = models.QueryProfile
+	QueryProfiles       = models.QueryProfiles
+	QueryParams         = models.QueryParams
 )
 
 var (
 	// functions aliases
-	ProfileStoreKey                         = models.ProfileStoreKey
-	DtagStoreKey                            = models.DtagStoreKey
-	RelationshipsStoreKey                   = models.RelationshipsStoreKey
-	NewProfile                              = models.NewProfile
-	NewProfiles                             = models.NewProfiles
-	NewPictures                             = models.NewPictures
-	NewRelationshipResponse                 = models.NewRelationshipResponse
-	RegisterModelsCodec                     = models.RegisterModelsCodec
-	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
-	NewMsgDeleteRelationship                = msgs.NewMsgDeleteRelationship
-	NewMsgSaveProfile                       = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile                     = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
+	ProfileStoreKey       = models.ProfileStoreKey
+	DtagStoreKey          = models.DtagStoreKey
+	NewProfile            = models.NewProfile
+	NewProfiles           = models.NewProfiles
+	NewPictures           = models.NewPictures
+	RegisterModelsCodec   = models.RegisterModelsCodec
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
 
 	// variable aliases
-	ProfileStorePrefix       = models.ProfileStorePrefix
-	DtagStorePrefix          = models.DtagStorePrefix
-	RelationshipsStorePrefix = models.RelationshipsStorePrefix
-	ModelsCdc                = models.ModelsCdc
-	MsgsCodec                = msgs.MsgsCodec
+	ProfileStorePrefix = models.ProfileStorePrefix
+	DtagStorePrefix    = models.DtagStorePrefix
+	ModelsCdc          = models.ModelsCdc
+	MsgsCodec          = msgs.MsgsCodec
 )
 
 type (
-	Profile                              = models.Profile
-	Profiles                             = models.Profiles
-	Pictures                             = models.Pictures
-	RelationshipsResponse                = models.RelationshipsResponse
-	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
-	MsgDeleteRelationship                = msgs.MsgDeleteRelationship
-	MsgSaveProfile                       = msgs.MsgSaveProfile
-	MsgDeleteProfile                     = msgs.MsgDeleteProfile
+	MsgSaveProfile   = msgs.MsgSaveProfile
+	MsgDeleteProfile = msgs.MsgDeleteProfile
+	Profile          = models.Profile
+	Profiles         = models.Profiles
+	Pictures         = models.Pictures
 )
