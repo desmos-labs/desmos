@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-// ModuleCdc is the codec used inside the whole posts module
+// ModuleCdc is the codec used inside the whole profiles module
 var ModuleCdc = codec.New()
 
 func init() {
