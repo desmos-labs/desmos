@@ -25,7 +25,7 @@ type SessionID uint64
 
 // Session is a struct of a user session
 type Session struct {
-	SessionID     SessionID      `json:"id,string"`              // ID of the session
+	SessionID     SessionID      `json:"id,string"`              // Id of the session
 	Owner         sdk.AccAddress `json:"owner"`                  // Desmos owner of this session
 	Created       int64          `json:"creation_time,string"`   // Block height at which the session has been created
 	Expiry        int64          `json:"expiration_time,string"` // Block height at which the session will expire

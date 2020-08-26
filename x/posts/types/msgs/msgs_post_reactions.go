@@ -18,7 +18,7 @@ import (
 
 // MsgAddPostReaction defines the message to be used to add a reaction to a post
 type MsgAddPostReaction struct {
-	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // ID of the post to react to
+	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // Id of the post to react to
 	Reaction string         `json:"reaction" yaml:"reaction"` // Reaction of the reaction
 	User     sdk.AccAddress `json:"user" yaml:"user"`         // Address of the user reacting to the post
 }
@@ -73,7 +73,7 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // MsgRemovePostReaction defines the message to be used when wanting to remove
 // an existing reaction from a specific user having a specific value
 type MsgRemovePostReaction struct {
-	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // ID of the post to unlike
+	PostID   models.PostID  `json:"post_id" yaml:"post_id"`   // Id of the post to unlike
 	Reaction string         `json:"reaction" yaml:"reaction"` // Reaction of the reaction to be removed
 	User     sdk.AccAddress `json:"user" yaml:"user"`         // Address of the user that has previously liked the post
 }
