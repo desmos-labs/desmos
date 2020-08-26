@@ -17,7 +17,7 @@ import (
 
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profileTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -192,7 +192,7 @@ func TestAppImportExport(t *testing.T) {
 
 		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
-		{app.keys[profileTypes.StoreKey], newApp.keys[profileTypes.StoreKey], [][]byte{}},
+		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
 	}
 
