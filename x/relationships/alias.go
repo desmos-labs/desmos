@@ -18,6 +18,7 @@ const (
 	ActionCreateRelationship = models.ActionCreateRelationship
 	ActionDeleteRelationship = models.ActionDeleteRelationship
 	QuerierRoute             = models.QuerierRoute
+	QueryUserRelationships   = models.QueryUserRelationships
 	QueryRelationships       = models.QueryRelationships
 )
 
@@ -29,7 +30,6 @@ var (
 	GetCmdCreateMonoDirectionalRelationship = cli.GetCmdCreateMonoDirectionalRelationship
 	GetCmdDeleteUserRelationship            = cli.GetCmdDeleteUserRelationship
 	RegisterRoutes                          = rest.RegisterRoutes
-	NewQuerier                              = keeper.NewQuerier
 	NewHandler                              = keeper.NewHandler
 	NewKeeper                               = keeper.NewKeeper
 	NewRelationshipResponse                 = models.NewRelationshipResponse
@@ -46,8 +46,8 @@ var (
 )
 
 type (
-	CommonRelationshipReq                = rest.CommonRelationshipReq
-	Keeper                               = keeper.Keeper
 	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
 	MsgDeleteRelationship                = msgs.MsgDeleteRelationship
+	CommonRelationshipReq                = rest.CommonRelationshipReq
+	Keeper                               = keeper.Keeper
 )

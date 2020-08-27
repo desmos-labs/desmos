@@ -14,12 +14,25 @@ import (
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
-		case types.QueryRelationships:
+		case types.QueryUserRelationships:
 			return queryUserRelationships(ctx, path[1:], req, keeper)
+		case types.QueryRelationships:
+			return queryRelationships(ctx, req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown profiles query endpoint")
 		}
 	}
+}
+
+// queryRelationships handles the request of listing all the relationships in the given context
+func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	relationships := keeper.GetUsersRelationships(ctx)
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
 }
 
 // queryUserRelationships handles the request of listing all the users' storedRelationships

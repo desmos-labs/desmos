@@ -33,16 +33,16 @@ var (
 	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
 
 	// variable aliases
+	MsgsCodec          = msgs.MsgsCodec
 	ProfileStorePrefix = models.ProfileStorePrefix
 	DtagStorePrefix    = models.DtagStorePrefix
 	ModelsCdc          = models.ModelsCdc
-	MsgsCodec          = msgs.MsgsCodec
 )
 
 type (
-	MsgSaveProfile   = msgs.MsgSaveProfile
-	MsgDeleteProfile = msgs.MsgDeleteProfile
 	Profile          = models.Profile
 	Profiles         = models.Profiles
 	Pictures         = models.Pictures
+	MsgSaveProfile   = msgs.MsgSaveProfile
+	MsgDeleteProfile = msgs.MsgDeleteProfile
 )

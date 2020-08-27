@@ -11,8 +11,9 @@ const (
 	ActionDeleteRelationship = "delete_relationship"
 
 	// Queries
-	QuerierRoute       = ModuleName
-	QueryRelationships = "relationships"
+	QuerierRoute           = ModuleName
+	QueryUserRelationships = "user_relationships"
+	QueryRelationships     = "relationships"
 )
 
 var (

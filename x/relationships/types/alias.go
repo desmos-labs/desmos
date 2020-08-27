@@ -15,6 +15,7 @@ const (
 	ActionCreateRelationship = models.ActionCreateRelationship
 	ActionDeleteRelationship = models.ActionDeleteRelationship
 	QuerierRoute             = models.QuerierRoute
+	QueryUserRelationships   = models.QueryUserRelationships
 	QueryRelationships       = models.QueryRelationships
 )
 
@@ -28,9 +29,9 @@ var (
 	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	ModelsCdc                = models.ModelsCdc
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
