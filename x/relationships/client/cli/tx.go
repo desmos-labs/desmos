@@ -38,7 +38,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateMonoDirectionalRelationship is the CLI command for creating a monoDirRelationship
 func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-relationship [receiver]",
+		Use:   "create [receiver]",
 		Short: "Create a mono directional relationship with the given receiver address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -63,7 +63,7 @@ func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
 // GetCmdDeleteUserRelationship is the CLI command for deleting a relationship
 func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-relationship [receiver]",
+		Use:   "delete [receiver]",
 		Short: "Delete the relationship with the given user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -30,7 +30,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdQueryRelationships(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "relationships",
+		Use:   "all",
 		Short: "Retrieve all the relationships",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

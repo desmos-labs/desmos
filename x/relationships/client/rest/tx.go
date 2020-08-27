@@ -12,8 +12,8 @@ import (
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profiles/relationship/{address}", createMonoDirectionalRelationshipHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profiles/relationship/delete/{address}", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/relationships/create/{address}", createMonoDirectionalRelationshipHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/relationships/delete/{address}", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
 }
 
 func createMonoDirectionalRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {

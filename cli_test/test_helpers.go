@@ -471,13 +471,13 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 //___________________________________________________________________________________
 // desmoscli tx relationships
 func (f *Fixtures) TxCreateMonoDirectionalRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships create-relationship %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx relationships create %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
 func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships delete-relationship %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx relationships delete %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
