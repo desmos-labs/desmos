@@ -2,8 +2,8 @@ package types
 
 const (
 	// Relationships events
-	EventTypeMonoDirectionalRelationshipCreated = "relationship_created"
-	EventTypeRelationshipsDeleted               = "relationships_deleted"
+	EventTypeRelationshipCreated  = "relationship_created"
+	EventTypeRelationshipsDeleted = "relationships_deleted"
 
 	// Relationships attributes
 	AttributeRelationshipSender   = "relationship_sender"

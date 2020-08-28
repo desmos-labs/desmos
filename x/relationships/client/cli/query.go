@@ -53,7 +53,7 @@ func GetCmdQueryRelationships(cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryUserRelationships queries all the profiles' users' relationships
 func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "user_relationships [address]",
+		Use:   "user [address]",
 		Short: "Retrieve all the user's relationships",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

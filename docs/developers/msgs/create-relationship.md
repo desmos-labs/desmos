@@ -1,11 +1,11 @@
-# `MsgCreateMonoDirectionalRelationship`
+# `MsgCreateRelationship`
 This message allows you to create a mono directional relationship with a specified user.
 Mono directional relationships are like the follow of today's social networks.
 
 ## Structure
 ```json
 {
-  "type": "desmos/MsgCreateMonoDirectionalRelationship",
+  "type": "desmos/MsgCreateRelationship",
   "value": {
     "sender": "<Desmos address that's creating the relationship>",
     "receiver": "<Desmos address that's receiving the relationship>"
@@ -22,7 +22,7 @@ Mono directional relationships are like the follow of today's social networks.
 ## Example
 ````json
 {
-  "type": "desmos/MsgCreateMonoDirectionalRelationship",
+  "type": "desmos/MsgCreateRelationship",
   "value": {
     "sender": "desmos1e209r8nc8qdkmqujahwrq4xrlxhk3fs9k7yzmw",
     "receiver": "desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud"

@@ -28,15 +28,15 @@ var (
 	NewProfiles           = models.NewProfiles
 	NewPictures           = models.NewPictures
 	RegisterModelsCodec   = models.RegisterModelsCodec
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec          = msgs.MsgsCodec
 	ProfileStorePrefix = models.ProfileStorePrefix
 	DtagStorePrefix    = models.DtagStorePrefix
 	ModelsCdc          = models.ModelsCdc
+	MsgsCodec          = msgs.MsgsCodec
 )
 
 type (

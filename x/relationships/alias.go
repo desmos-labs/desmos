@@ -24,20 +24,22 @@ const (
 
 var (
 	// functions aliases
-	GetQueryCmd                             = cli.GetQueryCmd
-	GetCmdQueryUserRelationships            = cli.GetCmdQueryUserRelationships
-	GetTxCmd                                = cli.GetTxCmd
-	GetCmdCreateMonoDirectionalRelationship = cli.GetCmdCreateMonoDirectionalRelationship
-	GetCmdDeleteUserRelationship            = cli.GetCmdDeleteUserRelationship
-	RegisterRoutes                          = rest.RegisterRoutes
-	NewHandler                              = keeper.NewHandler
-	NewKeeper                               = keeper.NewKeeper
-	NewRelationshipResponse                 = models.NewRelationshipResponse
-	RelationshipsStoreKey                   = models.RelationshipsStoreKey
-	RegisterModelsCodec                     = models.RegisterModelsCodec
-	NewMsgCreateMonoDirectionalRelationship = msgs.NewMsgCreateMonoDirectionalRelationship
-	NewMsgDeleteRelationship                = msgs.NewMsgDeleteRelationship
-	RegisterMessagesCodec                   = msgs.RegisterMessagesCodec
+	NewHandler                   = keeper.NewHandler
+	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
+	NewRelationshipResponse      = models.NewRelationshipResponse
+	RelationshipsStoreKey        = models.RelationshipsStoreKey
+	RegisterModelsCodec          = models.RegisterModelsCodec
+	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
+	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteUserRelationship = cli.GetCmdDeleteUserRelationship
+	RegisterRoutes               = rest.RegisterRoutes
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -46,8 +48,8 @@ var (
 )
 
 type (
-	MsgCreateMonoDirectionalRelationship = msgs.MsgCreateMonoDirectionalRelationship
-	MsgDeleteRelationship                = msgs.MsgDeleteRelationship
-	CommonRelationshipReq                = rest.CommonRelationshipReq
-	Keeper                               = keeper.Keeper
+	CommonRelationshipReq = rest.CommonRelationshipReq
+	Keeper                = keeper.Keeper
+	MsgCreateRelationship = msgs.MsgCreateRelationship
+	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 )

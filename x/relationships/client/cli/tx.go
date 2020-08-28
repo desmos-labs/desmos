@@ -28,18 +28,18 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	profileTxCmd.AddCommand(flags.PostCommands(
-		GetCmdCreateMonoDirectionalRelationship(cdc),
+		GetCmdCreateRelationship(cdc),
 		GetCmdDeleteUserRelationship(cdc),
 	)...)
 
 	return profileTxCmd
 }
 
-// GetCmdCreateMonoDirectionalRelationship is the CLI command for creating a monoDirRelationship
-func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
+// GetCmdCreateRelationship is the CLI command for creating a relationship
+func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [receiver]",
-		Short: "Create a mono directional relationship with the given receiver address",
+		Short: "Create a relationship with the given receiver address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -51,7 +51,7 @@ func GetCmdCreateMonoDirectionalRelationship(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateMonoDirectionalRelationship(cliCtx.FromAddress, receiver)
+			msg := types.NewMsgCreateRelationship(cliCtx.FromAddress, receiver)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

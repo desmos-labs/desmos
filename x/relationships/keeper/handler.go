@@ -14,7 +14,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case types.MsgCreateMonoDirectionalRelationship:
+		case types.MsgCreateRelationship:
 			return handleMsgCreateRelationship(ctx, keeper, msg)
 		case types.MsgDeleteRelationship:
 			return handleMsgDeleteRelationship(ctx, keeper, msg)
@@ -25,8 +25,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
-// handleMsgCreateRelationship handles the creation of a mono directional relationship
-func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateMonoDirectionalRelationship) (*sdk.Result, error) {
+// handleMsgCreateRelationship handles the creation of a relationship
+func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
 	// Save the relationship
 	err := keeper.StoreRelationship(ctx, msg.Sender, msg.Receiver)
 	if err != nil {
@@ -34,7 +34,7 @@ func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCr
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeMonoDirectionalRelationshipCreated,
+		types.EventTypeRelationshipCreated,
 		sdk.NewAttribute(types.AttributeRelationshipSender, msg.Sender.String()),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Receiver.String()),
 	))

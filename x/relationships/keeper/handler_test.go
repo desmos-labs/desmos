@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
-func (suite *KeeperTestSuite) Test_handleMsgCreateMonoDirectionalRelationship() {
+func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -16,24 +16,24 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateMonoDirectionalRelationship() 
 
 	tests := []struct {
 		name                string
-		msg                 types.MsgCreateMonoDirectionalRelationship
+		msg                 types.MsgCreateRelationship
 		storedRelationships []sdk.AccAddress
 		expErr              error
 		expEvent            sdk.Event
 	}{
 		{
 			name:                "Relationship already created returns error",
-			msg:                 types.NewMsgCreateMonoDirectionalRelationship(sender, receiver),
+			msg:                 types.NewMsgCreateRelationship(sender, receiver),
 			storedRelationships: []sdk.AccAddress{receiver},
 			expErr:              sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("relationship already exists with %s", receiver)),
 		},
 		{
 			name:                "Relationship has been saved correctly",
-			msg:                 types.NewMsgCreateMonoDirectionalRelationship(sender, receiver),
+			msg:                 types.NewMsgCreateRelationship(sender, receiver),
 			storedRelationships: nil,
 			expErr:              nil,
 			expEvent: sdk.NewEvent(
-				types.EventTypeMonoDirectionalRelationshipCreated,
+				types.EventTypeRelationshipCreated,
 				sdk.NewAttribute(types.AttributeRelationshipSender, sender.String()),
 				sdk.NewAttribute(types.AttributeRelationshipReceiver, receiver.String()),
 			),

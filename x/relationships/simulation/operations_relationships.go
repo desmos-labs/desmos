@@ -15,19 +15,19 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 )
 
-// SimulateMsgCreateMonoDirectionalRelationship tests and runs a single msg create monoDirectional relationships
+// SimulateMsgCreateRelationship tests and runs a single msg create relationships
 // nolint: funlen
-func SimulateMsgCreateMonoDirectionalRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
-		sender, receiver, skip := randomMonoRelationshipFields(r, ctx, accs, k)
+		sender, receiver, skip := randomRelationshipFields(r, ctx, accs, k)
 		if skip {
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgCreateMonoDirectionalRelationship(sender.Address, receiver)
-		if err := sendMsgCreateMonoDirectionalRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
+		msg := types.NewMsgCreateRelationship(sender.Address, receiver)
+		if err := sendMsgCreateRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -35,9 +35,9 @@ func SimulateMsgCreateMonoDirectionalRelationship(k keeper.Keeper, ak auth.Accou
 	}
 }
 
-// sendMsgCreateMonoDirectionalRelationship sends a transaction with a MsgCreateMonoDirectionalRelationship from a provided random account
-func sendMsgCreateMonoDirectionalRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg types.MsgCreateMonoDirectionalRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+// sendMsgCreateRelationship sends a transaction with a Relationship from a provided random account
+func sendMsgCreateRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	msg types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
@@ -65,8 +65,8 @@ func sendMsgCreateMonoDirectionalRelationship(r *rand.Rand, app *baseapp.BaseApp
 	return nil
 }
 
-// randomMonoRelationshipFields returns random monoDirectional relationships fields
-func randomMonoRelationshipFields(
+// randomRelationshipFields returns random relationships fields
+func randomRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper,
 ) (sim.Account, sdk.AccAddress, bool) {
 	if len(accs) == 0 {

@@ -11,6 +11,6 @@ func init() {
 
 // RegisterMessagesCodec registers concrete types on the Amino codec
 func RegisterMessagesCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgCreateMonoDirectionalRelationship{}, "desmos/MsgCreateMonoDirectionalRelationship", nil)
+	cdc.RegisterConcrete(MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
 	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
 }

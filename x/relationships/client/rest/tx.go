@@ -12,11 +12,11 @@ import (
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/relationships/create/{address}", createMonoDirectionalRelationshipHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/relationships/create/{address}", createRelationshipHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/relationships/delete/{address}", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
 }
 
-func createMonoDirectionalRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		var req CommonRelationshipReq
@@ -43,7 +43,7 @@ func createMonoDirectionalRelationshipHandler(cliCtx context.CLIContext) http.Ha
 			return
 		}
 
-		msg := types.NewMsgCreateMonoDirectionalRelationship(sender, receiver)
+		msg := types.NewMsgCreateRelationship(sender, receiver)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

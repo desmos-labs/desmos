@@ -30,7 +30,7 @@ func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create mono directional relationship
-	success, _, sterr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "-y")
+	success, _, sterr := f.TxCreateRelationship(receiver, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -48,11 +48,11 @@ func TestDesmosCLICreateMonoDirectionalRelationship(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-tun
-	success, _, _ = f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "--dry-run")
+	success, _, _ = f.TxCreateRelationship(receiver, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxCreateRelationship(receiver, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -82,7 +82,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create mono directional relationship
-	success, _, sterr := f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "-y")
+	success, _, sterr := f.TxCreateRelationship(receiver, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -104,7 +104,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.Empty(t, storedRelationships)
 
 	// Create mono directional relationship
-	success, _, sterr = f.TxCreateMonoDirectionalRelationship(receiver, fooAddr, "-y")
+	success, _, sterr = f.TxCreateRelationship(receiver, fooAddr, "-y")
 
 	// Test --dry-tun
 	success, _, _ = f.TxDeleteUserRelationship(receiver, fooAddr, "--dry-run")

@@ -38,7 +38,7 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
-			SimulateMsgCreateMonoDirectionalRelationship(k, ak),
+			SimulateMsgCreateRelationship(k, ak),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,

@@ -8,31 +8,31 @@ import (
 	"github.com/desmos-labs/desmos/x/relationships/types/models"
 )
 
-// Creates a mono directional relationship between the sender and
+// Creates a relationship between the sender and
 // the receiver.
-// An example of mono directional relationship is the follow on Twitter or the subscribe on YouTube.
-type MsgCreateMonoDirectionalRelationship struct {
+// An example of relationship is the follow on Twitter or the subscribe on YouTube.
+type MsgCreateRelationship struct {
 	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
 }
 
-func NewMsgCreateMonoDirectionalRelationship(sender, receiver sdk.AccAddress) MsgCreateMonoDirectionalRelationship {
-	return MsgCreateMonoDirectionalRelationship{
+func NewMsgCreateRelationship(sender, receiver sdk.AccAddress) MsgCreateRelationship {
+	return MsgCreateRelationship{
 		Sender:   sender,
 		Receiver: receiver,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgCreateMonoDirectionalRelationship) Route() string { return models.RouterKey }
+func (msg MsgCreateRelationship) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgCreateMonoDirectionalRelationship) Type() string {
+func (msg MsgCreateRelationship) Type() string {
 	return models.ActionCreateRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateMonoDirectionalRelationship) ValidateBasic() error {
+func (msg MsgCreateRelationship) ValidateBasic() error {
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
@@ -49,12 +49,12 @@ func (msg MsgCreateMonoDirectionalRelationship) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreateMonoDirectionalRelationship) GetSignBytes() []byte {
+func (msg MsgCreateRelationship) GetSignBytes() []byte {
 	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreateMonoDirectionalRelationship) GetSigners() []sdk.AccAddress {
+func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
