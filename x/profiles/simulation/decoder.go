@@ -24,6 +24,6 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)
 		return fmt.Sprintf("AddressA: %s\nAddressB: %s\n", addressA, addressB)
 	default:
-		panic(fmt.Sprintf("invalid profile key %X", kvA.Key))
+		panic(fmt.Sprintf("invalid profiles key %X", kvA.Key))
 	}
 }

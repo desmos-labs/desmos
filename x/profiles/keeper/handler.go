@@ -21,7 +21,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		case types.MsgDeleteProfile:
 			return handleMsgDeleteProfile(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("Unrecognized Posts message type: %v", msg.Type())
+			errMsg := fmt.Sprintf("Unrecognized Profiles message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
@@ -124,7 +124,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("No profile associated with this address: %s", msg.Creator))
+			fmt.Sprintf("no profile associated with this address: %s", msg.Creator))
 	}
 
 	keeper.DeleteProfile(ctx, profile.Creator, profile.DTag)

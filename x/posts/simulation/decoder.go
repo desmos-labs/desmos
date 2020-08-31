@@ -44,6 +44,6 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &totalPostsB)
 		return fmt.Sprintf("TotalPostsA: %s\nTotalPostsB: %s\n", totalPostsA, totalPostsB)
 	default:
-		panic(fmt.Sprintf("invalid account key %X", kvA.Key))
+		panic(fmt.Sprintf("invalid posts key %X", kvA.Key))
 	}
 }

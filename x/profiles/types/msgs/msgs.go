@@ -1,4 +1,4 @@
-package types
+package msgs
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 )
 
 // ----------------------
@@ -35,10 +36,10 @@ func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, coverPic *string, 
 }
 
 // Route should return the name of the module
-func (msg MsgSaveProfile) Route() string { return RouterKey }
+func (msg MsgSaveProfile) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
+func (msg MsgSaveProfile) Type() string { return models.ActionSaveProfile }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSaveProfile) ValidateBasic() error {
@@ -55,7 +56,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgSaveProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
@@ -80,10 +81,10 @@ func NewMsgDeleteProfile(creator sdk.AccAddress) MsgDeleteProfile {
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteProfile) Route() string { return RouterKey }
+func (msg MsgDeleteProfile) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
+func (msg MsgDeleteProfile) Type() string { return models.ActionDeleteProfile }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteProfile) ValidateBasic() error {
@@ -96,7 +97,7 @@ func (msg MsgDeleteProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgDeleteProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

@@ -1,12 +1,14 @@
-package types_test
+package models_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types/common"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,8 +21,8 @@ func TestNewProfile(t *testing.T) {
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	expProfile := types.NewProfile("test", owner, date)
-	actProfile := types.NewProfile("test", owner, date)
+	expProfile := models.NewProfile("test", owner, date)
+	actProfile := models.NewProfile("test", owner, date)
 
 	require.True(t, expProfile.Equals(actProfile))
 }
@@ -34,9 +36,9 @@ func TestProfile_WithMoniker(t *testing.T) {
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	profile := types.NewProfile("monik", owner, date)
+	profile := models.NewProfile("monik", owner, date)
 
-	profileWithMoniker := profile.WithMoniker(newStrPtr("test-moniker"))
+	profileWithMoniker := profile.WithMoniker(common.NewStrPtr("test-moniker"))
 	require.Equal(t, "test-moniker", *profileWithMoniker.Moniker)
 }
 
@@ -49,9 +51,9 @@ func TestProfile_WithBio(t *testing.T) {
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	profile := types.NewProfile("dtag", owner, date)
+	profile := models.NewProfile("dtag", owner, date)
 
-	profileWithBio := profile.WithBio(newStrPtr("new-biography"))
+	profileWithBio := profile.WithBio(common.NewStrPtr("new-biography"))
 	require.Equal(t, "new-biography", *profileWithBio.Bio)
 }
 
@@ -64,29 +66,29 @@ func TestProfile_WithPics(t *testing.T) {
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
 
-	profile := types.NewProfile("dtag", owner, date)
+	profile := models.NewProfile("dtag", owner, date)
 
 	tests := []struct {
 		name       string
-		profile    types.Profile
+		profile    models.Profile
 		pic        *string
 		cov        *string
-		expProfile types.Profile
+		expProfile models.Profile
 	}{
 		{
 			name:    "not nil pics",
 			profile: profile,
-			pic:     newStrPtr("pic"),
-			cov:     newStrPtr("cov"),
-			expProfile: types.NewProfile("dtag", owner, date).
-				WithPictures(newStrPtr("pic"), newStrPtr("cov")),
+			pic:     common.NewStrPtr("pic"),
+			cov:     common.NewStrPtr("cov"),
+			expProfile: models.NewProfile("dtag", owner, date).
+				WithPictures(common.NewStrPtr("pic"), common.NewStrPtr("cov")),
 		},
 		{
 			name:       "nil pics",
 			profile:    profile,
 			pic:        nil,
 			cov:        nil,
-			expProfile: types.NewProfile("dtag", owner, date),
+			expProfile: models.NewProfile("dtag", owner, date),
 		},
 	}
 
@@ -110,37 +112,37 @@ func TestProfile_String(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		profile   types.Profile
+		profile   models.Profile
 		expString string
 	}{
 		{
 			name:      "profile without moniker, bio and pictures",
-			profile:   types.NewProfile("my_Tag", owner, date),
+			profile:   models.NewProfile("my_Tag", owner, date),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC",
 		},
 		{
 			name:      "profile with moniker",
-			profile:   types.NewProfile("my_Tag", owner, date).WithMoniker(newStrPtr("moniker")),
+			profile:   models.NewProfile("my_Tag", owner, date).WithMoniker(common.NewStrPtr("moniker")),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Moniker] moniker",
 		},
 		{
 			name:      "profile with bio",
-			profile:   types.NewProfile("my_Tag", owner, date).WithBio(newStrPtr("bio")),
+			profile:   models.NewProfile("my_Tag", owner, date).WithBio(common.NewStrPtr("bio")),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Biography] bio",
 		},
 		{
 			name:      "profile with profile pic",
-			profile:   types.NewProfile("my_Tag", owner, date).WithPictures(newStrPtr("pic"), nil),
+			profile:   models.NewProfile("my_Tag", owner, date).WithPictures(common.NewStrPtr("pic"), nil),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Profile] pic ",
 		},
 		{
 			name:      "profile with profile cov",
-			profile:   types.NewProfile("my_Tag", owner, date).WithPictures(nil, newStrPtr("cov")),
+			profile:   models.NewProfile("my_Tag", owner, date).WithPictures(nil, common.NewStrPtr("cov")),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC Pictures:\n[Cover] cov",
 		},
 		{
 			name:      "profile with moniker, bio, pictures",
-			profile:   types.NewProfile("my_Tag", owner, date).WithMoniker(newStrPtr("moniker")).WithBio(newStrPtr("bio")).WithPictures(newStrPtr("pic"), newStrPtr("cov")),
+			profile:   models.NewProfile("my_Tag", owner, date).WithMoniker(common.NewStrPtr("moniker")).WithBio(common.NewStrPtr("bio")).WithPictures(common.NewStrPtr("pic"), common.NewStrPtr("cov")),
 			expString: "Profile:\n[Dtag] my_Tag [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Creation Time] 2010-10-02 12:10:00 +0000 UTC [Moniker] moniker [Biography] bio Pictures:\n[Profile] pic [Cover] cov",
 		},
 	}
@@ -168,62 +170,62 @@ func TestProfile_Equals(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		first   types.Profile
-		second  types.Profile
+		first   models.Profile
+		second  models.Profile
 		expBool bool
 	}{
 		{
 			name:    "Different DTag returns false",
-			first:   types.NewProfile("dtag-1", user1, time1),
-			second:  types.NewProfile("dtag-2", user1, time1),
+			first:   models.NewProfile("dtag-1", user1, time1),
+			second:  models.NewProfile("dtag-2", user1, time1),
 			expBool: false,
 		},
 		{
 			name: "Different moniker returns false",
-			first: types.NewProfile("dtag", user1, time1).
-				WithMoniker(newStrPtr("moniker-1")),
-			second: types.NewProfile("dtag", user1, time1).
-				WithMoniker(newStrPtr("moniker-2")),
+			first: models.NewProfile("dtag", user1, time1).
+				WithMoniker(common.NewStrPtr("moniker-1")),
+			second: models.NewProfile("dtag", user1, time1).
+				WithMoniker(common.NewStrPtr("moniker-2")),
 			expBool: false,
 		},
 		{
 			name: "Different bio returns false",
-			first: types.NewProfile("dtag", user1, time1).
-				WithBio(newStrPtr("bio-1")),
-			second: types.NewProfile("dtag", user1, time1).
-				WithBio(newStrPtr("bio-2")),
+			first: models.NewProfile("dtag", user1, time1).
+				WithBio(common.NewStrPtr("bio-1")),
+			second: models.NewProfile("dtag", user1, time1).
+				WithBio(common.NewStrPtr("bio-2")),
 			expBool: false,
 		},
 		{
 			name: "Different pictures returns false",
-			first: types.NewProfile("dtag", user1, time1).
-				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
-			second: types.NewProfile("dtag", user1, time1).
-				WithPictures(newStrPtr("profile-2"), newStrPtr("cover-2")),
+			first: models.NewProfile("dtag", user1, time1).
+				WithPictures(common.NewStrPtr("profile-1"), common.NewStrPtr("cover-1")),
+			second: models.NewProfile("dtag", user1, time1).
+				WithPictures(common.NewStrPtr("profile-2"), common.NewStrPtr("cover-2")),
 			expBool: false,
 		},
 		{
 			name:    "Different creation dates returns false",
-			first:   types.NewProfile("dtag", user1, time1),
-			second:  types.NewProfile("dtag", user1, time2),
+			first:   models.NewProfile("dtag", user1, time1),
+			second:  models.NewProfile("dtag", user1, time2),
 			expBool: false,
 		},
 		{
 			name:    "Different creators returns false",
-			first:   types.NewProfile("dtag", user1, time1),
-			second:  types.NewProfile("dtag", user2, time1),
+			first:   models.NewProfile("dtag", user1, time1),
+			second:  models.NewProfile("dtag", user2, time1),
 			expBool: false,
 		},
 		{
 			name: "Same profiles return true",
-			first: types.NewProfile("dtag-1", user1, time1).
-				WithMoniker(newStrPtr("moniker-1")).
-				WithBio(newStrPtr("bio-1")).
-				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
-			second: types.NewProfile("dtag-1", user1, time1).
-				WithMoniker(newStrPtr("moniker-1")).
-				WithBio(newStrPtr("bio-1")).
-				WithPictures(newStrPtr("profile-1"), newStrPtr("cover-1")),
+			first: models.NewProfile("dtag-1", user1, time1).
+				WithMoniker(common.NewStrPtr("moniker-1")).
+				WithBio(common.NewStrPtr("bio-1")).
+				WithPictures(common.NewStrPtr("profile-1"), common.NewStrPtr("cover-1")),
+			second: models.NewProfile("dtag-1", user1, time1).
+				WithMoniker(common.NewStrPtr("moniker-1")).
+				WithBio(common.NewStrPtr("bio-1")).
+				WithPictures(common.NewStrPtr("profile-1"), common.NewStrPtr("cover-1")),
 			expBool: true,
 		},
 	}
@@ -243,17 +245,17 @@ func TestProfile_Validate(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		account types.Profile
+		account models.Profile
 		expErr  error
 	}{
 		{
 			name: "Empty profile creator returns error",
-			account: types.Profile{
+			account: models.Profile{
 				DTag: "dtag",
-				Bio:  newStrPtr("bio"),
-				Pictures: types.NewPictures(
-					newStrPtr("https://shorturl.at/adnX3"),
-					newStrPtr("https://shorturl.at/cgpyF"),
+				Bio:  common.NewStrPtr("bio"),
+				Pictures: models.NewPictures(
+					common.NewStrPtr("https://shorturl.at/adnX3"),
+					common.NewStrPtr("https://shorturl.at/cgpyF"),
 				),
 				Creator: nil,
 			},
@@ -261,12 +263,12 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty profile dtag returns error",
-			account: types.Profile{
+			account: models.Profile{
 				DTag: "",
-				Bio:  newStrPtr("bio"),
-				Pictures: types.NewPictures(
-					newStrPtr("https://shorturl.at/adnX3"),
-					newStrPtr("https://shorturl.at/cgpyF"),
+				Bio:  common.NewStrPtr("bio"),
+				Pictures: models.NewPictures(
+					common.NewStrPtr("https://shorturl.at/adnX3"),
+					common.NewStrPtr("https://shorturl.at/cgpyF"),
 				),
 				Creator: user,
 			},
@@ -274,12 +276,12 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Valid profile returns no error",
-			account: types.Profile{
+			account: models.Profile{
 				DTag: "dtag",
-				Bio:  newStrPtr("bio"),
-				Pictures: types.NewPictures(
-					newStrPtr("https://shorturl.at/adnX3"),
-					newStrPtr("https://shorturl.at/cgpyF"),
+				Bio:  common.NewStrPtr("bio"),
+				Pictures: models.NewPictures(
+					common.NewStrPtr("https://shorturl.at/adnX3"),
+					common.NewStrPtr("https://shorturl.at/cgpyF"),
 				),
 				Creator: user,
 			},
@@ -287,10 +289,10 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			account: types.Profile{
+			account: models.Profile{
 				DTag:     "dtag",
-				Bio:      newStrPtr("bio"),
-				Pictures: types.NewPictures(newStrPtr("pic"), newStrPtr("cov")),
+				Bio:      common.NewStrPtr("bio"),
+				Pictures: models.NewPictures(common.NewStrPtr("pic"), common.NewStrPtr("cov")),
 				Creator:  user,
 			},
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
@@ -303,4 +305,20 @@ func TestProfile_Validate(t *testing.T) {
 			require.Equal(t, test.expErr, test.account.Validate())
 		})
 	}
+}
+
+func TestNewProfiles(t *testing.T) {
+	profile := models.Profile{
+		DTag: "dtag",
+		Bio:  common.NewStrPtr("bio"),
+		Pictures: models.NewPictures(
+			common.NewStrPtr("https://shorturl.at/adnX3"),
+			common.NewStrPtr("https://shorturl.at/cgpyF"),
+		),
+		Creator: nil,
+	}
+
+	profiles := types.NewProfiles(profile)
+
+	require.Equal(t, types.Profiles{profile}, profiles)
 }

@@ -51,7 +51,7 @@ func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
 		Short: "Save your profile associating to it the given DTag.",
 		Long: fmt.Sprintf(`
 Save a new profile or edit the existing one specifying a DTag, a moniker, biography, profile picture and cover picture.
-Every data given through the flags is optional.
+Every data given through the flags is optional.
 If you are editing an existing profile you should fill all the existent fields otherwise the existing values
 will be removed.
 

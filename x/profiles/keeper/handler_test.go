@@ -280,7 +280,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
-				"No profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"no profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 		},
 		{
