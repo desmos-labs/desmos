@@ -14,5 +14,6 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 
 // CommonRelationshipReq defines the properties of a create relationship operation request's body
 type CommonRelationshipReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Receiver string       `json:"receiver"`
 }

@@ -19,7 +19,7 @@ import (
 
 // GetTxCmd set the tx commands
 func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
-	profileTxCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Profiles transaction subcommands",
 		DisableFlagParsing:         true,
@@ -27,12 +27,12 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	profileTxCmd.AddCommand(flags.PostCommands(
+	cmd.AddCommand(flags.PostCommands(
 		GetCmdCreateRelationship(cdc),
-		GetCmdDeleteUserRelationship(cdc),
+		GetCmdDeleteRelationship(cdc),
 	)...)
 
-	return profileTxCmd
+	return cmd
 }
 
 // GetCmdCreateRelationship is the CLI command for creating a relationship
@@ -60,8 +60,8 @@ func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
-// GetCmdDeleteUserRelationship is the CLI command for deleting a relationship
-func GetCmdDeleteUserRelationship(cdc *codec.Codec) *cobra.Command {
+// GetCmdDeleteRelationship is the CLI command for deleting a relationship
+func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete [receiver]",
 		Short: "Delete the relationship with the given user",

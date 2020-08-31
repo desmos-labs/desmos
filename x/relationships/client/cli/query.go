@@ -14,18 +14,18 @@ import (
 
 // GetQueryCmd adds the query commands
 func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	profileQueryCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the relationships module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	profileQueryCmd.AddCommand(flags.GetCommands(
+	cmd.AddCommand(flags.GetCommands(
 		GetCmdQueryUserRelationships(cdc),
 		GetCmdQueryRelationships(cdc),
 	)...)
-	return profileQueryCmd
+	return cmd
 }
 
 func GetCmdQueryRelationships(cdc *codec.Codec) *cobra.Command {

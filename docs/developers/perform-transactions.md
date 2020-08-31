@@ -22,7 +22,7 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 * [`EditParamsProposal`](msgs/edit_param_proposal.md): allows you to open a proposal to change profile's params.
 
 ## Relationships
-* [`MsgCreateMonoDirectionalRelationship`](msgs/create-relationship.md): allows you to create a mono directional relationship.
+* [`MsgCreateRelationship`](msgs/create-relationship.md): allows you to create a relationship.
 * [`MsgDeleteRelationship`](msgs/delete-relationship.md): allows you to delete a relationship.
 
 ### Reports

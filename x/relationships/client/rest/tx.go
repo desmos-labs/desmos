@@ -12,13 +12,12 @@ import (
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/relationships/create/{address}", createRelationshipHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/relationships/delete/{address}", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/relationships", createRelationshipHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/relationships", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
 }
 
 func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
 		var req CommonRelationshipReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -37,7 +36,7 @@ func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receiver, err := sdk.AccAddressFromBech32(vars["address"])
+		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -55,7 +54,6 @@ func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
 		var req CommonRelationshipReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -74,7 +72,7 @@ func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receiver, err := sdk.AccAddressFromBech32(vars["address"])
+		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid receiver given")
 		}

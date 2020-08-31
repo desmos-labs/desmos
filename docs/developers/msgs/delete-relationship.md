@@ -1,5 +1,5 @@
 # `MsgDeleteRelationship`
-This message allows you to delete a mono directional relationship with a specified counterparty.
+This message allows you to delete an existing relationship with a specified counterparty.
 
 ## Structure
 ````json

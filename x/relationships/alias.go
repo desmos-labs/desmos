@@ -38,7 +38,7 @@ var (
 	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
 	GetTxCmd                     = cli.GetTxCmd
 	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteUserRelationship = cli.GetCmdDeleteUserRelationship
+	GetCmdDeleteUserRelationship = cli.GetCmdDeleteRelationship
 	RegisterRoutes               = rest.RegisterRoutes
 
 	// variable aliases

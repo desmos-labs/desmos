@@ -1,6 +1,5 @@
 # `MsgCreateRelationship`
-This message allows you to create a mono directional relationship with a specified user.
-Mono directional relationships are like the follow of today's social networks.
+This message allows you to create a relationship between the signer and a specified user.
 
 ## Structure
 ```json
