@@ -106,3 +106,102 @@ func (msg MsgDeleteRelationship) GetSignBytes() []byte {
 func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
+
+// MsgBlockUser allows the given Blocker to block the specified Blocked user
+// for the (optional) reason.
+type MsgBlockUser struct {
+	Blocker sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Reason  string         `json:"reason,omitempty" yaml:"reason,omitempty"`
+}
+
+func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason string) MsgBlockUser {
+	return MsgBlockUser{
+		Blocker: blocker,
+		Blocked: blocked,
+		Reason:  reason,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgBlockUser) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgBlockUser) Type() string {
+	return models.ActionBlockUser
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgBlockUser) ValidateBasic() error {
+	if msg.Blocker.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	}
+
+	if msg.Blocked.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	}
+
+	if msg.Blocker.Equals(msg.Blocked) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgBlockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Blocker}
+}
+
+// MsgUnblockUser allows the given original Blocker to unblock the specified Blocked user.
+type MsgUnblockUser struct {
+	Blocker sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked sdk.AccAddress `json:"blocked" yaml:"blocked"`
+}
+
+func NewMsgUnblockUser(blocker, blocked sdk.AccAddress) MsgUnblockUser {
+	return MsgUnblockUser{
+		Blocker: blocker,
+		Blocked: blocked,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgUnblockUser) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgUnblockUser) Type() string {
+	return models.ActionUnblockUser
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgUnblockUser) ValidateBasic() error {
+	if msg.Blocker.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	}
+
+	if msg.Blocked.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	}
+
+	if msg.Blocker.Equals(msg.Blocked) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgUnblockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Blocker}
+}

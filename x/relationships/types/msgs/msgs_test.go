@@ -19,6 +19,16 @@ var (
 	msgDeleteRelationships = msgs.MsgDeleteRelationship{
 		Sender: user,
 	}
+
+	msgBlockUser = msgs.MsgBlockUser{
+		Blocker: user,
+		Blocked: otherUser,
+	}
+
+	msgUnblockUser = msgs.MsgUnblockUser{
+		Blocker: user,
+		Blocked: otherUser,
+	}
 )
 
 // MsgCreateRelationship
@@ -166,4 +176,150 @@ func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
 	actual := msgDeleteRelationships.GetSigners()
 	require.Equal(t, 1, len(actual))
 	require.Equal(t, msgDeleteRelationships.Sender, actual[0])
+}
+
+// MsgBlockUser
+func TestMsgBlockUser_Route(t *testing.T) {
+	actual := msgBlockUser.Route()
+	require.Equal(t, "relationships", actual)
+}
+
+func TestMsgBlockUser_Type(t *testing.T) {
+	actual := msgBlockUser.Type()
+	require.Equal(t, "block_user", actual)
+}
+
+func TestMsgBlockUser_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgBlockUser
+		error error
+	}{
+		{
+			name: "Empty sender returns error",
+			msg: msgs.NewMsgBlockUser(
+				nil, nil, "",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
+		},
+		{
+			name: "Empty receiver returns error",
+			msg: msgs.NewMsgBlockUser(
+				user, nil, "",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
+		},
+		{
+			name: "Equals sender and receiver",
+			msg: msgs.NewMsgBlockUser(
+				user, user, "",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgBlockUser(
+				user, otherUser, "mobbing",
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgBlockUser_GetSignBytes(t *testing.T) {
+	actual := msgBlockUser.GetSignBytes()
+	expected := `{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgBlockUser_GetSigners(t *testing.T) {
+	actual := msgBlockUser.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgBlockUser.Blocker, actual[0])
+}
+
+// MsgUnblockUser
+func TestMsgUnblockUser_Route(t *testing.T) {
+	actual := msgUnblockUser.Route()
+	require.Equal(t, "relationships", actual)
+}
+
+func TestMsgUnblockUser_Type(t *testing.T) {
+	actual := msgUnblockUser.Type()
+	require.Equal(t, "unblock_user", actual)
+}
+
+func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgUnblockUser
+		error error
+	}{
+		{
+			name: "Empty sender returns error",
+			msg: msgs.NewMsgUnblockUser(
+				nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
+		},
+		{
+			name: "Empty receiver returns error",
+			msg: msgs.NewMsgUnblockUser(
+				user, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
+		},
+		{
+			name: "Equals sender and receiver",
+			msg: msgs.NewMsgUnblockUser(
+				user, user,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgUnblockUser(
+				user, otherUser,
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
+	actual := msgUnblockUser.GetSignBytes()
+	expected := `{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgUnblockUser_GetSigners(t *testing.T) {
+	actual := msgUnblockUser.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgUnblockUser.Blocker, actual[0])
 }
