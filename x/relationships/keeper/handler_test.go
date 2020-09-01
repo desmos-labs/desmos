@@ -97,3 +97,98 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, addr1.String()),
 	))
 }
+
+func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
+	blocker, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	blocked, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	tests := []struct {
+		name             string
+		msg              types.MsgBlockUser
+		storedUserBlocks []types.UserBlock
+		expErr           error
+		expEvent         sdk.Event
+	}{
+		{
+			name:             "Relationship already created returns error",
+			msg:              types.NewMsgBlockUser(blocker, blocked, "reason"),
+			storedUserBlocks: []types.UserBlock{types.NewUserBlock(blocker, blocked, "reason")},
+			expErr:           sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the user with %s address has been blocked already", blocked)),
+		},
+		{
+			name:             "Relationship has been saved correctly",
+			msg:              types.NewMsgBlockUser(blocker, blocked, "reason"),
+			storedUserBlocks: nil,
+			expErr:           nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeBlockUser,
+				sdk.NewAttribute(types.AttributeUserBlockBlocker, blocker.String()),
+				sdk.NewAttribute(types.AttributeUserBlockBlocked, blocked.String()),
+				sdk.NewAttribute(types.AttributeUserBlockReason, "reason"),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedUserBlocks != nil {
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store.Set(types.UsersBlocksStoreKey(test.msg.Blocker),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedUserBlocks))
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if test.expErr != nil {
+				suite.Error(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+
+			if test.expErr == nil {
+				suite.NoError(err)
+
+				// Check the events
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+				suite.Len(suite.keeper.GetUserBlocks(suite.ctx, blocker), 1)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
+	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.NoError(err)
+	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store.Set(types.UsersBlocksStoreKey(suite.testData.user),
+		suite.keeper.Cdc.MustMarshalBinaryBare(&[]types.UserBlock{
+			types.NewUserBlock(suite.testData.user, addr1, "reason"),
+			types.NewUserBlock(suite.testData.user, addr2, "reason"),
+		}))
+
+	testMsg := types.NewMsgUnblockUser(suite.testData.user, addr1)
+
+	handler := keeper.NewHandler(suite.keeper)
+	res, err := handler(suite.ctx, testMsg)
+
+	suite.NoError(err)
+
+	suite.Equal([]types.UserBlock{types.NewUserBlock(suite.testData.user, addr2, "reason")},
+		suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user))
+
+	// Check the events
+	suite.Len(res.Events, 1)
+	suite.Contains(res.Events, sdk.NewEvent(
+		types.EventTypeUnblockUser,
+		sdk.NewAttribute(types.AttributeUserBlockBlocker, suite.testData.user.String()),
+		sdk.NewAttribute(types.AttributeUserBlockBlocked, addr1.String()),
+	))
+}

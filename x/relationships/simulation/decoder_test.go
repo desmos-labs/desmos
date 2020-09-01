@@ -19,6 +19,10 @@ var (
 	anotherUserAddr = sdk.AccAddress(anotherKey.Address())
 
 	relationships = []sdk.AccAddress{accountCreatorAddr, anotherUserAddr}
+	usersBlocks   = []types.UserBlock{
+		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason"),
+		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason"),
+	}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
@@ -41,6 +45,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Relationships", fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationships, relationships)},
+		{"UsersBlocks", fmt.Sprintf("UsersBlocks: %s\nUsersBlocks: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},
 	}
 

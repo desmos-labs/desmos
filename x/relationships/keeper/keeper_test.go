@@ -50,7 +50,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersRelationships() {
 		expMap              map[string][]sdk.AccAddress
 	}{
 		{
-			name:                "Return a non-empty address -> relationships map",
+			name:                "Return a non-empty address -> userBlocks map",
 			storedRelationships: []sdk.AccAddress{suite.testData.user, suite.testData.otherUser},
 			expMap: map[string][]sdk.AccAddress{
 				suite.testData.user.String():      {suite.testData.otherUser},
@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersRelationships() {
 			},
 		},
 		{
-			name:                "Return an empty address -> relationships map",
+			name:                "Return an empty address -> userBlocks map",
 			storedRelationships: nil,
 			expMap:              map[string][]sdk.AccAddress{},
 		},
@@ -91,12 +91,12 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
 		expRelationships    []sdk.AccAddress
 	}{
 		{
-			name:                "Returns non empty relationships slice",
+			name:                "Returns non empty userBlocks slice",
 			storedRelationships: []sdk.AccAddress{addr1, addr2},
 			expRelationships:    []sdk.AccAddress{addr1, addr2},
 		},
 		{
-			name:                "Returns empty relationships slice",
+			name:                "Returns empty userBlocks slice",
 			storedRelationships: nil,
 			expRelationships:    nil,
 		},
@@ -140,19 +140,19 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 		userToDelete        sdk.AccAddress
 	}{
 		{
-			name:                "Delete a relationship with len(relationships) > 1",
+			name:                "Delete a relationship with len(userBlocks) > 1",
 			storedRelationships: []sdk.AccAddress{addr1, addr2, addr3},
 			expRelationships:    []sdk.AccAddress{addr1, addr3},
 			userToDelete:        addr2,
 		},
 		{
-			name:                "Delete a relationship with len(relationships) == 1",
+			name:                "Delete a relationship with len(userBlocks) == 1",
 			storedRelationships: []sdk.AccAddress{addr1},
 			expRelationships:    nil,
 			userToDelete:        addr1,
 		},
 		{
-			name:                "Delete a relationship with len(relationships) == 0",
+			name:                "Delete a relationship with len(userBlocks) == 0",
 			storedRelationships: nil,
 			expRelationships:    nil,
 			userToDelete:        addr1,
@@ -171,6 +171,179 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 			suite.keeper.DeleteRelationship(suite.ctx, suite.testData.user, test.userToDelete)
 			rel := suite.keeper.GetUserRelationships(suite.ctx, suite.testData.user)
 			suite.Equal(test.expRelationships, rel)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		userBlock        types.UserBlock
+		expErr           error
+	}{
+		{
+			name: "already blocked user returns error",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, suite.testData.otherUser, "reason"),
+			},
+			userBlock: types.NewUserBlock(suite.testData.user, suite.testData.otherUser, "reason"),
+			expErr:    fmt.Errorf("the user with %s address has been blocked already", suite.testData.otherUser),
+		},
+		{
+			name:             "user block added correctly",
+			storedUserBlocks: nil,
+			userBlock:        types.NewUserBlock(suite.testData.user, suite.testData.otherUser, "reason"),
+			expErr:           nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedUserBlocks != nil {
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store.Set(types.UsersBlocksStoreKey(suite.testData.user), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedUserBlocks))
+			}
+			err := suite.keeper.SaveUserBlock(suite.ctx, test.userBlock)
+			suite.Equal(test.expErr, err)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_UnblockUser() {
+	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	addr3, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	suite.NoError(err)
+
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		expBlocks        []types.UserBlock
+		expError         error
+		userToUnblock    sdk.AccAddress
+	}{
+		{
+			name: "Unblock user with len(storedUserBlocks) > 1",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+				types.NewUserBlock(suite.testData.user, addr3, "reason"),
+			},
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr3, "reason"),
+			},
+			userToUnblock: addr2,
+			expError:      nil,
+		},
+		{
+			name:             "Unblock user with len(storedUserBlocks) == 1",
+			storedUserBlocks: []types.UserBlock{types.NewUserBlock(suite.testData.user, addr2, "reason")},
+			expBlocks:        nil,
+			userToUnblock:    addr2,
+			expError:         nil,
+		},
+		{
+			name:             "Delete a relationship with len(userBlocks) == 0",
+			storedUserBlocks: nil,
+			expBlocks:        nil,
+			userToUnblock:    addr2,
+			expError:         fmt.Errorf("blocked user with address %s not found", addr2),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedUserBlocks != nil {
+				store.Set(types.UsersBlocksStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedUserBlocks))
+			}
+
+			err := suite.keeper.UnblockUser(suite.ctx, suite.testData.user, test.userToUnblock)
+			suite.Equal(test.expError, err)
+			rel := suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user)
+			suite.Equal(test.expBlocks, rel)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
+	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		expUserBlocks    []types.UserBlock
+	}{
+		{
+			name: "Returns non empty user blocks slice",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+			},
+			expUserBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+			},
+		},
+		{
+			name:             "Returns empty user blocks slice",
+			storedUserBlocks: nil,
+			expUserBlocks:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			if test.storedUserBlocks != nil {
+				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store.Set(types.UsersBlocksStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&[]types.UserBlock{
+						types.NewUserBlock(suite.testData.user, addr2, "reason"),
+					}))
+			}
+
+			suite.Equal(test.expUserBlocks, suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user))
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUsersBlocks() {
+	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
+	addr3, err := sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+	suite.NoError(err)
+
+	tests := []struct {
+		name              string
+		storedUsersBlocks []types.UserBlock
+		expUsersBlocks    []types.UserBlock
+	}{
+		{
+			name: "Returns a non-empty users blocks slice",
+			storedUsersBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+				types.NewUserBlock(suite.testData.otherUser, addr3, "reason"),
+			},
+			expUsersBlocks: []types.UserBlock{
+				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+				types.NewUserBlock(suite.testData.otherUser, addr3, "reason"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, userBlock := range test.storedUsersBlocks {
+				err := suite.keeper.SaveUserBlock(suite.ctx, userBlock)
+				suite.NoError(err)
+			}
+
+			actualBlocks := suite.keeper.GetUsersBlocks(suite.ctx)
+			suite.Equal(test.expUsersBlocks, actualBlocks)
 		})
 	}
 }

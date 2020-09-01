@@ -18,13 +18,15 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryUserRelationships(ctx, path[1:], req, keeper)
 		case types.QueryRelationships:
 			return queryRelationships(ctx, req, keeper)
+		case types.QueryUserBlocks:
+			return queryUserBlocks(ctx, path[1:], req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown profiles query endpoint")
 		}
 	}
 }
 
-// queryRelationships handles the request of listing all the relationships in the given context
+// queryRelationships handles the request of listing all the userBlocks in the given context
 func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	relationships := keeper.GetUsersRelationships(ctx)
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
@@ -35,7 +37,7 @@ func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]
 	return bz, nil
 }
 
-// queryUserRelationships handles the request of listing all the users' storedRelationships
+// queryUserRelationships handles the request of listing all the users' storedUserBlocks
 func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	user, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {
@@ -45,6 +47,22 @@ func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery,
 	relationships := types.NewRelationshipResponse(keeper.GetUserRelationships(ctx, user))
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+func queryUserBlocks(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	user, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
+	}
+
+	userBlocks := keeper.GetUserBlocks(ctx, user)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &userBlocks)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

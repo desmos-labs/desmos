@@ -9,12 +9,14 @@ import (
 // GenesisState contains the data of the genesis state for the profile module
 type GenesisState struct {
 	UsersRelationships map[string][]sdk.AccAddress `json:"users_relationships"`
+	UsersBlocks        []UserBlock                 `json:"users_blocks"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(usersRelationships map[string][]sdk.AccAddress) GenesisState {
+func NewGenesisState(usersRelationships map[string][]sdk.AccAddress, usersBlocks []UserBlock) GenesisState {
 	return GenesisState{
 		UsersRelationships: usersRelationships,
+		UsersBlocks:        usersBlocks,
 	}
 }
 
@@ -22,6 +24,7 @@ func NewGenesisState(usersRelationships map[string][]sdk.AccAddress) GenesisStat
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
 		UsersRelationships: map[string][]sdk.AccAddress{},
+		UsersBlocks:        []UserBlock{},
 	}
 }
 
@@ -32,6 +35,12 @@ func ValidateGenesis(data GenesisState) error {
 			if address.Empty() {
 				return fmt.Errorf("invalid address %s", address)
 			}
+		}
+	}
+
+	for _, ub := range data.UsersBlocks {
+		if err := ub.Validate(); err != nil {
+			return err
 		}
 	}
 

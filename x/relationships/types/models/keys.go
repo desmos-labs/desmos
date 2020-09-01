@@ -16,12 +16,12 @@ const (
 	QuerierRoute           = ModuleName
 	QueryUserRelationships = "user_relationships"
 	QueryRelationships     = "relationships"
-	QueryBlockedUsers      = "blocked_users"
+	QueryUserBlocks        = "user_blocks"
 )
 
 var (
 	RelationshipsStorePrefix = []byte("relationships")
-	BlockedUsersStorePrefix  = []byte("blocked_users_of")
+	UsersBlocksStorePrefix   = []byte("users_blocks")
 )
 
 // RelationshipsStoreKey turns a user address to a key used to store a Address -> []Address couple
@@ -29,7 +29,7 @@ func RelationshipsStoreKey(user sdk.AccAddress) []byte {
 	return append(RelationshipsStorePrefix, []byte(user)...)
 }
 
-// BlockedUsersStoreKey turns a user address to a key used to store a Address -> []Address couple
-func BlockedUsersStoreKey(user sdk.AccAddress) []byte {
-	return append(BlockedUsersStorePrefix, []byte(user)...)
+// UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
+func UsersBlocksStoreKey(user sdk.AccAddress) []byte {
+	return append(UsersBlocksStorePrefix, []byte(user)...)
 }

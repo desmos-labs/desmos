@@ -18,6 +18,11 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipsA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipsB)
 		return fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationshipsA, relationshipsB)
+	case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
+		var userBlocksA, userBlocksB []types.UserBlock
+		cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlocksA)
+		cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
+		return fmt.Sprintf("UsersBlocks: %s\nUsersBlocks: %s\n", userBlocksA, userBlocksB)
 	default:
 		panic(fmt.Sprintf("invalid relationships key %X", kvA.Key))
 	}

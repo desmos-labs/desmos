@@ -10,12 +10,14 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	usersRelationships := map[string][]sdk.AccAddress{}
+	var usersBlocks []types.UserBlock
 
 	expGenState := types.GenesisState{
 		UsersRelationships: usersRelationships,
+		UsersBlocks:        usersBlocks,
 	}
 
-	actualGenState := types.NewGenesisState(usersRelationships)
+	actualGenState := types.NewGenesisState(usersRelationships, usersBlocks)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -43,6 +45,23 @@ func TestValidateGenesis(t *testing.T) {
 					user.String():      {sdk.AccAddress{}},
 					otherUser.String(): {user},
 				},
+				UsersBlocks: []types.UserBlock{
+					types.NewUserBlock(user, otherUser, "reason"),
+					types.NewUserBlock(otherUser, user, "reason"),
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid users blocks return error",
+			genesis: types.GenesisState{
+				UsersRelationships: map[string][]sdk.AccAddress{
+					user.String():      {otherUser},
+					otherUser.String(): {user},
+				},
+				UsersBlocks: []types.UserBlock{
+					types.NewUserBlock(user, nil, "reason"),
+				},
 			},
 			shouldError: true,
 		},
@@ -52,6 +71,10 @@ func TestValidateGenesis(t *testing.T) {
 				UsersRelationships: map[string][]sdk.AccAddress{
 					user.String():      {otherUser},
 					otherUser.String(): {user},
+				},
+				UsersBlocks: []types.UserBlock{
+					types.NewUserBlock(user, otherUser, "reason"),
+					types.NewUserBlock(otherUser, user, "reason"),
 				},
 			},
 			shouldError: false,

@@ -30,6 +30,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	cmd.AddCommand(flags.PostCommands(
 		GetCmdCreateRelationship(cdc),
 		GetCmdDeleteRelationship(cdc),
+		GetCmdBlockUser(cdc),
+		GetCmdUnblockUser(cdc),
 	)...)
 
 	return cmd
@@ -77,6 +79,57 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "block [address] [[reason]]",
+		Short: "Block the user with the given address optionally specifying the reason",
+		Args:  cobra.RangeArgs(1, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			userToBlock, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", userToBlock))
+			}
+
+			var reason string
+			if len(args) == 2 {
+				reason = args[1]
+			}
+
+			msg := types.NewMsgBlockUser(cliCtx.FromAddress, userToBlock, reason)
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+func GetCmdUnblockUser(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "unblock [address]",
+		Short: "Unblock the user with the given address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			userToBlock, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", userToBlock))
+			}
+
+			msg := types.NewMsgUnblockUser(cliCtx.FromAddress, userToBlock)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

@@ -13,6 +13,7 @@ import (
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/relationships", queryRelationships(cliCtx)).Methods("GET")
 	r.HandleFunc("/relationships/{address}", queryUserRelationships(cliCtx)).Methods("GET")
+	r.HandleFunc("/userBlocks/{address}", queryUserBlocks(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query list of user's relationships
@@ -36,6 +37,22 @@ func queryUserRelationships(cliCtx context.CLIContext) http.HandlerFunc {
 func queryRelationships(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRelationships)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func queryUserBlocks(cliCtx context.CLIContext) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		address := vars["address"]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryBlockedUsers, address)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

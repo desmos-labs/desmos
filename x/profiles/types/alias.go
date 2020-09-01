@@ -23,15 +23,15 @@ const (
 
 var (
 	// functions aliases
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
 	ProfileStoreKey       = models.ProfileStoreKey
 	DtagStoreKey          = models.DtagStoreKey
 	NewProfile            = models.NewProfile
 	NewProfiles           = models.NewProfiles
 	NewPictures           = models.NewPictures
 	RegisterModelsCodec   = models.RegisterModelsCodec
-	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	ProfileStorePrefix = models.ProfileStorePrefix

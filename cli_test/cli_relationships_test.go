@@ -121,3 +121,107 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 
 	f.Cleanup()
 }
+
+func TestDesmosCLIBlockUser(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
+	require.NoError(t, err)
+
+	// Block user
+	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "reason", "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure relationship is created
+	userBlocks := f.QueryUserBlocks(fooAddr)
+	require.NotEmpty(t, userBlocks)
+	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason")}
+	require.Equal(t, expRelationship, userBlocks)
+
+	// Unblock the user to perform other tests
+	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test --dry-tun
+	success, _, _ = f.TxBlockUser(userToBlock, fooAddr, "reason", "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxBlockUser(userToBlock, fooAddr, "reason", "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIUnblockUser(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+
+	// Later usage variables
+	fooAcc := f.QueryAccount(fooAddr)
+	startTokens := sdk.TokensFromConsensusPower(140)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
+	require.NoError(t, err)
+
+	// Block user
+	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "reason", "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure relationship is created
+	userBlocks := f.QueryUserBlocks(fooAddr)
+	require.NotEmpty(t, userBlocks)
+	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason")}
+	require.Equal(t, expRelationship, userBlocks)
+
+	// Unblock the user to perform other tests
+	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test --dry-tun
+	success, _, _ = f.TxUnblockUser(userToBlock, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxUnblockUser(userToBlock, fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	f.Cleanup()
+}

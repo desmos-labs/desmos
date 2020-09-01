@@ -33,7 +33,7 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
-	relationshipsKey := sdk.NewKVStoreKey("relationships")
+	relationshipsKey := sdk.NewKVStoreKey("userBlocks")
 
 	// create an in-memory db
 	memDB := db.NewMemDB()

@@ -482,6 +482,18 @@ func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxBlockUser(blockedUser, from sdk.AccAddress, reason string, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships block %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, from, reason, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxUnblockUser(blockedUser, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships unblock %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx reports
 
@@ -828,6 +840,18 @@ func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) rela
 	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
 	require.NoError(f.T, err)
 	return storedRelationships
+}
+
+// QueryUserBlocks returns store user blocks
+func (f *Fixtures) QueryUserBlocks(user sdk.AccAddress, flags ...string) []relationshipsTypes.UserBlock {
+	cmd := fmt.Sprintf("%s query relationships user-blocks %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var userBlocks []relationshipsTypes.UserBlock
+	err := cdc.UnmarshalJSON([]byte(res), &userBlocks)
+	require.NoError(f.T, err)
+	return userBlocks
 }
 
 //___________________________________________________________________________________
