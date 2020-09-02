@@ -52,7 +52,7 @@ func queryUserBlocks(cliCtx context.CLIContext) func(http.ResponseWriter, *http.
 		vars := mux.Vars(r)
 		address := vars["address"]
 
-		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryBlockedUsers, address)
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryUserBlocks, address)
 		res, _, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

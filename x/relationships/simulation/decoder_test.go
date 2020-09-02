@@ -38,6 +38,7 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.RelationshipsStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&relationships)},
+		kv.Pair{Key: types.UsersBlocksStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&usersBlocks)},
 	}
 
 	tests := []struct {
