@@ -115,7 +115,7 @@ func blockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
 		}
 
-		msg := types.NewMsgBlockUser(user, blocked, req.Reason)
+		msg := types.NewMsgBlockUser(user, blocked, req.Reason, req.Subspace)
 
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -151,7 +151,7 @@ func unblockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
 		}
 
-		msg := types.NewMsgUnblockUser(user, blocked)
+		msg := types.NewMsgUnblockUser(user, blocked, req.Subspace)
 
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

@@ -115,14 +115,14 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 }
 
 // UnblockUser allows to the specified blocker to unblock the given blocked user.
-func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked sdk.AccAddress) error {
+func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked sdk.AccAddress, subspace string) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.UsersBlocksStoreKey(blocker)
 	var usersBlocks []types.UserBlock
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &usersBlocks)
 
 	for index, ub := range usersBlocks {
-		if ub.Blocker.Equals(blocker) && ub.Blocked.Equals(blocked) {
+		if ub.Blocker.Equals(blocker) && ub.Blocked.Equals(blocked) && ub.Subspace == subspace {
 			usersBlocks = append(usersBlocks[:index], usersBlocks[index+1:]...)
 			if len(usersBlocks) == 0 {
 				store.Delete(key)

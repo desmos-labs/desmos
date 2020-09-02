@@ -71,7 +71,7 @@ func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDe
 
 // handleMsgBlockUser handles the process to block a user
 func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) (*sdk.Result, error) {
-	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason)
+	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
 
 	if err := keeper.SaveUserBlock(ctx, userBlock); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -94,7 +94,7 @@ func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) 
 
 // handleMsgUnblockUser handles the process to unblock a user
 func handleMsgUnblockUser(ctx sdk.Context, keeper Keeper, msg types.MsgUnblockUser) (*sdk.Result, error) {
-	if err := keeper.UnblockUser(ctx, msg.Blocker, msg.Blocked); err != nil {
+	if err := keeper.UnblockUser(ctx, msg.Blocker, msg.Blocked, msg.Subspace); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 

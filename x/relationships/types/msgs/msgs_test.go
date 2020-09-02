@@ -21,13 +21,15 @@ var (
 	}
 
 	msgBlockUser = msgs.MsgBlockUser{
-		Blocker: user,
-		Blocked: otherUser,
+		Blocker:  user,
+		Blocked:  otherUser,
+		Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}
 
 	msgUnblockUser = msgs.MsgUnblockUser{
-		Blocker: user,
-		Blocked: otherUser,
+		Blocker:  user,
+		Blocked:  otherUser,
+		Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}
 )
 
@@ -198,28 +200,35 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty sender returns error",
 			msg: msgs.NewMsgBlockUser(
-				nil, nil, "",
+				nil, nil, "", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgBlockUser(
-				user, nil, "",
+				user, nil, "", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
 		},
 		{
-			name: "Equals sender and receiver",
+			name: "Equals sender and receiver returns error",
 			msg: msgs.NewMsgBlockUser(
-				user, user, "",
+				user, user, "", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
 		},
 		{
+			name: "Invalid subspace returns error",
+			msg: msgs.NewMsgBlockUser(
+				user, otherUser, "", "yeah",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash"),
+		},
+		{
 			name: "No errors message",
 			msg: msgs.NewMsgBlockUser(
-				user, otherUser, "mobbing",
+				user, otherUser, "mobbing", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
 		},
@@ -241,7 +250,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 
 func TestMsgBlockUser_GetSignBytes(t *testing.T) {
 	actual := msgBlockUser.GetSignBytes()
-	expected := `{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgBlockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -271,28 +280,35 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty sender returns error",
 			msg: msgs.NewMsgUnblockUser(
-				nil, nil,
+				nil, nil, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgUnblockUser(
-				user, nil,
+				user, nil, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
 		},
 		{
-			name: "Equals sender and receiver",
+			name: "Equals sender and receiver returns error",
 			msg: msgs.NewMsgUnblockUser(
-				user, user,
+				user, user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
 		},
 		{
+			name: "Invalid subspace returns error",
+			msg: msgs.NewMsgUnblockUser(
+				user, otherUser, "yeah",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash"),
+		},
+		{
 			name: "No errors message",
 			msg: msgs.NewMsgUnblockUser(
-				user, otherUser,
+				user, otherUser, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
 		},
@@ -314,7 +330,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 
 func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
 	actual := msgUnblockUser.GetSignBytes()
-	expected := `{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}`
+	expected := `{"type":"desmos/MsgUnblockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
 	require.Equal(t, expected, string(actual))
 }
 

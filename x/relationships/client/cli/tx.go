@@ -88,9 +88,9 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "block [address] [[reason]]",
+		Use:   "block [address] [subspace] [[reason]]",
 		Short: "Block the user with the given address optionally specifying the reason",
-		Args:  cobra.RangeArgs(1, 2),
+		Args:  cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -102,11 +102,11 @@ func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var reason string
-			if len(args) == 2 {
-				reason = args[1]
+			if len(args) == 3 {
+				reason = args[2]
 			}
 
-			msg := types.NewMsgBlockUser(cliCtx.FromAddress, userToBlock, reason)
+			msg := types.NewMsgBlockUser(cliCtx.FromAddress, userToBlock, reason, args[1])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -116,9 +116,9 @@ func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdUnblockUser(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unblock [address]",
+		Use:   "unblock [address] [subspace]",
 		Short: "Unblock the user with the given address",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -129,7 +129,7 @@ func GetCmdUnblockUser(cdc *codec.Codec) *cobra.Command {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", userToBlock))
 			}
 
-			msg := types.NewMsgUnblockUser(cliCtx.FromAddress, userToBlock)
+			msg := types.NewMsgUnblockUser(cliCtx.FromAddress, userToBlock, args[1])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

@@ -143,12 +143,12 @@ func (suite *KeeperTestSuite) Test_queryUserBlocks() {
 			name: "User Relationships returned correctly",
 			path: []string{types.QueryUserBlocks, suite.testData.user.String()},
 			userBlocks: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, addr1, "reason"),
-				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+				types.NewUserBlock(suite.testData.user, addr1, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 			expResult: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, addr1, "reason"),
-				types.NewUserBlock(suite.testData.user, addr2, "reason"),
+				types.NewUserBlock(suite.testData.user, addr1, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 			expErr: nil,
 		},

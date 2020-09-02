@@ -52,7 +52,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
-	if !postsmodels.IsValidSubspace(msg.Subspace) {
+	if !commons.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 

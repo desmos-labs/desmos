@@ -46,8 +46,8 @@ func TestValidateGenesis(t *testing.T) {
 					otherUser.String(): {user},
 				},
 				UsersBlocks: []types.UserBlock{
-					types.NewUserBlock(user, otherUser, "reason"),
-					types.NewUserBlock(otherUser, user, "reason"),
+					types.NewUserBlock(user, otherUser, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					types.NewUserBlock(otherUser, user, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				},
 			},
 			shouldError: true,
@@ -60,7 +60,7 @@ func TestValidateGenesis(t *testing.T) {
 					otherUser.String(): {user},
 				},
 				UsersBlocks: []types.UserBlock{
-					types.NewUserBlock(user, nil, "reason"),
+					types.NewUserBlock(user, nil, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				},
 			},
 			shouldError: true,
@@ -73,8 +73,8 @@ func TestValidateGenesis(t *testing.T) {
 					otherUser.String(): {user},
 				},
 				UsersBlocks: []types.UserBlock{
-					types.NewUserBlock(user, otherUser, "reason"),
-					types.NewUserBlock(otherUser, user, "reason"),
+					types.NewUserBlock(user, otherUser, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					types.NewUserBlock(otherUser, user, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				},
 			},
 			shouldError: false,

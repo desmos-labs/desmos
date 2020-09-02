@@ -482,15 +482,15 @@ func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-func (f *Fixtures) TxBlockUser(blockedUser, from sdk.AccAddress, reason string, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships block %s %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, blockedUser, from, reason, f.Flags())
+func (f *Fixtures) TxBlockUser(blockedUser, from sdk.AccAddress, subspace, reason string, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships block %s %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, subspace, reason, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-func (f *Fixtures) TxUnblockUser(blockedUser, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships unblock %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, blockedUser, from, f.Flags())
+func (f *Fixtures) TxUnblockUser(blockedUser, from sdk.AccAddress, subspace string, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships unblock %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, subspace, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 

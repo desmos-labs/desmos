@@ -2,6 +2,7 @@ package msgs
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/commons"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -110,16 +111,18 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 // MsgBlockUser allows the given Blocker to block the specified Blocked user
 // for the (optional) reason.
 type MsgBlockUser struct {
-	Blocker sdk.AccAddress `json:"blocker" yaml:"blocker"`
-	Blocked sdk.AccAddress `json:"blocked" yaml:"blocked"`
-	Reason  string         `json:"reason,omitempty" yaml:"reason,omitempty"`
+	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Reason   string         `json:"reason,omitempty" yaml:"reason,omitempty"`
+	Subspace string         `json:"subspace" yaml:"subspace"`
 }
 
-func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason string) MsgBlockUser {
+func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason, subspace string) MsgBlockUser {
 	return MsgBlockUser{
-		Blocker: blocker,
-		Blocked: blocked,
-		Reason:  reason,
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Reason:   reason,
+		Subspace: subspace,
 	}
 }
 
@@ -145,6 +148,10 @@ func (msg MsgBlockUser) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
 	}
 
+	if !commons.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
+	}
+
 	return nil
 }
 
@@ -160,14 +167,16 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 
 // MsgUnblockUser allows the given original Blocker to unblock the specified Blocked user.
 type MsgUnblockUser struct {
-	Blocker sdk.AccAddress `json:"blocker" yaml:"blocker"`
-	Blocked sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Subspace string         `json:"subspace" yaml:"subspace"`
 }
 
-func NewMsgUnblockUser(blocker, blocked sdk.AccAddress) MsgUnblockUser {
+func NewMsgUnblockUser(blocker, blocked sdk.AccAddress, subspace string) MsgUnblockUser {
 	return MsgUnblockUser{
-		Blocker: blocker,
-		Blocked: blocked,
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Subspace: subspace,
 	}
 }
 
@@ -191,6 +200,10 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 
 	if msg.Blocker.Equals(msg.Blocked) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+	}
+
+	if !commons.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
 	}
 
 	return nil

@@ -1,5 +1,3 @@
-// +build cli_test
-
 //nolint
 package clitest
 
@@ -141,7 +139,7 @@ func TestDesmosCLIBlockUser(t *testing.T) {
 	require.NoError(t, err)
 
 	// Block user
-	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "reason", "-y")
+	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -149,21 +147,21 @@ func TestDesmosCLIBlockUser(t *testing.T) {
 	// Make sure relationship is created
 	userBlocks := f.QueryUserBlocks(fooAddr)
 	require.NotEmpty(t, userBlocks)
-	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason")}
+	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")}
 	require.Equal(t, expRelationship, userBlocks)
 
 	// Unblock the user to perform other tests
-	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "-y")
+	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-tun
-	success, _, _ = f.TxBlockUser(userToBlock, fooAddr, "reason", "--dry-run")
+	success, _, _ = f.TxBlockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxBlockUser(userToBlock, fooAddr, "reason", "--generate-only=true")
+	success, stdout, stderr := f.TxBlockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -193,7 +191,7 @@ func TestDesmosCLIUnblockUser(t *testing.T) {
 	require.NoError(t, err)
 
 	// Block user
-	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "reason", "-y")
+	success, _, sterr := f.TxBlockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -201,21 +199,27 @@ func TestDesmosCLIUnblockUser(t *testing.T) {
 	// Make sure relationship is created
 	userBlocks := f.QueryUserBlocks(fooAddr)
 	require.NotEmpty(t, userBlocks)
-	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason")}
+	expRelationship := []types.UserBlock{types.NewUserBlock(fooAddr, userToBlock, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")}
 	require.Equal(t, expRelationship, userBlocks)
 
-	// Unblock the user to perform other tests
-	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "-y")
+	// Unblock the user
+	success, _, sterr = f.TxUnblockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Block user again for other tests
+	success, _, sterr = f.TxBlockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-tun
-	success, _, _ = f.TxUnblockUser(userToBlock, fooAddr, "--dry-run")
+	success, _, _ = f.TxUnblockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxUnblockUser(userToBlock, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxUnblockUser(userToBlock, fooAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)

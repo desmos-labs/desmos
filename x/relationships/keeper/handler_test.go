@@ -113,13 +113,13 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	}{
 		{
 			name:             "Relationship already created returns error",
-			msg:              types.NewMsgBlockUser(blocker, blocked, "reason"),
-			storedUserBlocks: []types.UserBlock{types.NewUserBlock(blocker, blocked, "reason")},
+			msg:              types.NewMsgBlockUser(blocker, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			storedUserBlocks: []types.UserBlock{types.NewUserBlock(blocker, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 			expErr:           sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the user with %s address has been blocked already", blocked)),
 		},
 		{
 			name:             "Relationship has been saved correctly",
-			msg:              types.NewMsgBlockUser(blocker, blocked, "reason"),
+			msg:              types.NewMsgBlockUser(blocker, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			storedUserBlocks: nil,
 			expErr:           nil,
 			expEvent: sdk.NewEvent(
@@ -170,18 +170,18 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)
 	store.Set(types.UsersBlocksStoreKey(suite.testData.user),
 		suite.keeper.Cdc.MustMarshalBinaryBare(&[]types.UserBlock{
-			types.NewUserBlock(suite.testData.user, addr1, "reason"),
-			types.NewUserBlock(suite.testData.user, addr2, "reason"),
+			types.NewUserBlock(suite.testData.user, addr1, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 		}))
 
-	testMsg := types.NewMsgUnblockUser(suite.testData.user, addr1)
+	testMsg := types.NewMsgUnblockUser(suite.testData.user, addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 
 	handler := keeper.NewHandler(suite.keeper)
 	res, err := handler(suite.ctx, testMsg)
 
 	suite.NoError(err)
 
-	suite.Equal([]types.UserBlock{types.NewUserBlock(suite.testData.user, addr2, "reason")},
+	suite.Equal([]types.UserBlock{types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 		suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user))
 
 	// Check the events

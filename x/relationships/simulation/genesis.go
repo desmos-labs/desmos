@@ -44,7 +44,8 @@ func randomUsersBlocks(simState *module.SimulationState) []types.UserBlock {
 		blocker, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		blocked, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		if !blocker.Equals(blocked) {
-			usersBlocks[index] = types.NewUserBlock(blocker.Address, blocked.Address, "reason")
+			usersBlocks[index] = types.NewUserBlock(blocker.Address, blocked.Address,
+				"reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 		}
 	}
 

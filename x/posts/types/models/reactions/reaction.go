@@ -45,7 +45,7 @@ func (reaction Reaction) Validate() error {
 		return fmt.Errorf("reaction value should be a URL")
 	}
 
-	if !postsCommon.IsValidSubspace(reaction.Subspace) {
+	if !commons.IsValidSubspace(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

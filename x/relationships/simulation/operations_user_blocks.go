@@ -27,7 +27,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgBlockUser(blocker.Address, blocked, "reason")
+		msg := types.NewMsgBlockUser(blocker.Address, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 		if err := sendMsgBlockUser(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -102,7 +102,7 @@ func SimulateMsgUnblockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgUnblockUser(blocker.Address, userBlock.Blocked)
+		msg := types.NewMsgUnblockUser(blocker.Address, userBlock.Blocked, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 		if err := sendMsgUnblockUser(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
