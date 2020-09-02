@@ -1,0 +1,29 @@
+# This is an attempt to build gaia for many OSes and instruction set architectures at once.
+# The ARM64 binaries this process will produce will reduce the size of desmos-pi.img by several gigabytes.
+
+name: Desmos Matrix
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        arch: [amd64, arm64, risc64]
+        targetos: [windows, darwin, linux]
+    name: Desmos ${{ matrix.arch }} for ${{ matrix.targetos }} 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+        env: 
+          GOOS: ${{ matrix.targetos }}
+          GOARCH: ${{ matrix.arch }}
+      - name: Compile
+        run: make build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: desmos ${{ matrix.targetos }} ${{ matrix.arch }}
+          path: build
