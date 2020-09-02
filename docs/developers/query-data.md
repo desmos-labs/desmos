@@ -18,6 +18,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 ## Relationships
 - [Query user's relationships](queries/user_relationships.md)
 - [Query all the relationships](queries/relationships.md)
+- [Query user's blocked users](queries/user-blocks.md)
 
 ## Reports
 - [Query the post's related reports](queries/reports.md)

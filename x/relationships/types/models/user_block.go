@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/commons"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // UserBlock represents the fact that the Blocker has blocked the given Blocked user.

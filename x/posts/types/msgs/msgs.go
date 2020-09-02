@@ -3,7 +3,6 @@ package msgs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,6 +10,7 @@ import (
 
 	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 

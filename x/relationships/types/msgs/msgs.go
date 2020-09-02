@@ -2,10 +2,10 @@ package msgs
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/commons"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/relationships/types/models"
 )
 

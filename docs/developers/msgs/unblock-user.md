@@ -1,0 +1,40 @@
+# `MsgBlockUser`
+This message allows you to block a specific user associated with a given address.
+
+## Structure
+```json
+{
+  "type": "desmos/MsgUnblockUser",
+  "value": {
+    "blocker": "<Desmos address that's blocking someone>",
+    "blocked": "<Desmos address that's been blocked>",
+    "subspace": "<Subspace of the block>"
+  }
+}   
+```
+
+### Attributes
+| Attribute | Type | Description |
+| :-------: | :----: | :-------- |
+| `blocker`  | String | Desmos address of the user that is blocking someone else |
+| `blocked`| String | Desmos address of the blocked user |
+| `subspace` | String | Required string that identifies the app |
+
+## Example
+````json
+{
+  "type": "desmos/MsgUnblockUser",
+  "value": {
+    "blocker": "desmos1j83hlf5yn5839wgpege3z669r8j3lh2ggmtf5u",
+    "blocked": "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
+    "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+  }
+}   
+````
+
+## Message action
+The action associated to this message is the following: 
+
+```
+unblock_user
+```
