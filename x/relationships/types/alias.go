@@ -21,12 +21,12 @@ const (
 
 var (
 	// functions aliases
+	NewRelationship          = models.NewRelationship
+	RelationshipsStoreKey    = models.RelationshipsStoreKey
+	RegisterModelsCodec      = models.RegisterModelsCodec
 	NewMsgCreateRelationship = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship = msgs.NewMsgDeleteRelationship
 	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
-	RelationshipsStoreKey    = models.RelationshipsStoreKey
-	RegisterModelsCodec      = models.RegisterModelsCodec
-	NewRelationshipResponse  = models.NewRelationshipResponse
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -35,7 +35,8 @@ var (
 )
 
 type (
-	RelationshipsResponse = models.RelationshipsResponse
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
+	Relationship          = models.Relationship
+	Relationships         = models.Relationships
 )

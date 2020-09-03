@@ -1,3 +1,7 @@
+# Version 0.12.0
+## Changes
+- Changed `relationships`' implementation (#266)
+
 # Version 0.11.0
 ## Changes
 - Allowed the possibility to edit a post's attachments and poll data using the `MsgEditPost` type (#202)

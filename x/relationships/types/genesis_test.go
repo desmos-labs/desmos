@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewGenesis(t *testing.T) {
-	usersRelationships := map[string][]sdk.AccAddress{}
+	usersRelationships := map[string]types.Relationships{}
 
 	expGenState := types.GenesisState{
 		UsersRelationships: usersRelationships,
@@ -39,9 +39,9 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid relationship return error",
 			genesis: types.GenesisState{
-				UsersRelationships: map[string][]sdk.AccAddress{
-					user.String():      {sdk.AccAddress{}},
-					otherUser.String(): {user},
+				UsersRelationships: map[string]types.Relationships{
+					user.String():      {types.NewRelationship(sdk.AccAddress{}, "")},
+					otherUser.String(): {types.NewRelationship(user, "")},
 				},
 			},
 			shouldError: true,
@@ -49,9 +49,9 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
-				UsersRelationships: map[string][]sdk.AccAddress{
-					user.String():      {otherUser},
-					otherUser.String(): {user},
+				UsersRelationships: map[string]types.Relationships{
+					user.String():      {types.NewRelationship(otherUser, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
+					otherUser.String(): {types.NewRelationship(user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 				},
 			},
 			shouldError: false,
