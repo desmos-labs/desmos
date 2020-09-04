@@ -48,8 +48,8 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
 			}
@@ -108,8 +108,8 @@ func (suite *KeeperTestSuite) Test_queryRelationships() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, rel)
