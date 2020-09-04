@@ -1,6 +1,7 @@
 # Version 0.12.0
 ## Changes
-- Changed `relationships`' implementation (#266)
+- Changed `relationships`' implementation adding a `subspace` field to identify in which app
+  users make relationships (#266)
 
 # Version 0.11.0
 ## Changes
