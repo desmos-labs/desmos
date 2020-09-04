@@ -156,8 +156,8 @@ func (suite *KeeperTestSuite) Test_queryUserBlocks() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
 			for _, ub := range test.userBlocks {
 				_ = suite.keeper.SaveUserBlock(suite.ctx, ub)
 			}
