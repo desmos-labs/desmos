@@ -125,7 +125,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			name:             "Relationship already created returns error",
 			msg:              types.NewMsgBlockUser(blocker, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			storedUserBlocks: []types.UserBlock{types.NewUserBlock(blocker, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
-			expErr:           sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the user with %s address has been blocked already", blocked)),
+			expErr:           sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the user with %s address has already been blocked", blocked)),
 		},
 		{
 			name:             "Relationship has been saved correctly",

@@ -10,6 +10,7 @@ import (
 
 func TestNewGenesis(t *testing.T) {
 	usersRelationships := map[string]types.Relationships{}
+	var usersBlocks []types.UserBlock
 
 	expGenState := types.GenesisState{
 		UsersRelationships: usersRelationships,
@@ -54,9 +55,9 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid users blocks return error",
 			genesis: types.GenesisState{
-				UsersRelationships: map[string][]sdk.AccAddress{
-					user.String():      {otherUser},
-					otherUser.String(): {user},
+				UsersRelationships: map[string]types.Relationships{
+					user.String():      {types.NewRelationship(otherUser, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
+					otherUser.String(): {types.NewRelationship(user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")},
 				},
 				UsersBlocks: []types.UserBlock{
 					types.NewUserBlock(user, nil, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),

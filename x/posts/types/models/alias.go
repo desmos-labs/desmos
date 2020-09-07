@@ -34,7 +34,6 @@ const (
 var (
 	// functions aliases
 	IsValidPostID              = common.IsValidPostID
-	IsValidSubspace            = common.IsValidSubspace
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	NewAttachment              = common.NewAttachment

@@ -9,11 +9,11 @@ import (
 // GenesisState contains the data of the genesis state for the profile module
 type GenesisState struct {
 	UsersRelationships map[string]models.Relationships `json:"users_relationships"`
-	UsersBlocks        []UserBlock                 `json:"users_blocks"`
+	UsersBlocks        []UserBlock                     `json:"users_blocks"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(usersRelationships map[string]models.Relationships) GenesisState {
+func NewGenesisState(usersRelationships map[string]models.Relationships, usersBlocks []UserBlock) GenesisState {
 	return GenesisState{
 		UsersRelationships: usersRelationships,
 		UsersBlocks:        usersBlocks,
