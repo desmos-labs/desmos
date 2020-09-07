@@ -18,3 +18,17 @@ type CommonRelationshipReq struct {
 	Receiver string       `json:"receiver"`
 	Subspace string       `json:"subspace"`
 }
+
+// UserBlockReq defines the properties of a block user operation request's body
+type UserBlockReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Blocked  string       `json:"blocked"`
+	Reason   string       `json:"reason,omitempty"`
+	Subspace string       `json:"subspace"`
+}
+
+type UserUnblockReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Blocked  string       `json:"blocked"`
+	Subspace string       `json:"subspace"`
+}

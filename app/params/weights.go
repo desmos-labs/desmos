@@ -13,4 +13,6 @@ const (
 	DefaultWeightMsgReportPost         int = 100
 	DefaultWeightMsgCreateRelationship int = 100
 	DefaultWeightMsgDeleteRelationship int = 100
+	DefaultWeightMsgBlockUser          int = 100
+	DefaultWeightMsgUnblockUser        int = 100
 )

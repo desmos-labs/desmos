@@ -10,6 +10,7 @@ import (
 
 	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -61,7 +62,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !models.IsValidSubspace(msg.Subspace) {
+	if !commons.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 

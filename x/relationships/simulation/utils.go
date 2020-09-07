@@ -30,3 +30,9 @@ func RandomSubspace(r *rand.Rand) string {
 	idx := r.Intn(len(subspaces))
 	return subspaces[idx]
 }
+
+// RandomUserBlock picks and returns a random user block from an array
+func RandomUserBlock(r *rand.Rand, userBlocks []types.UserBlock) types.UserBlock {
+	idx := r.Intn(len(userBlocks))
+	return userBlocks[idx]
+}

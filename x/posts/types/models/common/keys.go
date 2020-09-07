@@ -35,7 +35,6 @@ const (
 
 var (
 	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
-	subspaceRegEx  = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
 
 	ModuleAddress = supply.NewModuleAddress(ModuleName)
@@ -52,11 +51,6 @@ var (
 // IsValidPostID tells whether the given value represents a valid post id or not
 func IsValidPostID(value string) bool {
 	return postIDRegEx.MatchString(value)
-}
-
-// IsValidSubspace tells whether the given value is a valid subspace or not
-func IsValidSubspace(value string) bool {
-	return subspaceRegEx.MatchString(value)
 }
 
 // IsValidReactionCode tells whether the given value is a valid emoji shortcode or not

@@ -24,6 +24,11 @@ var (
 		types.NewRelationship(accountCreatorAddr, subspace),
 		types.NewRelationship(anotherUserAddr, subspace),
 	}
+
+	usersBlocks = []types.UserBlock{
+		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+	}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
@@ -39,6 +44,7 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.RelationshipsStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&relationships)},
+		kv.Pair{Key: types.UsersBlocksStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&usersBlocks)},
 	}
 
 	tests := []struct {
@@ -46,6 +52,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Relationships", fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationships, relationships)},
+		{"UsersBlocks", fmt.Sprintf("UsersBlocks: %s\nUsersBlocks: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},
 	}
 

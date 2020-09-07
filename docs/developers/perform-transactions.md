@@ -24,6 +24,7 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 ## Relationships
 * [`MsgCreateRelationship`](msgs/create-relationship.md): allows you to create a relationship.
 * [`MsgDeleteRelationship`](msgs/delete-relationship.md): allows you to delete a relationship.
-
+* [`MsgBlockUser`](msgs/block-user.md): allows you to block a user.
+* [`MsgUnblockUser`](msgs/unblock-user.md): allows you to unblock a user.
 ### Reports
 * [`MsgReportPost`](msgs/report-post.md): allows you to report an existing post.
