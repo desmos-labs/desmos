@@ -11,6 +11,7 @@ import (
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 	return types.GenesisState{
 		UsersRelationships: k.GetUsersRelationships(ctx),
+		UsersBlocks:        k.GetUsersBlocks(ctx),
 	}
 }
 
@@ -26,6 +27,13 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 			if err != nil {
 				panic(err)
 			}
+		}
+	}
+
+	for _, userBlock := range data.UsersBlocks {
+		err := k.SaveUserBlock(ctx, userBlock)
+		if err != nil {
+			panic(err)
 		}
 	}
 

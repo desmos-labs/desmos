@@ -15,6 +15,8 @@ import (
 const (
 	OpWeightMsgCreateRelationship = "op_weight_msg_create_relationship"
 	OpWeightMsgDeleteRelationship = "op_weight_msg_delete_relationship"
+	OpWeightMsgBlockUser          = "op_weight_msg_block_user"
+	OpWeightMsgUnBlockUser        = "op_weight_msg_unblock_user"
 
 	DefaultGasValue = 200000
 )
@@ -35,6 +37,20 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
+	var weightMsgBlockUser int
+	appParams.GetOrGenerate(cdc, OpWeightMsgBlockUser, &weightMsgBlockUser, nil,
+		func(_ *rand.Rand) {
+			weightMsgBlockUser = params.DefaultWeightMsgBlockUser
+		},
+	)
+
+	var weightMsgUnblockUser int
+	appParams.GetOrGenerate(cdc, OpWeightMsgUnBlockUser, &weightMsgUnblockUser, nil,
+		func(_ *rand.Rand) {
+			weightMsgBlockUser = params.DefaultWeightMsgUnblockUser
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
@@ -43,6 +59,14 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,
 			SimulateMsgDeleteRelationship(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgBlockUser,
+			SimulateMsgBlockUser(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgUnblockUser,
+			SimulateMsgUnblockUser(k, ak),
 		),
 	}
 }

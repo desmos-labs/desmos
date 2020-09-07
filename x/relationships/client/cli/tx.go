@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -14,7 +15,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
 )
 
@@ -31,6 +31,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	cmd.AddCommand(flags.PostCommands(
 		GetCmdCreateRelationship(cdc),
 		GetCmdDeleteRelationship(cdc),
+		GetCmdBlockUser(cdc),
+		GetCmdUnblockUser(cdc),
 	)...)
 
 	return cmd
@@ -52,8 +54,7 @@ func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			// TODO edit this import to use commons when user blocks is merged
-			if !posts.IsValidSubspace(args[1]) {
+			if !commons.IsValidSubspace(args[1]) {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 			}
 
@@ -82,12 +83,70 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", receiver))
 			}
 
-			// TODO edit this import to use commons when user blocks is merged
-			if !posts.IsValidSubspace(args[1]) {
+			if !commons.IsValidSubspace(args[1]) {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 			}
 
 			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver, args[1])
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "block [address] [subspace] [[reason]]",
+		Short: "Block the user with the given address, optionally specifying the reason for the block",
+		Args:  cobra.RangeArgs(2, 3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			userToBlock, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", userToBlock))
+			}
+
+			var reason string
+			if len(args) == 3 {
+				reason = args[2]
+			}
+
+			if !commons.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			}
+
+			msg := types.NewMsgBlockUser(cliCtx.FromAddress, userToBlock, reason, args[1])
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+func GetCmdUnblockUser(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "unblock [address] [subspace]",
+		Short: "Unblock the user with the given address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			userToBlock, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", userToBlock))
+			}
+
+			if !commons.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			}
+
+			msg := types.NewMsgUnblockUser(cliCtx.FromAddress, userToBlock, args[1])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

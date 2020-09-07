@@ -14,6 +14,8 @@ import (
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/relationships", createRelationshipHandler(cliCtx)).Methods("POST")
 	r.HandleFunc("/relationships", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/blacklist", blockUserHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/blacklist", unblockUserHandler(cliCtx)).Methods("DELETE")
 }
 
 func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -78,6 +80,78 @@ func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgDeleteRelationship(receiver, user, req.Subspace)
+
+		if err := msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+func blockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req UserBlockReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		user, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		blocked, err := sdk.AccAddressFromBech32(req.Blocked)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
+		}
+
+		msg := types.NewMsgBlockUser(user, blocked, req.Reason, req.Subspace)
+
+		if err := msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+func unblockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req UserUnblockReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		user, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		blocked, err := sdk.AccAddressFromBech32(req.Blocked)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
+		}
+
+		msg := types.NewMsgUnblockUser(user, blocked, req.Subspace)
 
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

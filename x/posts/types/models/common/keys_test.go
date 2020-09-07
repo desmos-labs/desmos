@@ -1,6 +1,7 @@
 package common_test
 
 import (
+	"github.com/desmos-labs/desmos/x/commons"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -47,7 +48,7 @@ func TestIsValidSubspace(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.subspace, func(t *testing.T) {
-			require.Equal(t, test.expValid, common.IsValidSubspace(test.subspace))
+			require.Equal(t, test.expValid, commons.IsValidSubspace(test.subspace))
 		})
 	}
 }

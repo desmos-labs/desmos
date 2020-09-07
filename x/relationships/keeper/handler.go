@@ -18,6 +18,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgCreateRelationship(ctx, keeper, msg)
 		case types.MsgDeleteRelationship:
 			return handleMsgDeleteRelationship(ctx, keeper, msg)
+		case types.MsgBlockUser:
+			return handleMsgBlockUser(ctx, keeper, msg)
+		case types.MsgUnblockUser:
+			return handleMsgUnblockUser(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Relationships message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -61,6 +65,51 @@ func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDe
 
 	result := sdk.Result{
 		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(msg.Counterparty),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+// handleMsgBlockUser handles the process to block a user
+func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) (*sdk.Result, error) {
+	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
+
+	if err := keeper.SaveUserBlock(ctx, userBlock); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeBlockUser,
+		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker.String()),
+		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked.String()),
+		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeUserBlockReason, msg.Reason),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(msg.Blocker),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+// handleMsgUnblockUser handles the process to unblock a user
+func handleMsgUnblockUser(ctx sdk.Context, keeper Keeper, msg types.MsgUnblockUser) (*sdk.Result, error) {
+	if err := keeper.UnblockUser(ctx, msg.Blocker, msg.Blocked, msg.Subspace); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeUnblockUser,
+		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker.String()),
+		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked.String()),
+		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(msg.Blocker),
 		Events: ctx.EventManager().Events(),
 	}
 

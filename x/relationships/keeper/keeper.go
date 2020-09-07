@@ -89,3 +89,75 @@ func (k Keeper) DeleteRelationship(ctx sdk.Context, user sdk.AccAddress, relatio
 		}
 	}
 }
+
+/////////////////////
+/////UserBlocks/////
+///////////////////
+
+// SaveUserBlock allows to store the given block inside the store, returning an error if
+// something goes wrong.
+func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.UsersBlocksStoreKey(userBlock.Blocker)
+	var usersBlocks []types.UserBlock
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &usersBlocks)
+
+	for _, ub := range usersBlocks {
+		if ub.Equals(userBlock) {
+			return fmt.Errorf("the user with %s address has already been blocked", userBlock.Blocked)
+		}
+	}
+
+	usersBlocks = append(usersBlocks, userBlock)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&usersBlocks))
+
+	return nil
+}
+
+// UnblockUser allows to the specified blocker to unblock the given blocked user.
+func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked sdk.AccAddress, subspace string) error {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.UsersBlocksStoreKey(blocker)
+	var usersBlocks []types.UserBlock
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &usersBlocks)
+
+	for index, ub := range usersBlocks {
+		if ub.Blocker.Equals(blocker) && ub.Blocked.Equals(blocked) && ub.Subspace == subspace {
+			usersBlocks = append(usersBlocks[:index], usersBlocks[index+1:]...)
+			if len(usersBlocks) == 0 {
+				store.Delete(key)
+			} else {
+				store.Set(key, k.Cdc.MustMarshalBinaryBare(&usersBlocks))
+			}
+			return nil
+		}
+	}
+
+	return fmt.Errorf("blocked user with address %s not found", blocked)
+}
+
+// GetUserBlocks returns the list of users that the specified user has blocked.
+func (k Keeper) GetUserBlocks(ctx sdk.Context, user sdk.AccAddress) []types.UserBlock {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.UsersBlocksStoreKey(user)
+
+	var userBlocks []types.UserBlock
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &userBlocks)
+
+	return userBlocks
+}
+
+// GetUsersBlocks returns a list of all the users blocks inside the given context.
+func (k Keeper) GetUsersBlocks(ctx sdk.Context) []types.UserBlock {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UsersBlocksStorePrefix)
+
+	var usersBlocks []types.UserBlock
+	for ; iterator.Valid(); iterator.Next() {
+		var userBlocks []types.UserBlock
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userBlocks)
+		usersBlocks = append(usersBlocks, userBlocks...)
+	}
+
+	return usersBlocks
+}

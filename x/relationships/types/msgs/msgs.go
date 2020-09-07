@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/relationships/types/models"
 )
 
@@ -48,8 +48,7 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
 	}
 
-	//TODO change this when userBlock is merged
-	if !posts.IsValidSubspace(msg.Subspace) {
+	if !commons.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 	}
 
@@ -104,8 +103,7 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
 	}
 
-	//TODO change this when userBlock is merged
-	if !posts.IsValidSubspace(msg.Subspace) {
+	if !commons.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 	}
 
@@ -120,4 +118,115 @@ func (msg MsgDeleteRelationship) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
+}
+
+// MsgBlockUser allows the given Blocker to block the specified Blocked user
+// for the (optional) reason.
+type MsgBlockUser struct {
+	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Reason   string         `json:"reason,omitempty" yaml:"reason,omitempty"`
+	Subspace string         `json:"subspace" yaml:"subspace"`
+}
+
+func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason, subspace string) MsgBlockUser {
+	return MsgBlockUser{
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Reason:   reason,
+		Subspace: subspace,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgBlockUser) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgBlockUser) Type() string {
+	return models.ActionBlockUser
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgBlockUser) ValidateBasic() error {
+	if msg.Blocker.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	}
+
+	if msg.Blocked.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	}
+
+	if msg.Blocker.Equals(msg.Blocked) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+	}
+
+	if !commons.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgBlockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Blocker}
+}
+
+// MsgUnblockUser allows the given original Blocker to unblock the specified Blocked user.
+type MsgUnblockUser struct {
+	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
+	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
+	Subspace string         `json:"subspace" yaml:"subspace"`
+}
+
+func NewMsgUnblockUser(blocker, blocked sdk.AccAddress, subspace string) MsgUnblockUser {
+	return MsgUnblockUser{
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Subspace: subspace,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgUnblockUser) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgUnblockUser) Type() string {
+	return models.ActionUnblockUser
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgUnblockUser) ValidateBasic() error {
+	if msg.Blocker.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	}
+
+	if msg.Blocked.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	}
+
+	if msg.Blocker.Equals(msg.Blocked) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+	}
+
+	if !commons.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgUnblockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Blocker}
 }

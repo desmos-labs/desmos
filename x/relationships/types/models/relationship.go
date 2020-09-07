@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // Relationship is the struct of a relationship.
@@ -34,8 +34,7 @@ func (r Relationship) Validate() error {
 		return fmt.Errorf("recipient can't be empty")
 	}
 
-	// TODO edit this when user blocks is merged
-	if !posts.IsValidSubspace(r.Subspace) {
+	if !commons.IsValidSubspace(r.Subspace) {
 		return fmt.Errorf("subspace must be a valid sha-256")
 	}
 
