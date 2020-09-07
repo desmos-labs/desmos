@@ -8,7 +8,7 @@ This message allows you to create a relationship between the signer and a specif
   "value": {
     "sender": "<Desmos address that's creating the relationship>",
     "receiver": "<Desmos address that's receiving the relationship>",
-    "subspace": "<Subspace of a relationship>"
+    "subspace": "<Subspace of the relationship>"
   }
 }      
 ```
@@ -18,7 +18,7 @@ This message allows you to create a relationship between the signer and a specif
 | :-------: | :----: | :-------- |
 | `sender`  | String | Desmos address of the user that is creating the relationship |
 | `receiver`| String | Desmos address of the relationship's recipient |
-| `subspace`| String | Required string that identifies the app where the user make the relationship |
+| `subspace`| String | Identifies the app where the relationship should be valid |
 
 ## Example
 ````json

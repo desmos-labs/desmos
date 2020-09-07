@@ -33,6 +33,28 @@ func (suite *KeeperTestSuite) TestKeeper_StoreRelationship() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			expErr: nil,
 		},
+		{
+			name: "relationship added correctly (another subspace)",
+			storedRelationships: types.Relationships{
+				types.NewRelationship(suite.testData.otherUser,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+			user: suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.otherUser,
+				"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88"),
+			expErr: nil,
+		},
+		{
+			name: "relationship added correctly (another receiver)",
+			storedRelationships: types.Relationships{
+				types.NewRelationship(suite.testData.otherUser,
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+			user: suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.user,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			expErr: nil,
+		},
 	}
 
 	for _, test := range tests {

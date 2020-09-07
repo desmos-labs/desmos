@@ -14,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
 )
 
@@ -51,6 +52,11 @@ func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			// TODO edit this import to use commons when user blocks is merged
+			if !posts.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			}
+
 			msg := types.NewMsgCreateRelationship(cliCtx.FromAddress, receiver, args[1])
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
@@ -74,6 +80,11 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 			receiver, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", receiver))
+			}
+
+			// TODO edit this import to use commons when user blocks is merged
+			if !posts.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 			}
 
 			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver, args[1])

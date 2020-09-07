@@ -7,6 +7,8 @@ import (
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
 
+// Relationship is the struct of a relationship.
+// It represent the concept of "follow" of traditional social networks.
 type Relationship struct {
 	Recipient sdk.AccAddress `json:"recipient" yaml:"recipient"`
 	Subspace  string         `json:"subspace" yaml:"subspace"`
