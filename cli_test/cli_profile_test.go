@@ -1,5 +1,3 @@
-// +build cli_test
-
 //nolint
 package clitest
 
@@ -153,7 +151,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave(dTag, fooAddr, "-y")
+	success, _, sterr = f.TxProfileSave("mrPink", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -165,9 +163,10 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	// Make sure the profile has been edited
 	require.Nil(t, editedProfiles[0].Moniker)
 	require.Nil(t, editedProfiles[0].Bio)
+	require.Equal(t, "mrPink", editedProfiles[0].DTag)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(dTag, fooAddr, "--dry-run")
+	success, _, _ = f.TxProfileSave("mrPink", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
