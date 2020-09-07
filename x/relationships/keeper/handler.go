@@ -32,7 +32,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 // handleMsgCreateRelationship handles the creation of a relationship
 func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
 	// Save the relationship
-	err := keeper.StoreRelationship(ctx, msg.Sender, msg.Receiver)
+	err := keeper.StoreRelationship(ctx, msg.Sender, types.NewRelationship(msg.Receiver, msg.Subspace))
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -41,6 +41,7 @@ func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCr
 		types.EventTypeRelationshipCreated,
 		sdk.NewAttribute(types.AttributeRelationshipSender, msg.Sender.String()),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Receiver.String()),
+		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
 	result := sdk.Result{
@@ -53,12 +54,13 @@ func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCr
 
 // handleMsgDeleteRelationship handles the relationship's deletion
 func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
-	keeper.DeleteRelationship(ctx, msg.Sender, msg.Counterparty)
+	keeper.DeleteRelationship(ctx, msg.Sender, types.NewRelationship(msg.Counterparty, msg.Subspace))
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeRelationshipsDeleted,
 		sdk.NewAttribute(types.AttributeRelationshipSender, msg.Sender.String()),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Counterparty.String()),
+		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
 	result := sdk.Result{

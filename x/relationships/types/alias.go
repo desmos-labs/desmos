@@ -14,39 +14,29 @@ const (
 	StoreKey                 = models.StoreKey
 	ActionCreateRelationship = models.ActionCreateRelationship
 	ActionDeleteRelationship = models.ActionDeleteRelationship
-	ActionBlockUser          = models.ActionBlockUser
-	ActionUnblockUser        = models.ActionUnblockUser
 	QuerierRoute             = models.QuerierRoute
 	QueryUserRelationships   = models.QueryUserRelationships
 	QueryRelationships       = models.QueryRelationships
-	QueryUserBlocks          = models.QueryUserBlocks
 )
 
 var (
 	// functions aliases
-	NewUserBlock             = models.NewUserBlock
+	NewRelationship          = models.NewRelationship
 	RelationshipsStoreKey    = models.RelationshipsStoreKey
-	UsersBlocksStoreKey      = models.UsersBlocksStoreKey
 	RegisterModelsCodec      = models.RegisterModelsCodec
-	NewRelationshipResponse  = models.NewRelationshipResponse
 	NewMsgCreateRelationship = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship = msgs.NewMsgDeleteRelationship
-	NewMsgBlockUser          = msgs.NewMsgBlockUser
-	NewMsgUnblockUser        = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
-	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
-	UserBlock             = models.UserBlock
-	RelationshipsResponse = models.RelationshipsResponse
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
-	MsgBlockUser          = msgs.MsgBlockUser
-	MsgUnblockUser        = msgs.MsgUnblockUser
+	Relationship          = models.Relationship
+	Relationships         = models.Relationships
 )

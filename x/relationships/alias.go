@@ -17,54 +17,41 @@ const (
 	StoreKey                 = models.StoreKey
 	ActionCreateRelationship = models.ActionCreateRelationship
 	ActionDeleteRelationship = models.ActionDeleteRelationship
-	ActionBlockUser          = models.ActionBlockUser
-	ActionUnblockUser        = models.ActionUnblockUser
 	QuerierRoute             = models.QuerierRoute
 	QueryUserRelationships   = models.QueryUserRelationships
 	QueryRelationships       = models.QueryRelationships
-	QueryUserBlocks          = models.QueryUserBlocks
 )
 
 var (
 	// functions aliases
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
-	GetTxCmd                     = cli.GetTxCmd
-	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
-	GetCmdBlockUser              = cli.GetCmdBlockUser
-	GetCmdUnblockUser            = cli.GetCmdUnblockUser
-	RegisterRoutes               = rest.RegisterRoutes
-	NewKeeper                    = keeper.NewKeeper
-	NewQuerier                   = keeper.NewQuerier
-	NewRelationshipResponse      = models.NewRelationshipResponse
-	NewUserBlock                 = models.NewUserBlock
+	NewRelationship              = models.NewRelationship
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
-	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
 	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
-	NewMsgBlockUser              = msgs.NewMsgBlockUser
-	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
+	RegisterRoutes               = rest.RegisterRoutes
+	NewQuerier                   = keeper.NewQuerier
+	NewHandler                   = keeper.NewHandler
+	NewKeeper                    = keeper.NewKeeper
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
-	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
-	UserBlock             = models.UserBlock
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
-	MsgBlockUser          = msgs.MsgBlockUser
-	MsgUnblockUser        = msgs.MsgUnblockUser
 	CommonRelationshipReq = rest.CommonRelationshipReq
-	UserBlockReq          = rest.UserBlockReq
-	UserUnblockReq        = rest.UserUnblockReq
 	Keeper                = keeper.Keeper
+	Relationship          = models.Relationship
+	Relationships         = models.Relationships
 )

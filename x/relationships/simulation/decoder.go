@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/tendermint/tendermint/libs/kv"
 )
@@ -14,7 +13,7 @@ import (
 func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 	switch {
 	case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
-		var relationshipsA, relationshipsB []sdk.AccAddress
+		var relationshipsA, relationshipsB types.Relationships
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipsA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipsB)
 		return fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationshipsA, relationshipsB)

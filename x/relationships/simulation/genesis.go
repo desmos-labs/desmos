@@ -3,7 +3,6 @@ package simulation
 // DONTCOVER
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -20,15 +19,16 @@ func RandomizedGenState(simsState *module.SimulationState) {
 }
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
-func randomRelationships(simState *module.SimulationState) map[string][]sdk.AccAddress {
+func randomRelationships(simState *module.SimulationState) map[string]types.Relationships {
 	relationshipsNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 100))
-	usersRelationships := map[string][]sdk.AccAddress{}
+	usersRelationships := map[string]types.Relationships{}
+	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	for index := 0; index < relationshipsNumber; index++ {
 		sender, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		receiver, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		if !sender.Equals(receiver) {
-			usersRelationships[sender.Address.String()] = []sdk.AccAddress{receiver.Address}
+			usersRelationships[sender.Address.String()] = types.Relationships{types.NewRelationship(receiver.Address, subspace)}
 		}
 	}
 

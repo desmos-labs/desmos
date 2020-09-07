@@ -14,10 +14,12 @@ var (
 	msgCreateRelationship = msgs.MsgCreateRelationship{
 		Sender:   user,
 		Receiver: user,
+		Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}
 
 	msgDeleteRelationships = msgs.MsgDeleteRelationship{
-		Sender: user,
+		Sender:   user,
+		Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}
 
 	msgBlockUser = msgs.MsgBlockUser{
@@ -53,28 +55,35 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty sender returns error",
 			msg: msgs.NewMsgCreateRelationship(
-				nil, nil,
+				nil, nil, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgCreateRelationship(
-				user, nil,
+				user, nil, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
-			name: "Equals sender and receiver",
+			name: "Equals sender and receiver returns error",
 			msg: msgs.NewMsgCreateRelationship(
-				user, user,
+				user, user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
 		},
 		{
+			name: "Invalid subspace returns error",
+			msg: msgs.NewMsgCreateRelationship(
+				user, otherUser, "1234",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256"),
+		},
+		{
 			name: "No errors message",
 			msg: msgs.NewMsgCreateRelationship(
-				user, otherUser,
+				user, otherUser, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
 		},
@@ -96,7 +105,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 
 func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
 	actual := msgCreateRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreateRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgCreateRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -127,28 +136,35 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty sender returns error",
 			msg: msgs.NewMsgDeleteRelationship(
-				nil, user,
+				nil, user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name: "Empty receiver returns error",
 			msg: msgs.NewMsgDeleteRelationship(
-				user, nil,
+				user, nil, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address: "),
 		},
 		{
-			name: "Equals sender and receiver",
+			name: "Equals sender and receiver returns error",
 			msg: msgs.NewMsgDeleteRelationship(
-				user, user,
+				user, user, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
 		},
 		{
+			name: "Invalid subspace returns error",
+			msg: msgs.NewMsgDeleteRelationship(
+				user, otherUser, "1234",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256"),
+		},
+		{
 			name: "No errors message",
 			msg: msgs.NewMsgDeleteRelationship(
-				user, otherUser,
+				user, otherUser, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			error: nil,
 		},
@@ -170,7 +186,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
 	require.Equal(t, expected, string(actual))
 }
 

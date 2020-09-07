@@ -16,6 +16,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 type CommonRelationshipReq struct {
 	BaseReq  rest.BaseReq `json:"base_req"`
 	Receiver string       `json:"receiver"`
+	Subspace string       `json:"subspace"`
 }
 
 // UserBlockReq defines the properties of a block user operation request's body

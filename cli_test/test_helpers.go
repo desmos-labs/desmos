@@ -470,15 +470,15 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 
 //___________________________________________________________________________________
 // desmoscli tx relationships
-func (f *Fixtures) TxCreateRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships create %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, receiver, from, f.Flags())
+func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships create %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, receiver, subspace, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
-func (f *Fixtures) TxDeleteUserRelationship(receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx relationships delete %s --keyring-backend=test --from=%s %v`,
-		f.DesmoscliBinary, receiver, from, f.Flags())
+func (f *Fixtures) TxDeleteUserRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships delete %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, receiver, subspace, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -831,12 +831,12 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 
 //___________________________________________________________________________________
 // QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.RelationshipsResponse {
+func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
 	cmd := fmt.Sprintf("%s query relationships user %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedRelationships relationshipsTypes.RelationshipsResponse
+	var storedRelationships relationshipsTypes.Relationships
 	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
 	require.NoError(f.T, err)
 	return storedRelationships

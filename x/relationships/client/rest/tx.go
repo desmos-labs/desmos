@@ -44,7 +44,7 @@ func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreateRelationship(sender, receiver)
+		msg := types.NewMsgCreateRelationship(sender, receiver, req.Subspace)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -79,7 +79,7 @@ func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid receiver given")
 		}
 
-		msg := types.NewMsgDeleteRelationship(receiver, user)
+		msg := types.NewMsgDeleteRelationship(receiver, user, req.Subspace)
 
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

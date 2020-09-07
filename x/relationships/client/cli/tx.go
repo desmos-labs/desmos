@@ -14,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/spf13/cobra"
 )
 
@@ -40,9 +41,9 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateRelationship is the CLI command for creating a relationship
 func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [receiver]",
+		Use:   "create [receiver] [subspace]",
 		Short: "Create a relationship with the given receiver address",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -53,7 +54,12 @@ func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateRelationship(cliCtx.FromAddress, receiver)
+			// TODO edit this import to use commons when user blocks is merged
+			if !posts.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			}
+
+			msg := types.NewMsgCreateRelationship(cliCtx.FromAddress, receiver, args[1])
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
@@ -65,9 +71,9 @@ func GetCmdCreateRelationship(cdc *codec.Codec) *cobra.Command {
 // GetCmdDeleteRelationship is the CLI command for deleting a relationship
 func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete [receiver]",
+		Use:   "delete [receiver] [subspace]",
 		Short: "Delete the relationship with the given user",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -78,7 +84,12 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid receiver address: %s", receiver))
 			}
 
-			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver)
+			// TODO edit this import to use commons when user blocks is merged
+			if !posts.IsValidSubspace(args[1]) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			}
+
+			msg := types.NewMsgDeleteRelationship(cliCtx.FromAddress, receiver, args[1])
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

@@ -18,7 +18,13 @@ var (
 	anotherKey      = ed25519.GenPrivKey().PubKey()
 	anotherUserAddr = sdk.AccAddress(anotherKey.Address())
 
-	relationships = []sdk.AccAddress{accountCreatorAddr, anotherUserAddr}
+	subspace = "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+
+	relationships = types.Relationships{
+		types.NewRelationship(accountCreatorAddr, subspace),
+		types.NewRelationship(anotherUserAddr, subspace),
+	}
+
 	usersBlocks   = []types.UserBlock{
 		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 		types.NewUserBlock(accountCreatorAddr, anotherUserAddr, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),

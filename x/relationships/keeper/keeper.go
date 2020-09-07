@@ -23,43 +23,43 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	}
 }
 
-// StoreRelationship allows to store the given receiver returning an error if he's already present.
-func (k Keeper) StoreRelationship(ctx sdk.Context, user, receiver sdk.AccAddress) error {
+// StoreRelationship allows to store the given relationship returning an error if he's already present.
+func (k Keeper) StoreRelationship(ctx sdk.Context, user sdk.AccAddress, relationship types.Relationship) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(user)
-	var relationships []sdk.AccAddress
+	var relationships types.Relationships
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationships)
 
-	for _, addr := range relationships {
-		if addr.Equals(receiver) {
-			return fmt.Errorf("relationship already exists with %s", receiver)
+	for _, rel := range relationships {
+		if rel.Equals(relationship) {
+			return fmt.Errorf("relationship already exists with %s", relationship.Recipient)
 		}
 	}
 
-	relationships = append(relationships, receiver)
+	relationships = append(relationships, relationship)
 	store.Set(key, k.Cdc.MustMarshalBinaryBare(&relationships))
 
 	return nil
 }
 
-// GetUserRelationships allows to list all the storedUserBlocks that involve the given user.
-func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) []sdk.AccAddress {
+// GetUserRelationships allows to list all the storedRelationships that involve the given user.
+func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types.Relationships {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(user)
 
-	var relationships []sdk.AccAddress
+	var relationships types.Relationships
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationships)
 
 	return relationships
 }
 
-// GetUsersRelationships allows to returns the map of all the users and their associated storedUserBlocks
-func (k Keeper) GetUsersRelationships(ctx sdk.Context) map[string][]sdk.AccAddress {
+// GetUsersRelationships allows to returns the map of all the users and their associated storedRelationships
+func (k Keeper) GetUsersRelationships(ctx sdk.Context) map[string]types.Relationships {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
 
-	usersRelationshipsMap := map[string][]sdk.AccAddress{}
-	var relationships []sdk.AccAddress
+	usersRelationshipsMap := map[string]types.Relationships{}
+	var relationships types.Relationships
 	for ; iterator.Valid(); iterator.Next() {
 		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &relationships)
 		userBytes := bytes.TrimPrefix(iterator.Key(), types.RelationshipsStorePrefix)
@@ -71,14 +71,14 @@ func (k Keeper) GetUsersRelationships(ctx sdk.Context) map[string][]sdk.AccAddre
 }
 
 // DeleteRelationship allows to delete the relationship between the given user and his counterparty
-func (k Keeper) DeleteRelationship(ctx sdk.Context, user, receiver sdk.AccAddress) {
+func (k Keeper) DeleteRelationship(ctx sdk.Context, user sdk.AccAddress, relationship types.Relationship) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(user)
-	var relationships []sdk.AccAddress
+	var relationships types.Relationships
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationships)
 
-	for index, addr := range relationships {
-		if addr.Equals(receiver) {
+	for index, rel := range relationships {
+		if rel.Recipient.Equals(relationship.Recipient) && rel.Subspace == relationship.Subspace {
 			relationships = append(relationships[:index], relationships[index+1:]...)
 			if len(relationships) == 0 {
 				store.Delete(key)
