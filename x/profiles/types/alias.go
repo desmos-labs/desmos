@@ -40,9 +40,9 @@ var (
 )
 
 type (
+	MsgSaveProfile   = msgs.MsgSaveProfile
+	MsgDeleteProfile = msgs.MsgDeleteProfile
 	Profile          = models.Profile
 	Profiles         = models.Profiles
 	Pictures         = models.Pictures
-	MsgSaveProfile   = msgs.MsgSaveProfile
-	MsgDeleteProfile = msgs.MsgDeleteProfile
 )

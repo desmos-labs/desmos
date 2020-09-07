@@ -66,7 +66,7 @@ func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.RelationshipsResponse
+			var out types.Relationships
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

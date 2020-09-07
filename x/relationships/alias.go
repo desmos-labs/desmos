@@ -24,10 +24,7 @@ const (
 
 var (
 	// functions aliases
-	NewHandler                   = keeper.NewHandler
-	NewKeeper                    = keeper.NewKeeper
-	NewQuerier                   = keeper.NewQuerier
-	NewRelationshipResponse      = models.NewRelationshipResponse
+	NewRelationship              = models.NewRelationship
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
 	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
@@ -38,8 +35,11 @@ var (
 	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
 	GetTxCmd                     = cli.GetTxCmd
 	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteUserRelationship = cli.GetCmdDeleteRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
 	RegisterRoutes               = rest.RegisterRoutes
+	NewQuerier                   = keeper.NewQuerier
+	NewHandler                   = keeper.NewHandler
+	NewKeeper                    = keeper.NewKeeper
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -48,8 +48,10 @@ var (
 )
 
 type (
-	CommonRelationshipReq = rest.CommonRelationshipReq
-	Keeper                = keeper.Keeper
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
+	CommonRelationshipReq = rest.CommonRelationshipReq
+	Keeper                = keeper.Keeper
+	Relationship          = models.Relationship
+	Relationships         = models.Relationships
 )

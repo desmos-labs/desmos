@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/relationships/types/models"
 )
 
@@ -14,12 +15,14 @@ import (
 type MsgCreateRelationship struct {
 	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
 	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
+	Subspace string         `json:"subspace" yaml:"subspace"`
 }
 
-func NewMsgCreateRelationship(sender, receiver sdk.AccAddress) MsgCreateRelationship {
+func NewMsgCreateRelationship(sender, receiver sdk.AccAddress, subspace string) MsgCreateRelationship {
 	return MsgCreateRelationship{
 		Sender:   sender,
 		Receiver: receiver,
+		Subspace: subspace,
 	}
 }
 
@@ -45,6 +48,11 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
 	}
 
+	//TODO change this when userBlock is merged
+	if !posts.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+	}
+
 	return nil
 }
 
@@ -63,12 +71,14 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 type MsgDeleteRelationship struct {
 	Sender       sdk.AccAddress `json:"sender" yaml:"sender"`
 	Counterparty sdk.AccAddress `json:"counterparty" yaml:"counterparty"`
+	Subspace     string         `json:"subspace" yaml:"subspace"`
 }
 
-func NewMsgDeleteRelationship(sender, receiver sdk.AccAddress) MsgDeleteRelationship {
+func NewMsgDeleteRelationship(sender, receiver sdk.AccAddress, subspace string) MsgDeleteRelationship {
 	return MsgDeleteRelationship{
 		Sender:       sender,
 		Counterparty: receiver,
+		Subspace:     subspace,
 	}
 }
 
@@ -92,6 +102,11 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 
 	if msg.Sender.Equals(msg.Counterparty) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
+	}
+
+	//TODO change this when userBlock is merged
+	if !posts.IsValidSubspace(msg.Subspace) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 	}
 
 	return nil

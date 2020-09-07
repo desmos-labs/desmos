@@ -15,13 +15,16 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.NoError(err)
 
-	expRelationships := types.NewRelationshipResponse([]sdk.AccAddress{addr1, addr2})
+	expRelationships := types.Relationships{
+		types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+		types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+	}
 
 	tests := []struct {
 		name          string
 		path          []string
-		relationships []sdk.AccAddress
-		expResult     *types.RelationshipsResponse
+		relationships types.Relationships
+		expResult     types.Relationships
 		expErr        error
 	}{
 		{
@@ -32,18 +35,21 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalidAddress"),
 		},
 		{
-			name:          "User Relationships returned correctly",
-			path:          []string{types.QueryUserRelationships, suite.testData.user.String()},
-			relationships: []sdk.AccAddress{addr1, addr2},
-			expResult:     &expRelationships,
-			expErr:        nil,
+			name: "User Relationships returned correctly",
+			path: []string{types.QueryUserRelationships, suite.testData.user.String()},
+			relationships: types.Relationships{
+				types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+			expResult: expRelationships,
+			expErr:    nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
 			}
@@ -76,25 +82,34 @@ func (suite *KeeperTestSuite) Test_queryRelationships() {
 	tests := []struct {
 		name          string
 		path          []string
-		relationships []sdk.AccAddress
-		expResult     map[string][]sdk.AccAddress
+		relationships types.Relationships
+		expResult     map[string]types.Relationships
 		expErr        error
 	}{
 		{
-			name:          "Relationships returned correctly",
-			path:          []string{types.QueryRelationships},
-			relationships: []sdk.AccAddress{addr1, addr2},
-			expResult: map[string][]sdk.AccAddress{
-				suite.testData.user.String():      {addr1, addr2},
-				suite.testData.otherUser.String(): {addr1, addr2},
+			name: "Relationships returned correctly",
+			path: []string{types.QueryRelationships},
+			relationships: types.Relationships{
+				types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			},
+			expResult: map[string]types.Relationships{
+				suite.testData.user.String(): {
+					types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				},
+				suite.testData.otherUser.String(): {
+					types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				},
 			},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
 			for _, rel := range test.relationships {
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, rel)
