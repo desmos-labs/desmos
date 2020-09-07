@@ -2,13 +2,14 @@
 ## Changes
 - Changed `relationships`' implementation adding a `subspace` field to identify in which app
   users make relationships (#266)
+- Allow users to change their DTag (#226)
 
 # Version 0.11.0
 ## Changes
 - Allowed the possibility to edit a post's attachments and poll data using the `MsgEditPost` type (#202)
 - Removed the `Open` field from within the `PollData` object. Now you should rely on the `CloseDate` field to determine whether a poll is closed or open. (#252)
 - Implemented users `Relationships` (#168)
-- Allow users to change their DTag (#226)
+
 # Version 0.10.0
 ## Changes
 - Changed application errors to make them more clear (#237)
