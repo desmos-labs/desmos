@@ -1,13 +1,13 @@
-# `MsgBlockUser`
-This message allows you to block a specific user associated with a given address.
+# `MsgUnblockUser`
+This message allows you to unblock a previously blocked user.
 
 ## Structure
 ```json
 {
   "type": "desmos/MsgUnblockUser",
   "value": {
-    "blocker": "<Desmos address that's blocking someone>",
-    "blocked": "<Desmos address that's been blocked>",
+    "blocker": "<Desmos address of the user that is unblocking another user>",
+    "blocked": "<Desmos address of the unblocked user>",
     "subspace": "<Subspace of the block>"
   }
 }   
@@ -17,8 +17,8 @@ This message allows you to block a specific user associated with a given address
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `blocker`  | String | Desmos address of the user that is blocking someone else |
-| `blocked`| String | Desmos address of the blocked user |
-| `subspace` | String | Required string that identifies the app |
+| `blocked`| String | Desmos address of the unblocked user |
+| `subspace` | String | String that identifies the app for which the block was valid |
 
 ## Example
 ````json

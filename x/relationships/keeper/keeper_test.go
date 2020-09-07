@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 				types.NewUserBlock(suite.testData.user, suite.testData.otherUser, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 			userBlock: types.NewUserBlock(suite.testData.user, suite.testData.otherUser, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			expErr:    fmt.Errorf("the user with %s address has been blocked already", suite.testData.otherUser),
+			expErr:    fmt.Errorf("the user with %s address has already been blocked", suite.testData.otherUser),
 		},
 		{
 			name:             "user block added correctly",

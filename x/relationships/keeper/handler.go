@@ -81,6 +81,7 @@ func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) 
 		types.EventTypeBlockUser,
 		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker.String()),
 		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked.String()),
+		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
 		sdk.NewAttribute(types.AttributeUserBlockReason, msg.Reason),
 	))
 
@@ -102,6 +103,7 @@ func handleMsgUnblockUser(ctx sdk.Context, keeper Keeper, msg types.MsgUnblockUs
 		types.EventTypeUnblockUser,
 		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker.String()),
 		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked.String()),
+		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
 	))
 
 	result := sdk.Result{

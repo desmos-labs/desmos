@@ -844,7 +844,7 @@ func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) rela
 
 // QueryUserBlocks returns store user blocks
 func (f *Fixtures) QueryUserBlocks(user sdk.AccAddress, flags ...string) []relationshipsTypes.UserBlock {
-	cmd := fmt.Sprintf("%s query relationships user-blocks %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
+	cmd := fmt.Sprintf("%s query relationships blacklist %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()

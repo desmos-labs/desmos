@@ -17,4 +17,5 @@ const (
 	AttributeUserBlockBlocker = "userBlock_blocker"
 	AttributeUserBlockBlocked = "userBlock_blocked"
 	AttributeUserBlockReason  = "userBlock_reason"
+	AttributeSubspace         = "subspace"
 )

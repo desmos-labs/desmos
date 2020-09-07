@@ -1,5 +1,5 @@
 # Version 0.12.0
-- Implemented the possibility to block/unblock a specific user `address` (#169)
+- Implemented the possibility to (un)blocking a specific user (#169)
 
 # Version 0.11.0
 ## Changes

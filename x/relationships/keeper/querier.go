@@ -21,12 +21,12 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case types.QueryUserBlocks:
 			return queryUserBlocks(ctx, path[1:], req, keeper)
 		default:
-			return nil, fmt.Errorf("unknown profiles query endpoint")
+			return nil, fmt.Errorf("unknown relationships query endpoint")
 		}
 	}
 }
 
-// queryRelationships handles the request of listing all the userBlocks in the given context
+// queryRelationships handles the request of listing all the relationships in the given context
 func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	relationships := keeper.GetUsersRelationships(ctx)
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
@@ -37,7 +37,7 @@ func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]
 	return bz, nil
 }
 
-// queryUserRelationships handles the request of listing all the users' storedUserBlocks
+// queryUserRelationships handles the request of listing all the users' storedRelationships
 func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	user, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {
@@ -54,6 +54,7 @@ func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery,
 	return bz, nil
 }
 
+// queryUserBlocks handles the request of listing all the users' blocked users
 func queryUserBlocks(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	user, err := sdk.AccAddressFromBech32(path[0])
 	if err != nil {

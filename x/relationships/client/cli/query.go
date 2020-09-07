@@ -76,8 +76,8 @@ func GetCmdQueryUserRelationships(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdQueryUserBlocks(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "user-blocks [address]",
-		Short: "Retrieve all the user's blocks",
+		Use:   "blacklist [address]",
+		Short: "Retrieve the list of all the blocked users of the given address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

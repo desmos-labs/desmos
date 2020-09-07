@@ -13,7 +13,7 @@ import (
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/relationships", queryRelationships(cliCtx)).Methods("GET")
 	r.HandleFunc("/relationships/{address}", queryUserRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc("/userBlocks/{address}", queryUserBlocks(cliCtx)).Methods("GET")
+	r.HandleFunc("/blacklist/{address}", queryUserBlocks(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query list of user's relationships

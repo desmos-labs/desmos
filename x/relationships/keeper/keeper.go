@@ -104,7 +104,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 
 	for _, ub := range usersBlocks {
 		if ub.Equals(userBlock) {
-			return fmt.Errorf("the user with %s address has been blocked already", userBlock.Blocked)
+			return fmt.Errorf("the user with %s address has already been blocked", userBlock.Blocked)
 		}
 	}
 

@@ -20,7 +20,7 @@ This message allows you to block a specific user associated with a given address
 | `blocker`  | String | Desmos address of the user that is blocking someone else |
 | `blocked`| String | Desmos address of the blocked user |
 | `reason` | String | (Optional) reason for the block |
-| `subspace` | String | Required string that identifies the app |
+| `subspace` | String | String that identifies the app for which the block should apply |
 
 ## Example
 ````json

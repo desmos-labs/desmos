@@ -126,6 +126,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 				types.EventTypeBlockUser,
 				sdk.NewAttribute(types.AttributeUserBlockBlocker, blocker.String()),
 				sdk.NewAttribute(types.AttributeUserBlockBlocked, blocked.String()),
+				sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				sdk.NewAttribute(types.AttributeUserBlockReason, "reason"),
 			),
 		},
@@ -190,5 +191,6 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 		types.EventTypeUnblockUser,
 		sdk.NewAttribute(types.AttributeUserBlockBlocker, suite.testData.user.String()),
 		sdk.NewAttribute(types.AttributeUserBlockBlocked, addr1.String()),
+		sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 	))
 }

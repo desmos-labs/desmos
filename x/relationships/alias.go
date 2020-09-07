@@ -27,7 +27,16 @@ const (
 
 var (
 	// functions aliases
-	NewHandler                   = keeper.NewHandler
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
+	GetCmdBlockUser              = cli.GetCmdBlockUser
+	GetCmdUnblockUser            = cli.GetCmdUnblockUser
+	RegisterRoutes               = rest.RegisterRoutes
 	NewKeeper                    = keeper.NewKeeper
 	NewQuerier                   = keeper.NewQuerier
 	NewRelationshipResponse      = models.NewRelationshipResponse
@@ -40,16 +49,6 @@ var (
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
-	GetTxCmd                     = cli.GetTxCmd
-	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
-	GetCmdBlockUser              = cli.GetCmdBlockUser
-	GetCmdUnblockUser            = cli.GetCmdUnblockUser
-	RegisterRoutes               = rest.RegisterRoutes
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -59,13 +58,13 @@ var (
 )
 
 type (
-	CommonRelationshipReq = rest.CommonRelationshipReq
-	UserBlockReq          = rest.UserBlockReq
-	UserUnblockReq        = rest.UserUnblockReq
-	Keeper                = keeper.Keeper
 	UserBlock             = models.UserBlock
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 	MsgBlockUser          = msgs.MsgBlockUser
 	MsgUnblockUser        = msgs.MsgUnblockUser
+	CommonRelationshipReq = rest.CommonRelationshipReq
+	UserBlockReq          = rest.UserBlockReq
+	UserUnblockReq        = rest.UserUnblockReq
+	Keeper                = keeper.Keeper
 )

@@ -89,7 +89,7 @@ func GetCmdDeleteRelationship(cdc *codec.Codec) *cobra.Command {
 func GetCmdBlockUser(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "block [address] [subspace] [[reason]]",
-		Short: "Block the user with the given address optionally specifying the reason",
+		Short: "Block the user with the given address, optionally specifying the reason for the block",
 		Args:  cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
