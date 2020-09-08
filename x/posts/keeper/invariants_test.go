@@ -103,7 +103,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			answers:      nil,
 			postReaction: &postReaction,
 			reaction:     &reaction,
-			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n [Shortcode] :like: [Value] +1 [Owner] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
+			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n [Shortcode] :like: [Value] +1 [CurrentOwner] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
 			expBool:      true,
 		},
 		{

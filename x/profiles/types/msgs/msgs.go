@@ -104,3 +104,97 @@ func (msg MsgDeleteProfile) GetSignBytes() []byte {
 func (msg MsgDeleteProfile) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Creator}
 }
+
+// ----------------------
+// --- MsgRequestDTagTransfer
+// ----------------------
+
+// MsgRequestDTagTransfer define a Dtag transfer message
+type MsgRequestDTagTransfer struct {
+	CurrentOwner  sdk.AccAddress `json:"current_owner" yaml:"current_owner"`
+	ReceivingUser sdk.AccAddress `json:"receiving_user" yaml:"receiving_user"`
+}
+
+// NewMsgRequestDTagTransfer is a constructor function for MsgRequestDtagTransfer
+func NewMsgRequestDTagTransfer(owner, receiver sdk.AccAddress) MsgRequestDTagTransfer {
+	return MsgRequestDTagTransfer{
+		CurrentOwner:  owner,
+		ReceivingUser: receiver,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgRequestDTagTransfer) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgRequestDTagTransfer) Type() string { return models.ActionRequestDtag }
+
+func (msg MsgRequestDTagTransfer) ValidateBasic() error {
+	if msg.CurrentOwner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid current owner address: %s", msg.CurrentOwner))
+	}
+
+	if msg.ReceivingUser.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid receiving user address: %s", msg.ReceivingUser))
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgRequestDTagTransfer) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.CurrentOwner}
+}
+
+// ----------------------
+// --- MsgAcceptDTagTransfer
+// ----------------------
+
+// MsgAcceptDTagTransfer represent a DTag transfer acceptance message
+type MsgAcceptDTagTransfer struct {
+	NewDTag       string         `json:"new_d_tag" yaml:"new_d_tag"`
+	CurrentOwner  sdk.AccAddress `json:"owner" yaml:"owner"`
+	ReceivingUser sdk.AccAddress `json:"receiving_user" yaml:"receiving_user"`
+}
+
+// NewMsgAcceptDTagTransfer is a constructor for MsgAcceptDTagTransfer
+func NewMsgAcceptDTagTransfer(newDTag string, owner, receivingUser sdk.AccAddress) MsgAcceptDTagTransfer {
+	return MsgAcceptDTagTransfer{
+		NewDTag:       newDTag,
+		CurrentOwner:  owner,
+		ReceivingUser: receivingUser,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgAcceptDTagTransfer) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgAcceptDTagTransfer) Type() string { return models.ActionAcceptDtagTransfer }
+
+func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
+	if len(strings.TrimSpace(msg.NewDTag)) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "new DTag can't be empty")
+	}
+
+	if msg.CurrentOwner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid owner address: %s", msg.CurrentOwner))
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgAcceptDTagTransfer) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgAcceptDTagTransfer) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.CurrentOwner}
+}

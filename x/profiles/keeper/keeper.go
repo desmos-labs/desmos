@@ -136,3 +136,37 @@ func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile typ
 
 	return types.Profile{}, false
 }
+
+// SaveDTagTransferRequest save the given request into the currentOwner's requests
+// throwing errors if an already if an equal one exist.
+func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.DTagTransferRequest) error {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(transferRequest.CurrentOwner)
+
+	var requests []types.DTagTransferRequest
+	bz := store.Get(key)
+	if bz != nil {
+		k.Cdc.MustUnmarshalJSON(bz, &requests)
+		for _, req := range requests {
+			if req.Equals(transferRequest) {
+				return fmt.Errorf("the transfer request from %s has already been made", transferRequest.ReceivingUser)
+			}
+		}
+	}
+
+	requests = append(requests, transferRequest)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&requests))
+
+	return nil
+}
+
+// GetDTagTransferRequests returns all the request made to the given user
+func (k Keeper) GetDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(user)
+
+	var requests []types.DTagTransferRequest
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+
+	return requests
+}

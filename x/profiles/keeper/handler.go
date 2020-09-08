@@ -20,6 +20,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgSaveProfile(ctx, keeper, msg)
 		case types.MsgDeleteProfile:
 			return handleMsgDeleteProfile(ctx, keeper, msg)
+		case types.MsgRequestDTagTransfer:
+			return handleMsgRequestDTagTransfer(ctx, keeper, msg)
+		case types.MsgAcceptDTagTransfer:
+			return handleMsgAcceptDTagTransfer(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Profiles message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -143,4 +147,84 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 	}
 
 	return &result, nil
+}
+
+// handleMsgRequestDTagTransfer handles the request of a dTag transfer
+func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
+	transferRequest := types.NewDTagTransferRequest(msg.CurrentOwner, msg.ReceivingUser)
+
+	if err := keeper.SaveDTagTransferRequest(ctx, transferRequest); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeDTagTransferRequest,
+		sdk.NewAttribute(types.AttributeCurrentOwner, transferRequest.CurrentOwner.String()),
+		sdk.NewAttribute(types.AttributeCurrentOwner, transferRequest.ReceivingUser.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(transferRequest),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+// handleMsgAcceptDTagTransfer handle the acceptance of a dTag transfer request
+func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptDTagTransfer) (*sdk.Result, error) {
+	requests := keeper.GetDTagTransferRequests(ctx, msg.CurrentOwner)
+
+	// Check if the receiving User request is present, if not return error
+	found := false
+	for _, req := range requests {
+		if req.ReceivingUser.Equals(msg.ReceivingUser) {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("No request made from %s", msg.ReceivingUser))
+	}
+
+	// Get the current owner profile
+	currentOwnerProfile, exist := keeper.GetProfile(ctx, msg.CurrentOwner)
+	if !exist {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Profile of %s doesn't exist", msg.CurrentOwner))
+	}
+
+	// Save the current owner profile with his new dTag
+	currentOwnerProfile = currentOwnerProfile.WithDTag(msg.NewDTag)
+	err := keeper.SaveProfile(ctx, currentOwnerProfile)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	// check for an existent receiverProfile of the receiving user
+	receiverProfile, exist := keeper.GetProfile(ctx, msg.ReceivingUser)
+	if !exist {
+		receiverProfile = types.NewProfile(currentOwnerProfile.DTag, msg.ReceivingUser, ctx.BlockTime())
+	} else {
+		receiverProfile = receiverProfile.WithDTag(currentOwnerProfile.DTag)
+	}
+
+	err = keeper.SaveProfile(ctx, receiverProfile)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeDTagTransferReqAccepted,
+		sdk.NewAttribute(types.AttributeCurrentOwner, msg.CurrentOwner.String()),
+		sdk.NewAttribute(types.AttributeCurrentOwner, msg.ReceivingUser.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(msg.CurrentOwner),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+
 }
