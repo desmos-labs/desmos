@@ -192,7 +192,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
-	if !IsValidSubspace(p.Subspace) {
+	if !commons.IsValidSubspace(p.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 

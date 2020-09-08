@@ -18,6 +18,7 @@ import (
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -194,6 +195,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
 		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
+		{app.keys[relationshipsTypes.StoreKey], newApp.keys[relationshipsTypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

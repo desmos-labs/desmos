@@ -27,7 +27,8 @@ type KeeperTestSuite struct {
 }
 
 type TestData struct {
-	postOwner sdk.AccAddress
+	user      sdk.AccAddress
+	otherUser sdk.AccAddress
 	profile   types.Profile
 }
 
@@ -54,7 +55,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// setup Data
 	// nolint - errcheck
-	suite.testData.postOwner, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.testData.user, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.testData.otherUser, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.testData.profile = types.Profile{
 		DTag: "dtag",
 		Bio:  newStrPtr("biography"),
@@ -62,7 +64,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 			newStrPtr("https://shorturl.at/adnX3"),
 			newStrPtr("https://shorturl.at/cgpyF"),
 		),
-		Creator: suite.testData.postOwner,
+		Creator: suite.testData.user,
 	}
 }
 

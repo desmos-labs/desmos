@@ -1,13 +1,14 @@
-package types_test
+package msgs_test
 
 import (
+	"github.com/desmos-labs/desmos/x/profiles/types/common"
+	"github.com/desmos-labs/desmos/x/profiles/types/models"
+	"github.com/desmos-labs/desmos/x/profiles/types/msgs"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-
-	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // ----------------------
@@ -15,18 +16,18 @@ import (
 // ----------------------
 
 var user, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testProfile = types.Profile{
+var testProfile = models.Profile{
 	DTag:    "dtag",
-	Moniker: newStrPtr("moniker"),
-	Bio:     newStrPtr("biography"),
-	Pictures: types.NewPictures(
-		newStrPtr("https://shorturl.at/adnX3"),
-		newStrPtr("https://shorturl.at/cgpyF"),
+	Moniker: common.NewStrPtr("moniker"),
+	Bio:     common.NewStrPtr("biography"),
+	Pictures: models.NewPictures(
+		common.NewStrPtr("https://shorturl.at/adnX3"),
+		common.NewStrPtr("https://shorturl.at/cgpyF"),
 	),
 	Creator: user,
 }
 
-var msgEditProfile = types.NewMsgSaveProfile(
+var msgEditProfile = msgs.NewMsgSaveProfile(
 	"monk",
 	testProfile.Moniker,
 	testProfile.Bio,
@@ -35,7 +36,7 @@ var msgEditProfile = types.NewMsgSaveProfile(
 	testProfile.Creator,
 )
 
-var msgDeleteProfile = types.NewMsgDeleteProfile(
+var msgDeleteProfile = msgs.NewMsgDeleteProfile(
 	testProfile.Creator,
 )
 
@@ -52,12 +53,12 @@ func TestMsgSaveProfile_Type(t *testing.T) {
 func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgSaveProfile
+		msg   msgs.MsgSaveProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				testProfile.DTag,
 				testProfile.Moniker,
 				testProfile.Bio,
@@ -69,17 +70,17 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Invalid empty dtag returns error",
-			msg:   types.NewMsgSaveProfile("", nil, nil, nil, nil, testProfile.Creator),
+			msg:   msgs.NewMsgSaveProfile("", nil, nil, nil, nil, testProfile.Creator),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
 		},
 		{
 			name: "No error message",
-			msg: types.NewMsgSaveProfile(
+			msg: msgs.NewMsgSaveProfile(
 				"_crazy_papa_21",
-				newStrPtr("custom-moniker"),
-				newStrPtr("custom-bio"),
-				newStrPtr("https://test.com/my-custom-profile-pic"),
-				newStrPtr("https://test.com/my-custom-cover-pic"),
+				common.NewStrPtr("custom-moniker"),
+				common.NewStrPtr("custom-bio"),
+				common.NewStrPtr("https://test.com/my-custom-profile-pic"),
+				common.NewStrPtr("https://test.com/my-custom-cover-pic"),
 				user,
 			),
 			error: nil,
@@ -129,19 +130,19 @@ func TestMsgDeleteProfile_Type(t *testing.T) {
 func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   types.MsgDeleteProfile
+		msg   msgs.MsgDeleteProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: types.NewMsgDeleteProfile(
+			msg: msgs.NewMsgDeleteProfile(
 				nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
 		},
 		{
 			name: "Valid message returns no error",
-			msg: types.NewMsgDeleteProfile(
+			msg: msgs.NewMsgDeleteProfile(
 				testProfile.Creator,
 			),
 			error: nil,

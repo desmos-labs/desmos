@@ -5,8 +5,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,12 +17,15 @@ func TestNewGenesis(t *testing.T) {
 	bioParams := sdk.Int{}
 	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
 
+	usersRelationships := map[string][]sdk.AccAddress{}
+
 	expGenState := types.GenesisState{
-		Profiles: profiles,
-		Params:   params,
+		Profiles:           profiles,
+		Params:             params,
+		UsersRelationships: usersRelationships,
 	}
 
-	actualGenState := types.NewGenesisState(profiles, params)
+	actualGenState := types.NewGenesisState(profiles, params, usersRelationships)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -34,6 +37,9 @@ func TestValidateGenesis(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	otherUser, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name        string
@@ -56,14 +62,48 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
+			name: "Genesis with invalid relationship return error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.DefaultParams(),
+				UsersRelationships: map[string][]sdk.AccAddress{
+					user.String():      {sdk.AccAddress{}},
+					otherUser.String(): {user},
+				},
+			},
+			shouldError: true,
+		},
+		{
+			name: "Invalid params returns error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.NewParams(types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)), types.DefaultDtagParams(), types.DefaultMaxBioLength),
+			},
+			shouldError: true,
+		},
+		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
 					types.NewProfile("custom_dtag1", user, date).
-						WithBio(newStrPtr("biography")).
+						WithBio(common.NewStrPtr("biography")).
 						WithPictures(
-							newStrPtr("https://test.com/profile-pic"),
-							newStrPtr("https://test.com/cover-pic"),
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
 						),
 				),
 				Params: types.DefaultParams(),

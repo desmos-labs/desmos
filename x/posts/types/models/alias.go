@@ -34,7 +34,6 @@ const (
 var (
 	// functions aliases
 	IsValidPostID              = common.IsValidPostID
-	IsValidSubspace            = common.IsValidSubspace
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	NewAttachment              = common.NewAttachment
@@ -64,10 +63,6 @@ var (
 )
 
 type (
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
-	Attachment    = common.Attachment
-	Attachments   = common.Attachments
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
@@ -78,4 +73,8 @@ type (
 	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
 	Reactions     = reactions.Reactions
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
+	Attachment    = common.Attachment
+	Attachments   = common.Attachments
 )

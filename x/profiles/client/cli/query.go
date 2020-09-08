@@ -7,9 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/spf13/cobra"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/spf13/cobra"
 )
 
 // GetQueryCmd adds the query commands
@@ -57,7 +56,7 @@ func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "all",
 		Short: "Retrieve all the registered profiles.",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -80,7 +79,7 @@ func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "parameters",
 		Short: "Retrieve all the profile module parameters",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 

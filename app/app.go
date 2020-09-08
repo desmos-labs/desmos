@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	"github.com/desmos-labs/desmos/x/relationships"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -40,6 +41,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles"
 	profilesKeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipsKeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
@@ -81,6 +84,7 @@ var (
 		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		reports.AppModuleBasic{},
+		relationships.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -141,10 +145,11 @@ type DesmosApp struct {
 	evidenceKeeper evidence.Keeper
 
 	// Custom modules
-	magpieKeeper  magpieKeeper.Keeper
-	postsKeeper   postsKeeper.Keeper
-	profileKeeper profilesKeeper.Keeper
-	reportsKeeper reportsKeeper.Keeper
+	magpieKeeper        magpieKeeper.Keeper
+	postsKeeper         postsKeeper.Keeper
+	profileKeeper       profilesKeeper.Keeper
+	reportsKeeper       reportsKeeper.Keeper
+	relationshipsKeeper relationships.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -171,6 +176,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 
 		// Custom modules
 		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
+		relationshipsTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -299,6 +305,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		keys[reportsTypes.StoreKey],
 	)
 
+	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
+		app.cdc,
+		keys[relationshipsTypes.StoreKey],
+	)
+
 	// Register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
@@ -328,6 +339,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
 		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -345,7 +357,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
 		gov.ModuleName, evidence.ModuleName,
 
-		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName, // custom modules
+		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName,
+		relationshipsTypes.ModuleName, // custom modules
 
 		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
 		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules
@@ -373,6 +386,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
 		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

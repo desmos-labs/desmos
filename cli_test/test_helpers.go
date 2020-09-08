@@ -28,7 +28,8 @@ import (
 
 	"github.com/desmos-labs/desmos/app"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profileTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -454,7 +455,7 @@ func (f *Fixtures) TxPostsRegisterReaction(shortCode, value, subspace string, fr
 }
 
 //___________________________________________________________________________________
-// desmoscli tx profile
+// desmoscli tx profiles
 func (f *Fixtures) TxProfileSave(dTag string, from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles save %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, dTag, from, f.Flags())
@@ -464,6 +465,32 @@ func (f *Fixtures) TxProfileSave(dTag string, from sdk.AccAddress, flags ...stri
 func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, string, string) {
 	cmd := fmt.Sprintf(`%s tx profiles delete --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+//___________________________________________________________________________________
+// desmoscli tx relationships
+func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships create %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, receiver, subspace, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxDeleteUserRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships delete %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, receiver, subspace, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxBlockUser(blockedUser sdk.AccAddress, subspace, reason string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships block %s %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, subspace, reason, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxUnblockUser(blockedUser sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx relationships unblock %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, blockedUser, subspace, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
@@ -791,15 +818,40 @@ func (f *Fixtures) QueryReactions(flags ...string) postsTypes.Reactions {
 // query profile
 
 // QueryProfile returns stored profiles
-func (f *Fixtures) QueryProfiles(flags ...string) profileTypes.Profiles {
+func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	cmd := fmt.Sprintf("%s query profiles all --output=json %s", f.DesmoscliBinary, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
-	var storedProfile profileTypes.Profiles
+	var storedProfile profilesTypes.Profiles
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile
+}
+
+//___________________________________________________________________________________
+// QueryRelationships returns stored relationships
+func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
+	cmd := fmt.Sprintf("%s query relationships user %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedRelationships relationshipsTypes.Relationships
+	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
+	require.NoError(f.T, err)
+	return storedRelationships
+}
+
+// QueryUserBlocks returns store user blocks
+func (f *Fixtures) QueryUserBlocks(user sdk.AccAddress, flags ...string) []relationshipsTypes.UserBlock {
+	cmd := fmt.Sprintf("%s query relationships blacklist %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var userBlocks []relationshipsTypes.UserBlock
+	err := cdc.UnmarshalJSON([]byte(res), &userBlocks)
+	require.NoError(f.T, err)
+	return userBlocks
 }
 
 //___________________________________________________________________________________

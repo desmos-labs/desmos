@@ -99,7 +99,7 @@ func GetSimAccount(address sdk.Address, accs []sim.Account) *sim.Account {
 	return nil
 }
 
-// RandomMonikerParams return a random set of moniker params
+// RandomMonikerParams return a random set of moniker params
 func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 	randomMin := sdk.NewInt(int64(sim.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(sim.RandIntBetween(r, 30, 1000)))

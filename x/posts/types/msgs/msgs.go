@@ -7,8 +7,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
+	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/posts/types/models"
 )
 
@@ -60,7 +62,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !models.IsValidSubspace(msg.Subspace) {
+	if !commons.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(postserrors.ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
@@ -71,9 +73,6 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if msg.PollData != nil {
-		if !msg.PollData.Open {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "poll cannot be created closed")
-		}
 		if err := msg.PollData.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}

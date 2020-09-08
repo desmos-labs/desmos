@@ -22,7 +22,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case types.QueryParams:
 			return queryProfileParams(ctx, req, keeper)
 		default:
-			return nil, fmt.Errorf("unknown post query endpoint")
+			return nil, fmt.Errorf("unknown profiles query endpoint")
 		}
 	}
 }

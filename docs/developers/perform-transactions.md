@@ -16,10 +16,15 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 * [`MsgAnswerPoll`](msgs/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/register-reaction.md): allows you to register a reaction.
 
-### Profile
+### Profiles
 * [`MsgSaveProfile`](msgs/save-profile.md): allows you to create or edit an existing profile.
 * [`MsgDeleteProfile`](msgs/delete-profile.md): allows you to delete an existing profile.
 * [`EditParamsProposal`](msgs/edit_param_proposal.md): allows you to open a proposal to change profile's params.
 
+## Relationships
+* [`MsgCreateRelationship`](msgs/create-relationship.md): allows you to create a relationship.
+* [`MsgDeleteRelationship`](msgs/delete-relationship.md): allows you to delete a relationship.
+* [`MsgBlockUser`](msgs/block-user.md): allows you to block a user.
+* [`MsgUnblockUser`](msgs/unblock-user.md): allows you to unblock a user.
 ### Reports
 * [`MsgReportPost`](msgs/report-post.md): allows you to report an existing post.
