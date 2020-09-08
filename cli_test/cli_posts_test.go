@@ -1,5 +1,3 @@
-// +build cli_test
-
 // nolint
 package clitest
 
