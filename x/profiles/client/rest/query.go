@@ -15,6 +15,23 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/parameters", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/dtag/requests/{address}", queryDTagRequests(cliCtx)).Methods("GET")
+}
+
+func queryDTagRequests(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		address := vars["address"]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryDTagRequests, address)
+		res, _, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
 }
 
 // HTTP request handler to query a single profile based on its dtag

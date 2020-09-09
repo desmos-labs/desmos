@@ -37,10 +37,10 @@ var (
 	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (

@@ -60,9 +60,6 @@ var (
 )
 
 type (
-	CommonRelationshipReq = rest.CommonRelationshipReq
-	UserBlockReq          = rest.UserBlockReq
-	UserUnblockReq        = rest.UserUnblockReq
 	Keeper                = keeper.Keeper
 	Relationship          = models.Relationship
 	Relationships         = models.Relationships
@@ -71,4 +68,7 @@ type (
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 	MsgBlockUser          = msgs.MsgBlockUser
 	MsgUnblockUser        = msgs.MsgUnblockUser
+	CommonRelationshipReq = rest.CommonRelationshipReq
+	UserBlockReq          = rest.UserBlockReq
+	UserUnblockReq        = rest.UserUnblockReq
 )

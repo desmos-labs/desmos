@@ -210,6 +210,8 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
+	keeper.DeleteAllDTagTransferRequests(ctx, msg.CurrentOwner)
+
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferReqAccepted,
 		sdk.NewAttribute(types.AttributeCurrentOwner, msg.CurrentOwner.String()),

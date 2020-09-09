@@ -170,3 +170,10 @@ func (k Keeper) GetDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []
 
 	return requests
 }
+
+// DeleteAllDTagTransferRequests delete all the requests made to the given user
+func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(user)
+	store.Delete(key)
+}

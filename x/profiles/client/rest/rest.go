@@ -26,3 +26,14 @@ type SaveProfileReq struct {
 type DeleteProfileReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 }
+
+type TransferDTagReq struct {
+	BaseReq      rest.BaseReq `json:"base_req"`
+	CurrentOwner string       `json:"current_owner"`
+}
+
+type AcceptDTagTransferReq struct {
+	BaseReq       rest.BaseReq `json:"base_req"`
+	ReceivingUser string       `json:"receiving_user"`
+	NewDTag       string       `json:"new_d_tag"`
+}

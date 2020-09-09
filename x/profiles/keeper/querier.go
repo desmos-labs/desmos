@@ -21,10 +21,29 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryProfiles(ctx, req, keeper)
 		case types.QueryParams:
 			return queryProfileParams(ctx, req, keeper)
+		case types.QueryDTagRequests:
+			return queryDTagRequests(ctx, path[1:], req, keeper)
 		default:
 			return nil, fmt.Errorf("unknown profiles query endpoint")
 		}
 	}
+}
+
+// queryDTagRequests handles the request to get all the dTag requests of a user
+func queryDTagRequests(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	user, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
+	}
+
+	dTagRequests := keeper.GetDTagTransferRequests(ctx, user)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &dTagRequests)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
 }
 
 // queryProfile handles the request to get a profile having a dtag or an address
