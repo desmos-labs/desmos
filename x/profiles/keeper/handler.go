@@ -175,7 +175,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptDTagTransfer) (*sdk.Result, error) {
 	requests := keeper.GetDTagTransferRequests(ctx, msg.CurrentOwner)
 
-	// Check if the receiving User request is present, if not return error
+	// Check if the receiving user request is present, if not return error
 	found := false
 	for _, req := range requests {
 		if req.ReceivingUser.Equals(msg.ReceivingUser) {
@@ -201,7 +201,7 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// check for an existent receiverProfile of the receiving user
+	// check for an existent profile of the receiving user
 	receiverProfile, exist := keeper.GetProfile(ctx, msg.ReceivingUser)
 	if !exist {
 		receiverProfile = types.NewProfile(currentOwnerProfile.DTag, msg.ReceivingUser, ctx.BlockTime())

@@ -30,6 +30,7 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd.AddCommand(flags.PostCommands(
 		GetCmdSaveProfile(cdc),
 		GetCmdDeleteProfile(cdc),
+		GetCmdRequestDTagTransfer(cdc),
 	)...)
 
 	return profileTxCmd
@@ -97,6 +98,31 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdRequestDTagTransfer is the CLI command for request an existent dTag to the given owner
+func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "request-dtag [address]",
+		Short: "Make a request to get the dTag of the given address Profile",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			currentOwnerAddr, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRequestDTagTransfer(currentOwnerAddr, cliCtx.FromAddress)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

@@ -15,10 +15,11 @@ const (
 	ActionAcceptDtagTransfer = "accept_dtag_request"
 
 	//Queries
-	QuerierRoute  = ModuleName
-	QueryProfile  = "profile"
-	QueryProfiles = "all"
-	QueryParams   = "params"
+	QuerierRoute      = ModuleName
+	QueryProfile      = "profile"
+	QueryProfiles     = "all"
+	QueryDTagRequests = "dtag-requests"
+	QueryParams       = "params"
 )
 
 var (

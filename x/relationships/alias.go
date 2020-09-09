@@ -41,11 +41,11 @@ var (
 	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
 	NewQuerier                   = keeper.NewQuerier
-	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewRelationship              = models.NewRelationship
 	NewUserBlock                 = models.NewUserBlock
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
 	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
+	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
@@ -53,17 +53,13 @@ var (
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	ModelsCdc                = models.ModelsCdc
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
+	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
-	MsgCreateRelationship = msgs.MsgCreateRelationship
-	MsgDeleteRelationship = msgs.MsgDeleteRelationship
-	MsgBlockUser          = msgs.MsgBlockUser
-	MsgUnblockUser        = msgs.MsgUnblockUser
 	CommonRelationshipReq = rest.CommonRelationshipReq
 	UserBlockReq          = rest.UserBlockReq
 	UserUnblockReq        = rest.UserUnblockReq
@@ -71,4 +67,8 @@ type (
 	Relationship          = models.Relationship
 	Relationships         = models.Relationships
 	UserBlock             = models.UserBlock
+	MsgCreateRelationship = msgs.MsgCreateRelationship
+	MsgDeleteRelationship = msgs.MsgDeleteRelationship
+	MsgBlockUser          = msgs.MsgBlockUser
+	MsgUnblockUser        = msgs.MsgUnblockUser
 )

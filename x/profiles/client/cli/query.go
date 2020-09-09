@@ -24,8 +24,31 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdQueryProfile(cdc),
 		GetCmdQueryProfiles(cdc),
 		GetCmdQueryProfileParams(cdc),
+		GetCmdQueryDTagRequests(cdc),
 	)...)
 	return profileQueryCmd
+}
+
+func GetCmdQueryDTagRequests(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "dtag-requests [address]",
+		Short: "Retrieve the requests made to the given profile to transfer its dTag",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryDTagRequests, args[0])
+			res, _, err := cliCtx.QueryWithData(route, nil)
+			if err != nil {
+				fmt.Printf("Could not find a dTag requests %s \n", args[0])
+				return nil
+			}
+
+			var out []types.DTagTransferRequest
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
 }
 
 // GetCmdQueryProfile queries a profile from the given address or dtag

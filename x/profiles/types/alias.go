@@ -20,24 +20,25 @@ const (
 	QuerierRoute             = models.QuerierRoute
 	QueryProfile             = models.QueryProfile
 	QueryProfiles            = models.QueryProfiles
+	QueryDTagRequests        = models.QueryDTagRequests
 	QueryParams              = models.QueryParams
 )
 
 var (
 	// functions aliases
+	RegisterModelsCodec         = models.RegisterModelsCodec
+	ProfileStoreKey             = models.ProfileStoreKey
+	DtagStoreKey                = models.DtagStoreKey
+	DtagTransferRequestStoreKey = models.DtagTransferRequestStoreKey
+	NewProfile                  = models.NewProfile
+	NewProfiles                 = models.NewProfiles
+	NewPictures                 = models.NewPictures
+	NewDTagTransferRequest      = models.NewDTagTransferRequest
 	NewMsgSaveProfile           = msgs.NewMsgSaveProfile
 	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
 	NewMsgRequestDTagTransfer   = msgs.NewMsgRequestDTagTransfer
 	NewMsgAcceptDTagTransfer    = msgs.NewMsgAcceptDTagTransfer
 	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
-	NewProfile                  = models.NewProfile
-	NewProfiles                 = models.NewProfiles
-	NewPictures                 = models.NewPictures
-	NewDTagTransferRequest      = models.NewDTagTransferRequest
-	RegisterModelsCodec         = models.RegisterModelsCodec
-	ProfileStoreKey             = models.ProfileStoreKey
-	DtagStoreKey                = models.DtagStoreKey
-	DtagTransferRequestStoreKey = models.DtagTransferRequestStoreKey
 
 	// variable aliases
 	ModelsCdc             = models.ModelsCdc
