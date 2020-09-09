@@ -23,6 +23,12 @@ func NewProfile(dtag string, creator sdk.AccAddress, creationDate time.Time) Pro
 	return Profile{DTag: dtag, Creator: creator, CreationDate: creationDate}
 }
 
+// WithDTag updates profile's dtag with the given one
+func (profile Profile) WithDTag(dtag string) Profile {
+	profile.DTag = dtag
+	return profile
+}
+
 // WithMoniker updates profile's moniker with the given one
 func (profile Profile) WithMoniker(moniker *string) Profile {
 	profile.Moniker = moniker
