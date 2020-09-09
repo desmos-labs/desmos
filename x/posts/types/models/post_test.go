@@ -1,13 +1,13 @@
 package models_test
 
 import (
+	"strconv"
 	"testing"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/types/models"
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
-	"github.com/desmos-labs/desmos/x/posts/types/models/polls"
 
 	"github.com/stretchr/testify/require"
 )
@@ -57,8 +57,6 @@ func TestPostID_String(t *testing.T) {
 // -------------
 
 func TestPostIDs_Equals(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name      string
 		first     models.PostIDs
@@ -66,21 +64,36 @@ func TestPostIDs_Equals(t *testing.T) {
 		expEquals bool
 	}{
 		{
-			name:      "Different length",
-			first:     models.PostIDs{models.PostID(id), models.PostID(id)},
-			second:    models.PostIDs{models.PostID(id)},
+			name: "Different length",
+			first: models.PostIDs{
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+			},
+			second:    models.PostIDs{models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
 			expEquals: false,
 		},
 		{
-			name:      "Different order",
-			first:     models.PostIDs{models.PostID(id), models.PostID(id2)},
-			second:    models.PostIDs{models.PostID(id2), models.PostID(id)},
+			name: "Different order",
+			first: models.PostIDs{
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			},
+			second: models.PostIDs{
+				models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+			},
 			expEquals: false,
 		},
 		{
-			name:      "Same length and order",
-			first:     models.PostIDs{models.PostID(id), models.PostID(id2)},
-			second:    models.PostIDs{models.PostID(id), models.PostID(id2)},
+			name: "Same length and order",
+			first: models.PostIDs{
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			},
+			second: models.PostIDs{
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			},
 			expEquals: true,
 		},
 	}
@@ -94,8 +107,6 @@ func TestPostIDs_Equals(t *testing.T) {
 }
 
 func TestPostIDs_AppendIfMissing(t *testing.T) {
-	id := []byte("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := []byte("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	tests := []struct {
 		name      string
 		IDs       models.PostIDs
@@ -105,16 +116,19 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 	}{
 		{
 			name:      "AppendIfMissing dont append anything",
-			IDs:       models.PostIDs{models.PostID(id)},
-			newID:     models.PostID(id),
-			expIDs:    models.PostIDs{models.PostID(id)},
+			IDs:       models.PostIDs{models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
+			newID:     models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+			expIDs:    models.PostIDs{models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
 			expEdited: false,
 		},
 		{
-			name:      "AppendIfMissing append something",
-			IDs:       models.PostIDs{models.PostID(id)},
-			newID:     models.PostID(id2),
-			expIDs:    models.PostIDs{models.PostID(id), models.PostID(id2)},
+			name:  "AppendIfMissing append something",
+			IDs:   models.PostIDs{models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
+			newID: models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			expIDs: models.PostIDs{
+				models.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+				models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			},
 			expEdited: true,
 		},
 	}
@@ -133,41 +147,39 @@ func TestPostIDs_AppendIfMissing(t *testing.T) {
 // --- Post
 // -----------
 
-func TestPost_String(t *testing.T) {
-	id2 := models.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
+func TestPost_NewPost(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-
-	postMedias := common.Attachments{
-		common.Attachment{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-			Tags:     []sdk.AccAddress{owner},
-		},
-		common.Attachment{
-			URI:      "https://another.com",
-			MimeType: "application/json",
-			Tags:     nil,
+	tests := []struct {
+		post       models.Post
+		expectedId string
+	}{
+		{
+			post: models.NewPost(
+				"1",
+				"This is a message",
+				true,
+				"my_subspace",
+				map[string]string{},
+				time.Date(2020, 1, 1, 12, 0, 0, 0, time.FixedZone("UTC", 0)),
+				owner,
+			),
+			expectedId: "16ee282c835ef2bdfeea5bbd035eb3bea91c2b54f3ce2c28bbccfc9e4173f174",
 		},
 	}
 
-	var pollEndDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
+	for index, test := range tests {
+		test := test
+		t.Run(strconv.Itoa(index), func(t *testing.T) {
+			require.Equal(t, test.expectedId, test.post.PostID.String())
+		})
+	}
+}
 
-	pollData := polls.NewPollData(
-		"poll?",
-		pollEndDate,
-		polls.NewPollAnswers(
-			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
-			polls.NewPollAnswer(polls.AnswerID(2), "No"),
-		),
-		false,
-		true,
-	)
+func TestPost_String(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -177,12 +189,12 @@ func TestPost_String(t *testing.T) {
 		{
 			name: "Post without attachments and poll data",
 			post: models.NewPost(
-				id2,
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expString: "[ID] 7238e494e329def3bb2666e8a8fdd4bd3c64654f06c4a8e091be8c7cc441106d [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -190,46 +202,86 @@ func TestPost_String(t *testing.T) {
 		{
 			name: "Post with attachments and without poll data",
 			post: models.NewPost(
-				id2,
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
-			).WithAttachments(postMedias),
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment(
+					"https://uri.com",
+					"text/plain",
+					[]sdk.AccAddress{owner},
+				),
+				models.NewAttachment(
+					"https://another.com",
+					"application/json",
+					nil,
+				),
+			)),
 			expString: "[ID] 7b23bc67a9d163134261b0c77eb262da96e783861977ebfc6100bdf408b8a995 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
 		},
 		{
 			name: "Post without attachments and with poll data",
 			post: models.NewPost(
-				id2,
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
-			).WithPollData(pollData),
+			).WithPollData(models.NewPollData(
+				"poll?",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expString: "[ID] 048813e6e9f93a169234d10999e2f59bac14a364db11d4eb99309ac186cb78d9 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
 			name: "Post with attachments and with poll data",
 			post: models.NewPost(
-				id2,
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
-			).WithAttachments(postMedias).WithPollData(pollData),
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment(
+					"https://uri.com",
+					"text/plain",
+					[]sdk.AccAddress{owner},
+				),
+				models.NewAttachment(
+					"https://another.com",
+					"application/json",
+					nil,
+				),
+			)).WithPollData(models.NewPollData(
+				"poll?",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expString: "[ID] 0b67394573f711c7e22d209abeab184b4eaadc7822d797232f959e40dfa3af0f [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
 		},
 		{
 			name: "Post with optional data",
 			post: models.NewPost(
-				id2,
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -238,7 +290,7 @@ func TestPost_String(t *testing.T) {
 					"key2": "value",
 					"key3": "value",
 				},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expString: "[ID] ea9b8a7ca2a8b8bea2665b46dbbd757c5cad67cf1b191421a25d60518faf5e82 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Optional Data] map[key1:value key2:value key3:value]",
@@ -254,36 +306,10 @@ func TestPost_String(t *testing.T) {
 }
 
 func TestPost_Validate(t *testing.T) {
-	id := models.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
-	id2 := models.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	attachs := common.Attachments{
-		common.Attachment{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	}
-
-	invalidAttachs := common.Attachments{
-		common.NewAttachment("htp:/uri.com", "text/plain", nil),
-	}
-
-	answer := polls.PollAnswer{
-		ID:   polls.AnswerID(1),
-		Text: "Yes",
-	}
-
-	answer2 := polls.PollAnswer{
-		ID:   polls.AnswerID(2),
-		Text: "No",
-	}
-	pollData := polls.NewPollData("poll?", time.Now().UTC().Add(time.Hour), polls.PollAnswers{answer, answer2}, false, true)
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0))
 
 	tests := []struct {
 		name     string
@@ -291,63 +317,220 @@ func TestPost_Validate(t *testing.T) {
 		expError string
 	}{
 		{
-			name:     "Invalid postID",
-			post:     models.Post{Message: "Message", Created: date, AllowsComments: true, Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", OptionalData: map[string]string{}, Creator: owner},
+			name: "Invalid postID",
+			post: models.Post{
+				Message:        "Message",
+				Created:        date,
+				AllowsComments: true,
+				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData:   map[string]string{},
+				Creator:        owner,
+			},
 			expError: "invalid postID: ",
 		},
 		{
-			name:     "Invalid post owner",
-			post:     models.NewPost(id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, nil).WithAttachments(attachs).WithPollData(pollData),
+			name: "Invalid post owner",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				nil,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("https://uri.com", "text/plain", nil),
+			)).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "invalid post owner: ",
 		},
 		{
-			name:     "Empty post message, attachment and poll",
-			post:     models.NewPost(id2, "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			name: "Empty post message, attachment and poll",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Empty post message (blank), attachment and poll",
-			post:     models.NewPost(id2, " ", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner),
+			name: "Empty post message (blank), attachment and poll",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				" ",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
 		{
-			name:     "Invalid post creation time",
-			post:     models.NewPost(id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, time.Time{}, owner).WithAttachments(attachs).WithPollData(pollData),
+			name: "Invalid post creation time",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				time.Time{},
+				owner,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("https://uri.com", "text/plain", nil),
+			)).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
-			name:     "Invalid post last edit time",
-			post:     models.Post{PostID: id, Creator: owner, Message: "Message", Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", Created: date, LastEdited: date.AddDate(0, 0, -1)},
+			name: "Invalid post last edit time",
+			post: models.Post{
+				PostID:     "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				Creator:    owner,
+				Message:    "Message",
+				Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Created:    date,
+				LastEdited: date.AddDate(0, 0, -1),
+			},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
 		{
-			name:     "Invalid post subspace",
-			post:     models.NewPost(id2, "Message", true, "", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
+			name: "Invalid post subspace",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"Message",
+				true,
+				"",
+				map[string]string{},
+				date,
+				owner,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("https://uri.com", "text/plain", nil),
+			)).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
-			name:     "Invalid post subspace(blank)",
-			post:     models.NewPost(id2, "Message", true, " ", map[string]string{}, date, owner).WithAttachments(attachs).WithPollData(pollData),
+			name: "Invalid post subspace(blank)",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"Message",
+				true,
+				" ",
+				map[string]string{},
+				date,
+				owner,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("https://uri.com", "text/plain", nil),
+			)).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
-			name:     "Invalid post attachments",
-			post:     models.NewPost(id2, "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(invalidAttachs),
+			name: "Invalid post attachments",
+			post: models.NewPost(
+				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("htp:/uri.com", "text/plain", nil)),
+			),
 			expError: "invalid uri provided",
 		},
 		{
-			name:     "Valid post without poll data",
-			post:     models.NewPost("", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithAttachments(attachs),
+			name: "Valid post without poll data",
+			post: models.NewPost("",
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithAttachments(models.NewAttachments(
+				models.NewAttachment("https://uri.com", "text/plain", nil),
+			)),
 			expError: "",
 		},
 		{
-			name:     "Valid post without attachs",
-			post:     models.NewPost("", "Message", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			name: "Valid post without attachs",
+			post: models.NewPost("",
+				"Message",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "",
 		},
 		{
-			name:     "Valid post without text and attachs, but with poll",
-			post:     models.NewPost("", "", true, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", map[string]string{}, date, owner).WithPollData(pollData),
+			name: "Valid post without text and attachs, but with poll",
+			post: models.NewPost("",
+				"",
+				true,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				map[string]string{},
+				date,
+				owner,
+			).WithPollData(models.NewPollData(
+				"poll?",
+				time.Now().UTC().Add(time.Hour),
+				models.NewPollAnswers(
+					models.NewPollAnswer(models.AnswerID(1), "Yes"),
+					models.NewPollAnswer(models.AnswerID(2), "No"),
+				),
+				false,
+				true,
+			)),
 			expError: "",
 		},
 	}
@@ -377,19 +560,19 @@ func TestPost_Equals(t *testing.T) {
 	require.NoError(t, err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := common.Attachments{
-		common.Attachment{
+	medias := models.Attachments{
+		models.Attachment{
 			URI:      "https://uri.com",
 			MimeType: "text/plain",
 		},
 	}
 
-	pollData := polls.NewPollData(
+	pollData := models.NewPollData(
 		"poll?",
 		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-		polls.NewPollAnswers(
-			polls.NewPollAnswer(polls.AnswerID(1), "Yes"),
-			polls.NewPollAnswer(polls.AnswerID(2), "No"),
+		models.NewPollAnswers(
+			models.NewPollAnswer(models.AnswerID(1), "Yes"),
+			models.NewPollAnswer(models.AnswerID(2), "No"),
 		),
 		false,
 		true,
@@ -681,7 +864,7 @@ func TestPost_Equals(t *testing.T) {
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
-				Attachments:    common.Attachments{},
+				Attachments:    models.Attachments{},
 			},
 			expEquals: false,
 		},
@@ -711,7 +894,7 @@ func TestPost_Equals(t *testing.T) {
 				OptionalData:   map[string]string{},
 				Creator:        otherOwner,
 				Attachments:    medias,
-				PollData:       &polls.PollData{},
+				PollData:       &models.PollData{},
 			},
 			expEquals: false,
 		},
@@ -752,14 +935,8 @@ func TestPost_Equals(t *testing.T) {
 }
 
 func TestPost_GetPostHashtags(t *testing.T) {
-	id2 := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
 	tests := []struct {
 		name        string
@@ -769,12 +946,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "Hashtags in message extracted correctly (spaced hashtags)",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with #test #desmos",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{"test", "desmos"},
@@ -782,12 +959,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with #test#desmos",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{},
@@ -795,12 +972,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with #test_#desmos",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{},
@@ -808,12 +985,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "Hashtags in message extracted correctly (only number hashtag)",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with #101112",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{},
@@ -821,12 +998,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "No hashtags in message",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with no hashtag",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{},
@@ -834,12 +1011,12 @@ func TestPost_GetPostHashtags(t *testing.T) {
 		{
 			name: "No same hashtags inside string array",
 			post: models.NewPost(
-				id2,
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				"Post with double #hashtag #hashtag",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				map[string]string{},
-				date,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				owner,
 			),
 			expHashtags: []string{"hashtag"},
@@ -859,39 +1036,55 @@ func TestPost_GetPostHashtags(t *testing.T) {
 // --- Posts
 // -----------
 func TestPosts_String(t *testing.T) {
-	id2 := models.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
 	owner2, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
 	require.NoError(t, err)
 
-	medias := common.Attachments{
-		common.Attachment{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	}
-	answer := polls.PollAnswer{
-		ID:   polls.AnswerID(1),
-		Text: "Yes",
-	}
-
-	answer2 := polls.PollAnswer{
-		ID:   polls.AnswerID(2),
-		Text: "No",
-	}
-
-	timeZone, err := time.LoadLocation("UTC")
-	date := time.Date(2020, 1, 1, 12, 0, 00, 000, timeZone)
-
-	pollData := polls.NewPollData("poll?", date.Add(time.Hour), polls.PollAnswers{answer, answer2}, false, true)
-
-	require.NoError(t, err)
+	date := time.Date(2020, 1, 1, 12, 0, 00, 000, time.FixedZone("UTC", 0))
 
 	posts := models.Posts{
-		models.NewPost(id2, "Post 1", false, "external-ref-1", map[string]string{}, date, owner1).WithAttachments(medias).WithPollData(pollData),
-		models.NewPost(id2, "Post 2", false, "external-ref-1", map[string]string{}, date, owner2).WithAttachments(medias).WithPollData(pollData),
+		models.NewPost(
+			"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+			"Post 1",
+			false,
+			"external-ref-1",
+			map[string]string{},
+			date,
+			owner1,
+		).WithAttachments(models.NewAttachments(
+			models.NewAttachment("https://uri.com", "text/plain", nil),
+		)).WithPollData(models.NewPollData(
+			"poll?",
+			date.Add(time.Hour),
+			models.NewPollAnswers(
+				models.NewPollAnswer(models.AnswerID(1), "Yes"),
+				models.NewPollAnswer(models.AnswerID(2), "No"),
+			),
+			false,
+			true,
+		)),
+		models.NewPost(
+			"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+			"Post 2",
+			false,
+			"external-ref-1",
+			map[string]string{},
+			date,
+			owner2,
+		).WithAttachments(models.NewAttachments(
+			models.NewAttachment("https://uri.com", "text/plain", nil),
+		)).WithPollData(models.NewPollData(
+			"poll?",
+			date.Add(time.Hour),
+			models.NewPollAnswers(
+				models.NewPollAnswer(models.AnswerID(1), "Yes"),
+				models.NewPollAnswer(models.AnswerID(2), "No"),
+			),
+			false,
+			true,
+		)),
 	}
 
 	expected := `ID - [Creator] Message

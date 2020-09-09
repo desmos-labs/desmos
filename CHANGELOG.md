@@ -3,6 +3,7 @@
 - Changed `relationships`' implementation adding a `subspace` field to identify in which app
   users make relationships (#266)
 - Implemented the possibility to (un)blocking a specific user (#169)
+- Allow users to edit their DTag (#226)
 
 # Version 0.11.0
 ## Changes

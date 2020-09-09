@@ -190,23 +190,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			),
 		},
 		{
-			name: "Profile saving fails due to wrong tag",
-			existentProfiles: types.NewProfiles(
-				suite.testData.profile,
-				types.NewProfile("editor_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
-					WithBio(newStrPtr("biography")),
-			),
-			msg: types.NewMsgSaveProfile(
-				"editor_tag",
-				newStrPtr("new-moniker"),
-				newStrPtr("new-bio"),
-				nil,
-				nil,
-				suite.testData.profile.Creator, // Use the same user
-			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "wrong dtag provided. Make sure to use the current one"),
-		},
-		{
 			name: "Profile not edited because of the invalid profile picture",
 			existentProfiles: types.NewProfiles(
 				suite.testData.profile,
