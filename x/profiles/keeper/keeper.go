@@ -160,13 +160,27 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.D
 	return nil
 }
 
-// GetDTagTransferRequests returns all the request made to the given user
-func (k Keeper) GetDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
+// GetUserDTagTransferRequests returns all the request made to the given user
+func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.DtagTransferRequestStoreKey(user)
 
 	var requests []types.DTagTransferRequest
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+
+	return requests
+}
+
+// GetDTagTransferRequests returns all the requests inside the given context
+func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var request types.DTagTransferRequest
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &request)
+		requests = append(requests, request)
+	}
 
 	return requests
 }

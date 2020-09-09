@@ -28,15 +28,6 @@ const (
 
 var (
 	// functions aliases
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
-	GetTxCmd                     = cli.GetTxCmd
-	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
-	GetCmdBlockUser              = cli.GetCmdBlockUser
-	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 	RegisterRoutes               = rest.RegisterRoutes
 	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
@@ -51,6 +42,15 @@ var (
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
+	GetCmdBlockUser              = cli.GetCmdBlockUser
+	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -60,6 +60,9 @@ var (
 )
 
 type (
+	CommonRelationshipReq = rest.CommonRelationshipReq
+	UserBlockReq          = rest.UserBlockReq
+	UserUnblockReq        = rest.UserUnblockReq
 	Keeper                = keeper.Keeper
 	Relationship          = models.Relationship
 	Relationships         = models.Relationships
@@ -68,7 +71,4 @@ type (
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 	MsgBlockUser          = msgs.MsgBlockUser
 	MsgUnblockUser        = msgs.MsgUnblockUser
-	CommonRelationshipReq = rest.CommonRelationshipReq
-	UserBlockReq          = rest.UserBlockReq
-	UserUnblockReq        = rest.UserUnblockReq
 )

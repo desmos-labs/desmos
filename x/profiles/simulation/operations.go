@@ -15,8 +15,10 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgSaveProfile   = "op_weight_msg_save_profile"
-	OpWeightMsgDeleteProfile = "op_weight_msg_delete_profile"
+	OpWeightMsgSaveProfile         = "op_weight_msg_save_profile"
+	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
+	OpWeightMsgRequestDTagTransfer = "op_weight_msg_request_dtag_transfer"
+	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
 
 	DefaultGasValue = 200000
 )
@@ -26,14 +28,28 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgSaveProfile = params.DefaultWeightMsgSaveAccount
+			weightMsgSaveProfile = params.DefaultWeightMsgSaveProfile
 		},
 	)
 
 	var weightMsgDeleteProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteProfile, &weightMsgDeleteProfile, nil,
 		func(_ *rand.Rand) {
-			weightMsgDeleteProfile = params.DefaultWeightMsgDeleteAccount
+			weightMsgDeleteProfile = params.DefaultWeightMsgDeleteProfile
+		},
+	)
+
+	var weightMsgRequestDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRequestDTagTransfer, &weightMsgRequestDTagTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgRequestDTagTransfer = params.DefaultWeightMsgRequestDTagTransfer
+		},
+	)
+
+	var weightMsgAcceptDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptDTagTransfer, &weightMsgAcceptDTagTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgAcceptDTagTransfer = params.DefaultWeightMsgAcceptDTagTransfer
 		},
 	)
 
@@ -45,6 +61,14 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
 			SimulateMsgDeleteProfile(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRequestDTagTransfer,
+			SimulateMsgRequestDTagTransfer(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgAcceptDTagTransfer,
+			SimulateMsgAcceptDTagTransfer(k, ak),
 		),
 	}
 }

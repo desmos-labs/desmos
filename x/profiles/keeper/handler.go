@@ -169,7 +169,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 
 // handleMsgAcceptDTagTransfer handle the acceptance of a dTag transfer request
 func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptDTagTransfer) (*sdk.Result, error) {
-	requests := keeper.GetDTagTransferRequests(ctx, msg.CurrentOwner)
+	requests := keeper.GetUserDTagTransferRequests(ctx, msg.CurrentOwner)
 
 	// Check if the receiving user request is present, if not return error
 	found := false

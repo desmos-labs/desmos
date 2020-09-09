@@ -23,9 +23,9 @@ const (
 )
 
 var (
-	ProfileStorePrefix    = []byte("profile")
-	DtagStorePrefix       = []byte("dtag")
-	TransferRequestPrefix = []byte("transfer_requests")
+	ProfileStorePrefix        = []byte("profile")
+	DtagStorePrefix           = []byte("dtag")
+	DTagTransferRequestPrefix = []byte("transfer_requests")
 )
 
 // ProfileStoreKey turns an address to a key used to store a profile into the profiles store
@@ -40,5 +40,5 @@ func DtagStoreKey(dtag string) []byte {
 
 // DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
 func DtagTransferRequestStoreKey(address sdk.AccAddress) []byte {
-	return append(TransferRequestPrefix, address...)
+	return append(DTagTransferRequestPrefix, address...)
 }

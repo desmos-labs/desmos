@@ -36,7 +36,7 @@ func queryDTagRequests(ctx sdk.Context, path []string, _ abci.RequestQuery, keep
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
 	}
 
-	dTagRequests := keeper.GetDTagTransferRequests(ctx, user)
+	dTagRequests := keeper.GetUserDTagTransferRequests(ctx, user)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &dTagRequests)
 	if err != nil {
