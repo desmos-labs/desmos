@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -39,6 +40,10 @@ func (dtagTR DTagTransferRequest) Validate() error {
 
 	if dtagTR.ReceivingUser.Empty() {
 		return fmt.Errorf("receiving user address cannot be empty")
+	}
+
+	if dtagTR.CurrentOwner.Equals(dtagTR.ReceivingUser) {
+		return fmt.Errorf("the receiving user and current owner must be different")
 	}
 
 	return nil

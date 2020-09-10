@@ -88,3 +88,7 @@ func testCodec() *codec.Codec {
 func newStrPtr(value string) *string {
 	return &value
 }
+
+func newProfilePtr(profile types.Profile) *types.Profile {
+	return &profile
+}

@@ -1,6 +1,8 @@
 package simulation
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,7 +11,6 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/tendermint/tendermint/crypto"
-	"math/rand"
 )
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer

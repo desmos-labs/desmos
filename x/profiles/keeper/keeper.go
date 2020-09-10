@@ -138,7 +138,7 @@ func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile typ
 }
 
 // SaveDTagTransferRequest save the given request into the currentOwner's requests
-// throwing errors if an already if an equal one exist.
+// returning errors if an equal one already exists.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.DTagTransferRequest) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.DtagTransferRequestStoreKey(transferRequest.CurrentOwner)
@@ -146,10 +146,11 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.D
 	var requests []types.DTagTransferRequest
 	bz := store.Get(key)
 	if bz != nil {
-		k.Cdc.MustUnmarshalJSON(bz, &requests)
+		k.Cdc.MustUnmarshalBinaryBare(bz, &requests)
 		for _, req := range requests {
 			if req.Equals(transferRequest) {
-				return fmt.Errorf("the transfer request from %s has already been made", transferRequest.ReceivingUser)
+				return fmt.Errorf("the transfer request from %s to %s has already been made",
+					transferRequest.ReceivingUser, transferRequest.CurrentOwner)
 			}
 		}
 	}
@@ -160,7 +161,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.D
 	return nil
 }
 
-// GetUserDTagTransferRequests returns all the request made to the given user
+// GetUserDTagTransferRequests returns all the request made to the given user inside the current context.
 func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.DtagTransferRequestStoreKey(user)
@@ -177,9 +178,9 @@ func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagT
 	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
 
 	for ; iterator.Valid(); iterator.Next() {
-		var request types.DTagTransferRequest
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &request)
-		requests = append(requests, request)
+		var userRequests []types.DTagTransferRequest
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
+		requests = append(requests, userRequests...)
 	}
 
 	return requests

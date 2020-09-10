@@ -23,6 +23,11 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryBare(kvA.Value, &addressA)
 		cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)
 		return fmt.Sprintf("AddressA: %s\nAddressB: %s\n", addressA, addressB)
+	case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
+		var requestsA, requestsB []types.DTagTransferRequest
+		cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
+		cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
+		return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA, requestsB)
 	default:
 		panic(fmt.Sprintf("invalid profiles key %X", kvA.Key))
 	}

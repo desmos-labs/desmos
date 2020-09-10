@@ -11,21 +11,13 @@ import (
 )
 
 func TestNewGenesis(t *testing.T) {
-	profiles := types.Profiles{}
-	nameSurnameParams := types.MonikerParams{}
-	monikerParams := types.DtagParams{}
-	bioParams := sdk.Int{}
-	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
-
-	usersRelationships := map[string][]sdk.AccAddress{}
-
 	expGenState := types.GenesisState{
-		Profiles:           profiles,
-		Params:             params,
-		UsersRelationships: usersRelationships,
+		Profiles:             types.Profiles{},
+		Params:               types.NewParams(types.MonikerParams{}, types.DtagParams{}, sdk.Int{}),
+		DTagTransferRequests: []types.DTagTransferRequest{},
 	}
 
-	actualGenState := types.NewGenesisState(profiles, params, usersRelationships)
+	actualGenState := types.NewGenesisState(expGenState.Profiles, expGenState.Params, expGenState.DTagTransferRequests)
 	require.Equal(t, expGenState, actualGenState)
 }
 
@@ -62,25 +54,6 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid relationship return error",
-			genesis: types.GenesisState{
-				Profiles: types.NewProfiles(
-					types.NewProfile("custom_dtag1", user, date).
-						WithBio(common.NewStrPtr("biography")).
-						WithPictures(
-							common.NewStrPtr("https://test.com/profile-pic"),
-							common.NewStrPtr("https://test.com/cover-pic"),
-						),
-				),
-				Params: types.DefaultParams(),
-				UsersRelationships: map[string][]sdk.AccAddress{
-					user.String():      {sdk.AccAddress{}},
-					otherUser.String(): {user},
-				},
-			},
-			shouldError: true,
-		},
-		{
 			name: "Invalid params returns error",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
@@ -96,6 +69,24 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
+			name: "Invalid dTag requests returns error",
+			genesis: types.GenesisState{
+				Profiles: types.NewProfiles(
+					types.NewProfile("custom_dtag1", user, date).
+						WithBio(common.NewStrPtr("biography")).
+						WithPictures(
+							common.NewStrPtr("https://test.com/profile-pic"),
+							common.NewStrPtr("https://test.com/cover-pic"),
+						),
+				),
+				Params: types.DefaultParams(),
+				DTagTransferRequests: []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(nil, user),
+				},
+			},
+			shouldError: true,
+		},
+		{
 			name: "Valid Genesis returns no errors",
 			genesis: types.GenesisState{
 				Profiles: types.NewProfiles(
@@ -107,6 +98,9 @@ func TestValidateGenesis(t *testing.T) {
 						),
 				),
 				Params: types.DefaultParams(),
+				DTagTransferRequests: []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(user, otherUser),
+				},
 			},
 			shouldError: false,
 		},

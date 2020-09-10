@@ -29,23 +29,6 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-// queryDTagRequests handles the request to get all the dTag requests of a user
-func queryDTagRequests(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	user, err := sdk.AccAddressFromBech32(path[0])
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
-	}
-
-	dTagRequests := keeper.GetUserDTagTransferRequests(ctx, user)
-
-	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &dTagRequests)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
-
-	return bz, nil
-}
-
 // queryProfile handles the request to get a profile having a dtag or an address
 func queryProfile(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
 	if len(strings.TrimSpace(path[0])) == 0 {
@@ -93,6 +76,23 @@ func queryProfileParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]
 	profileParams := keeper.GetParams(ctx)
 
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &profileParams)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+// queryDTagRequests handles the request to get all the dTag requests of a user
+func queryDTagRequests(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+	user, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid bech32 address: %s", path[0]))
+	}
+
+	dTagRequests := keeper.GetUserDTagTransferRequests(ctx, user)
+
+	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &dTagRequests)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

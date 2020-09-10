@@ -172,3 +172,61 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) Test_queryDTagRequests() {
+	tests := []struct {
+		name           string
+		path           []string
+		storedRequests []types.DTagTransferRequest
+		expResult      []types.DTagTransferRequest
+		expErr         error
+	}{
+		{
+			name:           "Invalid address returns error",
+			path:           []string{types.QueryDTagRequests, "invalid"},
+			storedRequests: nil,
+			expResult:      nil,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalid"),
+		},
+		{
+			name: "Stored dTag requests returns correctly",
+			path: []string{types.QueryDTagRequests, suite.testData.user.String()},
+			storedRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			},
+			expResult: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			},
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest() // reset
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedRequests != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRequests),
+				)
+			}
+
+			querier := keeper.NewQuerier(suite.keeper)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+
+			if test.expResult != nil {
+				suite.Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				suite.NoError(err)
+				suite.Equal(string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Nil(result)
+			}
+		})
+	}
+
+}

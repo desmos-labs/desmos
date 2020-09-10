@@ -89,7 +89,7 @@ func (msg MsgDeleteProfile) Type() string { return models.ActionDeleteProfile }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteProfile) ValidateBasic() error {
 	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid creator address: %s", msg.Creator))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator address: %s", msg.Creator))
 	}
 
 	return nil
@@ -131,11 +131,15 @@ func (msg MsgRequestDTagTransfer) Type() string { return models.ActionRequestDta
 
 func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 	if msg.CurrentOwner.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid current owner address: %s", msg.CurrentOwner))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid current owner address: %s", msg.CurrentOwner))
 	}
 
 	if msg.ReceivingUser.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid receiving user address: %s", msg.ReceivingUser))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiving user address: %s", msg.ReceivingUser))
+	}
+
+	if msg.ReceivingUser.Equals(msg.CurrentOwner) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different")
 	}
 
 	return nil
@@ -148,7 +152,7 @@ func (msg MsgRequestDTagTransfer) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.CurrentOwner}
+	return []sdk.AccAddress{msg.ReceivingUser}
 }
 
 // ----------------------
@@ -179,11 +183,19 @@ func (msg MsgAcceptDTagTransfer) Type() string { return models.ActionAcceptDtagT
 
 func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.NewDTag)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "new DTag can't be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new dTag can't be empty")
 	}
 
 	if msg.CurrentOwner.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("Invalid owner address: %s", msg.CurrentOwner))
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid current owner address: %s", msg.CurrentOwner))
+	}
+
+	if msg.ReceivingUser.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiving user address: %s", msg.ReceivingUser))
+	}
+
+	if msg.ReceivingUser.Equals(msg.CurrentOwner) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different")
 	}
 
 	return nil
