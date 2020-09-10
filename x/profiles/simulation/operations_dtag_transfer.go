@@ -182,5 +182,10 @@ func randomDtagAcceptRequestTransferFields(r *rand.Rand, ctx sdk.Context, accs [
 		return sim.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
+	err := k.SaveProfile(ctx, types.NewProfile(RandomDTag(r), currentOwner.Address, ctx.BlockTime()))
+	if err != nil {
+		return sim.Account{}, types.DTagTransferRequest{}, "", true
+	}
+
 	return currentOwner, req, RandomDTag(r), false
 }
