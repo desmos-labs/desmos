@@ -168,7 +168,7 @@ func randomDtagAcceptRequestTransferFields(r *rand.Rand, ctx sdk.Context, accs [
 
 	req := types.NewDTagTransferRequest(currentOwner.Address, receivingUser.Address)
 
-	// skip if requests already exists
+	// skip if requests doesnt exists
 	requests := k.GetUserDTagTransferRequests(ctx, currentOwner.Address)
 	found := false
 	for _, request := range requests {
@@ -182,7 +182,14 @@ func randomDtagAcceptRequestTransferFields(r *rand.Rand, ctx sdk.Context, accs [
 		return sim.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
-	err := k.SaveProfile(ctx, types.NewProfile(RandomDTag(r), currentOwner.Address, ctx.BlockTime()))
+	profile := NewRandomProfile(r, currentOwner.Address)
+	err := keeper.ValidateProfile(ctx, k, profile)
+	if err != nil {
+		return sim.Account{}, types.DTagTransferRequest{}, "", true
+	}
+
+	err = k.SaveProfile(ctx, profile)
+
 	if err != nil {
 		return sim.Account{}, types.DTagTransferRequest{}, "", true
 	}

@@ -20,7 +20,11 @@ type Profile struct {
 }
 
 func NewProfile(dtag string, creator sdk.AccAddress, creationDate time.Time) Profile {
-	return Profile{DTag: dtag, Creator: creator, CreationDate: creationDate}
+	return Profile{
+		DTag:         dtag,
+		Creator:      creator,
+		CreationDate: creationDate,
+	}
 }
 
 // WithDTag updates profile's dtag with the given one

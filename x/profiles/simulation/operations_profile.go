@@ -29,13 +29,13 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		var profilePic, coverPic = "", ""
+		var profilePic, coverPic = RandomProfilePic(r), RandomProfileCover(r)
 		if data.Pictures != nil {
-			profilePic = *data.Pictures.Profile
-			coverPic = *data.Pictures.Cover
+			profilePic = data.Pictures.Profile
+			coverPic = data.Pictures.Cover
 		}
 
-		msg := types.NewMsgSaveProfile(data.DTag, data.Moniker, data.Bio, &profilePic, &coverPic, acc.Address)
+		msg := types.NewMsgSaveProfile(data.DTag, data.Moniker, data.Bio, profilePic, coverPic, acc.Address)
 		if err := sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
