@@ -135,7 +135,7 @@ func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
 // GetCmdAcceptDTagTransfer is the CLI command to accept the request to transfer a dTag
 func GetCmdAcceptDTagTransfer(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "accept-dtag-transfer [newDTag] [address]",
+		Use:   "accept-dtag-transfer.md [newDTag] [address]",
 		Short: "Accept a dtag transfer request made by the user with the given address",
 		Long: `Accept a previously made dtag transfer request from the given address.
 When accepting, the user that must choose a new dTag for the profile`,
