@@ -14,7 +14,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 ## Profiles
 - [Query a profile](queries/profile.md)
 - [Query the stored profiles](queries/profiles.md)
-- [Query all the dTag transfer's requests](queries/user-dtag-requests.md)
+- [Query all the DTag transfer's requests](queries/user-dtag-requests.md)
 
 ## Relationships
 - [Query user's relationships](queries/user_relationships.md)

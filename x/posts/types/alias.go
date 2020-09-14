@@ -35,6 +35,16 @@ const (
 
 var (
 	// functions aliases
+	ParsePostID                = models.ParsePostID
+	NewPost                    = models.NewPost
+	NewPostResponse            = models.NewPostResponse
+	PostStoreKey               = models.PostStoreKey
+	PostIndexedIDStoreKey      = models.PostIndexedIDStoreKey
+	PostCommentsStoreKey       = models.PostCommentsStoreKey
+	PostReactionsStoreKey      = models.PostReactionsStoreKey
+	ReactionsStoreKey          = models.ReactionsStoreKey
+	PollAnswersStoreKey        = models.PollAnswersStoreKey
+	RegisterModelsCodec        = models.RegisterModelsCodec
 	IsValidPostID              = common.IsValidPostID
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
@@ -47,30 +57,22 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
-	NewMsgAnswerPoll           = msgs.NewMsgAnswerPoll
-	NewMsgCreatePost           = msgs.NewMsgCreatePost
-	NewMsgEditPost             = msgs.NewMsgEditPost
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 	NewMsgRegisterReaction     = msgs.NewMsgRegisterReaction
 	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
 	NewMsgAddPostReaction      = msgs.NewMsgAddPostReaction
 	NewMsgRemovePostReaction   = msgs.NewMsgRemovePostReaction
-	ParsePostID                = models.ParsePostID
-	NewPost                    = models.NewPost
-	NewPostResponse            = models.NewPostResponse
-	PostStoreKey               = models.PostStoreKey
-	PostIndexedIDStoreKey      = models.PostIndexedIDStoreKey
-	PostCommentsStoreKey       = models.PostCommentsStoreKey
-	PostReactionsStoreKey      = models.PostReactionsStoreKey
-	ReactionsStoreKey          = models.ReactionsStoreKey
-	PollAnswersStoreKey        = models.PollAnswersStoreKey
-	RegisterModelsCodec        = models.RegisterModelsCodec
+	NewMsgAnswerPoll           = msgs.NewMsgAnswerPoll
+	NewMsgCreatePost           = msgs.NewMsgCreatePost
+	NewMsgEditPost             = msgs.NewMsgEditPost
 
 	// variable aliases
+	MsgsCodec                = msgs.MsgsCodec
+	ModelsCdc                = models.ModelsCdc
 	ModuleAddress            = common.ModuleAddress
 	PostStorePrefix          = common.PostStorePrefix
 	PostIndexedIDStorePrefix = common.PostIndexedIDStorePrefix
@@ -79,8 +81,6 @@ var (
 	PostReactionsStorePrefix = common.PostReactionsStorePrefix
 	ReactionsStorePrefix     = common.ReactionsStorePrefix
 	PollAnswersStorePrefix   = common.PollAnswersStorePrefix
-	MsgsCodec                = msgs.MsgsCodec
-	ModelsCdc                = models.ModelsCdc
 )
 
 type (
@@ -100,14 +100,14 @@ type (
 	PollData                 = polls.PollData
 	UserAnswer               = polls.UserAnswer
 	UserAnswers              = polls.UserAnswers
-	PostReaction             = reactions.PostReaction
-	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
 	Reactions                = reactions.Reactions
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
+	PostReaction             = reactions.PostReaction
+	PostReactions            = reactions.PostReactions
 	MsgRegisterReaction      = msgs.MsgRegisterReaction
 	MsgAddPostReaction       = msgs.MsgAddPostReaction
 	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
 )

@@ -21,7 +21,7 @@ func TestReportsQueryResponse_String(t *testing.T) {
 
 	repQueryResp := types.NewReportResponse(postID, reports)
 
-	require.Equal(t, "Post ID: 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af\n Reports: Type - Message - ReceivingUser\nscam - it's a trap - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\nviolence - it's a trap - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", repQueryResp.String())
+	require.Equal(t, "Post ID: 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af\n Reports: Type - Message - Sender\nscam - it's a trap - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\nviolence - it's a trap - cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", repQueryResp.String())
 }
 
 func TestReportsQueryResponse_MarshalJSON(t *testing.T) {

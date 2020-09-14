@@ -161,7 +161,7 @@ func (msg MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
 
 // MsgAcceptDTagTransfer represent a DTag transfer acceptance message
 type MsgAcceptDTagTransfer struct {
-	NewDTag       string         `json:"new_d_tag" yaml:"new_d_tag"`
+	NewDTag       string         `json:"new_d_tag" yaml:"new_dtag"`
 	CurrentOwner  sdk.AccAddress `json:"owner" yaml:"owner"`
 	ReceivingUser sdk.AccAddress `json:"receiving_user" yaml:"receiving_user"`
 }

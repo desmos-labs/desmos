@@ -1,13 +1,13 @@
 # `MsgRequestDTagTransfer`
-This message allows you to request a transfer to your profile for a `dTag` owned by another user.
+This message allows you to request a transfer to your profile for a `DTag` owned by another user.
 
 ## Structure
 ````json
 {
   "type": "desmos/MsgRequestDTagTransfer",
   "value": {
-    "current_owner": "<Desmos address of the dTag owner>",
-    "receiving_user": "<Desmos address that's making the dTag's request>"
+    "current_owner": "<Desmos address of the DTag owner>",
+    "receiving_user": "<Desmos address that's making the DTag's request>"
   }
 }
 ````
@@ -15,8 +15,8 @@ This message allows you to request a transfer to your profile for a `dTag` owned
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `current_owner`  | String | Desmos address of the user that is the owner of the requested `dTag` |
-| `receiving_user`| String | Desmos address of the user that request the `dTag` |
+| `current_owner`  | String | Desmos address of the user that is the owner of the requested `DTag` |
+| `receiving_user`| String | Desmos address of the user that request the `DTag` |
 
 ## Example
 ````json

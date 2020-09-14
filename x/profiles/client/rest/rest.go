@@ -35,5 +35,5 @@ type TransferDTagReq struct {
 type AcceptDTagTransferReq struct {
 	BaseReq       rest.BaseReq `json:"base_req"`
 	ReceivingUser string       `json:"receiving_user"`
-	NewDTag       string       `json:"new_d_tag"`
+	NewDTag       string       `json:"new_dtag"`
 }

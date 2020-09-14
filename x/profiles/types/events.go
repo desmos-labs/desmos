@@ -1,10 +1,10 @@
 package types
 
 const (
-	EventTypeProfileSaved            = "profile_saved"
-	EventTypeProfileDeleted          = "profile_deleted"
-	EventTypeDTagTransferRequest     = "dtag_transfer_request"
-	EventTypeDTagTransferReqAccepted = "accepted_transfer_request"
+	EventTypeProfileSaved        = "profile_saved"
+	EventTypeProfileDeleted      = "profile_deleted"
+	EventTypeDTagTransferRequest = "dtag_transfer_request"
+	EventTypeDTagTransferAccept  = "dtag_transfer_accept"
 
 	// Profile attributes
 	AttributeProfileDtag         = "profile_dtag"
@@ -14,5 +14,5 @@ const (
 	// DTag trade attributes
 	AttributeCurrentOwner  = "current_owner"
 	AttributeReceivingUser = "receiving_user"
-	AttributeNewDTag       = "new_DTag"
+	AttributeNewDTag       = "new_dtag"
 )

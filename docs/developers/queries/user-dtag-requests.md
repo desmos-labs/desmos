@@ -1,5 +1,5 @@
-## Query user's dTag requests
-This query endpoint allows you to retrieve the dTag requests of the user with the given `address`.
+## Query user's DTag requests
+This query endpoint allows you to retrieve the DTag requests of the user with the given `address`.
 
 **CLI**
 ```bash

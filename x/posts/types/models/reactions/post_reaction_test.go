@@ -15,7 +15,7 @@ func TestPostReaction_String(t *testing.T) {
 	require.NoError(t, err)
 
 	reaction := reactions.NewPostReaction(":smile:", "reaction", user)
-	require.Equal(t, "[Shortcode] :smile: [Value] reaction [CurrentOwner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4", reaction.String())
+	require.Equal(t, "[Shortcode] :smile: [Value] reaction [Owner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4", reaction.String())
 }
 
 func TestPostReaction_Validate(t *testing.T) {

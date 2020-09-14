@@ -175,7 +175,7 @@ func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress
 // GetDTagTransferRequests returns all the requests inside the given context
 func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
 	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
 
 	for ; iterator.Valid(); iterator.Next() {
 		var userRequests []types.DTagTransferRequest

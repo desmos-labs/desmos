@@ -33,23 +33,23 @@ const (
 
 var (
 	// functions aliases
-	NewAttachment              = common.NewAttachment
-	NewAttachments             = common.NewAttachments
-	IsValidPostID              = common.IsValidPostID
-	IsValidReactionCode        = common.IsValidReactionCode
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	ParseAnswerID              = polls.ParseAnswerID
+	NewPollAnswer              = polls.NewPollAnswer
+	NewPollAnswers             = polls.NewPollAnswers
 	NewPollData                = polls.NewPollData
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	ParseAnswerID              = polls.ParseAnswerID
-	NewPollAnswer              = polls.NewPollAnswer
-	NewPollAnswers             = polls.NewPollAnswers
 	NewPostReaction            = reactions.NewPostReaction
 	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	NewAttachment              = common.NewAttachment
+	NewAttachments             = common.NewAttachments
+	IsValidPostID              = common.IsValidPostID
+	IsValidReactionCode        = common.IsValidReactionCode
 
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
@@ -63,6 +63,12 @@ var (
 )
 
 type (
+	AnswerID      = polls.AnswerID
+	PollAnswer    = polls.PollAnswer
+	PollAnswers   = polls.PollAnswers
+	PollData      = polls.PollData
+	UserAnswer    = polls.UserAnswer
+	UserAnswers   = polls.UserAnswers
 	PostReaction  = reactions.PostReaction
 	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
@@ -71,10 +77,4 @@ type (
 	KeyValue      = common.KeyValue
 	Attachment    = common.Attachment
 	Attachments   = common.Attachments
-	PollData      = polls.PollData
-	UserAnswer    = polls.UserAnswer
-	UserAnswers   = polls.UserAnswers
-	AnswerID      = polls.AnswerID
-	PollAnswer    = polls.PollAnswer
-	PollAnswers   = polls.PollAnswers
 )

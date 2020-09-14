@@ -1,14 +1,14 @@
 # `MsgAcceptDTagTransfer`
-This message allows you to accept a `dTag`'s transfer request.
+This message allows you to accept a `DTag`'s transfer request.
 
 ## Structure
 ````json
 {
   "type": "desmos/MsgAcceptDTagTransfer",
   "value": {
-    "new_d_tag": "<the new dTag for the current owner's profile>",
-    "current_owner": "<Desmos address of the dTag owner>",
-    "receiving_user": "<Desmos address that's making the dTag's request>"
+    "new_d_tag": "<The new DTag for the current owner's profile>",
+    "current_owner": "<Desmos address of the DTag owner>",
+    "receiving_user": "<Desmos address that's making the DTag's request>"
   }
 }
 ````
@@ -16,9 +16,9 @@ This message allows you to accept a `dTag`'s transfer request.
 ### Attributes
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `new_d_tag` | String | The new `dTag` for the current owner profile that will replace the traded one |
-| `current_owner`  | String | Desmos address of the user that is the owner of the requested `dTag` |
-| `receiving_user`| String | Desmos address of the user that request the `dTag` |
+| `new_d_tag` | String | The new `DTag` for the current owner profile that will replace the traded one |
+| `current_owner`  | String | Desmos address of the user that is the owner of the requested `DTag` |
+| `receiving_user`| String | Desmos address of the user that request the `DTag` |
 
 ## Example
 ````json

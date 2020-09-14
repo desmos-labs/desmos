@@ -32,7 +32,7 @@ func NewPostReaction(shortcode, value string, owner sdk.AccAddress) PostReaction
 
 // String implements fmt.Stringer
 func (reaction PostReaction) String() string {
-	out := fmt.Sprintf("[Shortcode] %s [Value] %s [CurrentOwner] %s", reaction.Shortcode, reaction.Value, reaction.Owner)
+	out := fmt.Sprintf("[Shortcode] %s [Value] %s [Owner] %s", reaction.Shortcode, reaction.Value, reaction.Owner)
 	return strings.TrimSpace(out)
 }
 

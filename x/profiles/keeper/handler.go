@@ -216,7 +216,7 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 	keeper.DeleteAllDTagTransferRequests(ctx, msg.CurrentOwner)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeDTagTransferReqAccepted,
+		types.EventTypeDTagTransferAccept,
 		sdk.NewAttribute(types.AttributeCurrentOwner, msg.CurrentOwner.String()),
 		sdk.NewAttribute(types.AttributeReceivingUser, msg.ReceivingUser.String()),
 	))

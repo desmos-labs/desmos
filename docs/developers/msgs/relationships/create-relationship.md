@@ -1,5 +1,5 @@
 # `MsgCreateRelationship`
-This message allows you to create a relationship between the signer, and a specified user.
+This message allows you to create a relationship between the signer and a specified user.
 
 ## Structure
 ```json

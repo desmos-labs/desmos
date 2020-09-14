@@ -424,7 +424,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 			storedReceivingUserProfile: nil,
 			expErr:                     nil,
 			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferReqAccepted,
+				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
 				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
 			),
@@ -437,7 +437,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 			storedReceivingUserProfile: newProfilePtr(types.NewProfile("previous", suite.testData.otherUser, suite.ctx.BlockTime())),
 			expErr:                     nil,
 			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferReqAccepted,
+				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
 				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
 			),
@@ -479,7 +479,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
-					types.EventTypeDTagTransferReqAccepted,
+					types.EventTypeDTagTransferAccept,
 					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
 					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
 				)

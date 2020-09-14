@@ -29,7 +29,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 			return sim.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		var profilePic, coverPic = RandomProfilePic(r), RandomProfileCover(r)
+		var profilePic, coverPic *string = nil, nil
 		if data.Pictures != nil {
 			profilePic = data.Pictures.Profile
 			coverPic = data.Pictures.Cover
