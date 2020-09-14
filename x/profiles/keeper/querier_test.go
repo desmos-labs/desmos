@@ -189,6 +189,13 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalid"),
 		},
 		{
+			name:           "Empty dTag requests returns correctly",
+			path:           []string{types.QueryDTagRequests, suite.testData.user.String()},
+			storedRequests: nil,
+			expResult:      nil,
+			expErr:         nil,
+		},
+		{
 			name: "Stored dTag requests returns correctly",
 			path: []string{types.QueryDTagRequests, suite.testData.user.String()},
 			storedRequests: []types.DTagTransferRequest{

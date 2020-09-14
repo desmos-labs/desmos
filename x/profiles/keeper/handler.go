@@ -86,6 +86,11 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		profile = types.NewProfile(msg.Dtag, msg.Creator, ctx.BlockTime())
 	}
 
+	// If dTag changes, delete all the previous dTag transfer requests
+	if profile.DTag != msg.Dtag {
+		keeper.DeleteAllDTagTransferRequests(ctx, msg.Creator)
+	}
+
 	// Replace all editable fields (clients should autofill existing values)
 	// We do not replace the tag since we do not want it to be editable
 	profile = profile.

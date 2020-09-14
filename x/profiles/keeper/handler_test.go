@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 			),
 			msg: types.NewMsgSaveProfile(
-				"test_dtag",
+				"other_dtag",
 				newStrPtr("moniker"),
 				newStrPtr("biography"),
 				newStrPtr("https://test.com/profile-pic"),
@@ -174,7 +174,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				suite.testData.profile.Creator,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("test_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
+				types.NewProfile("other_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithMoniker(newStrPtr("moniker")).
 					WithBio(newStrPtr("biography")).
 					WithPictures(
@@ -184,7 +184,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			),
 			expEvent: sdk.NewEvent(
 				types.EventTypeProfileSaved,
-				sdk.NewAttribute(types.AttributeProfileDtag, "test_dtag"),
+				sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
 				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator.String()),
 				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 			),
