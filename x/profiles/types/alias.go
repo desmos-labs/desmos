@@ -9,40 +9,51 @@ import (
 )
 
 const (
-	ModuleName          = models.ModuleName
-	RouterKey           = models.RouterKey
-	StoreKey            = models.StoreKey
-	ActionSaveProfile   = models.ActionSaveProfile
-	ActionDeleteProfile = models.ActionDeleteProfile
-	QuerierRoute        = models.QuerierRoute
-	QueryProfile        = models.QueryProfile
-	QueryProfiles       = models.QueryProfiles
-	QueryParams         = models.QueryParams
+	ModuleName               = models.ModuleName
+	RouterKey                = models.RouterKey
+	StoreKey                 = models.StoreKey
+	ActionSaveProfile        = models.ActionSaveProfile
+	ActionDeleteProfile      = models.ActionDeleteProfile
+	ActionRequestDtag        = models.ActionRequestDtag
+	ActionAcceptDtagTransfer = models.ActionAcceptDtagTransfer
+	QuerierRoute             = models.QuerierRoute
+	QueryProfile             = models.QueryProfile
+	QueryProfiles            = models.QueryProfiles
+	QueryDTagRequests        = models.QueryDTagRequests
+	QueryParams              = models.QueryParams
 )
 
 var (
 	// functions aliases
-	ProfileStoreKey       = models.ProfileStoreKey
-	DtagStoreKey          = models.DtagStoreKey
-	NewProfile            = models.NewProfile
-	NewProfiles           = models.NewProfiles
-	NewPictures           = models.NewPictures
-	RegisterModelsCodec   = models.RegisterModelsCodec
-	NewMsgSaveProfile     = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile   = msgs.NewMsgDeleteProfile
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
+	ProfileStoreKey             = models.ProfileStoreKey
+	DtagStoreKey                = models.DtagStoreKey
+	DtagTransferRequestStoreKey = models.DtagTransferRequestStoreKey
+	NewProfile                  = models.NewProfile
+	NewProfiles                 = models.NewProfiles
+	NewPictures                 = models.NewPictures
+	NewDTagTransferRequest      = models.NewDTagTransferRequest
+	RegisterModelsCodec         = models.RegisterModelsCodec
+	NewMsgSaveProfile           = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
+	NewMsgRequestDTagTransfer   = msgs.NewMsgRequestDTagTransfer
+	NewMsgAcceptDTagTransfer    = msgs.NewMsgAcceptDTagTransfer
+	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	ProfileStorePrefix = models.ProfileStorePrefix
-	DtagStorePrefix    = models.DtagStorePrefix
-	ModelsCdc          = models.ModelsCdc
-	MsgsCodec          = msgs.MsgsCodec
+	ProfileStorePrefix         = models.ProfileStorePrefix
+	DtagStorePrefix            = models.DtagStorePrefix
+	DTagTransferRequestsPrefix = models.DTagTransferRequestsPrefix
+	ModelsCdc                  = models.ModelsCdc
+	MsgsCodec                  = msgs.MsgsCodec
 )
 
 type (
-	Profile          = models.Profile
-	Profiles         = models.Profiles
-	Pictures         = models.Pictures
-	MsgSaveProfile   = msgs.MsgSaveProfile
-	MsgDeleteProfile = msgs.MsgDeleteProfile
+	MsgSaveProfile         = msgs.MsgSaveProfile
+	MsgDeleteProfile       = msgs.MsgDeleteProfile
+	MsgRequestDTagTransfer = msgs.MsgRequestDTagTransfer
+	MsgAcceptDTagTransfer  = msgs.MsgAcceptDTagTransfer
+	Profile                = models.Profile
+	Profiles               = models.Profiles
+	Pictures               = models.Pictures
+	DTagTransferRequest    = models.DTagTransferRequest
 )

@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -213,6 +212,197 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 				suite.Equal(types.Profiles{}, res)
 			}
 
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
+	tests := []struct {
+		name                  string
+		storedTransferReqs    []types.DTagTransferRequest
+		transferReq           types.DTagTransferRequest
+		expErr                error
+		expStoredTransferReqs []types.DTagTransferRequest
+	}{
+		{
+			name: "already present request returns error",
+			storedTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			expErr: fmt.Errorf("the transfer request from %s to %s has already been made",
+				suite.testData.otherUser, suite.testData.user),
+			expStoredTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser)},
+		},
+		{
+			name: "different current owner request saved correctly",
+			storedTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
+			expErr:      nil,
+			expStoredTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.otherUser, suite.testData.user)},
+		},
+		{
+			name: "different receiver request saved correctly",
+			storedTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
+			expErr:      nil,
+			expStoredTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser), types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.user)},
+		},
+		{
+			name: "different dtag request saved correctly",
+			storedTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			transferReq: types.NewDTagTransferRequest("dtag1", suite.testData.user, suite.testData.otherUser),
+			expErr:      nil,
+			expStoredTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser), types.NewDTagTransferRequest(
+				"dtag1", suite.testData.user, suite.testData.otherUser)},
+		},
+		{
+			name:               "not already present request saved correctly",
+			storedTransferReqs: nil,
+			transferReq:        types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			expErr:             nil,
+			expStoredTransferReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest(
+				"dtag", suite.testData.user, suite.testData.otherUser)},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedTransferReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(test.storedTransferReqs[0].CurrentOwner),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedTransferReqs),
+				)
+			}
+
+			actualErr := suite.keeper.SaveDTagTransferRequest(suite.ctx, test.transferReq)
+			suite.Equal(test.expErr, actualErr)
+
+			var actualReqs []types.DTagTransferRequest
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.CurrentOwner)), &actualReqs)
+			suite.Equal(test.expStoredTransferReqs, actualReqs)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
+	tests := []struct {
+		name       string
+		storedReqs []types.DTagTransferRequest
+		expReqs    []types.DTagTransferRequest
+	}{
+		{
+			name: "returns a non-empty array of dTag requests",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			expReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+		},
+		{
+			name:       "returns an empty array of dTag requests",
+			storedReqs: nil,
+			expReqs:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+				)
+			}
+
+			suite.Equal(test.expReqs, suite.keeper.GetUserDTagTransferRequests(suite.ctx, suite.testData.user))
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
+	tests := []struct {
+		name       string
+		storedReqs []types.DTagTransferRequest
+		expReqs    []types.DTagTransferRequest
+	}{
+		{
+			name: "returns a non-empty array of dTag requests",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			expReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+		},
+		{
+			name:       "returns an empty array of dTag requests",
+			storedReqs: nil,
+			expReqs:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+				)
+			}
+
+			suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
+	tests := []struct {
+		name       string
+		storedReqs []types.DTagTransferRequest
+		expReqs    []types.DTagTransferRequest
+	}{
+		{
+			name: "returns a non-empty array of dTag requests",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			expReqs: nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+				)
+			}
+
+			suite.keeper.DeleteAllDTagTransferRequests(suite.ctx, suite.testData.user)
+			suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
 		})
 	}
 }

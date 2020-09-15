@@ -33,11 +33,16 @@ const (
 
 var (
 	// functions aliases
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
+	NewReaction                = reactions.NewReaction
+	IsEmoji                    = reactions.IsEmoji
+	NewReactions               = reactions.NewReactions
+	NewAttachment              = common.NewAttachment
+	NewAttachments             = common.NewAttachments
 	IsValidPostID              = common.IsValidPostID
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
-	NewAttachment              = common.NewAttachment
-	NewAttachments             = common.NewAttachments
 	ParseAnswerID              = polls.ParseAnswerID
 	NewPollAnswer              = polls.NewPollAnswer
 	NewPollAnswers             = polls.NewPollAnswers
@@ -45,11 +50,6 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
-	NewReaction                = reactions.NewReaction
-	IsEmoji                    = reactions.IsEmoji
-	NewReactions               = reactions.NewReactions
 
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
@@ -63,6 +63,10 @@ var (
 )
 
 type (
+	OptionalData  = common.OptionalData
+	KeyValue      = common.KeyValue
+	Attachment    = common.Attachment
+	Attachments   = common.Attachments
 	AnswerID      = polls.AnswerID
 	PollAnswer    = polls.PollAnswer
 	PollAnswers   = polls.PollAnswers
@@ -73,8 +77,4 @@ type (
 	PostReactions = reactions.PostReactions
 	Reaction      = reactions.Reaction
 	Reactions     = reactions.Reactions
-	OptionalData  = common.OptionalData
-	KeyValue      = common.KeyValue
-	Attachment    = common.Attachment
-	Attachments   = common.Attachments
 )

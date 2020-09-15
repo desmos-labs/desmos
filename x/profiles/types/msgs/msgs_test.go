@@ -16,6 +16,7 @@ import (
 // ----------------------
 
 var user, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+var otherUser, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 var testProfile = models.Profile{
 	DTag:    "dtag",
 	Moniker: common.NewStrPtr("moniker"),
@@ -38,6 +39,17 @@ var msgEditProfile = msgs.NewMsgSaveProfile(
 
 var msgDeleteProfile = msgs.NewMsgDeleteProfile(
 	testProfile.Creator,
+)
+
+var msgRequestTransferDTag = msgs.NewMsgRequestDTagTransfer(
+	user,
+	otherUser,
+)
+
+var msgAcceptDTagTransfer = msgs.NewMsgAcceptDTagTransfer(
+	"dtag",
+	user,
+	otherUser,
 )
 
 func TestMsgSaveProfile_Route(t *testing.T) {
@@ -138,7 +150,7 @@ func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgDeleteProfile(
 				nil,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
 			name: "Valid message returns no error",
@@ -173,4 +185,163 @@ func TestMsgDeleteProfile_GetSigners(t *testing.T) {
 	actual := msgDeleteProfile.GetSigners()
 	require.Equal(t, 1, len(actual))
 	require.Equal(t, msgDeleteProfile.Creator, actual[0])
+}
+
+// ----------------------
+// --- MsgRequestDTagTransfer
+// ----------------------
+
+func TestMsgRequestDTagTransfer_Route(t *testing.T) {
+	actual := msgRequestTransferDTag.Route()
+	require.Equal(t, "profiles", actual)
+}
+
+func TestMsgRequestDTagTransfer_Type(t *testing.T) {
+	actual := msgRequestTransferDTag.Type()
+	require.Equal(t, "request_dtag", actual)
+}
+
+func TestMsgRequestDTagTransfer_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgRequestDTagTransfer
+		error error
+	}{
+		{
+			name: "Empty current owner returns error",
+			msg: msgs.NewMsgRequestDTagTransfer(
+				nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid current owner address: "),
+		},
+		{
+			name: "Empty receiving user returns error",
+			msg: msgs.NewMsgRequestDTagTransfer(
+				user, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiving user address: "),
+		},
+		{
+			name: "Equals current owner and receiving user returns error",
+			msg: msgs.NewMsgRequestDTagTransfer(
+				user, user,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different"),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgRequestDTagTransfer(
+				user, otherUser,
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgRequestDTagTransfer_GetSignBytes(t *testing.T) {
+	actual := msgRequestTransferDTag.GetSignBytes()
+	expected := `{"type":"desmos/MsgRequestDTagTransfer","value":{"current_owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","receiving_user":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
+	actual := msgRequestTransferDTag.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgRequestTransferDTag.ReceivingUser, actual[0])
+}
+
+// ----------------------
+// --- MsgAcceptDTagTransfer
+// ----------------------
+
+func TestMsgAcceptDTagTransfer_Route(t *testing.T) {
+	actual := msgAcceptDTagTransfer.Route()
+	require.Equal(t, "profiles", actual)
+}
+
+func TestMsgAcceptDTagTransfer_Type(t *testing.T) {
+	actual := msgAcceptDTagTransfer.Type()
+	require.Equal(t, "accept_dtag_request", actual)
+}
+
+func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgAcceptDTagTransfer
+		error error
+	}{
+		{
+			name: "Empty current owner returns error",
+			msg: msgs.NewMsgAcceptDTagTransfer(
+				"dtag", nil, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid current owner address: "),
+		},
+		{
+			name: "Empty receiving user returns error",
+			msg: msgs.NewMsgAcceptDTagTransfer(
+				"dtag", user, nil,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiving user address: "),
+		},
+		{
+			name: "Equals current owner and receiving user returns error",
+			msg: msgs.NewMsgAcceptDTagTransfer(
+				"dtag", user, user,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different"),
+		},
+		{
+			name: "Empty newDTag returns error",
+			msg: msgs.NewMsgAcceptDTagTransfer(
+				"", user, otherUser,
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new dTag can't be empty"),
+		},
+		{
+			name: "No errors message",
+			msg: msgs.NewMsgAcceptDTagTransfer(
+				"dtag", user, otherUser,
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgAcceptDTagTransfer_GetSignBytes(t *testing.T) {
+	actual := msgAcceptDTagTransfer.GetSignBytes()
+	expected := `{"type":"desmos/MsgAcceptDTagTransfer","value":{"new_d_tag":"dtag","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","receiving_user":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgAcceptDTagTransfer_GetSigners(t *testing.T) {
+	actual := msgAcceptDTagTransfer.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgRequestTransferDTag.CurrentOwner, actual[0])
 }

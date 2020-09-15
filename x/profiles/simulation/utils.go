@@ -59,6 +59,12 @@ func RandomProfile(r *rand.Rand, accounts types.Profiles) types.Profile {
 	return accounts[idx]
 }
 
+// RandomDTagTransferRequest picks and returns a random dtag transfer request from an array of requests
+func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
+	idx := r.Intn(len(requests))
+	return requests[idx]
+}
+
 // RandomDTag return a random dtag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30

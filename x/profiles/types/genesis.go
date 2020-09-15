@@ -1,33 +1,27 @@
 package types
 
-import (
-	"fmt"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-)
-
 // GenesisState contains the data of the genesis state for the profile module
 type GenesisState struct {
-	Profiles           []Profile                   `json:"profiles" yaml:"profiles"`
-	Params             Params                      `json:"params" yaml:"params"`
-	UsersRelationships map[string][]sdk.AccAddress `json:"users_relationships"`
+	Profiles             []Profile             `json:"profiles" yaml:"profiles"`
+	Params               Params                `json:"params" yaml:"params"`
+	DTagTransferRequests []DTagTransferRequest `json:"dtag_transfer_requests" yaml:"dtag_transfer_requests"`
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(profiles []Profile, params Params, usersRelationships map[string][]sdk.AccAddress) GenesisState {
+func NewGenesisState(profiles []Profile, params Params, request []DTagTransferRequest) GenesisState {
 	return GenesisState{
-		Profiles:           profiles,
-		Params:             params,
-		UsersRelationships: usersRelationships,
+		Profiles:             profiles,
+		Params:               params,
+		DTagTransferRequests: request,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
-		Profiles:           Profiles{},
-		Params:             DefaultParams(),
-		UsersRelationships: map[string][]sdk.AccAddress{},
+		Profiles:             Profiles{},
+		Params:               DefaultParams(),
+		DTagTransferRequests: []DTagTransferRequest{},
 	}
 }
 
@@ -43,11 +37,9 @@ func ValidateGenesis(data GenesisState) error {
 		return err
 	}
 
-	for _, relationships := range data.UsersRelationships {
-		for _, address := range relationships {
-			if !address.Empty() {
-				return fmt.Errorf("invalid address %s", address)
-			}
+	for _, transferReq := range data.DTagTransferRequests {
+		if err := transferReq.Validate(); err != nil {
+			return err
 		}
 	}
 
