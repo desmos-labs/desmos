@@ -30,6 +30,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 	profileTxCmd.AddCommand(flags.PostCommands(
 		GetCmdSaveProfile(cdc),
 		GetCmdDeleteProfile(cdc),
+		GetCmdRequestDTagTransfer(cdc),
+		GetCmdAcceptDTagTransfer(cdc),
 	)...)
 
 	return profileTxCmd
@@ -97,6 +99,56 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdRequestDTagTransfer is the CLI command for request an existent dTag to the given owner
+func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "transfer-dtag [address]",
+		Short: "Make a request to get the DTag of the user having the given address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			currentOwnerAddr, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRequestDTagTransfer(currentOwnerAddr, cliCtx.FromAddress)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdAcceptDTagTransfer is the CLI command to accept the request to transfer a dTag
+func GetCmdAcceptDTagTransfer(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "accept-dtag-transfer.md [newDTag] [address]",
+		Short: "Accept a DTag transfer request made by the user with the given address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			receivingUser, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAcceptDTagTransfer(args[0], cliCtx.FromAddress, receivingUser)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

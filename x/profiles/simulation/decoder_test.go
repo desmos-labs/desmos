@@ -24,6 +24,8 @@ var (
 		Bio:     &bio,
 		Creator: accountCreatorAddr,
 	}
+
+	requests = []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", accountCreatorAddr, accountCreatorAddr)}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {
@@ -40,6 +42,7 @@ func TestDecodeStore(t *testing.T) {
 	kvPairs := kv.Pairs{
 		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
 		kv.Pair{Key: types.DtagStoreKey(profile.DTag), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
+		kv.Pair{Key: types.DtagTransferRequestStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&requests)},
 	}
 
 	tests := []struct {
@@ -48,6 +51,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
+		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests, requests)},
 		{"other", ""},
 	}
 

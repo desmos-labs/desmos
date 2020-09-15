@@ -27,6 +27,21 @@ func TestNewProfile(t *testing.T) {
 	require.True(t, expProfile.Equals(actProfile))
 }
 
+func TestProfile_WithDTag(t *testing.T) {
+	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	require.NoError(t, err)
+
+	timeZone, err := time.LoadLocation("UTC")
+	require.NoError(t, err)
+
+	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
+
+	profile := models.NewProfile("dtag", owner, date)
+
+	profileWithDtag := profile.WithDTag("test-dtag")
+	require.Equal(t, "test-dtag", profileWithDtag.DTag)
+}
+
 func TestProfile_WithMoniker(t *testing.T) {
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)

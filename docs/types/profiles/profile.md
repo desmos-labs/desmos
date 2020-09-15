@@ -11,7 +11,7 @@ These data that could be verified later on chain by providing some additional in
 A profile contains different fields. Most of them could be omitted and each of them could be edited.
 
 ### `DTag`
-The `DTag` is a string of min `3` and max `30` characters that uniquely identifies the user.
+The `DTag` is a string of min `3` and max `30` characters that uniquely identifies the user.
 In order to be valid it needs to match the following RegEx:
 
 ```

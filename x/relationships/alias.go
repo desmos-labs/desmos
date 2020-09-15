@@ -27,6 +27,15 @@ const (
 
 var (
 	// functions aliases
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
+	GetCmdBlockUser              = cli.GetCmdBlockUser
+	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 	RegisterRoutes               = rest.RegisterRoutes
 	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
@@ -41,21 +50,12 @@ var (
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
-	GetTxCmd                     = cli.GetTxCmd
-	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
-	GetCmdBlockUser              = cli.GetCmdBlockUser
-	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 
 	// variable aliases
+	MsgsCodec                = msgs.MsgsCodec
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
-	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (

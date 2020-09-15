@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 			),
 			msg: types.NewMsgSaveProfile(
-				"test_dtag",
+				"other_dtag",
 				newStrPtr("moniker"),
 				newStrPtr("biography"),
 				newStrPtr("https://test.com/profile-pic"),
@@ -174,7 +174,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				suite.testData.profile.Creator,
 			),
 			expProfiles: types.NewProfiles(
-				types.NewProfile("test_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
+				types.NewProfile("other_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
 					WithMoniker(newStrPtr("moniker")).
 					WithBio(newStrPtr("biography")).
 					WithPictures(
@@ -184,27 +184,10 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			),
 			expEvent: sdk.NewEvent(
 				types.EventTypeProfileSaved,
-				sdk.NewAttribute(types.AttributeProfileDtag, "test_dtag"),
+				sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
 				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator.String()),
 				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 			),
-		},
-		{
-			name: "Profile saving fails due to wrong tag",
-			existentProfiles: types.NewProfiles(
-				suite.testData.profile,
-				types.NewProfile("editor_dtag", suite.testData.profile.Creator, suite.testData.profile.CreationDate).
-					WithBio(newStrPtr("biography")),
-			),
-			msg: types.NewMsgSaveProfile(
-				"editor_tag",
-				newStrPtr("new-moniker"),
-				newStrPtr("new-bio"),
-				nil,
-				nil,
-				suite.testData.profile.Creator, // Use the same user
-			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "wrong dtag provided. Make sure to use the current one"),
 		},
 		{
 			name: "Profile not edited because of the invalid profile picture",
@@ -319,6 +302,204 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 					types.EventTypeProfileDeleted,
 					sdk.NewAttribute(types.AttributeProfileDtag, "dtag"),
 					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator.String()),
+				)
+
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, createAccountEv)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
+	tests := []struct {
+		name           string
+		msg            types.MsgRequestDTagTransfer
+		storedDTagReqs []types.DTagTransferRequest
+		expErr         error
+		expEvent       sdk.Event
+	}{
+		{
+			name: "Already present request returns error",
+			msg:  types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("the transfer request from %s to %s has already been made",
+					suite.testData.otherUser, suite.testData.user)),
+		},
+		{
+			name:           "Not already present request saved correctly",
+			msg:            types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: nil,
+			expErr:         nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferRequest,
+				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedDTagReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+				)
+			}
+
+			suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if res == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+			if res != nil {
+				// Check the data
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(
+					types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)), res.Data,
+				)
+
+				// Check the events
+				createAccountEv := sdk.NewEvent(
+					types.EventTypeDTagTransferRequest,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				)
+
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, createAccountEv)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
+	user, err := sdk.AccAddressFromBech32("cosmos1lkqrqrns0ekttzrs678thh5f4prcgasthqcxph")
+	suite.NoError(err)
+
+	tests := []struct {
+		name                       string
+		msg                        types.MsgAcceptDTagTransfer
+		storedDTagReqs             []types.DTagTransferRequest
+		storedOwnerProfile         *types.Profile
+		storedReceivingUserProfile *types.Profile
+		storedDtag                 *string
+		expErr                     error
+		expEvent                   sdk.Event
+	}{
+		{
+			name:           "No request made from the receiving user returns error",
+			msg:            types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: nil,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("no request made from %s", suite.testData.otherUser)),
+		},
+		{
+			name:           "No existent profile for the dTag owner returns error",
+			msg:            types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("profile of %s doesn't exist", suite.testData.user)),
+		},
+		{
+			name:                       "Already existent dTag for current owner edited profile returns error",
+			msg:                        types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs:             []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			storedOwnerProfile:         newProfilePtr(types.NewProfile("dtag", suite.testData.user, suite.ctx.BlockTime())),
+			storedReceivingUserProfile: nil,
+			storedDtag:                 newStrPtr("newDtag"),
+			expErr:                     sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with dtag: newDtag has already been created"),
+		},
+		{
+			name:                       "Current owner DTag different that the requested one",
+			msg:                        types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs:             []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			storedOwnerProfile:         newProfilePtr(types.NewProfile("dtag1", suite.testData.user, suite.ctx.BlockTime())),
+			storedReceivingUserProfile: nil,
+			expErr:                     sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged"),
+		},
+		{
+			name:                       "Dtag exchanged correctly (not existent receiver profile)",
+			msg:                        types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs:             []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			storedOwnerProfile:         newProfilePtr(types.NewProfile("dtag", suite.testData.user, suite.ctx.BlockTime())),
+			storedReceivingUserProfile: nil,
+			expErr:                     nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferAccept,
+				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
+				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+			),
+		},
+		{
+			name:                       "Dtag exchanged correctly (already existent receiver profile)",
+			msg:                        types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs:             []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			storedOwnerProfile:         newProfilePtr(types.NewProfile("dtag", suite.testData.user, suite.ctx.BlockTime())),
+			storedReceivingUserProfile: newProfilePtr(types.NewProfile("previous", suite.testData.otherUser, suite.ctx.BlockTime())),
+			expErr:                     nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferAccept,
+				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
+				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedDTagReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+				)
+			}
+
+			if test.storedOwnerProfile != nil {
+				suite.keeper.SaveProfile(suite.ctx, *test.storedOwnerProfile)
+			}
+
+			if test.storedReceivingUserProfile != nil {
+				suite.keeper.SaveProfile(suite.ctx, *test.storedReceivingUserProfile)
+			}
+
+			if test.storedDtag != nil {
+				suite.keeper.SaveProfile(suite.ctx, types.NewProfile(*test.storedDtag, user, suite.ctx.BlockTime()))
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if res == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+			if res != nil {
+				// Check the data
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.storedOwnerProfile.DTag), res.Data)
+
+				// Check the events
+				createAccountEv := sdk.NewEvent(
+					types.EventTypeDTagTransferAccept,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
+					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
 				)
 
 				suite.Len(res.Events, 1)

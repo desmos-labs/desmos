@@ -468,6 +468,18 @@ func (f *Fixtures) TxProfileDelete(from sdk.AccAddress, flags ...string) (bool, 
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxProfileRequestDTagTransfer(owner, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles transfer-dtag %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, owner, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileAcceptDTagTransfer(newDtag string, receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles accept-dtag-transfer.md %s %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, newDtag, receiver, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx relationships
 func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
@@ -827,6 +839,19 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile
+}
+
+// QueryUserDTagRequests returns the user's stored requests
+func (f *Fixtures) QueryUserDTagRequests(user sdk.AccAddress, flags ...string) []profilesTypes.DTagTransferRequest {
+	cmd := fmt.Sprintf("%s query profiles dtag-requests %s --output=json %s",
+		f.DesmoscliBinary, user, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedRequests []profilesTypes.DTagTransferRequest
+	err := cdc.UnmarshalJSON([]byte(res), &storedRequests)
+	require.NoError(f.T, err)
+	return storedRequests
 }
 
 //___________________________________________________________________________________

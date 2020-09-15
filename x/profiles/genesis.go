@@ -10,8 +10,9 @@ import (
 // ExportGenesis returns the GenesisState associated with the given context
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 	return types.GenesisState{
-		Profiles: k.GetProfiles(ctx),
-		Params:   k.GetParams(ctx),
+		Profiles:             k.GetProfiles(ctx),
+		Params:               k.GetParams(ctx),
+		DTagTransferRequests: k.GetDTagTransferRequests(ctx),
 	}
 }
 
@@ -24,6 +25,12 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 			panic(err)
 		}
 		if err := k.SaveProfile(ctx, profile); err != nil {
+			panic(err)
+		}
+	}
+
+	for _, request := range data.DTagTransferRequests {
+		if err := k.SaveDTagTransferRequest(ctx, request); err != nil {
 			panic(err)
 		}
 	}

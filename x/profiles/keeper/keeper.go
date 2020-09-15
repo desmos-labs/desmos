@@ -136,3 +136,56 @@ func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile typ
 
 	return types.Profile{}, false
 }
+
+// SaveDTagTransferRequest save the given request into the currentOwner's requests
+// returning errors if an equal one already exists.
+func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.DTagTransferRequest) error {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(transferRequest.CurrentOwner)
+
+	var requests []types.DTagTransferRequest
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+	for _, req := range requests {
+		if req.Equals(transferRequest) {
+			return fmt.Errorf("the transfer request from %s to %s has already been made",
+				transferRequest.ReceivingUser, transferRequest.CurrentOwner)
+		}
+	}
+
+	requests = append(requests, transferRequest)
+	store.Set(key, k.Cdc.MustMarshalBinaryBare(&requests))
+
+	return nil
+}
+
+// GetUserDTagTransferRequests returns all the request made to the given user inside the current context.
+func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(user)
+
+	var requests []types.DTagTransferRequest
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+
+	return requests
+}
+
+// GetDTagTransferRequests returns all the requests inside the given context
+func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
+	store := ctx.KVStore(k.StoreKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var userRequests []types.DTagTransferRequest
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
+		requests = append(requests, userRequests...)
+	}
+
+	return requests
+}
+
+// DeleteAllDTagTransferRequests delete all the requests made to the given user
+func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) {
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(user)
+	store.Delete(key)
+}
