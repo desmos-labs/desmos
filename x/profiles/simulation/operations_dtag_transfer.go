@@ -86,7 +86,7 @@ func randomDtagRequestTransferFields(
 
 	randomDTag := RandomDTag(r)
 	req := types.NewDTagTransferRequest(randomDTag, currentOwner.Address, receivingUser.Address)
-	k.AssociateDtagWithAddress(ctx, randomDTag, currentOwner.Address)
+	_ = k.SaveProfile(ctx, types.NewProfile(randomDTag, currentOwner.Address, ctx.BlockTime()))
 
 	// skip if requests already exists
 	requests := k.GetUserDTagTransferRequests(ctx, currentOwner.Address)
