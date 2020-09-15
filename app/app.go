@@ -23,11 +23,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/desmos-labs/desmos/x/relationships"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/relationships"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
@@ -367,6 +368,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
+
+	// Register the upgrade handler for the september update
+	app.upgradeKeeper.SetUpgradeHandler("september-upgrade", func(ctx sdk.Context, plan upgrade.Plan) {
+
+	})
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
