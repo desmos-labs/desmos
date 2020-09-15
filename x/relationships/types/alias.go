@@ -24,16 +24,16 @@ const (
 
 var (
 	// functions aliases
-	NewUserBlock             = models.NewUserBlock
-	RelationshipsStoreKey    = models.RelationshipsStoreKey
-	UsersBlocksStoreKey      = models.UsersBlocksStoreKey
-	RegisterModelsCodec      = models.RegisterModelsCodec
-	NewRelationship          = models.NewRelationship
+	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
 	NewMsgCreateRelationship = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship = msgs.NewMsgDeleteRelationship
 	NewMsgBlockUser          = msgs.NewMsgBlockUser
 	NewMsgUnblockUser        = msgs.NewMsgUnblockUser
-	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
+	RelationshipsStoreKey    = models.RelationshipsStoreKey
+	UsersBlocksStoreKey      = models.UsersBlocksStoreKey
+	RegisterModelsCodec      = models.RegisterModelsCodec
+	NewRelationship          = models.NewRelationship
+	NewUserBlock             = models.NewUserBlock
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
@@ -43,9 +43,9 @@ var (
 )
 
 type (
-	UserBlock             = models.UserBlock
 	Relationship          = models.Relationship
 	Relationships         = models.Relationships
+	UserBlock             = models.UserBlock
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 	MsgBlockUser          = msgs.MsgBlockUser

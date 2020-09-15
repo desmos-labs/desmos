@@ -86,7 +86,7 @@ func handleMsgSaveProfile(ctx sdk.Context, keeper Keeper, msg types.MsgSaveProfi
 		profile = types.NewProfile(msg.Dtag, msg.Creator, ctx.BlockTime())
 	}
 
-	// If dTag changes, delete all the previous dTag transfer requests
+	// If the DTag changes, delete all the previous DTag transfer requests
 	if profile.DTag != msg.Dtag {
 		keeper.DeleteAllDTagTransferRequests(ctx, msg.Creator)
 	}
@@ -152,7 +152,8 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 // handleMsgRequestDTagTransfer handles the request of a dTag transfer
 func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
-	transferRequest := types.NewDTagTransferRequest(msg.CurrentOwner, msg.ReceivingUser)
+	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.CurrentOwner)
+	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.CurrentOwner, msg.ReceivingUser)
 
 	if err := keeper.SaveDTagTransferRequest(ctx, transferRequest); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -160,6 +161,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferRequest,
+		sdk.NewAttribute(types.AttributeDTagToTrade, dtagToTrade),
 		sdk.NewAttribute(types.AttributeCurrentOwner, transferRequest.CurrentOwner.String()),
 		sdk.NewAttribute(types.AttributeReceivingUser, transferRequest.ReceivingUser.String()),
 	))
@@ -178,8 +180,10 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 
 	// Check if the receiving user request is present, if not return error
 	found := false
+	var dTagWanted string
 	for _, req := range requests {
 		if req.ReceivingUser.Equals(msg.ReceivingUser) {
+			dTagWanted = req.DTagToTrade
 			found = true
 			break
 		}
@@ -195,8 +199,12 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("profile of %s doesn't exist", msg.CurrentOwner))
 	}
 
-	// Get the dTag to trade
+	// Get the DTag to trade
 	dTagToTrade := currentOwnerProfile.DTag
+
+	if dTagWanted != dTagToTrade {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
+	}
 
 	// Save the current owner profile with his new dTag
 	currentOwnerProfile = currentOwnerProfile.WithDTag(msg.NewDTag)
@@ -219,9 +227,12 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 	}
 
 	keeper.DeleteAllDTagTransferRequests(ctx, msg.CurrentOwner)
+	keeper.DeleteAllDTagTransferRequests(ctx, msg.ReceivingUser)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferAccept,
+		sdk.NewAttribute(types.AttributeDTagToTrade, dTagToTrade),
+		sdk.NewAttribute(types.AttributeNewDTag, msg.NewDTag),
 		sdk.NewAttribute(types.AttributeCurrentOwner, msg.CurrentOwner.String()),
 		sdk.NewAttribute(types.AttributeReceivingUser, msg.ReceivingUser.String()),
 	))

@@ -81,7 +81,7 @@ func TestValidateGenesis(t *testing.T) {
 				),
 				Params: types.DefaultParams(),
 				DTagTransferRequests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(nil, user),
+					types.NewDTagTransferRequest("dtag", nil, user),
 				},
 			},
 			shouldError: true,
@@ -99,7 +99,7 @@ func TestValidateGenesis(t *testing.T) {
 				),
 				Params: types.DefaultParams(),
 				DTagTransferRequests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(user, otherUser),
+					types.NewDTagTransferRequest("dtag", user, otherUser),
 				},
 			},
 			shouldError: false,

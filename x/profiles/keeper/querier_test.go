@@ -199,10 +199,10 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 			name: "Stored dTag requests returns correctly",
 			path: []string{types.QueryDTagRequests, suite.testData.user.String()},
 			storedRequests: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			expResult: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			expErr: nil,
 		},

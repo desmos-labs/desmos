@@ -111,7 +111,7 @@ func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
 func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "transfer-dtag [address]",
-		Short: "Make a request to get the dTag of the given address Profile",
+		Short: "Make a request to get the DTag of the user having the given address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -136,10 +136,8 @@ func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
 func GetCmdAcceptDTagTransfer(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "accept-dtag-transfer.md [newDTag] [address]",
-		Short: "Accept a dtag transfer request made by the user with the given address",
-		Long: `Accept a previously made dtag transfer request from the given address.
-When accepting, the user that must choose a new dTag for the profile`,
-		Args: cobra.ExactArgs(2),
+		Short: "Accept a DTag transfer request made by the user with the given address",
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))

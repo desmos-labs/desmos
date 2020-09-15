@@ -144,14 +144,11 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.D
 	key := types.DtagTransferRequestStoreKey(transferRequest.CurrentOwner)
 
 	var requests []types.DTagTransferRequest
-	bz := store.Get(key)
-	if bz != nil {
-		k.Cdc.MustUnmarshalBinaryBare(bz, &requests)
-		for _, req := range requests {
-			if req.Equals(transferRequest) {
-				return fmt.Errorf("the transfer request from %s to %s has already been made",
-					transferRequest.ReceivingUser, transferRequest.CurrentOwner)
-			}
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+	for _, req := range requests {
+		if req.Equals(transferRequest) {
+			return fmt.Errorf("the transfer request from %s to %s has already been made",
+				transferRequest.ReceivingUser, transferRequest.CurrentOwner)
 		}
 	}
 

@@ -25,7 +25,7 @@ var (
 		Creator: accountCreatorAddr,
 	}
 
-	requests = []types.DTagTransferRequest{types.NewDTagTransferRequest(accountCreatorAddr, accountCreatorAddr)}
+	requests = []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", accountCreatorAddr, accountCreatorAddr)}
 )
 
 func makeTestCodec() (cdc *codec.Codec) {

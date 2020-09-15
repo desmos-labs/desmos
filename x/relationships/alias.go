@@ -27,11 +27,6 @@ const (
 
 var (
 	// functions aliases
-	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
-	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
-	NewMsgBlockUser              = msgs.NewMsgBlockUser
-	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
-	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 	GetQueryCmd                  = cli.GetQueryCmd
 	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
 	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
@@ -50,6 +45,11 @@ var (
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
 	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
 	RegisterModelsCodec          = models.RegisterModelsCodec
+	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
+	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
+	NewMsgBlockUser              = msgs.NewMsgBlockUser
+	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	MsgsCodec                = msgs.MsgsCodec

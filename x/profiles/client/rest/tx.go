@@ -14,8 +14,8 @@ import (
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/transfer/dtag", requestDTagTransferHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/accept/dtag/transfer", acceptTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/dtag-transfer-requests", requestDTagTransferHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/dtag-transfer-requests/accept", acceptTransferRequestHandler(cliCtx)).Methods("POST")
 }
 
 func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {

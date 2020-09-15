@@ -14,5 +14,6 @@ const (
 	// DTag trade attributes
 	AttributeCurrentOwner  = "current_owner"
 	AttributeReceivingUser = "receiving_user"
+	AttributeDTagToTrade   = "dtag_to_trade"
 	AttributeNewDTag       = "new_dtag"
 )

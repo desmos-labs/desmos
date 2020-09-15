@@ -15,7 +15,7 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/parameters", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/dtag/requests/{address}", queryDTagRequests(cliCtx)).Methods("GET")
+	r.HandleFunc("/profiles/{address}/dtag-transfer-requests", queryDTagRequests(cliCtx)).Methods("GET")
 }
 
 func queryDTagRequests(cliCtx context.CLIContext) http.HandlerFunc {

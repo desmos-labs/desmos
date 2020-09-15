@@ -37,7 +37,7 @@ func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTr
 	for i := 0; i < dtagTransferRequestsNumber; i++ {
 		simAccount, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
 		simAccount2, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		dtagTransferRequests[i] = types.NewDTagTransferRequest(simAccount.Address, simAccount2.Address)
+		dtagTransferRequests[i] = types.NewDTagTransferRequest(RandomDTag(simState.Rand), simAccount.Address, simAccount2.Address)
 	}
 
 	return dtagTransferRequests

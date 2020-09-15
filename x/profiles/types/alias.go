@@ -25,11 +25,6 @@ const (
 
 var (
 	// functions aliases
-	NewMsgSaveProfile           = msgs.NewMsgSaveProfile
-	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
-	NewMsgRequestDTagTransfer   = msgs.NewMsgRequestDTagTransfer
-	NewMsgAcceptDTagTransfer    = msgs.NewMsgAcceptDTagTransfer
-	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
 	ProfileStoreKey             = models.ProfileStoreKey
 	DtagStoreKey                = models.DtagStoreKey
 	DtagTransferRequestStoreKey = models.DtagTransferRequestStoreKey
@@ -38,6 +33,11 @@ var (
 	NewPictures                 = models.NewPictures
 	NewDTagTransferRequest      = models.NewDTagTransferRequest
 	RegisterModelsCodec         = models.RegisterModelsCodec
+	NewMsgSaveProfile           = msgs.NewMsgSaveProfile
+	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
+	NewMsgRequestDTagTransfer   = msgs.NewMsgRequestDTagTransfer
+	NewMsgAcceptDTagTransfer    = msgs.NewMsgAcceptDTagTransfer
+	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	ProfileStorePrefix         = models.ProfileStorePrefix
@@ -48,12 +48,12 @@ var (
 )
 
 type (
-	Profile                = models.Profile
-	Profiles               = models.Profiles
-	Pictures               = models.Pictures
-	DTagTransferRequest    = models.DTagTransferRequest
 	MsgSaveProfile         = msgs.MsgSaveProfile
 	MsgDeleteProfile       = msgs.MsgDeleteProfile
 	MsgRequestDTagTransfer = msgs.MsgRequestDTagTransfer
 	MsgAcceptDTagTransfer  = msgs.MsgAcceptDTagTransfer
+	Profile                = models.Profile
+	Profiles               = models.Profiles
+	Pictures               = models.Pictures
+	DTagTransferRequest    = models.DTagTransferRequest
 )
