@@ -449,6 +449,14 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 	require.Equal(t, msgCreatePost.Creator, actual[0])
 }
 
+func TestMsgCreatePost_ReadJSON(t *testing.T) {
+	json := `{"type":"desmos/MsgCreatePost","value":{"parent_id":"","message":"","allows_comments":true,"subspace":"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88","optional_data":{"local_id":"2020-09-15T10:17:54.101972"},"creator":"cosmos10txl52f64zmp2j7eywawlv9t4xxc4e0wnjlhq9","poll_data":{"question":"What is it better?","end_date":"2020-10-15T08:17:45.639Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":false,"provided_answers":[{"id":"0","text":"Sushi\t"},{"id":"1","text":"Pizza"}]}}}`
+
+	var msg msgs.MsgCreatePost
+	err := msgs.MsgsCodec.UnmarshalJSON([]byte(json), &msg)
+	require.NoError(t, err)
+}
+
 // ----------------------
 // --- MsgEditPost
 // ----------------------

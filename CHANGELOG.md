@@ -1,15 +1,14 @@
 # Version 0.12.0
 ## Changes
-- Changed `relationships`' implementation adding a `subspace` field to identify in which app
-  users make relationships (#266)
-- Implemented the possibility to (un)blocking a specific user (#169)
+- Changed `relationships`' implementation adding a `subspace` field to identify in which app users make relationships (#266)
+- Implemented the possibility to (un)block a specific user (#169)
 - Allow users to edit their DTag (#226)
 - Allow users to give their DTag away (#225)
 
 # Version 0.11.0
 ## Changes
 - Allowed the possibility to edit a post's attachments and poll data using the `MsgEditPost` type (#202)
-- Removed the `Open` field from within the `PollData` object. Now you should rely on the `CloseDate` field to determine whether a poll is closed or open. (#252)
+- Removed the `Open` field from within the `PollData` object. Now you should rely on the `CloseDate` field to determine whether a poll is close or open. (#252)
 - Implemented users `Relationships` (#168)
 
 # Version 0.10.0
