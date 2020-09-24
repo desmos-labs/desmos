@@ -1,3 +1,7 @@
+# Version 0.12.1
+## Bug fixes
+- Fixed an upgrade migration bug
+
 # Version 0.12.0
 ## Changes
 - Changed `relationships`' implementation adding a `subspace` field to identify in which app users make relationships (#266)
