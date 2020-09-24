@@ -4,6 +4,19 @@
 If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](update.md).   
 :::
 
+## Requirements
+In order to run a full node, the following minimum hardware requirements should be met: 
+
+- 2 CPU cores
+- 4GB of RAM
+- 40GB disk space
+
+However, these requirements **will not** be sufficient in the future. For this reason, if you plan to run your validator node for an indefinite amount of time, we suggest you to use the following hardware: 
+
+- 4 CPU cores
+- 8GB of RAM or more
+- 512GB of disk space or more
+
 
 ## 1. Setup your environment
 In order to run a fullnode, you need to build `desmosd` and `desmoscli` which require `Go`, `git`, `gcc` and `make` installed.

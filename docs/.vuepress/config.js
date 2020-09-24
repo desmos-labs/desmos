@@ -31,7 +31,7 @@ module.exports = {
         lineNumbers: true,
     },
     plugins: [
-        'vuepress-plugin-element-tabs',
+        'tabs',
         '@vuepress/google-analytics',
         {
             'ga': 'UA-108489905-8' // UA-00000000-0
