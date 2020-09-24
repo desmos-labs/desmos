@@ -20,7 +20,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
 func randomRelationships(simState *module.SimulationState) map[string]types.Relationships {
-	relationshipsNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 100))
+	relationshipsNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 30))
 	usersRelationships := map[string]types.Relationships{}
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
@@ -37,7 +37,7 @@ func randomRelationships(simState *module.SimulationState) map[string]types.Rela
 
 // randomUsersBlocks
 func randomUsersBlocks(simState *module.SimulationState) []types.UserBlock {
-	usersBlocksNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 100))
+	usersBlocksNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 30))
 	var usersBlocks = make([]types.UserBlock, usersBlocksNumber)
 
 	for index := 0; index < usersBlocksNumber; index++ {
