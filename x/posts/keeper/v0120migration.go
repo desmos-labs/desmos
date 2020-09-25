@@ -19,8 +19,16 @@ func (k Keeper) MigratePostsFrom0100To0120(ctx sdk.Context) error {
 	// Get all the keys
 	var keys [][]byte
 	for ; iterator.Valid(); iterator.Next() {
-		keys = append(keys, iterator.Value())
+		keys = append(keys, iterator.Key())
 	}
+
+	// Check iteration errors
+	err := iterator.Error()
+	if err != nil {
+		return err
+	}
+
+	// Close the iterator
 	iterator.Close()
 
 	// Iterate over all the keys and migrate the data
