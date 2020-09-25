@@ -369,10 +369,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
-	// Register the upgrade handler for the september update
-	app.upgradeKeeper.SetUpgradeHandler("september-upgrade", func(ctx sdk.Context, plan upgrade.Plan) {
-		// Migrate the posts from v0.10.0 to v0.12.0
-		if err := app.postsKeeper.MigratePostsFrom0100To0120(ctx); err != nil {
+	// Register the upgrade handler for the september upgrade fix
+	app.upgradeKeeper.SetUpgradeHandler("september-upgrade-fix", func(ctx sdk.Context, plan upgrade.Plan) {
+		// Fixes the errors made inside the september-upgrade migration process
+		if err := app.postsKeeper.PerformSeptemberFixMigration(ctx); err != nil {
 			panic(err)
 		}
 	})

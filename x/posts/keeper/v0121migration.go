@@ -1,19 +1,89 @@
 package keeper
 
 import (
+	"bytes"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v0100 "github.com/desmos-labs/desmos/x/posts/keeper/legacy/v0.10.0"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// MigratePostsFrom0100To0120 migrates all the posts from v0.10.0 to v.12.0.
-// To do this it executes the following operations one post at a time:
-// 1. It reads the old post
-// 2. It converts the post removing the Open field from the PollData, if any
-// 3. It saves the post inside the store again
-func (k Keeper) MigratePostsFrom0100To0120(ctx sdk.Context) error {
+// PerformSeptemberFixMigration fixes all the errors made inside the september-upgrade
+// migration process. To do this, it performs the following operations:
+// 1. Remove all the keys that should not be there and were added during the posts migration.
+// 2. Truly migrate all the posts.
+func (k Keeper) PerformSeptemberFixMigration(ctx sdk.Context) error {
 	store := ctx.KVStore(k.StoreKey)
+
+	// Delete unwanted keys
+	if err := k.deleteUnwatedKeys(store); err != nil {
+		return err
+	}
+
+	// Migrate the posts
+	if err := k.migratePosts(store); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// deleteUnwatedKeys removes all the keys from the posts store that should not be there.
+// These are all the keys that were created wrongly due to a bug inside the september upgrade migration.
+func (k Keeper) deleteUnwatedKeys(store sdk.KVStore) error {
+	iterator := store.Iterator(nil, nil)
+
+	// Get all the keys that should be deleted
+	var keysToDelete [][]byte
+	for ; iterator.Valid(); iterator.Next() {
+		key := iterator.Key()
+
+		if bytes.HasPrefix(key, types.PostStorePrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.PostIndexedIDStorePrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.PostTotalNumberPrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.PostCommentsStorePrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.PostReactionsStorePrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.ReactionsStorePrefix) {
+			continue
+		}
+
+		if bytes.HasPrefix(key, types.PollAnswersStorePrefix) {
+			continue
+		}
+
+		keysToDelete = append(keysToDelete, key)
+	}
+
+	// Close the iterator
+	iterator.Close()
+
+	// Check iteration errors
+	if err := iterator.Error(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// migratePosts performs the migration of all the posts from version v0.10.0 to v0.12.0.
+// To do this it reads all the keys inside the store having the proper prefix, it migrates the values,
+// and then it writes all the new values associating them with the already existing keys.
+func (k Keeper) migratePosts(store sdk.KVStore) error {
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 
 	// Get all the keys
@@ -22,14 +92,13 @@ func (k Keeper) MigratePostsFrom0100To0120(ctx sdk.Context) error {
 		keys = append(keys, iterator.Key())
 	}
 
-	// Check iteration errors
-	err := iterator.Error()
-	if err != nil {
-		return err
-	}
-
 	// Close the iterator
 	iterator.Close()
+
+	// Check iteration errors
+	if err := iterator.Error(); err != nil {
+		return err
+	}
 
 	// Iterate over all the keys and migrate the data
 	for _, key := range keys {
