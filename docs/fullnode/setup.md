@@ -4,18 +4,38 @@
 If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](update.md).   
 :::
 
-## Requirements
-In order to run a full node, the following minimum hardware requirements should be met: 
+## Hardware requirements
+### Understanding pruning
+In order to run a full node, different hardware requirements should be met based on the pruning strategy you would like to use.
 
-- 2 CPU cores
-- 4GB of RAM
-- 40GB disk space
+*Pruning* is the term used to identify the periodic action that can be taken in order to free some disk space on your full node. This is done by removing old blocks data from the disk, freeing up space.
 
-However, these requirements **will not** be sufficient in the future. For this reason, if you plan to run your validator node for an indefinite amount of time, we suggest you to use the following hardware: 
+Inside Desmos, there are various types of pruning strategies that can be applied. The main ones are: 
 
-- 4 CPU cores
-- 8GB of RAM or more
-- 512GB of disk space or more
+- `default`: the last 100 states are kept in addition to every 500th state; pruning at 10 block intervals
+
+- `nothing`: all historic states will be saved, nothing will be deleted (i.e. archiving node)
+
+- `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals
+
+### Hardware requirements
+You can easily understand how using a pruning strategy of `nothing` will use more disk space than `everything`. For this reason, there are different disk space that we recommend based on the pruning strategy you choose:
+
+| Pruning strategy | Minimum disk space | Recommended disk space |
+| :--------------: | :----------------: | :--------------------: |
+| `nothing` | 20 GB | 40 GB | 
+| `default` | 80 GB | 120 GB |
+| `everything` | 120 GB | \> 240 GB |
+
+A part from disk space, the following requirements should be met.
+
+| Minimum CPU cores | Recommended CPU cores |
+| :---------------: | :-------------------: |
+| 2 | 4 |
+
+| Minimum RAM | Recommended RAM |
+| :---------------: | :-------------------: |
+| 4 GB | 8 GB |
 
 
 ## 1. Setup your environment
@@ -88,9 +108,11 @@ Note that is still possible to build and run the software on __Windows__ but it 
 ::::
 
 ## 2. Build the software
+:::tip Choose your DB backend  
 Before installing the software, a consideration must be done. 
 
-By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further. 
+By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.  
+:::
 
 The following operations will all be done in the terminal environment under your home directory.
 
