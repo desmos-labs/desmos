@@ -15,14 +15,19 @@ import (
 func (k Keeper) MigratePostsFrom0100To0120(ctx sdk.Context) error {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
-	defer iterator.Close()
 
+	// Get all the keys
+	var keys [][]byte
 	for ; iterator.Valid(); iterator.Next() {
-		postKey := iterator.Value()
+		keys = append(keys, iterator.Value())
+	}
+	iterator.Close()
 
+	// Iterate over all the keys and migrate the data
+	for _, key := range keys {
 		// Get the v0.10.0 post
 		var v0100Post v0100.Post
-		err := k.Cdc.UnmarshalBinaryBare(postKey, &v0100Post)
+		err := k.Cdc.UnmarshalBinaryBare(store.Get(key), &v0100Post)
 		if err != nil {
 			return err
 		}
@@ -48,8 +53,7 @@ func (k Keeper) MigratePostsFrom0100To0120(ctx sdk.Context) error {
 		}
 
 		// Store the post
-		store.Set(postKey, bz)
-
+		store.Set(key, bz)
 	}
 
 	return nil
