@@ -4,7 +4,7 @@ The following guide allows you to setup your Desmos node along with the [`cosmos
 ## 1. Setup `desmosd`
 If you haven't already, please setup the `desmosd` binary and your validator node. You can do so by following these guides: 
 
-1. [Setup a full node](../../../fullnode/setup.md)
+1. [Setup a full node](../../../fullnode/setup/overview.md)
 2. [Setup a validator node](../../setup.md)
 
 ## 2. Setup `cosmosd`

@@ -9,7 +9,7 @@ If you wish to run a new validator node instead, please reference the [setup ins
 ## 1. Stop the currently running node. 
 First of all we need to stop the currently running validator node. To do so you can go inside the console where you have run `desmosd start` and type `Ctrl + C`. This will halt your fullnode gracefully. 
 
-If you have also setup a [background service](../../fullnode/setup.md#optional-configure-the-service), please stop that too by executing the following command: 
+If you have also setup a [background service](../../fullnode/setup/manual.md#optional-configure-the-service), please stop that too by executing the following command: 
 
 ```bash
 systemctl stop desmosd
