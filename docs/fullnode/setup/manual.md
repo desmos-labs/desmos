@@ -80,7 +80,7 @@ persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"
 Save the file and exit the text editor.
 
 ## (Optional) Change your database backend
-If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 2](#2-build-the-software), there is one more thing you need to do. 
+If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 1](#1-build-the-software), there is one more thing you need to do. 
 
 In order to tell Tendermint to use RocksDB as its database backend engine, you are required to change the following like inside the `config.toml` file: 
 
@@ -94,7 +94,7 @@ To become
 db_backend="rocksdb"
 ```
 
-Once you have done so, you can go ahead with [point 6](#6-start-the-desmos-node).
+Once you have done so, you can go ahead with [point 5](#5-start-the-desmos-node).
 
 ## 5. Start the Desmos node
 Now you are good to run the full node. To do so, run:
@@ -152,7 +152,7 @@ You should see an output like the following one:
 
 If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it is `true`, it means your node is still syncing. 
 
-After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
+After your node is fully synced, you can consider running your full node as a [validator node](../../validators/setup.md).
 
 ## (Optional) Configure the service
 To allow your `desmosd` instance to run in the background as a service you need to execute the following command
