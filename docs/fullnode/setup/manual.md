@@ -9,7 +9,7 @@ Before starting, make sure you read the [setup overview](overview.md) to make su
 :::tip Choose your DB backend  
 Before installing the software, a consideration must be done. 
 
-By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](docs/fullnode/rocksdb-installation.md) before proceeding further.  
+By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](../rocksdb-installation.md) before proceeding further.  
 :::
 
 The following operations will all be done in the terminal environment under your home directory.

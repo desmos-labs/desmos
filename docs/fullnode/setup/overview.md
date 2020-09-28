@@ -1,7 +1,7 @@
 # Installing and running a Desmos fullnode
 
 :::warning This guide is for new fullnodes only  
-If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](docs/fullnode/update.md).   
+If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](../update.md).   
 :::
 
 ## Hardware requirements
