@@ -369,6 +369,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
+	// TODO: Remove this
+	app.upgradeKeeper.SetUpgradeHandler("test", func(ctx sdk.Context, plan upgrade.Plan) {
+	})
+
 	// Register the upgrade handler for the september upgrade fix
 	app.upgradeKeeper.SetUpgradeHandler("september-upgrade-fix", func(ctx sdk.Context, plan upgrade.Plan) {
 		// Fixes the errors made inside the september-upgrade migration process
