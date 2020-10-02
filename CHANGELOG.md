@@ -1,4 +1,4 @@
-# Verson 0.12.2
+# Version 0.12.2
 ## Changes
 - Added the migration command from v0.10.0 to v0.12.0
 

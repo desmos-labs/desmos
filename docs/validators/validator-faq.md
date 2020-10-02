@@ -95,7 +95,7 @@ Delegators are free to choose validators according to their own subjective crite
 - **Commission rate:** Commission applied on revenue by validators before it is distributed to their delegators.
 - **Track record:** Delegators will likely look at the track record of the validators they plan to delegate to. This includes seniority, past votes on proposals, historical average uptime and how often the node was compromised.
 
-Apart from these criteria, there will be a possibility for validators to signal a website address to complete their resume. Validators will need to build reputation one way or another to attract delegators. For example, it would be a good practice for validators to have their setup audited by third parties. Note though, that the Tendermint team will not approve or conduct any audit themselves. For more on due diligence, see [this blog post](https://medium.com/@interchain_io/3d0faf10ce6f)
+Apart from these criteria, there will be a possibility for validators to signal a website address to complete their resume. Validators will need to build reputation one way or another to attract delegators. For example, it would be a good practice for validators to have their setup audited by third parties. Note though, that the Desmos team will not approve or conduct any audit themselves. For more on due diligence, see [this blog post](https://medium.com/@interchain_io/3d0faf10ce6f)
 
 ## Responsibilities
 ### Do validators need to be publicly identified?
@@ -230,7 +230,7 @@ Validators should expect to run an HSM that supports ed25519 keys. Here are pote
 - Ledger BOLOS SGX enclave
 - Thales nShield support
 
-The Tendermint team does not recommend one solution above the other. The community is encouraged to bolster the effort to improve HSMs and the security of key management.
+The Desmos team does not recommend one solution above the other. The community is encouraged to bolster the effort to improve HSMs and the security of key management.
 
 ### What can validators expect in terms of operations?
 Running effective operation is the key to avoiding unexpectedly unbonding or being slashed. This includes being able to respond to attacks, outages, as well as to maintain security and isolation in your data center.

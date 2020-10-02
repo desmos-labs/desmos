@@ -31,7 +31,7 @@ module.exports = {
         lineNumbers: true,
     },
     plugins: [
-        'vuepress-plugin-element-tabs',
+        'tabs',
         '@vuepress/google-analytics',
         {
             'ga': 'UA-108489905-8' // UA-00000000-0
@@ -91,7 +91,15 @@ module.exports = {
                 collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    ["fullnode/setup", "Setup"],
+                    {
+                        title: "Setup",
+                        collapsable: false,
+                        children: [
+                            ["fullnode/setup/overview", "Overview"],
+                            ["fullnode/setup/automatic", "Automatic setup"],
+                            ["fullnode/setup/manual", "Manual setup"],
+                        ]
+                    },
                     ["fullnode/rocksdb-installation", "Using RocksDB"],
                     ["fullnode/update", "Update"],
                 ]

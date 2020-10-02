@@ -1,83 +1,16 @@
-# Installing and running a Desmos fullnode
+# Manual full node setup
+Following you will find the instructions on how to manually setup your Desmos full node.
 
-:::warning This guide is for new fullnodes only  
-If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](update.md).   
+:::warning Requirements  
+Before starting, make sure you read the [setup overview](overview.md) to make sure your hardware meets the needed requirements.  
 :::
 
-
-## 1. Setup your environment
-In order to run a fullnode, you need to build `desmosd` and `desmoscli` which require `Go`, `git`, `gcc` and `make` installed.
-
-This process depends on your working environment.
-
-:::: tabs
-
-::: tab Linux
-The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by default. Please run the equivalent commands if you are running other Linux distributions.
-
-```bash
-# Install git, gcc and make
-sudo apt install build-essential --yes
-
-# Install Go with Snap
-sudo snap install go --classic
-
-# Export environment variables
-echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
-source ~/.profile
-```
-
-:::
-
-::: tab MacOS
-To install the required build tools, simple [install Xcode from the Mac App Store](https://apps.apple.com/hk/app/xcode/id497799835?l=en&mt=12).
-
-To install `Go` on __MacOS__, the best option is to install with [__Homebrew__](https://brew.sh/). To do so, open the `Terminal` application and run the following command: 
-
-```bash
-# Install Homebrew
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-
-> If you don't know how to open a `Terminal`, you can search it by typing `terminal` in `Spotlight`. 
-
-After __Homebrew__ is installed, run
-
-```bash
-# Install Go using Homebrew
-brew install go
-
-# Install Git using Homebrew
-brew install git
-
-# Export environment variables
-echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
-source ~/.profile
-```
-
-:::
-
-::: tab Windows
-The software has not been tested on __Windows__. If you are currently running a __Windows__ PC, the following options should be considered:
-
-1. Switch to a __Mac__ 👨‍💻. 
-2. Wipe your hard drive and install a __Linux__ system on your PC.
-3. Install a separate __Linux__ system using [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-4. Run a __Linux__ instance on a cloud provider.
-
-Note that is still possible to build and run the software on __Windows__ but it may give you unexpected results and it may require additional setup to be done. If you insist to build and run the software on __Windows__, the best bet would be installing the [Chocolatey](https://chocolatey.org/) package manager.
-
-:::
-
-::::
-
-## 2. Build the software
+## 1. Build the software
+:::tip Choose your DB backend  
 Before installing the software, a consideration must be done. 
 
-By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further. 
+By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](../rocksdb-installation.md) before proceeding further.  
+:::
 
 The following operations will all be done in the terminal environment under your home directory.
 
@@ -107,7 +40,7 @@ If the software is built successfully, `desmosd` and `desmoscli` will be located
 desmosd version --long
 ```
 
-## 3. Initialize the Desmos working directory
+## 2. Initialize the Desmos working directory
 Configuration files and chain data will be stored inside the `.desmosd` directory under your home directory by default. It will be created when you initialize the environment.
 
 ```bash
@@ -117,7 +50,7 @@ desmosd init <your_moniker>
 
 You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmosd` working directory.
 
-## 4. Get the genesis file
+## 3. Get the genesis file
 To connect to or start a new network, a genesis file is required. The file contains all the settings telling how the genesis block of the network should look like. To connect to the `morpheus` testnets, you will need the corresponding genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct genesis file by running the following command.
 
 ```bash
@@ -129,7 +62,7 @@ rm $HOME/.desmosd/config/genesis.json
 curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
 ```
 
-## 5. Connect to persistent peer
+## 4. Connect to persistent peer
 To properly run your node, you will need to connect it to other full nodes running with the same software and genesis file. This can be done configuring the `persisten_peers` value inside the `config.toml` file localed under the `.desmosd` working directory.
 
 ```bash
@@ -147,7 +80,7 @@ persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"
 Save the file and exit the text editor.
 
 ## (Optional) Change your database backend
-If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 2](#2-build-the-software), there is one more thing you need to do. 
+If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database backend, and you have correctly built the Desmos binaries to work with it following the instructions at [point 1](#1-build-the-software), there is one more thing you need to do. 
 
 In order to tell Tendermint to use RocksDB as its database backend engine, you are required to change the following like inside the `config.toml` file: 
 
@@ -161,9 +94,9 @@ To become
 db_backend="rocksdb"
 ```
 
-Once you have done so, you can go ahead with [point 6](#6-start-the-desmos-node).
+Once you have done so, you can go ahead with [point 5](#5-start-the-desmos-node).
 
-## 6. Start the Desmos node
+## 5. Start the Desmos node
 Now you are good to run the full node. To do so, run:
 
 ```bash
@@ -219,7 +152,7 @@ You should see an output like the following one:
 
 If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it is `true`, it means your node is still syncing. 
 
-After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
+After your node is fully synced, you can consider running your full node as a [validator node](../../validators/setup.md).
 
 ## (Optional) Configure the service
 To allow your `desmosd` instance to run in the background as a service you need to execute the following command

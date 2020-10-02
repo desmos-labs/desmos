@@ -15,7 +15,8 @@
     "markdown-it": "^8.4.2",
     "markdown-it-meta": "0.0.1",
     "vuepress": "^1.5.2",
-    "vuepress-plugin-element-tabs": "^0.2.8"
+    "vue-tabs-component": "^1.5.0",
+    "vuepress-plugin-tabs": "^0.3.0"
   },
   "dependencies": {
     "axios": "^0.19.2",
