@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	v0120 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.12.0"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -24,6 +26,7 @@ import (
 var migrationMap = map[string]types.MigrationCallback{
 	"v0.8.0":  v080.Migrate,
 	"v0.10.0": v0100.Migrate,
+	"v0.12.0": v0120.Migrate,
 }
 
 const (

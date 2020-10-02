@@ -1,3 +1,7 @@
+# Verson 0.12.2
+## Changes
+- Added the migration command from v0.10.0 to v0.12.0
+
 # Version 0.12.1
 ## Bug fixes
 - Fixed an upgrade migration bug

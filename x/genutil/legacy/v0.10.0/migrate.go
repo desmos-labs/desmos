@@ -1,4 +1,4 @@
-package v090
+package v0100
 
 import (
 	"time"
@@ -13,7 +13,7 @@ import (
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 )
 
-// Migrate migrates exported state from v0.8.0 to a v0.9.0 genesis state.
+// Migrate migrates exported state from v0.8.0 to a v0.10.0 genesis state.
 func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 	// Perform Cosmos v0.39 migration
 	appState = v039.Migrate(appState)
