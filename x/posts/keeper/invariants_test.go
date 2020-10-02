@@ -1,10 +1,12 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"time"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {

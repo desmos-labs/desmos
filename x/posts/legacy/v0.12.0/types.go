@@ -1,12 +1,14 @@
 package v0120
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v0100 "github.com/desmos-labs/desmos/x/posts/legacy/v0.10.0"
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
-	"time"
 )
 
 // GenesisState contains the data of a v0.12.0 genesis state for the posts module
