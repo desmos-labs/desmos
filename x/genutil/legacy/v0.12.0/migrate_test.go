@@ -53,6 +53,6 @@ func TestMigrate0100(t *testing.T) {
 		}
 	}
 
-	// Make sure the relationships genesis state is not nit
+	// Make sure the relationships genesis state is not nil
 	require.NotNil(t, v0120state[relationships.ModuleName])
 }
