@@ -54,7 +54,7 @@ echo "=====> Downloading Cosmovisor"
 # Prepare Cosmovisor
 echo "=====> Installing up Cosmovisor"
 {
-  wget -O desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmbHnXy4mGuCDEaJF18DGTF86vtbgLZG5cffowoZypgwUj
+  wget -O desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmfVPHGPEimn7BKQo5JNeyiPtjbkYWqfnEvUnqfAVQapUe
   mkdir -p ~/.desmosd
   unzip desmosd-cosmovisor.zip -d ~/.desmosd
 } &> /dev/null
