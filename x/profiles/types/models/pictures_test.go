@@ -2,9 +2,10 @@ package models_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
-	"testing"
 
 	"github.com/stretchr/testify/require"
 )

@@ -2,11 +2,12 @@ package models_test
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/desmos-labs/desmos/x/profiles/types/models"
-	"testing"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

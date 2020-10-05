@@ -1,8 +1,9 @@
 package common_test
 
 import (
-	"github.com/desmos-labs/desmos/x/commons"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/commons"
 
 	"github.com/stretchr/testify/require"
 

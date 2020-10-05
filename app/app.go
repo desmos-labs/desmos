@@ -369,14 +369,6 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
-	// Register the upgrade handler for the september update
-	app.upgradeKeeper.SetUpgradeHandler("september-upgrade", func(ctx sdk.Context, plan upgrade.Plan) {
-		// Migrate the posts from v0.10.0 to v0.12.0
-		if err := app.postsKeeper.MigratePostsFrom0100To0120(ctx); err != nil {
-			panic(err)
-		}
-	})
-
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
 	// NOTE: this is not required apps that don't use the simulator for fuzz testing
