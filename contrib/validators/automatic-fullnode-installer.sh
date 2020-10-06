@@ -15,9 +15,16 @@ USER=$(id -u -n)
 ####################################
 echo "===> Setting up environmental variables"
 
-if [ -z "$GOBIN" ]; then
-  echo "GOBIN environmental variable not set" >> ~/.profile
+if [ -z "$GOPATH" ]; then
+  echo "GOPATH environmental variable not set" >> ~/.profile
   exit 0
+fi
+
+if [ -z "$GOBIN" ]; then
+  {
+    echo "export GOBIN=$GOPATH/bin" >> ~/.profile
+    source ~/.profile
+  } &> /dev/null
 fi
 
 if [ -z "$DAEMON_NAME" ]; then
