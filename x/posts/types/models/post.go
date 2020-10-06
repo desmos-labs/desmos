@@ -106,7 +106,7 @@ type Post struct {
 	LastEdited     time.Time      `json:"last_edited" yaml:"last_edited"`                         // RFC3339 date at which the post has been edited the last time
 	AllowsComments bool           `json:"allows_comments" yaml:"allows_comments"`                 // Tells if users can reference this PostID as the parent
 	Subspace       string         `json:"subspace" yaml:"subspace"`                               // Identifies the application that has posted the message
-	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
+	OptionalData   []OptionalData `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
 	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
 	Attachments    Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
 	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`         // Contains the poll details, if existing
@@ -123,7 +123,7 @@ func computeID(post Post) PostID {
 }
 
 func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
-	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
+	optionalData []OptionalData, created time.Time, creator sdk.AccAddress) Post {
 	post := Post{
 		PostID:         "",
 		ParentID:       parentID,
@@ -226,8 +226,8 @@ func (p Post) Equals(other Post) bool {
 func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
-		for key := range p.OptionalData {
-			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		for index, opd := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && opd == other.OptionalData[index]
 		}
 	}
 

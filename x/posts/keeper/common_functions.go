@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -61,11 +62,11 @@ func ValidatePost(ctx sdk.Context, k Keeper, post types.Post) error {
 				post.PostID, maxOpFieldNum))
 	}
 
-	for key, value := range post.OptionalData {
-		if int64(len(value)) > maxOpFieldValLen {
+	for _, optionalData := range post.OptionalData {
+		if int64(len(strings.TrimSpace(optionalData.Value))) > maxOpFieldValLen {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("post with id %s has optional data with key %s which value exceeds %d characters.",
-					post.PostID, key, maxOpFieldValLen))
+					post.PostID, optionalData.Key, maxOpFieldValLen))
 		}
 	}
 
