@@ -89,7 +89,7 @@ The <key_name> specifies which validator you are editing. If you choose to not i
 The `--identity` can be used as to verify identity with systems like Keybase or UPort. When using with Keybase `--identity` should be populated with a 16-digit string that is generated with a [keybase.io](https://keybase.io) account. It's a cryptographically secure method of verifying your identity across multiple online networks. The Keybase API allows some block explorers to retrieve your Keybase avatar. This is how you can add a logo to your validator profile.
 
 ```bash
-desmoscli tx staking edit-validator
+desmoscli tx staking edit-validator \
   --moniker="choose a moniker" \
   --website="https://desmos.network" \
   --identity=6A0D65E29A4CBC8E \

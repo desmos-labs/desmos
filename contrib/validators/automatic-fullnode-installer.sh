@@ -15,9 +15,14 @@ USER=$(id -u -n)
 ####################################
 echo "===> Setting up environmental variables"
 
+if [ -z "$GOPATH" ]; then
+  echo "GOPATH environmental variable not set" >> ~/.profile
+  exit 0
+fi
+
 if [ -z "$GOBIN" ]; then
   {
-    echo "export GOBIN=$HOME/go/bin" >> ~/.profile
+    echo "export GOBIN=$GOPATH/bin" >> ~/.profile
     source ~/.profile
   } &> /dev/null
 fi
@@ -55,6 +60,7 @@ echo "=====> Downloading Cosmovisor"
 echo "=====> Installing up Cosmovisor"
 {
   wget -O desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmfVPHGPEimn7BKQo5JNeyiPtjbkYWqfnEvUnqfAVQapUe
+  sudo rm -r ~/.desmosd
   mkdir -p ~/.desmosd
   unzip desmosd-cosmovisor.zip -d ~/.desmosd
 } &> /dev/null
@@ -113,7 +119,7 @@ RestartSec=3
 LimitNOFILE=4096
 Environment="DAEMON_NAME=desmosd"
 Environment="DAEMON_HOME=$HOME/.desmosd"
-Environment="DAEMON_RESTART_AFTER_UPGRADE=ony"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=on"
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -123,7 +129,7 @@ echo "====> Starting Desmos service"
 {
   sudo systemctl daemon-reload
   sudo systemctl enable desmosd
-  sudo systemctl start desmosd
+  sudo systemctl restart desmosd
 } &> /dev/null
 
 tail -100f /var/log/syslog
