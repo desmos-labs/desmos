@@ -475,7 +475,7 @@ func (f *Fixtures) TxProfileRequestDTagTransfer(owner, from sdk.AccAddress, flag
 }
 
 func (f *Fixtures) TxProfileAcceptDTagTransfer(newDtag string, receiver, from sdk.AccAddress, flags ...string) (bool, string, string) {
-	cmd := fmt.Sprintf(`%s tx profiles accept-dtag-transfer.md %s %s --keyring-backend=test --from=%s %v`,
+	cmd := fmt.Sprintf(`%s tx profiles accept-dtag-transfer %s %s --keyring-backend=test --from=%s %v`,
 		f.DesmoscliBinary, newDtag, receiver, from, f.Flags())
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
