@@ -57,7 +57,8 @@ sudo snap install go --classic
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+echo 'export GOBIN="$GOPATH/bin"' >> ~/.profile
+echo 'export PATH="$GOBIN:$PATH"' >> ~/.profile
 source ~/.profile
 ```
 
