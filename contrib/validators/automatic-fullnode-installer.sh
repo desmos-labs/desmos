@@ -96,10 +96,10 @@ echo "This might take a while..."
 {
   DESMOS_FOLDER=$HOME/desmos
   if [ -d "$DESMOS_FOLDER" ]; then
-    git clone https://github.com/desmos-labs/desmos.git DESMOS_FOLDER
+    git clone https://github.com/desmos-labs/desmos.git "$DESMOS_FOLDER"
   fi
 
-  cd DESMOS_FOLDER || exit
+  cd "$DESMOS_FOLDER" || exit
   git fetch -a
   git checkout tags/v0.12.2
   make build
