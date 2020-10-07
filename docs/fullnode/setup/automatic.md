@@ -2,7 +2,9 @@
 Following you will find how to download and execute the script that allows you to run a Desmos full node in minutes.  
 
 :::warning Requirements  
-Before proceeding, make sure you have read the [overview page](overview.md) and your system satisfied the needed requirements.  
+Before proceeding, make sure you have read the overview page and your system satisfied the [needed requirements](overview.md#requirements).  
+
+Also, make sure you setup your environment properly as described inside the [_"Setup your environment"_ section](overview.md#1-setup-your-environment).   
 :::
 
 ## 1. Download the script
