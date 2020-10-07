@@ -94,17 +94,18 @@ fi
 echo "====> Configuring Cosmovisor"
 echo "This might take a while..."
 {
-  DESMOS_FOLDER=$HOME/desmos
+  DESMOS_FOLDER=~/desmos
   if [ -d "$DESMOS_FOLDER" ]; then
-    git clone https://github.com/desmos-labs/desmos.git "$DESMOS_FOLDER"
+    git clone https://github.com/desmos-labs/desmos.git ~/desmos
   fi
 
-  cd "$DESMOS_FOLDER" || exit
+  cd ~/desmos || exit
   git fetch -a
   git checkout tags/v0.12.2
   make build
 
   mkdir -p ~/.desmosd/cosmovisor/genesis/bin
+  mkdir -p ~/.desmosd/cosmovisor/upgrades
   mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
