@@ -94,7 +94,7 @@ fi
 echo "====> Configuring Cosmovisor"
 echo "This might take a while..."
 {
-  wget -q --show-progress -O ~/desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmT12JLMm1F9V2YhFAAkJhkg1zc9jJy1HMuo6DofrayFgN 2>&1
+  wget -q --show-progress -O ~/desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmVMKN8XRGE43T7yoEe8adUUoNZnnAWGbdNAtPJqdAeMqA 2>&1
   unzip -o ~/desmosd-cosmovisor.zip -d ~/.desmosd
   rm ~/desmosd-cosmovisor.zip
 
