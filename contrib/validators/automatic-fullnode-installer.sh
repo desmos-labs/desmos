@@ -19,7 +19,7 @@ USER=$(id -u -n)
 echo "===> Setting up environmental variables"
 
 if [ -z "$GOPATH" ]; then
-  echo "GOPATH environmental variable not set" >> ~/.profile
+  echo "GOPATH environmental variable not set"
   exit 0
 fi
 
