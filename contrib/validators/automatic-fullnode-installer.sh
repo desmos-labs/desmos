@@ -24,10 +24,8 @@ if [ -z "$GOPATH" ]; then
 fi
 
 if [ -z "$GOBIN" ]; then
-  {
-    echo "export GOBIN=$GOPATH/bin" >> ~/.profile
-    source ~/.profile
-  } &> /dev/null
+  echo "export GOBIN=$GOPATH/bin" >> ~/.profile
+  source ~/.profile
 fi
 
 if [ -z "$DAEMON_NAME" ]; then
@@ -107,6 +105,7 @@ echo "This might take a while..."
 # Initialize the chain
 echo "====> Initializing a new chain"
 {
+  cosmovisor unsafe-reset-all
   cosmovisor init "$MONIKER"
 } &> /dev/null
 

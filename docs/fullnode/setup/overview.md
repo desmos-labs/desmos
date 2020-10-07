@@ -4,7 +4,7 @@
 If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](../update.md).   
 :::
 
-## Hardware requirements
+## Requirements
 ### Understanding pruning
 In order to run a full node, different hardware requirements should be met based on the pruning strategy you would like to use.
 
