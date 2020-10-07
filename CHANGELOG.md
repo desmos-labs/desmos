@@ -1,3 +1,7 @@
+# Version 0.12.3
+## Changes
+- Renamed the `accept-dtag-transfer` CLI command to remove the `.md` suffix (#282)
+
 # Version 0.12.2
 ## Changes
 - Added the migration command from v0.10.0 to v0.12.0
