@@ -90,9 +90,8 @@ if [ -d "$DESMOSCLI_FOLDER" ]; then
   sudo rm -r ~/.desmoscli
 fi
 
-# Configure Cosmovisor
-echo "====> Configuring Cosmovisor"
-echo "This might take a while..."
+# Clone Desmos
+echo "====> Downloading Desmos"
 {
   DESMOS_FOLDER=~/desmos
   if [ ! -d "$DESMOS_FOLDER" ]; then
