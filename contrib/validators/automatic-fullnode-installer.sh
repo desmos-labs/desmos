@@ -54,7 +54,7 @@ if [ ! -f "$COSMOVISOR_FILE" ]; then
     git clone https://github.com/cosmos/cosmos-sdk.git ~/cosmos
     cd ~/cosmos/cosmovisor
     make cosmovisor
-    cp cosmovisor -t "$GOBIN"
+    cp cosmovisor "$GOBIN"
     cd ~
   } &> /dev/null
 
