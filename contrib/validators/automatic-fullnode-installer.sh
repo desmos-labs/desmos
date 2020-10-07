@@ -7,7 +7,7 @@ shopt -s expand_aliases
 MONIKER=$1
 if [ -z "$MONIKER" ]; then
   echo "Validator moniker not given. Please specify it as the first argument"
-  exit 0
+  exit
 fi
 
 USER=$(id -u -n)
@@ -20,7 +20,7 @@ echo "===> Setting up environmental variables"
 
 if [ -z "$GOPATH" ]; then
   echo "GOPATH environmental variable not set"
-  exit 0
+  exit
 fi
 
 if [ -z "$GOBIN" ]; then
@@ -90,13 +90,22 @@ if [ -d "$DESMOSCLI_FOLDER" ]; then
   sudo rm -r ~/.desmoscli
 fi
 
-# Configure Cosmovisor
-echo "====> Configuring Cosmovisor"
-echo "This might take a while..."
+# Clone Desmos
+echo "====> Downloading Desmos"
 {
-  wget -q --show-progress -O ~/desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmfVPHGPEimn7BKQo5JNeyiPtjbkYWqfnEvUnqfAVQapUe 2>&1
-  unzip -o ~/desmosd-cosmovisor.zip -d ~/.desmosd
-  rm ~/desmosd-cosmovisor.zip
+  DESMOS_FOLDER=~/desmos
+  if [ ! -d "$DESMOS_FOLDER" ]; then
+    git clone https://github.com/desmos-labs/desmos.git ~/desmos
+  fi
+
+  cd ~/desmos || exit
+  git fetch -a
+  git checkout tags/v0.12.2
+  make build
+
+  mkdir -p ~/.desmosd/cosmovisor/genesis/bin
+  mkdir -p ~/.desmosd/cosmovisor/upgrades
+  mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
   alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
@@ -125,7 +134,7 @@ echo "====> Downloading the genesis file"
 # Setup the persistent peers
 echo "====> Setting persistent peers"
 {
-  sed -i -e 's/persistent_peers = ""/persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656,5077b7964d71d8758f7fc01cac01d0e2d55b8c18@18.196.238.210:26656,bdd98ec74fe56146f08e886239e52373f6821ce3@51.15.113.208:26656,e30d9bb713d17d1e4380b2e2a6df4b5c76c73eb1@34.212.106.82:26656"/g' ~/.desmosd/config/config.toml
+  sed -i -e 's/persistent_peers = ""/persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"/g' ~/.desmosd/config/config.toml
 } &> /dev/null
 
 echo "===> Completed Desmos setup"
