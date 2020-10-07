@@ -7,7 +7,7 @@ shopt -s expand_aliases
 MONIKER=$1
 if [ -z "$MONIKER" ]; then
   echo "Validator moniker not given. Please specify it as the first argument"
-  exit 0
+  exit
 fi
 
 USER=$(id -u -n)
@@ -20,7 +20,7 @@ echo "===> Setting up environmental variables"
 
 if [ -z "$GOPATH" ]; then
   echo "GOPATH environmental variable not set" >> ~/.profile
-  exit 0
+  exit
 fi
 
 if [ -z "$GOBIN" ]; then
@@ -94,9 +94,18 @@ fi
 echo "====> Configuring Cosmovisor"
 echo "This might take a while..."
 {
-  wget -q --show-progress -O ~/desmosd-cosmovisor.zip http://ipfs.io/ipfs/QmVMKN8XRGE43T7yoEe8adUUoNZnnAWGbdNAtPJqdAeMqA 2>&1
-  unzip -o ~/desmosd-cosmovisor.zip -d ~/.desmosd
-  rm ~/desmosd-cosmovisor.zip
+  DESMOS_FOLDER=$HOME/desmos
+  if [ -d "$DESMOS_FOLDER" ]; then
+    git clone https://github.com/desmos-labs/desmos.git DESMOS_FOLDER
+  fi
+
+  cd DESMOS_FOLDER || exit
+  git fetch -a
+  git checkout tags/v0.12.2
+  make build
+
+  mkdir ~/.desmosd/cosmovisor/genesis/bin
+  mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
   alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
