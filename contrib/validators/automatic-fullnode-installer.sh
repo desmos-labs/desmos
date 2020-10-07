@@ -104,7 +104,7 @@ echo "This might take a while..."
   git checkout tags/v0.12.2
   make build
 
-  mkdir ~/.desmosd/cosmovisor/genesis/bin
+  mkdir -p ~/.desmosd/cosmovisor/genesis/bin
   mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
