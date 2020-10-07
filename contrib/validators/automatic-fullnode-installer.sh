@@ -109,7 +109,7 @@ echo "This might take a while..."
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
   alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
-} &> /dev/null
+}
 
 # Initialize the chain
 echo "====> Initializing a new chain"
