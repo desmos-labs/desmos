@@ -125,7 +125,7 @@ echo "====> Downloading the genesis file"
 # Setup the persistent peers
 echo "====> Setting persistent peers"
 {
-  sed -i -e 's/persistent_peers = ""/persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656,5077b7964d71d8758f7fc01cac01d0e2d55b8c18@18.196.238.210:26656,bdd98ec74fe56146f08e886239e52373f6821ce3@51.15.113.208:26656,e30d9bb713d17d1e4380b2e2a6df4b5c76c73eb1@34.212.106.82:26656"/g' ~/.desmosd/config/config.toml
+  sed -i -e 's/persistent_peers = ""/persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"/g' ~/.desmosd/config/config.toml
 } &> /dev/null
 
 echo "===> Completed Desmos setup"
