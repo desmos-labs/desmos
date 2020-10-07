@@ -95,7 +95,7 @@ echo "====> Configuring Cosmovisor"
 echo "This might take a while..."
 {
   DESMOS_FOLDER=~/desmos
-  if [ -d "$DESMOS_FOLDER" ]; then
+  if [ ! -d "$DESMOS_FOLDER" ]; then
     git clone https://github.com/desmos-labs/desmos.git ~/desmos
   fi
 
