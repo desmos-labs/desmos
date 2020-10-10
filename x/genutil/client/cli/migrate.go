@@ -6,18 +6,17 @@ import (
 	"strconv"
 	"time"
 
-	v0120 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.12.0"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
-	"github.com/spf13/cobra"
-	tm "github.com/tendermint/tendermint/types"
-
 	v0100 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
+	v0120 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.12.0"
+	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
 	v080 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.8.0"
 	"github.com/desmos-labs/desmos/x/genutil/types"
+	"github.com/spf13/cobra"
+	tm "github.com/tendermint/tendermint/types"
 )
 
 // migrationMap contains the list of migrations that should be performed when migrating
@@ -27,6 +26,7 @@ var migrationMap = map[string]types.MigrationCallback{
 	"v0.8.0":  v080.Migrate,
 	"v0.10.0": v0100.Migrate,
 	"v0.12.0": v0120.Migrate,
+	"v0.13.0": v0130.Migrate,
 }
 
 const (
