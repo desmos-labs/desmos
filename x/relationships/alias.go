@@ -40,22 +40,22 @@ var (
 	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
 	NewQuerier                   = keeper.NewQuerier
-	NewRelationship              = models.NewRelationship
-	NewUserBlock                 = models.NewUserBlock
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
 	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
 	RegisterModelsCodec          = models.RegisterModelsCodec
+	NewRelationship              = models.NewRelationship
+	NewUserBlock                 = models.NewUserBlock
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
-	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (

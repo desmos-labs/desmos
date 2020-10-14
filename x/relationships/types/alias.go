@@ -24,21 +24,21 @@ const (
 
 var (
 	// functions aliases
-	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
+	RegisterModelsCodec      = models.RegisterModelsCodec
+	NewRelationship          = models.NewRelationship
+	NewUserBlock             = models.NewUserBlock
+	RelationshipsStoreKey    = models.RelationshipsStoreKey
+	UsersBlocksStoreKey      = models.UsersBlocksStoreKey
 	NewMsgCreateRelationship = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship = msgs.NewMsgDeleteRelationship
 	NewMsgBlockUser          = msgs.NewMsgBlockUser
 	NewMsgUnblockUser        = msgs.NewMsgUnblockUser
-	RelationshipsStoreKey    = models.RelationshipsStoreKey
-	UsersBlocksStoreKey      = models.UsersBlocksStoreKey
-	RegisterModelsCodec      = models.RegisterModelsCodec
-	NewRelationship          = models.NewRelationship
-	NewUserBlock             = models.NewUserBlock
+	RegisterMessagesCodec    = msgs.RegisterMessagesCodec
 
 	// variable aliases
+	ModelsCdc                = models.ModelsCdc
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
-	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 
