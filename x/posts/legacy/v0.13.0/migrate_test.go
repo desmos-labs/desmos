@@ -225,6 +225,7 @@ func TestConvertOptionalData(t *testing.T) {
 	oldOptionalData := v040posts.OptionalData{
 		"optional": "data",
 		"old":      "version",
+		"another":  "data",
 	}
 
 	expOptionalData := []v0130.OptionalData{
@@ -235,6 +236,10 @@ func TestConvertOptionalData(t *testing.T) {
 		{
 			Key:   "old",
 			Value: "version",
+		},
+		{
+			Key:   "another",
+			Value: "data",
 		},
 	}
 
