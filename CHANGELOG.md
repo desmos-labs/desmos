@@ -1,4 +1,4 @@
-# Version 0.12.3
+# Version 0.13.0
 ## Changes
 - Removed the user_block event attribute key prefix. (#291)
 
