@@ -1,6 +1,6 @@
 # Version 0.12.3
 ## Changes
-- Edited the block_user transaction's event. (#291)
+- Removed the user_block event attribute key prefix. (#291)
 
 # Version 0.12.3
 ## Changes
