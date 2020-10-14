@@ -48,6 +48,6 @@ func TestMigrate0120(t *testing.T) {
 
 	// Make sure that all the posts' polls are migrated correctly
 	for _, post := range v0130postsState.Posts {
-		require.Equal(t, "OptionalData", reflect.TypeOf(post).String())
+		require.Equal(t, "[]v0130.OptionalData", reflect.TypeOf(post.OptionalData).String())
 	}
 }

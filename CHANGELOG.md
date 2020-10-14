@@ -1,5 +1,9 @@
 # Version 0.12.3
 ## Changes
+- Changed `OptionalData` representation from `map[string]string` to an `OptionalData` object (#272) 
+
+# Version 0.12.3
+## Changes
 - Renamed the `accept-dtag-transfer` CLI command to remove the `.md` suffix (#282)
 
 # Version 0.12.2
