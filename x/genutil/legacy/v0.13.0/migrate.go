@@ -20,7 +20,7 @@ func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
 	// Migrate posts state
 	if appState[v060posts.ModuleName] != nil {
 		var genDocs v0120posts.GenesisState
-		v0130Codec.MustUnmarshalJSON(appState[v060posts.ModuleName], &genDocs)
+		v0120Codec.MustUnmarshalJSON(appState[v060posts.ModuleName], &genDocs)
 
 		appState[v060posts.ModuleName] = v0130Codec.MustMarshalJSON(
 			v0130posts.Migrate(genDocs),

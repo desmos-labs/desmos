@@ -37,7 +37,7 @@ func TestMigrate0120(t *testing.T) {
 	// Make sure that all the posts are migrated
 	var v012postsState v0120posts.GenesisState
 	err = cdc.UnmarshalJSON(v012state[v060posts.ModuleName], &v012postsState)
-	//require.NoError(t, err)
+	require.NoError(t, err)
 
 	var v0130postsState v0130posts.GenesisState
 	err = cdc.UnmarshalJSON(v0130state[v060posts.ModuleName], &v0130postsState)
