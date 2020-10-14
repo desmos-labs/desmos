@@ -153,6 +153,11 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 // handleMsgRequestDTagTransfer handles the request of a dTag transfer
 func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.CurrentOwner)
+	if len(dtagToTrade) == 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("The user with address %s doesn't have a profile yet so no dTag can be transferred",
+				msg.CurrentOwner))
+	}
 	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.CurrentOwner, msg.ReceivingUser)
 
 	if err := keeper.SaveDTagTransferRequest(ctx, transferRequest); err != nil {
