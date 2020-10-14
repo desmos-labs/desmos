@@ -1,4 +1,4 @@
-# Version 0.12.3
+# Version 0.13.0
 ## Changes
 - Changed `OptionalData` representation from `map[string]string` to an `OptionalData` object (#272) 
 
