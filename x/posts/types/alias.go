@@ -48,6 +48,7 @@ var (
 	IsValidPostID              = common.IsValidPostID
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	NewOptionalData            = common.NewOptionalData
 	NewAttachment              = common.NewAttachment
 	NewAttachments             = common.NewAttachments
 	ParseAnswerID              = polls.ParseAnswerID
@@ -84,16 +85,6 @@ var (
 )
 
 type (
-	PostID                   = models.PostID
-	PostIDs                  = models.PostIDs
-	Post                     = models.Post
-	Posts                    = models.Posts
-	PostQueryResponse        = models.PostQueryResponse
-	PollAnswersQueryResponse = models.PollAnswersQueryResponse
-	OptionalData             = common.OptionalData
-	KeyValue                 = common.KeyValue
-	Attachment               = common.Attachment
-	Attachments              = common.Attachments
 	AnswerID                 = polls.AnswerID
 	PollAnswer               = polls.PollAnswer
 	PollAnswers              = polls.PollAnswers
@@ -110,4 +101,13 @@ type (
 	MsgCreatePost            = msgs.MsgCreatePost
 	MsgEditPost              = msgs.MsgEditPost
 	MsgRegisterReaction      = msgs.MsgRegisterReaction
+	PostID                   = models.PostID
+	PostIDs                  = models.PostIDs
+	Post                     = models.Post
+	Posts                    = models.Posts
+	PostQueryResponse        = models.PostQueryResponse
+	PollAnswersQueryResponse = models.PollAnswersQueryResponse
+	OptionalData             = common.OptionalData
+	Attachment               = common.Attachment
+	Attachments              = common.Attachments
 )
