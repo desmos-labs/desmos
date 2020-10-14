@@ -1,5 +1,9 @@
 # Version 0.12.3
 ## Changes
+- Edited the block_user transaction's event. (#291)
+
+# Version 0.12.3
+## Changes
 - Renamed the `accept-dtag-transfer` CLI command to remove the `.md` suffix (#282)
 
 # Version 0.12.2
