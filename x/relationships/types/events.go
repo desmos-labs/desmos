@@ -15,8 +15,8 @@ const (
 	EventTypeUnblockUser = "unblock_user"
 
 	// UserBlocks attributes
-	AttributeUserBlockBlocker = "userBlock_blocker"
-	AttributeUserBlockBlocked = "userBlock_blocked"
-	AttributeUserBlockReason  = "userBlock_reason"
+	AttributeUserBlockBlocker = "blocker"
+	AttributeUserBlockBlocked = "blocked"
+	AttributeUserBlockReason  = "reason"
 	AttributeSubspace         = "subspace"
 )

@@ -1,6 +1,7 @@
 # Version 0.13.0
 ## Changes
-- Removed the relationship event attribute key prefix. (#291)
+- Removed the relationship event attribute key prefix. (#300)
+- Removed the user_block event attribute key prefix. (#291)
 
 # Version 0.12.3
 ## Changes
