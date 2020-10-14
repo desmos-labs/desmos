@@ -1,3 +1,7 @@
+# Version 0.13.0
+## Changes
+- Removed the relationship event attribute key prefix. (#291)
+
 # Version 0.12.3
 ## Changes
 - Renamed the `accept-dtag-transfer` CLI command to remove the `.md` suffix (#282)
