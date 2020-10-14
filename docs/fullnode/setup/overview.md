@@ -4,7 +4,7 @@
 If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](../update.md).   
 :::
 
-## Hardware requirements
+## Requirements
 ### Understanding pruning
 In order to run a full node, different hardware requirements should be met based on the pruning strategy you would like to use.
 
@@ -57,7 +57,8 @@ sudo snap install go --classic
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+echo 'export GOBIN="$GOPATH/bin"' >> ~/.profile
+echo 'export PATH="$GOBIN:$PATH"' >> ~/.profile
 source ~/.profile
 ```
 
