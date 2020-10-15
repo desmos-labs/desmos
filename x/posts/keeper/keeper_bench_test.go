@@ -45,7 +45,7 @@ func RandomPost() types.Post {
 		RandomMessage(r),
 		r.Intn(101) <= 50,
 		RandomPostIDOrSubspace().String(),
-		map[string]string{},
+		nil,
 		time.Now(),
 		accounts[r.Intn(len(accounts))].Address,
 	)

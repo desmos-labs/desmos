@@ -77,7 +77,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Created:      suite.testData.postCreationDate,
 		LastEdited:   suite.testData.postCreationDate.Add(1),
 		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: map[string]string{},
+		OptionalData: nil,
 		Creator:      suite.testData.postOwner,
 		Attachments:  types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", []sdk.AccAddress{suite.testData.postOwner})),
 		PollData: &types.PollData{

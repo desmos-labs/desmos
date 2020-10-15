@@ -35,8 +35,6 @@ const (
 
 var (
 	// functions aliases
-	ParsePostID                = models.ParsePostID
-	NewPost                    = models.NewPost
 	NewPostResponse            = models.NewPostResponse
 	PostStoreKey               = models.PostStoreKey
 	PostIndexedIDStoreKey      = models.PostIndexedIDStoreKey
@@ -45,11 +43,14 @@ var (
 	ReactionsStoreKey          = models.ReactionsStoreKey
 	PollAnswersStoreKey        = models.PollAnswersStoreKey
 	RegisterModelsCodec        = models.RegisterModelsCodec
+	ParsePostID                = models.ParsePostID
+	NewPost                    = models.NewPost
+	NewOptionalData            = common.NewOptionalData
+	NewAttachment              = common.NewAttachment
+	NewAttachments             = common.NewAttachments
 	IsValidPostID              = common.IsValidPostID
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
-	NewAttachment              = common.NewAttachment
-	NewAttachments             = common.NewAttachments
 	ParseAnswerID              = polls.ParseAnswerID
 	NewPollAnswer              = polls.NewPollAnswer
 	NewPollAnswers             = polls.NewPollAnswers
@@ -84,14 +85,20 @@ var (
 )
 
 type (
+	MsgAddPostReaction       = msgs.MsgAddPostReaction
+	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
+	MsgRegisterReaction      = msgs.MsgRegisterReaction
+	PostQueryResponse        = models.PostQueryResponse
+	PollAnswersQueryResponse = models.PollAnswersQueryResponse
 	PostID                   = models.PostID
 	PostIDs                  = models.PostIDs
 	Post                     = models.Post
 	Posts                    = models.Posts
-	PostQueryResponse        = models.PostQueryResponse
-	PollAnswersQueryResponse = models.PollAnswersQueryResponse
 	OptionalData             = common.OptionalData
-	KeyValue                 = common.KeyValue
+	OptionalDataEntry        = common.OptionalDataEntry
 	Attachment               = common.Attachment
 	Attachments              = common.Attachments
 	AnswerID                 = polls.AnswerID
@@ -104,10 +111,4 @@ type (
 	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
 	Reactions                = reactions.Reactions
-	MsgAddPostReaction       = msgs.MsgAddPostReaction
-	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
-	MsgRegisterReaction      = msgs.MsgRegisterReaction
 )

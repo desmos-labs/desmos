@@ -2,6 +2,9 @@
 ## Changes
 - Removed the relationship event attribute key prefix (#300)
 - Removed the user_block event attribute key prefix (#291)
+- Changed posts' optional data representation (#272) 
+
+## Bug fixes
 - Fixed the possibility of requesting a transfer of an empty DTag (#292)
 
 # Version 0.12.3

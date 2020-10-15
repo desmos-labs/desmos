@@ -123,7 +123,7 @@ func computeID(post Post) PostID {
 }
 
 func NewPost(parentID PostID, message string, allowsComments bool, subspace string,
-	optionalData map[string]string, created time.Time, creator sdk.AccAddress) Post {
+	optionalData OptionalData, created time.Time, creator sdk.AccAddress) Post {
 	post := Post{
 		PostID:         "",
 		ParentID:       parentID,
@@ -226,8 +226,8 @@ func (p Post) Equals(other Post) bool {
 func (p Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(p.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
-		for key := range p.OptionalData {
-			equalsOptionalData = equalsOptionalData && p.OptionalData[key] == other.OptionalData[key]
+		for index, opd := range p.OptionalData {
+			equalsOptionalData = equalsOptionalData && opd == other.OptionalData[index]
 		}
 	}
 
