@@ -232,11 +232,11 @@ func TestConvertOptionalData(t *testing.T) {
 
 	require.Equal(t, len(oldOptionalData), len(actualOptionalData))
 	for key, value := range oldOptionalData {
-	        found := false
-		for index, entry := range actualOptionalData {
+		found := false
+		for _, entry := range actualOptionalData {
 			found = entry.Key == key && entry.Value == value
 			if found {
-			    break
+				break
 			}
 		}
 		require.True(t, found)
