@@ -29,7 +29,7 @@ func TestPostQueryResponse_MarshalJSON(t *testing.T) {
 		"Post",
 		true,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		map[string]string{},
+		nil,
 		time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
 		postOwner,
 	)
@@ -158,7 +158,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 			"Post",
 			true,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			map[string]string{},
+			nil,
 			time.Date(2020, 2, 2, 15, 0, 0, 0, timeZone),
 			postOwner,
 		).WithAttachments(attachments).WithPollData(pollData),

@@ -32,7 +32,7 @@ type MsgCreatePost struct {
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(message string, parentID models.PostID, allowsComments bool, subspace string,
-	optionalData map[string]string, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
+	optionalData models.OptionalData, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,

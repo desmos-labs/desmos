@@ -34,7 +34,7 @@ A common value that is used when you don't want to crete your own is `4e188d9c17
 If you instead prefer having a custom subspace, you can create your own by hashing any plain-text using any online SHA256 calculator such as [this one](https://emn178.github.io/online-tools/sha256.html).
 
 ### `OptionalData`
-In order to allow developers to specify any arbitrary data they want inside a post, we've introduced the `OptionalData` field. This field is a string-to-string map that allows to insert up to 10 fields containing any value you prefer. 
+In order to allow developers to specify any arbitrary data they want inside a post, we've introduced the `OptionalData` field. This field is an array of objects containing a key and a value, and it allows inserting up to 10 fields containing any value you prefer.  
 
 Please note that this field should be used only when strictly necessary as it might cause an unexpected chain state dimensions increment. Also, each value must be no longer than 200 characters, or an error will be thrown.
 

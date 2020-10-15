@@ -18,7 +18,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 		Message:      "Post",
 		Created:      suite.testData.postCreationDate,
 		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: map[string]string{},
+		OptionalData: nil,
 		Creator:      suite.testData.creator,
 	}
 
