@@ -228,22 +228,19 @@ func TestConvertOptionalData(t *testing.T) {
 		"another":  "data",
 	}
 
-	expOptionalData := []v0130.OptionalDataEntry{
-		{
-			Key:   "optional",
-			Value: "data",
-		},
-		{
-			Key:   "old",
-			Value: "version",
-		},
-		{
-			Key:   "another",
-			Value: "data",
-		},
-	}
-
 	actualOptionalData := v0130.ConvertOptionalData(oldOptionalData)
 
-	require.Equal(t, expOptionalData, actualOptionalData)
+	require.Equal(t, len(oldOptionalData), len(actualOptionalData))
+
+	var found = make([]bool, len(actualOptionalData))
+
+	for key, value := range oldOptionalData {
+		for index, entry := range actualOptionalData {
+			if result := entry.Key == key && entry.Value == value; result {
+				found[index] = true
+			}
+		}
+	}
+
+	require.Equal(t, []bool{true, true, true}, found)
 }
