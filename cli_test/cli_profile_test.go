@@ -339,34 +339,46 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
+	barAddr := f.KeyAddress(keyBar)
+	calAddr := f.KeyAddress(keyBaz)
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
-	// Later usage variables
-	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	// Create the profile of the DTag owner
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	owner, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
-	require.NoError(t, err)
-
-	owner2, err := sdk.AccAddressFromBech32("desmos16namwr0llz5p82kug58fx7xp3rccqfp25j30h6")
-	require.NoError(t, err)
+	// Make sure the profile is saved
+	storedProfiles := f.QueryProfiles()
+	require.NotEmpty(t, storedProfiles)
+	profile := storedProfiles[0]
+	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request
-	success, _, sterr := f.TxProfileRequestDTagTransfer(owner, fooAddr, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the request is saved
-	storedRequests := f.QueryUserDTagRequests(owner)
+	storedRequests := f.QueryUserDTagRequests(fooAddr)
 	require.NotEmpty(t, storedRequests)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileRequestDTagTransfer(owner2, fooAddr, "--dry-run")
+
+	// Create the profile of the dTag owner
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileRequestDTagTransfer(owner2, fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
