@@ -53,6 +53,16 @@ var msgAcceptDTagTransfer = msgs.NewMsgAcceptDTagTransfer(
 	otherUser,
 )
 
+var msgRejectDTagTransfer = msgs.NewMsgRejectDTagRequest(
+	user,
+	otherUser,
+)
+
+var msgCancelDTagTransferReq = msgs.NewMsgCancelDTagRequest(
+	user,
+	otherUser,
+)
+
 func TestMsgSaveProfile_Route(t *testing.T) {
 	actual := msgEditProfile.Route()
 	require.Equal(t, "profiles", actual)
@@ -345,4 +355,132 @@ func TestMsgAcceptDTagTransfer_GetSigners(t *testing.T) {
 	actual := msgAcceptDTagTransfer.GetSigners()
 	require.Equal(t, 1, len(actual))
 	require.Equal(t, msgRequestTransferDTag.CurrentOwner, actual[0])
+}
+
+func TestMsgRejectDTagRequest_Route(t *testing.T) {
+	actual := msgRejectDTagTransfer.Route()
+	require.Equal(t, "profiles", actual)
+}
+
+func TestMsgRejectDTagRequest_Type(t *testing.T) {
+	actual := msgRejectDTagTransfer.Type()
+	require.Equal(t, "reject_dtag_request", actual)
+}
+
+func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgRejectDTagRequest
+		error error
+	}{
+		{
+			name:  "Empty owner returns error",
+			msg:   msgs.NewMsgRejectDTagRequest(user, nil),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address: "),
+		},
+		{
+			name:  "Empty sender returns error",
+			msg:   msgs.NewMsgRejectDTagRequest(nil, user),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+		},
+		{
+			name:  "Equals owner and sender returns error",
+			msg:   msgs.NewMsgRejectDTagRequest(user, user),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different"),
+		},
+		{
+			name:  "No error message",
+			msg:   msgs.NewMsgRejectDTagRequest(user, otherUser),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgRejectDTagRequest_GetSignBytes(t *testing.T) {
+	actual := msgRejectDTagTransfer.GetSignBytes()
+	expected := `{"type":"desmos/MsgRejectDTagTransferRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgRejectDTagRequest_GetSigners(t *testing.T) {
+	actual := msgRejectDTagTransfer.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgRejectDTagTransfer.Owner, actual[0])
+}
+
+func TestMsgCancelDTagRequest_Route(t *testing.T) {
+	actual := msgCancelDTagTransferReq.Route()
+	require.Equal(t, "profiles", actual)
+}
+
+func TestMsgCancelDTagRequest_Type(t *testing.T) {
+	actual := msgCancelDTagTransferReq.Type()
+	require.Equal(t, "cancel_dtag_request", actual)
+}
+
+func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   msgs.MsgCancelDTagRequest
+		error error
+	}{
+		{
+			name:  "Empty owner returns error",
+			msg:   msgs.NewMsgCancelDTagRequest(user, nil),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address: "),
+		},
+		{
+			name:  "Empty sender returns error",
+			msg:   msgs.NewMsgCancelDTagRequest(nil, user),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+		},
+		{
+			name:  "Equals owner and sender returns error",
+			msg:   msgs.NewMsgCancelDTagRequest(user, user),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different"),
+		},
+		{
+			name:  "No error message",
+			msg:   msgs.NewMsgCancelDTagRequest(user, otherUser),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgCancelDTagRequest_GetSignBytes(t *testing.T) {
+	actual := msgCancelDTagTransferReq.GetSignBytes()
+	expected := `{"type":"desmos/MsgCancelDTagRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgCancelDTagRequest_GetSigners(t *testing.T) {
+	actual := msgCancelDTagTransferReq.GetSigners()
+	require.Equal(t, 1, len(actual))
+	require.Equal(t, msgCancelDTagTransferReq.Sender, actual[0])
 }

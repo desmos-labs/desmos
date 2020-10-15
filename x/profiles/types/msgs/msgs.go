@@ -210,3 +210,95 @@ func (msg MsgAcceptDTagTransfer) GetSignBytes() []byte {
 func (msg MsgAcceptDTagTransfer) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.CurrentOwner}
 }
+
+// MsgRejectDTagRequest represent a DTag request rejection
+type MsgRejectDTagRequest struct {
+	Sender sdk.AccAddress `json:"sender" yaml:"sender"`
+	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
+}
+
+// NewMsgRejectDTagRequest is a constructor for MsgRejectDTagRequest
+func NewMsgRejectDTagRequest(sender, owner sdk.AccAddress) MsgRejectDTagRequest {
+	return MsgRejectDTagRequest{
+		Sender: sender,
+		Owner:  owner,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgRejectDTagRequest) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgRejectDTagRequest) Type() string { return models.RejectDTagTransferRequest }
+
+func (msg MsgRejectDTagRequest) ValidateBasic() error {
+	if msg.Owner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid owner address: %s", msg.Owner))
+	}
+
+	if msg.Sender.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	}
+
+	if msg.Owner.Equals(msg.Sender) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgRejectDTagRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgRejectDTagRequest) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Owner}
+}
+
+// MsgCancelDTagRequest represent a DTag request rejection
+type MsgCancelDTagRequest struct {
+	Sender sdk.AccAddress `json:"sender" yaml:"sender"`
+	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
+}
+
+// NewMsgCancelDTagRequest is a constructor for MsgRejectDTagRequest
+func NewMsgCancelDTagRequest(sender, owner sdk.AccAddress) MsgCancelDTagRequest {
+	return MsgCancelDTagRequest{
+		Sender: sender,
+		Owner:  owner,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgCancelDTagRequest) Route() string { return models.RouterKey }
+
+// Type should return the action
+func (msg MsgCancelDTagRequest) Type() string { return models.CancelDTagTransferRequest }
+
+func (msg MsgCancelDTagRequest) ValidateBasic() error {
+	if msg.Owner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid owner address: %s", msg.Owner))
+	}
+
+	if msg.Sender.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	}
+
+	if msg.Owner.Equals(msg.Sender) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgCancelDTagRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgCancelDTagRequest) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Sender}
+}
