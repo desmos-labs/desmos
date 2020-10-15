@@ -6,9 +6,9 @@ const (
 	EventTypeRelationshipsDeleted = "relationships_deleted"
 
 	// Relationships attributes
-	AttributeRelationshipSender   = "relationship_sender"
-	AttributeRelationshipReceiver = "relationship_receiver"
-	AttributeRelationshipSubspace = "relationship_subspace"
+	AttributeRelationshipSender   = "sender"
+	AttributeRelationshipReceiver = "receiver"
+	AttributeRelationshipSubspace = "subspace"
 
 	// UserBlocks events
 	EventTypeBlockUser   = "block_user"
