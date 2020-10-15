@@ -316,16 +316,27 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	tests := []struct {
 		name           string
 		msg            types.MsgRequestDTagTransfer
+		hasProfile     bool
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
 	}{
+		{
+			name:           "No DTag to transfer returns error",
+			msg:            types.NewMsgRequestDTagTransfer(suite.testData.otherUser, suite.testData.user),
+			storedDTagReqs: nil,
+			hasProfile:     false,
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s doesn't have a profile yet so their dTag cannot be transferred",
+					suite.testData.otherUser)),
+		},
 		{
 			name: "Already present request returns error",
 			msg:  types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
+			hasProfile: true,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("the transfer request from %s to %s has already been made",
 					suite.testData.otherUser, suite.testData.user)),
@@ -334,6 +345,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			name:           "Not already present request saved correctly",
 			msg:            types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
+			hasProfile:     true,
 			expErr:         nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferRequest,
@@ -354,7 +366,9 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				)
 			}
 
-			suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
+			if test.hasProfile {
+				suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
+			}
 
 			handler := keeper.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
