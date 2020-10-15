@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"strings"
 	"time"
 
@@ -35,7 +36,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
+				OptionalData:   nil,
 				Creator:        owner,
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
@@ -50,18 +51,18 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: map[string]string{
-					"key1":  "value",
-					"key2":  "value",
-					"key3":  "value",
-					"key4":  "value",
-					"key5":  "value",
-					"key6":  "value",
-					"key7":  "value",
-					"key8":  "value",
-					"key9":  "value",
-					"key10": "value",
-					"key11": "value",
+				OptionalData: []common.OptionalDataEntry{
+					{"key1", "value"},
+					{"key2", "value"},
+					{"key3", "value"},
+					{"key4", "value"},
+					{"key5", "value"},
+					{"key6", "value"},
+					{"key7", "value"},
+					{"key8", "value"},
+					{"key9", "value"},
+					{"key10", "value"},
+					{"key11", "value"},
 				},
 				Creator: owner,
 			},
@@ -77,10 +78,11 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: map[string]string{
-					"key1": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
+				OptionalData: []common.OptionalDataEntry{
+					{"key1", `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
 							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
 							sem eget neque metus.`,
+					},
 				},
 				Creator: owner,
 			},
@@ -95,7 +97,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   map[string]string{},
+				OptionalData:   nil,
 				Creator:        owner,
 			},
 			expError: nil,

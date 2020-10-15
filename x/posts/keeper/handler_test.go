@@ -418,7 +418,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 		Message:      "Post message",
 		Created:      suite.testData.post.Created,
 		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: map[string]string{},
+		OptionalData: nil,
 		Creator:      suite.testData.post.Creator,
 	}
 
@@ -565,7 +565,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				"Post message",
 				false,
 				"desmos",
-				map[string]string{},
+				nil,
 				suite.testData.post.Created,
 				suite.testData.post.Creator,
 			).WithPollData(types.NewPollData(
@@ -585,7 +585,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 			},
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
@@ -598,7 +598,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:          "poll?",
@@ -619,7 +619,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:              "poll?",
@@ -640,7 +640,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:              "poll?",
@@ -661,7 +661,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     "desmos",
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:              "poll?",
@@ -682,7 +682,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     "desmos",
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:              "poll?",
@@ -704,7 +704,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				Created:      suite.testData.post.Created,
 				LastEdited:   suite.testData.post.LastEdited,
 				Subspace:     "desmos",
-				OptionalData: map[string]string{},
+				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 				PollData: &types.PollData{
 					Question:              "poll?",

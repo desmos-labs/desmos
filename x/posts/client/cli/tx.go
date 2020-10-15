@@ -237,7 +237,7 @@ E.g.
 				parentID,
 				allowsComments,
 				args[0],
-				map[string]string{},
+				nil,
 				cliCtx.GetFromAddress(),
 				attachments,
 				pollData,
