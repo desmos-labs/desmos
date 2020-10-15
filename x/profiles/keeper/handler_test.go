@@ -327,7 +327,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedDTagReqs: nil,
 			hasProfile:     false,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s doesn't have a profile yet so no dTag can be transfered",
+				fmt.Sprintf("The user with address %s doesn't have a profile yet so no dTag can be transferred",
 					suite.testData.otherUser)),
 		},
 		{
