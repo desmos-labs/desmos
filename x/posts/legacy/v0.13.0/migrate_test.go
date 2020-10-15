@@ -90,7 +90,7 @@ func TestMigrate(t *testing.T) {
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   []v0130.OptionalData{{Key: "optional", Value: "data"}},
+				OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
 				Created:        parentCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        parentPostCreator,
@@ -102,7 +102,7 @@ func TestMigrate(t *testing.T) {
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   []v0130.OptionalData{{Key: "optional", Value: "data"}},
+				OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
 				Created:        postCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        postCreator,
@@ -195,7 +195,7 @@ func TestConvertPosts(t *testing.T) {
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			OptionalData:   []v0130.OptionalData{{Key: "optional", Value: "data"}},
+			OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
 			Created:        parentCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        parentPostCreator,
@@ -207,7 +207,7 @@ func TestConvertPosts(t *testing.T) {
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			OptionalData:   []v0130.OptionalData{{Key: "optional", Value: "data"}},
+			OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
 			Created:        postCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        postCreator,
@@ -228,7 +228,7 @@ func TestConvertOptionalData(t *testing.T) {
 		"another":  "data",
 	}
 
-	expOptionalData := []v0130.OptionalData{
+	expOptionalData := []v0130.OptionalDataEntry{
 		{
 			Key:   "optional",
 			Value: "data",

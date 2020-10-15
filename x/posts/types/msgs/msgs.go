@@ -20,19 +20,19 @@ import (
 
 // MsgCreatePost defines a CreatePost message
 type MsgCreatePost struct {
-	ParentID       models.PostID         `json:"parent_id" yaml:"parent_id"`
-	Message        string                `json:"message" yaml:"message"`
-	AllowsComments bool                  `json:"allows_comments" yaml:"allows_comments"`
-	Subspace       string                `json:"subspace" yaml:"subspace"`
-	OptionalData   []models.OptionalData `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
-	Creator        sdk.AccAddress        `json:"creator" yaml:"creator"`
-	Attachments    models.Attachments    `json:"attachments,omitempty" yaml:"attachments,omitempty"`
-	PollData       *models.PollData      `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
+	ParentID       models.PostID       `json:"parent_id" yaml:"parent_id"`
+	Message        string              `json:"message" yaml:"message"`
+	AllowsComments bool                `json:"allows_comments" yaml:"allows_comments"`
+	Subspace       string              `json:"subspace" yaml:"subspace"`
+	OptionalData   models.OptionalData `json:"optional_data,omitempty" yaml:"optional_data,omitempty"`
+	Creator        sdk.AccAddress      `json:"creator" yaml:"creator"`
+	Attachments    models.Attachments  `json:"attachments,omitempty" yaml:"attachments,omitempty"`
+	PollData       *models.PollData    `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
 }
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(message string, parentID models.PostID, allowsComments bool, subspace string,
-	optionalData []models.OptionalData, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
+	optionalData models.OptionalData, owner sdk.AccAddress, attachments models.Attachments, pollData *models.PollData) MsgCreatePost {
 	return MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,

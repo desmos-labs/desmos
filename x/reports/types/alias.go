@@ -28,15 +28,15 @@ var (
 	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec              = msgs.MsgsCodec
 	ModelsCdc              = models.ModelsCdc
 	ReportsStorePrefix     = common.ReportsStorePrefix
 	ReportsTypeStorePrefix = common.ReportsTypeStorePrefix
+	MsgsCodec              = msgs.MsgsCodec
 )
 
 type (
+	MsgReportPost        = msgs.MsgReportPost
 	ReportsQueryResponse = models.ReportsQueryResponse
 	Report               = models.Report
 	Reports              = models.Reports
-	MsgReportPost        = msgs.MsgReportPost
 )

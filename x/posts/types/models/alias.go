@@ -33,24 +33,24 @@ const (
 
 var (
 	// functions aliases
+	IsValidPostID              = common.IsValidPostID
+	IsValidReactionCode        = common.IsValidReactionCode
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	NewOptionalData            = common.NewOptionalData
+	NewAttachment              = common.NewAttachment
+	NewAttachments             = common.NewAttachments
+	ParseAnswerID              = polls.ParseAnswerID
+	NewPollAnswer              = polls.NewPollAnswer
+	NewPollAnswers             = polls.NewPollAnswers
+	NewPollData                = polls.NewPollData
+	ArePollDataEquals          = polls.ArePollDataEquals
+	NewUserAnswer              = polls.NewUserAnswer
+	NewUserAnswers             = polls.NewUserAnswers
 	NewPostReaction            = reactions.NewPostReaction
 	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
-	NewOptionalData            = common.NewOptionalData
-	NewAttachment              = common.NewAttachment
-	NewAttachments             = common.NewAttachments
-	IsValidPostID              = common.IsValidPostID
-	IsValidReactionCode        = common.IsValidReactionCode
-	NewPollData                = polls.NewPollData
-	ArePollDataEquals          = polls.ArePollDataEquals
-	NewUserAnswer              = polls.NewUserAnswer
-	NewUserAnswers             = polls.NewUserAnswers
-	ParseAnswerID              = polls.ParseAnswerID
-	NewPollAnswer              = polls.NewPollAnswer
-	NewPollAnswers             = polls.NewPollAnswers
 
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
@@ -64,17 +64,18 @@ var (
 )
 
 type (
-	OptionalData  = common.OptionalData
-	Attachment    = common.Attachment
-	Attachments   = common.Attachments
-	PollData      = polls.PollData
-	UserAnswer    = polls.UserAnswer
-	UserAnswers   = polls.UserAnswers
-	AnswerID      = polls.AnswerID
-	PollAnswer    = polls.PollAnswer
-	PollAnswers   = polls.PollAnswers
-	PostReaction  = reactions.PostReaction
-	PostReactions = reactions.PostReactions
-	Reaction      = reactions.Reaction
-	Reactions     = reactions.Reactions
+	OptionalData      = common.OptionalData
+	OptionalDataEntry = common.OptionalDataEntry
+	Attachment        = common.Attachment
+	Attachments       = common.Attachments
+	AnswerID          = polls.AnswerID
+	PollAnswer        = polls.PollAnswer
+	PollAnswers       = polls.PollAnswers
+	PollData          = polls.PollData
+	UserAnswer        = polls.UserAnswer
+	UserAnswers       = polls.UserAnswers
+	PostReaction      = reactions.PostReaction
+	PostReactions     = reactions.PostReactions
+	Reaction          = reactions.Reaction
+	Reactions         = reactions.Reactions
 )

@@ -17,15 +17,15 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 
 // CreatePostReq defines the properties of a post creation request's body.
 type CreatePostReq struct {
-	BaseReq        rest.BaseReq         `json:"base_req"`
-	Message        string               `json:"message"`
-	ParentID       string               `json:"parent_id"`
-	AllowsComments bool                 `json:"allows_comments"`
-	Subspace       string               `json:"subspace"`
-	OptionalData   []types.OptionalData `json:"optional_data"`
-	CreationTime   time.Time            `json:"creation_time"`
-	Medias         types.Attachments    `json:"attachments,omitempty"`
-	PollData       *types.PollData      `json:"poll_data,omitempty"`
+	BaseReq        rest.BaseReq       `json:"base_req"`
+	Message        string             `json:"message"`
+	ParentID       string             `json:"parent_id"`
+	AllowsComments bool               `json:"allows_comments"`
+	Subspace       string             `json:"subspace"`
+	OptionalData   types.OptionalData `json:"optional_data"`
+	CreationTime   time.Time          `json:"creation_time"`
+	Medias         types.Attachments  `json:"attachments,omitempty"`
+	PollData       *types.PollData    `json:"poll_data,omitempty"`
 }
 
 // AddReactionReq defines the properties of a reaction adding request's body.

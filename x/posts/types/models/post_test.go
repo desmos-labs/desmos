@@ -286,7 +286,7 @@ func TestPost_String(t *testing.T) {
 				"My post message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]common.OptionalData{
+				[]common.OptionalDataEntry{
 					{
 						"key1",
 						"value",
@@ -800,7 +800,7 @@ func TestPost_Equals(t *testing.T) {
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []common.OptionalData{
+				OptionalData: []common.OptionalDataEntry{
 					{
 						Key:   "field",
 						Value: "value",
@@ -817,7 +817,7 @@ func TestPost_Equals(t *testing.T) {
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []common.OptionalData{
+				OptionalData: []common.OptionalDataEntry{
 					{
 						Key:   "field",
 						Value: "other-value",

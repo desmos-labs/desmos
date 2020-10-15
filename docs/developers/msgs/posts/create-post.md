@@ -10,7 +10,7 @@ This message allows you to create a new public post. If you want to know more ab
     "message": "<Post message>",
     "allows_comments": false,
     "subspace": "<Subspace of a post>",
-    "optional_data": "<Optional Data's array that contains all the optional data>",
+    "optional_data": [],
     "creator": "<Desmos address that's creating the post>",
     "attachments": "<Attachment's array that contains all the attachments associated with the post",
     "poll_data": "<Poll data contains all useful data of the poll's post>"
@@ -40,10 +40,12 @@ This message allows you to create a new public post. If you want to know more ab
     "message": "Desmos is great!",
     "allows_comments": true,
     "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-    "optional_data": {
-      "key": "My custom key",
-      "value": "My custom value"
-    },
+    "optional_data": [
+      {
+        "key": "My custom key",
+        "value": "My custom value"
+      }
+    ],
     "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
     "attachments": [
       {

@@ -48,12 +48,12 @@ var (
 )
 
 type (
-	MsgSaveProfile         = msgs.MsgSaveProfile
-	MsgDeleteProfile       = msgs.MsgDeleteProfile
-	MsgRequestDTagTransfer = msgs.MsgRequestDTagTransfer
-	MsgAcceptDTagTransfer  = msgs.MsgAcceptDTagTransfer
 	Profile                = models.Profile
 	Profiles               = models.Profiles
 	Pictures               = models.Pictures
 	DTagTransferRequest    = models.DTagTransferRequest
+	MsgSaveProfile         = msgs.MsgSaveProfile
+	MsgDeleteProfile       = msgs.MsgDeleteProfile
+	MsgRequestDTagTransfer = msgs.MsgRequestDTagTransfer
+	MsgAcceptDTagTransfer  = msgs.MsgAcceptDTagTransfer
 )

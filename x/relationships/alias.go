@@ -27,35 +27,35 @@ const (
 
 var (
 	// functions aliases
-	RegisterRoutes               = rest.RegisterRoutes
-	NewHandler                   = keeper.NewHandler
-	NewKeeper                    = keeper.NewKeeper
-	NewQuerier                   = keeper.NewQuerier
-	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewRelationship              = models.NewRelationship
 	NewUserBlock                 = models.NewUserBlock
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
 	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
+	RegisterModelsCodec          = models.RegisterModelsCodec
 	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
 	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
 	GetTxCmd                     = cli.GetTxCmd
 	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
 	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
 	GetCmdBlockUser              = cli.GetCmdBlockUser
 	GetCmdUnblockUser            = cli.GetCmdUnblockUser
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
+	RegisterRoutes               = rest.RegisterRoutes
+	NewHandler                   = keeper.NewHandler
+	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
-	ModelsCdc                = models.ModelsCdc
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
+	ModelsCdc                = models.ModelsCdc
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (

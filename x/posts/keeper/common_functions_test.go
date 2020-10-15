@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []common.OptionalData{
+				OptionalData: []common.OptionalDataEntry{
 					{"key1", "value"},
 					{"key2", "value"},
 					{"key3", "value"},
@@ -78,7 +78,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []common.OptionalData{
+				OptionalData: []common.OptionalDataEntry{
 					{"key1", `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
 							efficitur, quam sapien congue enim, ut porttitor lacus tellus vitae turpis. Vivamus aliquam 
 							sem eget neque metus.`,

@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewOptionalData(t *testing.T) {
-	expOpd := common.OptionalData{
+	expOpd := common.OptionalDataEntry{
 		Key:   "key",
 		Value: "value",
 	}
@@ -21,8 +21,8 @@ func TestNewOptionalData(t *testing.T) {
 func TestOptionalData_Equals(t *testing.T) {
 	tests := []struct {
 		name         string
-		optionalData common.OptionalData
-		otherOpData  common.OptionalData
+		optionalData common.OptionalDataEntry
+		otherOpData  common.OptionalDataEntry
 		expBool      bool
 	}{
 		{

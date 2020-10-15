@@ -38,19 +38,16 @@ func ConvertPosts(oldPosts []v0120posts.Post) []Post {
 	return posts
 }
 
-func ConvertOptionalData(oldOptionalData v040posts.OptionalData) []OptionalData {
-	optionalDataSize := len(oldOptionalData)
-	allOptionalData := make([]OptionalData, optionalDataSize)
+func ConvertOptionalData(oldOptionalData v040posts.OptionalData) []OptionalDataEntry {
+	optionalData := make([]OptionalDataEntry, len(oldOptionalData))
 	index := 0
 	for key, value := range oldOptionalData {
-		if index < optionalDataSize {
-			allOptionalData[index] = OptionalData{
-				Key:   key,
-				Value: value,
-			}
-			index++
+		optionalData[index] = OptionalDataEntry{
+			Key:   key,
+			Value: value,
 		}
+		index++
 	}
 
-	return allOptionalData
+	return optionalData
 }

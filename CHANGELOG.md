@@ -1,7 +1,7 @@
 # Version 0.13.0
 ## Changes
 - Removed the user_block event attribute key prefix. (#291)
-- Changed `OptionalData` representation from `map[string]string` to an `OptionalData` object (#272) 
+- Changed posts' optional data representation (#272) 
 
 # Version 0.12.3
 ## Changes

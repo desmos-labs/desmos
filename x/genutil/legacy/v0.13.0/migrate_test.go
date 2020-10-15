@@ -1,7 +1,6 @@
 package v0130_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -47,7 +46,18 @@ func TestMigrate0120(t *testing.T) {
 	require.Equal(t, len(v012postsState.Posts), len(v0130postsState.Posts))
 
 	// Make sure that all the posts' polls are migrated correctly
-	for _, post := range v0130postsState.Posts {
-		require.Equal(t, "[]v0130.OptionalData", reflect.TypeOf(post.OptionalData).String())
+	for index, post := range v0130postsState.Posts {
+		if post.OptionalData == nil {
+			require.Nil(t, v012postsState.Posts[index].OptionalData)
+		} else {
+			oldOptionalData := v012postsState.Posts[index].OptionalData
+			require.NotNil(t, oldOptionalData)
+			i := 0
+			for key, value := range oldOptionalData {
+				require.Equal(t, key, post.OptionalData[i].Key)
+				require.Equal(t, value, post.OptionalData[i].Value)
+				i++
+			}
+		}
 	}
 }

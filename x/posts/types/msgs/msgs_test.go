@@ -243,7 +243,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]common.OptionalData{
+				[]common.OptionalDataEntry{
 					{"lorem", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in dapibus tortor, in iaculis nunc. Integer ac bibendum nisi. Curabitur faucibus vestibulum tincidunt. Donec interdum tincidunt cras amet."},
 					{"date", "2020-01-01T00:00.000Z"},
 					{"text", "Welcome to Desmos"},
@@ -370,7 +370,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				id,
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]common.OptionalData{{"field", "value"}},
+				[]common.OptionalDataEntry{{"field", "value"}},
 				testOwner,
 				models.Attachments{
 					models.Attachment{

@@ -63,7 +63,7 @@ type PostData struct {
 	Message        string
 	AllowsComments bool
 	Subspace       string
-	OptionalData   []types.OptionalData
+	OptionalData   types.OptionalData
 	Attachments    types.Attachments
 	PollData       *types.PollData
 }
