@@ -344,7 +344,7 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
-	// Create the profile of the dTag owner
+	// Create the profile of the DTag owner
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)

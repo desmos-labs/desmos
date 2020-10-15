@@ -2,7 +2,7 @@
 ## Changes
 - Removed the relationship event attribute key prefix (#300)
 - Removed the user_block event attribute key prefix (#291)
-- Fixed the possibility to request a transfer for an empty dTag (#292)
+- Fixed the possibility of requesting a transfer of an empty DTag (#292)
 
 # Version 0.12.3
 ## Changes

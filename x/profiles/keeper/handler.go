@@ -155,7 +155,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.CurrentOwner)
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("The user with address %s doesn't have a profile yet so no dTag can be transferred",
+			fmt.Sprintf("The user with address %s doesn't have a profile yet so their dTag cannot be transferred",
 				msg.CurrentOwner))
 	}
 	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.CurrentOwner, msg.ReceivingUser)
