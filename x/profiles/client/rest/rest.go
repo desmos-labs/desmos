@@ -37,3 +37,13 @@ type AcceptDTagTransferReq struct {
 	ReceivingUser string       `json:"receiving_user"`
 	NewDTag       string       `json:"new_dtag"`
 }
+
+type RefuseDTagTransferReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	Sender  string       `json:"sender"`
+}
+
+type CancelDTagTransferReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	Owner   string       `json:"owner"`
+}

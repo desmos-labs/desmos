@@ -53,12 +53,12 @@ var msgAcceptDTagTransfer = msgs.NewMsgAcceptDTagTransfer(
 	otherUser,
 )
 
-var msgRejectDTagTransfer = msgs.NewMsgRefuseDTagRequest(
+var msgRejectDTagTransfer = msgs.NewMsgRefuseDTagTransferRequest(
 	user,
 	otherUser,
 )
 
-var msgCancelDTagTransferReq = msgs.NewMsgCancelDTagRequest(
+var msgCancelDTagTransferReq = msgs.NewMsgCancelDTagTransferRequest(
 	user,
 	otherUser,
 )
@@ -364,33 +364,33 @@ func TestMsgRejectDTagRequest_Route(t *testing.T) {
 
 func TestMsgRejectDTagRequest_Type(t *testing.T) {
 	actual := msgRejectDTagTransfer.Type()
-	require.Equal(t, "reject_dtag_request", actual)
+	require.Equal(t, "refuse_dtag_request", actual)
 }
 
 func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgRefuseDTagRequest
+		msg   msgs.MsgRefuseDTagTransferRequest
 		error error
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   msgs.NewMsgRefuseDTagRequest(user, nil),
+			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address: "),
 		},
 		{
 			name:  "Empty sender returns error",
-			msg:   msgs.NewMsgRefuseDTagRequest(nil, user),
+			msg:   msgs.NewMsgRefuseDTagTransferRequest(nil, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name:  "Equals owner and sender returns error",
-			msg:   msgs.NewMsgRefuseDTagRequest(user, user),
+			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different"),
 		},
 		{
 			name:  "No error message",
-			msg:   msgs.NewMsgRefuseDTagRequest(user, otherUser),
+			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, otherUser),
 			error: nil,
 		},
 	}
@@ -411,7 +411,7 @@ func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 
 func TestMsgRejectDTagRequest_GetSignBytes(t *testing.T) {
 	actual := msgRejectDTagTransfer.GetSignBytes()
-	expected := `{"type":"desmos/MsgRejectDTagTransferRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgRefuseDTagTransferRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -434,27 +434,27 @@ func TestMsgCancelDTagRequest_Type(t *testing.T) {
 func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgCancelDTagRequest
+		msg   msgs.MsgCancelDTagTransferRequest
 		error error
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   msgs.NewMsgCancelDTagRequest(user, nil),
+			msg:   msgs.NewMsgCancelDTagTransferRequest(user, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address: "),
 		},
 		{
 			name:  "Empty sender returns error",
-			msg:   msgs.NewMsgCancelDTagRequest(nil, user),
+			msg:   msgs.NewMsgCancelDTagTransferRequest(nil, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name:  "Equals owner and sender returns error",
-			msg:   msgs.NewMsgCancelDTagRequest(user, user),
+			msg:   msgs.NewMsgCancelDTagTransferRequest(user, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different"),
 		},
 		{
 			name:  "No error message",
-			msg:   msgs.NewMsgCancelDTagRequest(user, otherUser),
+			msg:   msgs.NewMsgCancelDTagTransferRequest(user, otherUser),
 			error: nil,
 		},
 	}
@@ -475,7 +475,7 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 
 func TestMsgCancelDTagRequest_GetSignBytes(t *testing.T) {
 	actual := msgCancelDTagTransferReq.GetSignBytes()
-	expected := `{"type":"desmos/MsgCancelDTagRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgCancelDTagTransferRequest","value":{"owner":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

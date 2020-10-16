@@ -584,20 +584,20 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 	tests := []struct {
 		name           string
-		msg            types.MsgRefuseDTagRequest
+		msg            types.MsgRefuseDTagTransferRequest
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
 	}{
 		{
 			name:           "No requests found returns error",
-			msg:            types.NewMsgRefuseDTagRequest(suite.testData.user, suite.testData.otherUser),
+			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
 			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be refused"),
 		},
 		{
 			name:           "Deletion runs correctly",
-			msg:            types.NewMsgRefuseDTagRequest(suite.testData.otherUser, suite.testData.user),
+			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
 			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
 			expErr:         nil,
 			expEvent: sdk.NewEvent(
@@ -638,7 +638,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 	tests := []struct {
 		name           string
-		msg            types.MsgCancelDTagRequest
+		msg            types.MsgCancelDTagTransferRequest
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event

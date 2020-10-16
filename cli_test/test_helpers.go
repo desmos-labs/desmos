@@ -480,6 +480,18 @@ func (f *Fixtures) TxProfileAcceptDTagTransfer(newDtag string, receiver, from sd
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxProfileRefuseDTagTransfer(sender, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles refuse-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, sender, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileCancelDTagTransfer(owner, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles cancel-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, owner, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx relationships
 func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {

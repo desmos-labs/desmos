@@ -13,7 +13,7 @@ const (
 	ActionDeleteProfile       = "delete_profile"
 	ActionRequestDtag         = "request_dtag"
 	ActionAcceptDtagTransfer  = "accept_dtag_request"
-	RejectDTagTransferRequest = "reject_dtag_request"
+	RefuseDTagTransferRequest = "refuse_dtag_request"
 	CancelDTagTransferRequest = "cancel_dtag_request"
 
 	//Queries

@@ -211,27 +211,27 @@ func (msg MsgAcceptDTagTransfer) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.CurrentOwner}
 }
 
-// MsgRefuseDTagRequest represent a DTag request rejection
-type MsgRefuseDTagRequest struct {
+// MsgRefuseDTagTransferRequest represent a DTag request rejection
+type MsgRefuseDTagTransferRequest struct {
 	Sender sdk.AccAddress `json:"sender" yaml:"sender"`
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
 }
 
-// NewMsgRefuseDTagRequest is a constructor for MsgRefuseDTagRequest
-func NewMsgRefuseDTagRequest(sender, owner sdk.AccAddress) MsgRefuseDTagRequest {
-	return MsgRefuseDTagRequest{
+// NewMsgRefuseDTagTransferRequest is a constructor for MsgRefuseDTagTransferRequest
+func NewMsgRefuseDTagTransferRequest(sender, owner sdk.AccAddress) MsgRefuseDTagTransferRequest {
+	return MsgRefuseDTagTransferRequest{
 		Sender: sender,
 		Owner:  owner,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgRefuseDTagRequest) Route() string { return models.RouterKey }
+func (msg MsgRefuseDTagTransferRequest) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgRefuseDTagRequest) Type() string { return models.RejectDTagTransferRequest }
+func (msg MsgRefuseDTagTransferRequest) Type() string { return models.RefuseDTagTransferRequest }
 
-func (msg MsgRefuseDTagRequest) ValidateBasic() error {
+func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid owner address: %s", msg.Owner))
 	}
@@ -248,36 +248,36 @@ func (msg MsgRefuseDTagRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRefuseDTagRequest) GetSignBytes() []byte {
+func (msg MsgRefuseDTagTransferRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRefuseDTagRequest) GetSigners() []sdk.AccAddress {
+func (msg MsgRefuseDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-// MsgCancelDTagRequest represent a DTag request rejection
-type MsgCancelDTagRequest struct {
+// MsgCancelDTagTransferRequest represent a DTag request rejection
+type MsgCancelDTagTransferRequest struct {
 	Sender sdk.AccAddress `json:"sender" yaml:"sender"`
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
 }
 
-// NewMsgCancelDTagRequest is a constructor for MsgRefuseDTagRequest
-func NewMsgCancelDTagRequest(sender, owner sdk.AccAddress) MsgCancelDTagRequest {
-	return MsgCancelDTagRequest{
+// NewMsgCancelDTagTransferRequest is a constructor for MsgCancelDTagTransferRequest
+func NewMsgCancelDTagTransferRequest(sender, owner sdk.AccAddress) MsgCancelDTagTransferRequest {
+	return MsgCancelDTagTransferRequest{
 		Sender: sender,
 		Owner:  owner,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgCancelDTagRequest) Route() string { return models.RouterKey }
+func (msg MsgCancelDTagTransferRequest) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgCancelDTagRequest) Type() string { return models.CancelDTagTransferRequest }
+func (msg MsgCancelDTagTransferRequest) Type() string { return models.CancelDTagTransferRequest }
 
-func (msg MsgCancelDTagRequest) ValidateBasic() error {
+func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid owner address: %s", msg.Owner))
 	}
@@ -294,11 +294,11 @@ func (msg MsgCancelDTagRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCancelDTagRequest) GetSignBytes() []byte {
+func (msg MsgCancelDTagTransferRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCancelDTagRequest) GetSigners() []sdk.AccAddress {
+func (msg MsgCancelDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
