@@ -211,27 +211,27 @@ func (msg MsgAcceptDTagTransfer) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.CurrentOwner}
 }
 
-// MsgRejectDTagRequest represent a DTag request rejection
-type MsgRejectDTagRequest struct {
+// MsgRefuseDTagRequest represent a DTag request rejection
+type MsgRefuseDTagRequest struct {
 	Sender sdk.AccAddress `json:"sender" yaml:"sender"`
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
 }
 
-// NewMsgRejectDTagRequest is a constructor for MsgRejectDTagRequest
-func NewMsgRejectDTagRequest(sender, owner sdk.AccAddress) MsgRejectDTagRequest {
-	return MsgRejectDTagRequest{
+// NewMsgRefuseDTagRequest is a constructor for MsgRefuseDTagRequest
+func NewMsgRefuseDTagRequest(sender, owner sdk.AccAddress) MsgRefuseDTagRequest {
+	return MsgRefuseDTagRequest{
 		Sender: sender,
 		Owner:  owner,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgRejectDTagRequest) Route() string { return models.RouterKey }
+func (msg MsgRefuseDTagRequest) Route() string { return models.RouterKey }
 
 // Type should return the action
-func (msg MsgRejectDTagRequest) Type() string { return models.RejectDTagTransferRequest }
+func (msg MsgRefuseDTagRequest) Type() string { return models.RejectDTagTransferRequest }
 
-func (msg MsgRejectDTagRequest) ValidateBasic() error {
+func (msg MsgRefuseDTagRequest) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid owner address: %s", msg.Owner))
 	}
@@ -248,12 +248,12 @@ func (msg MsgRejectDTagRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRejectDTagRequest) GetSignBytes() []byte {
+func (msg MsgRefuseDTagRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRejectDTagRequest) GetSigners() []sdk.AccAddress {
+func (msg MsgRefuseDTagRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
@@ -263,7 +263,7 @@ type MsgCancelDTagRequest struct {
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
 }
 
-// NewMsgCancelDTagRequest is a constructor for MsgRejectDTagRequest
+// NewMsgCancelDTagRequest is a constructor for MsgRefuseDTagRequest
 func NewMsgCancelDTagRequest(sender, owner sdk.AccAddress) MsgCancelDTagRequest {
 	return MsgCancelDTagRequest{
 		Sender: sender,

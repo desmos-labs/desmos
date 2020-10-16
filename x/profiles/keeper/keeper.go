@@ -189,3 +189,28 @@ func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user sdk.AccAddre
 	key := types.DtagTransferRequestStoreKey(user)
 	store.Delete(key)
 }
+
+func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, owner, sender sdk.AccAddress, deletionType string) error {
+	var requests []types.DTagTransferRequest
+	store := ctx.KVStore(k.StoreKey)
+	key := types.DtagTransferRequestStoreKey(owner)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+
+	if len(requests) == 0 {
+		return fmt.Errorf("no requests to be %s", deletionType)
+	}
+
+	for index, request := range requests {
+		if request.ReceivingUser.Equals(sender) {
+			requests = append(requests[:index], requests[index+1:]...)
+			if len(requests) == 0 {
+				store.Delete(key)
+			} else {
+				store.Set(key, k.Cdc.MustMarshalBinaryBare(&requests))
+			}
+			return nil
+		}
+	}
+
+	return fmt.Errorf("no request made by %s", sender)
+}

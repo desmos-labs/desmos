@@ -24,6 +24,10 @@ func NewHandler(keeper Keeper) sdk.Handler {
 			return handleMsgRequestDTagTransfer(ctx, keeper, msg)
 		case types.MsgAcceptDTagTransfer:
 			return handleMsgAcceptDTagTransfer(ctx, keeper, msg)
+		case types.MsgRefuseDTagRequest:
+			return handleMsgRefuseDTagTransfer(ctx, keeper, msg)
+		case types.MsgCancelDTagRequest:
+			return handleMsgCancelDTagTransfer(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized Profiles message type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -179,7 +183,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 	return &result, nil
 }
 
-// handleMsgAcceptDTagTransfer handle the acceptance of a dTag transfer request
+// handleMsgAcceptDTagTransfer handles the acceptance of a dTag transfer request
 func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAcceptDTagTransfer) (*sdk.Result, error) {
 	requests := keeper.GetUserDTagTransferRequests(ctx, msg.CurrentOwner)
 
@@ -249,4 +253,34 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 
 	return &result, nil
 
+}
+
+// DeleteDTagTransferRequest delete the request made by the sender and returns the event with the given eventType.
+func DeleteDTagTransferRequest(ctx sdk.Context, keeper Keeper, owner, sender sdk.AccAddress, eventType, deletionType string) (*sdk.Result, error) {
+	if err := keeper.DeleteDTagTransferRequest(ctx, owner, sender, deletionType); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		eventType,
+		sdk.NewAttribute(types.AttributeCurrentOwner, owner.String()),
+		sdk.NewAttribute(types.AttributeReceivingUser, sender.String()),
+	))
+
+	result := sdk.Result{
+		Data:   keeper.Cdc.MustMarshalBinaryLengthPrefixed(sender),
+		Events: ctx.EventManager().Events(),
+	}
+
+	return &result, nil
+}
+
+// handleMsgRefuseDTagTransfer handles the reject of a dTag transfer request
+func handleMsgRefuseDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRefuseDTagRequest) (*sdk.Result, error) {
+	return DeleteDTagTransferRequest(ctx, keeper, msg.Owner, msg.Sender, types.EventTypeDTagTransferRefuse, "refused")
+}
+
+// handleMsgCancelDTagTransfer handles the deletion of a dTag transfer request
+func handleMsgCancelDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgCancelDTagRequest) (*sdk.Result, error) {
+	return DeleteDTagTransferRequest(ctx, keeper, msg.Owner, msg.Sender, types.EventTypeDTagTransferCancel, "cancelled")
 }

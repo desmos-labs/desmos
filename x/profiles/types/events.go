@@ -5,6 +5,8 @@ const (
 	EventTypeProfileDeleted      = "profile_deleted"
 	EventTypeDTagTransferRequest = "dtag_transfer_request"
 	EventTypeDTagTransferAccept  = "dtag_transfer_accept"
+	EventTypeDTagTransferRefuse  = "dtag_transfer_refuse"
+	EventTypeDTagTransferCancel  = "dtag_transfer_cancel"
 
 	// Profile attributes
 	AttributeProfileDtag         = "profile_dtag"

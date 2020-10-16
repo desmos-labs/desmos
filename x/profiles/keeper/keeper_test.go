@@ -408,3 +408,73 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
+	tests := []struct {
+		name       string
+		storedReqs []types.DTagTransferRequest
+		sender     sdk.AccAddress
+		expReqs    []types.DTagTransferRequest
+		error      error
+	}{
+		{
+			name:       "empty requests array returns error",
+			storedReqs: nil,
+			error:      fmt.Errorf("no requests to be refused"),
+		},
+		{
+			name: "no request made by the sender returns error",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.user),
+			},
+			sender:  suite.testData.otherUser,
+			expReqs: nil,
+			error:   fmt.Errorf("no request made by %s", suite.testData.otherUser),
+		},
+		{
+			name: "request removed properly (remaining requests array)",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.user),
+			},
+			sender: suite.testData.otherUser,
+			expReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.user),
+			},
+			error: nil,
+		},
+		{
+			name: "request removed properly (no remaining requests)",
+			storedReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			sender:  suite.testData.otherUser,
+			expReqs: nil,
+			error:   nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+				)
+			}
+
+			err := suite.keeper.DeleteDTagTransferRequest(suite.ctx, suite.testData.user, suite.testData.otherUser, "refused")
+			if err != nil {
+				suite.Equal(test.error, err)
+			} else {
+				suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
+			}
+		})
+	}
+}

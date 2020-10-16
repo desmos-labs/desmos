@@ -34,24 +34,24 @@ const (
 
 var (
 	// functions aliases
-	ParseAnswerID              = polls.ParseAnswerID
-	NewPollAnswer              = polls.NewPollAnswer
-	NewPollAnswers             = polls.NewPollAnswers
-	NewPollData                = polls.NewPollData
-	ArePollDataEquals          = polls.ArePollDataEquals
-	NewUserAnswer              = polls.NewUserAnswer
-	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
-	NewReaction                = reactions.NewReaction
-	IsEmoji                    = reactions.IsEmoji
-	NewReactions               = reactions.NewReactions
 	IsValidPostID              = common.IsValidPostID
 	IsValidReactionCode        = common.IsValidReactionCode
 	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
 	NewOptionalData            = common.NewOptionalData
 	NewAttachment              = common.NewAttachment
 	NewAttachments             = common.NewAttachments
+	NewPollData                = polls.NewPollData
+	ArePollDataEquals          = polls.ArePollDataEquals
+	NewUserAnswer              = polls.NewUserAnswer
+	NewUserAnswers             = polls.NewUserAnswers
+	ParseAnswerID              = polls.ParseAnswerID
+	NewPollAnswer              = polls.NewPollAnswer
+	NewPollAnswers             = polls.NewPollAnswers
+	NewReaction                = reactions.NewReaction
+	IsEmoji                    = reactions.IsEmoji
+	NewReactions               = reactions.NewReactions
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
 
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress
@@ -69,14 +69,14 @@ type (
 	OptionalDataEntry = common.OptionalDataEntry
 	Attachment        = common.Attachment
 	Attachments       = common.Attachments
-	AnswerID          = polls.AnswerID
-	PollAnswer        = polls.PollAnswer
-	PollAnswers       = polls.PollAnswers
 	PollData          = polls.PollData
 	UserAnswer        = polls.UserAnswer
 	UserAnswers       = polls.UserAnswers
-	PostReaction      = reactions.PostReaction
-	PostReactions     = reactions.PostReactions
+	AnswerID          = polls.AnswerID
+	PollAnswer        = polls.PollAnswer
+	PollAnswers       = polls.PollAnswers
 	Reaction          = reactions.Reaction
 	Reactions         = reactions.Reactions
+	PostReaction      = reactions.PostReaction
+	PostReactions     = reactions.PostReactions
 )

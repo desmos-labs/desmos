@@ -53,7 +53,7 @@ var msgAcceptDTagTransfer = msgs.NewMsgAcceptDTagTransfer(
 	otherUser,
 )
 
-var msgRejectDTagTransfer = msgs.NewMsgRejectDTagRequest(
+var msgRejectDTagTransfer = msgs.NewMsgRefuseDTagRequest(
 	user,
 	otherUser,
 )
@@ -370,27 +370,27 @@ func TestMsgRejectDTagRequest_Type(t *testing.T) {
 func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgRejectDTagRequest
+		msg   msgs.MsgRefuseDTagRequest
 		error error
 	}{
 		{
 			name:  "Empty owner returns error",
-			msg:   msgs.NewMsgRejectDTagRequest(user, nil),
+			msg:   msgs.NewMsgRefuseDTagRequest(user, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address: "),
 		},
 		{
 			name:  "Empty sender returns error",
-			msg:   msgs.NewMsgRejectDTagRequest(nil, user),
+			msg:   msgs.NewMsgRefuseDTagRequest(nil, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name:  "Equals owner and sender returns error",
-			msg:   msgs.NewMsgRejectDTagRequest(user, user),
+			msg:   msgs.NewMsgRefuseDTagRequest(user, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner and sender addresses must be different"),
 		},
 		{
 			name:  "No error message",
-			msg:   msgs.NewMsgRejectDTagRequest(user, otherUser),
+			msg:   msgs.NewMsgRefuseDTagRequest(user, otherUser),
 			error: nil,
 		},
 	}

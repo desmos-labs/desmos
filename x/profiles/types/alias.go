@@ -40,7 +40,8 @@ var (
 	NewMsgDeleteProfile         = msgs.NewMsgDeleteProfile
 	NewMsgRequestDTagTransfer   = msgs.NewMsgRequestDTagTransfer
 	NewMsgAcceptDTagTransfer    = msgs.NewMsgAcceptDTagTransfer
-	NewMsgRejectDTagRequest     = msgs.NewMsgRejectDTagRequest
+	NewMsgRefuseDTagRequest     = msgs.NewMsgRefuseDTagRequest
+	NewMsgCancelDTagRequest     = msgs.NewMsgCancelDTagRequest
 	RegisterMessagesCodec       = msgs.RegisterMessagesCodec
 
 	// variable aliases
@@ -60,5 +61,6 @@ type (
 	MsgDeleteProfile       = msgs.MsgDeleteProfile
 	MsgRequestDTagTransfer = msgs.MsgRequestDTagTransfer
 	MsgAcceptDTagTransfer  = msgs.MsgAcceptDTagTransfer
-	MsgRejectDTagRequest   = msgs.MsgRejectDTagRequest
+	MsgRefuseDTagRequest   = msgs.MsgRefuseDTagRequest
+	MsgCancelDTagRequest   = msgs.MsgCancelDTagRequest
 )

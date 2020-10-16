@@ -17,6 +17,6 @@ func RegisterMessagesCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 	cdc.RegisterConcrete(MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer", nil)
 	cdc.RegisterConcrete(MsgAcceptDTagTransfer{}, "desmos/MsgAcceptDTagTransfer", nil)
-	cdc.RegisterConcrete(MsgRejectDTagRequest{}, "desmos/MsgRejectDTagTransferRequest", nil)
+	cdc.RegisterConcrete(MsgRefuseDTagRequest{}, "desmos/MsgRejectDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgCancelDTagRequest{}, "desmos/MsgCancelDTagRequest", nil)
 }

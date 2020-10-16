@@ -28,16 +28,6 @@ const (
 
 var (
 	// functions aliases
-	GetQueryCmd                  = cli.GetQueryCmd
-	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
-	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
-	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
-	GetTxCmd                     = cli.GetTxCmd
-	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
-	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
-	GetCmdBlockUser              = cli.GetCmdBlockUser
-	GetCmdUnblockUser            = cli.GetCmdUnblockUser
-	RegisterRoutes               = rest.RegisterRoutes
 	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
 	NewQuerier                   = keeper.NewQuerier
@@ -51,6 +41,16 @@ var (
 	NewMsgBlockUser              = msgs.NewMsgBlockUser
 	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
+	GetQueryCmd                  = cli.GetQueryCmd
+	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
+	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
+	GetCmdQueryUserBlocks        = cli.GetCmdQueryUserBlocks
+	GetTxCmd                     = cli.GetTxCmd
+	GetCmdCreateRelationship     = cli.GetCmdCreateRelationship
+	GetCmdDeleteRelationship     = cli.GetCmdDeleteRelationship
+	GetCmdBlockUser              = cli.GetCmdBlockUser
+	GetCmdUnblockUser            = cli.GetCmdUnblockUser
+	RegisterRoutes               = rest.RegisterRoutes
 
 	// variable aliases
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
