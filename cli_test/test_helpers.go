@@ -853,6 +853,19 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	return storedProfile
 }
 
+// QueryProfile returns stored profile
+func (f *Fixtures) QueryProfile(address sdk.AccAddress, flags ...string) profilesTypes.Profile {
+	cmd := fmt.Sprintf("%s query profiles profile %s --output=json %s",
+		f.DesmoscliBinary, address, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedProfile profilesTypes.Profile
+	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
+	require.NoError(f.T, err)
+	return storedProfile
+}
+
 // QueryUserDTagRequests returns the user's stored requests
 func (f *Fixtures) QueryUserDTagRequests(user sdk.AccAddress, flags ...string) []profilesTypes.DTagTransferRequest {
 	cmd := fmt.Sprintf("%s query profiles dtag-requests %s --output=json %s",

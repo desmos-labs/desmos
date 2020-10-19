@@ -501,11 +501,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	require.Empty(t, receiverRequests)
 
 	// Make sure that the DTag has been transferred properly and the profile for receiver created
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrPink")
-	receiverProfile := storedProfiles[1]
+	fooProfile := f.QueryProfile(fooAddr)
+	require.NotNil(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrPink")
+	receiverProfile := f.QueryProfile(barAddr)
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
