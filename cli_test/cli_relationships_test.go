@@ -40,9 +40,12 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure relationship is created
-	storedRelationships := f.QueryRelationships(fooAddr)
+	storedRelationships := f.QueryRelationships()
 	require.NotEmpty(t, storedRelationships)
-	expRelationship := types.Relationships{types.Relationship{Recipient: receiver, Subspace: subspace}}
+
+	expRelationship := map[string]types.Relationships{
+		fooAddr.String(): []types.Relationship{{Recipient: receiver, Subspace: subspace}},
+	}
 	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
@@ -52,8 +55,8 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure relationship is created
-	storedRelationships = f.QueryRelationships(fooAddr)
-	require.Empty(t, storedRelationships)
+	userRelationships := f.QueryUserRelationships(fooAddr)
+	require.Empty(t, userRelationships)
 
 	// Test --dry-tun
 	success, _, _ = f.TxCreateRelationship(receiver, subspace, fooAddr, "--dry-run")
@@ -98,7 +101,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure relationship is created
-	storedRelationships := f.QueryRelationships(fooAddr)
+	storedRelationships := f.QueryUserRelationships(fooAddr)
 	require.NotEmpty(t, storedRelationships)
 	expRelationship := types.Relationships{types.Relationship{Recipient: receiver, Subspace: subspace}}
 	require.Equal(t, expRelationship, storedRelationships)
@@ -110,7 +113,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure relationship is deleted
-	storedRelationships = f.QueryRelationships(fooAddr)
+	storedRelationships = f.QueryUserRelationships(fooAddr)
 	require.Empty(t, storedRelationships)
 
 	// Create mono directional relationship

@@ -855,8 +855,22 @@ func (f *Fixtures) QueryUserDTagRequests(user sdk.AccAddress, flags ...string) [
 }
 
 //___________________________________________________________________________________
-// QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
+// query relationships
+
+// QueryRelationships queries all the relationships that are stored
+func (f *Fixtures) QueryRelationships(flags ...string) map[string]relationshipsTypes.Relationships {
+	cmd := fmt.Sprintf("%s query relationships all --output=json %s", f.DesmoscliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedRelationships map[string]relationshipsTypes.Relationships
+	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
+	require.NoError(f.T, err)
+	return storedRelationships
+}
+
+// QueryUserRelationships returns stored relationships
+func (f *Fixtures) QueryUserRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
 	cmd := fmt.Sprintf("%s query relationships user %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)
