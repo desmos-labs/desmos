@@ -707,8 +707,8 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	reactions := types.Reactions{
 		types.Reaction{":earth:", "http://earth.jpg", subspace, fooAddr},
-		types.Reaction{":ocean:", "https://gph.is/2p19Zai", subspace, fooAddr},
-		types.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
+		types.Reaction{":plot:", "https://gph.is/2p19Zai", subspace, fooAddr},
+		types.Reaction{":loot:", "https://gph.is/2phybnt", subspace, fooAddr},
 	}
 
 	// Create a post
@@ -746,11 +746,11 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Equal(t, types.NewPostReaction(":+1:", "👍", fooAddr), storedPost.Reactions[0])
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":ocean:", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":plot:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxPostsAddReaction(post.PostID.String(), ":thumbsdown:", fooAddr, "--generate-only=true")
+	success, stdout, stderr := f.TxPostsAddReaction(post.PostID.String(), ":loot:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg := unmarshalStdTx(f.T, stdout)
@@ -772,7 +772,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr = f.TxPostsRemoveReaction(post.PostID.String(), ":thumbsdown:", fooAddr, "--generate-only=true")
+	success, stdout, stderr = f.TxPostsRemoveReaction(post.PostID.String(), ":loot:", fooAddr, "--generate-only=true")
 	require.Empty(t, stderr)
 	require.True(t, success)
 	msg = unmarshalStdTx(f.T, stdout)
