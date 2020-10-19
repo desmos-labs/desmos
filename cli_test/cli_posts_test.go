@@ -707,7 +707,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	reactions := types.Reactions{
 		types.Reaction{":earth:", "http://earth.jpg", subspace, fooAddr},
-		types.Reaction{":blush:", "https://gph.is/2p19Zai", subspace, fooAddr},
+		types.Reaction{":ocean:", "https://gph.is/2p19Zai", subspace, fooAddr},
 		types.Reaction{":thumbsdown:", "https://gph.is/2phybnt", subspace, fooAddr},
 	}
 
@@ -746,7 +746,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 	require.Equal(t, types.NewPostReaction(":+1:", "👍", fooAddr), storedPost.Reactions[0])
 
 	// Test --dry-run
-	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":blush:", fooAddr, "--dry-run")
+	success, _, _ = f.TxPostsAddReaction(post.PostID.String(), ":ocean:", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
