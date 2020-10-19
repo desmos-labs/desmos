@@ -1,5 +1,3 @@
-// +build cli_test
-
 //nolint
 package clitest
 
@@ -541,10 +539,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the profile is saved and the DTag isn't empty
-	storedProfiles := f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile := storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrBrown")
+	fooProfile := f.QueryProfile(fooAddr)
+	require.NotEmpty(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrBrown")
 
 	// Create a profile for the DTag receiver
 	success, _, sterr = f.TxProfileSave("mrOrange", barAddr, "-y")
@@ -553,10 +550,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the profile is saved and the DTag isn't empty
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[1]
-	require.Equal(t, profile.DTag, "mrOrange")
+	barProfile := f.QueryProfile(barAddr)
+	require.NotEmpty(t, barProfile)
+	require.Equal(t, barProfile.DTag, "mrOrange")
 
 	// Create a request from a user without a profile
 	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
@@ -582,11 +578,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.Empty(t, receiverRequests)
 
 	// Make sure that the DTag has been transferred properly and the profile for receiver created
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrPink")
-	receiverProfile := storedProfiles[1]
+	fooProfile = f.QueryProfile(fooAddr)
+	require.NotEmpty(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrPink")
+	receiverProfile := f.QueryProfile(barAddr)
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
