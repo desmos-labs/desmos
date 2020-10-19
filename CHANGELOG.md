@@ -4,7 +4,7 @@
 - Removed the user_block event attribute key prefix (#291)
 - Changed posts' optional data representation (#272)
 - Fixed bugs inside the DTag transfer process (#295, #296)
-- Implemented the possibility to refuse and cancel DTag requests from both receiver and sender (#297)
+- Implemented the possibility to refuse and cancel DTag requests from both receiver and sender side (#297)
 
 ## Bug fixes
 - Fixed the possibility of requesting a transfer of an empty DTag (#292)

@@ -188,7 +188,7 @@ func GetCmdRefuseDTagTransfer(cdc *codec.Codec) *cobra.Command {
 func GetCmdCancelDTagTransfer(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "cancel-dtag-transfer [owner]",
-		Short: "Refuse a DTag transfer made by the given sender address",
+		Short: "Cancel a DTag transfer made to the given owner address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
