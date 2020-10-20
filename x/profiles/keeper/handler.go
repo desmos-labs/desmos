@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 	"regexp"
 	"time"
 
@@ -150,8 +151,24 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 	return &result, nil
 }
 
+// CheckForBlockedUser checks if the given user address is present inside the blocked users array
+func CheckForBlockedUser(blockedUsers []relationships.UserBlock, addr sdk.AccAddress) bool {
+	for _, user := range blockedUsers {
+		if user.Blocked.Equals(addr) {
+			return true
+		}
+	}
+	return false
+}
+
 // handleMsgRequestDTagTransfer handles the request of a dTag transfer
 func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
+	// check if the request's receiver has blocked the sender before
+	if isBlocked := CheckForBlockedUser(keeper.RelKeeper.GetUserBlocks(ctx, msg.CurrentOwner), msg.ReceivingUser); isBlocked {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("The user with address %s has been blocked from %s", msg.ReceivingUser, msg.CurrentOwner))
+	}
+
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.CurrentOwner)
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,

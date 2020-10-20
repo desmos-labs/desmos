@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -22,9 +23,17 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 		name                string
 		msg                 types.MsgCreateRelationship
 		storedRelationships types.Relationships
+		isBlocked           bool
 		expErr              error
 		expEvent            sdk.Event
 	}{
+		{
+			name:      "Relationship sender been blocked from receiver returns error",
+			msg:       types.NewMsgCreateRelationship(sender, receiver, subspace),
+			isBlocked: true,
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s has been blocked from %s", sender, receiver)),
+		},
 		{
 			name:                "Relationship already created returns error",
 			msg:                 types.NewMsgCreateRelationship(sender, receiver, subspace),
@@ -48,6 +57,12 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+			if test.isBlocked {
+				userBlock := relationships.NewUserBlock(receiver, sender, "test",
+					"")
+				_ = suite.keeper.SaveUserBlock(suite.ctx, userBlock)
+			}
+
 			if test.storedRelationships != nil {
 				store := suite.ctx.KVStore(suite.keeper.StoreKey)
 				store.Set(types.RelationshipsStoreKey(test.msg.Sender),

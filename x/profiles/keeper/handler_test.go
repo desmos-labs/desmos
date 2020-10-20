@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 	"strings"
 	"time"
 
@@ -312,15 +313,59 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestCheckForBlockedUser() {
+	user, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	otherUser, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	userBlock := relationships.NewUserBlock(user, otherUser, "test", "")
+	userBlock1 := relationships.NewUserBlock(otherUser, user, "test", "")
+
+	tests := []struct {
+		name       string
+		user       sdk.AccAddress
+		userBlocks []relationships.UserBlock
+		expBool    bool
+	}{
+		{
+			name:       "blocked user found returns true",
+			user:       otherUser,
+			userBlocks: []relationships.UserBlock{userBlock, userBlock1},
+			expBool:    true,
+		},
+		{
+			name:       "non blocked user not found returns false",
+			user:       user,
+			userBlocks: []relationships.UserBlock{userBlock},
+			expBool:    false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			res := keeper.CheckForBlockedUser(test.userBlocks, test.user)
+			suite.Equal(test.expBool, res)
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	tests := []struct {
 		name           string
 		msg            types.MsgRequestDTagTransfer
 		hasProfile     bool
+		isBlocked      bool
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
 	}{
+		{
+			name:      "Blocked receiver making request returns error",
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			isBlocked: true,
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s has been blocked from %s",
+					suite.testData.otherUser, suite.testData.user),
+			),
+		},
 		{
 			name:           "No DTag to transfer returns error",
 			msg:            types.NewMsgRequestDTagTransfer(suite.testData.otherUser, suite.testData.user),
@@ -359,6 +404,13 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			if test.isBlocked {
+				userBlock := relationships.NewUserBlock(suite.testData.user, suite.testData.otherUser, "test",
+					"")
+				_ = suite.keeper.RelKeeper.SaveUserBlock(suite.ctx, userBlock)
+			}
+
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),

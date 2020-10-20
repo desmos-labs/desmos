@@ -299,6 +299,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.cdc,
 		keys[profilesTypes.StoreKey],
 		app.subspaces[profilesTypes.ModuleName],
+		app.relationshipsKeeper,
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.postsKeeper,

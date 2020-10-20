@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,18 +16,20 @@ type Keeper struct {
 	// The reference to the ParamsStore to get and set profile specific params
 	paramSubspace params.Subspace
 
-	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
+	RelKeeper relationships.Keeper // Relationships keeper to keep track of blocked users
+	StoreKey  sdk.StoreKey         // Unexposed key to access store from sdk.Context
+	Cdc       *codec.Codec         // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace, relKeeper relationships.Keeper) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
 		paramSubspace: paramSpace,
+		RelKeeper:     relKeeper,
 		StoreKey:      storeKey,
 		Cdc:           cdc,
 	}

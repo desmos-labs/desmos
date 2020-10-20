@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -29,8 +28,24 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// CheckForBlockedUser checks if the given user address is present inside the blocked users array
+func CheckForBlockedUser(blockedUsers []types.UserBlock, addr sdk.AccAddress) bool {
+	for _, user := range blockedUsers {
+		if user.Blocked.Equals(addr) {
+			return true
+		}
+	}
+	return false
+}
+
 // handleMsgCreateRelationship handles the creation of a relationship
 func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
+	// Check if the receiver has blocked the sender before
+	if isBlocked := CheckForBlockedUser(keeper.GetUserBlocks(ctx, msg.Receiver), msg.Sender); isBlocked {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("The user with address %s has been blocked from %s", msg.Sender, msg.Receiver))
+	}
+
 	// Save the relationship
 	err := keeper.StoreRelationship(ctx, msg.Sender, types.NewRelationship(msg.Receiver, msg.Subspace))
 	if err != nil {
