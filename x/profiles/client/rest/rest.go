@@ -28,22 +28,18 @@ type DeleteProfileReq struct {
 }
 
 type TransferDTagReq struct {
-	BaseReq      rest.BaseReq `json:"base_req"`
-	CurrentOwner string       `json:"current_owner"`
+	BaseReq rest.BaseReq `json:"base_req"`
 }
 
 type AcceptDTagTransferReq struct {
-	BaseReq       rest.BaseReq `json:"base_req"`
-	ReceivingUser string       `json:"receiving_user"`
-	NewDTag       string       `json:"new_dtag"`
+	BaseReq rest.BaseReq `json:"base_req"`
+	NewDTag string       `json:"new_dtag"`
 }
 
 type RefuseDTagTransferReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Sender  string       `json:"sender"`
 }
 
 type CancelDTagTransferReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Owner   string       `json:"owner"`
 }

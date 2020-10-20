@@ -313,7 +313,7 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 			msg: msgs.NewMsgAcceptDTagTransfer(
 				"dtag", user, user,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name: "Empty newDTag returns error",
@@ -386,7 +386,7 @@ func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 		{
 			name:  "Equals sender and receiver returns error",
 			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver addresses must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name:  "No error message",
@@ -450,7 +450,7 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 		{
 			name:  "Equals sender and receiver returns error",
 			msg:   msgs.NewMsgCancelDTagTransferRequest(user, user),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiver and sender addresses must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name:  "No error message",

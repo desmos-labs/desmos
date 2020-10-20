@@ -16,7 +16,7 @@ This message allows you to cancel a `DTag` transfer request made by yourself.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `sender`| String | Desmos address of the user that request the `DTag` |
-| `owner`  | String | Desmos address of the user that is the owner of the requested `DTag` |
+| `receiver`  | String | Desmos address of the user that is the owner of the requested `DTag` |
 
 ## Example
 ````json
@@ -24,7 +24,7 @@ This message allows you to cancel a `DTag` transfer request made by yourself.
   "type": "desmos/MsgCancelDTagTransferRequest",
   "value": {
     "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a",
-    "owner": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
+    "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
   }
 }
 ````

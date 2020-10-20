@@ -23,35 +23,35 @@ func NewDTagTransferRequest(dtagToTrade string, receiver, sender sdk.AccAddress)
 }
 
 // Equals returns true if the two requests are equals. False otherwise
-func (dtagTR DTagTransferRequest) Equals(other DTagTransferRequest) bool {
-	return dtagTR.DTagToTrade == other.DTagToTrade &&
-		dtagTR.Receiver.Equals(other.Receiver) &&
-		dtagTR.Sender.Equals(other.Sender)
+func (request DTagTransferRequest) Equals(other DTagTransferRequest) bool {
+	return request.DTagToTrade == other.DTagToTrade &&
+		request.Receiver.Equals(other.Receiver) &&
+		request.Sender.Equals(other.Sender)
 }
 
 // String implement fmt.Stringer
-func (dtagTR DTagTransferRequest) String() string {
+func (request DTagTransferRequest) String() string {
 	out := "DTag transfer request:\n"
 	out += fmt.Sprintf("[DTag to trade] %s [Request Receiver] %s [Request Sender] %s",
-		dtagTR.DTagToTrade, dtagTR.Receiver, dtagTR.Sender)
+		request.DTagToTrade, request.Receiver, request.Sender)
 	return out
 }
 
 // Validate checks the request validity
-func (dtagTR DTagTransferRequest) Validate() error {
-	if len(strings.TrimSpace(dtagTR.DTagToTrade)) == 0 {
-		return fmt.Errorf("invalid DTag to trade %s", dtagTR.DTagToTrade)
+func (request DTagTransferRequest) Validate() error {
+	if len(strings.TrimSpace(request.DTagToTrade)) == 0 {
+		return fmt.Errorf("invalid DTag to trade %s", request.DTagToTrade)
 	}
 
-	if dtagTR.Receiver.Empty() {
+	if request.Receiver.Empty() {
 		return fmt.Errorf("receiver address cannot be empty")
 	}
 
-	if dtagTR.Sender.Empty() {
+	if request.Sender.Empty() {
 		return fmt.Errorf("sender address cannot be empty")
 	}
 
-	if dtagTR.Receiver.Equals(dtagTR.Sender) {
+	if request.Receiver.Equals(request.Sender) {
 		return fmt.Errorf("the sender and receiver must be different")
 	}
 

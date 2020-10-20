@@ -159,7 +159,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.Receiver)
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("The user with address %s doesn't have a profile yet so their dTag cannot be transferred",
+			fmt.Sprintf("The user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 				msg.Receiver))
 	}
 	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.Receiver, msg.Sender)
@@ -256,8 +256,8 @@ func handleMsgAcceptDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgAc
 }
 
 // DeleteDTagTransferRequest delete the request made by the sender and returns the event with the given eventType.
-func DeleteDTagTransferRequest(ctx sdk.Context, keeper Keeper, owner, sender sdk.AccAddress, eventType, deletionType string) (*sdk.Result, error) {
-	if err := keeper.DeleteDTagTransferRequest(ctx, owner, sender, deletionType); err != nil {
+func DeleteDTagTransferRequest(ctx sdk.Context, keeper Keeper, owner, sender sdk.AccAddress, eventType string) (*sdk.Result, error) {
+	if err := keeper.DeleteDTagTransferRequest(ctx, owner, sender); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
@@ -277,10 +277,10 @@ func DeleteDTagTransferRequest(ctx sdk.Context, keeper Keeper, owner, sender sdk
 
 // handleMsgRefuseDTagTransfer handles the reject of a dTag transfer request
 func handleMsgRefuseDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRefuseDTagTransferRequest) (*sdk.Result, error) {
-	return DeleteDTagTransferRequest(ctx, keeper, msg.Sender, msg.Receiver, types.EventTypeDTagTransferRefuse, "refused")
+	return DeleteDTagTransferRequest(ctx, keeper, msg.Sender, msg.Receiver, types.EventTypeDTagTransferRefuse)
 }
 
 // handleMsgCancelDTagTransfer handles the deletion of a dTag transfer request
 func handleMsgCancelDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgCancelDTagTransferRequest) (*sdk.Result, error) {
-	return DeleteDTagTransferRequest(ctx, keeper, msg.Receiver, msg.Sender, types.EventTypeDTagTransferCancel, "cancelled")
+	return DeleteDTagTransferRequest(ctx, keeper, msg.Receiver, msg.Sender, types.EventTypeDTagTransferCancel)
 }

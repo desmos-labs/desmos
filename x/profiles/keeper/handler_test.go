@@ -327,7 +327,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedDTagReqs: nil,
 			hasProfile:     false,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s doesn't have a profile yet so their dTag cannot be transferred",
+				fmt.Sprintf("The user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 					suite.testData.otherUser)),
 		},
 		{
@@ -538,7 +538,7 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 			owner:          suite.testData.user,
 			sender:         suite.testData.otherUser,
 			storedDTagReqs: nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be refused"),
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
 		},
 		{
 			name:           "Deletion runs correctly",
@@ -564,7 +564,7 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 			}
 
 			res, err := keeper.DeleteDTagTransferRequest(suite.ctx, suite.keeper,
-				test.owner, test.sender, types.EventTypeDTagTransferRefuse, "refused")
+				test.owner, test.sender, types.EventTypeDTagTransferRefuse)
 
 			if res == nil {
 				suite.NotNil(err)
@@ -593,7 +593,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 			name:           "No requests found returns error",
 			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be refused"),
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
 		},
 		{
 			name:           "Deletion runs correctly",
@@ -647,7 +647,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 			name:           "No requests found returns error",
 			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be cancelled"),
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
 		},
 		{
 			name:           "Deletion runs correctly",

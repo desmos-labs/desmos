@@ -195,7 +195,7 @@ func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Sender.Equals(msg.Receiver) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiving user and current owner must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -241,7 +241,7 @@ func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Sender.Equals(msg.Receiver) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver addresses must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -287,7 +287,7 @@ func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Receiver.Equals(msg.Sender) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the receiver and sender addresses must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil

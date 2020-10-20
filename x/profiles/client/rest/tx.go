@@ -14,10 +14,10 @@ import (
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/dtag-transfer-requests", requestDTagTransferHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/dtag-transfer-requests/accept", acceptTransferRequestHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/dtag-transfer-requests/refuse", refuseDTagTransferRequestHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/dtag-transfer-requests/cancel", cancelDTagTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtag/request/{receiverAddress}", requestDTagTransferHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtag/accept/{senderAddress}", acceptTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtag/refuse/{senderAddress}", refuseDTagTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtag/cancel/{receiverAddress}", cancelDTagTransferRequestHandler(cliCtx)).Methods("POST")
 }
 
 func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -86,6 +86,7 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req TransferDTagReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -97,13 +98,13 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		currentOwner, err := sdk.AccAddressFromBech32(req.CurrentOwner)
+		receiver, err := sdk.AccAddressFromBech32(vars["receiverAddress"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(currentOwner, cliCtx.FromAddress)
+		msg := types.NewMsgRequestDTagTransfer(receiver, cliCtx.FromAddress)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -115,6 +116,7 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req AcceptDTagTransferReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -127,7 +129,7 @@ func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receivingUser, err := sdk.AccAddressFromBech32(req.ReceivingUser)
+		receivingUser, err := sdk.AccAddressFromBech32(vars["senderAddress"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -145,6 +147,7 @@ func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func refuseDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req RefuseDTagTransferReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -156,7 +159,7 @@ func refuseDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFun
 			return
 		}
 
-		sender, err := sdk.AccAddressFromBech32(req.Sender)
+		sender, err := sdk.AccAddressFromBech32(vars["senderAddress"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -174,6 +177,7 @@ func refuseDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFun
 
 func cancelDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req CancelDTagTransferReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -185,7 +189,7 @@ func cancelDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFun
 			return
 		}
 
-		owner, err := sdk.AccAddressFromBech32(req.Owner)
+		owner, err := sdk.AccAddressFromBech32(vars["receiverAddress"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

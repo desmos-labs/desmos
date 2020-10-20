@@ -420,7 +420,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 		{
 			name:       "empty requests array returns error",
 			storedReqs: nil,
-			error:      fmt.Errorf("no requests to be refused"),
+			error:      fmt.Errorf("no requests to be deleted"),
 		},
 		{
 			name: "no request made by the sender returns error",
@@ -469,7 +469,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 				)
 			}
 
-			err := suite.keeper.DeleteDTagTransferRequest(suite.ctx, suite.testData.user, suite.testData.otherUser, "refused")
+			err := suite.keeper.DeleteDTagTransferRequest(suite.ctx, suite.testData.user, suite.testData.otherUser)
 			if err != nil {
 				suite.Equal(test.error, err)
 			} else {
