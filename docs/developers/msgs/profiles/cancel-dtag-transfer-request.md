@@ -1,5 +1,5 @@
 # `MsgCancelDTagTransferRequest`
-This message allows you to cancel a `DTag`'s transfer request made by yourself.
+This message allows you to cancel a `DTag` transfer request made by yourself.
 
 ## Structure
 ````json
@@ -7,7 +7,7 @@ This message allows you to cancel a `DTag`'s transfer request made by yourself.
   "type": "desmos/MsgCancelDTagTransferRequest",
   "value": {
     "sender": "<Desmos address that sent the DTag's request>",
-    "owner": "<Desmos address of the DTag owner>"
+    "receiver": "<Desmos address of the DTag owner>"
   }
 }
 ````

@@ -350,8 +350,8 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferRequest,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 	}
@@ -387,8 +387,8 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 				)
 
 				suite.Len(res.Events, 1)
@@ -405,7 +405,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 	tests := []struct {
 		name                       string
-		msg                        types.MsgAcceptDTagTransfer
+		msg                        types.MsgAcceptDTagTransferRequest
 		storedDTagReqs             []types.DTagTransferRequest
 		storedOwnerProfile         *types.Profile
 		storedReceivingUserProfile *types.Profile
@@ -453,8 +453,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 		{
@@ -468,8 +468,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 	}
@@ -512,8 +512,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					types.EventTypeDTagTransferAccept,
 					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 				)
 
 				suite.Len(res.Events, 1)
@@ -548,8 +548,8 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 			expErr:         nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferRefuse,
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String())),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
 		},
 	}
 
@@ -602,8 +602,8 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 			expErr:         nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferRefuse,
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String())),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
 		},
 	}
 
@@ -626,7 +626,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}
@@ -645,19 +645,19 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 	}{
 		{
 			name:           "No requests found returns error",
-			msg:            types.NewMsgCancelDTagRequest(suite.testData.user, suite.testData.otherUser),
+			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
 			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be cancelled"),
 		},
 		{
 			name:           "Deletion runs correctly",
-			msg:            types.NewMsgCancelDTagRequest(suite.testData.otherUser, suite.testData.user),
+			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
 			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
 			expErr:         nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferCancel,
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String())),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
 		},
 	}
 

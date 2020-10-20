@@ -64,10 +64,6 @@ var (
 )
 
 type (
-	OptionalData      = common.OptionalData
-	OptionalDataEntry = common.OptionalDataEntry
-	Attachment        = common.Attachment
-	Attachments       = common.Attachments
 	AnswerID          = polls.AnswerID
 	PollAnswer        = polls.PollAnswer
 	PollAnswers       = polls.PollAnswers
@@ -78,4 +74,8 @@ type (
 	PostReactions     = reactions.PostReactions
 	Reaction          = reactions.Reaction
 	Reactions         = reactions.Reactions
+	OptionalData      = common.OptionalData
+	OptionalDataEntry = common.OptionalDataEntry
+	Attachment        = common.Attachment
+	Attachments       = common.Attachments
 )

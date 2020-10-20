@@ -44,7 +44,7 @@ type Reports []Report
 
 // String implements stringer
 func (reports Reports) String() string {
-	out := "Type - Message - Sender\n"
+	out := "Type - Message - Receiver\n"
 	for _, rep := range reports {
 		out += fmt.Sprintf("%s - %s - %s\n",
 			rep.Type, rep.Message, rep.User)

@@ -14,8 +14,8 @@ const (
 	AttributeProfileCreationTime = "profile_creation_time"
 
 	// DTag trade attributes
-	AttributeCurrentOwner  = "current_owner"
-	AttributeReceivingUser = "receiving_user"
-	AttributeDTagToTrade   = "dtag_to_trade"
-	AttributeNewDTag       = "new_dtag"
+	AttributeRequestReceiver = "request_receiver"
+	AttributeRequestSender   = "request_sender"
+	AttributeDTagToTrade     = "dtag_to_trade"
+	AttributeNewDTag         = "new_dtag"
 )

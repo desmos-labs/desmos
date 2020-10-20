@@ -175,7 +175,7 @@ func TestPostQueryResponse_String(t *testing.T) {
 		},
 	)
 
-	expected := "ID: 93ed93d2f3b3363399c8b7a4509f0530a8c863c16c755bf916901ab55ce33322\nReactions: [[Shortcode] :like: [Value] https://example.com/like [Owner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 [Shortcode] :+1: [Value] 👍 [Owner] cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae]\nChildren: [dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1, dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]"
+	expected := "ID: 93ed93d2f3b3363399c8b7a4509f0530a8c863c16c755bf916901ab55ce33322\nReactions: [[Shortcode] :like: [Value] https://example.com/like [Receiver] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4 [Shortcode] :+1: [Value] 👍 [Receiver] cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae]\nChildren: [dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1, dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1]"
 	stringResponse := postResponse.String()
 	require.Equal(t, strings.TrimSpace(expected), stringResponse)
 }

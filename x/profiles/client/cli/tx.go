@@ -200,7 +200,7 @@ func GetCmdCancelDTagTransfer(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCancelDTagRequest(cliCtx.FromAddress, owner)
+			msg := types.NewMsgCancelDTagTransferRequest(cliCtx.FromAddress, owner)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},

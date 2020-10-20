@@ -1,5 +1,5 @@
 # `MsgRefuseDTagTransferRequest`
-This message allows you to refuse a `DTag`'s transfer request made by a user.
+This message allows you to refuse a `DTag` transfer request made by a user.
 
 ## Structure
 ````json
@@ -7,7 +7,7 @@ This message allows you to refuse a `DTag`'s transfer request made by a user.
   "type": "desmos/MsgRefuseDTagTransferRequest",
   "value": {
     "sender": "<Desmos address that sent the DTag's request>",
-    "owner": "<Desmos address of the DTag owner>"
+    "receiver": "<Desmos address of the DTag owner>"
   }
 }
 ````
@@ -16,7 +16,7 @@ This message allows you to refuse a `DTag`'s transfer request made by a user.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `sender`| String | Desmos address of the user that request the `DTag` |
-| `owner`  | String | Desmos address of the user that is the owner of the requested `DTag` |
+| `receiver`  | String | Desmos address of the user that is the owner of the requested `DTag` |
 
 ## Example
 ````json
@@ -24,7 +24,7 @@ This message allows you to refuse a `DTag`'s transfer request made by a user.
   "type": "desmos/MsgRefuseDTagTransferRequest",
   "value": {
     "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a",
-    "owner": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
+    "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
   }
 }
 ````

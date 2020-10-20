@@ -141,14 +141,14 @@ func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile typ
 // returning errors if an equal one already exists.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.DTagTransferRequest) error {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.DtagTransferRequestStoreKey(transferRequest.CurrentOwner)
+	key := types.DtagTransferRequestStoreKey(transferRequest.Receiver)
 
 	var requests []types.DTagTransferRequest
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
 	for _, req := range requests {
 		if req.Equals(transferRequest) {
 			return fmt.Errorf("the transfer request from %s to %s has already been made",
-				transferRequest.ReceivingUser, transferRequest.CurrentOwner)
+				transferRequest.Sender, transferRequest.Receiver)
 		}
 	}
 
@@ -201,7 +201,7 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, owner, sender sdk.Acc
 	}
 
 	for index, request := range requests {
-		if request.ReceivingUser.Equals(sender) {
+		if request.Sender.Equals(sender) {
 			requests = append(requests[:index], requests[index+1:]...)
 			if len(requests) == 0 {
 				store.Delete(key)

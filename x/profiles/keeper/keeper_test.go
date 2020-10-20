@@ -284,7 +284,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedTransferReqs != nil {
-				store.Set(types.DtagTransferRequestStoreKey(test.storedTransferReqs[0].CurrentOwner),
+				store.Set(types.DtagTransferRequestStoreKey(test.storedTransferReqs[0].Receiver),
 					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedTransferReqs),
 				)
 			}
@@ -293,7 +293,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			suite.Equal(test.expErr, actualErr)
 
 			var actualReqs []types.DTagTransferRequest
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.CurrentOwner)), &actualReqs)
+			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.Receiver)), &actualReqs)
 			suite.Equal(test.expStoredTransferReqs, actualReqs)
 		})
 	}

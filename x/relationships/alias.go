@@ -37,9 +37,9 @@ var (
 	GetCmdBlockUser              = cli.GetCmdBlockUser
 	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 	RegisterRoutes               = rest.RegisterRoutes
-	NewHandler                   = keeper.NewHandler
 	NewKeeper                    = keeper.NewKeeper
 	NewQuerier                   = keeper.NewQuerier
+	NewHandler                   = keeper.NewHandler
 	NewRelationship              = models.NewRelationship
 	NewUserBlock                 = models.NewUserBlock
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
@@ -59,9 +59,6 @@ var (
 )
 
 type (
-	Relationship          = models.Relationship
-	Relationships         = models.Relationships
-	UserBlock             = models.UserBlock
 	MsgCreateRelationship = msgs.MsgCreateRelationship
 	MsgDeleteRelationship = msgs.MsgDeleteRelationship
 	MsgBlockUser          = msgs.MsgBlockUser
@@ -70,4 +67,7 @@ type (
 	UserBlockReq          = rest.UserBlockReq
 	UserUnblockReq        = rest.UserUnblockReq
 	Keeper                = keeper.Keeper
+	Relationship          = models.Relationship
+	Relationships         = models.Relationships
+	UserBlock             = models.UserBlock
 )
