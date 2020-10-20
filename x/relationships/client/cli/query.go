@@ -7,9 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
 // GetQueryCmd adds the query commands
@@ -44,7 +44,7 @@ func GetCmdQueryRelationships(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out map[string][]sdk.AccAddress
+			var out map[string]types.Relationships
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

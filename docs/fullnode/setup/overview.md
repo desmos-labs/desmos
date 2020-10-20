@@ -23,9 +23,9 @@ You can easily understand how using a pruning strategy of `nothing` will use mor
 
 | Pruning strategy | Minimum disk space | Recommended disk space |
 | :--------------: | :----------------: | :--------------------: |
-| `nothing` | 20 GB | 40 GB | 
+| `everything` | 20 GB | 40 GB | 
 | `default` | 80 GB | 120 GB |
-| `everything` | 120 GB | \> 240 GB |
+| `nothing` | 120 GB | \> 240 GB |
 
 A part from disk space, the following requirements should be met.
 
