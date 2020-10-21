@@ -195,6 +195,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: cli-test
-        run: |
-          make test-integration
-        if: "env.GIT_DIFF != ''"
+        run: make test-integration
+
