@@ -1,3 +1,6 @@
+# Version 0.14.0
+- Implemented users blocks checks inside DTag transferring process and relationships creation process (#298)
+
 # Version 0.13.0
 ## Changes
 - Removed the relationship event attribute key prefix (#300)

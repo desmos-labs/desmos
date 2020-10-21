@@ -84,6 +84,10 @@ func randomRelationshipFields(
 		return sim.Account{}, types.Relationship{}, true
 	}
 
+	if isBlocked := keeper.CheckForBlockedUser(k.GetUserBlocks(ctx, receiver.Address), sender.Address); isBlocked {
+		return sim.Account{}, types.Relationship{}, true
+	}
+
 	rel := types.NewRelationship(receiver.Address, subspace)
 
 	// skip if relationships already exists
