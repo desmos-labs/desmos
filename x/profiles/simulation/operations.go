@@ -19,6 +19,8 @@ const (
 	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
 	OpWeightMsgRequestDTagTransfer = "op_weight_msg_request_dtag_transfer"
 	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
+	OpWeightMsgRefuseDTagTransfer  = "op_weight_msg_refuse_dtag_transfer_request"
+	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
 
 	DefaultGasValue = 200000
 )
@@ -53,6 +55,20 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
+	var weightMsgRefuseDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRefuseDTagTransfer, &weightMsgRefuseDTagTransfer, nil,
+		func(r *rand.Rand) {
+			weightMsgRefuseDTagTransfer = params.DefaultWeightMsgRefuseDTagTransfer
+		},
+	)
+
+	var weightMsgCancelDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCancelDTagTransfer, &weightMsgCancelDTagTransfer, nil,
+		func(r *rand.Rand) {
+			weightMsgCancelDTagTransfer = params.DefaultWeightMsgCancelDTagTransfer
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
@@ -69,6 +85,14 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
 			SimulateMsgAcceptDTagTransfer(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRefuseDTagTransfer,
+			SimulateMsgRefuseDTagTransfer(k, ak),
+		),
+		sim.NewWeightedOperation(
+			weightMsgCancelDTagTransfer,
+			SimulateMsgCancelDTagTransfer(k, ak),
 		),
 	}
 }

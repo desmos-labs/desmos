@@ -58,18 +58,18 @@ var (
 	ArePollDataEquals          = polls.ArePollDataEquals
 	NewUserAnswer              = polls.NewUserAnswer
 	NewUserAnswers             = polls.NewUserAnswers
-	NewPostReaction            = reactions.NewPostReaction
-	NewPostReactions           = reactions.NewPostReactions
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	NewPostReaction            = reactions.NewPostReaction
+	NewPostReactions           = reactions.NewPostReactions
+	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
 	NewMsgAddPostReaction      = msgs.NewMsgAddPostReaction
 	NewMsgRemovePostReaction   = msgs.NewMsgRemovePostReaction
 	NewMsgAnswerPoll           = msgs.NewMsgAnswerPoll
 	NewMsgCreatePost           = msgs.NewMsgCreatePost
 	NewMsgEditPost             = msgs.NewMsgEditPost
 	NewMsgRegisterReaction     = msgs.NewMsgRegisterReaction
-	RegisterMessagesCodec      = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	MsgsCodec                = msgs.MsgsCodec
@@ -85,12 +85,6 @@ var (
 )
 
 type (
-	MsgAddPostReaction       = msgs.MsgAddPostReaction
-	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
-	MsgAnswerPoll            = msgs.MsgAnswerPoll
-	MsgCreatePost            = msgs.MsgCreatePost
-	MsgEditPost              = msgs.MsgEditPost
-	MsgRegisterReaction      = msgs.MsgRegisterReaction
 	PostQueryResponse        = models.PostQueryResponse
 	PollAnswersQueryResponse = models.PollAnswersQueryResponse
 	PostID                   = models.PostID
@@ -107,8 +101,14 @@ type (
 	PollData                 = polls.PollData
 	UserAnswer               = polls.UserAnswer
 	UserAnswers              = polls.UserAnswers
-	PostReaction             = reactions.PostReaction
-	PostReactions            = reactions.PostReactions
 	Reaction                 = reactions.Reaction
 	Reactions                = reactions.Reactions
+	PostReaction             = reactions.PostReaction
+	PostReactions            = reactions.PostReactions
+	MsgAddPostReaction       = msgs.MsgAddPostReaction
+	MsgRemovePostReaction    = msgs.MsgRemovePostReaction
+	MsgAnswerPoll            = msgs.MsgAnswerPoll
+	MsgCreatePost            = msgs.MsgCreatePost
+	MsgEditPost              = msgs.MsgEditPost
+	MsgRegisterReaction      = msgs.MsgRegisterReaction
 )

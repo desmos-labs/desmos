@@ -14,8 +14,14 @@ import (
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/dtag-transfer-requests", requestDTagTransferHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/dtag-transfer-requests/accept", acceptTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests",
+		requestDTagTransferHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests/{senderAddress}/acceptances",
+		acceptTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests/{senderAddress}",
+		refuseDTagTransferRequestHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles/dtagrequests/{receiverAddress}",
+		cancelDTagTransferRequestHandler(cliCtx)).Methods("DELETE")
 }
 
 func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -95,13 +101,13 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		currentOwner, err := sdk.AccAddressFromBech32(req.CurrentOwner)
+		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(currentOwner, cliCtx.FromAddress)
+		msg := types.NewMsgRequestDTagTransfer(receiver, cliCtx.FromAddress)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -113,6 +119,7 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req AcceptDTagTransferReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -125,13 +132,73 @@ func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receivingUser, err := sdk.AccAddressFromBech32(req.ReceivingUser)
+		receivingUser, err := sdk.AccAddressFromBech32(vars["senderAddress"])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		msg := types.NewMsgAcceptDTagTransfer(req.NewDTag, cliCtx.FromAddress, receivingUser)
+		if err := msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+func refuseDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req RefuseDTagTransferReq
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		sender, err := sdk.AccAddressFromBech32(vars["senderAddress"])
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgRefuseDTagTransferRequest(sender, cliCtx.FromAddress)
+		if err := msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+func cancelDTagTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req CancelDTagTransferReq
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		owner, err := sdk.AccAddressFromBech32(vars["receiverAddress"])
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgRefuseDTagTransferRequest(cliCtx.FromAddress, owner)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

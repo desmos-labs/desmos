@@ -33,12 +33,6 @@ const (
 
 var (
 	// functions aliases
-	IsValidPostID              = common.IsValidPostID
-	IsValidReactionCode        = common.IsValidReactionCode
-	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
-	NewOptionalData            = common.NewOptionalData
-	NewAttachment              = common.NewAttachment
-	NewAttachments             = common.NewAttachments
 	ParseAnswerID              = polls.ParseAnswerID
 	NewPollAnswer              = polls.NewPollAnswer
 	NewPollAnswers             = polls.NewPollAnswers
@@ -51,6 +45,12 @@ var (
 	NewReaction                = reactions.NewReaction
 	IsEmoji                    = reactions.IsEmoji
 	NewReactions               = reactions.NewReactions
+	IsValidPostID              = common.IsValidPostID
+	IsValidReactionCode        = common.IsValidReactionCode
+	GetEmojiByShortCodeOrValue = common.GetEmojiByShortCodeOrValue
+	NewOptionalData            = common.NewOptionalData
+	NewAttachment              = common.NewAttachment
+	NewAttachments             = common.NewAttachments
 
 	// variable aliases
 	ModuleAddress            = common.ModuleAddress

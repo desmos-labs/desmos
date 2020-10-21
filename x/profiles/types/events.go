@@ -5,6 +5,8 @@ const (
 	EventTypeProfileDeleted      = "profile_deleted"
 	EventTypeDTagTransferRequest = "dtag_transfer_request"
 	EventTypeDTagTransferAccept  = "dtag_transfer_accept"
+	EventTypeDTagTransferRefuse  = "dtag_transfer_refuse"
+	EventTypeDTagTransferCancel  = "dtag_transfer_cancel"
 
 	// Profile attributes
 	AttributeProfileDtag         = "profile_dtag"
@@ -12,8 +14,8 @@ const (
 	AttributeProfileCreationTime = "profile_creation_time"
 
 	// DTag trade attributes
-	AttributeCurrentOwner  = "current_owner"
-	AttributeReceivingUser = "receiving_user"
-	AttributeDTagToTrade   = "dtag_to_trade"
-	AttributeNewDTag       = "new_dtag"
+	AttributeRequestReceiver = "request_receiver"
+	AttributeRequestSender   = "request_sender"
+	AttributeDTagToTrade     = "dtag_to_trade"
+	AttributeNewDTag         = "new_dtag"
 )

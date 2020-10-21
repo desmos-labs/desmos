@@ -20,7 +20,9 @@ Here is the list of currently available [messages](developer-faq.md#what-is-a-me
 * [`MsgSaveProfile`](msgs/profiles/save-profile.md): allows you to create or edit an existing profile.
 * [`MsgDeleteProfile`](msgs/profiles/delete-profile.md): allows you to delete an existing profile.
 * [`MsgRequestDTagTransfer`](msgs/profiles/request-dtag-transfer.md): allows you to ask a transfer for another user `dTag`.
-* [`MsgAcceptDTagTransfer`](msgs/profiles/accept-dtag-transfer-request.md): allows you to accept a dtag transfer.
+* [`MsgAcceptDTagTransferRequest`](msgs/profiles/accept-dtag-transfer-request.md): allows you to accept a dtag transfer.
+* [`MsgRefuseDTagTransferRequest`](msgs/profiles/refuse-dtag-transfer-request.md): allows the `dTag` owner to refuse a transfer request.
+* [`MsgCancelDTagTransferRequest`](msgs/profiles/cancel-dtag-transfer-request.md): allows the `dTag` request's sender to cancel his request.
 
 ### Relationships
 * [`MsgCreateRelationship`](msgs/relationships/create-relationship.md): allows you to create a relationship.
