@@ -84,6 +84,10 @@ func randomDtagRequestTransferFields(
 		return sim.Account{}, types.DTagTransferRequest{}, true
 	}
 
+	if isBlocked := keeper.CheckForBlockedUser(k.RelKeeper.GetUserBlocks(ctx, receiver.Address), sender.Address); isBlocked {
+		return sim.Account{}, types.DTagTransferRequest{}, true
+	}
+
 	randomDTag := RandomDTag(r)
 	req := types.NewDTagTransferRequest(randomDTag, receiver.Address, sender.Address)
 	_ = k.SaveProfile(ctx, types.NewProfile(randomDTag, receiver.Address, ctx.BlockTime()))
