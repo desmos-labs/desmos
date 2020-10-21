@@ -3,12 +3,12 @@ package keeper
 import (
 	"bytes"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/relationships"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine

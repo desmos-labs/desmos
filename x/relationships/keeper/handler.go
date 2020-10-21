@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -29,7 +30,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 }
 
 // CheckForBlockedUser checks if the given user address is present inside the blocked users array
-func CheckForBlockedUser(blockedUsers []types.UserBlock, addr sdk.AccAddress) bool {
+func CheckForBlockedUser(blockedUsers []types.UserBlock, addr sdk.Address) bool {
 	for _, user := range blockedUsers {
 		if user.Blocked.Equals(addr) {
 			return true

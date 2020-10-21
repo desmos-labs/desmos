@@ -2,13 +2,13 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/relationships"
 	"regexp"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 // NewHandler returns a handler for "profile" type messages.
@@ -156,7 +156,7 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 }
 
 // CheckForBlockedUser checks if the given user address is present inside the blocked users array
-func CheckForBlockedUser(blockedUsers []relationships.UserBlock, addr sdk.AccAddress) bool {
+func CheckForBlockedUser(blockedUsers []relationships.UserBlock, addr sdk.Address) bool {
 	for _, user := range blockedUsers {
 		if user.Blocked.Equals(addr) {
 			return true
@@ -168,9 +168,9 @@ func CheckForBlockedUser(blockedUsers []relationships.UserBlock, addr sdk.AccAdd
 // handleMsgRequestDTagTransfer handles the request of a dTag transfer
 func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
 	// check if the request's receiver has blocked the sender before
-	if isBlocked := CheckForBlockedUser(keeper.RelKeeper.GetUserBlocks(ctx, msg.CurrentOwner), msg.ReceivingUser); isBlocked {
+	if isBlocked := CheckForBlockedUser(keeper.RelKeeper.GetUserBlocks(ctx, msg.Receiver), msg.Sender); isBlocked {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("The user with address %s has been blocked from %s", msg.ReceivingUser, msg.CurrentOwner))
+			fmt.Sprintf("The user with address %s has been blocked from %s", msg.Sender, msg.Receiver))
 	}
 
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.Receiver)

@@ -37,9 +37,10 @@ var (
 	GetCmdBlockUser              = cli.GetCmdBlockUser
 	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 	RegisterRoutes               = rest.RegisterRoutes
-	NewQuerier                   = keeper.NewQuerier
 	NewHandler                   = keeper.NewHandler
+	CheckForBlockedUser          = keeper.CheckForBlockedUser
 	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
 	NewRelationship              = models.NewRelationship
 	NewUserBlock                 = models.NewUserBlock
 	RelationshipsStoreKey        = models.RelationshipsStoreKey
@@ -52,10 +53,10 @@ var (
 	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
-	MsgsCodec                = msgs.MsgsCodec
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
 	ModelsCdc                = models.ModelsCdc
+	MsgsCodec                = msgs.MsgsCodec
 )
 
 type (
