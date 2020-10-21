@@ -1,10 +1,11 @@
 package models_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

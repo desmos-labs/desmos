@@ -18,7 +18,7 @@ func TestNewDTagTransferRequest(t *testing.T) {
 
 	dTag := "dtag"
 
-	require.Equal(t, types.DTagTransferRequest{DTagToTrade: dTag, CurrentOwner: user, ReceivingUser: otherUser},
+	require.Equal(t, types.DTagTransferRequest{DTagToTrade: dTag, Receiver: user, Sender: otherUser},
 		types.NewDTagTransferRequest(dTag, user, otherUser))
 }
 
@@ -65,7 +65,7 @@ func TestDTagTransferRequest_String(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t,
-		"DTag transfer request:\n[DTagToTrade] dtag [Current CurrentOwner] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 [Receiving User] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		"DTag transfer request:\n[DTag to trade] dtag [Request Receiver] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 [Request Sender] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.NewDTagTransferRequest("dtag", user, otherUser).String(),
 	)
 }
@@ -88,19 +88,19 @@ func TestDTagTransferRequest_Validate(t *testing.T) {
 			expErr:  fmt.Errorf("invalid DTag to trade "),
 		},
 		{
-			name:    "Empty current owner returns error",
+			name:    "Empty request receiver returns error",
 			request: types.NewDTagTransferRequest("dtag", nil, otherUser),
-			expErr:  fmt.Errorf("current owner address cannot be empty"),
+			expErr:  fmt.Errorf("receiver address cannot be empty"),
 		},
 		{
-			name:    "Empty receiving user returns error",
+			name:    "Empty request sender returns error",
 			request: types.NewDTagTransferRequest("dtag", user, nil),
-			expErr:  fmt.Errorf("receiving user address cannot be empty"),
+			expErr:  fmt.Errorf("sender address cannot be empty"),
 		},
 		{
-			name:    "Equals current owner and receiving user addresses return error",
+			name:    "Equals request receiver and request sender addresses return error",
 			request: types.NewDTagTransferRequest("dtag", user, user),
-			expErr:  fmt.Errorf("the receiving user and current owner must be different"),
+			expErr:  fmt.Errorf("the sender and receiver must be different"),
 		},
 		{
 			name:    "Valid request returns no error",

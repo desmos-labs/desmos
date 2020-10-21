@@ -1,14 +1,14 @@
-# `MsgAcceptDTagTransfer`
-This message allows you to accept a `DTag`'s transfer request.
+# `MsgAcceptDTagTransferRequest`
+This message allows you to accept a `DTag` transfer request.
 
 ## Structure
 ````json
 {
-  "type": "desmos/MsgAcceptDTagTransfer",
+  "type": "desmos/MsgAcceptDTagTransferRequest",
   "value": {
     "new_dtag": "<The new DTag for the current owner's profile>",
-    "current_owner": "<Desmos address of the DTag owner>",
-    "receiving_user": "<Desmos address that's making the DTag's request>"
+    "receiver": "<Desmos address of the DTag owner>",
+    "sender": "<Desmos address that's making the DTag's request>"
   }
 }
 ````
@@ -17,17 +17,17 @@ This message allows you to accept a `DTag`'s transfer request.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `new_dtag` | String | The new `DTag` for the current owner profile that will replace the traded one |
-| `current_owner`  | String | Desmos address of the user that is the owner of the requested `DTag` |
-| `receiving_user`| String | Desmos address of the user that request the `DTag` |
+| `receiver`  | String | Desmos address of the user that is the owner of the requested `DTag` |
+| `sender`| String | Desmos address of the user that request the `DTag` |
 
 ## Example
 ````json
 {
-  "type": "desmos/MsgAcceptDTagTransfer",
+  "type": "desmos/MsgAcceptDTagTransferRequest",
   "value": {
     "new_dtag": "newDTag",
-    "current_owner": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7",
-    "receiving_user": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a"
+    "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7",
+    "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a"
   }
 }
 ````

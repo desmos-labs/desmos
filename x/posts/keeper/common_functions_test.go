@@ -1,12 +1,14 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"strings"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )

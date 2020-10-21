@@ -480,6 +480,18 @@ func (f *Fixtures) TxProfileAcceptDTagTransfer(newDtag string, receiver, from sd
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxProfileRefuseDTagTransfer(sender, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles refuse-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, sender, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileCancelDTagTransfer(owner, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles cancel-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, owner, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx relationships
 func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
@@ -841,6 +853,19 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	return storedProfile
 }
 
+// QueryProfile returns stored profile
+func (f *Fixtures) QueryProfile(address sdk.AccAddress, flags ...string) profilesTypes.Profile {
+	cmd := fmt.Sprintf("%s query profiles profile %s --output=json %s",
+		f.DesmoscliBinary, address, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedProfile profilesTypes.Profile
+	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
+	require.NoError(f.T, err)
+	return storedProfile
+}
+
 // QueryUserDTagRequests returns the user's stored requests
 func (f *Fixtures) QueryUserDTagRequests(user sdk.AccAddress, flags ...string) []profilesTypes.DTagTransferRequest {
 	cmd := fmt.Sprintf("%s query profiles dtag-requests %s --output=json %s",
@@ -855,8 +880,22 @@ func (f *Fixtures) QueryUserDTagRequests(user sdk.AccAddress, flags ...string) [
 }
 
 //___________________________________________________________________________________
-// QueryRelationships returns stored relationships
-func (f *Fixtures) QueryRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
+// query relationships
+
+// QueryRelationships queries all the relationships that are stored
+func (f *Fixtures) QueryRelationships(flags ...string) map[string]relationshipsTypes.Relationships {
+	cmd := fmt.Sprintf("%s query relationships all --output=json %s", f.DesmoscliBinary, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedRelationships map[string]relationshipsTypes.Relationships
+	err := cdc.UnmarshalJSON([]byte(res), &storedRelationships)
+	require.NoError(f.T, err)
+	return storedRelationships
+}
+
+// QueryUserRelationships returns stored relationships
+func (f *Fixtures) QueryUserRelationships(user sdk.AccAddress, flags ...string) relationshipsTypes.Relationships {
 	cmd := fmt.Sprintf("%s query relationships user %s --output=json %s", f.DesmoscliBinary, user, f.Flags())
 	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
 	require.Empty(f.T, errStr)

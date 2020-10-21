@@ -1,9 +1,10 @@
 package msgs_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 
