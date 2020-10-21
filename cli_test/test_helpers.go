@@ -480,6 +480,18 @@ func (f *Fixtures) TxProfileAcceptDTagTransfer(newDtag string, receiver, from sd
 	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
 }
 
+func (f *Fixtures) TxProfileRefuseDTagTransfer(sender, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles refuse-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, sender, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
+func (f *Fixtures) TxProfileCancelDTagTransfer(owner, from sdk.AccAddress, flags ...string) (bool, string, string) {
+	cmd := fmt.Sprintf(`%s tx profiles cancel-dtag-transfer %s --keyring-backend=test --from=%s %v`,
+		f.DesmoscliBinary, owner, from, f.Flags())
+	return executeWriteRetStdStreams(f.T, addFlags(cmd, flags), clientkeys.DefaultKeyPass)
+}
+
 //___________________________________________________________________________________
 // desmoscli tx relationships
 func (f *Fixtures) TxCreateRelationship(receiver sdk.AccAddress, subspace string, from sdk.AccAddress, flags ...string) (bool, string, string) {
@@ -836,6 +848,19 @@ func (f *Fixtures) QueryProfiles(flags ...string) profilesTypes.Profiles {
 	require.Empty(f.T, errStr)
 	cdc := app.MakeCodec()
 	var storedProfile profilesTypes.Profiles
+	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
+	require.NoError(f.T, err)
+	return storedProfile
+}
+
+// QueryProfile returns stored profile
+func (f *Fixtures) QueryProfile(address sdk.AccAddress, flags ...string) profilesTypes.Profile {
+	cmd := fmt.Sprintf("%s query profiles profile %s --output=json %s",
+		f.DesmoscliBinary, address, f.Flags())
+	res, errStr := tests.ExecuteT(f.T, addFlags(cmd, flags), "")
+	require.Empty(f.T, errStr)
+	cdc := app.MakeCodec()
+	var storedProfile profilesTypes.Profile
 	err := cdc.UnmarshalJSON([]byte(res), &storedProfile)
 	require.NoError(f.T, err)
 	return storedProfile

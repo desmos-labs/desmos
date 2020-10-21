@@ -32,6 +32,8 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		GetCmdDeleteProfile(cdc),
 		GetCmdRequestDTagTransfer(cdc),
 		GetCmdAcceptDTagTransfer(cdc),
+		GetCmdRefuseDTagTransfer(cdc),
+		GetCmdCancelDTagTransfer(cdc),
 	)...)
 
 	return profileTxCmd
@@ -149,6 +151,56 @@ func GetCmdAcceptDTagTransfer(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAcceptDTagTransfer(args[0], cliCtx.FromAddress, receivingUser)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdRefuseDTagTransfer is the CLI command to refuse a DTag transfer request from the owner's side
+func GetCmdRefuseDTagTransfer(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "refuse-dtag-transfer [sender]",
+		Short: "Refuse a DTag transfer made by the given sender address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			sender, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRefuseDTagTransferRequest(sender, cliCtx.FromAddress)
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+
+	return cmd
+}
+
+// GetCmdCancelDTagTransfer is the CLI command to cancel a DTag transfer request from the sender's side
+func GetCmdCancelDTagTransfer(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cancel-dtag-transfer [owner]",
+		Short: "Cancel a DTag transfer made to the given owner address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+
+			owner, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCancelDTagTransferRequest(cliCtx.FromAddress, owner)
 
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
