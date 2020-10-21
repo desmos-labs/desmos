@@ -501,11 +501,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	require.Empty(t, receiverRequests)
 
 	// Make sure that the DTag has been transferred properly and the profile for receiver created
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrPink")
-	receiverProfile := storedProfiles[1]
+	fooProfile := f.QueryProfile(fooAddr)
+	require.NotNil(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrPink")
+	receiverProfile := f.QueryProfile(barAddr)
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
@@ -542,10 +541,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the profile is saved and the DTag isn't empty
-	storedProfiles := f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile := storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrBrown")
+	fooProfile := f.QueryProfile(fooAddr)
+	require.NotEmpty(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrBrown")
 
 	// Create a profile for the DTag receiver
 	success, _, sterr = f.TxProfileSave("mrOrange", barAddr, "-y")
@@ -554,10 +552,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Make sure the profile is saved and the DTag isn't empty
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[1]
-	require.Equal(t, profile.DTag, "mrOrange")
+	barProfile := f.QueryProfile(barAddr)
+	require.NotEmpty(t, barProfile)
+	require.Equal(t, barProfile.DTag, "mrOrange")
 
 	// Create a request from a user without a profile
 	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
@@ -583,11 +580,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.Empty(t, receiverRequests)
 
 	// Make sure that the DTag has been transferred properly and the profile for receiver created
-	storedProfiles = f.QueryProfiles()
-	require.NotEmpty(t, storedProfiles)
-	profile = storedProfiles[0]
-	require.Equal(t, profile.DTag, "mrPink")
-	receiverProfile := storedProfiles[1]
+	fooProfile = f.QueryProfile(fooAddr)
+	require.NotEmpty(t, fooProfile)
+	require.Equal(t, fooProfile.DTag, "mrPink")
+	receiverProfile := f.QueryProfile(barAddr)
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
@@ -600,6 +596,146 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	storedRequests = f.QueryUserDTagRequests(fooAddr)
 	require.NotEmpty(t, storedRequests)
 	require.Len(t, storedRequests, 1)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+	barAddr := f.KeyAddress(keyBar)
+	calAddr := f.KeyAddress(keyBaz)
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+
+	// Create the profile of the DTag owner
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the profile is saved
+	storedProfiles := f.QueryProfiles()
+	require.NotEmpty(t, storedProfiles)
+	profile := storedProfiles[0]
+	require.Equal(t, profile.DTag, "mrBrown")
+
+	// Create a request
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the request is saved
+	storedRequests := f.QueryUserDTagRequests(fooAddr)
+	require.NotEmpty(t, storedRequests)
+
+	// Refuse the request
+	success, _, sterr = f.TxProfileRefuseDTagTransfer(barAddr, fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test --dry-run
+
+	// Create the profile of the dTag owner
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "-y")
+	require.True(t, success)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	success, _, sterr = f.TxProfileRefuseDTagTransfer(fooAddr, calAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxProfileRefuseDTagTransfer(calAddr, fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
+
+	f.Cleanup()
+}
+
+func TestDesmosCLICancelDTagTransfer(t *testing.T) {
+	t.Parallel()
+	f := InitFixtures(t)
+
+	// Start Desmosd server
+	proc := f.GDStart()
+	defer proc.Stop(false)
+
+	// Save key addresses for later use
+	fooAddr := f.KeyAddress(keyFoo)
+	barAddr := f.KeyAddress(keyBar)
+	calAddr := f.KeyAddress(keyBaz)
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+
+	// Create the profile of the DTag owner
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the profile is saved
+	storedProfiles := f.QueryProfiles()
+	require.NotEmpty(t, storedProfiles)
+	profile := storedProfiles[0]
+	require.Equal(t, profile.DTag, "mrBrown")
+
+	// Create a request
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Make sure the request is saved
+	storedRequests := f.QueryUserDTagRequests(fooAddr)
+	require.NotEmpty(t, storedRequests)
+
+	// Refuse the request
+	success, _, sterr = f.TxProfileCancelDTagTransfer(fooAddr, barAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	// Test --dry-run
+
+	// Create the profile of the dTag owner
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
+	require.True(t, success)
+	require.Empty(t, sterr)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "-y")
+	require.True(t, success)
+	tests.WaitForNextNBlocksTM(1, f.Port)
+
+	success, _, sterr = f.TxProfileCancelDTagTransfer(calAddr, fooAddr, "--dry-run")
+	require.True(t, success)
+
+	// Test --generate-only
+	success, stdout, stderr := f.TxProfileRefuseDTagTransfer(calAddr, fooAddr, "--generate-only=true")
+	require.Empty(t, stderr)
+	require.True(t, success)
+	msg := unmarshalStdTx(f.T, stdout)
+	require.NotZero(t, msg.Fee.Gas)
+	require.Len(t, msg.Msgs, 1)
+	require.Len(t, msg.GetSignatures(), 0)
 
 	f.Cleanup()
 }

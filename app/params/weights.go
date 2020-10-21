@@ -12,6 +12,8 @@ const (
 	DefaultWeightMsgDeleteProfile       int = 100
 	DefaultWeightMsgRequestDTagTransfer int = 100
 	DefaultWeightMsgAcceptDTagTransfer  int = 100
+	DefaultWeightMsgRefuseDTagTransfer  int = 100
+	DefaultWeightMsgCancelDTagTransfer  int = 100
 	DefaultWeightMsgReportPost          int = 100
 	DefaultWeightMsgCreateRelationship  int = 100
 	DefaultWeightMsgDeleteRelationship  int = 100

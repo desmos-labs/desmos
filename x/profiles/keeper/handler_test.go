@@ -372,7 +372,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedDTagReqs: nil,
 			hasProfile:     false,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s doesn't have a profile yet so their dTag cannot be transferred",
+				fmt.Sprintf("The user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 					suite.testData.otherUser)),
 		},
 		{
@@ -395,8 +395,8 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			expEvent: sdk.NewEvent(
 				types.EventTypeDTagTransferRequest,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 	}
@@ -439,8 +439,8 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				createAccountEv := sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 				)
 
 				suite.Len(res.Events, 1)
@@ -457,7 +457,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 	tests := []struct {
 		name                       string
-		msg                        types.MsgAcceptDTagTransfer
+		msg                        types.MsgAcceptDTagTransferRequest
 		storedDTagReqs             []types.DTagTransferRequest
 		storedOwnerProfile         *types.Profile
 		storedReceivingUserProfile *types.Profile
@@ -505,8 +505,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 		{
@@ -520,8 +520,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 				types.EventTypeDTagTransferAccept,
 				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-				sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 			),
 		},
 	}
@@ -564,12 +564,177 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					types.EventTypeDTagTransferAccept,
 					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-					sdk.NewAttribute(types.AttributeCurrentOwner, suite.testData.user.String()),
-					sdk.NewAttribute(types.AttributeReceivingUser, suite.testData.otherUser.String()),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String()),
 				)
 
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, createAccountEv)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
+	tests := []struct {
+		name           string
+		owner          sdk.AccAddress
+		sender         sdk.AccAddress
+		storedDTagReqs []types.DTagTransferRequest
+		expErr         error
+		expEvent       sdk.Event
+	}{
+		{
+			name:           "No requests found returns error",
+			owner:          suite.testData.user,
+			sender:         suite.testData.otherUser,
+			storedDTagReqs: nil,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
+		},
+		{
+			name:           "Deletion runs correctly",
+			owner:          suite.testData.user,
+			sender:         suite.testData.otherUser,
+			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			expErr:         nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferRefuse,
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedDTagReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+				)
+			}
+
+			res, err := keeper.DeleteDTagTransferRequest(suite.ctx, suite.keeper,
+				test.owner, test.sender, types.EventTypeDTagTransferRefuse)
+
+			if res == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+			if res != nil {
+				// Check the data
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.sender), res.Data)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
+	tests := []struct {
+		name           string
+		msg            types.MsgRefuseDTagTransferRequest
+		storedDTagReqs []types.DTagTransferRequest
+		expErr         error
+		expEvent       sdk.Event
+	}{
+		{
+			name:           "No requests found returns error",
+			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: nil,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
+		},
+		{
+			name:           "Deletion runs correctly",
+			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
+			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			expErr:         nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferRefuse,
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedDTagReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+				)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if res == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+			if res != nil {
+				// Check the data
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
+			}
+
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
+	tests := []struct {
+		name           string
+		msg            types.MsgCancelDTagTransferRequest
+		storedDTagReqs []types.DTagTransferRequest
+		expErr         error
+		expEvent       sdk.Event
+	}{
+		{
+			name:           "No requests found returns error",
+			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			storedDTagReqs: nil,
+			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
+		},
+		{
+			name:           "Deletion runs correctly",
+			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
+			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			expErr:         nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypeDTagTransferCancel,
+				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user.String()),
+				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser.String())),
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			if test.storedDTagReqs != nil {
+				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
+					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+				)
+			}
+
+			handler := keeper.NewHandler(suite.keeper)
+			res, err := handler(suite.ctx, test.msg)
+
+			if res == nil {
+				suite.NotNil(err)
+				suite.Equal(test.expErr.Error(), err.Error())
+			}
+			if res != nil {
+				// Check the data
+				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
+				suite.Len(res.Events, 1)
+				suite.Contains(res.Events, test.expEvent)
 			}
 
 		})
