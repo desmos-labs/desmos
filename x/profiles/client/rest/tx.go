@@ -14,10 +14,14 @@ import (
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/profiles/dtag/request/{receiverAddress}", requestDTagTransferHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profiles/dtag/accept/{senderAddress}", acceptTransferRequestHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profiles/dtag/refuse/{senderAddress}", refuseDTagTransferRequestHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/profiles/dtag/cancel/{receiverAddress}", cancelDTagTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests",
+		requestDTagTransferHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests/{senderAddress}/acceptances",
+		acceptTransferRequestHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/profiles/dtagrequests/{senderAddress}",
+		refuseDTagTransferRequestHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles/dtagrequests/{receiverAddress}",
+		cancelDTagTransferRequestHandler(cliCtx)).Methods("DELETE")
 }
 
 func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -86,7 +90,6 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
 		var req TransferDTagReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -98,7 +101,7 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receiver, err := sdk.AccAddressFromBech32(vars["receiverAddress"])
+		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

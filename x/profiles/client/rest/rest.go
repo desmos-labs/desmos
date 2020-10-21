@@ -28,7 +28,8 @@ type DeleteProfileReq struct {
 }
 
 type TransferDTagReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Receiver string       `json:"receiver"`
 }
 
 type AcceptDTagTransferReq struct {
