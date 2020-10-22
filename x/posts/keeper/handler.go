@@ -70,6 +70,17 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		}
 	}
 
+	// Check if any of the tags have blocked the post creator
+	for _, attachment := range post.Attachments {
+		for _, tag := range attachment.Tags {
+			// check if the request's receiver has blocked the sender before
+			if keeper.IsUserBlocked(ctx, tag, post.Creator) {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+					fmt.Sprintf("The user with address %s has been blocked from %s", post.Creator, tag))
+			}
+		}
+	}
+
 	if err := ValidatePost(ctx, keeper, post); err != nil {
 		return nil, err
 	}
@@ -115,6 +126,16 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	existing.Message = msg.Message
 
 	if msg.Attachments != nil {
+		// Check if any of the tags have blocked the post creator
+		for _, attachment := range msg.Attachments {
+			for _, tag := range attachment.Tags {
+				// check if the request's receiver has blocked the sender before
+				if keeper.IsUserBlocked(ctx, tag, existing.Creator) {
+					return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+						fmt.Sprintf("The user with address %s has been blocked from %s", existing.Creator, tag))
+				}
+			}
+		}
 		existing.Attachments = msg.Attachments
 	}
 
@@ -263,7 +284,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 	return &post, nil
 }
 
-// answerExist checks if the answer is contained in providedAnswers slice
+// answerExist checks if the answer is contained in providedAnswers slice
 func answerExist(providedAnswers []types.AnswerID, answer types.AnswerID) bool {
 	for _, ans := range providedAnswers {
 		if ans == answer {

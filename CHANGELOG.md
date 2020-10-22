@@ -1,5 +1,5 @@
 # Version 0.14.0
-- Implemented users blocks checks inside DTag transferring process and relationships creation process (#298)
+- Implemented blocked users checks (#298)
 
 # Version 0.13.0
 ## Changes

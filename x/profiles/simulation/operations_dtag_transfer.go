@@ -84,7 +84,7 @@ func randomDtagRequestTransferFields(
 		return sim.Account{}, types.DTagTransferRequest{}, true
 	}
 
-	if isBlocked := keeper.CheckForBlockedUser(k.RelKeeper.GetUserBlocks(ctx, receiver.Address), sender.Address); isBlocked {
+	if k.IsUserBlocked(ctx, receiver.Address, sender.Address) {
 		return sim.Account{}, types.DTagTransferRequest{}, true
 	}
 

@@ -15,10 +15,10 @@ import (
 type Keeper struct {
 	// The reference to the ParamsStore to get and set profile specific params
 	paramSubspace params.Subspace
+	relKeeper     relationships.Keeper // Relationships keeper to keep track of blocked users
 
-	RelKeeper relationships.Keeper // Relationships keeper to keep track of blocked users
-	StoreKey  sdk.StoreKey         // Unexposed key to access store from sdk.Context
-	Cdc       *codec.Codec         // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
+	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
@@ -29,10 +29,15 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 
 	return Keeper{
 		paramSubspace: paramSpace,
-		RelKeeper:     relKeeper,
+		relKeeper:     relKeeper,
 		StoreKey:      storeKey,
 		Cdc:           cdc,
 	}
+}
+
+// IsUserBlocked tells if the given blocker has blocked the given blocked user
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked sdk.AccAddress) bool {
+	return k.relKeeper.IsUserBlocked(ctx, blocker, blocked)
 }
 
 // AssociateDtagWithAddress save the relation of dtag and address on chain

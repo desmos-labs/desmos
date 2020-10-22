@@ -24,8 +24,8 @@ var (
 	NewReportResponse     = models.NewReportResponse
 	NewReport             = models.NewReport
 	RegisterModelsCodec   = models.RegisterModelsCodec
-	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 	NewMsgReportPost      = msgs.NewMsgReportPost
+	RegisterMessagesCodec = msgs.RegisterMessagesCodec
 
 	// variable aliases
 	ModelsCdc              = models.ModelsCdc

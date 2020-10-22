@@ -176,8 +176,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, upgrade.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, postsTypes.StoreKey, relationshipsTypes.StoreKey,
-		profilesTypes.StoreKey, reportsTypes.StoreKey,
+		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey,
+		relationshipsTypes.StoreKey, reportsTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -290,14 +290,15 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.cdc,
 		keys[magpieTypes.StoreKey],
 	)
+	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
+		app.cdc,
+		keys[relationshipsTypes.StoreKey],
+	)
 	app.postsKeeper = postsKeeper.NewKeeper(
 		app.cdc,
 		keys[postsTypes.StoreKey],
 		app.subspaces[postsTypes.ModuleName],
-	)
-	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
-		app.cdc,
-		keys[relationshipsTypes.StoreKey],
+		app.relationshipsKeeper,
 	)
 	app.profileKeeper = profilesKeeper.NewKeeper(
 		app.cdc,

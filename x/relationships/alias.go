@@ -27,6 +27,19 @@ const (
 
 var (
 	// functions aliases
+	NewHandler                   = keeper.NewHandler
+	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
+	RegisterModelsCodec          = models.RegisterModelsCodec
+	NewRelationship              = models.NewRelationship
+	NewUserBlock                 = models.NewUserBlock
+	RelationshipsStoreKey        = models.RelationshipsStoreKey
+	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
+	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
+	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
+	NewMsgBlockUser              = msgs.NewMsgBlockUser
+	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
+	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 	GetQueryCmd                  = cli.GetQueryCmd
 	GetCmdQueryRelationships     = cli.GetCmdQueryRelationships
 	GetCmdQueryUserRelationships = cli.GetCmdQueryUserRelationships
@@ -37,25 +50,11 @@ var (
 	GetCmdBlockUser              = cli.GetCmdBlockUser
 	GetCmdUnblockUser            = cli.GetCmdUnblockUser
 	RegisterRoutes               = rest.RegisterRoutes
-	NewHandler                   = keeper.NewHandler
-	CheckForBlockedUser          = keeper.CheckForBlockedUser
-	NewKeeper                    = keeper.NewKeeper
-	NewQuerier                   = keeper.NewQuerier
-	NewRelationship              = models.NewRelationship
-	NewUserBlock                 = models.NewUserBlock
-	RelationshipsStoreKey        = models.RelationshipsStoreKey
-	UsersBlocksStoreKey          = models.UsersBlocksStoreKey
-	RegisterModelsCodec          = models.RegisterModelsCodec
-	NewMsgCreateRelationship     = msgs.NewMsgCreateRelationship
-	NewMsgDeleteRelationship     = msgs.NewMsgDeleteRelationship
-	NewMsgBlockUser              = msgs.NewMsgBlockUser
-	NewMsgUnblockUser            = msgs.NewMsgUnblockUser
-	RegisterMessagesCodec        = msgs.RegisterMessagesCodec
 
 	// variable aliases
+	ModelsCdc                = models.ModelsCdc
 	RelationshipsStorePrefix = models.RelationshipsStorePrefix
 	UsersBlocksStorePrefix   = models.UsersBlocksStorePrefix
-	ModelsCdc                = models.ModelsCdc
 	MsgsCodec                = msgs.MsgsCodec
 )
 

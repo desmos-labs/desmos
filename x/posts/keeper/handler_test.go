@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
+	"github.com/desmos-labs/desmos/x/relationships"
 	"strings"
 	"time"
 
@@ -144,6 +146,23 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"post with id 38caeb754684d0173f3e47e45831bd15a23056caa9b64b498a61b67739f6f8a0 has more than 500 characters"),
 		},
+		{
+			name: "post tag blocked the post creator",
+			msg: types.NewMsgCreatePost(
+				"blocked",
+				suite.testData.post.ParentID,
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				suite.testData.post.Creator,
+				[]common.Attachment{common.NewAttachment("http://uri.com", "text/plain",
+					[]sdk.AccAddress{otherCreator})},
+				suite.testData.post.PollData,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s has been blocked from %s", suite.testData.post.Creator,
+					otherCreator)),
+		},
 	}
 
 	for _, test := range tests {
@@ -155,6 +174,11 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 
 			for _, p := range test.storedPosts {
 				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
+			}
+
+			if test.msg.Message == "blocked" {
+				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx,
+					relationships.NewUserBlock(otherCreator, suite.testData.post.Creator, "test", ""))
 			}
 
 			handler := keeper.NewHandler(suite.keeper)
@@ -197,6 +221,8 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
 	suite.NoError(err)
+	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.NoError(err)
 	timeZone, _ := time.LoadLocation("UTC")
 
 	editedPollData := models.NewPollData(
@@ -238,9 +264,20 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
+			name:       "Blocked creator from tags",
+			storedPost: &suite.testData.post,
+			msg: types.NewMsgEditPost(suite.testData.post.PostID, "blocked",
+				models.NewAttachments(models.NewAttachment("https://edited.com", "text/plain",
+					[]sdk.AccAddress{otherCreator})), nil, suite.testData.post.Creator),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s has been blocked from %s", suite.testData.post.Creator,
+					otherCreator)),
+		},
+		{
 			name:       "Valid request is handled properly without attachments and pollData",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", editedAttachments, &editedPollData, suite.testData.post.Creator),
+			msg: types.NewMsgEditPost(suite.testData.post.PostID, "Edited message",
+				editedAttachments, &editedPollData, suite.testData.post.Creator),
 			expPost: &types.Post{
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
@@ -260,9 +297,18 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	for _, test := range testData {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+
+			if test.msg.Message == "blocked" {
+				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx,
+					relationships.NewUserBlock(otherCreator, suite.testData.post.Creator, "test", ""))
+				test.storedPost.Created = suite.ctx.BlockTime()
+				suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
+			}
+
 			if test.storedPost != nil {
 				if test.expPost != nil {
 					test.storedPost.Created = suite.ctx.BlockTime()

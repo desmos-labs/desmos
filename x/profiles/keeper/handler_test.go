@@ -313,40 +313,6 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestCheckForBlockedUser() {
-	user, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	otherUser, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	userBlock := relationships.NewUserBlock(user, otherUser, "test", "")
-	userBlock1 := relationships.NewUserBlock(otherUser, user, "test", "")
-
-	tests := []struct {
-		name       string
-		user       sdk.AccAddress
-		userBlocks []relationships.UserBlock
-		expBool    bool
-	}{
-		{
-			name:       "blocked user found returns true",
-			user:       otherUser,
-			userBlocks: []relationships.UserBlock{userBlock, userBlock1},
-			expBool:    true,
-		},
-		{
-			name:       "non blocked user not found returns false",
-			user:       user,
-			userBlocks: []relationships.UserBlock{userBlock},
-			expBool:    false,
-		},
-	}
-
-	for _, test := range tests {
-		suite.Run(test.name, func() {
-			res := keeper.CheckForBlockedUser(test.userBlocks, test.user)
-			suite.Equal(test.expBool, res)
-		})
-	}
-}
-
 func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	tests := []struct {
 		name           string
@@ -408,7 +374,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			if test.isBlocked {
 				userBlock := relationships.NewUserBlock(suite.testData.user, suite.testData.otherUser, "test",
 					"")
-				_ = suite.keeper.RelKeeper.SaveUserBlock(suite.ctx, userBlock)
+				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx, userBlock)
 			}
 
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
