@@ -70,12 +70,18 @@ func getSessionHandler(cliCtx context.CLIContext, storeName string) http.Handler
 		vars := mux.Vars(r)
 		sessionID := vars["sessionID"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/session/%s", storeName, sessionID), nil)
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/session/%s", storeName, sessionID), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
 		}
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }

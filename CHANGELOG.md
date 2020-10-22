@@ -1,3 +1,7 @@
+# Version 0.14.0
+## Bug fixes
+- Fixed height not working in REST queries (#299)
+
 # Version 0.13.0
 ## Changes
 - Removed the relationship event attribute key prefix (#300)
