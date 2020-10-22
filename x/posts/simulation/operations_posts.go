@@ -99,6 +99,14 @@ func randomPostCreateFields(
 		return nil, true
 	}
 
+	for _, attachment := range postData.Attachments {
+		for _, tag := range attachment.Tags {
+			if k.IsUserBlocked(ctx, postData.Creator.Address, tag) {
+				return nil, true
+			}
+		}
+	}
+
 	posts := k.GetPosts(ctx)
 	if posts != nil {
 		if parent, _ := RandomPost(r, posts); parent.AllowsComments {
@@ -178,5 +186,15 @@ func randomPostEditFields(
 		return sim.Account{}, "", "", nil, nil, true
 	}
 
-	return *acc, post.PostID, RandomMessage(r), RandomAttachments(r, accs), RandomPollData(r), false
+	editedAttachments := RandomAttachments(r, accs)
+
+	for _, attachment := range editedAttachments {
+		for _, tag := range attachment.Tags {
+			if k.IsUserBlocked(ctx, post.Creator, tag) {
+				return sim.Account{}, "", "", nil, nil, true
+			}
+		}
+	}
+
+	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPollData(r), false
 }
