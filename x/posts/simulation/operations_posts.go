@@ -101,7 +101,7 @@ func randomPostCreateFields(
 
 	for _, attachment := range postData.Attachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, postData.Creator.Address, tag) {
+			if k.IsUserBlocked(ctx, tag, postData.Creator.Address) {
 				return nil, true
 			}
 		}
@@ -190,7 +190,7 @@ func randomPostEditFields(
 
 	for _, attachment := range editedAttachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, post.Creator, tag) {
+			if k.IsUserBlocked(ctx, tag, post.Creator) {
 				return sim.Account{}, "", "", nil, nil, true
 			}
 		}
