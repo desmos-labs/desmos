@@ -202,6 +202,5 @@ jobs:
             .mod
             .sum
       - name: cli-test
-        run: |
-          make test-integration
-        if: "env.GIT_DIFF != ''"
+        run: make test-integration
+
