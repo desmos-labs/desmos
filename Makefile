@@ -112,7 +112,7 @@ test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
 test-integration: build
-	BUILDDIR=$(BUILDDIR) go test -mod=readonly -p 4 `go list ./cli_test/...` -tags='cli_test' -v
+	BUILDDIR=$(BUILDDIR) go test -mod=readonly -p 4 `go list ./cli_test/...` -tags='cli_test' -v -timeout 20m
 
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race -tags='ledger test_ledger_mock' ./...
