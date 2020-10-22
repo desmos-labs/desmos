@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			msg:       types.NewMsgCreateRelationship(sender, receiver, subspace),
 			isBlocked: true,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s has been blocked from %s", sender, receiver)),
+				fmt.Sprintf("The user with address %s has blocked you", receiver)),
 		},
 		{
 			name:                "Relationship already created returns error",

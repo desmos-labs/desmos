@@ -34,7 +34,7 @@ func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCr
 	// Check if the receiver has blocked the sender before
 	if keeper.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("The user with address %s has been blocked from %s", msg.Sender, msg.Receiver))
+			fmt.Sprintf("The user with address %s has blocked you", msg.Receiver))
 	}
 
 	// Save the relationship

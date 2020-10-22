@@ -159,7 +159,7 @@ func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgR
 	// check if the request's receiver has blocked the sender before
 	if keeper.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("The user with address %s has been blocked from %s", msg.Sender, msg.Receiver))
+			fmt.Sprintf("The user with address %s has blocked you", msg.Receiver))
 	}
 
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.Receiver)

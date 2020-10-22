@@ -328,9 +328,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
 			isBlocked: true,
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s has been blocked from %s",
-					suite.testData.otherUser, suite.testData.user),
-			),
+				fmt.Sprintf("The user with address %s has blocked you", suite.testData.user)),
 		},
 		{
 			name:           "No DTag to transfer returns error",

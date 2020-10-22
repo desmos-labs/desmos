@@ -160,8 +160,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.PollData,
 			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s has been blocked from %s", suite.testData.post.Creator,
-					otherCreator)),
+				fmt.Sprintf("The user with address %s has blocked you", otherCreator)),
 		},
 	}
 
@@ -270,8 +269,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				models.NewAttachments(models.NewAttachment("https://edited.com", "text/plain",
 					[]sdk.AccAddress{otherCreator})), nil, suite.testData.post.Creator),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("The user with address %s has been blocked from %s", suite.testData.post.Creator,
-					otherCreator)),
+				fmt.Sprintf(fmt.Sprintf("The user with address %s has blocked you", otherCreator))),
 		},
 		{
 			name:       "Valid request is handled properly without attachments and pollData",
