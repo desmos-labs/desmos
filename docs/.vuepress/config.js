@@ -70,9 +70,24 @@ module.exports = {
                         children: [
                             ["types/profiles/profile", "Profile"],
                             ["types/profiles/profile-pictures", "Profile pictures"],
+                            ["types/profiles/dtag-transfer-request", "DTag transfer request"],
                         ]
                     },
-                    ["types/reports/report", "Report"]
+                    {
+                        title: "Relationships",
+                        collapsable: true,
+                        children: [
+                            ["types/relationships/relationship", "Relationship"],
+                            ["types/relationships/user-block", "User block"],
+                        ]
+                    },
+                    {
+                        title: "Reports",
+                        collapsable: true,
+                        children: [
+                            ["types/reports/report", "Report"],
+                        ]
+                    },
                 ]
             },
             {
