@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"bytes"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -24,14 +23,15 @@ func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey) Keeper {
 }
 
 // StoreRelationship allows to store the given relationship returning an error if he's already present.
-func (k Keeper) StoreRelationship(ctx sdk.Context, user sdk.AccAddress, relationship types.Relationship) error {
+func (k Keeper) StoreRelationship(ctx sdk.Context, relationship types.Relationship) error {
 	store := ctx.KVStore(k.StoreKey)
-	key := types.RelationshipsStoreKey(user)
+	key := types.RelationshipsStoreKey(relationship.Creator)
+
 	var relationships types.Relationships
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationships)
 
 	for _, rel := range relationships {
-		if rel.Equals(relationship) {
+		if rel.Equal(relationship) {
 			return fmt.Errorf("relationship already exists with %s", relationship.Recipient)
 		}
 	}
@@ -43,7 +43,7 @@ func (k Keeper) StoreRelationship(ctx sdk.Context, user sdk.AccAddress, relation
 }
 
 // GetUserRelationships allows to list all the storedRelationships that involve the given user.
-func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types.Relationships {
+func (k Keeper) GetUserRelationships(ctx sdk.Context, user string) types.Relationships {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(user)
 
@@ -53,32 +53,31 @@ func (k Keeper) GetUserRelationships(ctx sdk.Context, user sdk.AccAddress) types
 	return relationships
 }
 
-// GetUsersRelationships allows to returns the map of all the users and their associated storedRelationships
-func (k Keeper) GetUsersRelationships(ctx sdk.Context) map[string]types.Relationships {
+// GetAllRelationships allows to returns the map of all the users and their associated storedRelationships
+func (k Keeper) GetAllRelationships(ctx sdk.Context) types.Relationships {
 	store := ctx.KVStore(k.StoreKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
 
-	usersRelationshipsMap := map[string]types.Relationships{}
-	var relationships types.Relationships
+	var relationships []types.Relationship
 	for ; iterator.Valid(); iterator.Next() {
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &relationships)
-		userBytes := bytes.TrimPrefix(iterator.Key(), types.RelationshipsStorePrefix)
-		userAddr := sdk.AccAddress(userBytes)
-		usersRelationshipsMap[userAddr.String()] = relationships
+		var userRelationships types.Relationships
+		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRelationships)
+		relationships = append(relationships, userRelationships...)
 	}
 
-	return usersRelationshipsMap
+	return relationships
 }
 
 // DeleteRelationship allows to delete the relationship between the given user and his counterparty
-func (k Keeper) DeleteRelationship(ctx sdk.Context, user sdk.AccAddress, relationship types.Relationship) {
+func (k Keeper) DeleteRelationship(ctx sdk.Context, user string, relationship types.Relationship) {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(user)
+
 	var relationships types.Relationships
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &relationships)
 
 	for index, rel := range relationships {
-		if rel.Recipient.Equals(relationship.Recipient) && rel.Subspace == relationship.Subspace {
+		if rel.Recipient == relationship.Recipient && rel.Subspace == relationship.Subspace {
 			relationships = append(relationships[:index], relationships[index+1:]...)
 			if len(relationships) == 0 {
 				store.Delete(key)
@@ -103,7 +102,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &usersBlocks)
 
 	for _, ub := range usersBlocks {
-		if ub.Equals(userBlock) {
+		if ub == userBlock {
 			return fmt.Errorf("the user with %s address has already been blocked", userBlock.Blocked)
 		}
 	}
@@ -115,14 +114,15 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 }
 
 // UnblockUser allows to the specified blocker to unblock the given blocked user.
-func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked sdk.AccAddress, subspace string) error {
+func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked string, subspace string) error {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.UsersBlocksStoreKey(blocker)
+
 	var usersBlocks []types.UserBlock
 	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &usersBlocks)
 
 	for index, ub := range usersBlocks {
-		if ub.Blocker.Equals(blocker) && ub.Blocked.Equals(blocked) && ub.Subspace == subspace {
+		if ub.Blocker == blocker && ub.Blocked == blocked && ub.Subspace == subspace {
 			usersBlocks = append(usersBlocks[:index], usersBlocks[index+1:]...)
 			if len(usersBlocks) == 0 {
 				store.Delete(key)
@@ -137,7 +137,7 @@ func (k Keeper) UnblockUser(ctx sdk.Context, blocker, blocked sdk.AccAddress, su
 }
 
 // GetUserBlocks returns the list of users that the specified user has blocked.
-func (k Keeper) GetUserBlocks(ctx sdk.Context, user sdk.AccAddress) []types.UserBlock {
+func (k Keeper) GetUserBlocks(ctx sdk.Context, user string) []types.UserBlock {
 	store := ctx.KVStore(k.StoreKey)
 	key := types.UsersBlocksStoreKey(user)
 

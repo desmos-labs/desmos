@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 // ------------------

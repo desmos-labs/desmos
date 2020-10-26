@@ -1,0 +1,84 @@
+syntax = "proto3";
+package desmos.magpie.v1beta1;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/relationships/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/relationships/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Relationships queries all the stored relationships
+  rpc Relationships(QueryRelationshipsRequest) returns (QueryRelationshipsResult) {
+    option (google.api.http).get = "/desmos/relationships/v1beta1/relationships";
+  }
+
+  // UserRelationships queries the relationships for the user having the given address
+  rpc UserRelationships(QueryUserRelationshipsRequest) returns (QueryRelationshipsResult) {
+    option (google.api.http).get = "/desmos/relationships/v1beta1/relationships/{user}";
+  }
+
+  // UserRelationships queries the user blocks for the user having the given address
+  rpc UserBlocks(QueryUserBlocksRequest) returns (QueryBlocksResult) {
+    option (google.api.http).get = "/desmos/relationships/v1beta1/blocks/{user}";
+  }
+}
+
+// QueryRelationships is the request type for the Query/Relationships RPC method
+message QueryRelationshipsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryUserRelationships is the request type for the Query/UserRelationships RPC method.
+message QueryUserRelationshipsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // address of the user to query the relationships for
+  string user = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryRelationshipsResult is the response type for the Query/Balance RPC method.
+message QueryRelationshipsResult {
+  // relationships represent the list of all the relationships for the queried user
+  repeated desmos.relationships.v1beta1.Relationship relationships = 1
+  [(gogoproto.nullable) = false];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryUserBlocks is the request type for the Query/UserBlocks RPC endpoint
+message QueryUserBlocksRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // address of the user to query the blocks for
+  string user = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryBlocksResult is the response type for the Query/UserBlocks RPC method.
+message QueryBlocksResult {
+  // relationships represent the list of all the blocks for the queried user
+  repeated desmos.relationships.v1beta1.UserBlock blocks = 1
+  [(gogoproto.nullable) = false];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}

@@ -1,16 +1,16 @@
-package keeper_test
+package relationships_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
-func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
+func (suite *keeper.KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	sender, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 	receiver, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRelationships))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := relationships.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if test.expErr != nil {
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	}
 }
 
-func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
+func (suite *keeper.KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 
 	testMsg := types.NewMsgDeleteRelationship(suite.testData.user, addr1, subspace)
 
-	handler := keeper.NewHandler(suite.keeper)
+	handler := relationships.NewHandler(suite.keeper)
 	res, err := handler(suite.ctx, testMsg)
 
 	suite.NoError(err)
@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 	))
 }
 
-func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
+func (suite *keeper.KeeperTestSuite) Test_handleMsgBlockUser() {
 	blocker, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 	blocked, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -153,7 +153,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedUserBlocks))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := relationships.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if test.expErr != nil {
@@ -174,7 +174,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	}
 }
 
-func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
+func (suite *keeper.KeeperTestSuite) Test_handleMsgUnblockUser() {
 	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.NoError(err)
 	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
@@ -189,7 +189,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 
 	testMsg := types.NewMsgUnblockUser(suite.testData.user, addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
 
-	handler := keeper.NewHandler(suite.keeper)
+	handler := relationships.NewHandler(suite.keeper)
 	res, err := handler(suite.ctx, testMsg)
 
 	suite.NoError(err)

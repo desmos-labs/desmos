@@ -2,7 +2,7 @@ syntax = "proto3";
 package desmos.magpie.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "desmos/magpie/v1beta1/magpie.proto";
+import "desmos/magpie/v1beta1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
 

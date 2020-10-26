@@ -28,7 +28,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 // queryRelationships handles the request of listing all the relationships in the given context
 func queryRelationships(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	relationships := keeper.GetUsersRelationships(ctx)
+	relationships := keeper.GetAllRelationships(ctx)
 	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &relationships)
 	if err != nil {
 		panic("could not marshal result to JSON")

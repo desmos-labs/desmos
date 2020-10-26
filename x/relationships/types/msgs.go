@@ -1,25 +1,14 @@
-package msgs
+package types
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/commons"
-	"github.com/desmos-labs/desmos/x/relationships/types/models"
 )
 
-// Creates a relationship between the sender and
-// the receiver.
-// An example of relationship is the follow on Twitter or the subscribe on YouTube.
-type MsgCreateRelationship struct {
-	Sender   sdk.AccAddress `json:"sender" yaml:"sender"`
-	Receiver sdk.AccAddress `json:"receiver" yaml:"receiver"`
-	Subspace string         `json:"subspace" yaml:"subspace"`
-}
-
-func NewMsgCreateRelationship(sender, receiver sdk.AccAddress, subspace string) MsgCreateRelationship {
-	return MsgCreateRelationship{
+func NewMsgCreateRelationship(sender, receiver string, subspace string) *MsgCreateRelationship {
+	return &MsgCreateRelationship{
 		Sender:   sender,
 		Receiver: receiver,
 		Subspace: subspace,
@@ -27,24 +16,24 @@ func NewMsgCreateRelationship(sender, receiver sdk.AccAddress, subspace string) 
 }
 
 // Route should return the name of the module
-func (msg MsgCreateRelationship) Route() string { return models.RouterKey }
+func (msg MsgCreateRelationship) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgCreateRelationship) Type() string {
-	return models.ActionCreateRelationship
+	return ActionCreateRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateRelationship) ValidateBasic() error {
-	if msg.Sender.Empty() {
+	if len(msg.Sender) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
 
-	if msg.Receiver.Empty() {
+	if len(msg.Receiver) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}
 
-	if msg.Sender.Equals(msg.Receiver) {
+	if msg.Sender == msg.Receiver {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
 	}
 
@@ -57,24 +46,19 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Sender}
+	sender, _ := sdk.AccAddressFromBech32(msg.Sender)
+	return []sdk.AccAddress{sender}
 }
 
-// MsgDeleteRelationship allows the specified Sender to cut off the relationship he had previously
-// created with the specified Counterparty.
-type MsgDeleteRelationship struct {
-	Sender       sdk.AccAddress `json:"sender" yaml:"sender"`
-	Counterparty sdk.AccAddress `json:"counterparty" yaml:"counterparty"`
-	Subspace     string         `json:"subspace" yaml:"subspace"`
-}
+// ___________________________________________________________________________________________________________________
 
-func NewMsgDeleteRelationship(sender, receiver sdk.AccAddress, subspace string) MsgDeleteRelationship {
-	return MsgDeleteRelationship{
+func NewMsgDeleteRelationship(sender, receiver string, subspace string) *MsgDeleteRelationship {
+	return &MsgDeleteRelationship{
 		Sender:       sender,
 		Counterparty: receiver,
 		Subspace:     subspace,
@@ -82,24 +66,24 @@ func NewMsgDeleteRelationship(sender, receiver sdk.AccAddress, subspace string) 
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteRelationship) Route() string { return models.RouterKey }
+func (msg MsgDeleteRelationship) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgDeleteRelationship) Type() string {
-	return models.ActionDeleteRelationship
+	return ActionDeleteRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteRelationship) ValidateBasic() error {
-	if msg.Sender.Empty() {
+	if len(msg.Sender) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
 
-	if msg.Counterparty.Empty() {
+	if len(msg.Counterparty) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid counterparty address: %s", msg.Counterparty))
 	}
 
-	if msg.Sender.Equals(msg.Counterparty) {
+	if msg.Sender == msg.Counterparty {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
 	}
 
@@ -112,25 +96,19 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgDeleteRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Sender}
+	sender, _ := sdk.AccAddressFromBech32(msg.Sender)
+	return []sdk.AccAddress{sender}
 }
 
-// MsgBlockUser allows the given Blocker to block the specified Blocked user
-// for the (optional) reason.
-type MsgBlockUser struct {
-	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
-	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
-	Reason   string         `json:"reason,omitempty" yaml:"reason,omitempty"`
-	Subspace string         `json:"subspace" yaml:"subspace"`
-}
+// ___________________________________________________________________________________________________________________
 
-func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason, subspace string) MsgBlockUser {
-	return MsgBlockUser{
+func NewMsgBlockUser(blocker, blocked string, reason, subspace string) *MsgBlockUser {
+	return &MsgBlockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,
 		Reason:   reason,
@@ -139,24 +117,24 @@ func NewMsgBlockUser(blocker, blocked sdk.AccAddress, reason, subspace string) M
 }
 
 // Route should return the name of the module
-func (msg MsgBlockUser) Route() string { return models.RouterKey }
+func (msg MsgBlockUser) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgBlockUser) Type() string {
-	return models.ActionBlockUser
+	return ActionBlockUser
 }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgBlockUser) ValidateBasic() error {
-	if msg.Blocker.Empty() {
+	if len(msg.Blocker) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
 	}
 
-	if msg.Blocked.Empty() {
+	if len(msg.Blocked) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
 	}
 
-	if msg.Blocker.Equals(msg.Blocked) {
+	if msg.Blocker == msg.Blocked {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
 	}
 
@@ -169,23 +147,19 @@ func (msg MsgBlockUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgBlockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Blocker}
+	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
+	return []sdk.AccAddress{blocker}
 }
 
-// MsgUnblockUser allows the given original Blocker to unblock the specified Blocked user.
-type MsgUnblockUser struct {
-	Blocker  sdk.AccAddress `json:"blocker" yaml:"blocker"`
-	Blocked  sdk.AccAddress `json:"blocked" yaml:"blocked"`
-	Subspace string         `json:"subspace" yaml:"subspace"`
-}
+// ___________________________________________________________________________________________________________________
 
-func NewMsgUnblockUser(blocker, blocked sdk.AccAddress, subspace string) MsgUnblockUser {
-	return MsgUnblockUser{
+func NewMsgUnblockUser(blocker, blocked string, subspace string) *MsgUnblockUser {
+	return &MsgUnblockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,
 		Subspace: subspace,
@@ -193,24 +167,24 @@ func NewMsgUnblockUser(blocker, blocked sdk.AccAddress, subspace string) MsgUnbl
 }
 
 // Route should return the name of the module
-func (msg MsgUnblockUser) Route() string { return models.RouterKey }
+func (msg MsgUnblockUser) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgUnblockUser) Type() string {
-	return models.ActionUnblockUser
+	return ActionUnblockUser
 }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgUnblockUser) ValidateBasic() error {
-	if msg.Blocker.Empty() {
+	if len(msg.Blocker) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
 	}
 
-	if msg.Blocked.Empty() {
+	if len(msg.Blocked) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
 	}
 
-	if msg.Blocker.Equals(msg.Blocked) {
+	if msg.Blocker == msg.Blocked {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
 	}
 
@@ -223,10 +197,11 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnblockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(MsgsCodec.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Blocker}
+	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
+	return []sdk.AccAddress{blocker}
 }

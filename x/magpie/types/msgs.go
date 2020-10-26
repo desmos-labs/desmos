@@ -60,9 +60,6 @@ func (msg MsgCreateSession) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgCreateSession) GetSigners() []sdk.AccAddress {
-	owner, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		panic(err)
-	}
+	owner, _ := sdk.AccAddressFromBech32(msg.Owner)
 	return []sdk.AccAddress{owner}
 }

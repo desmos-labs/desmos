@@ -10,7 +10,6 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
-	"github.com/desmos-labs/desmos/x/relationships/types/msgs"
 	"github.com/tendermint/tendermint/crypto"
 )
 
@@ -38,7 +37,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 
 // sendMsgBlockUser sends a transaction with a MsgBlockUser from a provided random account
 func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg msgs.MsgBlockUser, ctx sdk.Context, chainID string, privKeys []crypto.PrivKey) error {
+	msg types.MsgBlockUser, ctx sdk.Context, chainID string, privKeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
@@ -132,7 +131,7 @@ func randomUnblockUserFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, 
 
 // sendMsgUnblockUser sends a transaction with a MsgUnblockUser from a provided random account
 func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg msgs.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey) error {
+	msg types.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 	coins := account.SpendableCoins(ctx.BlockTime())
 

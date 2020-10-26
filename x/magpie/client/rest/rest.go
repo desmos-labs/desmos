@@ -12,8 +12,8 @@ const (
 	RestParamsID = "session_id"
 )
 
-// RegisterHandlers - Central function to define routes that get registered by the main application
-func RegisterHandlers(clientCtx client.Context, r *mux.Router) {
+// RegisterRoutes - Central function to define routes that get registered by the main application
+func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(clientCtx, r)
 	registerTxHandlers(clientCtx, r)
 }

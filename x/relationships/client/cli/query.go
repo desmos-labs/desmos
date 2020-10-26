@@ -1,11 +1,10 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 
@@ -13,7 +12,7 @@ import (
 )
 
 // GetQueryCmd adds the query commands
-func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
+func GetQueryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the relationships module",
@@ -21,32 +20,33 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	cmd.AddCommand(flags.GetCommands(
-		GetCmdQueryUserRelationships(cdc),
-		GetCmdQueryRelationships(cdc),
-		GetCmdQueryUserBlocks(cdc),
-	)...)
+	cmd.AddCommand(
+		GetCmdQueryUserRelationships(),
+		GetCmdQueryRelationships(),
+		GetCmdQueryUserBlocks(),
+	)
 	return cmd
 }
 
-func GetCmdQueryRelationships(cdc *codec.Codec) *cobra.Command {
+func GetCmdQueryRelationships() *cobra.Command {
 	return &cobra.Command{
 		Use:   "all",
 		Short: "Retrieve all the relationships",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRelationships)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadQueryCommandFlags(clientCtx, cmd.Flags())
 			if err != nil {
-				fmt.Printf("No relationships found")
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Relationships(context.Background(), &types.QueryRelationshipsRequest{})
+			if err != nil {
+				return fmt.Errorf("no relationships found")
 			}
 
-			var out map[string]types.Relationships
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintOutput(res.Relationships)
 		},
 	}
 }

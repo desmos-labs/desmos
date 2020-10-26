@@ -1,6 +1,4 @@
-package models
-
-import sdk "github.com/cosmos/cosmos-sdk/types"
+package types
 
 const (
 	ModuleName = "relationships"
@@ -25,11 +23,11 @@ var (
 )
 
 // RelationshipsStoreKey turns a user address to a key used to store a Address -> []Address couple
-func RelationshipsStoreKey(user sdk.AccAddress) []byte {
+func RelationshipsStoreKey(user string) []byte {
 	return append(RelationshipsStorePrefix, []byte(user)...)
 }
 
 // UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
-func UsersBlocksStoreKey(user sdk.AccAddress) []byte {
+func UsersBlocksStoreKey(user string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(user)...)
 }

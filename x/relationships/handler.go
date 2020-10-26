@@ -1,7 +1,8 @@
-package keeper
+package relationships
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,7 +10,7 @@ import (
 )
 
 // NewHandler returns a handler for "profile" type messages.
-func NewHandler(keeper Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
@@ -30,7 +31,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 }
 
 // handleMsgCreateRelationship handles the creation of a relationship
-func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
+func handleMsgCreateRelationship(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
 	// Save the relationship
 	err := keeper.StoreRelationship(ctx, msg.Sender, types.NewRelationship(msg.Receiver, msg.Subspace))
 	if err != nil {
@@ -53,7 +54,7 @@ func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCr
 }
 
 // handleMsgDeleteRelationship handles the relationship's deletion
-func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
+func handleMsgDeleteRelationship(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgDeleteRelationship) (*sdk.Result, error) {
 	keeper.DeleteRelationship(ctx, msg.Sender, types.NewRelationship(msg.Counterparty, msg.Subspace))
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -72,7 +73,7 @@ func handleMsgDeleteRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgDe
 }
 
 // handleMsgBlockUser handles the process to block a user
-func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) (*sdk.Result, error) {
+func handleMsgBlockUser(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgBlockUser) (*sdk.Result, error) {
 	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
 
 	if err := keeper.SaveUserBlock(ctx, userBlock); err != nil {
@@ -96,7 +97,7 @@ func handleMsgBlockUser(ctx sdk.Context, keeper Keeper, msg types.MsgBlockUser) 
 }
 
 // handleMsgUnblockUser handles the process to unblock a user
-func handleMsgUnblockUser(ctx sdk.Context, keeper Keeper, msg types.MsgUnblockUser) (*sdk.Result, error) {
+func handleMsgUnblockUser(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgUnblockUser) (*sdk.Result, error) {
 	if err := keeper.UnblockUser(ctx, msg.Blocker, msg.Blocked, msg.Subspace); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

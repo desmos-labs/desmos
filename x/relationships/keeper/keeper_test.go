@@ -112,7 +112,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersRelationships() {
 				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, test.storedRelationships[0])
 			}
 
-			actualIDsMap := suite.keeper.GetUsersRelationships(suite.ctx)
+			actualIDsMap := suite.keeper.GetAllRelationships(suite.ctx)
 			suite.Equal(test.expMap, actualIDsMap)
 		})
 	}
