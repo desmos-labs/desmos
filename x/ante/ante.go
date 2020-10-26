@@ -3,6 +3,7 @@ package ante
 import (
 	"errors"
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -79,11 +80,11 @@ func checkMinimumFees(
 	tokenDenom string,
 	requiredFees sdk.Dec,
 ) error {
+
 	// Each message should cost 0.01 daric
-	// Token quantity is always set as millionth of units
-	stableRequiredQty := requiredFees.MulInt64(10000)
+	stableRequiredQty := requiredFees.Mul(sdk.NewDec(1000000))
 	feeAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(tokenDenom))
-	if stableRequiredQty.IsZero() || stableRequiredQty.LTE(feeAmount) {
+	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(feeAmount) {
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
 			fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", requiredFees, tokenDenom, feeAmount))
 	}

@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
@@ -23,6 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	"github.com/desmos-labs/desmos/x/ante"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -52,6 +52,7 @@ import (
 const (
 	appName          = "desmos"
 	Bech32MainPrefix = "desmos"
+	DefaultBondDenom = "udaric"
 )
 
 var (
@@ -399,7 +400,9 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetAnteHandler(ante.NewAnteHandler(app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer))
+	app.SetAnteHandler(ante.NewAnteHandler(
+		app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer, DefaultBondDenom),
+	)
 	app.SetEndBlocker(app.EndBlocker)
 
 	if loadLatest {
