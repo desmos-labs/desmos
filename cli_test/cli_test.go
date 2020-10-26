@@ -1,5 +1,3 @@
-// +build cli_test
-
 //nolint
 package clitest
 
@@ -173,13 +171,16 @@ func TestDesmosCLIFeesDeduction(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+
 	fooAcc := f.QueryAccount(fooAddr)
 	fooAmt := fooAcc.GetCoins().AmountOf(fooDenom)
 
 	// test simulation
 	success, _, _ := f.TxSend(
 		keyFoo, barAddr, sdk.NewInt64Coin(fooDenom, 1000),
-		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), "--dry-run")
+		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), txFees, "--dry-run")
 	require.True(t, success)
 
 	// Wait for a block
@@ -193,7 +194,7 @@ func TestDesmosCLIFeesDeduction(t *testing.T) {
 	largeCoins := sdk.TokensFromConsensusPower(10000000)
 	success, stdOut, _ := f.TxSend(
 		keyFoo, barAddr, sdk.NewCoin(fooDenom, largeCoins),
-		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), "-y")
+		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), txFees, "-y")
 	require.Contains(t, stdOut, "insufficient account funds")
 	require.True(t, success)
 
@@ -207,7 +208,7 @@ func TestDesmosCLIFeesDeduction(t *testing.T) {
 	// test success (transfer = coins + fees)
 	success, _, _ = f.TxSend(
 		keyFoo, barAddr, sdk.NewInt64Coin(fooDenom, 500),
-		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), "-y")
+		fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(feeDenom, 2)), txFees, "-y")
 	require.True(t, success)
 
 	f.Cleanup()
@@ -224,6 +225,8 @@ func TestDesmosCLISend(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
 
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
@@ -231,7 +234,7 @@ func TestDesmosCLISend(t *testing.T) {
 
 	// Send some tokens from one account to the other
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
@@ -241,7 +244,7 @@ func TestDesmosCLISend(t *testing.T) {
 	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
 
 	// Test --dry-run
-	success, _, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--dry-run")
+	success, _, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -260,7 +263,7 @@ func TestDesmosCLISend(t *testing.T) {
 	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
 
 	// test autosequencing
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
@@ -270,7 +273,7 @@ func TestDesmosCLISend(t *testing.T) {
 	require.Equal(t, startTokens.Sub(sendTokens.MulRaw(2)), fooAcc.GetCoins().AmountOf(denom))
 
 	// test memo
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--memo='testmemo'", "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--memo='testmemo'", txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
@@ -293,13 +296,16 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Test failure with auto gas disabled and very little gas set by hand
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	success, stdOut, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--gas=10", "-y")
+	success, stdOut, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=10", "-y")
 	require.Contains(t, stdOut, "out of gas in location")
 	require.True(t, success)
 
@@ -308,7 +314,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Test failure with negative gas
-	success, _, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--gas=-100", "-y")
+	success, _, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=-100", "-y")
 	require.False(t, success)
 
 	// Check state didn't change
@@ -316,7 +322,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Test failure with 0 gas
-	success, stdOut, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--gas=0", "-y")
+	success, stdOut, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=0", "-y")
 	require.Contains(t, stdOut, "out of gas in location")
 	require.True(t, success)
 
@@ -325,7 +331,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 
 	// Enable auto gas
-	success, stdout, stderr := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--gas=auto", "-y")
+	success, stdout, stderr := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=auto", "-y")
 	require.NotEmpty(t, stderr)
 	require.True(t, success)
 	cdc := app.MakeCodec()
@@ -351,19 +357,24 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	defer proc.Stop(false)
 
 	barAddr := f.KeyAddress(keyBar)
+	fooAddr := f.KeyAddress(keyFoo)
 	barVal := sdk.ValAddress(barAddr)
+
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	f.TxSend(barAddr.String(), fooAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
+	f.TxSend(barAddr.String(), fooAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
 
 	consPubKey := sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, ed25519.GenPrivKey().PubKey())
 
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	barAcc := f.QueryAccount(barAddr)
 	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
 
 	// Generate a create validator transaction and ensure correctness
-	success, stdout, stderr := f.TxStakingCreateValidator(barAddr.String(), consPubKey, sdk.NewInt64Coin(denom, 2), "--generate-only")
+	success, stdout, stderr := f.TxStakingCreateValidator(barAddr.String(), consPubKey, sdk.NewInt64Coin(denom, 2), txFees, "--generate-only")
 
 	require.True(f.T, success)
 	require.Empty(f.T, stderr)
@@ -374,11 +385,11 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 
 	// Test --dry-run
 	newValTokens := sdk.TokensFromConsensusPower(2)
-	success, _, _ = f.TxStakingCreateValidator(keyBar, consPubKey, sdk.NewCoin(denom, newValTokens), "--dry-run")
+	success, _, _ = f.TxStakingCreateValidator(keyBar, consPubKey, sdk.NewCoin(denom, newValTokens), txFees, "--dry-run")
 	require.True(t, success)
 
 	// Create the validator
-	f.TxStakingCreateValidator(keyBar, consPubKey, sdk.NewCoin(denom, newValTokens), "-y")
+	f.TxStakingCreateValidator(keyBar, consPubKey, sdk.NewCoin(denom, newValTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure funds were deducted properly
@@ -397,7 +408,7 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 
 	// unbond a single share
 	unbondAmt := sdk.NewCoin(denom, sdk.TokensFromConsensusPower(1))
-	success = f.TxStakingUnbond(keyBar, unbondAmt.String(), barVal, "-y")
+	success = f.TxStakingUnbond(keyBar, unbondAmt.String(), barVal, txFees, "-y")
 	require.True(t, success)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
@@ -480,6 +491,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	f.QueryGovParamTallying()
 
 	fooAddr := f.KeyAddress(keyFoo)
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
 
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
@@ -491,7 +503,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	// Test submit generate only for submit proposal
 	proposalTokens := sdk.TokensFromConsensusPower(5)
 	success, stdout, stderr := f.TxGovSubmitProposal(
-		fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--generate-only", "-y")
+		fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), txFees, "--generate-only", "-y")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg := unmarshalStdTx(t, stdout)
@@ -500,11 +512,11 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	require.Equal(t, 0, len(msg.GetSignatures()))
 
 	// Test --dry-run
-	success, _, _ = f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--dry-run")
+	success, _, _ = f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), txFees, "--dry-run")
 	require.True(t, success)
 
 	// Create the proposal
-	f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "-y")
+	f.TxGovSubmitProposal(keyFoo, "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure transaction events can be queried
@@ -530,7 +542,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 
 	// Test deposit generate only
 	depositTokens := sdk.TokensFromConsensusPower(10)
-	success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), "--generate-only")
+	success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), txFees, "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg = unmarshalStdTx(t, stdout)
@@ -565,7 +577,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	require.Equal(t, gov.StatusVotingPeriod, proposal1.Status)
 
 	// Test vote generate only
-	success, stdout, stderr = f.TxGovVote(1, gov.OptionYes, fooAddr.String(), "--generate-only")
+	success, stdout, stderr = f.TxGovVote(1, gov.OptionYes, fooAddr.String(), txFees, "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg = unmarshalStdTx(t, stdout)
@@ -574,7 +586,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	require.Equal(t, 0, len(msg.GetSignatures()))
 
 	// Vote on the proposal
-	f.TxGovVote(1, gov.OptionYes, keyFoo, "-y")
+	f.TxGovVote(1, gov.OptionYes, keyFoo, txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Query the vote
@@ -601,7 +613,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	require.Equal(t, uint64(1), proposalsQuery[0].ProposalID)
 
 	// submit a second test proposal
-	f.TxGovSubmitProposal(keyFoo, "Text", "Apples", "test", sdk.NewCoin(denom, proposalTokens), "-y")
+	f.TxGovSubmitProposal(keyFoo, "Text", "Apples", "test", sdk.NewCoin(denom, proposalTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test limit on proposals query
@@ -623,9 +635,12 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+
 	// Test generate sendTx with default gas
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	success, stdout, stderr := f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "--generate-only")
+	success, stdout, stderr := f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg := unmarshalStdTx(t, stdout)
@@ -634,7 +649,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	require.Equal(t, 0, len(msg.GetSignatures()))
 
 	// Test generate sendTx with --gas=$amount
-	success, stdout, stderr = f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "--gas=100", "--generate-only")
+	success, stdout, stderr = f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=100", "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg = unmarshalStdTx(t, stdout)
@@ -643,7 +658,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	require.Equal(t, 0, len(msg.GetSignatures()))
 
 	// Test generate sendTx, estimate gas
-	success, stdout, stderr = f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "--generate-only")
+	success, stdout, stderr = f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg = unmarshalStdTx(t, stdout)
@@ -655,12 +670,12 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	defer os.Remove(unsignedTxFile.Name())
 
 	// Test sign --validate-signatures
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), "--validate-signatures")
+	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), txFees, "--validate-signatures")
 	require.False(t, success)
 	require.Equal(t, fmt.Sprintf("Signers:\n  0: %v\n\nSignatures:\n\n", fooAddr.String()), stdout)
 
 	// Test sign
-	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name())
+	success, stdout, _ = f.TxSign(keyFoo, unsignedTxFile.Name(), txFees)
 	require.True(t, success)
 	msg = unmarshalStdTx(t, stdout)
 	require.Equal(t, len(msg.Msgs), 1)
@@ -672,7 +687,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	defer os.Remove(signedTxFile.Name())
 
 	// Test sign --validate-signatures
-	success, stdout, _ = f.TxSign(keyFoo, signedTxFile.Name(), "--validate-signatures")
+	success, stdout, _ = f.TxSign(keyFoo, signedTxFile.Name(), txFees, "--validate-signatures")
 	require.True(t, success)
 	require.Equal(t, fmt.Sprintf("Signers:\n  0: %v\n\nSignatures:\n  0: %v\t\t\t[OK]\n\n", fooAddr.String(),
 		fooAddr.String()), stdout)

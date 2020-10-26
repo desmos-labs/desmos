@@ -116,7 +116,3 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
 	checkValidTx(t, anteHandler, ctx, tx, true)
 }
-
-func TestAnteHandlerFees_MsgSaveProfile(t *testing.T) {
-
-}

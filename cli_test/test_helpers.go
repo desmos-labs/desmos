@@ -38,7 +38,7 @@ const (
 	keyFoo     = "foo"
 	keyBar     = "bar"
 	fooDenom   = "footoken"
-	feeDenom   = "feetoken"
+	feeDenom   = "udaric"
 	fee2Denom  = "fee2token"
 	keyBaz     = "baz"
 	keyVesting = "vesting"

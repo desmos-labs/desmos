@@ -86,7 +86,7 @@ func checkMinimumFees(
 	feeAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(tokenDenom))
 	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(feeAmount) {
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
-			fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", requiredFees, tokenDenom, feeAmount))
+			fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", stableRequiredQty, tokenDenom, feeAmount))
 	}
 
 	return nil

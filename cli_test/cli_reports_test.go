@@ -4,6 +4,7 @@
 package clitest
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -32,7 +33,8 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	// Create a post
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	message := "message#test"
-	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, txFees, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -45,7 +47,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	require.Nil(t, post.Attachments)
 
 	//Report a post
-	success, _, sterr = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, "-y")
+	success, _, sterr = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, txFees, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -59,7 +61,7 @@ func TestDesmosCLIReportPost(t *testing.T) {
 	require.Equal(t, report.User, fooAcc.Address)
 
 	// Test --dry-run
-	success, _, _ = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, "--dry-run")
+	success, _, _ = f.TxReportPost(post.PostID.String(), repType, repMess, fooAddr, txFees, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
