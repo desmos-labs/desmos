@@ -2,11 +2,51 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/relationships"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
+
+func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
+	user, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	otherUser, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
+	tests := []struct {
+		name       string
+		blocker    sdk.AccAddress
+		blocked    sdk.AccAddress
+		userBlocks []relationships.UserBlock
+		expBool    bool
+	}{
+		{
+			name:       "blocked user found returns true",
+			blocker:    user,
+			blocked:    otherUser,
+			userBlocks: []relationships.UserBlock{relationships.NewUserBlock(user, otherUser, "test", "")},
+			expBool:    true,
+		},
+		{
+			name:       "non blocked user not found returns false",
+			blocker:    user,
+			blocked:    otherUser,
+			userBlocks: nil,
+			expBool:    false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.userBlocks != nil {
+				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx, test.userBlocks[0])
+			}
+			res := suite.keeper.IsUserBlocked(suite.ctx, test.blocker, test.blocked)
+			suite.Equal(test.expBool, res)
+		})
+	}
+}
 
 func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {
 	store := suite.ctx.KVStore(suite.keeper.StoreKey)

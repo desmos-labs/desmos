@@ -156,6 +156,12 @@ func handleMsgDeleteProfile(ctx sdk.Context, keeper Keeper, msg types.MsgDeleteP
 
 // handleMsgRequestDTagTransfer handles the request of a dTag transfer
 func handleMsgRequestDTagTransfer(ctx sdk.Context, keeper Keeper, msg types.MsgRequestDTagTransfer) (*sdk.Result, error) {
+	// check if the request's receiver has blocked the sender before
+	if keeper.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("The user with address %s has blocked you", msg.Receiver))
+	}
+
 	dtagToTrade := keeper.GetDtagFromAddress(ctx, msg.Receiver)
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,

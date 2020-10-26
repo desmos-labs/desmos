@@ -126,7 +126,7 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 		answers := types.PollAnswers{}
 		for index, answer := range pollAnswersSlice {
 			if strings.TrimSpace(answer) == "" {
-				return nil, fmt.Errorf("invalid answer text at index %s", string(index))
+				return nil, fmt.Errorf("invalid answer text at index %d", index)
 			}
 
 			pollAnswer := types.PollAnswer{

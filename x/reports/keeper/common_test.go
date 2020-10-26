@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/desmos-labs/desmos/x/relationships"
 	"testing"
 	"time"
 
@@ -43,6 +44,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	relationshipsKey := sdk.NewKVStoreKey("relationships")
 
 	// create an in-memory db for reports
 	memDB := db.NewMemDB()
@@ -51,6 +53,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(reportsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -60,7 +63,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// define keepers
 	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
-	suite.postsKeeper = postsK.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("postsT"))
+	relationshipsKeeper := relationships.NewKeeper(suite.cdc, relationshipsKey)
+	suite.postsKeeper = postsK.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("postsT"), relationshipsKeeper)
 	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
 
 	// setup data

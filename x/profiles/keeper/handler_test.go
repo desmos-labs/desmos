@@ -9,6 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 func (suite *KeeperTestSuite) Test_validateProfile() {
@@ -317,10 +318,18 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 		name           string
 		msg            types.MsgRequestDTagTransfer
 		hasProfile     bool
+		isBlocked      bool
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
 	}{
+		{
+			name:      "Blocked receiver making request returns error",
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			isBlocked: true,
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("The user with address %s has blocked you", suite.testData.user)),
+		},
 		{
 			name:           "No DTag to transfer returns error",
 			msg:            types.NewMsgRequestDTagTransfer(suite.testData.otherUser, suite.testData.user),
@@ -359,6 +368,13 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			if test.isBlocked {
+				userBlock := relationships.NewUserBlock(suite.testData.user, suite.testData.otherUser, "test",
+					"")
+				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx, userBlock)
+			}
+
 			store := suite.ctx.KVStore(suite.keeper.StoreKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
