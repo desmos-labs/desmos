@@ -68,7 +68,7 @@ func testCodec() *codec.Codec {
 	// register the different types
 	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
 	auth.RegisterCodec(cdc)
-	types.RegisterCodec(cdc)
+	types.RegisterLegacyAminoCodec(cdc)
 
 	cdc.Seal()
 	return cdc

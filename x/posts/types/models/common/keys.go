@@ -3,7 +3,7 @@ package common
 import (
 	"regexp"
 
-	"github.com/cosmos/cosmos-sdk/x/supply"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 const (
@@ -37,7 +37,7 @@ var (
 	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
 
-	ModuleAddress = supply.NewModuleAddress(ModuleName)
+	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
 	PostIndexedIDStorePrefix = []byte("p_index")

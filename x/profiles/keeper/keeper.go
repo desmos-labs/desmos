@@ -4,23 +4,24 @@ import (
 	"bytes"
 	"fmt"
 
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	// The reference to the ParamsStore to get and set profile specific params
-	paramSubspace params.Subspace
+	paramSubspace paramstypes.Subspace
 
-	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
+	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
+func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}

@@ -1,15 +1,16 @@
-package keeper_test
+package magpie_test
 
 import (
 	"strconv"
 
+	"github.com/desmos-labs/desmos/x/magpie"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
-func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
+func (suite *keeper.KeeperTestSuite) Test_handleMsgCreateSession() {
 	owner, err := sdk.AccAddressFromBech32("cosmos1m5gfj4t5ddksytl65mmv7lfg5nef3etmrnl8a0")
 	suite.NoError(err)
 
@@ -57,7 +58,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
 			err := suite.keeper.SetDefaultSessionLength(suite.ctx, sessionLength)
 			suite.NoError(err)
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := magpie.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response

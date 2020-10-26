@@ -2,7 +2,23 @@ package app
 
 import (
 	"io"
+	"net/http"
 	"os"
+	"path/filepath"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
+	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/gorilla/mux"
+	"github.com/rakyll/statik/fs"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -11,10 +27,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	distrclient "github.com/cosmos/cosmos-sdk/x/distribution/client"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -22,7 +38,6 @@ import (
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -47,6 +62,35 @@ import (
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+
+	"github.com/cosmos/cosmos-sdk/baseapp"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
+	tmjson "github.com/tendermint/tendermint/libs/json"
+
+	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+
+	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 )
 
 const (
@@ -70,14 +114,13 @@ var (
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler,
-			distr.ProposalHandler,
+			distrclient.ProposalHandler,
 			upgradeclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
-		supply.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 
 		// Custom modules
@@ -90,38 +133,29 @@ var (
 
 	// Module account permissions
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
-		distr.ModuleName:          nil,
-		staking.BondedPoolName:    {supply.Burner, supply.Staking},
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
-		gov.ModuleName:            {supply.Burner},
+		authtypes.FeeCollectorName:     nil,
+		distrtypes.ModuleName:          nil,
+		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:            {authtypes.Burner},
 	}
 
 	// module accounts that are allowed to receive tokens
 	allowedReceivingModAcc = map[string]bool{
-		distr.ModuleName: true,
+		distrtypes.ModuleName: true,
 	}
 )
 
-// MakeCodec generates the necessary codecs for Amino
-func MakeCodec() *codec.Codec {
-	var cdc = codec.New()
-
-	ModuleBasics.RegisterCodec(cdc)
-	sdk.RegisterCodec(cdc)
-	codec.RegisterCrypto(cdc)
-	codec.RegisterEvidences(cdc)
-	authvesting.RegisterCodec(cdc)
-
-	return cdc.Seal()
-}
+var _ simapp.App = (*DesmosApp)(nil)
 
 // DesmosApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities arKen't needed for testing.
 type DesmosApp struct {
 	*bam.BaseApp
-	cdc *codec.Codec
+	legacyAmino       *codec.LegacyAmino
+	appCodec          codec.Marshaler
+	interfaceRegistry types.InterfaceRegistry
 
 	invCheckPeriod uint
 
@@ -129,21 +163,17 @@ type DesmosApp struct {
 	keys  map[string]*sdk.KVStoreKey
 	tkeys map[string]*sdk.TransientStoreKey
 
-	// subspaces
-	subspaces map[string]params.Subspace
-
 	// Keepers
-	AccountKeeper  auth.AccountKeeper
-	BankKeeper     bank.Keeper
-	SupplyKeeper   supply.Keeper
-	stakingKeeper  staking.Keeper
-	SlashingKeeper slashing.Keeper
-	DistrKeeper    distr.Keeper
-	GovKeeper      gov.Keeper
-	CrisisKeeper   crisis.Keeper
-	upgradeKeeper  upgrade.Keeper
-	paramsKeeper   params.Keeper
-	evidenceKeeper evidence.Keeper
+	accountKeeper  authkeeper.AccountKeeper
+	bankKeeper     bankkeeper.Keeper
+	stakingKeeper  stakingkeeper.Keeper
+	slashingKeeper slashingkeeper.Keeper
+	distrKeeper    distrkeeper.Keeper
+	govKeeper      govkeeper.Keeper
+	crisisKeeper   crisiskeeper.Keeper
+	upgradeKeeper  upgradekeeper.Keeper
+	paramsKeeper   paramskeeper.Keeper
+	evidenceKeeper evidencekeeper.Keeper
 
 	// Custom modules
 	magpieKeeper        magpieKeeper.Keeper
@@ -159,235 +189,207 @@ type DesmosApp struct {
 	sm *module.SimulationManager
 }
 
+func init() {
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	DefaultNodeHome = filepath.Join(userHomeDir, ".desmosd")
+}
+
 // NewDesmosApp is a constructor function for DesmosApp
-func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
-	skipUpgradeHeights map[int64]bool, invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
+func NewDesmosApp(
+	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
+	homePath string, invCheckPeriod uint, encodingConfig simappparams.EncodingConfig, baseAppOptions ...func(*bam.BaseApp),
 ) *DesmosApp {
-	// First define the top level codec that will be shared by the different modules
-	cdc := MakeCodec()
+
+	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
+	appCodec := encodingConfig.Marshaler
+	legacyAmino := encodingConfig.Amino
+	interfaceRegistry := encodingConfig.InterfaceRegistry
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
+	bApp := baseapp.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetAppVersion(version.Version)
+	bApp.GRPCQueryRouter().SetInterfaceRegistry(interfaceRegistry)
+	bApp.GRPCQueryRouter().RegisterSimulateService(bApp.Simulate, interfaceRegistry)
+
 	keys := sdk.NewKVStoreKeys(
-		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey,
-		gov.StoreKey, upgrade.StoreKey, params.StoreKey, evidence.StoreKey,
+		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
+		distrtypes.StoreKey, slashingtypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
+		evidencetypes.StoreKey,
 
 		// Custom modules
 		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
 		relationshipsTypes.StoreKey,
 	)
-	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
+	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	// Here you initialize your application with the store keys it requires
 	var app = &DesmosApp{
-		BaseApp:        bApp,
-		cdc:            cdc,
-		invCheckPeriod: invCheckPeriod,
-		keys:           keys,
-		tkeys:          tkeys,
-		subspaces:      make(map[string]params.Subspace),
+		BaseApp:           bApp,
+		legacyAmino:       legacyAmino,
+		appCodec:          appCodec,
+		interfaceRegistry: interfaceRegistry,
+		invCheckPeriod:    invCheckPeriod,
+		keys:              keys,
+		tkeys:             tkeys,
 	}
 
-	// Init params keeper and subspaces
-	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tkeys[params.TStoreKey])
-	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
-	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
-	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
-	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
-	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
-	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
-	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
-	app.subspaces[postsTypes.ModuleName] = app.paramsKeeper.Subspace(postsTypes.DefaultParamspace)
-	app.subspaces[profilesTypes.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
+	app.paramsKeeper = initParamsKeeper(appCodec, legacyAmino, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey])
 
-	// Add keepers
-	app.AccountKeeper = auth.NewAccountKeeper(
-		app.cdc,
-		keys[auth.StoreKey],
-		app.subspaces[auth.ModuleName],
-		auth.ProtoBaseAccount,
+	// set the BaseApp's parameter store
+	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramskeeper.ConsensusParamsKeyTable()))
+
+	// add keepers
+	app.accountKeeper = authkeeper.NewAccountKeeper(
+		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
 	)
-	app.BankKeeper = bank.NewBaseKeeper(
-		app.AccountKeeper,
-		app.subspaces[bank.ModuleName],
-		app.BlacklistedAccAddrs(),
+	app.bankKeeper = bankkeeper.NewBaseKeeper(
+		appCodec, keys[banktypes.StoreKey], app.accountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
 	)
-	app.SupplyKeeper = supply.NewKeeper(
-		app.cdc,
-		keys[supply.StoreKey],
-		app.AccountKeeper,
-		app.BankKeeper,
-		maccPerms,
+	stakingKeeper := stakingkeeper.NewKeeper(
+		appCodec, keys[stakingtypes.StoreKey], app.accountKeeper, app.bankKeeper, app.GetSubspace(stakingtypes.ModuleName),
 	)
-	stakingKeeper := staking.NewKeeper(
-		app.cdc,
-		keys[staking.StoreKey],
-		app.SupplyKeeper,
-		app.subspaces[staking.ModuleName],
+	app.distrKeeper = distrkeeper.NewKeeper(
+		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.accountKeeper, app.bankKeeper,
+		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
-	app.DistrKeeper = distr.NewKeeper(
-		app.cdc,
-		keys[distr.StoreKey],
-		app.subspaces[distr.ModuleName],
-		&stakingKeeper,
-		app.SupplyKeeper,
-		auth.FeeCollectorName,
-		app.ModuleAccountAddrs(),
+	app.slashingKeeper = slashingkeeper.NewKeeper(
+		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
 	)
-	app.SlashingKeeper = slashing.NewKeeper(
-		app.cdc,
-		keys[slashing.StoreKey],
-		&stakingKeeper,
-		app.subspaces[slashing.ModuleName],
+	app.crisisKeeper = crisiskeeper.NewKeeper(
+		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.bankKeeper, authtypes.FeeCollectorName,
 	)
-	app.CrisisKeeper = crisis.NewKeeper(
-		app.subspaces[crisis.ModuleName],
-		app.invCheckPeriod,
-		app.SupplyKeeper,
-		auth.FeeCollectorName,
-	)
-	app.upgradeKeeper = upgrade.NewKeeper(
-		skipUpgradeHeights,
-		keys[upgrade.StoreKey],
-		app.cdc,
+	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
+
+	// register the staking hooks
+	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	app.stakingKeeper = *stakingKeeper.SetHooks(
+		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
 	)
 
-	// Create evidence keeper with router
-	evidenceKeeper := evidence.NewKeeper(
-		app.cdc,
-		keys[evidence.StoreKey],
-		app.subspaces[evidence.ModuleName],
-		&app.stakingKeeper,
-		app.SlashingKeeper,
+	// register the proposal types
+	govRouter := govtypes.NewRouter()
+	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
+	app.govKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
+		&stakingKeeper, govRouter,
 	)
-	evidenceRouter := evidence.NewRouter()
-	evidenceKeeper.SetRouter(evidenceRouter)
+
+	// create evidence keeper with router
+	evidenceKeeper := evidencekeeper.NewKeeper(
+		appCodec, keys[evidencetypes.StoreKey], &app.stakingKeeper, app.slashingKeeper,
+	)
+	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.evidenceKeeper = *evidenceKeeper
-
-	// Create gov keeper with router
-	govRouter := gov.NewRouter()
-	govRouter.
-		AddRoute(gov.RouterKey, gov.ProposalHandler).
-		AddRoute(params.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
-		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
-
-	app.GovKeeper = gov.NewKeeper(
-		app.cdc,
-		keys[gov.StoreKey],
-		app.subspaces[gov.ModuleName],
-		app.SupplyKeeper,
-		&stakingKeeper,
-		govRouter,
-	)
 
 	// Register custom modules
 	app.magpieKeeper = magpieKeeper.NewKeeper(
-		app.cdc,
+		app.legacyAmino,
 		keys[magpieTypes.StoreKey],
 	)
 	app.postsKeeper = postsKeeper.NewKeeper(
-		app.cdc,
+		app.legacyAmino,
 		keys[postsTypes.StoreKey],
-		app.subspaces[postsTypes.ModuleName],
+		app.GetSubspace(postsTypes.ModuleName),
 	)
 	app.profileKeeper = profilesKeeper.NewKeeper(
-		app.cdc,
+		app.legacyAmino,
 		keys[profilesTypes.StoreKey],
-		app.subspaces[profilesTypes.ModuleName],
+		app.GetSubspace(profilesTypes.ModuleName),
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
-		app.postsKeeper,
-		app.cdc,
+		app.legacyAmino,
 		keys[reportsTypes.StoreKey],
+		app.postsKeeper,
 	)
-
 	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
-		app.cdc,
+		app.legacyAmino,
 		keys[relationshipsTypes.StoreKey],
-	)
-
-	// Register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(
-			app.DistrKeeper.Hooks(),
-			app.SlashingKeeper.Hooks()),
 	)
 
 	// Create the module manager
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
-		genutil.NewAppModule(app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
-		auth.NewAppModule(app.AccountKeeper),
-		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		crisis.NewAppModule(&app.CrisisKeeper),
-		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		genutil.NewAppModule(
+			app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx,
+			encodingConfig.TxConfig,
+		),
+		auth.NewAppModule(appCodec, app.accountKeeper, authsims.RandomGenesisAccounts),
+		bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper),
+		crisis.NewAppModule(&app.crisisKeeper),
+		gov.NewAppModule(appCodec, app.govKeeper, app.accountKeeper, app.bankKeeper),
+		slashing.NewAppModule(appCodec, app.slashingKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
+		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
+		staking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
+		params.NewAppModule(app.paramsKeeper),
 
 		// Custom modules
-		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
-		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
+		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper),
+		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
-		upgrade.ModuleName, distr.ModuleName, slashing.ModuleName,
-		evidence.ModuleName, staking.ModuleName,
+		upgradetypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
+		evidencetypes.ModuleName, stakingtypes.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisis.ModuleName, gov.ModuleName, staking.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
-		auth.ModuleName, // loads all accounts - should run before any module with a module account
-		distr.ModuleName,
-		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
-		gov.ModuleName, evidence.ModuleName,
+		authtypes.ModuleName, // loads all accounts - should run before any module with a module account
+		distrtypes.ModuleName,
+		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
+		govtypes.ModuleName, evidencetypes.ModuleName,
 
 		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName,
 		relationshipsTypes.ModuleName, // custom modules
 
-		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
-		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules
-		genutil.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
+		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
+		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
 	)
 
-	app.mm.RegisterInvariants(&app.CrisisKeeper)
-	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
+	app.mm.RegisterInvariants(&app.crisisKeeper)
+	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
+	app.mm.RegisterServices(module.NewConfigurator(app.MsgServiceRouter(), app.GRPCQueryRouter()))
+
+	// add test gRPC service for testing gRPC queries in isolation
+	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
 	// NOTE: this is not required apps that don't use the simulator for fuzz testing
 	// transactions
 	app.sm = module.NewSimulationManager(
-		auth.NewAppModule(app.AccountKeeper),
-		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
-		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
+		auth.NewAppModule(appCodec, app.accountKeeper, authsims.RandomGenesisAccounts),
+		bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper),
+		gov.NewAppModule(appCodec, app.govKeeper, app.accountKeeper, app.bankKeeper),
+		staking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
+		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
+		slashing.NewAppModule(appCodec, app.slashingKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
+		params.NewAppModule(app.paramsKeeper),
+		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
-		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
-		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
+		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper),
+		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -399,12 +401,16 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetAnteHandler(ante.NewAnteHandler(app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer))
+	app.SetAnteHandler(
+		ante.NewAnteHandler(
+			app.accountKeeper, app.bankKeeper, ante.DefaultSigVerificationGasConsumer,
+			encodingConfig.TxConfig.SignModeHandler(),
+		),
+	)
 	app.SetEndBlocker(app.EndBlocker)
 
 	if loadLatest {
-		err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
-		if err != nil {
+		if err := app.LoadLatestVersion(); err != nil {
 			tmos.Exit(err.Error())
 		}
 	}
@@ -424,6 +430,17 @@ func SetupConfig(config *sdk.Config) {
 	config.SetFullFundraiserPath("44'/852'/0'/0/0")
 }
 
+// MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
+// simapp. It is useful for tests and clients who do not want to construct the
+// full simapp
+func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
+	config := MakeEncodingConfig()
+	return config.Marshaler, config.Amino
+}
+
+// Name returns the name of the App
+func (app *DesmosApp) Name() string { return app.BaseApp.Name() }
+
 // BeginBlocker application updates every begin block
 func (app *DesmosApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
@@ -437,41 +454,142 @@ func (app *DesmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci
 // InitChainer application update.md at chain initialization
 func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
-	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
-	return app.mm.InitGenesis(ctx, genesisState)
+	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
+		panic(err)
+	}
+	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
 
 // LoadHeight loads a particular height
 func (app *DesmosApp) LoadHeight(height int64) error {
-	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
+	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
 func (app *DesmosApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
-		modAccAddrs[supply.NewModuleAddress(acc).String()] = true
+		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
 
 	return modAccAddrs
 }
 
-// BlacklistedAccAddrs returns all the app's module account addresses black listed for receiving tokens.
-func (app *DesmosApp) BlacklistedAccAddrs() map[string]bool {
-	blacklistedAddrs := make(map[string]bool)
+// BlockedAddrs returns all the app's module account addresses that are not
+// allowed to receive external tokens.
+func (app *DesmosApp) BlockedAddrs() map[string]bool {
+	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
-		blacklistedAddrs[supply.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
+		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
 	}
 
-	return blacklistedAddrs
+	return blockedAddrs
 }
 
-// Codec returns the application's sealed codec.
-func (app *DesmosApp) Codec() *codec.Codec {
-	return app.cdc
+// BlacklistedAccAddrs returns all the app's module account addresses black listed for receiving tokens.
+func (app *DesmosApp) BlacklistedAccAddrs() map[string]bool {
+	blockedAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
+	}
+
+	return blockedAddrs
+}
+
+// LegacyAmino returns SimApp's amino codec.
+//
+// NOTE: This is solely to be used for testing purposes as it may be desirable
+// for modules to register their own custom testing types.
+func (app *DesmosApp) LegacyAmino() *codec.LegacyAmino {
+	return app.legacyAmino
+}
+
+// AppCodec returns SimApp's app codec.
+//
+// NOTE: This is solely to be used for testing purposes as it may be desirable
+// for modules to register their own custom testing types.
+func (app *DesmosApp) AppCodec() codec.Marshaler {
+	return app.appCodec
+}
+
+// InterfaceRegistry returns SimApp's InterfaceRegistry
+func (app *DesmosApp) InterfaceRegistry() types.InterfaceRegistry {
+	return app.interfaceRegistry
+}
+
+// GetKey returns the KVStoreKey for the provided store key.
+//
+// NOTE: This is solely to be used for testing purposes.
+func (app *DesmosApp) GetKey(storeKey string) *sdk.KVStoreKey {
+	return app.keys[storeKey]
+}
+
+// GetTKey returns the TransientStoreKey for the provided store key.
+//
+// NOTE: This is solely to be used for testing purposes.
+func (app *DesmosApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
+	return app.tkeys[storeKey]
+}
+
+// GetSubspace returns a param subspace for a given module name.
+//
+// NOTE: This is solely to be used for testing purposes.
+func (app *DesmosApp) GetSubspace(moduleName string) paramstypes.Subspace {
+	subspace, _ := app.paramsKeeper.GetSubspace(moduleName)
+	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
 func (app *DesmosApp) SimulationManager() *module.SimulationManager {
 	return app.sm
+}
+
+// RegisterAPIRoutes registers all application module routes with the provided
+// API server.
+func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+	clientCtx := apiSvr.ClientCtx
+	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
+	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
+
+	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
+	ModuleBasics.RegisterGRPCRoutes(apiSvr.ClientCtx, apiSvr.GRPCRouter)
+
+	// register swagger API from root so that other applications can override easily
+	if apiConfig.Swagger {
+		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
+	}
+}
+
+// RegisterSwaggerAPI registers swagger route with API Server
+func RegisterSwaggerAPI(ctx client.Context, rtr *mux.Router) {
+	statikFS, err := fs.New()
+	if err != nil {
+		panic(err)
+	}
+
+	staticServer := http.FileServer(statikFS)
+	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
+}
+
+// GetMaccPerms returns a copy of the module account permissions
+func GetMaccPerms() map[string][]string {
+	dupMaccPerms := make(map[string][]string)
+	for k, v := range maccPerms {
+		dupMaccPerms[k] = v
+	}
+	return dupMaccPerms
+}
+
+// initParamsKeeper init params keeper and its subspaces
+func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
+	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
+
+	paramsKeeper.Subspace(authtypes.ModuleName)
+	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(stakingtypes.ModuleName)
+	paramsKeeper.Subspace(distrtypes.ModuleName)
+	paramsKeeper.Subspace(slashingtypes.ModuleName)
+	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
+
+	return paramsKeeper
 }

@@ -10,12 +10,12 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
+	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		StoreKey: storeKey,
 		Cdc:      cdc,
@@ -58,7 +58,7 @@ func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) int64 {
 func (k Keeper) GetLastSessionID(ctx sdk.Context) types.SessionID {
 	store := ctx.KVStore(k.StoreKey)
 	if !store.Has(types.LastSessionIDStoreKey) {
-		return types.SessionID(0)
+		return types.SessionID{Value: 0}
 	}
 
 	var id types.SessionID
@@ -77,10 +77,10 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) {
 	// Save the session
 	store := ctx.KVStore(k.StoreKey)
-	store.Set(types.SessionStoreKey(session.SessionID), k.Cdc.MustMarshalBinaryBare(session))
+	store.Set(types.SessionStoreKey(session.SessionId), k.Cdc.MustMarshalBinaryBare(session))
 
 	// Update the last used session id
-	k.SetLastSessionID(ctx, session.SessionID)
+	k.SetLastSessionID(ctx, session.SessionId)
 }
 
 // GetSession returns the session having the specified id

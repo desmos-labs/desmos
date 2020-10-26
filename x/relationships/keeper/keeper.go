@@ -11,12 +11,12 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
+	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		StoreKey: storeKey,
 		Cdc:      cdc,
@@ -90,9 +90,9 @@ func (k Keeper) DeleteRelationship(ctx sdk.Context, user sdk.AccAddress, relatio
 	}
 }
 
-/////////////////////
-/////UserBlocks/////
-///////////////////
+// -------------------
+// --- Users blocks
+// -------------------
 
 // SaveUserBlock allows to store the given block inside the store, returning an error if
 // something goes wrong.
