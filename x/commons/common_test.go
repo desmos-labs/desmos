@@ -4,9 +4,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/stretchr/testify/require"
 )
 
 func newStrPtr(value string) *string {

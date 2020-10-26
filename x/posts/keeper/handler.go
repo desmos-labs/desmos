@@ -37,6 +37,20 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 
+// IsCreatorBlockedBySomeTags checks if some of the post's tags have blocked the post's creator
+func IsCreatorBlockedBySomeTags(ctx sdk.Context, keeper Keeper, attachments types.Attachments, creator sdk.AccAddress) error {
+	for _, attachment := range attachments {
+		for _, tag := range attachment.Tags {
+			// check if the request's receiver has blocked the sender before
+			if keeper.IsUserBlocked(ctx, tag, creator) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+					fmt.Sprintf("The user with address %s has blocked you", tag))
+			}
+		}
+	}
+	return nil
+}
+
 // handleMsgCreatePost handles the creation of a new post
 func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost) (*sdk.Result, error) {
 	post := types.NewPost(
@@ -68,6 +82,11 @@ func handleMsgCreatePost(ctx sdk.Context, keeper Keeper, msg types.MsgCreatePost
 		if !parentPost.AllowsComments {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s does not allow comments", parentPost.PostID))
 		}
+	}
+
+	// Check if any of the tags have blocked the post creator
+	if err := IsCreatorBlockedBySomeTags(ctx, keeper, post.Attachments, post.Creator); err != nil {
+		return nil, err
 	}
 
 	if err := ValidatePost(ctx, keeper, post); err != nil {
@@ -115,6 +134,10 @@ func handleMsgEditPost(ctx sdk.Context, keeper Keeper, msg types.MsgEditPost) (*
 	existing.Message = msg.Message
 
 	if msg.Attachments != nil {
+		// Check if any of the tags have blocked the post creator
+		if err := IsCreatorBlockedBySomeTags(ctx, keeper, msg.Attachments, existing.Creator); err != nil {
+			return nil, err
+		}
 		existing.Attachments = msg.Attachments
 	}
 
@@ -263,7 +286,7 @@ func checkPostPollValid(ctx sdk.Context, id types.PostID, keeper Keeper) (*types
 	return &post, nil
 }
 
-// answerExist checks if the answer is contained in providedAnswers slice
+// answerExist checks if the answer is contained in providedAnswers slice
 func answerExist(providedAnswers []types.AnswerID, answer types.AnswerID) bool {
 	for _, ans := range providedAnswers {
 		if ans == answer {

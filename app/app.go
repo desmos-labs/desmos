@@ -290,25 +290,26 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.cdc,
 		keys[magpieTypes.StoreKey],
 	)
+	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
+		app.cdc,
+		keys[relationshipsTypes.StoreKey],
+	)
 	app.postsKeeper = postsKeeper.NewKeeper(
 		app.cdc,
 		keys[postsTypes.StoreKey],
 		app.subspaces[postsTypes.ModuleName],
+		app.relationshipsKeeper,
 	)
 	app.profileKeeper = profilesKeeper.NewKeeper(
 		app.cdc,
 		keys[profilesTypes.StoreKey],
 		app.subspaces[profilesTypes.ModuleName],
+		app.relationshipsKeeper,
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.postsKeeper,
 		app.cdc,
 		keys[reportsTypes.StoreKey],
-	)
-
-	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
-		app.cdc,
-		keys[relationshipsTypes.StoreKey],
 	)
 
 	// Register the staking hooks

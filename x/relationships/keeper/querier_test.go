@@ -120,9 +120,23 @@ func (suite *KeeperTestSuite) Test_queryRelationships() {
 
 			if test.expResult != nil {
 				suite.Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				var relationshipsMap map[string]types.Relationships
+				suite.cdc.MustUnmarshalJSON(result, &relationshipsMap)
+
+				suite.Equal(len(test.expResult), len(relationshipsMap))
+
+				for user, relationships := range test.expResult {
+					found := false
+					for resUser, resRelationships := range relationshipsMap {
+						found = user == resUser
+						for index, rel := range resRelationships {
+							found = relationships[index].Equals(rel)
+						}
+						if found {
+							break
+						}
+					}
+				}
 			}
 
 			if result == nil {
