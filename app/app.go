@@ -52,7 +52,6 @@ import (
 const (
 	appName          = "desmos"
 	Bech32MainPrefix = "desmos"
-	DefaultBondDenom = "udaric"
 )
 
 var (
@@ -119,7 +118,7 @@ func MakeCodec() *codec.Codec {
 
 // DesmosApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
-// capabilities arKen't needed for testing.
+// capabilities aren't needed for testing.
 type DesmosApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
@@ -404,7 +403,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetAnteHandler(ante.NewAnteHandler(
-		app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer, DefaultBondDenom),
+		app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer, FeeDenom, BondDenom),
 	)
 	app.SetEndBlocker(app.EndBlocker)
 

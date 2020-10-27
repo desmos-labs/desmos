@@ -11,24 +11,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
-// fixedRequiredFee is the amount of fee desmos requires to process each tx. Actually set to 0.01 daric
+// fixedRequiredFee is the amount of fee desmos requires to process each tx. Actually set to 0.01 daric/desmos
 var fixedRequiredFee = sdk.NewDecWithPrec(1, 2)
+var conversionFactor = sdk.NewDec(1000000)
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
 //(sequence number increment, signature and account number checks, fee deduction) make sure that each
-// transaction has a minimum fee of 0.01 daric
+// transaction has a minimum fee of 0.01 daric/desmos
 func NewAnteHandler(
 	ak keeper.AccountKeeper,
 	supplyKeeper types.SupplyKeeper,
 	sigGasConsumer cosmosante.SignatureVerificationGasConsumer,
 	feeTokenDenom string,
+	defaultBondDenom string,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
 		cosmosante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		cosmosante.NewMempoolFeeDecorator(),
 		cosmosante.NewValidateBasicDecorator(),
 		cosmosante.NewValidateMemoDecorator(ak),
-		NewMinFeeDecorator(feeTokenDenom),
+		NewMinFeeDecorator(feeTokenDenom, defaultBondDenom),
 		cosmosante.NewConsumeGasForTxSizeDecorator(ak),
 		cosmosante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		cosmosante.NewValidateSigCountDecorator(ak),
@@ -40,12 +42,14 @@ func NewAnteHandler(
 }
 
 type MinFeeDecorator struct {
-	tokenDenom string
+	feeTokenDenom    string
+	defaultBondDenom string
 }
 
-func NewMinFeeDecorator(tokenDenom string) MinFeeDecorator {
+func NewMinFeeDecorator(feeDenom, defaultBondDenom string) MinFeeDecorator {
 	return MinFeeDecorator{
-		tokenDenom: tokenDenom,
+		feeTokenDenom:    feeDenom,
+		defaultBondDenom: defaultBondDenom,
 	}
 }
 
@@ -68,7 +72,7 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	requiredFees := fixedRequiredFee.MulInt64(int64(len(stdTx.Msgs)))
 
 	// Check the minimum fees
-	if err := checkMinimumFees(stdTx, mfd.tokenDenom, requiredFees); err != nil {
+	if err := checkMinimumFees(stdTx, requiredFees, mfd.feeTokenDenom, mfd.defaultBondDenom); err != nil {
 		return ctx, err
 	}
 
@@ -77,18 +81,24 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 
 func checkMinimumFees(
 	stdTx types.StdTx,
-	tokenDenom string,
 	requiredFees sdk.Dec,
+	feeTokenDenom string,
+	defaultBondDenom string,
 ) error {
 
-	// Each message should cost 0.01 daric
-	stableRequiredQty := requiredFees.Mul(sdk.NewDec(1000000))
-	feeAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(tokenDenom))
-	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(feeAmount) {
-		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
-			fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", stableRequiredQty, tokenDenom, feeAmount))
-	}
+	// Each message should cost 0.01 daric/desmos
+	stableRequiredQty := requiredFees.Mul(conversionFactor)
+	feeAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(feeTokenDenom))
 
+	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(feeAmount) {
+		// try by converting some desmos
+		dsmAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(defaultBondDenom))
+		feeConvertedAmount := dsmAmount.Mul(conversionFactor)
+		if stableRequiredQty.GT(feeConvertedAmount) {
+			return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
+				fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", stableRequiredQty, feeTokenDenom, feeAmount))
+		}
+	}
 	return nil
 }
 
