@@ -8,10 +8,10 @@ import (
 func (suite *KeeperTestSuite) TestKeeper_SavePollPostAnswers() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 	answers2 := []types.AnswerID{types.AnswerID(1)}
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollPostAnswers() {
 			var actualUsersAnswersDetails types.UserAnswers
 			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
 			suite.keeper.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
-			suite.Equal(test.expUsersAD, actualUsersAnswersDetails)
+			suite.Require().Equal(test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}
 }
@@ -65,7 +65,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollPostAnswers() {
 func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersDetails() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -95,7 +95,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersDetails() {
 
 			actualPostPollAnswers := suite.keeper.GetPollAnswers(suite.ctx, test.postID)
 
-			suite.Equal(test.storedAnswers, actualPostPollAnswers)
+			suite.Require().Equal(test.storedAnswers, actualPostPollAnswers)
 		})
 	}
 }
@@ -103,10 +103,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersDetails() {
 func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersByUser() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	user2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
 
@@ -137,6 +137,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostPollAnswersByUser() {
 		suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers)
 
 		actualPostPollAnswers := suite.keeper.GetPollAnswersByUser(suite.ctx, test.postID, test.user)
-		suite.Equal(test.expAnswers, actualPostPollAnswers)
+		suite.Require().Equal(test.expAnswers, actualPostPollAnswers)
 	}
 }

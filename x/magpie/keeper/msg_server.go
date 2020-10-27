@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -70,8 +68,8 @@ func (k msgServer) CreateSession(goCtx context.Context, msg *types.MsgCreateSess
 	session := types.NewSession(
 		k.GetLastSessionID(ctx).Next(),
 		msg.Owner,
-		ctx.BlockHeight(),
-		ctx.BlockHeight()+k.GetDefaultSessionLength(ctx),
+		uint64(ctx.BlockHeight()),
+		uint64(ctx.BlockHeight())+k.GetDefaultSessionLength(ctx),
 		msg.Namespace,
 		msg.ExternalOwner,
 		msg.PubKey,
@@ -91,7 +89,7 @@ func (k msgServer) CreateSession(goCtx context.Context, msg *types.MsgCreateSess
 		sdk.NewAttribute(types.AttributeKeySessionID, session.SessionId.String()),
 		sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
 		sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
-		sdk.NewAttribute(types.AttributeKeyExpiry, strconv.FormatInt(session.ExpirationTime, 10)),
+		sdk.NewAttribute(types.AttributeKeyExpiry, fmt.Sprintf("%d", session.ExpirationTime)),
 	)
 	ctx.EventManager().EmitEvent(createSessionEvent)
 

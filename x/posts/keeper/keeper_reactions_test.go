@@ -14,10 +14,10 @@ import (
 func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name           string
@@ -102,11 +102,11 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 			suite.keeper.SavePost(suite.ctx, test.storedPost)
 
 			err := suite.keeper.SavePostReaction(suite.ctx, test.postID, test.reaction)
-			suite.Equal(test.error, err)
+			suite.Require().Equal(test.error, err)
 
 			var stored types.PostReactions
 			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
-			suite.Equal(test.expectedStored, stored)
+			suite.Require().Equal(test.expectedStored, stored)
 		})
 	}
 }
@@ -114,7 +114,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 func (suite *KeeperTestSuite) TestKeeper_RemoveReaction() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name           string
@@ -168,14 +168,14 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveReaction() {
 			}
 
 			err := suite.keeper.RemovePostReaction(suite.ctx, test.postID, types.NewPostReaction(test.shortcode, test.value, test.liker))
-			suite.Equal(test.error, err)
+			suite.Require().Equal(test.error, err)
 
 			var stored types.PostReactions
 			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
 			suite.Len(stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
-				suite.Equal(like, stored[index])
+				suite.Require().Equal(like, stored[index])
 			}
 		})
 	}
@@ -184,10 +184,10 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveReaction() {
 func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	liker, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	otherLiker, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name               string
@@ -220,7 +220,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 				suite.keeper.SavePost(suite.ctx, test.storedPost)
 				suite.keeper.RegisterReaction(suite.ctx, test.registeredReaction)
 				err := suite.keeper.SavePostReaction(suite.ctx, test.postID, l)
-				suite.NoError(err)
+				suite.Require().NoError(err)
 			}
 
 			stored := suite.keeper.GetPostReactions(suite.ctx, test.postID)
@@ -237,10 +237,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetReactions() {
 	id := "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
 	id2 := "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"
 	liker1, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	liker2, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name  string
@@ -273,7 +273,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetReactions() {
 			}
 
 			likesData := suite.keeper.GetReactions(suite.ctx)
-			suite.Equal(test.likes, likesData)
+			suite.Require().Equal(test.likes, likesData)
 		})
 	}
 }
@@ -301,7 +301,7 @@ func (suite *KeeperTestSuite) TestKeeper_RegisterReaction() {
 	bz := store.Get(key)
 	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
 
-	suite.Equal(reaction, actualReaction)
+	suite.Require().Equal(reaction, actualReaction)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
@@ -344,10 +344,10 @@ func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
 			actualReaction, exist := suite.keeper.GetRegisteredReaction(suite.ctx, test.shortCode, reaction.Subspace)
 			if test.shortCode == reaction.ShortCode {
 				suite.True(exist)
-				suite.Equal(test.storedReaction, actualReaction)
+				suite.Require().Equal(test.storedReaction, actualReaction)
 			} else {
 				suite.False(exist)
-				suite.Equal(types.Reaction{}, actualReaction)
+				suite.Require().Equal(types.Reaction{}, actualReaction)
 			}
 		})
 	}
@@ -378,6 +378,6 @@ func (suite *KeeperTestSuite) TestKeeper_ListReactions() {
 
 	actualReactions := suite.keeper.GetRegisteredReactions(suite.ctx)
 
-	suite.Equal(reactions, actualReactions)
+	suite.Require().Equal(reactions, actualReactions)
 
 }

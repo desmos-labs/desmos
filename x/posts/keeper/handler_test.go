@@ -19,7 +19,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	createPostMessage := types.NewMsgCreatePost(
 		suite.testData.post.Message,
@@ -169,7 +169,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -186,7 +186,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expError.Error(), err.Error())
+				suite.Require().Equal(test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -196,7 +196,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 	timeZone, _ := time.LoadLocation("UTC")
 
 	editedPollData := models.NewPollData(
@@ -291,7 +291,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expError.Error(), err.Error())
+				suite.Require().Equal(test.expError.Error(), err.Error())
 			}
 		})
 	}
@@ -299,7 +299,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 
 func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name               string
@@ -406,7 +406,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.error.Error(), err.Error())
+				suite.Require().Equal(test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -423,14 +423,14 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 	}
 
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	regReaction := types.NewReaction(user, ":reaction:", "react", suite.testData.post.Subspace)
 	reaction := types.NewPostReaction(":reaction:", "react", user)
 	emojiShortcodeReaction := types.NewPostReaction(":smile:", "😄", user)
 
 	emoji, err := emoji.LookupEmojiByCode(":+1:")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], emoji.Value, user)
 
@@ -538,7 +538,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.error.Error(), err.Error())
+				suite.Require().Equal(test.error.Error(), err.Error())
 			}
 		})
 	}
@@ -737,14 +737,14 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 
 			// Valid response
 			if res != nil {
 				{
 					// Check the data
-					suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+					suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
 
 					// Check the events
 					answerEvent := sdk.NewEvent(
@@ -764,7 +764,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 
 func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name              string
@@ -853,7 +853,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 			// Invalid response
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.error.Error(), err.Error())
+				suite.Require().Equal(test.error.Error(), err.Error())
 			}
 		})
 	}

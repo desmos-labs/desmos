@@ -8,7 +8,7 @@ option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
 
 // GenesisState defines the bank module's genesis state.
 message GenesisState {
-  int64 default_session_length = 1
+  uint64 default_session_length = 1
   [(gogoproto.moretags) = "yaml:\"default_session_length\""];
 
   repeated desmos.magpie.v1beta1.Session sessions = 2

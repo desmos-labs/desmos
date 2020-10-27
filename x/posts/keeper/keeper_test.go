@@ -271,7 +271,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 			}
 
 			expected, found := suite.keeper.GetPost(suite.ctx, test.ID)
-			suite.Equal(test.postExists, found)
+			suite.Require().Equal(test.postExists, found)
 			if test.postExists {
 				suite.True(expected.Equals(test.expected))
 			}
@@ -389,13 +389,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
 	boolTrue := true
 
 	creator1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	creator2, err := sdk.AccAddressFromBech32("cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	date := time.Date(2020, 1, 1, 1, 1, 0, 0, timeZone)
 

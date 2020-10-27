@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -10,21 +9,11 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_queryUserRelationships() {
-	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.NoError(err)
-	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
-	expRelationships := types.Relationships{
-		types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-		types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-	}
-
 	tests := []struct {
 		name          string
 		path          []string
-		relationships types.Relationships
-		expResult     types.Relationships
+		relationships []types.Relationship
+		expResult     []types.Relationship
 		expErr        error
 	}{
 		{
@@ -36,13 +25,32 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 		},
 		{
 			name: "User Relationships returned correctly",
-			path: []string{types.QueryUserRelationships, suite.testData.user.String()},
-			relationships: types.Relationships{
-				types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			path: []string{types.QueryUserRelationships, suite.testData.user},
+			relationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
 			},
-			expResult: expRelationships,
-			expErr:    nil,
+			expResult: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			expErr: nil,
 		},
 	}
 
@@ -51,57 +59,63 @@ func (suite *KeeperTestSuite) Test_queryUserRelationships() {
 		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
 			for _, rel := range test.relationships {
-				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
+				err := suite.keeper.StoreRelationship(suite.ctx, rel)
+				suite.Require().NoError(err)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAmino)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expResult != nil {
-				suite.Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAmino, &test.expResult)
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_queryRelationships() {
-	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.NoError(err)
-	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
 	tests := []struct {
 		name          string
 		path          []string
-		relationships types.Relationships
-		expResult     map[string]types.Relationships
+		relationships []types.Relationship
+		expResult     []types.Relationship
 		expErr        error
 	}{
 		{
 			name: "Relationships returned correctly",
 			path: []string{types.QueryRelationships},
-			relationships: types.Relationships{
-				types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			relationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
 			},
-			expResult: map[string]types.Relationships{
-				suite.testData.user.String(): {
-					types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-					types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				},
-				suite.testData.otherUser.String(): {
-					types.NewRelationship(addr1, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-					types.NewRelationship(addr2, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				},
+			expResult: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
 			},
 		},
 	}
@@ -111,35 +125,30 @@ func (suite *KeeperTestSuite) Test_queryRelationships() {
 		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
 			for _, rel := range test.relationships {
-				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.user, rel)
-				_ = suite.keeper.StoreRelationship(suite.ctx, suite.testData.otherUser, rel)
+				err := suite.keeper.StoreRelationship(suite.ctx, rel)
+				suite.Require().NoError(err)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAmino)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expResult != nil {
-				suite.Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAmino, &test.expResult)
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_queryUserBlocks() {
-	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.NoError(err)
-	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
-
 	tests := []struct {
 		name       string
 		path       []string
@@ -156,14 +165,34 @@ func (suite *KeeperTestSuite) Test_queryUserBlocks() {
 		},
 		{
 			name: "User Relationships returned correctly",
-			path: []string{types.QueryUserBlocks, suite.testData.user.String()},
+			path: []string{types.QueryUserBlocks, suite.testData.user},
 			userBlocks: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, addr1, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewUserBlock(
+					suite.testData.user,
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewUserBlock(
+					suite.testData.user,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
 			},
 			expResult: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, addr1, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewUserBlock(suite.testData.user, addr2, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				types.NewUserBlock(
+					suite.testData.user,
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewUserBlock(
+					suite.testData.user,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
 			},
 			expErr: nil,
 		},
@@ -177,20 +206,20 @@ func (suite *KeeperTestSuite) Test_queryUserBlocks() {
 				_ = suite.keeper.SaveUserBlock(suite.ctx, ub)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAmino)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expResult != nil {
-				suite.Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAmino, &test.expResult)
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}

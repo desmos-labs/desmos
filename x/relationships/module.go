@@ -5,14 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/desmos-labs/desmos/x/relationships/client/cli"
 	"github.com/desmos-labs/desmos/x/relationships/client/rest"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
@@ -31,7 +33,9 @@ var (
 )
 
 // AppModuleBasic defines the basic application module used by the profile module.
-type AppModuleBasic struct{}
+type AppModuleBasic struct {
+	cdc codec.Marshaler
+}
 
 // Name returns the profile module's name.
 func (AppModuleBasic) Name() string {
@@ -54,7 +58,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
-	return types.ValidateGenesis(data)
+	return types.ValidateGenesis(&data)
 }
 
 // RegisterRESTRoutes registers the REST routes for the profile module.
@@ -77,21 +81,36 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
 
+// RegisterInterfaces registers interfaces and implementations of the magpie module.
+func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	types.RegisterInterfaces(registry)
+}
+
 //____________________________________________________________________________
 
 // AppModule implements an application module for the profile module.
 type AppModule struct {
 	AppModuleBasic
-	ak     auth.AccountKeeper
 	keeper keeper.Keeper
+	ak     authkeeper.AccountKeeper
+	bk     bankkeeper.Keeper
+}
+
+// RegisterServices registers module services.
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
 // NewAppModule creates a new AppModule Object
-func NewAppModule(keeper keeper.Keeper, accountKeeper auth.AccountKeeper) AppModule {
+func NewAppModule(
+	cdc codec.Marshaler, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
-		ak:             accountKeeper,
+		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
+		ak:             ak,
+		bk:             bk,
 	}
 }
 
@@ -104,8 +123,8 @@ func (AppModule) Name() string {
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
 // Route returns the message routing key for the profile module.
-func (am AppModule) Route() string {
-	return types.RouterKey
+func (am AppModule) Route() sdk.Route {
+	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
 }
 
 // NewHandler returns an sdk.Handler for the profile module.
@@ -119,23 +138,25 @@ func (am AppModule) QuerierRoute() string {
 }
 
 // NewQuerierHandler returns the profile module sdk.Querier.
-func (am AppModule) NewQuerierHandler() sdk.Querier {
-	return keeper.NewQuerier(am.keeper)
+func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }
 
-// InitGenesis performs genesis initialization for the profile module. It returns
-// no validator updates.
-func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
+// InitGenesis performs genesis initialization for the relationships module.
+// It returns no validator updates.
+func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
-	types.ModuleCdc.MustUnmarshalJSON(data, &genesisState)
-	return InitGenesis(ctx, am.keeper, genesisState)
+
+	cdc.MustUnmarshalJSON(data, &genesisState)
+	am.keeper.InitGenesis(ctx, genesisState)
+	return []abci.ValidatorUpdate{}
 }
 
-// ExportGenesis returns the exported genesis state as raw bytes for the auth
-// module.
-func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
-	gs := ExportGenesis(ctx, am.keeper)
-	return types.ModuleCdc.MustMarshalJSON(gs)
+// ExportGenesis returns the exported genesis state as raw bytes for the
+// relationships module.
+func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json.RawMessage {
+	gs := am.keeper.ExportGenesis(ctx)
+	return cdc.MustMarshalJSON(gs)
 }
 
 // BeginBlock returns the begin blocker for the profile module.
@@ -144,7 +165,7 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
 
 // EndBlock returns the end blocker for the profile module. It returns no validator
 // updates.
-func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
 }
 
@@ -159,21 +180,21 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
 	return nil
 }
 
 // RandomizedParams creates randomized profile param changes for the simulator.
-func (AppModule) RandomizedParams(_ *rand.Rand) []sim.ParamChange {
+func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 	return nil
 }
 
 // RegisterStoreDecoder performs a no-op.
-func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	sdr[types.ModuleName] = simulation.DecodeStore
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.keeper)
 }
 
 // WeightedOperations returns the all the profile module operations with their respective weights.
-func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak)
+func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }

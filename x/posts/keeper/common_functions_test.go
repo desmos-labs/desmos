@@ -17,10 +17,10 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
 	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	timeZone, err := time.LoadLocation("UTC")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
@@ -112,9 +112,9 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			err := keeper.ValidatePost(suite.ctx, suite.keeper, test.post)
 			if test.expError != nil {
-				suite.Equal(test.expError.Error(), err.Error())
+				suite.Require().Equal(test.expError.Error(), err.Error())
 			} else {
-				suite.Equal(test.expError, err)
+				suite.Require().Equal(test.expError, err)
 			}
 		})
 	}

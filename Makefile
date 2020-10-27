@@ -300,6 +300,7 @@ proto-check-breaking-docker:
 
 TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.0-rc5/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/master/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 
@@ -310,10 +311,14 @@ TM_VERSION 			= third_party/proto/tendermint/version
 TM_LIBS				= third_party/proto/tendermint/libs/bits
 
 GOGO_PROTO_TYPES    = third_party/proto/gogoproto
+COSMOS_TYPES 		= third_party/proto/cosmos
 COSMOS_PROTO_TYPES  = third_party/proto/cosmos_proto
 CONFIO_TYPES        = third_party/proto/confio
 
 proto-update-deps:
+	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
+	@curl -sSL $(COSMOS_URL)/base/query/v1beta1/pagination.proto > $(COSMOS_TYPES)/base/query/v1beta1/pagination.proto
+
 	@mkdir -p $(GOGO_PROTO_TYPES)
 	@curl -sSL $(GOGO_PROTO_URL)/gogoproto/gogo.proto > $(GOGO_PROTO_TYPES)/gogo.proto
 

@@ -46,7 +46,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 			}
 
 			actualBool := suite.keeper.CheckPostExistence(suite.ctx, suite.testData.postID)
-			suite.Equal(test.expBool, actualBool)
+			suite.Require().Equal(test.expBool, actualBool)
 		})
 	}
 }
@@ -61,7 +61,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 
 	var reports models.Reports
 	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(suite.testData.postID)), &reports)
-	suite.Equal(expReports, reports)
+	suite.Require().Equal(expReports, reports)
 
 }
 
@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			}
 
 			actualRep := suite.keeper.GetPostReports(suite.ctx, suite.testData.postID)
-			suite.Equal(test.expReports, actualRep)
+			suite.Require().Equal(test.expReports, actualRep)
 		})
 	}
 }
@@ -130,7 +130,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
 			}
 
 			actualRep := suite.keeper.GetReportsMap(suite.ctx)
-			suite.Equal(test.expReportsMap, actualRep)
+			suite.Require().Equal(test.expReportsMap, actualRep)
 		})
 	}
 }

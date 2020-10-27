@@ -153,26 +153,6 @@ func TestUserBlock_Equals(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestNewRelationship(t *testing.T) {
-	actual := types.NewRelationship(
-		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	)
-	require.Equal(t, actual.Recipient, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.Equal(t, actual.Subspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
-}
-
-func TestRelationship_String(t *testing.T) {
-	relationship := types.NewRelationship(
-		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	)
-	require.Equal(t,
-		"Relationship:[Recipient] cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		relationship.String(),
-	)
-}
-
 func TestRelationship_Validate(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -180,19 +160,46 @@ func TestRelationship_Validate(t *testing.T) {
 		expErr       error
 	}{
 		{
-			name:         "Empty recipient returns error",
-			relationship: types.NewRelationship("", ""),
-			expErr:       fmt.Errorf("recipient can't be empty"),
+			name: "Empty creator returns error",
+			relationship: types.NewRelationship(
+				"",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("creator cannot be empty"),
 		},
 		{
-			name:         "Invalid subspace returns error",
-			relationship: types.NewRelationship("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", ""),
-			expErr:       fmt.Errorf("subspace must be a valid sha-256"),
+			name: "Empty recipient returns error",
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("recipient cannot be empty"),
+		},
+		{
+			name: "Invalid subspace returns error",
+			relationship: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+			),
+			expErr: fmt.Errorf("subspace must be a valid sha-256"),
+		},
+		{
+			name: "Same creator and recipient return error",
+			relationship: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("creator and recipient cannot be the same user"),
 		},
 		{
 			name: "Valid relationship returns no error",
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			expErr: nil,
@@ -217,10 +224,12 @@ func TestRelationship_Equals(t *testing.T) {
 			name: "Equals relationships returns true",
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			otherRel: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			expBool: true,
@@ -228,10 +237,12 @@ func TestRelationship_Equals(t *testing.T) {
 		{
 			name: "Non equals relationships returns false",
 			relationship: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			otherRel: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"1234",
 			),

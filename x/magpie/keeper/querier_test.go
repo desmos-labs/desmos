@@ -24,13 +24,13 @@ func (suite *KeeperTestSuite) Test_querySession_InvalidIdReturnsError() {
 	}{
 		{
 			name:   "Not found session returns error",
-			query:  []string{keeper.QuerySessions, types.SessionID(50).String()},
+			query:  []string{keeper.QuerySessions, "50"},
 			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "session with id 50 not found"),
 		},
 		{
 			name:          "Existing session is returned",
 			storedSession: suite.testData.session,
-			query:         []string{keeper.QuerySessions, suite.testData.session.SessionID.String()},
+			query:         []string{keeper.QuerySessions, suite.testData.session.SessionId.String()},
 			expRes:        suite.testData.session,
 		},
 		{
@@ -48,27 +48,29 @@ func (suite *KeeperTestSuite) Test_querySession_InvalidIdReturnsError() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
-			if !(types.Session{}).Equals(test.storedSession) {
+			suite.SetupTest()
+
+			empty := types.Session{}
+			if !empty.Equal(test.storedSession) {
 				suite.keeper.SaveSession(suite.ctx, test.storedSession)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAmino)
 			result, err := querier(suite.ctx, test.query, request)
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expRes)
-				suite.NoError(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAmino, &test.expRes)
+				suite.Require().NoError(err)
 
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}

@@ -113,7 +113,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 			suite.SetupTest() // reset
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			actual := keeper.ValidateProfile(suite.ctx, suite.keeper, test.profile)
-			suite.Equal(test.expErr, actual)
+			suite.Require().Equal(test.expErr, actual)
 		})
 	}
 }
@@ -229,11 +229,11 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 
 			if test.expErr != nil {
 				suite.Error(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 
 			if test.expErr == nil {
-				suite.NoError(err)
+				suite.Require().NoError(err)
 
 				profiles := suite.keeper.GetProfiles(suite.ctx)
 				suite.Len(profiles, len(test.expProfiles))
@@ -291,11 +291,11 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
@@ -375,11 +375,11 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(
 					types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)), res.Data,
 				)
 
@@ -401,7 +401,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 
 func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 	user, err := sdk.AccAddressFromBech32("cosmos1lkqrqrns0ekttzrs678thh5f4prcgasthqcxph")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name                       string
@@ -501,11 +501,11 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.storedOwnerProfile.DTag), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.storedOwnerProfile.DTag), res.Data)
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
@@ -568,11 +568,11 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.sender), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.sender), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}
@@ -622,11 +622,11 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}
@@ -676,11 +676,11 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				// Check the data
-				suite.Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
+				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}

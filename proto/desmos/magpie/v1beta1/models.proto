@@ -19,8 +19,8 @@ message Session {
 
   SessionID session_id = 1 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"session_id\""];
   string owner = 2 [(gogoproto.moretags) = "yaml:\"owner\""];
-  int64 creation_time = 3 [(gogoproto.moretags) = "yaml:\"creation_time\""];
-  int64 expiration_time = 4 [(gogoproto.moretags) = "yaml:\"expiration_time\""];
+  uint64 creation_time = 3 [(gogoproto.moretags) = "yaml:\"creation_time\""];
+  uint64 expiration_time = 4 [(gogoproto.moretags) = "yaml:\"expiration_time\""];
   string namespace = 5 [(gogoproto.moretags) = "yaml:\"namespace\""];
   string external_owner = 6 [(gogoproto.moretags) = "yaml:\"external_owner\""];
   string public_key = 7 [(gogoproto.moretags) = "yaml:\"pub_key\""];

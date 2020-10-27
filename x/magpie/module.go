@@ -3,6 +3,7 @@ package magpie
 import (
 	"encoding/json"
 	"fmt"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -63,7 +64,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, config client.TxE
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
-	return types.ValidateGenesis(data)
+	return types.ValidateGenesis(&data)
 }
 
 // RegisterRESTRoutes registers the REST routes for the magpie module.
@@ -98,6 +99,7 @@ type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
+	bk     bankkeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -107,11 +109,14 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 // NewAppModule creates a new AppModule Object
-func NewAppModule(cdc codec.Marshaler, keeper keeper.Keeper, accountKeeper authkeeper.AccountKeeper) AppModule {
+func NewAppModule(
+	cdc codec.Marshaler, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
-		ak:             accountKeeper,
+		ak:             ak,
+		bk:             bk,
 	}
 }
 
@@ -197,7 +202,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the magpie module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	// TODO: Implement these again
-	//return WeightedOperations(simState.AppParams, simState.cdc, am.keeper, am.ak)
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, am.cdc, am.ak, am.bk)
 }

@@ -4,7 +4,7 @@ package simulation
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
@@ -12,7 +12,7 @@ import (
 func RandomizedGenState(simState *module.SimulationState) {
 	sessionLength := simState.Rand.Int63n(1000) + 1 // Session length cannot be zero
 	sessions := randomSessions(simState)
-	genState := types.NewGenesisState(sessionLength, sessions)
+	genState := types.NewGenesisState(uint64(sessionLength), sessions)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(genState)
 }
 
@@ -23,16 +23,18 @@ func randomSessions(simState *module.SimulationState) types.Sessions {
 	sessions := make(types.Sessions, sessionsLength)
 	for i := 0; i < sessionsLength; i++ {
 
-		simAccount, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
+		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		created := simState.Rand.Int63n(20000)
+		expiry := simState.Rand.Int63n(1000) + created
+
 		data := RandomSessionData(simAccount, simState.Rand)
 
 		// Create the session
 		sessions[i] = types.NewSession(
-			types.SessionID(i),
-			data.Owner.Address,
-			created,
-			simState.Rand.Int63n(1000)+created,
+			types.SessionID{Value: uint64(i)},
+			data.Owner,
+			uint64(created),
+			uint64(expiry),
 			data.Namespace,
 			data.ExternalOwner,
 			data.PubKey,

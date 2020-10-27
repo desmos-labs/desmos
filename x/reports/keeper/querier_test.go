@@ -51,16 +51,16 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResponse)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 
 		})

@@ -2,25 +2,25 @@ package rest
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/client"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/gorilla/mux"
 )
 
-func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/relationships", queryRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc("/relationships/{address}", queryUserRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc("/blacklist/{address}", queryUserBlocks(cliCtx)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/relationships/%s", ParamAddress), queryUserRelationships(cliCtx)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/blacklist/%s", ParamAddress), queryUserBlocks(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query list of user's relationships
-func queryUserRelationships(cliCtx context.CLIContext) http.HandlerFunc {
+func queryUserRelationships(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		address := vars["address"]
+		address := vars[ParamAddress]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, address)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -40,7 +40,7 @@ func queryUserRelationships(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 // HTTP request handler to query list of all relationships
-func queryRelationships(cliCtx context.CLIContext) http.HandlerFunc {
+func queryRelationships(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRelationships)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -59,10 +59,10 @@ func queryRelationships(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func queryUserBlocks(cliCtx context.CLIContext) func(http.ResponseWriter, *http.Request) {
+func queryUserBlocks(cliCtx client.Context) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		address := vars["address"]
+		address := vars[ParamAddress]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryUserBlocks, address)
 		res, height, err := cliCtx.QueryWithData(route, nil)

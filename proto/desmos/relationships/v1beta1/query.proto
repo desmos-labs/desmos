@@ -1,7 +1,6 @@
 syntax = "proto3";
 package desmos.magpie.v1beta1;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "desmos/relationships/v1beta1/models.proto";
@@ -27,13 +26,7 @@ service Query {
 }
 
 // QueryRelationships is the request type for the Query/Relationships RPC method
-message QueryRelationshipsRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
+message QueryRelationshipsRequest {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -44,9 +37,6 @@ message QueryUserRelationshipsRequest {
 
   // address of the user to query the relationships for
   string user = 1;
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryRelationshipsResult is the response type for the Query/Balance RPC method.
@@ -54,9 +44,6 @@ message QueryRelationshipsResult {
   // relationships represent the list of all the relationships for the queried user
   repeated desmos.relationships.v1beta1.Relationship relationships = 1
   [(gogoproto.nullable) = false];
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________
@@ -68,9 +55,6 @@ message QueryUserBlocksRequest {
 
   // address of the user to query the blocks for
   string user = 1;
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryBlocksResult is the response type for the Query/UserBlocks RPC method.
@@ -78,7 +62,4 @@ message QueryBlocksResult {
   // relationships represent the list of all the blocks for the queried user
   repeated desmos.relationships.v1beta1.UserBlock blocks = 1
   [(gogoproto.nullable) = false];
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }

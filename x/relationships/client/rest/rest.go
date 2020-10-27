@@ -6,6 +6,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	ParamAddress = "address"
+)
+
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)

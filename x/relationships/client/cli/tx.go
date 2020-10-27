@@ -30,7 +30,7 @@ func NewTxCmd() *cobra.Command {
 	return cmd
 }
 
-// GetCmdCreateRelationship is the CLI command for creating a relationship
+// GetCmdCreateRelationship returns the command allowing to create a relationship
 func GetCmdCreateRelationship() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [receiver] [subspace]",
@@ -55,7 +55,7 @@ func GetCmdCreateRelationship() *cobra.Command {
 	return cmd
 }
 
-// GetCmdDeleteRelationship is the CLI command for deleting a relationship
+// GetCmdDeleteRelationship returns the command allowing to delete a relationships
 func GetCmdDeleteRelationship() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete [receiver] [subspace]",
@@ -80,6 +80,7 @@ func GetCmdDeleteRelationship() *cobra.Command {
 	return cmd
 }
 
+// GetCmdBlockUser returns the command allowing to block a user
 func GetCmdBlockUser() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "block [address] [subspace] [[reason]]",
@@ -109,6 +110,7 @@ func GetCmdBlockUser() *cobra.Command {
 	return cmd
 }
 
+// GetCmdUnblockUser returns the command allowing to unblock a user
 func GetCmdUnblockUser() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "unblock [address] [subspace]",

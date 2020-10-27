@@ -57,11 +57,11 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 
 			if res == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 			if res != nil {
 				//Check the data
-				suite.Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", suite.testData.postID)), res.Data)
+				suite.Require().Equal([]byte(fmt.Sprintf("post with ID: %s reported correctly", suite.testData.postID)), res.Data)
 
 				//Check the events
 				createReportEv := sdk.NewEvent(

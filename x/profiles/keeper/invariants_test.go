@@ -32,12 +32,12 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			suite.SetupTest() //reset
 
 			err := suite.keeper.SaveProfile(suite.ctx, test.profile)
-			suite.NoError(err)
+			suite.Require().NoError(err)
 
 			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			suite.Equal(test.expResponse, res)
-			suite.Equal(test.expBool, stop)
+			suite.Require().Equal(test.expResponse, res)
+			suite.Require().Equal(test.expBool, stop)
 		})
 	}
 

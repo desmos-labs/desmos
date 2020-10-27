@@ -36,12 +36,12 @@ import (
 func init() {
 	simapp.GetSimulatorFlags()
 
-	// Setup the config
+	// SetupSimApp the config
 	sdkConfig := sdk.GetConfig()
 	SetupConfig(sdkConfig)
 	sdkConfig.Seal()
 
-	// Setup the overloads
+	// SetupSimApp the overloads
 	Init()
 }
 
@@ -180,7 +180,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[auth.StoreKey], newApp.keys[auth.StoreKey], [][]byte{}},
 
 		// TODO: This has been currently commented out as HistoricalInfoKey is not properly handled from DecodeStore
-		//{app.keys[staking.StoreKey], newApp.keys[staking.StoreKey],
+		//{app.keys[staking.storeKey], newApp.keys[staking.storeKey],
 		//	[][]byte{
 		//		staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,
 		//	}}, // ordering may change but it doesn't matter

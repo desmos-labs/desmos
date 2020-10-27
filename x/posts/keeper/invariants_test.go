@@ -14,7 +14,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
 	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	parentPost := types.Post{
 		PostID:       id,
@@ -138,8 +138,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			suite.Equal(test.expResponse, res)
-			suite.Equal(test.expBool, stop)
+			suite.Require().Equal(test.expResponse, res)
+			suite.Require().Equal(test.expBool, stop)
 
 		})
 	}

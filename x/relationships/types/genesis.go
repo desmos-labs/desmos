@@ -18,7 +18,7 @@ func DefaultGenesisState() *GenesisState {
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
-func ValidateGenesis(data GenesisState) error {
+func ValidateGenesis(data *GenesisState) error {
 	for _, rel := range data.Relationships {
 		if len(rel.Recipient) == 0 {
 			return fmt.Errorf("invalid relationship's recipient address %s", rel)

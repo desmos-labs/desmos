@@ -55,10 +55,10 @@ import (
 	postsKeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
-	profilesKeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	relationshipsKeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
-	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
+	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
@@ -178,9 +178,9 @@ type DesmosApp struct {
 	// Custom modules
 	magpieKeeper        magpieKeeper.Keeper
 	postsKeeper         postsKeeper.Keeper
-	profileKeeper       profilesKeeper.Keeper
+	profileKeeper       profileskeeper.Keeper
 	reportsKeeper       reportsKeeper.Keeper
-	relationshipsKeeper relationships.Keeper
+	RelationshipsKeeper relationshipskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -223,8 +223,8 @@ func NewDesmosApp(
 		evidencetypes.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
-		relationshipsTypes.StoreKey,
+		magpieTypes.StoreKey, postsTypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		relationshipstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
@@ -291,7 +291,7 @@ func NewDesmosApp(
 
 	// Register custom modules
 	app.magpieKeeper = magpieKeeper.NewKeeper(
-		app.legacyAmino,
+		appCodec,
 		keys[magpieTypes.StoreKey],
 	)
 	app.postsKeeper = postsKeeper.NewKeeper(
@@ -299,19 +299,19 @@ func NewDesmosApp(
 		keys[postsTypes.StoreKey],
 		app.GetSubspace(postsTypes.ModuleName),
 	)
-	app.profileKeeper = profilesKeeper.NewKeeper(
+	app.profileKeeper = profileskeeper.NewKeeper(
 		app.legacyAmino,
-		keys[profilesTypes.StoreKey],
-		app.GetSubspace(profilesTypes.ModuleName),
+		keys[profilestypes.StoreKey],
+		app.GetSubspace(profilestypes.ModuleName),
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.legacyAmino,
 		keys[reportsTypes.StoreKey],
 		app.postsKeeper,
 	)
-	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
-		app.legacyAmino,
-		keys[relationshipsTypes.StoreKey],
+	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
+		appCodec,
+		keys[relationshipstypes.StoreKey],
 	)
 
 	// Create the module manager
@@ -334,11 +334,11 @@ func NewDesmosApp(
 		params.NewAppModule(app.paramsKeeper),
 
 		// Custom modules
-		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper),
+		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
 		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
+		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -356,8 +356,8 @@ func NewDesmosApp(
 		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
 		govtypes.ModuleName, evidencetypes.ModuleName,
 
-		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName,
-		relationshipsTypes.ModuleName, // custom modules
+		magpieTypes.ModuleName, postsTypes.ModuleName, profilestypes.ModuleName, reportsTypes.ModuleName,
+		relationshipstypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -385,11 +385,11 @@ func NewDesmosApp(
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
-		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper),
+		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
 		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
 		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
+		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

@@ -7,8 +7,9 @@ import (
 )
 
 // NewRelationship returns a new relationships with the given recipient and subspace
-func NewRelationship(recipient string, subspace string) Relationship {
+func NewRelationship(creator string, recipient string, subspace string) Relationship {
 	return Relationship{
+		Creator:   creator,
 		Recipient: recipient,
 		Subspace:  subspace,
 	}
@@ -16,8 +17,16 @@ func NewRelationship(recipient string, subspace string) Relationship {
 
 // Validate implement Validator
 func (r Relationship) Validate() error {
+	if len(r.Creator) == 0 {
+		return fmt.Errorf("cretor cannot be empty")
+	}
+
 	if len(r.Recipient) == 0 {
-		return fmt.Errorf("recipient can't be empty")
+		return fmt.Errorf("recipient cannot be empty")
+	}
+
+	if r.Creator == r.Recipient {
+		return fmt.Errorf("creator and recipient cannot be the same user")
 	}
 
 	if !commons.IsValidSubspace(r.Subspace) {
@@ -26,9 +35,6 @@ func (r Relationship) Validate() error {
 
 	return nil
 }
-
-// Relationships represents a slice of Relationship objects
-type Relationships = []Relationship
 
 // ___________________________________________________________________________________________________________________
 

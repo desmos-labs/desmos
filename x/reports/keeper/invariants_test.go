@@ -10,7 +10,7 @@ import (
 
 func (suite *KeeperTestSuite) TestInvariants() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 	postID := posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	report := models.NewReport("type", "message", creator)
 
@@ -46,8 +46,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
 
-			suite.Equal(test.expResponse, res)
-			suite.Equal(test.expBool, stop)
+			suite.Require().Equal(test.expResponse, res)
+			suite.Require().Equal(test.expBool, stop)
 		})
 	}
 }

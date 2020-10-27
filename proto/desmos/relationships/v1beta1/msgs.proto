@@ -11,7 +11,7 @@ service Msg {
   rpc CreateRelationship(MsgCreateRelationship) returns (MsgCreateRelationshipResponse);
 
   // DeleteRelationship defines a method for deleting a relationship
-  rpc DeleteRelationship(MsgDeleteRelationship) returns (MsgDeleteRelationshipResponse);
+  rpc RemoveRelationship(MsgDeleteRelationship) returns (MsgDeleteRelationshipResponse);
 
   // BlockUser defines a method for blocking a user
   rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);

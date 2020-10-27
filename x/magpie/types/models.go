@@ -35,7 +35,8 @@ func ParseSessionID(value string) (SessionID, error) {
 // ------------------
 
 // NewSession return a new session containing the given parameters
-func NewSession(id SessionID, owner string, created, expiry int64,
+func NewSession(
+	id SessionID, owner string, created, expiry uint64,
 	namespace, externalOwner, pubKey, signature string,
 ) Session {
 	return Session{

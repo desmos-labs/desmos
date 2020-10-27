@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 
 	actualParams := suite.keeper.GetParams(suite.ctx)
 
-	suite.Equal(params, actualParams)
+	suite.Require().Equal(params, actualParams)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
@@ -52,7 +52,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			}
 
 			if test.expParams != nil {
-				suite.Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
+				suite.Require().Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
 			}
 		})
 	}

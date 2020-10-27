@@ -18,14 +18,14 @@ func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {
 	bz := store.Get(key)
 	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &acc)
 
-	suite.Equal(suite.testData.profile.Creator, acc)
+	suite.Require().Equal(suite.testData.profile.Creator, acc)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetDtagRelatedAddress() {
 	suite.keeper.AssociateDtagWithAddress(suite.ctx, "moner", suite.testData.profile.Creator)
 
 	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "moner")
-	suite.Equal(suite.testData.profile.Creator, addr)
+	suite.Require().Equal(suite.testData.profile.Creator, addr)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteDtagAddressAssociation() {
@@ -33,12 +33,12 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDtagAddressAssociation() {
 	suite.keeper.DeleteDtagAddressAssociation(suite.ctx, "monik")
 
 	addr := suite.keeper.GetDtagRelatedAddress(suite.ctx, "monik")
-	suite.Nil(addr)
+	suite.Require().Nil(addr)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name      string
@@ -72,7 +72,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 
 			monk := suite.keeper.GetDtagFromAddress(suite.ctx, test.addresses[0])
 
-			suite.Equal(test.expDtag, monk)
+			suite.Require().Equal(test.expDtag, monk)
 		})
 	}
 }
@@ -117,7 +117,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 
 			err := suite.keeper.SaveProfile(suite.ctx, test.account)
 
-			suite.Equal(test.expError, err)
+			suite.Require().Equal(test.expError, err)
 
 		})
 	}
@@ -125,16 +125,16 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteProfile() {
 	err := suite.keeper.SaveProfile(suite.ctx, suite.testData.profile)
-	suite.Nil(err)
+	suite.Require().Nil(err)
 
 	res, found := suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
-	suite.Equal(suite.testData.profile, res)
+	suite.Require().Equal(suite.testData.profile, res)
 	suite.True(found)
 
 	suite.keeper.DeleteProfile(suite.ctx, suite.testData.profile.Creator, suite.testData.profile.DTag)
 
 	res, found = suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
-	suite.Equal(types.Profile{}, res)
+	suite.Require().Equal(types.Profile{}, res)
 	suite.False(found)
 }
 
@@ -170,10 +170,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 			res, found := suite.keeper.GetProfile(suite.ctx, testPostOwner)
 
 			if test.existentAccount != nil {
-				suite.Equal(*test.existentAccount, res)
+				suite.Require().Equal(*test.existentAccount, res)
 				suite.True(found)
 			} else {
-				suite.Equal(types.Profile{}, res)
+				suite.Require().Equal(types.Profile{}, res)
 				suite.False(found)
 			}
 
@@ -209,9 +209,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 			res := suite.keeper.GetProfiles(suite.ctx)
 
 			if len(test.existentAccounts) != 0 {
-				suite.Equal(test.existentAccounts, res)
+				suite.Require().Equal(test.existentAccounts, res)
 			} else {
-				suite.Equal(types.Profiles{}, res)
+				suite.Require().Equal(types.Profiles{}, res)
 			}
 
 		})
@@ -290,11 +290,11 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			}
 
 			actualErr := suite.keeper.SaveDTagTransferRequest(suite.ctx, test.transferReq)
-			suite.Equal(test.expErr, actualErr)
+			suite.Require().Equal(test.expErr, actualErr)
 
 			var actualReqs []types.DTagTransferRequest
 			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.Receiver)), &actualReqs)
-			suite.Equal(test.expStoredTransferReqs, actualReqs)
+			suite.Require().Equal(test.expStoredTransferReqs, actualReqs)
 		})
 	}
 }
@@ -333,7 +333,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
 				)
 			}
 
-			suite.Equal(test.expReqs, suite.keeper.GetUserDTagTransferRequests(suite.ctx, suite.testData.user))
+			suite.Require().Equal(test.expReqs, suite.keeper.GetUserDTagTransferRequests(suite.ctx, suite.testData.user))
 		})
 	}
 }
@@ -372,7 +372,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 				)
 			}
 
-			suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
+			suite.Require().Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
 		})
 	}
 }
@@ -404,7 +404,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 			}
 
 			suite.keeper.DeleteAllDTagTransferRequests(suite.ctx, suite.testData.user)
-			suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
+			suite.Require().Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
 		})
 	}
 }
@@ -471,9 +471,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 
 			err := suite.keeper.DeleteDTagTransferRequest(suite.ctx, suite.testData.user, suite.testData.otherUser)
 			if err != nil {
-				suite.Equal(test.error, err)
+				suite.Require().Equal(test.error, err)
 			} else {
-				suite.Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
+				suite.Require().Equal(test.expReqs, suite.keeper.GetDTagTransferRequests(suite.ctx))
 			}
 		})
 	}

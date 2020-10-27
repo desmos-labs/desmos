@@ -61,22 +61,22 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			err := suite.keeper.SaveProfile(suite.ctx, test.storedAccount)
-			suite.Nil(err)
+			suite.Require().Nil(err)
 
 			querier := keeper.NewQuerier(suite.keeper)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.storedAccount)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 
 		})
@@ -113,17 +113,17 @@ func (suite *KeeperTestSuite) Test_queryProfiles() {
 
 			if test.storedAccount != nil {
 				err := suite.keeper.SaveProfile(suite.ctx, *test.storedAccount)
-				suite.Nil(err)
+				suite.Require().Nil(err)
 			}
 
 			querier := keeper.NewQuerier(suite.keeper)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 		})
@@ -165,10 +165,10 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 		})
@@ -224,16 +224,16 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expResult != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expErr.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}

@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/binary"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -10,12 +11,12 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
-	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
+	StoreKey sdk.StoreKey          // Unexposed key to access store from sdk.Context
+	Cdc      codec.BinaryMarshaler // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		StoreKey: storeKey,
 		Cdc:      cdc,
@@ -28,23 +29,26 @@ func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey) Keeper {
 
 // SetDefaultSessionLength allows to set a default session length for new magpie sessions.
 // The specified length is intended to be in number of blocks.
-func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length int64) error {
+func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length uint64) error {
 	if length < 1 {
 		return fmt.Errorf("cannot set %d as default session length", length)
 	}
 
 	store := ctx.KVStore(k.StoreKey)
-	store.Set(types.SessionLengthKey, k.Cdc.MustMarshalBinaryBare(length))
+
+	var bz []byte
+	binary.LittleEndian.PutUint64(bz, length)
+	store.Set(types.SessionLengthKey, bz)
 	return nil
 }
 
 // GetDefaultSessionLength returns the default session length in number of blocks.
-func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) int64 {
+func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) uint64 {
 	store := ctx.KVStore(k.StoreKey)
 
-	length := int64(0)
+	length := uint64(0)
 	if store.Has(types.SessionLengthKey) {
-		k.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionLengthKey), &length)
+		length = binary.LittleEndian.Uint64(store.Get(types.SessionLengthKey))
 	}
 
 	return length
@@ -77,7 +81,7 @@ func (k Keeper) SetLastSessionID(ctx sdk.Context, id types.SessionID) {
 func (k Keeper) SaveSession(ctx sdk.Context, session types.Session) {
 	// Save the session
 	store := ctx.KVStore(k.StoreKey)
-	store.Set(types.SessionStoreKey(session.SessionId), k.Cdc.MustMarshalBinaryBare(session))
+	store.Set(types.SessionStoreKey(session.SessionId), k.Cdc.MustMarshalBinaryBare(&session))
 
 	// Update the last used session id
 	k.SetLastSessionID(ctx, session.SessionId)
@@ -92,8 +96,7 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 		return types.Session{}, false
 	}
 
-	bz := store.Get(key)
-	k.Cdc.MustUnmarshalBinaryBare(bz, &session)
+	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &session)
 	return session, true
 }
 

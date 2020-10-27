@@ -14,13 +14,13 @@ import (
 
 func (suite *KeeperTestSuite) Test_queryPost() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	computedID := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	stringID := computedID.String()
 
 	otherCreator, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	computedID2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 
@@ -182,7 +182,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			for postID, reactions := range test.storedReactions {
 				for _, reaction := range reactions {
 					err = suite.keeper.SavePostReaction(suite.ctx, types.PostID(postID), reaction)
-					suite.NoError(err)
+					suite.Require().NoError(err)
 				}
 			}
 
@@ -190,16 +190,16 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expError.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expError.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}
@@ -209,7 +209,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
 	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	answers := []types.AnswerID{types.AnswerID(1)}
 
@@ -309,18 +309,18 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			querier := keeper.NewQuerier(suite.keeper)
 			request := abci.RequestQuery{Data: suite.keeper.Cdc.MustMarshalJSON(&test.params)}
 			result, err := querier(suite.ctx, []string{types.QueryPosts}, request)
-			suite.NoError(err)
+			suite.Require().NoError(err)
 
 			expSerialized, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResponse)
-			suite.NoError(err)
-			suite.Equal(string(expSerialized), string(result))
+			suite.Require().NoError(err)
+			suite.Require().Equal(string(expSerialized), string(result))
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	computedID := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
 	stringID := computedID.String()
@@ -403,17 +403,17 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
+				suite.Require().NoError(err)
 
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expError.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expError.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}
@@ -422,7 +422,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 
 func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 	creator, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.NoError(err)
+	suite.Require().NoError(err)
 
 	tests := []struct {
 		name            string
@@ -461,17 +461,17 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
+				suite.Require().NoError(err)
 
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 			if result == nil {
 				suite.NotNil(err)
-				suite.Equal(test.expError.Error(), err.Error())
-				suite.Nil(result)
+				suite.Require().Equal(test.expError.Error(), err.Error())
+				suite.Require().Nil(result)
 			}
 		})
 	}
@@ -498,10 +498,10 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
-				suite.Nil(err)
+				suite.Require().Nil(err)
 				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
 			}
 
 		})
