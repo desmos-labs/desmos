@@ -1,3 +1,5 @@
+// +build cli_test
+
 //nolint
 package clitest
 
@@ -356,13 +358,12 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
-	barAddr := f.KeyAddress(keyBar)
 	fooAddr := f.KeyAddress(keyFoo)
+	barAddr := f.KeyAddress(keyBar)
 	barVal := sdk.ValAddress(barAddr)
 
 	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(barAddr.String(), fooAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
-	f.TxSend(barAddr.String(), fooAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
 
 	consPubKey := sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, ed25519.GenPrivKey().PubKey())
 
@@ -374,7 +375,8 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
 
 	// Generate a create validator transaction and ensure correctness
-	success, stdout, stderr := f.TxStakingCreateValidator(barAddr.String(), consPubKey, sdk.NewInt64Coin(denom, 2), txFees, "--generate-only")
+	success, stdout, stderr := f.TxStakingCreateValidator(barAddr.String(),
+		consPubKey, sdk.NewInt64Coin(denom, 2), "--generate-only")
 
 	require.True(f.T, success)
 	require.Empty(f.T, stderr)
@@ -503,7 +505,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	// Test submit generate only for submit proposal
 	proposalTokens := sdk.TokensFromConsensusPower(5)
 	success, stdout, stderr := f.TxGovSubmitProposal(
-		fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), txFees, "--generate-only", "-y")
+		fooAddr.String(), "Text", "Test", "test", sdk.NewCoin(denom, proposalTokens), "--generate-only", "-y")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg := unmarshalStdTx(t, stdout)
@@ -542,7 +544,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 
 	// Test deposit generate only
 	depositTokens := sdk.TokensFromConsensusPower(10)
-	success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), txFees, "--generate-only")
+	success, stdout, stderr = f.TxGovDeposit(1, fooAddr.String(), sdk.NewCoin(denom, depositTokens), "--generate-only")
 	require.True(t, success)
 	require.Empty(t, stderr)
 	msg = unmarshalStdTx(t, stdout)
@@ -551,7 +553,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	require.Equal(t, 0, len(msg.GetSignatures()))
 
 	// Run the deposit transaction
-	f.TxGovDeposit(1, keyFoo, sdk.NewCoin(denom, depositTokens), "-y")
+	f.TxGovDeposit(1, keyFoo, sdk.NewCoin(denom, depositTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// test query deposit
