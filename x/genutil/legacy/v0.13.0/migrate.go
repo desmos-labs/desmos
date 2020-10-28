@@ -2,7 +2,8 @@ package v0130
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
@@ -10,12 +11,12 @@ import (
 )
 
 // Migrate migrates exported state from v0.12.0 to a v0.13.0 genesis state.
-func Migrate(appState genutil.AppMap, values ...interface{}) genutil.AppMap {
-	v0120Codec := codec.New()
-	codec.RegisterCrypto(v0120Codec)
+func Migrate(appState genutiltypes.AppMap, values ...interface{}) genutiltypes.AppMap {
+	v0120Codec := codec.NewLegacyAmino()
+	cryptocodec.RegisterCrypto(v0120Codec)
 
-	v0130Codec := codec.New()
-	codec.RegisterCrypto(v0130Codec)
+	v0130Codec := codec.NewLegacyAmino()
+	cryptocodec.RegisterCrypto(v0130Codec)
 
 	// Migrate posts state
 	if appState[v060posts.ModuleName] != nil {

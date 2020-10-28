@@ -3,30 +3,26 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/types/errors"
 	"sort"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	extypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	v0100 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
-	v0120 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.12.0"
-	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
-	v080 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.8.0"
-	"github.com/desmos-labs/desmos/x/genutil/types"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
+
+	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
+	"github.com/desmos-labs/desmos/x/genutil/types"
 )
 
 // migrationMap contains the list of migrations that should be performed when migrating
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
 var migrationMap = map[string]types.MigrationCallback{
-	"v0.8.0":  v080.Migrate,
-	"v0.10.0": v0100.Migrate,
-	"v0.12.0": v0120.Migrate,
 	"v0.13.0": v0130.Migrate,
 }
 
