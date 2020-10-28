@@ -2,52 +2,47 @@ package app
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 const (
 	BondDenom = "desmos"
-
-	// gov
-	DefaultStartingProposalID uint64 = 1
-)
-
-var (
-	DefaultMinDepositTokens = sdk.TokensFromConsensusPower(10)
-	DefaultQuorum           = sdk.NewDecWithPrec(334, 3)
-	DefaultThreshold        = sdk.NewDecWithPrec(5, 1)
-	DefaultVeto             = sdk.NewDecWithPrec(334, 3)
 )
 
 // Init initializes the application, overriding the default genesis states that should be changed
 func Init() {
-	staking.DefaultGenesisState = stakingGenesisState
-	gov.DefaultGenesisState = govGenesisState
+	// TODO: Check how this can be implemented again
+	//stakingtypes.DefaultGenesisState = stakingGenesisState
+	//govtypes.DefaultGenesisState = govGenesisState
 }
 
 // stakingGenesisState returns the default genesis state for the staking module, replacing the
 // bond denom from stake to desmos
-func stakingGenesisState() staking.GenesisState {
-	return staking.GenesisState{
-		Params: staking.NewParams(
-			staking.DefaultUnbondingTime,
-			staking.DefaultMaxValidators,
-			staking.DefaultMaxEntries,
-			0,
+func stakingGenesisState() *stakingtypes.GenesisState {
+	return stakingtypes.NewGenesisState(
+		stakingtypes.NewParams(
+			stakingtypes.DefaultUnbondingTime,
+			stakingtypes.DefaultMaxValidators,
+			stakingtypes.DefaultMaxEntries,
+			stakingtypes.DefaultHistoricalEntries,
 			BondDenom,
 		),
-	}
+		nil,
+		nil,
+	)
 }
 
-func govGenesisState() gov.GenesisState {
-	return gov.NewGenesisState(
-		DefaultStartingProposalID,
-		gov.NewDepositParams(
-			sdk.NewCoins(sdk.NewCoin(BondDenom, DefaultMinDepositTokens)),
-			gov.DefaultPeriod,
+// govGenesisState returns the default genesis state for the gov module, replacing the
+// bond denom from stake to desmos
+func govGenesisState() *govtypes.GenesisState {
+	return govtypes.NewGenesisState(
+		govtypes.DefaultStartingProposalID,
+		govtypes.NewDepositParams(
+			sdk.NewCoins(sdk.NewCoin(BondDenom, govtypes.DefaultMinDepositTokens)),
+			govtypes.DefaultPeriod,
 		),
-		gov.NewVotingParams(gov.DefaultPeriod),
-		gov.NewTallyParams(DefaultQuorum, DefaultThreshold, DefaultVeto),
+		govtypes.DefaultVotingParams(),
+		govtypes.DefaultTallyParams(),
 	)
 }
