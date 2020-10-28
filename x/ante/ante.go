@@ -3,6 +3,7 @@ package ante
 import (
 	"errors"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/fees"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,8 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
-// fixedRequiredFee is the amount of fee desmos requires to process each tx. Actually set to 0.01 daric/desmos
-var fixedRequiredFee = sdk.NewDecWithPrec(1, 2)
+// conversion factor from desmos to fee 1:1000000
 var conversionFactor = sdk.NewDec(1000000)
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
@@ -22,15 +22,15 @@ func NewAnteHandler(
 	ak keeper.AccountKeeper,
 	supplyKeeper types.SupplyKeeper,
 	sigGasConsumer cosmosante.SignatureVerificationGasConsumer,
-	feeTokenDenom string,
-	defaultBondDenom string,
+	feesKeeper fees.Keeper,
+	bonDenom string,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
 		cosmosante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		cosmosante.NewMempoolFeeDecorator(),
 		cosmosante.NewValidateBasicDecorator(),
 		cosmosante.NewValidateMemoDecorator(ak),
-		NewMinFeeDecorator(feeTokenDenom, defaultBondDenom),
+		NewMinFeeDecorator(feesKeeper, bonDenom),
 		cosmosante.NewConsumeGasForTxSizeDecorator(ak),
 		cosmosante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		cosmosante.NewValidateSigCountDecorator(ak),
@@ -42,14 +42,14 @@ func NewAnteHandler(
 }
 
 type MinFeeDecorator struct {
-	feeTokenDenom    string
-	defaultBondDenom string
+	feesKeeper fees.Keeper
+	bonDenom   string
 }
 
-func NewMinFeeDecorator(feeDenom, defaultBondDenom string) MinFeeDecorator {
+func NewMinFeeDecorator(feesKeeper fees.Keeper, bonDenom string) MinFeeDecorator {
 	return MinFeeDecorator{
-		feeTokenDenom:    feeDenom,
-		defaultBondDenom: defaultBondDenom,
+		feesKeeper: feesKeeper,
+		bonDenom:   bonDenom,
 	}
 }
 
@@ -68,11 +68,13 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 		return next(ctx, tx, simulate)
 	}
 
+	feesParams := mfd.feesKeeper.GetParams(ctx)
+
 	// calculate required fees for this transaction as (number of messages * fixed required fees)
-	requiredFees := fixedRequiredFee.MulInt64(int64(len(stdTx.Msgs)))
+	requiredFees := feesParams.RequiredFee.MulInt64(int64(len(stdTx.Msgs)))
 
 	// Check the minimum fees
-	if err := checkMinimumFees(stdTx, requiredFees, mfd.feeTokenDenom, mfd.defaultBondDenom); err != nil {
+	if err := checkMinimumFees(stdTx, requiredFees, feesParams.FeeDenom, mfd.bonDenom); err != nil {
 		return ctx, err
 	}
 

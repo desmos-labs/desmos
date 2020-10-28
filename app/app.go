@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/desmos-labs/desmos/x/ante"
+	"github.com/desmos-labs/desmos/x/fees"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -33,6 +34,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	feesKeeper "github.com/desmos-labs/desmos/x/fees/keeper"
+	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/desmos-labs/desmos/x/magpie"
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
@@ -81,6 +84,7 @@ var (
 		evidence.AppModuleBasic{},
 
 		// Custom modules
+		fees.AppModuleBasic{},
 		magpie.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
@@ -146,6 +150,7 @@ type DesmosApp struct {
 	evidenceKeeper evidence.Keeper
 
 	// Custom modules
+	feesKeeper          feesKeeper.Keeper
 	magpieKeeper        magpieKeeper.Keeper
 	postsKeeper         postsKeeper.Keeper
 	profileKeeper       profilesKeeper.Keeper
@@ -201,6 +206,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 	app.subspaces[evidence.ModuleName] = app.paramsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
+	app.subspaces[feesTypes.ModuleName] = app.paramsKeeper.Subspace(feesTypes.DefaultParamspace)
 	app.subspaces[postsTypes.ModuleName] = app.paramsKeeper.Subspace(postsTypes.DefaultParamspace)
 	app.subspaces[profilesTypes.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
 
@@ -286,6 +292,10 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	)
 
 	// Register custom modules
+	app.feesKeeper = feesKeeper.NewKeeper(
+		app.cdc,
+		app.subspaces[feesTypes.ModuleName],
+	)
 	app.magpieKeeper = magpieKeeper.NewKeeper(
 		app.cdc,
 		keys[magpieTypes.StoreKey],
@@ -337,6 +347,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
+		fees.NewAppModule(app.feesKeeper, app.accountKeeper),
 		magpie.NewAppModule(app.magpieKeeper, app.accountKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
 		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
@@ -360,7 +371,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.ModuleName, evidence.ModuleName,
 
 		// custom modules
-		magpieTypes.ModuleName,
+		feesTypes.ModuleName, magpieTypes.ModuleName,
 		profilesTypes.ModuleName, relationshipsTypes.ModuleName,
 		postsTypes.ModuleName, reportsTypes.ModuleName,
 
@@ -403,7 +414,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetAnteHandler(ante.NewAnteHandler(
-		app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer, FeeDenom, BondDenom),
+		app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer, app.feesKeeper, BondDenom),
 	)
 	app.SetEndBlocker(app.EndBlocker)
 
