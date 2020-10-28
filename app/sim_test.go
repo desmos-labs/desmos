@@ -199,7 +199,7 @@ func TestAppImportExport(t *testing.T) {
 	storeKeysPrefixes := []StoreKeysPrefixes{
 		{app.keys[authtypes.StoreKey], newApp.keys[authtypes.StoreKey], [][]byte{}},
 
-		// TODO: This has been currently commented out as HistoricalInfoKey is not properly handled from DecodeStore
+		// TODO: This has been currently commented out as HistoricalInfoKey is not properly handled from NewDecodeStore
 		//{app.keys[staking.storeKey], newApp.keys[staking.storeKey],
 		//	[][]byte{
 		//		staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,

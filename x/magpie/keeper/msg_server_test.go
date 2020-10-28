@@ -3,8 +3,10 @@ package keeper_test
 import (
 	"context"
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
@@ -75,8 +77,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateSession() {
 				}
 
 				var stored types.Session
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(expectedID)), &stored)
 				suite.Require().Equal(session, stored)
 
 				// Check the events

@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
-// NewTxCmd set the tx commands
+// NewTxCmd returns a new command allowing to perform magpie transactions
 func NewTxCmd() *cobra.Command {
 	magpieTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
@@ -25,7 +25,7 @@ func NewTxCmd() *cobra.Command {
 	return magpieTxCmd
 }
 
-// GetCmdCreateSession is the CLI command for creating a session for create post
+// GetCmdCreateSession returns the command allowing to create a session
 func GetCmdCreateSession() *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-session [namespace] [external address] [pubkey] [external signer signature]",

@@ -1,80 +1,103 @@
 package keeper
 
 import (
-	"bytes"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	postsK "github.com/desmos-labs/desmos/x/posts/keeper"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/desmos-labs/desmos/x/reports/types/models"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	PostKeeper postsK.Keeper      // Post's keeper to perform checks on the postIDs
-	StoreKey   sdk.StoreKey       // Unexposed key to access store from sdk.Context
-	Cdc        *codec.LegacyAmino // The wire codec for binary encoding/decoding.
+	storeKey sdk.StoreKey          // Unexposed key to access store from sdk.Context
+	cdc      codec.BinaryMarshaler // The wire codec for binary encoding/decoding.
+
+	postKeeper postskeeper.Keeper // Post's keeper to perform checks on the postIDs
 }
 
-// NewKeeper creates new instances of the reports Keeper
-func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey, pk postsK.Keeper) Keeper {
+// NewKeeper creates new instances of the stored Keeper
+func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, pk postskeeper.Keeper) Keeper {
 	return Keeper{
-		PostKeeper: pk,
-		StoreKey:   storeKey,
-		Cdc:        cdc,
+		cdc:        cdc,
+		storeKey:   storeKey,
+		postKeeper: pk,
 	}
 }
 
 // CheckPostExistence checks if a post with the given postID is present inside
 // the current context and returns a boolean indicating that.
 func (k Keeper) CheckPostExistence(ctx sdk.Context, postID posts.PostID) bool {
-	_, exist := k.PostKeeper.GetPost(ctx, postID)
+	_, exist := k.postKeeper.GetPost(ctx, postID)
 	return exist
 }
 
-// SaveReport allows to save the given reports inside the current context.
-// It assumes that the given reports has already been validated.
-// If the same reports has already been inserted, nothing will be changed.
-func (k Keeper) SaveReport(ctx sdk.Context, postID posts.PostID, report types.Report) {
-	store := ctx.KVStore(k.StoreKey)
-	key := models.ReportStoreKey(postID)
+// SaveReport allows to save the given stored inside the current context.
+// It assumes that the given stored has already been validated.
+// If the same stored has already been inserted, nothing will be changed.
+func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.ReportStoreKey(report.PostId)
 
-	// Get the list of reports related to the given postID
-	var reports models.Reports
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &reports)
+	// Get the list of stored related to the given postID
+	reports, err := k.UnmarshalReports(store.Get(key))
+	if err != nil {
+		return err
+	}
 
-	// try to append the given reports
+	// Append the given stored
 	reports = append(reports, report)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&reports))
 
+	bz, err := k.MarshalReports(reports)
+	if err != nil {
+		return err
+	}
+
+	store.Set(key, bz)
+	return nil
 }
 
-// GetPostReports returns the list of reports associated with the given postID.
-// If no reports is associated with the given postID the function will returns an empty list.
-func (k Keeper) GetPostReports(ctx sdk.Context, postID posts.PostID) (reports types.Reports) {
-	store := ctx.KVStore(k.StoreKey)
-
-	// Get the list of reports related to the given postID
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(models.ReportStoreKey(postID)), &reports)
-	return reports
+// GetPostReports returns the list of stored associated with the given postID.
+// If no stored is associated with the given postID the function will returns an empty list.
+func (k Keeper) GetPostReports(ctx sdk.Context, postID string) ([]types.Report, error) {
+	store := ctx.KVStore(k.storeKey)
+	return k.UnmarshalReports(store.Get(types.ReportStoreKey(postID)))
 }
 
-// GetReportsMap allows to returns the list of reports that have been stored inside the given context
-func (k Keeper) GetReportsMap(ctx sdk.Context) map[string]types.Reports {
-	store := ctx.KVStore(k.StoreKey)
+// GetReports returns the list of all the stored that have been stored inside the given context
+func (k Keeper) GetReports(ctx sdk.Context) ([]types.Report, error) {
+	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
 	defer iterator.Close()
 
-	reportsData := map[string]types.Reports{}
+	var reports []types.Report
 	for ; iterator.Valid(); iterator.Next() {
-		var reports types.Reports
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &reports)
-		idBytes := bytes.TrimPrefix(iterator.Key(), types.ReportsStorePrefix)
-		reportsData[string(idBytes)] = reports
+		postReports, err := k.UnmarshalReports(iterator.Value())
+		if err != nil {
+			return nil, err
+		}
+
+		reports = append(reports, postReports...)
 	}
 
-	return reportsData
+	return reports, nil
+}
+
+// MarshalReports marshals a list of Report. If the given type implements
+// the Marshaler interface, it is treated as a Proto-defined message and
+// serialized that way. Otherwise, it falls back on the internal Amino codec.
+func (k Keeper) MarshalReports(reports []types.Report) ([]byte, error) {
+	return codec.MarshalAny(k.cdc, reports)
+}
+
+// UnmarshalReports returns a list of Report interface from raw encoded
+// blocks bytes. An error is returned upon decoding failure.
+func (k Keeper) UnmarshalReports(bz []byte) ([]types.Report, error) {
+	var reports []types.Report
+	if err := codec.UnmarshalAny(k.cdc, &reports, bz); err != nil {
+		return nil, err
+	}
+
+	return reports, nil
 }

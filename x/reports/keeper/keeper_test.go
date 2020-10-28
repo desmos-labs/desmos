@@ -4,19 +4,9 @@ import (
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/desmos-labs/desmos/x/reports/types/models"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
-	existentPost := posts.Post{
-		PostID:       suite.testData.postID,
-		Message:      "Post",
-		Created:      suite.testData.postCreationDate,
-		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: nil,
-		Creator:      suite.testData.creator,
-	}
-
 	tests := []struct {
 		name         string
 		existentPost *posts.Post
@@ -30,10 +20,17 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 			expBool:      false,
 		},
 		{
-			name:         "Post exist",
-			existentPost: &existentPost,
-			postID:       suite.testData.postID,
-			expBool:      true,
+			name: "Post exist",
+			existentPost: &posts.Post{
+				PostID:       suite.testData.postID,
+				Message:      "Post",
+				Created:      suite.testData.creationDate,
+				Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData: nil,
+				Creator:      suite.testData.creator,
+			},
+			postID:  suite.testData.postID,
+			expBool: true,
 		},
 	}
 
@@ -52,85 +49,116 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
-	expReports := models.Reports{models.NewReport("type", "message", suite.testData.creator)}
-	report := models.NewReport("type", "message", suite.testData.creator)
+	store := suite.ctx.KVStore(suite.storeKey)
 
-	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	report := types.NewReport(
+		suite.testData.postID.String(),
+		"type",
+		"message",
+		suite.testData.creator.String(),
+	)
+	err := suite.keeper.SaveReport(suite.ctx, report)
+	suite.Require().NoError(err)
 
-	suite.keeper.SaveReport(suite.ctx, suite.testData.postID, report)
+	reports, err := suite.keeper.UnmarshalReports(store.Get(types.ReportStoreKey(suite.testData.postID.String())))
+	suite.Require().NoError(err)
 
-	var reports models.Reports
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.ReportStoreKey(suite.testData.postID)), &reports)
-	suite.Require().Equal(expReports, reports)
-
+	suite.Require().Equal(reports, []types.Report{report})
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 	tests := []struct {
-		name       string
-		expReports models.Reports
+		name     string
+		postID   string
+		stored   []types.Report
+		expected []types.Report
 	}{
 		{
-			name: "Returns a non-empty reports array",
-			expReports: models.Reports{
-				{Type: "type", Message: "message", User: suite.testData.creator},
+			name: "Returns a non-empty stored array",
+			stored: []types.Report{
+				types.NewReport(
+					"post_id",
+					"type",
+					"message",
+					suite.testData.creator.String(),
+				),
+				types.NewReport(
+					"another_post_id",
+					"type",
+					"message",
+					suite.testData.creator.String(),
+				),
+			},
+			postID: "post_id",
+			expected: []types.Report{
+				types.NewReport(
+					suite.testData.postID.String(),
+					"type",
+					"message",
+					suite.testData.creator.String(),
+				),
 			},
 		},
 		{
-			name:       "Returns an empty reports array",
-			expReports: nil,
+			name:     "Returns an empty stored array",
+			postID:   "post_id",
+			stored:   nil,
+			expected: nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
-			if test.expReports != nil {
-				store.Set(types.ReportStoreKey(suite.testData.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expReports))
+			suite.SetupTest()
+
+			for _, report := range test.stored {
+				err := suite.keeper.SaveReport(suite.ctx, report)
+				suite.Require().NoError(err)
 			}
 
-			actualRep := suite.keeper.GetPostReports(suite.ctx, suite.testData.postID)
-			suite.Require().Equal(test.expReports, actualRep)
+			stored, err := suite.keeper.GetPostReports(suite.ctx, test.postID)
+			suite.Require().NoError(err)
+			suite.Require().Equal(test.expected, stored)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetReportsMap() {
-	reports := models.Reports{
-		{Type: "type", Message: "message", User: suite.testData.creator},
-	}
+func (suite *KeeperTestSuite) TestKeeper_GetReports() {
 	tests := []struct {
-		name            string
-		existingReports models.Reports
-		expReportsMap   map[string]models.Reports
+		name    string
+		reports []types.Report
 	}{
 		{
-			name:            "Returns a non-empty reports map",
-			existingReports: reports,
-			expReportsMap: map[string]models.Reports{
-				suite.testData.postID.String(): reports,
+			name: "Empty stored are returned properly",
+			reports: []types.Report{
+				types.NewReport(
+					suite.testData.postID.String(),
+					"type",
+					"message",
+					suite.testData.creator.String(),
+				),
 			},
 		},
 		{
-			name:            "Returns an empty reports map",
-			existingReports: nil,
-			expReportsMap:   map[string]models.Reports{},
+			name:    "Returns an empty stored map",
+			reports: nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
-			if test.existingReports != nil {
-				store.Set(types.ReportStoreKey(suite.testData.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingReports))
+			suite.SetupTest()
+
+			for _, report := range test.reports {
+				err := suite.keeper.SaveReport(suite.ctx, report)
+				suite.Require().NoError(err)
 			}
 
-			actualRep := suite.keeper.GetReportsMap(suite.ctx)
-			suite.Require().Equal(test.expReportsMap, actualRep)
+			stored, err := suite.keeper.GetReports(suite.ctx)
+			suite.Require().NoError(err)
+			suite.Require().Equal(test.reports, stored)
 		})
 	}
 }

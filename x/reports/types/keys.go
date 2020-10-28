@@ -1,4 +1,4 @@
-package common
+package types
 
 const (
 	ModuleName = "reports"
@@ -16,3 +16,8 @@ var (
 	ReportsStorePrefix     = []byte("reports")
 	ReportsTypeStorePrefix = []byte("report_type")
 )
+
+// ReportsStoreKey turn an id to a key used to store a reports inside the reports store
+func ReportStoreKey(id string) []byte {
+	return append(ReportsStorePrefix, []byte(id)...)
+}

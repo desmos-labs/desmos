@@ -37,7 +37,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetDefaultSessionLength() {
 			if test.expErr == nil {
 				suite.Require().NoError(err)
 
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
 				stored := binary.LittleEndian.Uint64(store.Get(types.SessionLengthKey))
 				suite.Require().Equal(test.length, stored)
 			}
@@ -56,7 +56,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDefaultSessionLength() {
 		length := length
 		suite.Run(fmt.Sprintf("Get default session length: %d", length), func() {
 			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if length != 0 {
 				var bz []byte
 				binary.LittleEndian.PutUint64(bz, length)
@@ -91,7 +91,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetLastSessionID() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			if test.existingID.Valid() {
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 				var bz []byte
 				binary.LittleEndian.PutUint64(bz, test.existingID.Value)
@@ -119,12 +119,12 @@ func (suite *KeeperTestSuite) TestKeeper_SetLastSessionID() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			suite.keeper.SetLastSessionID(suite.ctx, test.id)
 
 			var stored types.SessionID
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &stored)
 			suite.Require().Equal(test.id, stored)
 		})
 	}
@@ -136,12 +136,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSession() {
 	suite.keeper.SaveSession(suite.ctx, session)
 
 	var stored types.Session
-	store := suite.ctx.KVStore(suite.keeper.StoreKey)
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionId)), &stored)
+	store := suite.ctx.KVStore(suite.keeper.storeKey)
+	suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.SessionStoreKey(session.SessionId)), &stored)
 	suite.Require().Equal(session, stored)
 
 	var storedLastID types.SessionID
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
+	suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.LastSessionIDStoreKey), &storedLastID)
 	suite.Require().Equal(session.SessionId, storedLastID)
 }
 
@@ -175,8 +175,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetSession() {
 
 			empty := types.Session{}
 			if !empty.Equal(test.storedSession) {
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
-				store.Set(types.SessionStoreKey(test.id), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedSession))
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
+				store.Set(types.SessionStoreKey(test.id), suite.keeper.cdc.MustMarshalBinaryBare(&test.storedSession))
 			}
 
 			result, found := suite.keeper.GetSession(suite.ctx, types.SessionID(uint64(1)))

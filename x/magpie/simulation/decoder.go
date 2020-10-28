@@ -7,10 +7,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
+
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
-// DecodeStore unmarshals the KVPair's Value to the corresponding magpie type
+// DecodeStore unmarshalls the KVPair's Value to the corresponding magpie type
 func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {

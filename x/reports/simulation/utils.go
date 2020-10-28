@@ -5,11 +5,10 @@ package simulation
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
 
 	"github.com/desmos-labs/desmos/x/posts/simulation"
-
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -42,20 +41,20 @@ var (
 )
 
 type ReportsData struct {
-	Creator sim.Account
-	PostID  posts.PostID
+	PostID  string
 	Message string
 	Type    string
+	Creator simtypes.Account
 }
 
 // RandomReportsData returns a randomly generated ReportsData based on the given random posts and accounts list
-func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []sim.Account) ReportsData {
+func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []simtypes.Account) ReportsData {
 	post, _ := simulation.RandomPost(r, posts)
-	simAccount, _ := sim.RandomAcc(r, accs)
+	simAccount, _ := simtypes.RandomAcc(r, accs)
 
 	return ReportsData{
 		Creator: simAccount,
-		PostID:  post.PostID,
+		PostID:  post.PostID.String(),
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}

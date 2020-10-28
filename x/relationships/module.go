@@ -4,25 +4,27 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/desmos-labs/desmos/x/relationships/client/cli"
 	"github.com/desmos-labs/desmos/x/relationships/client/rest"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/simulation"
 	"github.com/desmos-labs/desmos/x/relationships/types"
-	"github.com/gorilla/mux"
-	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented
@@ -52,7 +54,7 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 	return cdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
-// ValidateGenesis performs genesis state validation for the profile module.
+// ValidateGenesis performs genesis state validation for the relationships module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
@@ -66,17 +68,17 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 	rest.RegisterRoutes(clientCtx, rtr)
 }
 
-// RegisterGRPCRoutes registers the gRPC Gateway routes for the magpie module.
+// RegisterGRPCRoutes registers the gRPC Gateway routes for the relationships module.
 func (AppModuleBasic) RegisterGRPCRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// GetQueryCmd returns the root query command for the profile module.
+// GetQueryCmd returns the root query command for the relationships module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
 
-// GetTxCmd returns the root tx command for the profile module.
+// GetTxCmd returns the root tx command for the relationships module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
@@ -137,7 +139,7 @@ func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
 
-// NewQuerierHandler returns the profile module sdk.Querier.
+// LegacyQuerierHandler returns the relationships module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }

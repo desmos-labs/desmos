@@ -1,9 +1,9 @@
 package types
 
 import (
-	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
@@ -25,12 +25,14 @@ func (msg MsgCreateRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateRelationship) ValidateBasic() error {
-	if len(msg.Sender) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Sender)
 	}
 
-	if len(msg.Receiver) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
+	_, err = sdk.AccAddressFromBech32(msg.Receiver)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Receiver)
 	}
 
 	if msg.Sender == msg.Receiver {
@@ -75,12 +77,14 @@ func (msg MsgDeleteRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteRelationship) ValidateBasic() error {
-	if len(msg.Sender) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Sender)
 	}
 
-	if len(msg.Counterparty) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid counterparty address: %s", msg.Counterparty))
+	_, err = sdk.AccAddressFromBech32(msg.Counterparty)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Counterparty)
 	}
 
 	if msg.Sender == msg.Counterparty {
@@ -126,12 +130,14 @@ func (msg MsgBlockUser) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgBlockUser) ValidateBasic() error {
-	if len(msg.Blocker) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	_, err := sdk.AccAddressFromBech32(msg.Blocker)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocker)
 	}
 
-	if len(msg.Blocked) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	_, err = sdk.AccAddressFromBech32(msg.Blocked)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocked)
 	}
 
 	if msg.Blocker == msg.Blocked {
@@ -176,12 +182,14 @@ func (msg MsgUnblockUser) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgUnblockUser) ValidateBasic() error {
-	if len(msg.Blocker) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocker address: %s", msg.Blocker))
+	_, err := sdk.AccAddressFromBech32(msg.Blocker)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocker)
 	}
 
-	if len(msg.Blocked) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid blocked address: %s", msg.Blocked))
+	_, err = sdk.AccAddressFromBech32(msg.Blocked)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocked)
 	}
 
 	if msg.Blocker == msg.Blocked {

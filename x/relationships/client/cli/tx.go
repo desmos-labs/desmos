@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 
@@ -10,11 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// GetTxCmd set the tx commands
+// NewTxCmd returns a new command allowing to perform relationships transactions
 func NewTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Profiles transaction subcommands",
+		Short:                      "Relationships transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

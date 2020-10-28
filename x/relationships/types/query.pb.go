@@ -105,7 +105,7 @@ func (m *QueryUserRelationshipsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserRelationshipsRequest proto.InternalMessageInfo
 
-// QueryRelationshipsResult is the response type for the Query/Balance RPC method.
+// QueryRelationshipsResult is the response type for the Query/UserRelationships RPC method.
 type QueryRelationshipsResult struct {
 	// relationships represent the list of all the relationships for the queried user
 	Relationships []Relationship `protobuf:"bytes,1,rep,name=relationships,proto3" json:"relationships"`

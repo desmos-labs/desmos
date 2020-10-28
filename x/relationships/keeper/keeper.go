@@ -2,8 +2,10 @@ package keeper
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
@@ -205,7 +207,7 @@ func (k Keeper) GetUsersBlocks(ctx sdk.Context) ([]types.UserBlock, error) {
 	return usersBlocks, nil
 }
 
-// MarshalUserBlocks marshals a list of USerBlock. If the given type implements
+// MarshalUserBlocks marshals a list of UserBlock. If the given type implements
 // the Marshaler interface, it is treated as a Proto-defined message and
 // serialized that way. Otherwise, it falls back on the internal Amino codec.
 func (k Keeper) MarshalUserBlocks(blocks []types.UserBlock) ([]byte, error) {

@@ -1,25 +1,19 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
 )
 
-// GetTxCmd set the tx commands
-func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
+// NewTxCmd returns a new command allowing to perform reports transactions
+func NewTxCmd() *cobra.Command {
 	postsTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Reports transaction subcommands",
@@ -27,16 +21,14 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-
-	postsTxCmd.AddCommand(flags.PostCommands(
-		GetCmdReportPost(cdc),
-	)...)
-
+	postsTxCmd.AddCommand(
+		GetCmdReportPost(),
+	)
 	return postsTxCmd
 }
 
-// GetCmdReportPost is the CLI command for reporting a post
-func GetCmdReportPost(cdc *codec.Codec) *cobra.Command {
+// GetCmdReportPost returns the command allowing to report a post
+func GetCmdReportPost() *cobra.Command {
 	return &cobra.Command{
 		Use:   "create [post-id] [reports-type] [reports-message]",
 		Short: "reports a post",
@@ -45,21 +37,22 @@ Report an existent post specifying its ID, the reports's type and message.
 
 E.g.
 %s tx reports create a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
-`, version.ClientName),
+`, version.AppName),
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
 			postID := posts.PostID(args[0])
 			if !postID.Valid() {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 
-			msg := types.NewMsgReportPost(postID, args[1], args[2], cliCtx.GetFromAddress())
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 }

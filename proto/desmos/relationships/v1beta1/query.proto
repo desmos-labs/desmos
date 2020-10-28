@@ -39,7 +39,7 @@ message QueryUserRelationshipsRequest {
   string user = 1;
 }
 
-// QueryRelationshipsResult is the response type for the Query/Balance RPC method.
+// QueryRelationshipsResult is the response type for the Query/UserRelationships RPC method.
 message QueryRelationshipsResult {
   // relationships represent the list of all the relationships for the queried user
   repeated desmos.relationships.v1beta1.Relationship relationships = 1
