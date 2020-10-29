@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			err := suite.keeper.SaveProfile(suite.ctx, test.storedAccount)
+			err := suite.keeper.StoreProfile(suite.ctx, test.storedAccount)
 			suite.Require().Nil(err)
 
 			querier := keeper.NewQuerier(suite.keeper)
@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.storedAccount)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.storedAccount)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}
@@ -112,7 +112,7 @@ func (suite *KeeperTestSuite) Test_queryProfiles() {
 			suite.SetupTest() // reset
 
 			if test.storedAccount != nil {
-				err := suite.keeper.SaveProfile(suite.ctx, *test.storedAccount)
+				err := suite.keeper.StoreProfile(suite.ctx, *test.storedAccount)
 				suite.Require().Nil(err)
 			}
 
@@ -121,7 +121,7 @@ func (suite *KeeperTestSuite) Test_queryProfiles() {
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}
@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}
@@ -213,10 +213,10 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 	for _, test := range tests {
 		suite.SetupTest() // reset
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedRequests != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedRequests),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedRequests),
 				)
 			}
 
@@ -225,7 +225,7 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 
 			if test.expResult != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}

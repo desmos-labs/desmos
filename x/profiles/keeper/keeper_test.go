@@ -9,14 +9,14 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_AssociateDtagWithAddress() {
-	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 	suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.profile.Creator)
 
 	var acc sdk.AccAddress
 	key := types.DtagStoreKey("dtag")
 	bz := store.Get(key)
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &acc)
+	suite.keeper.cdc.MustUnmarshalBinaryBare(bz, &acc)
 
 	suite.Require().Equal(suite.testData.profile.Creator, acc)
 }
@@ -109,13 +109,13 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, profile := range test.existentAccounts {
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
 				key := types.ProfileStoreKey(profile.Creator)
-				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(profile))
+				store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(profile))
 				suite.keeper.AssociateDtagWithAddress(suite.ctx, profile.DTag, profile.Creator)
 			}
 
-			err := suite.keeper.SaveProfile(suite.ctx, test.account)
+			err := suite.keeper.StoreProfile(suite.ctx, test.account)
 
 			suite.Require().Equal(test.expError, err)
 
@@ -124,14 +124,14 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteProfile() {
-	err := suite.keeper.SaveProfile(suite.ctx, suite.testData.profile)
+	err := suite.keeper.StoreProfile(suite.ctx, suite.testData.profile)
 	suite.Require().Nil(err)
 
 	res, found := suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
 	suite.Require().Equal(suite.testData.profile, res)
 	suite.True(found)
 
-	suite.keeper.DeleteProfile(suite.ctx, suite.testData.profile.Creator, suite.testData.profile.DTag)
+	suite.keeper.RemoveProfile(suite.ctx, suite.testData.profile.Creator, suite.testData.profile.DTag)
 
 	res, found = suite.keeper.GetProfile(suite.ctx, suite.testData.profile.Creator)
 	suite.Require().Equal(types.Profile{}, res)
@@ -161,9 +161,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			if test.existentAccount != nil {
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
-				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(&test.existentAccount))
 				suite.keeper.AssociateDtagWithAddress(suite.ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
@@ -201,9 +201,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			if len(test.existentAccounts) != 0 {
-				store := suite.ctx.KVStore(suite.keeper.StoreKey)
+				store := suite.ctx.KVStore(suite.keeper.storeKey)
 				key := types.ProfileStoreKey(test.existentAccounts[0].Creator)
-				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
+				store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(&test.existentAccounts[0]))
 			}
 
 			res := suite.keeper.GetProfiles(suite.ctx)
@@ -282,10 +282,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedTransferReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(test.storedTransferReqs[0].Receiver),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedTransferReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedTransferReqs),
 				)
 			}
 
@@ -293,7 +293,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			suite.Require().Equal(test.expErr, actualErr)
 
 			var actualReqs []types.DTagTransferRequest
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.Receiver)), &actualReqs)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.DtagTransferRequestStoreKey(test.transferReq.Receiver)), &actualReqs)
 			suite.Require().Equal(test.expStoredTransferReqs, actualReqs)
 		})
 	}
@@ -326,10 +326,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReqs),
 				)
 			}
 
@@ -365,10 +365,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReqs),
 				)
 			}
 
@@ -396,10 +396,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReqs),
 				)
 			}
 
@@ -462,10 +462,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReqs),
 				)
 			}
 

@@ -1,8 +1,4 @@
-package models
-
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-)
+package types
 
 const (
 	ModuleName = "profiles"
@@ -16,12 +12,13 @@ const (
 	RefuseDTagTransferRequest = "refuse_dtag_request"
 	CancelDTagTransferRequest = "cancel_dtag_request"
 
-	//Queries
 	QuerierRoute      = ModuleName
 	QueryProfile      = "profile"
 	QueryProfiles     = "all"
 	QueryDTagRequests = "dtag-requests"
 	QueryParams       = "params"
+
+	DoNotModify = "[do-not-modify]"
 )
 
 var (
@@ -31,7 +28,7 @@ var (
 )
 
 // ProfileStoreKey turns an address to a key used to store a profile into the profiles store
-func ProfileStoreKey(address sdk.AccAddress) []byte {
+func ProfileStoreKey(address string) []byte {
 	return append(ProfileStorePrefix, address...)
 }
 
@@ -41,6 +38,6 @@ func DtagStoreKey(dtag string) []byte {
 }
 
 // DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
-func DtagTransferRequestStoreKey(address sdk.AccAddress) []byte {
+func DtagTransferRequestStoreKey(address string) []byte {
 	return append(DTagTransferRequestsPrefix, address...)
 }

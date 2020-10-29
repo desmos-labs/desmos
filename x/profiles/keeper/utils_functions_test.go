@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	}
 
 	for _, profile := range profiles {
-		err := suite.keeper.SaveProfile(suite.ctx, profile)
+		err := suite.keeper.StoreProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 	}
 

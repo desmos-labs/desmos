@@ -2,12 +2,12 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/profiles"
 	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -112,7 +112,7 @@ func (suite *KeeperTestSuite) Test_validateProfile() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			actual := keeper.ValidateProfile(suite.ctx, suite.keeper, test.profile)
+			actual := profiles.ValidateProfile(suite.ctx, suite.keeper, test.profile)
 			suite.Require().Equal(test.expErr, actual)
 		})
 	}
@@ -214,17 +214,17 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			suite.SetupTest() //reset
 			suite.ctx = suite.ctx.WithBlockTime(suite.testData.profile.CreationDate)
 
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 			if test.existentProfiles != nil {
 				for _, acc := range test.existentProfiles {
 					key := types.ProfileStoreKey(acc.Creator)
-					store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(acc))
+					store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(acc))
 					suite.keeper.AssociateDtagWithAddress(suite.ctx, acc.DTag, acc.Creator)
 				}
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if test.expErr != nil {
@@ -278,15 +278,15 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			if test.existentAccount != nil {
 				key := types.ProfileStoreKey(test.existentAccount.Creator)
-				store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.existentAccount))
+				store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(&test.existentAccount))
 				suite.keeper.AssociateDtagWithAddress(suite.ctx, test.existentAccount.DTag, test.existentAccount.Creator)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
@@ -295,7 +295,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed("dtag"), res.Data)
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
@@ -359,10 +359,10 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
 				)
 			}
 
@@ -370,7 +370,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
@@ -379,7 +379,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(
 					types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)), res.Data,
 				)
 
@@ -405,7 +405,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 	tests := []struct {
 		name                       string
-		msg                        types.MsgAcceptDTagTransferRequest
+		msg                        types.MsgAcceptDTagTransfer
 		storedDTagReqs             []types.DTagTransferRequest
 		storedOwnerProfile         *types.Profile
 		storedReceivingUserProfile *types.Profile
@@ -477,26 +477,26 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
 				)
 			}
 
 			if test.storedOwnerProfile != nil {
-				suite.keeper.SaveProfile(suite.ctx, *test.storedOwnerProfile)
+				suite.keeper.StoreProfile(suite.ctx, *test.storedOwnerProfile)
 			}
 
 			if test.storedReceivingUserProfile != nil {
-				suite.keeper.SaveProfile(suite.ctx, *test.storedReceivingUserProfile)
+				suite.keeper.StoreProfile(suite.ctx, *test.storedReceivingUserProfile)
 			}
 
 			if test.storedDtag != nil {
-				suite.keeper.SaveProfile(suite.ctx, types.NewProfile(*test.storedDtag, user, suite.ctx.BlockTime()))
+				suite.keeper.StoreProfile(suite.ctx, types.NewProfile(*test.storedDtag, user, suite.ctx.BlockTime()))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
@@ -505,7 +505,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.storedOwnerProfile.DTag), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(test.storedOwnerProfile.DTag), res.Data)
 
 				// Check the events
 				createAccountEv := sdk.NewEvent(
@@ -556,14 +556,14 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
 				)
 			}
 
-			res, err := keeper.DeleteDTagTransferRequest(suite.ctx, suite.keeper,
+			res, err := profiles.DeleteDTagTransferRequest(suite.ctx, suite.keeper,
 				test.owner, test.sender, types.EventTypeDTagTransferRefuse)
 
 			if res == nil {
@@ -572,7 +572,7 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.sender), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(test.sender), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}
@@ -584,7 +584,7 @@ func (suite *KeeperTestSuite) Test_deleteDTagTransferRequest() {
 func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 	tests := []struct {
 		name           string
-		msg            types.MsgRefuseDTagTransferRequest
+		msg            types.MsgRefuseDTagTransfer
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
@@ -610,14 +610,14 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
 				)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
@@ -626,7 +626,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(test.msg.Receiver), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}
@@ -638,7 +638,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 	tests := []struct {
 		name           string
-		msg            types.MsgCancelDTagTransferRequest
+		msg            types.MsgCancelDTagTransfer
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
@@ -664,14 +664,14 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.storedDTagReqs != nil {
 				store.Set(types.DtagTransferRequestStoreKey(suite.testData.user),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.storedDTagReqs),
 				)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := profiles.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			if res == nil {
@@ -680,7 +680,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 			}
 			if res != nil {
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(test.msg.Sender), res.Data)
 				suite.Len(res.Events, 1)
 				suite.Contains(res.Events, test.expEvent)
 			}

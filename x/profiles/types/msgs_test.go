@@ -1,14 +1,12 @@
-package msgs_test
+package types_test
 
 import (
+	"github.com/desmos-labs/desmos/x/profiles/types"
 	"testing"
-
-	"github.com/desmos-labs/desmos/x/profiles/types/common"
-	"github.com/desmos-labs/desmos/x/profiles/types/models"
-	"github.com/desmos-labs/desmos/x/profiles/types/msgs"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,18 +16,18 @@ import (
 
 var user, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var otherUser, _ = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-var testProfile = models.Profile{
+var testProfile = Profile{
 	DTag:    "dtag",
 	Moniker: common.NewStrPtr("moniker"),
 	Bio:     common.NewStrPtr("biography"),
-	Pictures: models.NewPictures(
+	Pictures: NewPictures(
 		common.NewStrPtr("https://shorturl.at/adnX3"),
 		common.NewStrPtr("https://shorturl.at/cgpyF"),
 	),
 	Creator: user,
 }
 
-var msgEditProfile = msgs.NewMsgSaveProfile(
+var msgEditProfile = types.NewMsgSaveProfile(
 	"monk",
 	testProfile.Moniker,
 	testProfile.Bio,
@@ -38,27 +36,27 @@ var msgEditProfile = msgs.NewMsgSaveProfile(
 	testProfile.Creator,
 )
 
-var msgDeleteProfile = msgs.NewMsgDeleteProfile(
+var msgDeleteProfile = types.NewMsgDeleteProfile(
 	testProfile.Creator,
 )
 
-var msgRequestTransferDTag = msgs.NewMsgRequestDTagTransfer(
+var msgRequestTransferDTag = types.NewMsgRequestDTagTransfer(
 	user,
 	otherUser,
 )
 
-var msgAcceptDTagTransfer = msgs.NewMsgAcceptDTagTransfer(
+var msgAcceptDTagTransfer = types.NewMsgAcceptDTagTransfer(
 	"dtag",
 	user,
 	otherUser,
 )
 
-var msgRejectDTagTransfer = msgs.NewMsgRefuseDTagTransferRequest(
+var msgRejectDTagTransfer = types.NewMsgRefuseDTagTransferRequest(
 	user,
 	otherUser,
 )
 
-var msgCancelDTagTransferReq = msgs.NewMsgCancelDTagTransferRequest(
+var msgCancelDTagTransferReq = types.NewMsgCancelDTagTransferRequest(
 	user,
 	otherUser,
 )
@@ -76,12 +74,12 @@ func TestMsgSaveProfile_Type(t *testing.T) {
 func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgSaveProfile
+		msg   types.MsgSaveProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: msgs.NewMsgSaveProfile(
+			msg: types.NewMsgSaveProfile(
 				testProfile.DTag,
 				testProfile.Moniker,
 				testProfile.Bio,
@@ -93,12 +91,12 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Invalid empty dtag returns error",
-			msg:   msgs.NewMsgSaveProfile("", nil, nil, nil, nil, testProfile.Creator),
+			msg:   types.NewMsgSaveProfile("", nil, nil, nil, nil, testProfile.Creator),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
 		},
 		{
 			name: "No error message",
-			msg: msgs.NewMsgSaveProfile(
+			msg: types.NewMsgSaveProfile(
 				"_crazy_papa_21",
 				common.NewStrPtr("custom-moniker"),
 				common.NewStrPtr("custom-bio"),
@@ -153,19 +151,19 @@ func TestMsgDeleteProfile_Type(t *testing.T) {
 func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgDeleteProfile
+		msg   types.MsgDeleteProfile
 		error error
 	}{
 		{
 			name: "Empty owner returns error",
-			msg: msgs.NewMsgDeleteProfile(
+			msg: types.NewMsgDeleteProfile(
 				nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
 		},
 		{
 			name: "Valid message returns no error",
-			msg: msgs.NewMsgDeleteProfile(
+			msg: types.NewMsgDeleteProfile(
 				testProfile.Creator,
 			),
 			error: nil,
@@ -215,33 +213,33 @@ func TestMsgRequestDTagTransfer_Type(t *testing.T) {
 func TestMsgRequestDTagTransfer_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgRequestDTagTransfer
+		msg   types.MsgRequestDTagTransfer
 		error error
 	}{
 		{
 			name: "Empty current owner returns error",
-			msg: msgs.NewMsgRequestDTagTransfer(
+			msg: types.NewMsgRequestDTagTransfer(
 				nil, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name: "Empty receiving user returns error",
-			msg: msgs.NewMsgRequestDTagTransfer(
+			msg: types.NewMsgRequestDTagTransfer(
 				user, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name: "Equals current owner and receiving user returns error",
-			msg: msgs.NewMsgRequestDTagTransfer(
+			msg: types.NewMsgRequestDTagTransfer(
 				user, user,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name: "No errors message",
-			msg: msgs.NewMsgRequestDTagTransfer(
+			msg: types.NewMsgRequestDTagTransfer(
 				user, otherUser,
 			),
 			error: nil,
@@ -275,7 +273,7 @@ func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
 }
 
 // ----------------------
-// --- MsgAcceptDTagTransferRequest
+// --- MsgAcceptDTagTransfer
 // ----------------------
 
 func TestMsgAcceptDTagTransfer_Route(t *testing.T) {
@@ -291,40 +289,40 @@ func TestMsgAcceptDTagTransfer_Type(t *testing.T) {
 func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgAcceptDTagTransferRequest
+		msg   types.MsgAcceptDTagTransfer
 		error error
 	}{
 		{
 			name: "Empty current owner returns error",
-			msg: msgs.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransfer(
 				"dtag", nil, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid current owner address: "),
 		},
 		{
 			name: "Empty receiving user returns error",
-			msg: msgs.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransfer(
 				"dtag", user, nil,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiving user address: "),
 		},
 		{
 			name: "Equals current owner and receiving user returns error",
-			msg: msgs.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransfer(
 				"dtag", user, user,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name: "Empty newDTag returns error",
-			msg: msgs.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransfer(
 				"", user, otherUser,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new dTag can't be empty"),
 		},
 		{
 			name: "No errors message",
-			msg: msgs.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransfer(
 				"dtag", user, otherUser,
 			),
 			error: nil,
@@ -347,7 +345,7 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 
 func TestMsgAcceptDTagTransfer_GetSignBytes(t *testing.T) {
 	actual := msgAcceptDTagTransfer.GetSignBytes()
-	expected := `{"type":"desmos/MsgAcceptDTagTransferRequest","value":{"new_d_tag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	expected := `{"type":"desmos/MsgAcceptDTagTransfer","value":{"new_d_tag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -370,27 +368,27 @@ func TestMsgRejectDTagRequest_Type(t *testing.T) {
 func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgRefuseDTagTransferRequest
+		msg   types.MsgRefuseDTagTransfer
 		error error
 	}{
 		{
 			name:  "Empty sender returns error",
-			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, nil),
+			msg:   types.NewMsgRefuseDTagTransferRequest(user, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name:  "Empty receiver returns error",
-			msg:   msgs.NewMsgRefuseDTagTransferRequest(nil, user),
+			msg:   types.NewMsgRefuseDTagTransferRequest(nil, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name:  "Equals sender and receiver returns error",
-			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, user),
+			msg:   types.NewMsgRefuseDTagTransferRequest(user, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name:  "No error message",
-			msg:   msgs.NewMsgRefuseDTagTransferRequest(user, otherUser),
+			msg:   types.NewMsgRefuseDTagTransferRequest(user, otherUser),
 			error: nil,
 		},
 	}
@@ -411,7 +409,7 @@ func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 
 func TestMsgRejectDTagRequest_GetSignBytes(t *testing.T) {
 	actual := msgRejectDTagTransfer.GetSignBytes()
-	expected := `{"type":"desmos/MsgRefuseDTagTransferRequest","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	expected := `{"type":"desmos/MsgRefuseDTagTransfer","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
 	require.Equal(t, expected, string(actual))
 }
 
@@ -434,27 +432,27 @@ func TestMsgCancelDTagRequest_Type(t *testing.T) {
 func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   msgs.MsgCancelDTagTransferRequest
+		msg   types.MsgCancelDTagTransfer
 		error error
 	}{
 		{
 			name:  "Empty receiver returns error",
-			msg:   msgs.NewMsgCancelDTagTransferRequest(user, nil),
+			msg:   types.NewMsgCancelDTagTransferRequest(user, nil),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
 		},
 		{
 			name:  "Empty sender returns error",
-			msg:   msgs.NewMsgCancelDTagTransferRequest(nil, user),
+			msg:   types.NewMsgCancelDTagTransferRequest(nil, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
 		},
 		{
 			name:  "Equals sender and receiver returns error",
-			msg:   msgs.NewMsgCancelDTagTransferRequest(user, user),
+			msg:   types.NewMsgCancelDTagTransferRequest(user, user),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
 		},
 		{
 			name:  "No error message",
-			msg:   msgs.NewMsgCancelDTagTransferRequest(user, otherUser),
+			msg:   types.NewMsgCancelDTagTransferRequest(user, otherUser),
 			error: nil,
 		},
 	}
@@ -475,7 +473,7 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 
 func TestMsgCancelDTagRequest_GetSignBytes(t *testing.T) {
 	actual := msgCancelDTagTransferReq.GetSignBytes()
-	expected := `{"type":"desmos/MsgCancelDTagTransferRequest","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgCancelDTagTransfer","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 

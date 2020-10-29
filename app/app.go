@@ -297,7 +297,7 @@ func NewDesmosApp(
 		app.GetSubspace(postsTypes.ModuleName),
 	)
 	app.profileKeeper = profileskeeper.NewKeeper(
-		app.legacyAmino,
+		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 	)
@@ -333,7 +333,7 @@ func NewDesmosApp(
 		// Custom modules
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.appCodec, app.profileKeeper, app.accountKeeper, app.bankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.accountKeeper, app.bankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)
@@ -384,7 +384,7 @@ func NewDesmosApp(
 		// Custom modules
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.appCodec, app.profileKeeper, app.accountKeeper, app.bankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.accountKeeper, app.bankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)

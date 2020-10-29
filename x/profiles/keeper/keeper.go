@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	"bytes"
 	"fmt"
+	"regexp"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -13,205 +13,244 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	// The reference to the ParamsStore to get and set profile specific params
-	paramSubspace paramstypes.Subspace
+	storeKey sdk.StoreKey
+	cdc      codec.BinaryMarshaler
 
-	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
-	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
+	// The reference to the ParamsStore to get and set profiles specific params
+	paramSubspace paramstypes.Subspace
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace) Keeper {
+func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
 		paramSubspace: paramSpace,
-		StoreKey:      storeKey,
-		Cdc:           cdc,
+		storeKey:      storeKey,
+		cdc:           cdc,
 	}
 }
 
 // AssociateDtagWithAddress save the relation of dtag and address on chain
-func (k Keeper) AssociateDtagWithAddress(ctx sdk.Context, dtag string, address sdk.AccAddress) {
-	store := ctx.KVStore(k.StoreKey)
-	key := types.DtagStoreKey(dtag)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&address))
+func (k Keeper) AssociateDtagWithAddress(ctx sdk.Context, dtag string, address string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.DtagStoreKey(dtag), k.cdc.MustMarshalBinaryBare(&DTagOwner{Address: address}))
 }
 
-// GetDtagRelatedAddress returns the address associated to the given dtag or nil if it not exists
-func (k Keeper) GetDtagRelatedAddress(ctx sdk.Context, dtag string) (addr sdk.AccAddress) {
-	store := ctx.KVStore(k.StoreKey)
+// GetDtagRelatedAddress returns the address associated to the given dtag or an empty string if it does not exists
+func (k Keeper) GetDtagRelatedAddress(ctx sdk.Context, dtag string) (addr string) {
+	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.DtagStoreKey(dtag))
 	if bz == nil {
-		return nil
+		return ""
 	}
-	k.Cdc.MustUnmarshalBinaryBare(bz, &addr)
-	return addr
+
+	var owner DTagOwner
+	k.cdc.MustUnmarshalBinaryBare(bz, &owner)
+	return owner.Address
 }
 
 // GetDtagFromAddress returns the dtag associated with the given address or an empty string if no dtag exists
-func (k Keeper) GetDtagFromAddress(ctx sdk.Context, addr sdk.AccAddress) (dtag string) {
-	store := ctx.KVStore(k.StoreKey)
-	it := sdk.KVStorePrefixIterator(store, types.DtagStorePrefix)
-	defer it.Close()
-
-	for ; it.Valid(); it.Next() {
-		var acc sdk.AccAddress
-		k.Cdc.MustUnmarshalBinaryBare(it.Value(), &acc)
-		if acc.Equals(addr) {
-			return string(bytes.TrimPrefix(it.Key(), types.DtagStorePrefix))
-		}
+func (k Keeper) GetDtagFromAddress(ctx sdk.Context, addr string) (dtag string) {
+	profile, found := k.GetProfile(ctx, addr)
+	if !found {
+		return ""
 	}
 
-	return ""
+	return profile.Dtag
 }
 
 // DeleteDtagAddressAssociation delete the given dtag association with an address
 func (k Keeper) DeleteDtagAddressAssociation(ctx sdk.Context, dtag string) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DtagStoreKey(dtag))
 }
 
 // replaceDtag delete the oldDtag related to the creator address and associate the new one to it
-func (k Keeper) replaceDtag(ctx sdk.Context, oldDtag, newDtag string, creator sdk.AccAddress) {
+func (k Keeper) replaceDtag(ctx sdk.Context, oldDtag, newDtag string, creator string) {
 	k.DeleteDtagAddressAssociation(ctx, oldDtag)
 	k.AssociateDtagWithAddress(ctx, newDtag, creator)
 }
 
-// SaveProfile allows to save the given profile inside the current context.
+// StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same dtag from a different creator already exists
-func (k Keeper) SaveProfile(ctx sdk.Context, profile types.Profile) error {
+func (k Keeper) StoreProfile(ctx sdk.Context, profile types.Profile) error {
 
-	if addr := k.GetDtagRelatedAddress(ctx, profile.DTag); addr != nil && !addr.Equals(profile.Creator) {
-		return fmt.Errorf("a profile with dtag: %s has already been created", profile.DTag)
+	addr := k.GetDtagRelatedAddress(ctx, profile.Dtag)
+	if addr != "" && addr != profile.Creator {
+		return fmt.Errorf("a profile with dtag %s has already been created", profile.Dtag)
 	}
 
 	oldDtag := k.GetDtagFromAddress(ctx, profile.Creator)
-	k.replaceDtag(ctx, oldDtag, profile.DTag, profile.Creator)
+	k.replaceDtag(ctx, oldDtag, profile.Dtag, profile.Creator)
 
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	key := types.ProfileStoreKey(profile.Creator)
-
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&profile))
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&profile))
 
 	return nil
 }
 
-// DeleteProfile allows to delete a profile associated with the given address inside the current context.
-// It assumes that the address-related profile exists.
-// nolint: interfacer
-func (k Keeper) DeleteProfile(ctx sdk.Context, address sdk.AccAddress, dtag string) {
-	store := ctx.KVStore(k.StoreKey)
-	store.Delete(types.ProfileStoreKey(address))
-	k.DeleteDtagAddressAssociation(ctx, dtag)
-}
-
-// GetProfiles returns all the created profiles inside the current context.
-func (k Keeper) GetProfiles(ctx sdk.Context) (profiles types.Profiles) {
-	profiles = make(types.Profiles, 0)
-	store := ctx.KVStore(k.StoreKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		var acc types.Profile
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &acc)
-		profiles = append(profiles, acc)
-	}
-
-	return profiles
-}
-
 // GetProfile returns the profile corresponding to the given address inside the current context.
-// nolint: interfacer
-func (k Keeper) GetProfile(ctx sdk.Context, address sdk.AccAddress) (profile types.Profile, found bool) {
-	store := ctx.KVStore(k.StoreKey)
-	key := types.ProfileStoreKey(address)
-	if bz := store.Get(key); bz != nil {
-		k.Cdc.MustUnmarshalBinaryBare(bz, &profile)
+func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile types.Profile, found bool) {
+	store := ctx.KVStore(k.storeKey)
+
+	bz := store.Get(types.ProfileStoreKey(address))
+	if bz != nil {
+		k.cdc.MustUnmarshalBinaryBare(bz, &profile)
 		return profile, true
 	}
 
 	return types.Profile{}, false
 }
 
+// RemoveProfile allows to delete a profile associated with the given address inside the current context.
+// It assumes that the address-related profile exists.
+func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
+	profile, found := k.GetProfile(ctx, address)
+	if !found {
+		return fmt.Errorf("no profile associated with the following address found: %s", address)
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.ProfileStoreKey(address))
+	k.DeleteDtagAddressAssociation(ctx, profile.Dtag)
+	return nil
+}
+
+// GetProfiles returns all the created profiles inside the current context.
+func (k Keeper) GetProfiles(ctx sdk.Context) []types.Profile {
+	var profiles []types.Profile
+
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var profile types.Profile
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &profile)
+		profiles = append(profiles, profile)
+	}
+
+	return profiles
+}
+
+// ValidateProfile checks if the given profile is valid according to the current profile's module params
+func (k Keeper) ValidateProfile(ctx sdk.Context, profile types.Profile) error {
+	params := k.GetParams(ctx)
+
+	minMonikerLen := params.MonikerParams.MinMonikerLength.Int64()
+	maxMonikerLen := params.MonikerParams.MaxMonikerLength.Int64()
+
+	if profile.Moniker != "" {
+		nameLen := int64(len(profile.Moniker))
+		if nameLen < minMonikerLen {
+			return fmt.Errorf("profile moniker cannot be less than %d characters", minMonikerLen)
+		}
+		if nameLen > maxMonikerLen {
+			return fmt.Errorf("profile moniker cannot exceed %d characters", maxMonikerLen)
+		}
+	}
+
+	dTagRegEx := regexp.MustCompile(params.DtagParams.RegEx)
+	minDtagLen := params.DtagParams.MinDtagLength.Int64()
+	maxDtagLen := params.DtagParams.MaxDtagLength.Int64()
+	dtagLen := int64(len(profile.Dtag))
+
+	if !dTagRegEx.MatchString(profile.Dtag) {
+		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
+	}
+
+	if dtagLen < minDtagLen {
+		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
+	}
+
+	if dtagLen > maxDtagLen {
+		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDtagLen)
+	}
+
+	maxBioLen := params.MaxBioLength.Int64()
+	if profile.Bio != "" && int64(len(profile.Bio)) > maxBioLen {
+		return fmt.Errorf("profile biography cannot exceed %d characters", maxBioLen)
+	}
+
+	return profile.Validate()
+}
+
+// ___________________________________________________________________________________________________________________
+
 // SaveDTagTransferRequest save the given request into the currentOwner's requests
 // returning errors if an equal one already exists.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, transferRequest types.DTagTransferRequest) error {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	key := types.DtagTransferRequestStoreKey(transferRequest.Receiver)
 
-	var requests []types.DTagTransferRequest
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
-	for _, req := range requests {
-		if req.Equals(transferRequest) {
+	var requests DtagRequests
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+	for _, req := range requests.Requests {
+		if req.Equal(transferRequest) {
 			return fmt.Errorf("the transfer request from %s to %s has already been made",
 				transferRequest.Sender, transferRequest.Receiver)
 		}
 	}
 
-	requests = append(requests, transferRequest)
-	store.Set(key, k.Cdc.MustMarshalBinaryBare(&requests))
-
+	requests = DtagRequests{Requests: append(requests.Requests, transferRequest)}
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&requests))
 	return nil
 }
 
 // GetUserDTagTransferRequests returns all the request made to the given user inside the current context.
-func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) []types.DTagTransferRequest {
-	store := ctx.KVStore(k.StoreKey)
+func (k Keeper) GetUserDTagTransferRequests(ctx sdk.Context, user string) []types.DTagTransferRequest {
+	store := ctx.KVStore(k.storeKey)
 	key := types.DtagTransferRequestStoreKey(user)
 
-	var requests []types.DTagTransferRequest
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
-
-	return requests
+	var requests DtagRequests
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+	return requests.Requests
 }
 
 // GetDTagTransferRequests returns all the requests inside the given context
 func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
 
 	for ; iterator.Valid(); iterator.Next() {
-		var userRequests []types.DTagTransferRequest
-		k.Cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
-		requests = append(requests, userRequests...)
+		var userRequests DtagRequests
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
+		requests = append(requests, userRequests.Requests...)
 	}
 
 	return requests
 }
 
 // DeleteAllDTagTransferRequests delete all the requests made to the given user
-func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user sdk.AccAddress) {
-	store := ctx.KVStore(k.StoreKey)
-	key := types.DtagTransferRequestStoreKey(user)
-	store.Delete(key)
+func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.DtagTransferRequestStoreKey(user))
 }
 
-func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, owner, sender sdk.AccAddress) error {
-	var requests []types.DTagTransferRequest
-	store := ctx.KVStore(k.StoreKey)
-	key := types.DtagTransferRequestStoreKey(owner)
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
+// DeleteDTagTransferRequest deletes the transfer requests made from the sender towards the recipient
+func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient string) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.DtagTransferRequestStoreKey(recipient)
 
-	if len(requests) == 0 {
-		return fmt.Errorf("no requests to be deleted")
-	}
+	var reqs DtagRequests
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &reqs)
 
+	requests := reqs.Requests
 	for index, request := range requests {
-		if request.Sender.Equals(sender) {
+		if request.Sender == sender {
 			requests = append(requests[:index], requests[index+1:]...)
 			if len(requests) == 0 {
 				store.Delete(key)
 			} else {
-				store.Set(key, k.Cdc.MustMarshalBinaryBare(&requests))
+				reqs = DtagRequests{Requests: requests}
+				store.Set(key, k.cdc.MustMarshalBinaryBare(&reqs))
 			}
-			return nil
+			break
 		}
 	}
-
-	return fmt.Errorf("no request made by %s", sender)
 }

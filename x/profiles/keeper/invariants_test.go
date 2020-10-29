@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() //reset
 
-			err := suite.keeper.SaveProfile(suite.ctx, test.profile)
+			err := suite.keeper.StoreProfile(suite.ctx, test.profile)
 			suite.Require().NoError(err)
 
 			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)

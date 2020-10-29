@@ -3,10 +3,12 @@ package simulation
 // DONTCOVER
 
 import (
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/app/params"
@@ -26,7 +28,10 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
@@ -72,27 +77,27 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
-			SimulateMsgSaveProfile(k, ak),
+			SimulateMsgSaveProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
-			SimulateMsgDeleteProfile(k, ak),
+			SimulateMsgDeleteProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRequestDTagTransfer,
-			SimulateMsgRequestDTagTransfer(k, ak),
+			SimulateMsgRequestDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
-			SimulateMsgAcceptDTagTransfer(k, ak),
+			SimulateMsgAcceptDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRefuseDTagTransfer,
-			SimulateMsgRefuseDTagTransfer(k, ak),
+			SimulateMsgRefuseDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
-			SimulateMsgCancelDTagTransfer(k, ak),
+			SimulateMsgCancelDTagTransfer(k, ak, bk),
 		),
 	}
 }
