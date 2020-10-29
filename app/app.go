@@ -397,6 +397,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.StakingKeeper),
 
 		// Custom modules
+		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		posts.NewAppModule(app.PostsKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.MagpieKeeper, app.AccountKeeper),
 		profiles.NewAppModule(app.ProfileKeeper, app.AccountKeeper),
