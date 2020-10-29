@@ -3,13 +3,13 @@ package ante
 import (
 	"errors"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/fees"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/desmos/x/fees"
 )
 
 // conversion factor from desmos to fee 1:1000000

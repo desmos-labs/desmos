@@ -5,13 +5,16 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
+	app2 "github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/ante"
+	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/libs/log"
+	dbm "github.com/tendermint/tm-db"
 	"testing"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -19,8 +22,9 @@ import (
 )
 
 // returns context and app with params set on account keeper
-func createTestApp(isCheckTx bool, isBlockZero bool) (*simapp.SimApp, sdk.Context) {
-	app := simapp.Setup(isCheckTx)
+func createTestApp(isCheckTx bool, isBlockZero bool) (*app2.DesmosApp, sdk.Context) {
+	db := dbm.NewMemDB()
+	app := app2.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, 0)
 
 	header := abci.Header{}
 
@@ -30,6 +34,7 @@ func createTestApp(isCheckTx bool, isBlockZero bool) (*simapp.SimApp, sdk.Contex
 
 	ctx := app.BaseApp.NewContext(isCheckTx, header)
 	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
+	app.FeesKeeper.SetParams(ctx, feesTypes.DefaultParams())
 
 	return app, ctx
 }
@@ -72,7 +77,7 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 		app.AccountKeeper,
 		app.SupplyKeeper,
 		cosmosante.DefaultSigVerificationGasConsumer,
-		feeTokenDenom,
+		app.FeesKeeper,
 		defaultBondDenom,
 	)
 
