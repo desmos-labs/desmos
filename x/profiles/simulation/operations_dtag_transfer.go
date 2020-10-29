@@ -37,21 +37,18 @@ func SimulateMsgRequestDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.
 
 // sendMsgRequestDTagTransfer sends a transaction with a MsgRequestDTagTransfer from a provided random account.
 func sendMsgRequestDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRequestDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Sender)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -59,7 +56,7 @@ func sendMsgRequestDTagTransfer(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -126,21 +123,18 @@ func SimulateMsgAcceptDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgAcceptDTagTransfer sends a transaction with a MsgAcceptDTagTransfer from a provided random account.
 func sendMsgMsgAcceptDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAcceptDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Receiver)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -148,7 +142,7 @@ func sendMsgMsgAcceptDTagTransfer(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -227,21 +221,18 @@ func SimulateMsgRefuseDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgRefuseDTagTransfer sends a transaction with a MsgRefuseDTagTransfer from a provided random account.
 func sendMsgMsgRefuseDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRefuseDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Sender)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -249,7 +240,7 @@ func sendMsgMsgRefuseDTagTransfer(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -306,21 +297,18 @@ func SimulateMsgCancelDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgCancelDTagTransfer sends a transaction with a MsgCancelDTagTransfer from a provided random account.
 func sendMsgMsgCancelDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCancelDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Sender)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -328,7 +316,7 @@ func sendMsgMsgCancelDTagTransfer(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}

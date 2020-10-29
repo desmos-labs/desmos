@@ -415,7 +415,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetAnteHandler(ante.NewAnteHandler(
-		app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer, app.FeesKeeper, BondDenom),
+		app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer, app.FeesKeeper),
 	)
 	app.SetEndBlocker(app.EndBlocker)
 

@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -16,6 +17,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 )
+
+func swapFeesCoins(ctx sdk.Context, ak auth.AccountKeeper, account exported.Account) error {
+	coins := sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000000)))
+	if err := account.SetCoins(coins); err != nil {
+		return err
+	}
+	ak.SetAccount(ctx, account)
+	return nil
+}
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 // nolint: funlen
@@ -46,21 +56,18 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 // sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
 func sendMsgSaveProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -68,7 +75,7 @@ func sendMsgSaveProfile(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -131,21 +138,18 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 
 // sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
 func sendMsgDeleteProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
+	if err := swapFeesCoins(ctx, ak, account); err != nil {
 		return err
 	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -153,7 +157,7 @@ func sendMsgDeleteProfile(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}

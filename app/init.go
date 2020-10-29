@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	BondDenom = "desmos"
-	FeeDenom  = "udaric"
+	BondDenom = "udaric"
 
 	// gov
 	DefaultStartingProposalID uint64 = 1

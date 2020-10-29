@@ -15,7 +15,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 	feesGenesis := types.NewGenesisState(types.DefaultParams())
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(feesGenesis)
 
-	fmt.Printf("Selected randomly generated fees parameters:\n%s\n%d",
+	fmt.Printf("Selected randomly generated fees parameters:\n%s\n%s\n",
 		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.FeeDenom),
 		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.RequiredFee),
 	)
