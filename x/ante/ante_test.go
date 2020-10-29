@@ -5,7 +5,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
-	app2 "github.com/desmos-labs/desmos/app"
+	desmos "github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/ante"
 	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/require"
@@ -22,9 +22,9 @@ import (
 )
 
 // returns context and app with params set on account keeper
-func createTestApp(isCheckTx bool, isBlockZero bool) (*app2.DesmosApp, sdk.Context) {
+func createTestApp(isCheckTx bool, isBlockZero bool) (*desmos.DesmosApp, sdk.Context) {
 	db := dbm.NewMemDB()
-	app := app2.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, 0)
+	app := desmos.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, 0)
 
 	header := abci.Header{}
 
