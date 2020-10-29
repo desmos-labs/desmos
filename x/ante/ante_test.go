@@ -2,6 +2,9 @@ package ante_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -12,8 +15,6 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"testing"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
