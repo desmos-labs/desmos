@@ -72,14 +72,12 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 
 	app, ctx := createTestApp(true, false)
 	feeTokenDenom := "udaric"
-	defaultBondDenom := "desmos"
 
 	anteHandler := ante.NewAnteHandler(
 		app.AccountKeeper,
 		app.SupplyKeeper,
 		cosmosante.DefaultSigVerificationGasConsumer,
 		app.FeesKeeper,
-		defaultBondDenom,
 	)
 
 	// keys and addresses
@@ -116,12 +114,6 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 	seqs = []uint64{0}
 	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
 	checkInvalidTx(t, anteHandler, ctx, tx, false, sdkerrors.ErrInsufficientFee)
-
-	// Signer has not specified enough fee and uses default bond instead
-	fees = sdk.NewCoins(sdk.NewInt64Coin(defaultBondDenom, 2))
-	seqs = []uint64{1}
-	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
-	checkValidTx(t, anteHandler, ctx, tx, true)
 
 	// Signer has specified enough fee
 	fees = sdk.NewCoins(sdk.NewInt64Coin(feeTokenDenom, 10000))

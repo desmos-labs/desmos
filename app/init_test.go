@@ -9,5 +9,5 @@ import (
 
 func TestInit(t *testing.T) {
 	defaultState := staking.DefaultGenesisState()
-	require.Equal(t, "desmos", defaultState.Params.BondDenom)
+	require.Equal(t, "udaric", defaultState.Params.BondDenom)
 }
