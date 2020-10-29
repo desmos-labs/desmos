@@ -34,11 +34,11 @@ import (
 )
 
 const (
-	denom      = "desmos"
+	denom      = "udaric"
 	keyFoo     = "foo"
 	keyBar     = "bar"
 	fooDenom   = "footoken"
-	feeDenom   = "udaric"
+	feeDenom   = "feetoken"
 	fee2Denom  = "fee2token"
 	keyBaz     = "baz"
 	keyVesting = "vesting"
