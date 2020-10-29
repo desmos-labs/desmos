@@ -34,12 +34,12 @@ var (
 	_ module.AppModuleSimulation = AppModule{}
 )
 
-// AppModuleBasic defines the basic application module used by the profile module.
+// AppModuleBasic defines the basic application module used by the relationships module.
 type AppModuleBasic struct {
 	cdc codec.Marshaler
 }
 
-// Name returns the profile module's name.
+// Name returns the relationships module's name.
 func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
@@ -63,7 +63,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 	return types.ValidateGenesis(&data)
 }
 
-// RegisterRESTRoutes registers the REST routes for the profile module.
+// RegisterRESTRoutes registers the REST routes for the relationships module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
 	rest.RegisterRoutes(clientCtx, rtr)
 }
@@ -83,14 +83,14 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
 
-// RegisterInterfaces registers interfaces and implementations of the magpie module.
+// RegisterInterfaces registers interfaces and implementations of the relationships module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 }
 
 //____________________________________________________________________________
 
-// AppModule implements an application module for the profile module.
+// AppModule implements an application module for the relationships module.
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
@@ -116,7 +116,7 @@ func NewAppModule(
 	}
 }
 
-// Name returns the profile module's name.
+// Name returns the relationships module's name.
 func (AppModule) Name() string {
 	return types.ModuleName
 }
@@ -124,17 +124,17 @@ func (AppModule) Name() string {
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the profile module.
+// Route returns the message routing key for the relationships module.
 func (am AppModule) Route() sdk.Route {
 	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
 }
 
-// NewHandler returns an sdk.Handler for the profile module.
+// NewHandler returns an sdk.Handler for the relationships module.
 func (am AppModule) NewHandler() sdk.Handler {
 	return NewHandler(am.keeper)
 }
 
-// QuerierRoute returns the profile module's querier route name.
+// QuerierRoute returns the relationships module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
@@ -161,11 +161,11 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json
 	return cdc.MustMarshalJSON(gs)
 }
 
-// BeginBlock returns the begin blocker for the profile module.
+// BeginBlock returns the begin blocker for the relationships module.
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
 }
 
-// EndBlock returns the end blocker for the profile module. It returns no validator
+// EndBlock returns the end blocker for the relationships module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
@@ -173,10 +173,10 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 
 //____________________________________________________________________________
 
-// AppModuleSimulation defines the module simulation functions used by the profile module.
+// AppModuleSimulation defines the module simulation functions used by the relationships module.
 type AppModuleSimulation struct{}
 
-// GenerateGenesisState creates a randomized GenState of the bank module.
+// GenerateGenesisState creates a randomized GenState of the relationships module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
@@ -196,7 +196,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.NewDecodeStore(am.keeper)
 }
 
-// WeightedOperations returns the all the profile module operations with their respective weights.
+// WeightedOperations returns the all the relationships module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }
