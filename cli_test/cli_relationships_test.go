@@ -31,7 +31,7 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
@@ -93,7 +93,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
@@ -155,7 +155,7 @@ func TestDesmosCLIBlockUser(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Block user
 	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "-y")
@@ -208,7 +208,7 @@ func TestDesmosCLIUnblockUser(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Block user
 	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "-y")

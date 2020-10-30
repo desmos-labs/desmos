@@ -166,15 +166,15 @@ func TestDesmosCLIFeesDeduction(t *testing.T) {
 
 	// Start Desmosd server with minimum fees
 	minGasPrice, _ := sdk.NewDecFromStr("0.000006")
-	proc := f.GDStart(fmt.Sprintf("--minimum-gas-prices=%s", sdk.NewDecCoinFromDec(feeDenom, minGasPrice)))
+	proc := f.GDStart(fmt.Sprintf("--minimum-gas-prices=%s", sdk.NewDecCoinFromDec(denom, minGasPrice)))
 	defer proc.Stop(false)
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(40000)), txFees, "-y")
 
 	fooAcc := f.QueryAccount(fooAddr)
 	fooAmt := fooAcc.GetCoins().AmountOf(fooDenom)
@@ -227,31 +227,30 @@ func TestDesmosCLISend(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	startTokens := sdk.TokensFromConsensusPower(1000)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Send some tokens from one account to the other
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
 	barAcc := f.QueryAccount(barAddr)
-	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(fooDenom))
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Test --dry-run
-	success, _, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--dry-run")
+	success, _, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
 	success, stdout, stderr := f.TxSend(
-		fooAddr.String(), barAddr, sdk.NewCoin(denom, sendTokens), "--generate-only=true",
+		fooAddr.String(), barAddr, sdk.NewCoin(fooDenom, sendTokens), "--generate-only=true",
 	)
 	require.Empty(t, stderr)
 	require.True(t, success)
@@ -262,27 +261,27 @@ func TestDesmosCLISend(t *testing.T) {
 
 	// Check state didn't change
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// test autosequencing
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
 	barAcc = f.QueryAccount(barAddr)
-	require.Equal(t, sendTokens.MulRaw(2), barAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, sendTokens.MulRaw(2), barAcc.GetCoins().AmountOf(fooDenom))
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(sendTokens.MulRaw(2)), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens.MulRaw(2)), fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// test memo
-	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), "--memo='testmemo'", txFees, "-y")
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), "--memo='testmemo'", txFees, "-y")
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Ensure account balances match expected
 	barAcc = f.QueryAccount(barAddr)
-	require.Equal(t, sendTokens.MulRaw(3), barAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, sendTokens.MulRaw(3), barAcc.GetCoins().AmountOf(fooDenom))
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(sendTokens.MulRaw(3)), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens.MulRaw(3)), fooAcc.GetCoins().AmountOf(fooDenom))
 
 	f.Cleanup()
 }
@@ -298,42 +297,41 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	fooAcc := f.QueryAccount(fooAddr)
-	startTokens := sdk.TokensFromConsensusPower(140)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	startTokens := sdk.TokensFromConsensusPower(1000)
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Test failure with auto gas disabled and very little gas set by hand
 	sendTokens := sdk.TokensFromConsensusPower(10)
-	success, stdOut, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=10", "-y")
+	success, stdOut, _ := f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "--gas=10", "-y")
 	require.Contains(t, stdOut, "out of gas in location")
 	require.True(t, success)
 
 	// Check state didn't change
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Test failure with negative gas
-	success, _, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=-100", "-y")
+	success, _, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "--gas=-100", "-y")
 	require.False(t, success)
 
 	// Check state didn't change
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Test failure with 0 gas
-	success, stdOut, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=0", "-y")
+	success, stdOut, _ = f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "--gas=0", "-y")
 	require.Contains(t, stdOut, "out of gas in location")
 	require.True(t, success)
 
 	// Check state didn't change
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(fooDenom))
 
 	// Enable auto gas
-	success, stdout, stderr := f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sendTokens), txFees, "--gas=auto", "-y")
+	success, stdout, stderr := f.TxSend(keyFoo, barAddr, sdk.NewCoin(fooDenom, sendTokens), txFees, "--gas=auto", "-y")
 	require.NotEmpty(t, stderr)
 	require.True(t, success)
 	cdc := app.MakeCodec()
@@ -345,7 +343,7 @@ func TestDesmosCLIGasAuto(t *testing.T) {
 
 	// Check state has changed accordingly
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(fooDenom))
 
 	f.Cleanup()
 }
@@ -358,12 +356,11 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	proc := f.GDStart()
 	defer proc.Stop(false)
 
-	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	barVal := sdk.ValAddress(barAddr)
 
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
+	f.TxSend(keyFoo, barAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
 
 	consPubKey := sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, ed25519.GenPrivKey().PubKey())
 
@@ -372,7 +369,7 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	barAcc := f.QueryAccount(barAddr)
-	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, sendTokens.Add(sdk.NewInt(10000)), barAcc.GetCoins().AmountOf(denom))
 
 	// Generate a create validator transaction and ensure correctness
 	success, stdout, stderr := f.TxStakingCreateValidator(barAddr.String(),
@@ -396,7 +393,8 @@ func TestDesmosCLICreateValidator(t *testing.T) {
 
 	// Ensure funds were deducted properly
 	barAcc = f.QueryAccount(barAddr)
-	require.Equal(t, sendTokens.Sub(newValTokens), barAcc.GetCoins().AmountOf(denom))
+	val := sendTokens.Sub(newValTokens)
+	require.Equal(t, val, barAcc.GetCoins().AmountOf(denom))
 
 	// Ensure that validator state is as expected
 	validator := f.QueryStakingValidator(barVal)
@@ -470,10 +468,10 @@ func TestDesmosCLIQuerySupply(t *testing.T) {
 	defer proc.Stop(false)
 
 	totalSupply := f.QueryTotalSupply()
-	totalSupplyOf := f.QueryTotalSupplyOf(fooDenom)
+	totalSupplyOf := f.QueryTotalSupplyOf(denom)
 
 	require.Equal(t, totalCoins, totalSupply)
-	require.True(sdk.IntEq(t, totalCoins.AmountOf(fooDenom), totalSupplyOf))
+	require.True(sdk.IntEq(t, totalCoins.AmountOf(denom), totalSupplyOf))
 
 	f.Cleanup()
 }
@@ -493,7 +491,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 	f.QueryGovParamTallying()
 
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
@@ -527,7 +525,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 
 	// Ensure deposit was deducted
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(proposalTokens), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(proposalTokens).Sub(sdk.NewInt(10000)), fooAcc.GetCoins().AmountOf(denom))
 
 	// Ensure propsal is directly queryable
 	proposal1 := f.QueryGovProposal(1)
@@ -571,7 +569,7 @@ func TestDesmosCLISubmitProposal(t *testing.T) {
 
 	// Ensure account has expected amount of funds
 	fooAcc = f.QueryAccount(fooAddr)
-	require.Equal(t, startTokens.Sub(proposalTokens.Add(depositTokens)), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(proposalTokens.Add(depositTokens)).Sub(sdk.NewInt(20000)), fooAcc.GetCoins().AmountOf(denom))
 
 	// Fetch the proposal and ensure it is now in the voting period
 	proposal1 = f.QueryGovProposal(1)
@@ -637,8 +635,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Test generate sendTx with default gas
 	sendTokens := sdk.TokensFromConsensusPower(10)
@@ -708,7 +705,7 @@ func TestDesmosCLISendGenerateSignAndBroadcast(t *testing.T) {
 	barAcc := f.QueryAccount(barAddr)
 	fooAcc = f.QueryAccount(fooAddr)
 	require.Equal(t, sendTokens, barAcc.GetCoins().AmountOf(denom))
-	require.Equal(t, startTokens.Sub(sendTokens), fooAcc.GetCoins().AmountOf(denom))
+	require.Equal(t, startTokens.Sub(sendTokens).Sub(sdk.NewInt(10000)), fooAcc.GetCoins().AmountOf(denom))
 
 	f.Cleanup()
 }

@@ -15,7 +15,7 @@ func TestDefaultParams(t *testing.T) {
 
 func TestParams_String(t *testing.T) {
 	params := types.DefaultParams()
-	require.Equal(t, "Fee parameters:\nFeeDenom: udaric\nRequiredFee: 0.010000000000000000", params.String())
+	require.Equal(t, "Fee parameters:\nFeeDenom: stake\nRequiredFee: 0.010000000000000000", params.String())
 }
 
 func TestValidateParams(t *testing.T) {

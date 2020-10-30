@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	DefaultFeeDenom    = "udaric"
+	DefaultFeeDenom    = sdk.DefaultBondDenom
 	DefaultRequiredFee = sdk.NewDecWithPrec(1, 2)
 )
 

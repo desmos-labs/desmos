@@ -71,7 +71,6 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
 
 	app, ctx := createTestApp(true, false)
-	feeTokenDenom := "udaric"
 
 	anteHandler := ante.NewAnteHandler(
 		app.AccountKeeper,
@@ -110,13 +109,13 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 	checkInvalidTx(t, anteHandler, ctx, tx, false, sdkerrors.ErrInsufficientFee)
 
 	// Signer has not specified enough fee
-	fees = sdk.NewCoins(sdk.NewInt64Coin(feeTokenDenom, 9999))
+	fees = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 9999))
 	seqs = []uint64{0}
 	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
 	checkInvalidTx(t, anteHandler, ctx, tx, false, sdkerrors.ErrInsufficientFee)
 
 	// Signer has specified enough fee
-	fees = sdk.NewCoins(sdk.NewInt64Coin(feeTokenDenom, 10000))
+	fees = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000))
 	_ = app.BankKeeper.SetCoins(ctx, addr, fees)
 	seqs = []uint64{1}
 	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))

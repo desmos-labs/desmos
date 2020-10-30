@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	denom      = "udaric"
+	denom      = "stake"
 	keyFoo     = "foo"
 	keyBar     = "bar"
 	fooDenom   = "footoken"
@@ -137,7 +137,6 @@ func (f Fixtures) GenesisState() simapp.GenesisState {
 func InitFixtures(t *testing.T) (f *Fixtures) {
 	config := sdk.GetConfig()
 	app.SetupConfig(config)
-	app.Init()
 
 	f = NewFixtures(t)
 

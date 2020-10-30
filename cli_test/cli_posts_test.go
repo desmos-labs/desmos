@@ -31,7 +31,7 @@ func TestDesmosCLIPostsCreateNoMediasNoPollData(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, txFees, "-y")
@@ -82,7 +82,7 @@ func TestDesmosCLIPostsCreateAllowsCommentFalse(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, txFees, "-y",
@@ -137,7 +137,7 @@ func TestDesmosCLIPostsCreateWithAttachmentsAndEmptyMessage(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	tag, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
@@ -202,7 +202,7 @@ func TestDesmosCLIPostsCreateWithAttachmentsAndNonEmptyMessage(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, txFees, "-y",
@@ -270,7 +270,7 @@ func TestDesmosCLIPostsCreateWithNoMediasAndNonEmptyMessage(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, txFees, "-y")
@@ -321,7 +321,7 @@ func TestDesmosCLIPostsCreateWithPoll(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(subspace, "message#test", fooAddr, txFees, "-y",
@@ -400,7 +400,7 @@ func TestDesmosCLIPostsAnswerPoll(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a poll with single answer
 	success, _, sterr := f.TxPostsCreate(subspace, message, fooAddr, txFees, "-y",
@@ -458,7 +458,7 @@ func TestDesmosCLIPostsEdit(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate(
@@ -518,7 +518,7 @@ func TestDesmosCLIPostsEditWithAttachmentsAndNonEmptyMessage(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -583,7 +583,7 @@ func TestDesmosCLIPostsEditWithAttachmentsAndEmptyMessage(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -648,7 +648,7 @@ func TestDesmosCLIPostsEditWithPoll(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a post
 	success, _, sterr := f.TxPostsCreate("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -724,7 +724,7 @@ func TestDesmosCLIPostsReactions(t *testing.T) {
 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 	reactions := types.Reactions{
@@ -838,7 +838,7 @@ func TestDesmosCLIRegisterReaction(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Register a reaction
 	success, _, sterr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, txFees, "-y")
@@ -890,7 +890,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Register a reaction
 	success, _, sterr := f.TxPostsRegisterReaction(shortCode, value, subspace, fooAddr, txFees, "-y")

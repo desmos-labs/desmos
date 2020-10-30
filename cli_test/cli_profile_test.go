@@ -27,7 +27,7 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a profile
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -76,7 +76,7 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y",
@@ -137,7 +137,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	dTag := "mrBrown"
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
 	success, _, sterr := f.TxProfileSave(dTag, fooAddr, txFees, "-y",
@@ -207,7 +207,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	dTag := "mrBrown"
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
 	success, _, sterr := f.TxProfileSave(dTag, fooAddr, txFees, "-y",
@@ -289,7 +289,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 100000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -347,12 +347,12 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(10000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(feeDenom, sdk.NewInt(10000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
 
 	// Create the profile of the DTag owner
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -410,9 +410,9 @@ func TestDesmosCLIAcceptDTagTransferRequest(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(30000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(30000)), txFees, "-y")
 
 	// Create a profile
 	success, stdout, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -475,9 +475,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(40000)), txFees, "-y")
 
 	// Create a profile for the DTag owner
 	success, stdout, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -547,9 +547,9 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(40000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(40000)), txFees, "-y")
 
 	// Create a profile for the DTag owner
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -629,12 +629,12 @@ func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(20000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(feeDenom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
 
 	// Create the profile of the DTag owner
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
@@ -703,12 +703,12 @@ func TestDesmosCLICancelDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin("udaric", 10000))
+	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
 
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(feeDenom, sdk.NewInt(20000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(feeDenom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
 
 	// Create the profile of the DTag owner
 	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")

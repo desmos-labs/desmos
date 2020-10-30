@@ -36,9 +36,6 @@ var invCheckPeriod uint
 func main() {
 	cdc := app.MakeCodec()
 
-	// Initialize the app overriding the various methods we want to customize
-	app.Init()
-
 	config := sdk.GetConfig()
 	app.SetupConfig(config)
 	config.Seal()

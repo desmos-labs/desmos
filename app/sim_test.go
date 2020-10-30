@@ -40,9 +40,6 @@ func init() {
 	sdkConfig := sdk.GetConfig()
 	SetupConfig(sdkConfig)
 	sdkConfig.Seal()
-
-	// Setup the overloads
-	Init()
 }
 
 type StoreKeysPrefixes struct {
