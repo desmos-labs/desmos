@@ -4,10 +4,13 @@ import (
 	"context"
 	"time"
 
+	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -216,11 +219,22 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	tests := []struct {
 		name           string
 		msg            *types.MsgRequestDTagTransfer
+		isBlocked      bool
 		hasProfile     bool
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
 		expEvent       sdk.Event
 	}{
+		{
+			name:      "Blocked receiver making request returns error",
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			isBlocked: true,
+			expErr: sdkerrors.Wrapf(
+				sdkerrors.ErrInvalidRequest,
+				"The user with address %s has blocked you",
+				suite.testData.user,
+			),
+		},
 		{
 			name:           "No DTag to transfer returns error",
 			msg:            types.NewMsgRequestDTagTransfer(suite.testData.otherUser, suite.testData.user),
@@ -272,6 +286,16 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
 			}
 
+			if test.isBlocked {
+				err := suite.relKeeper.SaveUserBlock(suite.ctx, relationshipstypes.NewUserBlock(
+					suite.testData.user,
+					suite.testData.otherUser,
+					"test",
+					"",
+				))
+				suite.Require().NoError(err)
+			}
+
 			server := keeper.NewMsgServerImpl(suite.keeper)
 			res, err := server.RequestDTagTransfer(context.Background(), test.msg)
 
@@ -291,7 +315,6 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 				suite.Len(suite.ctx.EventManager().Events(), 1)
 				suite.Contains(suite.ctx.EventManager().Events(), createAccountEv)
 			}
-
 		})
 	}
 }

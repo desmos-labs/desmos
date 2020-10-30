@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -94,6 +95,11 @@ func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProf
 
 func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the request's receiver has blocked the sender before
+	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "The user with address %s has blocked you", msg.Receiver)
+	}
 
 	dtagToTrade := k.GetDtagFromAddress(ctx, msg.Receiver)
 	if len(dtagToTrade) == 0 {

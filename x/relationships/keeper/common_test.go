@@ -3,17 +3,17 @@ package keeper_test
 import (
 	"testing"
 
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/desmos-labs/desmos/app"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/relationships/keeper"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/relationships/keeper"
 )
 
 type KeeperTestSuite struct {

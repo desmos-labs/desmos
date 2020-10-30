@@ -21,6 +21,11 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if the receiver has blocked the sender before
+	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "The user with address %s has blocked you", msg.Receiver)
+	}
+
 	// Save the relationship
 	err := k.StoreRelationship(ctx, types.NewRelationship(msg.Sender, msg.Receiver, msg.Subspace))
 	if err != nil {

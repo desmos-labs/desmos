@@ -412,7 +412,12 @@ func (suite *KeeperTestSuite) TestKeeper_UnblockUser() {
 				store.Set(types.UsersBlocksStoreKey(suite.testData.user), bz)
 			}
 
-			err := suite.keeper.DeleteUserBlock(suite.ctx, suite.testData.user, test.userToUnblock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+			err := suite.keeper.DeleteUserBlock(
+				suite.ctx,
+				suite.testData.user,
+				test.userToUnblock,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			)
 			suite.Require().Equal(test.expError, err)
 
 			blocks, err := suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user)
@@ -531,6 +536,52 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersBlocks() {
 			suite.Require().NoError(err)
 
 			suite.Require().Equal(test.expUsersBlocks, actualBlocks)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
+	tests := []struct {
+		name       string
+		blocker    string
+		blocked    string
+		userBlocks []types.UserBlock
+		expBool    bool
+	}{
+		{
+			name:    "blocked user found returns true",
+			blocker: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			userBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"test",
+					"",
+				),
+			},
+			expBool: true,
+		},
+		{
+			name:       "non blocked user not found returns false",
+			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			userBlocks: nil,
+			expBool:    false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			for _, block := range test.userBlocks {
+				err := suite.keeper.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			res := suite.keeper.IsUserBlocked(suite.ctx, test.blocker, test.blocked)
+			suite.Equal(test.expBool, res)
 		})
 	}
 }

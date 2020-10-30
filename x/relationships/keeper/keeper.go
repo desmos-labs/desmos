@@ -122,9 +122,7 @@ func (k Keeper) UnmarshalRelationships(bz []byte) ([]types.Relationship, error) 
 	return relationships, nil
 }
 
-// -------------------
-// --- Users blocks
-// -------------------
+// ___________________________________________________________________________________________________________________
 
 // SaveUserBlock allows to store the given block inside the store, returning an error if
 // something goes wrong.
@@ -205,6 +203,19 @@ func (k Keeper) GetUsersBlocks(ctx sdk.Context) ([]types.UserBlock, error) {
 	}
 
 	return usersBlocks, nil
+}
+
+// CheckForBlockedUser checks if the given user address is present inside the blocked users array
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
+	blockedUsers, _ := k.GetUserBlocks(ctx, blocker)
+
+	for _, user := range blockedUsers {
+		if user.Blocked == blocked {
+			return true
+		}
+	}
+
+	return false
 }
 
 // MarshalUserBlocks marshals a list of UserBlock. If the given type implements

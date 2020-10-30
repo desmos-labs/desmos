@@ -295,11 +295,13 @@ func NewDesmosApp(
 		app.legacyAmino,
 		keys[postsTypes.StoreKey],
 		app.GetSubspace(postsTypes.ModuleName),
+		app.RelationshipsKeeper,
 	)
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
+		app.RelationshipsKeeper,
 	)
 	app.ReportsKeeper = reportsKeeper.NewKeeper(
 		app.appCodec,

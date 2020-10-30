@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/relationships"
-
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 
 	"github.com/desmos-labs/desmos/app"
 
@@ -64,9 +64,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	suite.relKeeper = relationships.NewKeeper(suite.cdc, relationshipsKey)
+	suite.relKeeper = relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
 	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
-	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+	suite.keeper = keeper.NewKeeper(
+		suite.cdc,
+		suite.storeKey,
+		suite.paramsKeeper.Subspace(types.DefaultParamspace),
+		suite.relKeeper,
+	)
 
 	// setup Data
 	// nolint - errcheck

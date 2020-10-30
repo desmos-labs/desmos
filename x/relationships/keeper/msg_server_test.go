@@ -12,11 +12,25 @@ import (
 func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	tests := []struct {
 		name                string
+		isBlocked           bool
 		msg                 *types.MsgCreateRelationship
 		storedRelationships []types.Relationship
 		expErr              error
 		expEvent            sdk.Event
 	}{
+		{
+			name: "Relationship sender been blocked from receiver returns error",
+			msg: types.NewMsgCreateRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			isBlocked: true,
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"The user with address cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns has blocked you",
+			),
+		},
 		{
 			name: "Relationship already created returns error",
 			msg: types.NewMsgCreateRelationship(
@@ -63,6 +77,12 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 				suite.Require().NoError(err)
 
 				store.Set(types.RelationshipsStoreKey(test.msg.Sender), bz)
+			}
+
+			if test.isBlocked {
+				userBlock := types.NewUserBlock(test.msg.Receiver, test.msg.Sender, "test", "")
+				err := suite.keeper.SaveUserBlock(suite.ctx, userBlock)
+				suite.Require().NoError(err)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.keeper)
