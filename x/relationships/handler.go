@@ -2,6 +2,7 @@ package relationships
 
 import (
 	"fmt"
+
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

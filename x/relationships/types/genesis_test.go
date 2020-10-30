@@ -1,8 +1,9 @@
 package types_test
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )

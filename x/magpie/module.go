@@ -3,8 +3,9 @@ package magpie
 import (
 	"encoding/json"
 	"fmt"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"math/rand"
+
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"

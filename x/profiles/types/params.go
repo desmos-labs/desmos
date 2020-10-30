@@ -2,8 +2,9 @@ package types
 
 import (
 	"fmt"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"strings"
+
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

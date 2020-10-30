@@ -2,8 +2,9 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/relationships/types"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/relationships/types"
 
 	"github.com/stretchr/testify/require"
 )

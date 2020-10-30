@@ -175,7 +175,7 @@ type DesmosApp struct {
 	// Custom modules
 	magpieKeeper        magpieKeeper.Keeper
 	postsKeeper         postsKeeper.Keeper
-	profileKeeper       profileskeeper.Keeper
+	ProfileKeeper       profileskeeper.Keeper
 	ReportsKeeper       reportsKeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 
@@ -296,7 +296,7 @@ func NewDesmosApp(
 		keys[postsTypes.StoreKey],
 		app.GetSubspace(postsTypes.ModuleName),
 	)
-	app.profileKeeper = profileskeeper.NewKeeper(
+	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
@@ -333,7 +333,7 @@ func NewDesmosApp(
 		// Custom modules
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
-		profiles.NewAppModule(app.appCodec, app.profileKeeper, app.accountKeeper, app.bankKeeper),
+		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.accountKeeper, app.bankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.accountKeeper, app.bankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)
@@ -384,7 +384,7 @@ func NewDesmosApp(
 		// Custom modules
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.accountKeeper, app.bankKeeper),
 		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
-		profiles.NewAppModule(app.appCodec, app.profileKeeper, app.accountKeeper, app.bankKeeper),
+		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.accountKeeper, app.bankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.accountKeeper, app.bankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.accountKeeper, app.bankKeeper),
 	)
@@ -431,8 +431,8 @@ func SetupConfig(config *sdk.Config) {
 // simapp. It is useful for tests and clients who do not want to construct the
 // full simapp
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
-	config := MakeEncodingConfig()
-	return config.Marshaler, config.Amino
+	cfg := MakeEncodingConfig()
+	return cfg.Marshaler, cfg.Amino
 }
 
 // Name returns the name of the App

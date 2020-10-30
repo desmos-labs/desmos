@@ -4,21 +4,22 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/profiles/parameters", queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles/{address_or_dtag}", queryProfileHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/profiles", queryProfilesHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/profiles/{address}/dtag-transfer-requests", queryDTagRequests(cliCtx)).Methods("GET")
+	r.HandleFunc("/profiles/{address}/dtag-requests", queryDTagRequests(cliCtx)).Methods("GET")
 }
 
-func queryDTagRequests(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query all the DTag transfer requests of a user
+func queryDTagRequests(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		address := vars["address"]
@@ -40,8 +41,8 @@ func queryDTagRequests(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// HTTP request handler to query a single profile based on its dtag
-func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query a single profile based on its DTag or address
+func queryProfileHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		address := vars["address_or_dtag"]
@@ -63,8 +64,8 @@ func queryProfileHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// HTTP request handler to query list of profiles
-func queryProfilesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query the list of profiles
+func queryProfilesHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryProfiles)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -83,8 +84,8 @@ func queryProfilesHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// HTTP request handler to query list of profiles' module params
-func queryProfilesParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query the module parameters
+func queryProfilesParamsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 		res, height, err := cliCtx.QueryWithData(route, nil)

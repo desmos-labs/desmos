@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
+	"testing"
+
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/desmos-labs/desmos/app"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"

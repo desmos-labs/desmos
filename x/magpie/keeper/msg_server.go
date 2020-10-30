@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	legacyauth "github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 

@@ -5,8 +5,9 @@ package simulation
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
+
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/desmos-labs/desmos/x/posts/simulation"
 

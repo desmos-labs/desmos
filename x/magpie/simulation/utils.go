@@ -4,9 +4,10 @@ package simulation
 
 import (
 	"encoding/base64"
+	"math/rand"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	legacyauth "github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
-	"math/rand"
 
 	secp256k1 "github.com/btcsuite/btcd/btcec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -2,9 +2,10 @@ package simulation_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/relationships/simulation"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"

@@ -3,6 +3,7 @@ package simulation
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,7 +27,7 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)
 			return fmt.Sprintf("AddressA: %s\nAddressB: %s\n", addressA.Address, addressB.Address)
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestsPrefix):
-			var requestsA, requestsB keeper.DtagRequests
+			var requestsA, requestsB keeper.DTagRequests
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
 			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)

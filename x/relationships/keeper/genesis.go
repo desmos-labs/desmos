@@ -8,10 +8,10 @@ import (
 
 // ExportGenesis returns the GenesisState associated with the given context
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	return types.NewGenesisState(
-		k.GetAllRelationships(ctx),
-		k.GetUsersBlocks(ctx),
-	)
+	relationships, _ := k.GetAllRelationships(ctx)
+	blocks, _ := k.GetUsersBlocks(ctx)
+
+	return types.NewGenesisState(relationships, blocks)
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState

@@ -1,18 +1,20 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/app"
 	"testing"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/magpie/keeper"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/magpie/keeper"
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 type KeeperTestSuite struct {

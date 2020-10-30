@@ -1,9 +1,10 @@
 package v0130_test
 
 import (
+	"testing"
+
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

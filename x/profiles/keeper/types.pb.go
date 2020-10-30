@@ -5,12 +5,13 @@ package keeper
 
 import (
 	fmt "fmt"
-	types "github.com/desmos-labs/desmos/x/profiles/types"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+
+	types "github.com/desmos-labs/desmos/x/profiles/types"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -71,22 +72,22 @@ func (m *DTagOwner) GetAddress() string {
 }
 
 // DtagRequests contains the DTag transfer requests made towards a user
-type DtagRequests struct {
+type DTagRequests struct {
 	Requests []types.DTagTransferRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`
 }
 
-func (m *DtagRequests) Reset()         { *m = DtagRequests{} }
-func (m *DtagRequests) String() string { return proto.CompactTextString(m) }
-func (*DtagRequests) ProtoMessage()    {}
-func (*DtagRequests) Descriptor() ([]byte, []int) {
+func (m *DTagRequests) Reset()         { *m = DTagRequests{} }
+func (m *DTagRequests) String() string { return proto.CompactTextString(m) }
+func (*DTagRequests) ProtoMessage()    {}
+func (*DTagRequests) Descriptor() ([]byte, []int) {
 	return fileDescriptor_732b728428b8b385, []int{1}
 }
-func (m *DtagRequests) XXX_Unmarshal(b []byte) error {
+func (m *DTagRequests) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *DtagRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *DTagRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_DtagRequests.Marshal(b, m, deterministic)
+		return xxx_messageInfo_DTagRequests.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -96,19 +97,19 @@ func (m *DtagRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (m *DtagRequests) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DtagRequests.Merge(m, src)
+func (m *DTagRequests) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DTagRequests.Merge(m, src)
 }
-func (m *DtagRequests) XXX_Size() int {
+func (m *DTagRequests) XXX_Size() int {
 	return m.Size()
 }
-func (m *DtagRequests) XXX_DiscardUnknown() {
-	xxx_messageInfo_DtagRequests.DiscardUnknown(m)
+func (m *DTagRequests) XXX_DiscardUnknown() {
+	xxx_messageInfo_DTagRequests.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DtagRequests proto.InternalMessageInfo
+var xxx_messageInfo_DTagRequests proto.InternalMessageInfo
 
-func (m *DtagRequests) GetRequests() []types.DTagTransferRequest {
+func (m *DTagRequests) GetRequests() []types.DTagTransferRequest {
 	if m != nil {
 		return m.Requests
 	}
@@ -117,7 +118,7 @@ func (m *DtagRequests) GetRequests() []types.DTagTransferRequest {
 
 func init() {
 	proto.RegisterType((*DTagOwner)(nil), "desmos.profiles.v1beta1.DTagOwner")
-	proto.RegisterType((*DtagRequests)(nil), "desmos.profiles.v1beta1.DtagRequests")
+	proto.RegisterType((*DTagRequests)(nil), "desmos.profiles.v1beta1.DTagRequests")
 }
 
 func init() {
@@ -125,7 +126,7 @@ func init() {
 }
 
 var fileDescriptor_732b728428b8b385 = []byte{
-	// 266 bytes of a gzipped FileDescriptorProto
+	// 264 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0x4a, 0x49, 0x2d, 0xce,
 	0xcd, 0x2f, 0xd6, 0x2f, 0x28, 0xca, 0x4f, 0xcb, 0xcc, 0x49, 0x2d, 0xd6, 0x2f, 0x33, 0x4c, 0x4a,
 	0x2d, 0x49, 0x34, 0xd4, 0xcf, 0x4e, 0x4d, 0x2d, 0x48, 0x2d, 0xd2, 0x2f, 0xa9, 0x2c, 0x48, 0x2d,
@@ -134,15 +135,15 @@ var fileDescriptor_732b728428b8b385 = []byte{
 	0x19, 0x9d, 0x9b, 0x9f, 0x92, 0x9a, 0x03, 0x35, 0x54, 0x49, 0x9f, 0x8b, 0xd3, 0x25, 0x24, 0x31,
 	0xdd, 0xbf, 0x3c, 0x2f, 0xb5, 0x48, 0x48, 0x82, 0x8b, 0x3d, 0x31, 0x25, 0xa5, 0x28, 0xb5, 0xb8,
 	0x58, 0x82, 0x51, 0x81, 0x51, 0x83, 0x33, 0x08, 0xc6, 0xb5, 0xe2, 0x98, 0xb1, 0x40, 0x9e, 0xf1,
-	0xc5, 0x02, 0x79, 0x46, 0xa5, 0x0c, 0x2e, 0x1e, 0x97, 0x92, 0xc4, 0xf4, 0xa0, 0xd4, 0xc2, 0xd2,
-	0xd4, 0xe2, 0x92, 0x62, 0x21, 0x3f, 0x2e, 0x8e, 0x22, 0x28, 0x5b, 0x82, 0x51, 0x81, 0x59, 0x83,
-	0xdb, 0x48, 0x47, 0x0f, 0x87, 0x43, 0xf5, 0x40, 0x36, 0x85, 0x14, 0x25, 0xe6, 0x15, 0xa7, 0xa5,
-	0x16, 0x41, 0x0d, 0x70, 0x62, 0x39, 0x71, 0x4f, 0x9e, 0x21, 0x08, 0x6e, 0x06, 0xc2, 0x26, 0x27,
-	0xcf, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63,
-	0x39, 0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0x88, 0xd2, 0x4f, 0xcf, 0x2c, 0xc9,
-	0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x87, 0xd8, 0xa5, 0x9b, 0x93, 0x98, 0x54, 0x0c, 0x65,
-	0xeb, 0x57, 0x20, 0xfc, 0x0c, 0x09, 0xc6, 0x24, 0x36, 0xb0, 0x67, 0x8d, 0x01, 0x01, 0x00, 0x00,
-	0xff, 0xff, 0x53, 0x25, 0xb1, 0xd7, 0x6f, 0x01, 0x00, 0x00,
+	0xc5, 0x02, 0x79, 0x46, 0xa5, 0x0c, 0x2e, 0x1e, 0x90, 0x86, 0xa0, 0xd4, 0xc2, 0xd2, 0xd4, 0xe2,
+	0x92, 0x62, 0x21, 0x3f, 0x2e, 0x8e, 0x22, 0x28, 0x5b, 0x82, 0x51, 0x81, 0x59, 0x83, 0xdb, 0x48,
+	0x47, 0x0f, 0x87, 0x43, 0xf5, 0x40, 0x1a, 0x43, 0x8a, 0x12, 0xf3, 0x8a, 0xd3, 0x52, 0x8b, 0xa0,
+	0x06, 0x38, 0xb1, 0x9c, 0xb8, 0x27, 0xcf, 0x10, 0x04, 0x37, 0x03, 0x61, 0x93, 0x93, 0xe7, 0x89,
+	0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3,
+	0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0xe9, 0xa7, 0x67, 0x96, 0x64, 0x94, 0x26,
+	0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x43, 0xec, 0xd2, 0xcd, 0x49, 0x4c, 0x2a, 0x86, 0xb2, 0xf5, 0x2b,
+	0x10, 0x7e, 0x86, 0x04, 0x63, 0x12, 0x1b, 0xd8, 0xb3, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x61, 0xdd, 0xd2, 0x6a, 0x6f, 0x01, 0x00, 0x00,
 }
 
 func (this *DTagOwner) Equal(that interface{}) bool {
@@ -169,14 +170,14 @@ func (this *DTagOwner) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *DtagRequests) Equal(that interface{}) bool {
+func (this *DTagRequests) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*DtagRequests)
+	that1, ok := that.(*DTagRequests)
 	if !ok {
-		that2, ok := that.(DtagRequests)
+		that2, ok := that.(DTagRequests)
 		if ok {
 			that1 = &that2
 		} else {
@@ -228,7 +229,7 @@ func (m *DTagOwner) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *DtagRequests) Marshal() (dAtA []byte, err error) {
+func (m *DTagRequests) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -238,12 +239,12 @@ func (m *DtagRequests) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *DtagRequests) MarshalTo(dAtA []byte) (int, error) {
+func (m *DTagRequests) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *DtagRequests) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *DTagRequests) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -289,7 +290,7 @@ func (m *DTagOwner) Size() (n int) {
 	return n
 }
 
-func (m *DtagRequests) Size() (n int) {
+func (m *DTagRequests) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -395,7 +396,7 @@ func (m *DTagOwner) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *DtagRequests) Unmarshal(dAtA []byte) error {
+func (m *DTagRequests) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -418,10 +419,10 @@ func (m *DtagRequests) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: DtagRequests: wiretype end group for non-group")
+			return fmt.Errorf("proto: DTagRequests: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DtagRequests: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: DTagRequests: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

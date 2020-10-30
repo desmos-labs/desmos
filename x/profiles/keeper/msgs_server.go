@@ -3,10 +3,11 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/profiles/types"
-	"time"
 )
 
 type msgServer struct {

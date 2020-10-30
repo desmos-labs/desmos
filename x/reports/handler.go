@@ -2,6 +2,7 @@ package reports
 
 import (
 	"fmt"
+
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -2,8 +2,9 @@ package types
 
 import (
 	"fmt"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	"strings"
+
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // NewReport returns a Report

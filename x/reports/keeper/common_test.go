@@ -3,11 +3,12 @@ package keeper_test
 // NOLINT
 
 import (
+	"testing"
+	"time"
+
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/desmos-labs/desmos/app"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	"testing"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"

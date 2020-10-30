@@ -19,11 +19,6 @@ func TestDefaultParams(t *testing.T) {
 	require.Equal(t, params, types.DefaultParams())
 }
 
-func TestParams_String(t *testing.T) {
-	params := types.DefaultParams()
-	require.Equal(t, "Profiles parameters:\nMoniker params lengths:\nMin accepted length: 2\nMax accepted length: 1000\nDtag params:\nRegEx: ^[A-Za-z0-9_]+$\nMin accepted length: 3\nMax accepted length: 30\nBiography params lengths:\nMax accepted length: 1000", params.String())
-}
-
 func TestValidateParams(t *testing.T) {
 	invalidNameMin := sdk.NewInt(1)
 	validNameMax := sdk.NewInt(1000)
@@ -81,12 +76,6 @@ func TestMonikerParams_String(t *testing.T) {
 	monikerParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
 	actual := monikerParams.String()
 	require.Equal(t, "Moniker params lengths:\nMin accepted length: 2\nMax accepted length: 1000", actual)
-}
-
-func TestDTagParams_String(t *testing.T) {
-	dtag := types.NewDtagParams("regEx", sdk.NewInt(2), sdk.NewInt(30))
-	actual := dtag.String()
-	require.Equal(t, "Dtag params:\nRegEx: regEx\nMin accepted length: 2\nMax accepted length: 30", actual)
 }
 
 func TestValidateMonikerParams(t *testing.T) {

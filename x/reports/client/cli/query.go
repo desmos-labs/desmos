@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ func GetQueryCmd() *cobra.Command {
 	return postQueryCmd
 }
 
-// GetCmdQueryPostReports returns the command that allows to query a post's reports
+// GetCmdQueryPostReports returns the command that allows to query the reports of a post
 func GetCmdQueryPostReports() *cobra.Command {
 	return &cobra.Command{
 		Use:   "post [id]",

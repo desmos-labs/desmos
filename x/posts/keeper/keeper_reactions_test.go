@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -346,7 +347,7 @@ func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
 				suite.True(exist)
 				suite.Require().Equal(test.storedReaction, actualReaction)
 			} else {
-				suite.False(exist)
+				suite.Require().False(exist)
 				suite.Require().Equal(types.Reaction{}, actualReaction)
 			}
 		})

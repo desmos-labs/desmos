@@ -2,10 +2,11 @@ package types
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewPictures is a constructor function for Pictures

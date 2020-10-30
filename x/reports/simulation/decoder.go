@@ -3,6 +3,7 @@ package simulation
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"

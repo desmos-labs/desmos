@@ -13,14 +13,28 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		expBool     bool
 	}{
 		{
-			name:        "Invariants not violated",
-			profile:     types.NewProfile("dtag", suite.testData.user, suite.testData.profile.CreationDate),
+			name: "Invariants not violated",
+			profile: types.NewProfile(
+				"dtag",
+				"",
+				"",
+				types.NewPictures("", ""),
+				suite.testData.profile.CreationDate,
+				suite.testData.user,
+			),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
-			name:        "ValidProfile invariant violated",
-			profile:     types.NewProfile("", suite.testData.user, suite.testData.profile.CreationDate),
+			name: "ValidProfile invariant violated",
+			profile: types.NewProfile(
+				"",
+				"",
+				"",
+				types.NewPictures("", ""),
+				suite.testData.profile.CreationDate,
+				suite.testData.user,
+			),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[DTag]: , [Creator]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\n\n",
 			expBool:     true,
 		},
@@ -40,5 +54,4 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			suite.Require().Equal(test.expBool, stop)
 		})
 	}
-
 }

@@ -3,11 +3,12 @@ package simulation
 // DONTCOVER
 
 import (
+	"math/rand"
+
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"

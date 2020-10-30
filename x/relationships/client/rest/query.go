@@ -2,8 +2,9 @@ package rest
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client"
 	"net/http"
+
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -12,8 +13,8 @@ import (
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/relationships", queryRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/relationships/%s", ParamAddress), queryUserRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/blacklist/%s", ParamAddress), queryUserBlocks(cliCtx)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/relationships/{%s}", ParamAddress), queryUserRelationships(cliCtx)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/blacklist/{%s}", ParamAddress), queryUserBlocks(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query list of user's relationships

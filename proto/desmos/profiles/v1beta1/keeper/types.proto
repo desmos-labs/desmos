@@ -16,7 +16,7 @@ message DTagOwner {
 }
 
 // DtagRequests contains the DTag transfer requests made towards a user
-message DtagRequests {
+message DTagRequests {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
