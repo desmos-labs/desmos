@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"testing"
 
+	"github.com/desmos-labs/desmos/x/relationships"
+
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -27,6 +29,7 @@ type KeeperTestSuite struct {
 	ctx            sdk.Context
 	storeKey       sdk.StoreKey
 	keeper         keeper.Keeper
+	relKeeper      relationshipskeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	testData       TestData
 }
@@ -44,6 +47,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	relationshipsKey := sdk.NewKVStoreKey("relationships")
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
@@ -51,6 +55,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(profileKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
+
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -58,6 +64,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
+	suite.relKeeper = relationships.NewKeeper(suite.cdc, relationshipsKey)
 	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
 

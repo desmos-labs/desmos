@@ -6,20 +6,24 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/relationships"
+
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/desmos-labs/desmos/app"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/suite"
+	"github.com/tendermint/tendermint/libs/log"
+	db "github.com/tendermint/tm-db"
+
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	db "github.com/tendermint/tm-db"
 )
 
 type KeeperTestSuite struct {
@@ -46,6 +50,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
 	reportsKey := sdk.NewKVStoreKey(types.StoreKey)
+	relationshipsKey := sdk.NewKVStoreKey("relationships")
 	suite.storeKey = reportsKey
 
 	// create an in-memory db for stored
@@ -55,6 +60,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(reportsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -63,6 +69,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// define keepers
+	relationshipsKeeper := relationships.NewKeeper(suite.cdc, relationshipsKey)
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.postsKeeper = postskeeper.NewKeeper(suite.legacyAminoCdc, postsKey, paramsKeeper.Subspace("poststypes"))
 	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.postsKeeper)

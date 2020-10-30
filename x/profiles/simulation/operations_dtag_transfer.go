@@ -11,9 +11,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
@@ -93,6 +94,10 @@ func randomDtagRequestTransferFields(
 	// skip if the two addresses are equals
 	if receiver.Equals(sender) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
+	}
+
+	if k.IsUserBlocked(ctx, receiver.Address, sender.Address) {
+		return sim.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	randomDTag := RandomDTag(r)

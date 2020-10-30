@@ -8,7 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
@@ -16,21 +18,30 @@ type Keeper struct {
 	storeKey sdk.StoreKey
 	cdc      codec.BinaryMarshaler
 
-	// The reference to the ParamsStore to get and set profiles specific params
+	relKeeper     relationships.Keeper
 	paramSubspace paramstypes.Subspace
 }
 
 // NewKeeper creates new instances of the magpie Keeper
-func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace) Keeper {
+func NewKeeper(
+	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
+	paramSpace paramstypes.Subspace, relKeeper relationships.Keeper,
+) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
 		paramSubspace: paramSpace,
+		relKeeper:     relKeeper,
 		storeKey:      storeKey,
 		cdc:           cdc,
 	}
+}
+
+// IsUserBlocked tells if the given blocker has blocked the given blocked user
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked sdk.AccAddress) bool {
+	return k.relKeeper.IsUserBlocked(ctx, blocker, blocked)
 }
 
 // AssociateDtagWithAddress save the relation of dtag and address on chain

@@ -13,9 +13,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // SimulateMsgCreateRelationship tests and runs a single msg create relationships
@@ -97,14 +98,18 @@ func randomRelationshipFields(
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
+	if k.IsUserBlocked(ctx, receiver.Address, sender.Address) {
+		return sim.Account{}, types.Relationship{}, true
+	}
+
 	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace)
 
+	// skip if relationships already exists
 	relationships, err := k.GetUserRelationships(ctx, sender.Address.String())
 	if err != nil {
 		return sender, rel, false
 	}
 
-	// skip if relationships already exists
 	for _, relationship := range relationships {
 		if relationship.Equal(rel) {
 			return simtypes.Account{}, types.Relationship{}, true

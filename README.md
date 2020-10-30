@@ -1,6 +1,6 @@
 [![Website](.img/cover.jpg)](https://desmos.network)
 
-[![CircleCI](https://circleci.com/gh/desmos-labs/desmos/tree/master.svg?style=shield)](https://circleci.com/gh/desmos-labs/desmos/tree/master)
+[![test status](https://github.com/desmos-labs/desmos/workflows/Tests%20%2F%20Code%20Coverage/badge.svg)](https://github.com/desmos-labs/desmos/actions?query=workflow%3A%22Tests+%2F+Code+Coverage%22)
 [![codecov](https://codecov.io/gh/desmos-labs/desmos/branch/master/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/desmos-labs/desmos)](https://goreportcard.com/report/github.com/desmos-labs/desmos)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/desmos-labs/desmos.svg)

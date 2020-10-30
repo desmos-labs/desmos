@@ -4,28 +4,32 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/relationships"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/desmos-labs/desmos/x/posts/keeper"
-	"github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+	"github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc          *codec.Codec
-	ctx          sdk.Context
-	keeper       keeper.Keeper
-	paramsKeeper params.Keeper
-	testData     TestData
+	cdc                 *codec.Codec
+	ctx                 sdk.Context
+	keeper              keeper.Keeper
+	paramsKeeper        params.Keeper
+	relationshipsKeeper relationships.Keeper
+	testData            TestData
 }
 
 type TestData struct {
@@ -45,6 +49,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	postKey := sdk.NewKVStoreKey(common.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	relationshipsKey := sdk.NewKVStoreKey("relationships")
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
@@ -52,6 +57,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(postKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -59,7 +65,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc = testCodec()
 	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
-	suite.keeper = keeper.NewKeeper(suite.cdc, postKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+	suite.relationshipsKeeper = relationships.NewKeeper(suite.cdc, relationshipsKey)
+	suite.keeper = keeper.NewKeeper(suite.cdc, postKey, suite.paramsKeeper.Subspace(types.DefaultParamspace), suite.relationshipsKeeper)
 
 	// setup Data
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
