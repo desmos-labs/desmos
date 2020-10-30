@@ -40,16 +40,10 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg msgs.MsgBlockUser, ctx sdk.Context, chainID string, privKeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -57,7 +51,7 @@ func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 		privKeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -134,16 +128,10 @@ func randomUnblockUserFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, 
 func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg msgs.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -151,7 +139,7 @@ func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeepe
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}

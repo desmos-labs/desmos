@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -17,15 +16,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 )
-
-func swapFeesCoins(ctx sdk.Context, ak auth.AccountKeeper, account exported.Account) error {
-	coins := sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000000)))
-	if err := account.SetCoins(coins); err != nil {
-		return err
-	}
-	ak.SetAccount(ctx, account)
-	return nil
-}
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 // nolint: funlen
@@ -61,13 +51,10 @@ func sendMsgSaveProfile(
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -143,13 +130,10 @@ func sendMsgDeleteProfile(
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Creator)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

@@ -23,8 +23,6 @@ const (
 	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
 
 	DefaultGasValue = 200000
-
-	DefaultBonDenom = "udaric"
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights

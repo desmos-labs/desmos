@@ -5,13 +5,12 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/x/reports/keeper"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/tendermint/tendermint/crypto"
 
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
@@ -52,16 +51,15 @@ func sendMsgReportPost(
 	msg types.MsgReportPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Report.User)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
+	err := account.SetCoins(sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1000000))))
 	if err != nil {
 		return err
 	}
+	ak.SetAccount(ctx, account)
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

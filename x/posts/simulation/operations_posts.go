@@ -54,18 +54,11 @@ func sendMsgCreatePost(
 	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -73,7 +66,7 @@ func sendMsgCreatePost(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -148,16 +141,10 @@ func sendMsgEditPost(
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Editor)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -165,7 +152,7 @@ func sendMsgEditPost(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}

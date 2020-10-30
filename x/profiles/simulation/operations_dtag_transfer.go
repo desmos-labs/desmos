@@ -40,15 +40,11 @@ func sendMsgRequestDTagTransfer(
 	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRequestDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Sender)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -126,15 +122,11 @@ func sendMsgMsgAcceptDTagTransfer(
 	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAcceptDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Receiver)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -224,15 +216,11 @@ func sendMsgMsgRefuseDTagTransfer(
 	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRefuseDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Sender)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -300,15 +288,11 @@ func sendMsgMsgCancelDTagTransfer(
 	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCancelDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Sender)
-	if err := swapFeesCoins(ctx, ak, account); err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(DefaultBonDenom, sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

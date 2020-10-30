@@ -79,16 +79,10 @@ func sendMsgCreateSession(
 ) error {
 
 	account := ak.GetAccount(ctx, msg.Owner)
-	coins := account.SpendableCoins(ctx.BlockTime())
-
-	fees, err := sim.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		fees,
+		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 		helpers.DefaultGenTxGas,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -96,7 +90,7 @@ func sendMsgCreateSession(
 		privkeys...,
 	)
 
-	_, _, err = app.Deliver(tx)
+	_, _, err := app.Deliver(tx)
 	if err != nil {
 		return err
 	}
