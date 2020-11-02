@@ -41,15 +41,24 @@ func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operati
 
 // sendMsgAnswerPoll sends a transaction with a MsgAnswerPoll from a provided random account.
 func sendMsgAnswerPoll(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAnswerPoll, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Answerer)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -57,7 +66,7 @@ func sendMsgAnswerPoll(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}

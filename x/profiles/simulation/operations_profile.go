@@ -17,6 +17,8 @@ import (
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
+var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
+
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 // nolint: funlen
 func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
@@ -46,15 +48,24 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 // sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
 func sendMsgSaveProfile(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -62,7 +73,7 @@ func sendMsgSaveProfile(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -125,15 +136,24 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 
 // sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
 func sendMsgDeleteProfile(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -141,7 +161,7 @@ func sendMsgDeleteProfile(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}

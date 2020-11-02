@@ -23,6 +23,8 @@ const (
 	OpWeightMsgCreatePost = "op_weight_msg_create_session"
 )
 
+var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
+
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
 
@@ -74,15 +76,24 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 
 // sendMsgCreateSession sends a transaction with a MsgCreateSession from a provided random account.
 func sendMsgCreateSession(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Owner)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		helpers.DefaultGenTxGas,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -90,7 +101,7 @@ func sendMsgCreateSession(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}

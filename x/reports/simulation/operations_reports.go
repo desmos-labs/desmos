@@ -17,6 +17,8 @@ import (
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
+var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
+
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
 func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeeper.Keeper) sim.Operation {
@@ -47,19 +49,24 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeepe
 
 // sendMsgReportPost sends a transaction with a MsgReportPost from a provided random account.
 func sendMsgReportPost(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgReportPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Report.User)
-	err := account.SetCoins(sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1000000))))
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
-	ak.SetAccount(ctx, account)
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

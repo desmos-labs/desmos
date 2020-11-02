@@ -51,14 +51,24 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 
 // sendMsgCreatePost sends a transaction with a MsgCreatePost from a provided random account.
 func sendMsgCreatePost(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Creator)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -66,7 +76,7 @@ func sendMsgCreatePost(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -136,15 +146,24 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 
 // sendMsgEditPost sends a transaction with a MsgEditPost from a provided random account.
 func sendMsgEditPost(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Editor)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -152,7 +171,7 @@ func sendMsgEditPost(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}

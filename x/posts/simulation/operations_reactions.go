@@ -20,6 +20,8 @@ import (
 // --- PostReaction
 // ---------------
 
+var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
+
 // SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
 // nolint: funlen
 func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
@@ -45,15 +47,24 @@ func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Oper
 
 // sendMsgAddPostReaction sends a transaction with a MsgAddReaction from a provided random account.
 func sendMsgAddPostReaction(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.User)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -61,7 +72,7 @@ func sendMsgAddPostReaction(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -128,15 +139,24 @@ func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgRemovePostReaction sends a transaction with a MsgRemoveReaction from a provided random account.
 func sendMsgRemovePostReaction(
-	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.User)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -144,7 +164,7 @@ func sendMsgRemovePostReaction(
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}
@@ -209,14 +229,24 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 }
 
 // sendMsgRegisterReaction sends a transaction with a MsgRegisterReaction from a provided random account.
-func sendMsgRegisterReaction(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Creator)
+	coins := account.SpendableCoins(ctx.BlockTime())
+
+	fees, err := sim.RandomFees(r, ctx, coins)
+	if err != nil {
+		return err
+	}
+
+	if fees.IsAllLT(minRequiredFee) {
+		return nil
+	}
 
 	tx := helpers.GenTx(
 		[]sdk.Msg{msg},
-		sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -224,7 +254,7 @@ func sendMsgRegisterReaction(_ *rand.Rand, app *baseapp.BaseApp, ak auth.Account
 		privkeys...,
 	)
 
-	_, _, err := app.Deliver(tx)
+	_, _, err = app.Deliver(tx)
 	if err != nil {
 		return err
 	}
