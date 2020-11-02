@@ -41,7 +41,7 @@ func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operati
 
 // sendMsgAnswerPoll sends a transaction with a MsgAnswerPoll from a provided random account.
 func sendMsgAnswerPoll(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAnswerPoll, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 

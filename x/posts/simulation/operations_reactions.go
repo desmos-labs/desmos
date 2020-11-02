@@ -45,7 +45,7 @@ func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Oper
 
 // sendMsgAddPostReaction sends a transaction with a MsgAddReaction from a provided random account.
 func sendMsgAddPostReaction(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
@@ -128,7 +128,7 @@ func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgRemovePostReaction sends a transaction with a MsgRemoveReaction from a provided random account.
 func sendMsgRemovePostReaction(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 
@@ -209,7 +209,7 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 }
 
 // sendMsgRegisterReaction sends a transaction with a MsgRegisterReaction from a provided random account.
-func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgRegisterReaction(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Creator)

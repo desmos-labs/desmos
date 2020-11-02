@@ -74,7 +74,7 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 
 // sendMsgCreateSession sends a transaction with a MsgCreateSession from a provided random account.
 func sendMsgCreateSession(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 

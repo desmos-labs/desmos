@@ -37,7 +37,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 }
 
 // sendMsgBlockUser sends a transaction with a MsgBlockUser from a provided random account
-func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgBlockUser(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg msgs.MsgBlockUser, ctx sdk.Context, chainID string, privKeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 
@@ -125,7 +125,7 @@ func randomUnblockUserFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, 
 }
 
 // sendMsgUnblockUser sends a transaction with a MsgUnblockUser from a provided random account
-func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgUnblockUser(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg msgs.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 

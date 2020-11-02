@@ -47,7 +47,7 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeepe
 
 // sendMsgReportPost sends a transaction with a MsgReportPost from a provided random account.
 func sendMsgReportPost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgReportPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Report.User)

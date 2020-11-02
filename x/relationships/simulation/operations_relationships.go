@@ -36,7 +36,7 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 }
 
 // sendMsgCreateRelationship sends a transaction with a Relationship from a provided random account
-func sendMsgCreateRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgCreateRelationship(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
@@ -116,7 +116,7 @@ func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 }
 
 // sendMsgDeleteRelationship sends a transaction with a MsgDenyBidirectionalRelationship from a provided random account
-func sendMsgDeleteRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgDeleteRelationship(_ *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
 	msg types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
