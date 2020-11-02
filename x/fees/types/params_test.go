@@ -9,13 +9,13 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	params := types.NewParams(types.DefaultFeeDenom, types.DefaultRequiredFee)
+	params := types.NewParams(types.DefaultFeeDenom, types.DefaultMinFees)
 	require.Equal(t, params, types.DefaultParams())
 }
 
 func TestParams_String(t *testing.T) {
 	params := types.DefaultParams()
-	require.Equal(t, "Fee parameters:\nFeeDenom: stake\nRequiredFee: 0.010000000000000000", params.String())
+	require.Equal(t, "Fee parameters:\nFeeDenom: stake\nMinFees: []", params.String())
 }
 
 func TestValidateParams(t *testing.T) {
@@ -27,13 +27,15 @@ func TestValidateParams(t *testing.T) {
 	}{
 		{
 			name:   "invalid fee denom length param returns error",
-			params: types.NewParams("", types.DefaultRequiredFee),
+			params: types.NewParams("", types.DefaultMinFees),
 			expErr: fmt.Errorf("invalid fee denom param, it shouldn't be empty"),
 		},
 		{
-			name:   "negative required fee returns error",
-			params: types.NewParams("udaric", sdk.NewDecWithPrec(-1, 2)),
-			expErr: fmt.Errorf("invalid minimum fee required, it shouldn't be a negative number"),
+			name: "invalid min fees param returns error",
+			params: types.NewParams("udaric", []types.MinFee{
+				types.NewMinFee("desmos/createPost", sdk.NewDecWithPrec(-1, 2))},
+			),
+			expErr: fmt.Errorf("minimum fee amout cannot be negative"),
 		},
 		{
 			name:   "valid params returns no error",
@@ -82,7 +84,7 @@ func TestValidateFeeDenomParam(t *testing.T) {
 	}
 }
 
-func TestRequiredFeeParam(t *testing.T) {
+func TestValidateMinFeesParam(t *testing.T) {
 	tests := []struct {
 		name        string
 		requiredFee interface{}
@@ -95,12 +97,12 @@ func TestRequiredFeeParam(t *testing.T) {
 		},
 		{
 			name:        "invalid param returns error",
-			requiredFee: sdk.NewDec(-1),
-			expErr:      fmt.Errorf("invalid minimum fee required, it shouldn't be a negative number"),
+			requiredFee: []types.MinFee{types.NewMinFee("desmos/createPost", sdk.NewDec(-1))},
+			expErr:      fmt.Errorf("minimum fee amout cannot be negative"),
 		},
 		{
 			name:        "valid param returns no errors",
-			requiredFee: sdk.NewDecWithPrec(1, 2),
+			requiredFee: []types.MinFee{types.NewMinFee("desmos/createPost", sdk.NewDec(1))},
 			expErr:      nil,
 		},
 	}
@@ -108,7 +110,7 @@ func TestRequiredFeeParam(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateRequiredFeeParam(test.requiredFee)
+			err := types.ValidateMinFeesParam(test.requiredFee)
 			require.Equal(t, test.expErr, err)
 		})
 	}

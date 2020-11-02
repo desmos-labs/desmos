@@ -2,14 +2,12 @@ package ante
 
 import (
 	"errors"
-	"fmt"
+	"github.com/desmos-labs/desmos/x/fees"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/desmos-labs/desmos/x/fees"
 )
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
@@ -62,36 +60,12 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 		return next(ctx, tx, simulate)
 	}
 
-	feesParams := mfd.feesKeeper.GetParams(ctx)
-
-	// calculate required fees for this transaction as (number of messages * fixed required fees)
-	requiredFees := feesParams.RequiredFee.MulInt64(int64(len(stdTx.Msgs)))
-
-	// Check the minimum fees
-	if err := checkMinimumFees(stdTx, requiredFees, feesParams.FeeDenom); err != nil {
+	// Check the minimum fees of the transaction
+	if err := mfd.feesKeeper.CheckFees(ctx, stdTx.Fee, stdTx.Msgs); err != nil {
 		return ctx, err
 	}
 
 	return next(ctx, tx, simulate)
-}
-
-func checkMinimumFees(
-	stdTx types.StdTx,
-	requiredFees sdk.Dec,
-	bonDenom string,
-) error {
-
-	// Each message should cost 0.01 daric/desmos
-	stableRequiredQty := requiredFees.Mul(sdk.NewDec(1000000))
-	feeAmount := sdk.NewDecFromInt(stdTx.Fee.Amount.AmountOf(bonDenom))
-
-	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(feeAmount) {
-		if stableRequiredQty.GT(feeAmount) {
-			return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
-				fmt.Sprintf("Insufficient fees. Expected %s %s amount, got %s", stableRequiredQty, bonDenom, feeAmount))
-		}
-	}
-	return nil
 }
 
 // setGasMeter returns a new context with a gas meter set from a given context.

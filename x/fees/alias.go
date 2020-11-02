@@ -33,14 +33,14 @@ var (
 	NewParams                = types.NewParams
 	DefaultParams            = types.DefaultParams
 	ValidateFeeDenomParam    = types.ValidateFeeDenomParam
-	ValidateRequiredFeeParam = types.ValidateRequiredFeeParam
+	ValidateRequiredFeeParam = types.ValidateMinFeesParam
 
 	// variable aliases
 	ModuleCdc           = types.ModuleCdc
 	DefaultFeeDenom     = types.DefaultFeeDenom
-	DefaultRequiredFee  = types.DefaultRequiredFee
+	DefaultRequiredFee  = types.DefaultMinFees
 	FeeDenomStoreKey    = types.FeeDenomStoreKey
-	RequiredFeeStoreKey = types.RequiredFeeStoreKey
+	RequiredFeeStoreKey = types.MinFeesStoreKey
 )
 
 type (

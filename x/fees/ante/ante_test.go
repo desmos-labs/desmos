@@ -2,6 +2,8 @@ package ante_test
 
 import (
 	"errors"
+	"github.com/desmos-labs/desmos/x/fees"
+	"github.com/desmos-labs/desmos/x/fees/ante"
 	"testing"
 	"time"
 
@@ -9,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	desmos "github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/ante"
 	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
@@ -101,6 +102,12 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 
 	privs, accnums, seqs := []crypto.PrivKey{priv}, []uint64{0}, []uint64{0}
 	msgs := []sdk.Msg{msgCreatePost}
+
+	feesParams := fees.NewParams(sdk.DefaultBondDenom, []feesTypes.MinFee{
+		feesTypes.NewMinFee("create_post", sdk.NewDecWithPrec(1, 2)),
+	})
+
+	app.FeesKeeper.SetParams(ctx, feesParams)
 
 	// Signer has not specified the fees
 	var tx sdk.Tx

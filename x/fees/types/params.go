@@ -14,14 +14,14 @@ const (
 )
 
 var (
-	DefaultFeeDenom    = sdk.DefaultBondDenom
-	DefaultRequiredFee = sdk.NewDecWithPrec(1, 2)
+	DefaultFeeDenom = sdk.DefaultBondDenom
+	DefaultMinFees  []MinFee
 )
 
 // Parameters store keys
 var (
-	FeeDenomStoreKey    = []byte("FeeDenom")
-	RequiredFeeStoreKey = []byte("RequiredFee")
+	FeeDenomStoreKey = []byte("FeeDenom")
+	MinFeesStoreKey  = []byte("MinFees")
 )
 
 // ParamKeyTable Key declaration for parameters
@@ -30,37 +30,37 @@ func ParamKeyTable() paramsModule.KeyTable {
 }
 
 type Params struct {
-	FeeDenom    string  `json:"fee_denom" yaml:"fee_denom"`
-	RequiredFee sdk.Dec `json:"required_fee" yaml:"required_fee"`
+	FeeDenom string   `json:"fee_denom" yaml:"fee_denom"`
+	MinFees  []MinFee `json:"min_fees" yaml:"min_fees"`
 }
 
 // NewParams create a new params object with the given data
-func NewParams(feeDenom string, requiredFee sdk.Dec) Params {
+func NewParams(feeDenom string, minFees []MinFee) Params {
 	return Params{
-		FeeDenom:    feeDenom,
-		RequiredFee: requiredFee,
+		FeeDenom: feeDenom,
+		MinFees:  minFees,
 	}
 }
 
 // DefaultParams return default params object
 func DefaultParams() Params {
 	return Params{
-		FeeDenom:    DefaultFeeDenom,
-		RequiredFee: DefaultRequiredFee,
+		FeeDenom: DefaultFeeDenom,
+		MinFees:  DefaultMinFees,
 	}
 }
 
 // String implements Stringer
 func (params Params) String() string {
 	out := "Fee parameters:\n"
-	out += fmt.Sprintf("FeeDenom: %s\nRequiredFee: %d\n", params.FeeDenom, params.RequiredFee)
+	out += fmt.Sprintf("FeeDenom: %s\nMinFees: %s\n", params.FeeDenom, params.MinFees)
 	return strings.TrimSpace(out)
 }
 
 func (params *Params) ParamSetPairs() paramsModule.ParamSetPairs {
 	return paramsModule.ParamSetPairs{
 		paramsModule.NewParamSetPair(FeeDenomStoreKey, &params.FeeDenom, ValidateFeeDenomParam),
-		paramsModule.NewParamSetPair(RequiredFeeStoreKey, &params.RequiredFee, ValidateRequiredFeeParam),
+		paramsModule.NewParamSetPair(MinFeesStoreKey, &params.MinFees, ValidateMinFeesParam),
 	}
 }
 
@@ -70,7 +70,7 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	if err := ValidateRequiredFeeParam(params.RequiredFee); err != nil {
+	if err := ValidateMinFeesParam(params.MinFees); err != nil {
 		return err
 	}
 
@@ -91,15 +91,17 @@ func ValidateFeeDenomParam(i interface{}) error {
 	return nil
 }
 
-func ValidateRequiredFeeParam(i interface{}) error {
-	param, isCorrectParam := i.(sdk.Dec)
+func ValidateMinFeesParam(i interface{}) error {
+	fees, isCorrectParam := i.([]MinFee)
 
 	if !isCorrectParam {
 		return fmt.Errorf("invalid parameter type: %s", i)
 	}
 
-	if param.IsNegative() {
-		return fmt.Errorf("invalid minimum fee required, it shouldn't be a negative number")
+	for _, fee := range fees {
+		if err := fee.Validate(); err != nil {
+			return err
+		}
 	}
 
 	return nil

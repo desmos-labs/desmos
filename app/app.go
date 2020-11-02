@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/desmos-labs/desmos/x/fees/ante"
 	"io"
 	"os"
 
@@ -22,7 +23,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/desmos-labs/desmos/x/ante"
 	"github.com/desmos-labs/desmos/x/fees"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"

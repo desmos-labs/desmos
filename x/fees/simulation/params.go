@@ -19,10 +19,10 @@ func ParamChanges(r *rand.Rand) []simulation.ParamChange {
 					params.FeeDenom)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.RequiredFeeStoreKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.MinFeesStoreKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"required_fee":"%s"`,
-					params.RequiredFee)
+				return fmt.Sprintf(`{"min_fees":"%s"`,
+					params.MinFees)
 			},
 		),
 	}

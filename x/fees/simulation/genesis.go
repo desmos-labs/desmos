@@ -17,6 +17,6 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 	fmt.Printf("Selected randomly generated fees parameters:\n%s\n%s\n",
 		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.FeeDenom),
-		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.RequiredFee),
+		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.MinFees),
 	)
 }
