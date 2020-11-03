@@ -2,12 +2,12 @@ package ante
 
 import (
 	"errors"
-	"github.com/desmos-labs/desmos/x/fees"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/desmos/x/fees"
 )
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
