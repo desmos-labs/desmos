@@ -2,14 +2,12 @@ package types
 
 import (
 	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramsModule "github.com/cosmos/cosmos-sdk/x/params/subspace"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 const (
-	// default paramspace for paramsModule keeper
+	// default paramspace for paramstypes keeper
 	DefaultParamspace = ModuleName
 )
 
@@ -28,14 +26,8 @@ var (
 )
 
 // ParamKeyTable Key declaration for parameters
-func ParamKeyTable() paramsModule.KeyTable {
-	return paramsModule.NewKeyTable().RegisterParamSet(&Params{})
-}
-
-type Params struct {
-	MaxPostMessageLength            sdk.Int `json:"max_post_message_length" yaml:"max_post_message_length"`
-	MaxOptionalDataFieldsNumber     sdk.Int `json:"max_optional_data_fields_number" yaml:"max_optional_data_fields_number"`
-	MaxOptionalDataFieldValueLength sdk.Int `json:"max_optional_data_field_value_length" yaml:"max_optional_data_field_value_length"`
+func ParamKeyTable() paramstypes.KeyTable {
+	return paramstypes.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 // NewParams creates a new Params obj
@@ -56,25 +48,13 @@ func DefaultParams() Params {
 	}
 }
 
-// String implements Stringer
-func (params Params) String() string {
-	out := "Posts parameters:\n"
-	out += fmt.Sprintf("MaxPostMessageLength: %s\nMaxOptionalDataFieldsNumber: %s\nMaxOptionalDataFieldValueLength: %s\n",
-		params.MaxPostMessageLength,
-		params.MaxOptionalDataFieldsNumber,
-		params.MaxOptionalDataFieldValueLength,
-	)
-
-	return strings.TrimSpace(out)
-}
-
 // ParamSetPairs implements the ParamSet interface and returns the key/value pairs
 // of posts module's parameters.
-func (params *Params) ParamSetPairs() paramsModule.ParamSetPairs {
-	return paramsModule.ParamSetPairs{
-		paramsModule.NewParamSetPair(MaxPostMessageLengthKey, &params.MaxPostMessageLength, ValidateMaxPostMessageLengthParam),
-		paramsModule.NewParamSetPair(MaxOptionalDataFieldsNumberKey, &params.MaxOptionalDataFieldsNumber, ValidateMaxOptionalDataFieldNumberParam),
-		paramsModule.NewParamSetPair(MaxOptionalDataFieldValueLengthKey, &params.MaxOptionalDataFieldValueLength, ValidateMaxOptionalDataFieldValueLengthParam),
+func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
+	return paramstypes.ParamSetPairs{
+		paramstypes.NewParamSetPair(MaxPostMessageLengthKey, &params.MaxPostMessageLength, ValidateMaxPostMessageLengthParam),
+		paramstypes.NewParamSetPair(MaxOptionalDataFieldsNumberKey, &params.MaxOptionalDataFieldsNumber, ValidateMaxOptionalDataFieldNumberParam),
+		paramstypes.NewParamSetPair(MaxOptionalDataFieldValueLengthKey, &params.MaxOptionalDataFieldValueLength, ValidateMaxOptionalDataFieldValueLengthParam),
 	}
 }
 

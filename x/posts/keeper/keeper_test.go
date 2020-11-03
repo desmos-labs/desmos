@@ -3,8 +3,6 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -116,7 +114,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Created:      suite.testData.post.Created,
 				LastEdited:   suite.testData.post.LastEdited,
 				Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []common.OptionalDataEntry{{"key", "value"}},
+				OptionalData: []types.OptionalDataEntry{{"key", "value"}},
 				Creator:      suite.testData.postOwner,
 			},
 			expParentCommentsIDs: []types.PostID{},

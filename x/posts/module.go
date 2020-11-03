@@ -5,13 +5,15 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/desmos-labs/desmos/x/posts/simulation"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
+	"github.com/desmos-labs/desmos/x/posts/simulation"
+	"github.com/desmos-labs/desmos/x/posts/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/desmos-labs/desmos/x/posts/client/cli"
 	"github.com/desmos-labs/desmos/x/posts/client/rest"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -37,15 +39,14 @@ func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
-// RegisterCodec registers the posts module's types for the given codec.
-func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
-	types.RegisterCodec(cdc)
+// RegisterLegacyAminoCodec registers the posts module's types for the given codec.
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	types.RegisterLegacyAminoCodec(cdc)
 }
 
-// DefaultGenesis returns default genesis state as raw bytes for the auth
-// module.
-func (AppModuleBasic) DefaultGenesis() json.RawMessage {
-	return types.ModuleCdc.MustMarshalJSON(types.DefaultGenesisState())
+// DefaultGenesis returns default genesis state as raw bytes for the posts module.
+func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
+	return cdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
 // ValidateGenesis performs genesis state validation for the posts module.

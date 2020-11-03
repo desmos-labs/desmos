@@ -50,7 +50,7 @@ func makeTestCodec() (cdc *codec.Codec) {
 	cdc = codec.New()
 	sdk.RegisterCodec(cdc)
 	codec.RegisterCrypto(cdc)
-	types.RegisterCodec(cdc)
+	types.RegisterLegacyAminoCodec(cdc)
 	return
 }
 

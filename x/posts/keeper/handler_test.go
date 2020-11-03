@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/x/posts/types/models/common"
 	"github.com/desmos-labs/desmos/x/relationships"
 
 	"github.com/desmos-labs/desmos/x/posts/types/models"
@@ -156,7 +155,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
 				suite.testData.post.Creator,
-				[]common.Attachment{common.NewAttachment("http://uri.com", "text/plain",
+				[]types.Attachment{types.NewAttachment("http://uri.com", "text/plain",
 					[]sdk.AccAddress{otherCreator})},
 				suite.testData.post.PollData,
 			),
@@ -223,18 +222,18 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 	suite.Require().NoError(err)
 	timeZone, _ := time.LoadLocation("UTC")
 
-	editedPollData := models.NewPollData(
+	editedPollData := types.NewPollData(
 		"poll?",
 		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
 		models.NewPollAnswers(
-			models.NewPollAnswer(models.AnswerID(1), "No"),
-			models.NewPollAnswer(models.AnswerID(2), "No"),
+			types.NewPollAnswer(models.AnswerID(1), "No"),
+			types.NewPollAnswer(models.AnswerID(2), "No"),
 		),
 		false,
 		true,
 	)
 
-	editedAttachments := models.NewAttachments(models.NewAttachment("https://edited.com", "text/plain", nil))
+	editedAttachments := models.NewAttachments(types.NewAttachment("https://edited.com", "text/plain", nil))
 
 	testData := []struct {
 		name       string
@@ -265,7 +264,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			name:       "Blocked creator from tags",
 			storedPost: &suite.testData.post,
 			msg: types.NewMsgEditPost(suite.testData.post.PostID, "blocked",
-				models.NewAttachments(models.NewAttachment("https://edited.com", "text/plain",
+				models.NewAttachments(types.NewAttachment("https://edited.com", "text/plain",
 					[]sdk.AccAddress{otherCreator})), nil, suite.testData.post.Creator),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf(fmt.Sprintf("The user with address %s has blocked you", otherCreator))),

@@ -1,13 +1,12 @@
 package types_test
 
 import (
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/reports/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	postserrors "github.com/desmos-labs/desmos/x/posts/types/errors"
 
 	"github.com/stretchr/testify/require"
 )
@@ -46,7 +45,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(postserrors.ErrInvalidPostID, "123"),
+			error: sdkerrors.Wrap(types2.ErrInvalidPostID, "123"),
 		},
 		{
 			name: "invalid reports returns error",
