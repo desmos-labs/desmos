@@ -83,7 +83,12 @@ func randomPollAnswerFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (sim.Account, []types.AnswerID, types.PostID, bool) {
 
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if posts == nil {
+		return sim.Account{}, nil, "", true
+	}
+
+	post, _ := RandomPost(r, posts)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {

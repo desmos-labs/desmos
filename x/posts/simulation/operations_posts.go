@@ -190,7 +190,11 @@ func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
 ) (sim.Account, types.PostID, string, types.Attachments, *types.PollData, bool) {
 
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if posts == nil {
+		return sim.Account{}, "", "", nil, nil, true
+	}
+	post, _ := RandomPost(r, posts)
 	acc := GetAccount(post.Creator, accs)
 
 	// Skip the operation without error as the account is not valid

@@ -181,7 +181,12 @@ func randomRemovePostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
 ) (*PostReactionData, bool) {
 
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if posts == nil {
+		return nil, true
+	}
+
+	post, _ := RandomPost(r, posts)
 
 	reactions := k.GetPostReactions(ctx, post.PostID)
 
