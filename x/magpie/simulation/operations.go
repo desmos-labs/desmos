@@ -10,7 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/app/params"
@@ -23,10 +25,9 @@ const (
 	OpWeightMsgCreatePost = "op_weight_msg_create_session"
 )
 
-var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
-
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper,
+	fk fees.Keeper) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
@@ -38,7 +39,7 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreateSession(ak),
+			SimulateMsgCreateSession(ak, fk),
 		),
 	}
 }
@@ -46,7 +47,7 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 // SimulateMsgCreateSession tests and runs a single msg create session where the post creator
 // account already exists
 // nolint: funlen
-func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCreateSession(ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -65,7 +66,7 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 			data.Signature,
 		)
 
-		err := sendMsgCreateSession(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
+		err := sendMsgCreateSession(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -76,24 +77,26 @@ func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
 
 // sendMsgCreateSession sends a transaction with a MsgCreateSession from a provided random account.
 func sendMsgCreateSession(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Owner)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		helpers.DefaultGenTxGas,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

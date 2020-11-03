@@ -9,17 +9,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
-var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
-
 // SimulateMsgCreateRelationship tests and runs a single msg create relationships
 // nolint: funlen
-func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
@@ -29,7 +29,7 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 		}
 
 		msg := types.NewMsgCreateRelationship(sender.Address, relationship.Recipient, relationship.Subspace)
-		if err := sendMsgCreateRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
+		if err := sendMsgCreateRelationship(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -38,24 +38,26 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 }
 
 // sendMsgCreateRelationship sends a transaction with a Relationship from a provided random account
-func sendMsgCreateRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgCreateRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -109,7 +111,7 @@ func randomRelationshipFields(
 
 // SimulateMsgDeleteRelationship tests and runs a single msg delete relationships
 // nolint: funlen
-func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
@@ -119,7 +121,7 @@ func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 		}
 
 		msg := types.NewMsgDeleteRelationship(sender.Address, relationship.Recipient, relationship.Subspace)
-		if err := sendMsgDeleteRelationship(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
+		if err := sendMsgDeleteRelationship(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -128,24 +130,26 @@ func SimulateMsgDeleteRelationship(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 }
 
 // sendMsgDeleteRelationship sends a transaction with a MsgDenyBidirectionalRelationship from a provided random account
-func sendMsgDeleteRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgDeleteRelationship(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

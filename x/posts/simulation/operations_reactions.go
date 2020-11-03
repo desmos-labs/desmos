@@ -9,7 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -20,11 +22,9 @@ import (
 // --- PostReaction
 // ---------------
 
-var minRequiredFee = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))
-
 // SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
 // nolint: funlen
-func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -36,7 +36,7 @@ func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Oper
 		}
 
 		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address)
-		err := sendMsgAddPostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgAddPostReaction(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -47,24 +47,26 @@ func SimulateMsgAddPostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Oper
 
 // sendMsgAddPostReaction sends a transaction with a MsgAddReaction from a provided random account.
 func sendMsgAddPostReaction(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.User)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -116,7 +118,7 @@ func randomAddPostReactionFields(
 
 // SimulateMsgRemovePostReaction tests and runs a single msg remove reaction where the reacting user account already exists
 // nolint: funlen
-func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -128,7 +130,7 @@ func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 		}
 
 		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address, data.Shortcode)
-		err := sendMsgRemovePostReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgRemovePostReaction(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -139,24 +141,26 @@ func SimulateMsgRemovePostReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgRemovePostReaction sends a transaction with a MsgRemoveReaction from a provided random account.
 func sendMsgRemovePostReaction(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.User)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -206,7 +210,7 @@ func randomRemovePostReactionFields(
 
 // SimulateMsgRegisterReaction tests and runs a single msg register reaction where the registering user account already exist
 // nolint: funlen
-func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -219,7 +223,7 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 		msg := types.NewMsgRegisterReaction(reactionData.Creator.Address,
 			reactionData.ShortCode, reactionData.Value, reactionData.Subspace)
 
-		err := sendMsgRegisterReaction(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
+		err := sendMsgRegisterReaction(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -229,24 +233,26 @@ func SimulateMsgRegisterReaction(k keeper.Keeper, ak auth.AccountKeeper) sim.Ope
 }
 
 // sendMsgRegisterReaction sends a transaction with a MsgRegisterReaction from a provided random account.
-func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgRegisterReaction(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Creator)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

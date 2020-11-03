@@ -398,11 +398,11 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 
 		// Custom modules
 		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		posts.NewAppModule(app.PostsKeeper, app.AccountKeeper),
+		posts.NewAppModuleSimulation(app.AccountKeeper, app.PostsKeeper, app.FeesKeeper),
 		magpie.NewAppModule(app.MagpieKeeper, app.AccountKeeper),
-		profiles.NewAppModule(app.ProfileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.ReportsKeeper, app.AccountKeeper, app.PostsKeeper),
-		relationships.NewAppModule(app.RelationshipsKeeper, app.AccountKeeper),
+		profiles.NewAppModuleSimulation(app.AccountKeeper, app.ProfileKeeper, app.FeesKeeper),
+		reports.NewAppModuleSimulation(app.AccountKeeper, app.PostsKeeper, app.ReportsKeeper, app.FeesKeeper),
+		relationships.NewAppModuleSimulation(app.AccountKeeper, app.RelationshipsKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

@@ -7,7 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/tendermint/tendermint/crypto"
@@ -15,7 +17,7 @@ import (
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
 // nolint: funlen
-func SimulateMsgRequestDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgRequestDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -26,7 +28,7 @@ func SimulateMsgRequestDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.
 
 		msg := types.NewMsgRequestDTagTransfer(request.Receiver, request.Sender)
 
-		err = sendMsgRequestDTagTransfer(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgRequestDTagTransfer(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -37,24 +39,26 @@ func SimulateMsgRequestDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.
 
 // sendMsgRequestDTagTransfer sends a transaction with a MsgRequestDTagTransfer from a provided random account.
 func sendMsgRequestDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgRequestDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -107,7 +111,7 @@ func randomDtagRequestTransferFields(
 }
 
 // SimulateMsgAcceptDTagTransfer tests and runs a single MsgAcceptDTagTransfer
-func SimulateMsgAcceptDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgAcceptDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -118,7 +122,7 @@ func SimulateMsgAcceptDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 		msg := types.NewMsgAcceptDTagTransfer(dtag, request.Receiver, request.Sender)
 
-		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -129,24 +133,26 @@ func SimulateMsgAcceptDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgAcceptDTagTransfer sends a transaction with a MsgAcceptDTagTransfer from a provided random account.
 func sendMsgMsgAcceptDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgAcceptDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Receiver)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -211,7 +217,7 @@ func randomDtagAcceptRequestTransferFields(r *rand.Rand, ctx sdk.Context, accs [
 
 // SimulateMsgRefuseDTagTransfer tests and runs a single MsgRefuseDTagTransfer
 // nolint: funlen
-func SimulateMsgRefuseDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgRefuseDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -222,7 +228,7 @@ func SimulateMsgRefuseDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender, acc.Address)
 
-		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -233,24 +239,26 @@ func SimulateMsgRefuseDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgRefuseDTagTransfer sends a transaction with a MsgRefuseDTagTransfer from a provided random account.
 func sendMsgMsgRefuseDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgRefuseDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -293,7 +301,7 @@ func randomRefuseDTagTransferFields(r *rand.Rand, ctx sdk.Context, accs []sim.Ac
 
 // SimulateMsgCancelDTagTransfer tests and runs a single MsgCancelDTagTransfer
 // nolint: funlen
-func SimulateMsgCancelDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCancelDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -304,7 +312,7 @@ func SimulateMsgCancelDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 		msg := types.NewMsgCancelDTagTransferRequest(acc.Address, owner)
 
-		err = sendMsgMsgCancelDTagTransfer(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgMsgCancelDTagTransfer(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -315,24 +323,26 @@ func SimulateMsgCancelDTagTransfer(k keeper.Keeper, ak auth.AccountKeeper) sim.O
 
 // sendMsgMsgCancelDTagTransfer sends a transaction with a MsgCancelDTagTransfer from a provided random account.
 func sendMsgMsgCancelDTagTransfer(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgCancelDTagTransferRequest, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Sender)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

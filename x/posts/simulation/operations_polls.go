@@ -9,7 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -18,7 +20,7 @@ import (
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists
 // nolint: funlen
-func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -30,7 +32,7 @@ func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operati
 		}
 
 		msg := types.NewMsgAnswerPoll(postID, answers, acc.Address)
-		err := sendMsgAnswerPoll(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err := sendMsgAnswerPoll(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -41,24 +43,26 @@ func SimulateMsgAnswerToPoll(k keeper.Keeper, ak auth.AccountKeeper) sim.Operati
 
 // sendMsgAnswerPoll sends a transaction with a MsgAnswerPoll from a provided random account.
 func sendMsgAnswerPoll(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgAnswerPoll, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Answerer)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

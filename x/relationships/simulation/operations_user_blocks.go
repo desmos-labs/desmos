@@ -7,7 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/desmos-labs/desmos/x/relationships/types/msgs"
@@ -18,7 +20,7 @@ import (
 
 // SimulateMsgBlockUser tests and runs a single msg block user
 // nolint: funlen
-func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
@@ -28,7 +30,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 		}
 
 		msg := types.NewMsgBlockUser(blocker.Address, blocked, "reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
-		if err := sendMsgBlockUser(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
+		if err := sendMsgBlockUser(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -37,23 +39,25 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation 
 }
 
 // sendMsgBlockUser sends a transaction with a MsgBlockUser from a provided random account
-func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgBlockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg msgs.MsgBlockUser, ctx sdk.Context, chainID string, privKeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -97,7 +101,7 @@ func randomUserBlocksFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, k
 
 // SimulateMsgUnblockUser tests and runs a single msg unblock user
 // nolint: funlen
-func SimulateMsgUnblockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgUnblockUser(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
 
@@ -107,7 +111,7 @@ func SimulateMsgUnblockUser(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgUnblockUser(blocker.Address, userBlock.Blocked, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
-		if err := sendMsgUnblockUser(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
+		if err := sendMsgUnblockUser(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -135,23 +139,25 @@ func randomUnblockUserFields(r *rand.Rand, ctx sdk.Context, accs []sim.Account, 
 }
 
 // sendMsgUnblockUser sends a transaction with a MsgUnblockUser from a provided random account
-func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+func sendMsgUnblockUser(r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg msgs.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey) error {
 	account := ak.GetAccount(ctx, msg.Blocker)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	if fees.IsAllLT(minRequiredFee) {
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
 		return nil
 	}
 
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

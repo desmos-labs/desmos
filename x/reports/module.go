@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	posts "github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/reports/client/cli"
 	"github.com/desmos-labs/desmos/x/reports/client/rest"
@@ -25,7 +26,7 @@ import (
 var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
-	_ module.AppModuleSimulation = AppModule{}
+	_ module.AppModuleSimulation = AppModuleSimulation{}
 )
 
 // AppModuleBasic defines the basic application module used by the posts module.
@@ -151,29 +152,45 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 //____________________________________________________________________________
 
 // AppModuleSimulation defines the module simulation functions used by the posts module.
-type AppModuleSimulation struct{}
+type AppModuleSimulation struct {
+	AppModuleBasic
+	ak     auth.AccountKeeper
+	pk     posts.Keeper
+	keeper keeper.Keeper
+	fk     fees.Keeper
+}
+
+func NewAppModuleSimulation(ak auth.AccountKeeper, pk posts.Keeper, keeper keeper.Keeper, fk fees.Keeper) AppModuleSimulation {
+	return AppModuleSimulation{
+		AppModuleBasic: AppModuleBasic{},
+		ak:             ak,
+		pk:             pk,
+		keeper:         keeper,
+		fk:             fk,
+	}
+}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
-func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+func (AppModuleSimulation) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
+func (AppModuleSimulation) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
 	return nil
 }
 
 // RandomizedParams creates randomized posts param changes for the simulator.
-func (AppModule) RandomizedParams(_ *rand.Rand) []sim.ParamChange {
+func (AppModuleSimulation) RandomizedParams(_ *rand.Rand) []sim.ParamChange {
 	return nil
 }
 
 // RegisterStoreDecoder performs a no-op.
-func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+func (AppModuleSimulation) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.DecodeStore
 }
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
-func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.pk)
+func (am AppModuleSimulation) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.pk, am.fk)
 }
