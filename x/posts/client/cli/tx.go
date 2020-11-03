@@ -1,13 +1,13 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -15,17 +15,12 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// GetTxCmd set the tx commands
-func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
+// NewTxCmd returns a new command allowing to perform posts transactions
+func NewTxCmd() *cobra.Command {
 	postsTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Posts transaction subcommands",
@@ -34,14 +29,14 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	postsTxCmd.AddCommand(flags.PostCommands(
-		GetCmdCreatePost(cdc),
-		GetCmdEditPost(cdc),
-		GetCmdAddPostReaction(cdc),
-		GetCmdRemovePostReaction(cdc),
-		GetCmdAnswerPoll(cdc),
-		GetCmdRegisterReaction(cdc),
-	)...)
+	postsTxCmd.AddCommand(
+		GetCmdCreatePost(),
+		GetCmdEditPost(),
+		GetCmdAddPostReaction(),
+		GetCmdRemovePostReaction(),
+		GetCmdAnswerPoll(),
+		GetCmdRegisterReaction(),
+	)
 
 	return postsTxCmd
 }
@@ -57,19 +52,15 @@ func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 	attachments := types.Attachments{}
 	for _, mediaString := range mediasStrings {
 		argz := strings.Split(mediaString, ",")
-		var tags []sdk.AccAddress
-		// if some tags are specified
+		var tags []string
+
+		// If some tags are specified
 		if len(argz) < 2 {
 			return nil, fmt.Errorf("if attachments are specified, the arguments has to be at least 2 and in this order: \"URI,Mime-Type\", please use the --help flag to know more")
 		} else if len(argz) > 2 {
-			for _, addr := range argz[2:] {
-				tag, err := sdk.AccAddressFromBech32(addr)
-				if err != nil {
-					return nil, err
-				}
-				tags = append(tags, tag)
-			}
+			tags = append(tags, argz[2:]...)
 		}
+
 		attachment := types.NewAttachment(argz[0], argz[1], tags)
 		attachments = attachments.AppendIfMissing(attachment)
 	}
@@ -130,7 +121,7 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 			}
 
 			pollAnswer := types.PollAnswer{
-				ID:   types.AnswerID(index),
+				ID:   fmt.Sprint(index),
 				Text: answer,
 			}
 
@@ -149,8 +140,8 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 	return pollData, nil
 }
 
-// GetCmdCreatePost is the CLI command for creating a post
-func GetCmdCreatePost(cdc *codec.Codec) *cobra.Command {
+// GetCmdCreatePost returns the CLI command to create a post
+func GetCmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace] [[message]]",
 		Short: "Create a new post",
@@ -205,23 +196,28 @@ E.g.
 	--poll-answer "Beagle" \
 	--poll-answer "Pug" \
 	--poll-answer "German Sheperd"
-`, version.ClientName, version.ClientName, version.ClientName, version.ClientName, version.ClientName, version.ClientName),
+`, version.AppName, version.AppName, version.AppName, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			allowsComments := viper.GetBool(flagAllowsComments)
-			parentID := types.PostID(viper.GetString(flagParentID))
+			// Check parent id
+			parentID := viper.GetString(flagParentID)
+			if !types.IsValidPostID(parentID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, parentID)
+			}
 
-			// check for attachments
+			// Check for attachments
 			attachments, err := getAttachments(cmd)
 			if err != nil {
 				return err
 			}
 
-			// check for poll
+			// Check for poll
 			pollData, err := getPollData(cmd)
 			if err != nil {
 				return err
@@ -235,15 +231,15 @@ E.g.
 			msg := types.NewMsgCreatePost(
 				text,
 				parentID,
-				allowsComments,
+				viper.GetBool(flagAllowsComments),
 				args[0],
 				nil,
-				cliCtx.GetFromAddress(),
+				clientCtx.FromAddress.String(),
 				attachments,
 				pollData,
 			)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
@@ -256,8 +252,8 @@ E.g.
 	return cmd
 }
 
-// GetCmdEditPost is the CLI command for editing a post
-func GetCmdEditPost(cdc *codec.Codec) *cobra.Command {
+// GetCmdEditPost returns the CLI command to edit a post
+func GetCmdEditPost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit [post-id] [[message]]",
 		Short: "Edit a post you have previously created",
@@ -291,16 +287,18 @@ E.g.
 	--poll-answer "Beagle" \
 	--poll-answer "Pug" \
 	--poll-answer "German Sheperd"
-`, version.ClientName, version.ClientName, version.ClientName),
+`, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			postID := args[0]
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, postID)
 			}
 
 			// check for attachments
@@ -320,8 +318,14 @@ E.g.
 				text = args[1]
 			}
 
-			msg := types.NewMsgEditPost(postID, text, attachments, pollData, cliCtx.GetFromAddress())
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			msg := types.NewMsgEditPost(
+				postID,
+				text,
+				attachments,
+				pollData,
+				clientCtx.FromAddress.String(),
+			)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
@@ -332,8 +336,8 @@ E.g.
 	return cmd
 }
 
-// GetCmdAddPostReaction is the CLI command for adding a like to a post
-func GetCmdAddPostReaction(cdc *codec.Codec) *cobra.Command {
+// GetCmdAddPostReaction returns the CLI command to add a reaction to a post
+func GetCmdAddPostReaction() *cobra.Command {
 	return &cobra.Command{
 		Use:   "add-reaction [post-id] [value]",
 		Short: "Adds a reaction to a post",
@@ -343,26 +347,28 @@ The value has to be a reaction short code.
 
 E.g. 
 %s tx posts add-reaction a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc :thumbsup: --from jack
-`, version.ClientName),
+`, version.AppName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			msg := types.NewMsgAddPostReaction(postID, args[1], cliCtx.GetFromAddress())
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			postID := args[0]
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
+			}
+
+			msg := types.NewMsgAddPostReaction(postID, args[1], clientCtx.GetFromAddress().String())
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 }
 
-// GetCmdRemovePostReaction is the CLI command for removing a like from a post
-func GetCmdRemovePostReaction(cdc *codec.Codec) *cobra.Command {
+// GetCmdRemovePostReaction returns the CLI command to remove a reaction from a post
+func GetCmdRemovePostReaction() *cobra.Command {
 	return &cobra.Command{
 		Use:   "remove-reaction [post-id] [value]",
 		Short: "Removes an existing reaction from a post",
@@ -372,58 +378,57 @@ The value has to be a reaction short code.
 
 E.g. 
 %s tx posts remove-reaction a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc :thumbsup: --from jack
-`, version.ClientName),
+`, version.AppName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			msg := types.NewMsgRemovePostReaction(postID, cliCtx.GetFromAddress(), args[1])
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			postID := args[0]
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
+			}
+
+			msg := types.NewMsgRemovePostReaction(postID, clientCtx.FromAddress.String(), args[1])
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 }
 
-// GetCmdAnswerPoll is the CLI command for answering a post's poll
-func GetCmdAnswerPoll(cdc *codec.Codec) *cobra.Command {
+// GetCmdAnswerPoll returns the CLI command to answer a poll
+func GetCmdAnswerPoll() *cobra.Command {
 	return &cobra.Command{
 		Use:   "answer-poll [post-id] [answer...]",
 		Short: "Answer a post's poll'",
 		Args:  cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			postID := types.PostID(args[0])
-			if !postID.Valid() {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			var answers []types.AnswerID
+			postID := args[0]
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
+			}
+
+			var answers []string
 			for i := 1; i < len(args); i++ {
-				answer, err := strconv.ParseUint(args[i], 10, 32)
-				if err != nil {
-					return err
-				}
-
-				answers = append(answers, types.AnswerID(answer))
+				answers = append(answers, args[i])
 			}
 
-			msg := types.NewMsgAnswerPoll(postID, answers, cliCtx.FromAddress)
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			msg := types.NewMsgAnswerPoll(postID, answers, clientCtx.FromAddress.String())
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 }
 
-// GetCmdRegisterReaction is the CLI command for registering a reaction
-func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
+// GetCmdRegisterReaction returns the CLI command to register a new reaction
+func GetCmdRegisterReaction() *cobra.Command {
 	return &cobra.Command{
 		Use:   "register-reaction [short-code] [value] [subspace]",
 		Short: "Register a new reaction",
@@ -433,12 +438,14 @@ func GetCmdRegisterReaction(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("%s represents an emoji shortcode and thus cannot be used to register another reaction", args[1])
 			}
 
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			msg := types.NewMsgRegisterReaction(cliCtx.FromAddress, args[0], args[1], args[2])
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			msg := types.NewMsgRegisterReaction(clientCtx.FromAddress.String(), args[0], args[1], args[2])
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 }

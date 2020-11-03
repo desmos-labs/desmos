@@ -1,31 +1,31 @@
-package posts
+package keeper
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/keeper"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
-	return types.GenesisState{
-		Posts:               k.GetPosts(ctx),
-		UsersPollAnswers:    k.GetPollAnswersMap(ctx),
-		PostReactions:       k.GetReactions(ctx),
-		RegisteredReactions: k.GetRegisteredReactions(ctx),
-		Params:              k.GetParams(ctx),
-	}
+func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
+	return types.NewGenesisState(
+		k.GetPosts(ctx),
+		k.GetPollAnswersMap(ctx),
+		k.GetReactions(ctx),
+		k.GetRegisteredReactions(ctx),
+		k.GetParams(ctx),
+	)
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
-func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []abci.ValidatorUpdate {
+func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.ValidatorUpdate {
 	k.SetParams(ctx, data.Params)
 
 	for _, post := range data.Posts {
-		if err := keeper.ValidatePost(ctx, k, post); err != nil {
+		if err := k.ValidatePost(ctx, k, post); err != nil {
 			panic(err)
 		}
 		k.SavePost(ctx, post)
@@ -43,7 +43,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 
 	for _, reaction := range data.RegisteredReactions {
 		if _, found := k.GetRegisteredReaction(ctx, reaction.ShortCode, reaction.Subspace); !found {
-			k.RegisterReaction(ctx, reaction)
+			k.SaveRegisteredReaction(ctx, reaction)
 		}
 	}
 

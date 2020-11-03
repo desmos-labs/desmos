@@ -128,7 +128,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				suite.keeper.SavePost(suite.ctx, post)
 			}
 			if test.reaction != nil && test.postReaction != nil {
-				suite.keeper.RegisterReaction(suite.ctx, *test.reaction)
+				suite.keeper.SaveRegisteredReaction(suite.ctx, *test.reaction)
 				// nolint: errcheck
 				suite.keeper.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
 			}

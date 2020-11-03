@@ -17,8 +17,8 @@ import (
 func NewMsgCreatePost(
 	message string, parentID string, allowsComments bool, subspace string,
 	optionalData OptionalData, owner string, attachments Attachments, pollData *PollData,
-) MsgCreatePost {
-	return MsgCreatePost{
+) *MsgCreatePost {
+	return &MsgCreatePost{
 		Message:        message,
 		ParentID:       parentID,
 		AllowsComments: allowsComments,
@@ -41,6 +41,10 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, msg.Creator)
+	}
+
+	if msg.ParentID != "" && !IsValidPostID(msg.ParentID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentID)
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
@@ -91,8 +95,8 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 // NewMsgEditPost is the constructor function for MsgEditPost
 func NewMsgEditPost(
 	id string, message string, attachments Attachments, pollData *PollData, owner string,
-) MsgEditPost {
-	return MsgEditPost{
+) *MsgEditPost {
+	return &MsgEditPost{
 		PostID:      id,
 		Message:     message,
 		Attachments: attachments,
@@ -154,8 +158,8 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
-func NewMsgAddPostReaction(postID string, value string, user string) MsgAddPostReaction {
-	return MsgAddPostReaction{
+func NewMsgAddPostReaction(postID string, value string, user string) *MsgAddPostReaction {
+	return &MsgAddPostReaction{
 		PostID:   postID,
 		User:     user,
 		Reaction: value,
@@ -201,8 +205,8 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 // MsgUnlikePostPost is the constructor of MsgRemovePostReaction
-func NewMsgRemovePostReaction(postID string, user string, value string) MsgRemovePostReaction {
-	return MsgRemovePostReaction{
+func NewMsgRemovePostReaction(postID string, user string, value string) *MsgRemovePostReaction {
+	return &MsgRemovePostReaction{
 		PostID:   postID,
 		User:     user,
 		Reaction: value,
@@ -248,8 +252,8 @@ func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
-func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) MsgAnswerPoll {
-	return MsgAnswerPoll{
+func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) *MsgAnswerPoll {
+	return &MsgAnswerPoll{
 		PostID:      id,
 		UserAnswers: providedAnswers,
 		Answerer:    answerer,
@@ -294,8 +298,8 @@ func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 // NewMsgRegisterReaction is a constructor function for MsgRegisterReaction
-func NewMsgRegisterReaction(creator string, shortCode, value, subspace string) MsgRegisterReaction {
-	return MsgRegisterReaction{
+func NewMsgRegisterReaction(creator string, shortCode, value, subspace string) *MsgRegisterReaction {
+	return &MsgRegisterReaction{
 		ShortCode: shortCode,
 		Value:     value,
 		Subspace:  subspace,

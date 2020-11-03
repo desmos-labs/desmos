@@ -10,7 +10,7 @@ import (
 var _ types.QueryServer = Keeper{}
 
 // Relationships implements the Query/Session gRPC method
-func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelationshipsRequest) (*types.QueryRelationshipsResult, error) {
+func (k Keeper) Relationships(ctx context.Context, _ *types.QueryRelationshipsRequest) (*types.QueryRelationshipsResult, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	relationships, err := k.GetAllRelationships(sdkCtx)
 	if err != nil {

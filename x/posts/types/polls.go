@@ -25,6 +25,31 @@ func (answer PollAnswer) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
+// PollAnswers represent a slice of PollAnswer objects
+type PollAnswers []PollAnswer
+
+// AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
+// It returns a new slice of PollAnswers containing such PollAnswer.
+func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {
+	for _, answer := range answers {
+		if answer.Equal(newAnswer) {
+			return answers
+		}
+	}
+	return append(answers, newAnswer)
+}
+
+// ExtractAnswersIDs appends every answer ID to a slice of IDs.
+//It returns a slice of answers IDs.
+func (answers PollAnswers) ExtractAnswersIDs() (answersIDs []string) {
+	for _, answer := range answers {
+		answersIDs = append(answersIDs, answer.ID)
+	}
+	return answersIDs
+}
+
+// ___________________________________________________________________________________________________________________
+
 // NewPollData returns a new PollData object pointer containing the given data
 func NewPollData(
 	question string, endDate time.Time, providedAnswers []PollAnswer, allowMultipleAnswers, allowsAnswerEdits bool,

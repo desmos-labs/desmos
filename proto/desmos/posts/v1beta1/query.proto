@@ -125,12 +125,7 @@ message QueryPollAnswersResponse{
 // ___________________________________________________________________________________________________________________
 
 // QueryRegisteredReactionsRequest is the request type for the Query/RegisteredReactions RPC method.
-message QueryRegisteredReactionsRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string post_id = 1;
-}
+message QueryRegisteredReactionsRequest {}
 
 // QueryRegisteredReactionsResponse is the response type for the Query/PollAnswers RPC method
 message QueryRegisteredReactionsResponse{

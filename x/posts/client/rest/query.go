@@ -3,11 +3,14 @@ package rest
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/desmos-labs/desmos/x/posts/client/cli"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
@@ -18,26 +21,25 @@ import (
 // REST Variable names
 // nolint
 const (
-	RestSortBy         = "sort_by"
-	RestSortOrder      = "sort_order"
-	RestParentID       = "parent_id"
-	RestCreationTime   = "creation_time"
-	RestAllowsComments = "allows_comments"
-	RestSubspace       = "subspace"
-	RestCreator        = "creator"
-	RestHashtags       = "hashtags"
+	RestSortBy       = "sort_by"
+	RestSortOrder    = "sort_order"
+	RestParentID     = "parent_id"
+	RestCreationTime = "creation_time"
+	RestSubspace     = "subspace"
+	RestCreator      = "creator"
+	RestHashtags     = "hashtags"
 )
 
-func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
+func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/posts/parameters", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/registeredReactions", queryRegisteredReactions(cliCtx)).Methods("GET")
+	r.HandleFunc("/registered-reactions", queryRegisteredReactions(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single post based on its ID
-func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func queryPostHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		postID := vars["postID"]
@@ -59,8 +61,8 @@ func queryPostHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// HTTP request handler to query list of posts
-func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query a list of posts
+func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, page, limit, err := rest.ParseHTTPArgsWithLimit(r, 0)
 		if err != nil {
@@ -69,7 +71,7 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		// Default params
-		params := types.DefaultQueryPostsParams(page, limit)
+		params := cli.DefaultQueryPostsRequest(uint64(page), uint64(limit))
 
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
@@ -85,12 +87,12 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 		}
 
 		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
-			parentID := types.PostID(v)
-			if !parentID.Valid() {
+			parentID := v
+			if !types.IsValidPostID(parentID) {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 				return
 			}
-			params.ParentID = &parentID
+			params.ParentID = parentID
 		}
 
 		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
@@ -100,15 +102,6 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				return
 			}
 			params.CreationTime = &parsedTime
-		}
-
-		if v := r.URL.Query().Get(RestAllowsComments); len(v) != 0 {
-			parsedAllowsComments, err := strconv.ParseBool(v)
-			if err != nil {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			}
-			params.AllowsComments = &parsedAllowsComments
 		}
 
 		if v := r.URL.Query().Get(RestSubspace); len(v) != 0 {
@@ -121,14 +114,14 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			params.Creator = creatorAddr
+			params.Creator = creatorAddr.String()
 		}
 
 		if v := r.URL.Query().Get(RestHashtags); len(v) != 0 {
 			params.Hashtags = strings.Split(v, ",")
 		}
 
-		bz, err := cliCtx.Codec.MarshalJSON(params)
+		bz, err := codec.MarshalJSONIndent(cliCtx.LegacyAmino, params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -146,7 +139,8 @@ func queryPostsWithParameterHandlerFn(cliCtx context.CLIContext) http.HandlerFun
 	}
 }
 
-func queryPostPollAnswersHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query the answers of a poll
+func queryPostPollAnswersHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		postID := vars["postID"]
@@ -168,7 +162,8 @@ func queryPostPollAnswersHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func queryRegisteredReactions(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query the registered reactions
+func queryRegisteredReactions(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRegisteredReactions)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -188,7 +183,7 @@ func queryRegisteredReactions(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 // HTTP request handler to query list of posts' module params
-func queryPostsParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func queryPostsParamsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 		res, height, err := cliCtx.QueryWithData(route, nil)

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/desmos-labs/desmos/x/posts"
 	"strings"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
-	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -169,10 +169,10 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			for _, p := range test.storedPosts {
-				store.Set(types.PostStoreKey(p.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(p))
+				store.Set(types.PostStoreKey(p.PostID), suite.keeper.cdc.MustMarshalBinaryBare(p))
 			}
 
 			if test.msg.Message == "blocked" {
@@ -180,19 +180,19 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					relationships.NewUserBlock(otherCreator, suite.testData.post.Creator, "test", ""))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
 			if res != nil {
 				// Check the post
 				var stored types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &stored)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &stored)
 
 				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the data
-				suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
@@ -296,7 +296,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			suite.SetupTest()
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			if test.msg.Message == "blocked" {
 				_ = suite.relationshipsKeeper.SaveUserBlock(suite.ctx,
@@ -311,10 +311,10 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 					suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
 					test.expPost.LastEdited = suite.ctx.BlockTime()
 				}
-				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
+				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.cdc.MustMarshalBinaryBare(&test.storedPost))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
@@ -326,7 +326,7 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 				))
 
 				var stored types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
 				suite.True(test.expPost.Equals(stored))
 			}
 
@@ -393,16 +393,16 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.registeredReaction != nil {
-				suite.keeper.RegisterReaction(suite.ctx, *test.registeredReaction)
+				suite.keeper.SaveRegisteredReaction(suite.ctx, *test.registeredReaction)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
@@ -411,7 +411,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 
 				// Check the post
 				var storedPost types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
 				suite.True(test.existingPost.Equals(storedPost))
 
 				// Check the post reactions
@@ -429,7 +429,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 				}
 
 				var storedReactions types.PostReactions
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				suite.Contains(storedReactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
 
 				// Check the registered reactions
@@ -544,24 +544,24 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.existingPost))
+				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.keeper.cdc.MustMarshalBinaryBare(&test.existingPost))
 			}
 
 			if test.registeredReaction != nil {
 				store.Set(types.ReactionsStoreKey(test.registeredReaction.ShortCode, test.registeredReaction.Subspace),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&test.registeredReaction))
+					suite.keeper.cdc.MustMarshalBinaryBare(&test.registeredReaction))
 			}
 
 			if test.existingReaction != nil {
 				store.Set(
 					types.PostReactionsStoreKey(test.existingPost.PostID),
-					suite.keeper.Cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
+					suite.keeper.cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
 				)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
@@ -569,11 +569,11 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 				suite.Contains(res.Events, test.expEvent)
 
 				var storedPost types.Post
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(suite.testData.post.PostID)), &storedPost)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(suite.testData.post.PostID)), &storedPost)
 				suite.True(test.existingPost.Equals(storedPost))
 
 				var storedReactions types.PostReactions
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
 				suite.NotContains(storedReactions, test.existingReaction)
 			}
 
@@ -762,8 +762,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
-			store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedPost))
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
+			store.Set(types.PostStoreKey(test.storedPost.PostID), suite.keeper.cdc.MustMarshalBinaryBare(&test.storedPost))
 
 			if test.storedAnswers != nil {
 				suite.keeper.SavePollAnswers(suite.ctx, test.storedPost.PostID, *test.storedAnswers)
@@ -773,7 +773,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				suite.ctx = suite.ctx.WithBlockTime(suite.testData.postEndPollDate)
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Invalid response
@@ -786,7 +786,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 			if res != nil {
 				{
 					// Check the data
-					suite.Require().Equal(suite.keeper.Cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+					suite.Require().Equal(suite.keeper.cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
 
 					// Check the events
 					answerEvent := sdk.NewEvent(
@@ -863,13 +863,13 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			for _, react := range test.existingReactions {
 				react := react
-				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), suite.keeper.Cdc.MustMarshalBinaryBare(&react))
+				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), suite.keeper.cdc.MustMarshalBinaryBare(&react))
 			}
 
-			handler := keeper.NewHandler(suite.keeper)
+			handler := posts.NewHandler(suite.keeper)
 			res, err := handler(suite.ctx, test.msg)
 
 			// Valid response
@@ -883,7 +883,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 				))
 
 				var storedReaction types.Reaction
-				suite.keeper.Cdc.MustUnmarshalBinaryBare(
+				suite.keeper.cdc.MustUnmarshalBinaryBare(
 					store.Get(types.ReactionsStoreKey(test.msg.ShortCode, test.msg.Subspace)),
 					&storedReaction,
 				)

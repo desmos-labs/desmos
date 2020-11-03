@@ -178,7 +178,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			for _, p := range test.existingPosts {
 				store.Set(types.PostStoreKey(p.PostID), suite.cdc.MustMarshalBinaryBare(p))
 			}
@@ -188,12 +188,12 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 
 			// Check the stored post
 			var expected types.Post
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			suite.True(expected.Equals(test.newPost))
 
 			// Check the parent comments
 			var parentCommentsIDs []types.PostID
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &parentCommentsIDs)
 			suite.True(test.expParentCommentsIDs.Equals(parentCommentsIDs))
 		})
 	}
@@ -262,10 +262,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			if test.postExists {
-				store.Set(types.PostStoreKey(test.expected.PostID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set(types.PostStoreKey(test.expected.PostID), suite.keeper.cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
 			expected, found := suite.keeper.GetPost(suite.ctx, test.ID)

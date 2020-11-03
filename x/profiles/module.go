@@ -33,17 +33,17 @@ var (
 	_ module.AppModuleSimulation = AppModule{}
 )
 
-// AppModuleBasic defines the basic application module used by the profile module.
+// AppModuleBasic defines the basic application module used by the profiles module.
 type AppModuleBasic struct {
 	cdc codec.Marshaler
 }
 
-// Name returns the profile module's name.
+// Name returns the profiles module's name.
 func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
-// RegisterLegacyAminoCodec registers the profile module's types for the given codec.
+// RegisterLegacyAminoCodec registers the profiles module's types for the given codec.
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	types.RegisterLegacyAminoCodec(cdc)
 }
@@ -82,14 +82,14 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
 
-// RegisterInterfaces registers interfaces and implementations of the relationships module.
+// RegisterInterfaces registers interfaces and implementations of the profiles module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 }
 
 //____________________________________________________________________________
 
-// AppModule implements an application module for the profile module.
+// AppModule implements an application module for the profiles module.
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
@@ -115,7 +115,7 @@ func NewAppModule(
 	}
 }
 
-// Name returns the profile module's name.
+// Name returns the profiles module's name.
 func (AppModule) Name() string {
 	return types.ModuleName
 }
@@ -125,22 +125,22 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Route returns the message routing key for the profile module.
+// Route returns the message routing key for the profiles module.
 func (am AppModule) Route() sdk.Route {
 	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
 }
 
-// NewHandler returns an sdk.Handler for the profile module.
+// NewHandler returns an sdk.Handler for the profiles module.
 func (am AppModule) NewHandler() sdk.Handler {
 	return NewHandler(am.keeper)
 }
 
-// QuerierRoute returns the profile module's querier route name.
+// QuerierRoute returns the profiles module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
 
-// NewQuerierHandler returns the profile module sdk.Querier.
+// NewQuerierHandler returns the profiles module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }
@@ -162,11 +162,11 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json
 	return cdc.MustMarshalJSON(gs)
 }
 
-// BeginBlock returns the begin blocker for the profile module.
+// BeginBlock returns the begin blocker for the profiles module.
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
 }
 
-// EndBlock returns the end blocker for the profile module. It returns no validator
+// EndBlock returns the end blocker for the profiles module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
@@ -174,7 +174,7 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 
 //____________________________________________________________________________
 
-// AppModuleSimulation defines the module simulation functions used by the profile module.
+// AppModuleSimulation defines the module simulation functions used by the profiles module.
 type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
@@ -197,7 +197,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
-// WeightedOperations returns the all the profile module operations with their respective weights.
+// WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }

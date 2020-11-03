@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 	"time"
@@ -64,11 +65,11 @@ func (ids PostIDs) String() string {
 // ___________________________________________________________________________________________________________________
 
 func NewPost(
-	parentID PostID, message string, allowsComments bool, subspace string,
+	parentID string, message string, allowsComments bool, subspace string,
 	optionalData OptionalData, created time.Time, creator string,
 ) Post {
 	post := Post{
-		PostID:         NewPostID(""),
+		PostID:         "",
 		ParentID:       parentID,
 		Message:        message,
 		Created:        created,
@@ -101,7 +102,7 @@ func (post Post) WithPollData(data PollData) Post {
 
 // Validate implements validator
 func (post Post) Validate() error {
-	if !post.PostID.Valid() {
+	if !IsValidPostID(post.PostID) {
 		return fmt.Errorf("invalid postID: %s", post.PostID)
 	}
 
@@ -242,6 +243,13 @@ func (attachments Attachment) Validate() error {
 		}
 	}
 
+	for _, tag := range attachments.Tags {
+		_, err := sdk.AccAddressFromBech32(tag)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -264,6 +272,17 @@ func (attachments Attachments) Equal(other Attachments) bool {
 	}
 
 	return true
+}
+
+// AppendIfMissing appends the given otherAttachment to the atts slice if it does not exist inside it yet.
+// It returns a new slice of Attachments containing such otherAttachment.
+func (atts Attachments) AppendIfMissing(otherAttachment Attachment) Attachments {
+	for _, att := range atts {
+		if att.Equal(otherAttachment) {
+			return atts
+		}
+	}
+	return append(atts, otherAttachment)
 }
 
 // ___________________________________________________________________________________________________________________

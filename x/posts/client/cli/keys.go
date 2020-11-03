@@ -30,7 +30,7 @@ const (
 	keyQuestion          = "question"
 )
 
-func DefaultQueryPostsParams(page, limit uint64) types.QueryPostsRequest {
+func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 	return types.QueryPostsRequest{
 		Pagination: &query.PageRequest{
 			Key:        nil,

@@ -95,9 +95,9 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if len(test.storedReaction) != 0 {
-				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReaction))
+				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReaction))
 			}
 
 			suite.keeper.SavePost(suite.ctx, test.storedPost)
@@ -106,7 +106,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 			suite.Require().Equal(test.error, err)
 
 			var stored types.PostReactions
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 			suite.Require().Equal(test.expectedStored, stored)
 		})
 	}
@@ -163,16 +163,16 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveReaction() {
 		test := test
 		suite.Run(test.name, func() {
 
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			if len(test.storedLikes) != 0 {
-				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedLikes))
+				store.Set(types.PostReactionsStoreKey(test.postID), suite.keeper.cdc.MustMarshalBinaryBare(&test.storedLikes))
 			}
 
-			err := suite.keeper.RemovePostReaction(suite.ctx, test.postID, types.NewPostReaction(test.shortcode, test.value, test.liker))
+			err := suite.keeper.DeletePostReaction(suite.ctx, test.postID, types.NewPostReaction(test.shortcode, test.value, test.liker))
 			suite.Require().Equal(test.error, err)
 
 			var stored types.PostReactions
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(test.postID)), &stored)
 
 			suite.Len(stored, len(test.expectedStored))
 			for index, like := range test.expectedStored {
@@ -219,7 +219,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 		suite.Run(test.name, func() {
 			for _, l := range test.likes {
 				suite.keeper.SavePost(suite.ctx, test.storedPost)
-				suite.keeper.RegisterReaction(suite.ctx, test.registeredReaction)
+				suite.keeper.SaveRegisteredReaction(suite.ctx, test.registeredReaction)
 				err := suite.keeper.SavePostReaction(suite.ctx, test.postID, l)
 				suite.Require().NoError(err)
 			}
@@ -268,9 +268,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetReactions() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			for postID, likes := range test.likes {
-				store.Set(types.PostReactionsStoreKey(types.PostID(postID)), suite.keeper.Cdc.MustMarshalBinaryBare(likes))
+				store.Set(types.PostReactionsStoreKey(types.PostID(postID)), suite.keeper.cdc.MustMarshalBinaryBare(likes))
 			}
 
 			likesData := suite.keeper.GetReactions(suite.ctx)
@@ -292,15 +292,15 @@ func (suite *KeeperTestSuite) TestKeeper_RegisterReaction() {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store := suite.ctx.KVStore(suite.keeper.storeKey)
 	key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
 
-	suite.keeper.RegisterReaction(suite.ctx, reaction)
+	suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
 
 	var actualReaction types.Reaction
 
 	bz := store.Get(key)
-	suite.keeper.Cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
+	suite.keeper.cdc.MustUnmarshalBinaryBare(bz, &actualReaction)
 
 	suite.Require().Equal(reaction, actualReaction)
 }
@@ -338,9 +338,9 @@ func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 			key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-			store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(&test.storedReaction))
+			store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(&test.storedReaction))
 
 			actualReaction, exist := suite.keeper.GetRegisteredReaction(suite.ctx, test.shortCode, reaction.Subspace)
 			if test.shortCode == reaction.ShortCode {
@@ -355,7 +355,7 @@ func (suite *KeeperTestSuite) TestKeeper_DoesReactionForShortcodeExist() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ListReactions() {
-	store := suite.ctx.KVStore(suite.keeper.StoreKey)
+	store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 	var testOwner, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	reaction := types.NewReaction(
@@ -374,7 +374,7 @@ func (suite *KeeperTestSuite) TestKeeper_ListReactions() {
 
 	for _, reaction := range reactions {
 		key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
-		store.Set(key, suite.keeper.Cdc.MustMarshalBinaryBare(reaction))
+		store.Set(key, suite.keeper.cdc.MustMarshalBinaryBare(reaction))
 	}
 
 	actualReactions := suite.keeper.GetRegisteredReactions(suite.ctx)

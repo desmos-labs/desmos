@@ -46,17 +46,17 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollPostAnswers() {
 
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.keeper.StoreKey)
+			store := suite.ctx.KVStore(suite.keeper.storeKey)
 
 			if test.previousUsersAD != nil {
-				store.Set(types.PollAnswersStoreKey(test.postID), suite.keeper.Cdc.MustMarshalBinaryBare(test.previousUsersAD))
+				store.Set(types.PollAnswersStoreKey(test.postID), suite.keeper.cdc.MustMarshalBinaryBare(test.previousUsersAD))
 			}
 
 			suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.userAnswersDetails)
 
 			var actualUsersAnswersDetails types.UserAnswers
 			answersBz := store.Get(types.PollAnswersStoreKey(test.postID))
-			suite.keeper.Cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
+			suite.keeper.cdc.MustUnmarshalBinaryBare(answersBz, &actualUsersAnswersDetails)
 			suite.Require().Equal(test.expUsersAD, actualUsersAnswersDetails)
 		})
 	}

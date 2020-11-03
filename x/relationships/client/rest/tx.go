@@ -13,10 +13,17 @@ import (
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc("/relationships", createRelationshipHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/relationships", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/blacklist", blockUserHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/blacklist", unblockUserHandler(cliCtx)).Methods("DELETE")
+	r.HandleFunc("/relationships",
+		createRelationshipHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/relationships",
+		deleteRelationshipHandler(cliCtx)).Methods("DELETE")
+
+	r.HandleFunc("/blacklist",
+		blockUserHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/blacklist",
+		unblockUserHandler(cliCtx)).Methods("DELETE")
 }
 
 func createRelationshipHandler(clientCtx client.Context) http.HandlerFunc {

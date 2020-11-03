@@ -90,7 +90,7 @@ func randomAddPostReactionFields(
 	data := RandomReactionData(r, accs)
 	reaction = types.NewReaction(data.Creator.Address, data.ShortCode, data.Value, post.Subspace)
 
-	k.RegisterReaction(ctx, reaction)
+	k.SaveRegisteredReaction(ctx, reaction)
 
 	reactionData := RandomPostReactionData(r, accs, post.PostID, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)

@@ -20,15 +20,13 @@ message Post {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  PostID post_id = 1 [
+  string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "id",
     (gogoproto.moretags) = "yaml\"id\""
   ];
-  PostID parent_id = 2 [
+  string parent_id = 2 [
     (gogoproto.customname) = "ParentID",
-    (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml\"parent_id\""
   ];

@@ -74,11 +74,11 @@ func IsEmoji(value string) bool {
 }
 
 // ComputeID computes a post ID based on the content of the given post.
-func ComputeID(post Post) PostID {
+func ComputeID(post Post) string {
 	jsonPost, err := json.Marshal(post)
 	if err != nil {
 		panic(err)
 	}
 	hash := sha256.Sum256(jsonPost)
-	return NewPostID(hex.EncodeToString(hash[:]))
+	return hex.EncodeToString(hash[:])
 }

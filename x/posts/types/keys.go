@@ -61,23 +61,23 @@ func IsValidReactionCode(value string) bool {
 }
 
 // PostStoreKey turns an id to a key used to store a post into the posts store
-func PostStoreKey(id PostID) []byte {
-	return append(PostStorePrefix, []byte(id.Id)...)
+func PostStoreKey(id string) []byte {
+	return append(PostStorePrefix, []byte(id)...)
 }
 
 // PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
-func PostIndexedIDStoreKey(id PostID) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id.Id)...)
+func PostIndexedIDStoreKey(id string) []byte {
+	return append(PostIndexedIDStorePrefix, []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
-func PostCommentsStoreKey(id PostID) []byte {
-	return append(PostCommentsStorePrefix, []byte(id.Id)...)
+func PostCommentsStoreKey(id string) []byte {
+	return append(PostCommentsStorePrefix, []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store
-func PostReactionsStoreKey(id PostID) []byte {
-	return append(PostReactionsStorePrefix, []byte(id.Id)...)
+func PostReactionsStoreKey(id string) []byte {
+	return append(PostReactionsStorePrefix, []byte(id)...)
 }
 
 // ReactionsStoreKey turns the combination of shortCode and subspace to a key used to store a reaction into the reaction's store
@@ -86,6 +86,6 @@ func ReactionsStoreKey(shortCode, subspace string) []byte {
 }
 
 // PollAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store
-func PollAnswersStoreKey(id PostID) []byte {
-	return append(PollAnswersStorePrefix, []byte(id.Id)...)
+func PollAnswersStoreKey(id string) []byte {
+	return append(PollAnswersStorePrefix, []byte(id)...)
 }

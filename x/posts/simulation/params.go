@@ -4,6 +4,7 @@ package simulation
 
 import (
 	"fmt"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -11,9 +12,9 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-func ParamChanges(r *rand.Rand) []simulation.ParamChange {
+func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	params := RandomParams(r)
-	return []simulation.ParamChange{
+	return []simtypes.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxPostMessageLengthKey),
 			func(r *rand.Rand) string {
 				return fmt.Sprintf(`{"max_post_message_length":"%s"`,

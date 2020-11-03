@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 	"sort"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -10,30 +11,32 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	// The reference to the ParamsStore to get and set posts specific params
-	paramSubspace paramstypes.Subspace
-	relKeeper     relationships.Keeper // Relationships keeper to keep track of blocked users
+	storeKey sdk.StoreKey
+	cdc      codec.BinaryMarshaler
 
-	StoreKey sdk.StoreKey       // Unexposed key to access store from sdk.Context
-	Cdc      *codec.LegacyAmino // The wire codec for binary encoding/decoding.
+	paramSubspace paramstypes.Subspace       // Reference to the ParamsStore to get and set posts specific params
+	rk            relationshipskeeper.Keeper // Relationships keeper to keep track of blocked users
+
 }
 
 // NewKeeper creates new instances of the posts Keeper
-func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey, paramSpace params.Subspace, relKeeper relationships.Keeper) Keeper {
+func NewKeeper(
+	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
+	paramSpace paramstypes.Subspace, rk relationshipskeeper.Keeper,
+) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
-		StoreKey:      storeKey,
-		Cdc:           cdc,
+		storeKey:      storeKey,
+		cdc:           cdc,
 		paramSubspace: paramSpace,
-		relKeeper:     relKeeper,
+		rk:            rk,
 	}
 }
 
@@ -42,57 +45,57 @@ func NewKeeper(cdc *codec.LegacyAmino, storeKey sdk.StoreKey, paramSpace params.
 // -------------
 
 // IsUserBlocked tells if the given blocker has blocked the given blocked user
-func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked sdk.AccAddress) bool {
-	return k.relKeeper.IsUserBlocked(ctx, blocker, blocked)
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
+	return k.rk.IsUserBlocked(ctx, blocker, blocked)
 }
 
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.
 // If another post has the same ID of the given post, the old post will be overridden
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	// Save the post
-	store.Set(types.PostStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&post))
+	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
 	// Check if the postID got an associated post, if not, increment the number of posts
 	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
 		numberOfPosts := sdk.ZeroInt()
 		if store.Has(types.PostTotalNumberPrefix) {
-			k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &numberOfPosts)
+			k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &numberOfPosts)
 		}
 
 		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
-		store.Set(types.PostTotalNumberPrefix, k.Cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostTotalNumberPrefix, k.cdc.MustMarshalBinaryBare(&numberOfPosts))
 	}
 
 	// Save the comments to the parent post, if it is valid
-	if post.ParentID.Valid() {
+	if types.IsValidPostID(post.ParentID) {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
 		var commentsIDs types.PostIDs
-		k.Cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
+		k.cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
 		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
-			store.Set(parentCommentsKey, k.Cdc.MustMarshalBinaryBare(&editedIDs))
+			store.Set(parentCommentsKey, k.cdc.MustMarshalBinaryBare(&editedIDs))
 		}
 	}
 }
 
 // GetPost returns the post having the given id inside the current context.
 // If no post having the given id can be found inside the current context, false will be returned.
-func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, found bool) {
-	store := ctx.KVStore(k.StoreKey)
+func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool) {
+	store := ctx.KVStore(k.storeKey)
 
 	key := types.PostStoreKey(id)
 	if !store.Has(key) {
 		return types.Post{}, false
 	}
 
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
 	return post, true
 }
 
@@ -100,10 +103,10 @@ func (k Keeper) GetPost(ctx sdk.Context, id types.PostID) (post types.Post, foun
 // having the given postID
 // nolint: interfacer
 func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.PostIDs {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	var postIDs types.PostIDs
-	k.Cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &postIDs)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &postIDs)
 	return postIDs
 }
 

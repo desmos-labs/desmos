@@ -12,12 +12,17 @@ import (
 )
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc("/relationships", queryRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/relationships/{%s}", ParamAddress), queryUserRelationships(cliCtx)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/blacklist/{%s}", ParamAddress), queryUserBlocks(cliCtx)).Methods("GET")
+	r.HandleFunc("/relationships",
+		queryRelationships(cliCtx)).Methods("GET")
+
+	r.HandleFunc(fmt.Sprintf("/relationships/{%s}", ParamAddress),
+		queryUserRelationships(cliCtx)).Methods("GET")
+
+	r.HandleFunc(fmt.Sprintf("/blacklist/{%s}", ParamAddress),
+		queryUserBlocks(cliCtx)).Methods("GET")
 }
 
-// HTTP request handler to query list of user's relationships
+// HTTP request handler to query the list of a user's relationships
 func queryUserRelationships(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -40,7 +45,7 @@ func queryUserRelationships(cliCtx client.Context) http.HandlerFunc {
 	}
 }
 
-// HTTP request handler to query list of all relationships
+// HTTP request handler to query the list of all relationships
 func queryRelationships(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRelationships)
@@ -60,6 +65,7 @@ func queryRelationships(cliCtx client.Context) http.HandlerFunc {
 	}
 }
 
+// HTTP request handler to query the blocks of a user
 func queryUserBlocks(cliCtx client.Context) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
