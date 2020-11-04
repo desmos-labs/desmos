@@ -4,7 +4,6 @@
 package clitest
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -27,10 +26,9 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -42,7 +40,7 @@ func TestDesmosCLIProfileCreate_noFlags(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -76,10 +74,9 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y",
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
 		"--profile-pic https://profilePic.jpg",
@@ -94,7 +91,7 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	require.Equal(t, *storedProfiles[0].Moniker, "Leonardo")
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, txFees, "--dry-run",
+	success, _, _ = f.TxProfileSave("mrBrown", fooAddr, "--dry-run",
 		"--moniker Leonardo",
 		"--bio biography",
 		"--profile-pic https://profilePic.jpg",
@@ -102,7 +99,7 @@ func TestDesmosCLIProfileCreate_withFlags(t *testing.T) {
 	require.True(t, success)
 
 	// Test --generate-only
-	success, stdout, stderr := f.TxProfileSave("mrBrown", fooAddr, txFees, "--generate-only=true",
+	success, stdout, stderr := f.TxProfileSave("mrBrown", fooAddr, "--generate-only=true",
 		"--moniker Leonardo",
 		"--bio biography",
 		"--profile-pic https://profilePic.jpg",
@@ -137,10 +134,9 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	dTag := "mrBrown"
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(dTag, fooAddr, txFees, "-y",
+	success, _, sterr := f.TxProfileSave(dTag, fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
 		"--profile-pic https://profilePic.jpg",
@@ -157,7 +153,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave("mrPink", fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileSave("mrPink", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -172,7 +168,7 @@ func TestDesmosCLIProfileEdit_noFlags(t *testing.T) {
 	require.Equal(t, "mrPink", editedProfiles[0].DTag)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave("mrPink", fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxProfileSave("mrPink", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -207,10 +203,9 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	dTag := "mrBrown"
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave(dTag, fooAddr, txFees, "-y",
+	success, _, sterr := f.TxProfileSave(dTag, fooAddr, "-y",
 		"--moniker Leonardo",
 		"--bio biography",
 		"--profile-pic https://profilePic.jpg",
@@ -226,7 +221,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.Equal(t, *profile.Moniker, "Leonardo")
 
 	// Edit the profile
-	success, _, sterr = f.TxProfileSave(dTag, fooAddr, txFees, "-y",
+	success, _, sterr = f.TxProfileSave(dTag, fooAddr, "-y",
 		"--moniker Leo",
 		"--bio HollywoodActor",
 		"--profile-pic https://profilePic.jpg",
@@ -247,7 +242,7 @@ func TestDesmosCLIProfileEdit_withFlags(t *testing.T) {
 	require.NotEqual(t, storedProfiles[0].Bio, editedProfiles[0].Bio)
 
 	// Test --dry-run
-	success, _, _ = f.TxProfileSave(dTag, fooAddr, txFees, "--dry-run",
+	success, _, _ = f.TxProfileSave(dTag, fooAddr, "--dry-run",
 		"--moniker Leo",
 		"--bio HollywoodActor",
 		"--profile-pic https://profilePic.jpg",
@@ -289,10 +284,9 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	fooAcc := f.QueryAccount(fooAddr)
 	startTokens := sdk.TokensFromConsensusPower(140)
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Create a profile
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -306,7 +300,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	// Test --dry-run
 	// This is run before the actual no dry-run call due to the fact that even using --dry-run the checks
 	// are performed anyway, and this would fail if the profile didn't exist
-	success, _, _ = f.TxProfileDelete(fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxProfileDelete(fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -323,7 +317,7 @@ func TestDesmosCLIProfileDelete(t *testing.T) {
 	require.Len(t, storedProfiles, 1)
 
 	// Delete the profile
-	success, _, sterr = f.TxProfileDelete(fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileDelete(fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -347,15 +341,11 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(10000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create the profile of the DTag owner
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -367,7 +357,7 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -379,12 +369,12 @@ func TestDesmosCLIRequestDTagTransfer(t *testing.T) {
 	// Test --dry-run
 
 	// Create the profile of the dTag owner
-	success, _, sterr = f.TxProfileSave("mrPink", calAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -410,12 +400,10 @@ func TestDesmosCLIAcceptDTagTransferRequest(t *testing.T) {
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(30000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create a profile
-	success, stdout, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -427,7 +415,7 @@ func TestDesmosCLIAcceptDTagTransferRequest(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request
-	success, stdout, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -437,19 +425,19 @@ func TestDesmosCLIAcceptDTagTransferRequest(t *testing.T) {
 	require.NotEmpty(t, storedRequests)
 
 	// Accept the request
-	success, stdout, sterr = f.TxProfileAcceptDTagTransfer("newDtag", barAddr, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileAcceptDTagTransfer("newDtag", barAddr, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Create a request
-	success, stdout, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-run
-	success, stdout, _ = f.TxProfileAcceptDTagTransfer("otherDtag", barAddr, fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxProfileAcceptDTagTransfer("otherDtag", barAddr, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -475,13 +463,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(40000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create a profile for the DTag owner
-	success, stdout, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
-	println(stdout)
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -493,7 +478,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request from a user without a profile
-	success, stdout, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -503,7 +488,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	require.NotEmpty(t, storedRequests)
 
 	// Accept the request
-	success, _, sterr = f.TxProfileAcceptDTagTransfer("mrPink", barAddr, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileAcceptDTagTransfer("mrPink", barAddr, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -523,7 +508,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithNoProfile(t *testing.T
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -547,12 +532,10 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	// Save key addresses for later use
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(40000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create a profile for the DTag owner
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -563,7 +546,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.Equal(t, fooProfile.DTag, "mrBrown")
 
 	// Create a profile for the DTag receiver
-	success, _, sterr = f.TxProfileSave("mrOrange", barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileSave("mrOrange", barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -574,7 +557,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.Equal(t, barProfile.DTag, "mrOrange")
 
 	// Create a request from a user without a profile
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -584,7 +567,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.NotEmpty(t, storedRequests)
 
 	// Accept the request
-	success, _, sterr = f.TxProfileAcceptDTagTransfer("mrPink", barAddr, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileAcceptDTagTransfer("mrPink", barAddr, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -604,7 +587,7 @@ func TestDesmosCLIMultipleDTagTransferRequest_receiverWithProfile(t *testing.T) 
 	require.Equal(t, receiverProfile.DTag, "mrBrown")
 
 	// Create another request
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -629,15 +612,11 @@ func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create the profile of the DTag owner
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -649,7 +628,7 @@ func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -659,7 +638,7 @@ func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
 	require.NotEmpty(t, storedRequests)
 
 	// Refuse the request
-	success, _, sterr = f.TxProfileRefuseDTagTransfer(barAddr, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRefuseDTagTransfer(barAddr, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -667,16 +646,16 @@ func TestDesmosCLIRefuseDTagTransfer(t *testing.T) {
 	// Test --dry-run
 
 	// Create the profile of the dTag owner
-	success, _, sterr = f.TxProfileSave("mrPink", calAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, txFees, "-y")
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "-y")
 	require.True(t, success)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	success, _, sterr = f.TxProfileRefuseDTagTransfer(fooAddr, calAddr, txFees, "--dry-run")
+	success, _, sterr = f.TxProfileRefuseDTagTransfer(fooAddr, calAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -703,15 +682,11 @@ func TestDesmosCLICancelDTagTransfer(t *testing.T) {
 	fooAddr := f.KeyAddress(keyFoo)
 	barAddr := f.KeyAddress(keyBar)
 	calAddr := f.KeyAddress(keyBaz)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 10000))
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), txFees, "-y")
-
-	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
-	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(20000)), txFees, "-y")
+	f.TxSend(fooAddr.String(), barAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
+	f.TxSend(fooAddr.String(), calAddr, sdk.NewCoin(denom, sdk.NewInt(1000)), "-y")
 
 	// Create the profile of the DTag owner
-	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxProfileSave("mrBrown", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -723,7 +698,7 @@ func TestDesmosCLICancelDTagTransfer(t *testing.T) {
 	require.Equal(t, profile.DTag, "mrBrown")
 
 	// Create a request
-	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileRequestDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -733,7 +708,7 @@ func TestDesmosCLICancelDTagTransfer(t *testing.T) {
 	require.NotEmpty(t, storedRequests)
 
 	// Refuse the request
-	success, _, sterr = f.TxProfileCancelDTagTransfer(fooAddr, barAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileCancelDTagTransfer(fooAddr, barAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -741,16 +716,16 @@ func TestDesmosCLICancelDTagTransfer(t *testing.T) {
 	// Test --dry-run
 
 	// Create the profile of the dTag owner
-	success, _, sterr = f.TxProfileSave("mrPink", calAddr, txFees, "-y")
+	success, _, sterr = f.TxProfileSave("mrPink", calAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, txFees, "-y")
+	success, _, _ = f.TxProfileRequestDTagTransfer(calAddr, fooAddr, "-y")
 	require.True(t, success)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
-	success, _, sterr = f.TxProfileCancelDTagTransfer(calAddr, fooAddr, txFees, "--dry-run")
+	success, _, sterr = f.TxProfileCancelDTagTransfer(calAddr, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only

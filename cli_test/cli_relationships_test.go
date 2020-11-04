@@ -4,7 +4,6 @@
 package clitest
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/tests"
@@ -31,12 +30,11 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	// Create mono directional relationship
-	success, _, sterr := f.TxCreateRelationship(receiver, subspace, fooAddr, txFees, "-y")
+	success, _, sterr := f.TxCreateRelationship(receiver, subspace, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -51,7 +49,7 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -61,7 +59,7 @@ func TestDesmosCLICreateRelationship(t *testing.T) {
 	require.Empty(t, userRelationships)
 
 	// Test --dry-tun
-	success, _, _ = f.TxCreateRelationship(receiver, subspace, fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxCreateRelationship(receiver, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -93,12 +91,11 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	receiver, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
 	// Create mono directional relationship
-	success, _, sterr := f.TxCreateRelationship(receiver, subspace, fooAddr, txFees, "-y")
+	success, _, sterr := f.TxCreateRelationship(receiver, subspace, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -110,7 +107,7 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.Equal(t, expRelationship, storedRelationships)
 
 	// Delete the relationship to perform other tests
-	success, _, sterr = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -120,10 +117,10 @@ func TestDesmosCLIDeleteRelationship(t *testing.T) {
 	require.Empty(t, storedRelationships)
 
 	// Create mono directional relationship
-	success, _, sterr = f.TxCreateRelationship(receiver, subspace, fooAddr, txFees, "-y")
+	success, _, sterr = f.TxCreateRelationship(receiver, subspace, fooAddr, "-y")
 
 	// Test --dry-tun
-	success, _, _ = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxDeleteUserRelationship(receiver, subspace, fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -155,10 +152,9 @@ func TestDesmosCLIBlockUser(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Block user
-	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -170,13 +166,13 @@ func TestDesmosCLIBlockUser(t *testing.T) {
 	require.Equal(t, expRelationship, userBlocks)
 
 	// Unblock the user to perform other tests
-	success, _, sterr = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, txFees, "-y")
+	success, _, sterr = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-tun
-	success, _, _ = f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
@@ -208,10 +204,9 @@ func TestDesmosCLIUnblockUser(t *testing.T) {
 	require.Equal(t, startTokens, fooAcc.GetCoins().AmountOf(denom))
 	userToBlock, err := sdk.AccAddressFromBech32("desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru")
 	require.NoError(t, err)
-	txFees := fmt.Sprintf("--fees=%s", sdk.NewInt64Coin(denom, 100000))
 
 	// Block user
-	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "-y")
+	success, _, sterr := f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
@@ -223,19 +218,19 @@ func TestDesmosCLIUnblockUser(t *testing.T) {
 	require.Equal(t, expRelationship, userBlocks)
 
 	// Unblock the user
-	success, _, sterr = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, txFees, "-y")
+	success, _, sterr = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Block user again for other tests
-	success, _, sterr = f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, txFees, "-y")
+	success, _, sterr = f.TxBlockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "reason", fooAddr, "-y")
 	require.True(t, success)
 	require.Empty(t, sterr)
 	tests.WaitForNextNBlocksTM(1, f.Port)
 
 	// Test --dry-tun
-	success, _, _ = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, txFees, "--dry-run")
+	success, _, _ = f.TxUnblockUser(userToBlock, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fooAddr, "--dry-run")
 	require.True(t, success)
 
 	// Test --generate-only
