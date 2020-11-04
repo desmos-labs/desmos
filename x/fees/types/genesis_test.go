@@ -21,7 +21,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid params errors",
 			genesis: types.NewGenesisState(types.NewParams("", []types.MinFee{
-				types.NewMinFee("desmos/createPost", sdk.NewDecWithPrec(-1, 2))})),
+				types.NewMinFee("create_post", sdk.NewDecWithPrec(-1, 2))})),
 			shouldError: true,
 		},
 	}

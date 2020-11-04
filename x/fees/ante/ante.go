@@ -12,7 +12,7 @@ import (
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
 //(sequence number increment, signature and account number checks, fee deduction) make sure that each
-// transaction has a minimum fee of 0.01 daric/desmos
+// transaction has a minimum fee based on messages types
 func NewAnteHandler(
 	ak keeper.AccountKeeper,
 	supplyKeeper types.SupplyKeeper,

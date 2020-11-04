@@ -9,6 +9,4 @@ func init() {
 	RegisterCodec(ModuleCdc)
 }
 
-func RegisterCodec(cdc *codec.Codec) {
-
-}
+func RegisterCodec(_ *codec.Codec) {}
