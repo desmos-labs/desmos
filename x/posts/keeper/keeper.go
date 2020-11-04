@@ -1,8 +1,9 @@
 package keeper
 
 import (
-	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 	"sort"
+
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -19,7 +20,7 @@ type Keeper struct {
 	cdc      codec.BinaryMarshaler
 
 	paramSubspace paramstypes.Subspace       // Reference to the ParamsStore to get and set posts specific params
-	rk            relationshipskeeper.Keeper // Relationships keeper to keep track of blocked users
+	rk            relationshipskeeper.Keeper // Relationships k to keep track of blocked users
 
 }
 
@@ -61,12 +62,12 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	// Check if the postID got an associated post, if not, increment the number of posts
 	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
-		numberOfPosts := sdk.ZeroInt()
+		numberOfPosts := NewWrappedUInt(0)
 		if store.Has(types.PostTotalNumberPrefix) {
 			k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &numberOfPosts)
 		}
 
-		numberOfPosts = numberOfPosts.Add(sdk.NewInt(1))
+		numberOfPosts = numberOfPosts.Add(1)
 
 		// Save the new incremental ID of the post and update the total number of posts
 		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&numberOfPosts))
@@ -77,7 +78,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	if types.IsValidPostID(post.ParentID) {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
-		var commentsIDs types.PostIDs
+		var commentsIDs CommentIDs
 		k.cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
 		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
 			store.Set(parentCommentsKey, k.cdc.MustMarshalBinaryBare(&editedIDs))
@@ -102,12 +103,12 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool
 // GetPostChildrenIDs returns the IDs of all the children posts associated to the post
 // having the given postID
 // nolint: interfacer
-func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.PostIDs {
+func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID string) []string {
 	store := ctx.KVStore(k.storeKey)
 
-	var postIDs types.PostIDs
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &postIDs)
-	return postIDs
+	var ids CommentIDs
+	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &ids)
+	return ids.Ids
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state
@@ -133,18 +134,13 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
 
 		// match parent id if valid
-		if params.ParentID != nil {
-			matchParentID = params.ParentID.Equals(post.ParentID)
+		if types.IsValidPostID(params.ParentID) {
+			matchParentID = params.ParentID == post.ParentID
 		}
 
 		// match creation time if valid height
 		if params.CreationTime != nil {
 			matchCreationTime = params.CreationTime.Equal(post.Created)
-		}
-
-		// match allows comments
-		if params.AllowsComments != nil {
-			matchAllowsComments = *params.AllowsComments == post.AllowsComments
 		}
 
 		// match subspace if provided
@@ -154,7 +150,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 		// match creator address (if supplied)
 		if len(params.Creator) > 0 {
-			matchCreator = params.Creator.Equals(post.Creator)
+			matchCreator = params.Creator == post.Creator
 		}
 
 		// match hashtags if provided
@@ -204,7 +200,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		page = 1
 	}
 
-	start, end := client.Paginate(len(filteredPosts), page, params.Limit, 100)
+	start, end := client.Paginate(len(filteredPosts), int(page), int(params.Limit), 100)
 	if start < 0 || end < 0 {
 		filteredPosts = types.Posts{}
 	} else {

@@ -1,9 +1,10 @@
 package types_test
 
 import (
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -22,7 +23,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid post errors",
 			genesis: types.NewGenesisState(
-				types.Posts{types.Post{PostID: types.NewPostID("")}},
+				types.Posts{types.Post{PostID: ""}},
 				nil,
 				nil,
 				nil,
@@ -47,8 +48,8 @@ func TestValidateGenesis(t *testing.T) {
 			name: "Genesis with invalid poll answers errors",
 			genesis: types.NewGenesisState(
 				types.Posts{},
-				[]types.UserPollAnswersEntry{
-					types.NewUserPollAnswersEntry("1", []types.UserAnswer{
+				[]types.UserAnswersEntry{
+					types.NewUserAnswersEntry("1", []types.UserAnswer{
 						types.NewUserAnswer([]string{""}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 					}),
 				},
@@ -65,7 +66,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Reactions{
-					types.NewReaction(
+					types.NewRegisteredReaction(
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						":smile",
 						"smile.jpg",
@@ -96,9 +97,9 @@ func TestValidateGenesis(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if test.shouldError {
-				require.Error(t, types.ValidateGenesis(*test.genesis))
+				require.Error(t, types.ValidateGenesis(test.genesis))
 			} else {
-				require.NoError(t, types.ValidateGenesis(*test.genesis))
+				require.NoError(t, types.ValidateGenesis(test.genesis))
 			}
 		})
 	}

@@ -3,21 +3,13 @@ package keeper_test
 import (
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-
-	user, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.Require().NoError(err)
-
 	parentPost := types.Post{
-		PostID:       id,
+		PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		Message:      "Post without medias",
 		Created:      suite.testData.post.Created,
 		LastEdited:   time.Time{},
@@ -29,28 +21,26 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	}
 
 	commentPost := types.Post{
-		PostID:         id2,
-		ParentID:       id,
+		PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+		ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		Message:        "Post without medias",
 		AllowsComments: false,
 		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		OptionalData:   nil,
 		Created:        suite.testData.post.Created.Add(time.Hour),
-		Creator:        user,
+		Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	}
 
-	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
-
-	postReaction := types.NewPostReaction(":like:", "+1", user)
-	reaction := types.NewReaction(suite.testData.post.Creator, ":like:", "+1", suite.testData.post.Subspace)
-	answer := types.NewUserAnswer(answers, suite.testData.post.Creator)
+	postReaction := types.NewPostReaction(":like:", "+1", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	reaction := types.NewRegisteredReaction(suite.testData.post.Creator, ":like:", "+1", suite.testData.post.Subspace)
+	answer := types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator)
 
 	tests := []struct {
 		name         string
 		posts        types.Posts
 		answers      *types.UserAnswer
 		postReaction *types.PostReaction
-		reaction     *types.Reaction
+		reaction     *types.RegisteredReaction
 		expResponse  string
 		expBool      bool
 	}{
@@ -122,25 +112,27 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			suite.SetupTest()
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+
 			for _, post := range test.posts {
-				suite.keeper.SavePost(suite.ctx, post)
-			}
-			if test.reaction != nil && test.postReaction != nil {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, *test.reaction)
-				// nolint: errcheck
-				suite.keeper.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
-			}
-			if test.answers != nil {
-				suite.keeper.SavePollAnswers(suite.ctx, test.posts[0].PostID, *test.answers)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
-			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			if test.reaction != nil && test.postReaction != nil {
+				suite.k.SaveRegisteredReaction(suite.ctx, *test.reaction)
+
+				err := suite.k.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
+				suite.Require().NoError(err)
+			}
+			if test.answers != nil {
+				suite.k.SavePollAnswers(suite.ctx, test.posts[0].PostID, *test.answers)
+			}
+
+			res, stop := keeper.AllInvariants(suite.k)(suite.ctx)
 
 			suite.Require().Equal(test.expResponse, res)
 			suite.Require().Equal(test.expBool, stop)
-
 		})
 	}
 }

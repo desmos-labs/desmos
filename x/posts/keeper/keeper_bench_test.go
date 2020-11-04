@@ -8,20 +8,21 @@ import (
 	"testing"
 	"time"
 
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/desmos-labs/desmos/x/posts/simulation"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // RandomPostIDOrSubspace returns a random PostID
-func RandomPostIDOrSubspace() types.PostID {
+func RandomPostIDOrSubspace() string {
 	bytes := make([]byte, 128)
 	_, err := rand.Read(bytes)
 	if err != nil {
 		panic(err)
 	}
 	hash := sha256.Sum256(bytes)
-	return types.PostID(hex.EncodeToString(hash[:]))
+	return hex.EncodeToString(hash[:])
 }
 
 // RandomMessage returns a random String with len <= 500
@@ -38,16 +39,16 @@ func RandomMessage(r *rand.Rand) string {
 // RandomPost returns a post with a 50% chance to have random medias and random poll
 func RandomPost() types.Post {
 	r := rand.New(rand.NewSource(100))
-	accounts := sim.RandomAccounts(r, r.Intn(20))
+	accounts := simtypes.RandomAccounts(r, r.Intn(20))
 
 	post := types.NewPost(
 		RandomPostIDOrSubspace(),
 		RandomMessage(r),
 		r.Intn(101) <= 50,
-		RandomPostIDOrSubspace().String(),
+		RandomPostIDOrSubspace(),
 		nil,
 		time.Now(),
-		accounts[r.Intn(len(accounts))].Address,
+		accounts[r.Intn(len(accounts))].Address.String(),
 	)
 
 	if r.Intn(101) <= 50 {
@@ -67,7 +68,6 @@ func RandomPost() types.Post {
 func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	sortBy := types.PostSortByCreationDate
 	sortOrder := types.PostSortOrderAscending
-	allowsComments := r.Intn(101) <= 50
 
 	if r.Intn(101) <= 50 {
 		sortBy = types.PostSortByID
@@ -78,16 +78,15 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	}
 
 	return types.QueryPostsParams{
-		Page:           r.Intn(10),
-		Limit:          r.Intn(100),
-		SortBy:         sortBy,
-		SortOrder:      sortOrder,
-		ParentID:       nil,
-		CreationTime:   nil,
-		AllowsComments: &allowsComments,
-		Subspace:       "",
-		Creator:        nil,
-		Hashtags:       nil,
+		Page:         int32(r.Intn(10)),
+		Limit:        int32(r.Intn(100)),
+		SortBy:       sortBy,
+		SortOrder:    sortOrder,
+		ParentID:     nil,
+		CreationTime: nil,
+		Subspace:     "",
+		Creator:      nil,
+		Hashtags:     nil,
 	}
 }
 
@@ -98,7 +97,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePost(b *testing.B) {
 	b.SetParallelism(10)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, post)
+		suite.k.SavePost(suite.ctx, post)
 	}
 }
 
@@ -107,15 +106,15 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, RandomPost())
+		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.keeper.GetPosts(suite.ctx)
+	posts := suite.k.GetPosts(suite.ctx)
 	randomPost := posts[r.Intn(len(posts))]
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.GetPost(suite.ctx, randomPost.PostID)
+		suite.k.GetPost(suite.ctx, randomPost.PostID)
 	}
 
 }
@@ -124,12 +123,12 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
 	fmt.Println("Benchmark: GetPosts")
 
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, RandomPost())
+		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.GetPosts(suite.ctx)
+		suite.k.GetPosts(suite.ctx)
 	}
 }
 
@@ -138,14 +137,14 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, RandomPost())
+		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
 	randomQueryParams := RandomQueryParams(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = suite.keeper.GetPostsFiltered(suite.ctx, randomQueryParams)
+		_ = suite.k.GetPostsFiltered(suite.ctx, randomQueryParams)
 	}
 }
 
@@ -154,17 +153,17 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, RandomPost())
+		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.keeper.GetPosts(suite.ctx)
+	posts := suite.k.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		// nolint: errcheck
-		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		suite.Require().NoError(err)
 	}
 }
 
@@ -173,20 +172,20 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.keeper.SavePost(suite.ctx, RandomPost())
+		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.keeper.GetPosts(suite.ctx)
+	posts := suite.k.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		// nolint: errcheck
-		suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		suite.Require().NoError(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.GetPostReactions(suite.ctx, post.PostID)
+		suite.k.GetPostReactions(suite.ctx, post.PostID)
 	}
 }

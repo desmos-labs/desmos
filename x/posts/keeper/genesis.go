@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -13,51 +12,56 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetPosts(ctx),
-		k.GetPollAnswersMap(ctx),
-		k.GetReactions(ctx),
+		k.GetUserAnswersEntries(ctx),
+		k.GetPostReactionsEntries(ctx),
 		k.GetRegisteredReactions(ctx),
 		k.GetParams(ctx),
 	)
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
-func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.ValidatorUpdate {
+func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	k.SetParams(ctx, data.Params)
 
+	// Save posts
 	for _, post := range data.Posts {
-		if err := k.ValidatePost(ctx, k, post); err != nil {
+		err := k.ValidatePost(ctx, post)
+		if err != nil {
 			panic(err)
 		}
+
 		k.SavePost(ctx, post)
 	}
 
-	for postID, usersAnswersDetails := range data.UsersPollAnswers {
-		for _, userAnswersDetails := range usersAnswersDetails {
-			postID := types.PostID(postID)
-			if !postID.Valid() {
-				panic(fmt.Errorf("invalid postID: %s", postID))
-			}
-			k.SavePollAnswers(ctx, postID, userAnswersDetails)
+	// Save poll answers
+	for _, entry := range data.UsersPollAnswers {
+		if !types.IsValidPostID(entry.PostId) {
+			panic(fmt.Errorf("invalid postID: %s", entry.PostId))
+		}
+
+		for _, answer := range entry.UserAnswers {
+			k.SavePollAnswers(ctx, entry.PostId, answer)
 		}
 	}
 
+	// Save registered reactions
 	for _, reaction := range data.RegisteredReactions {
 		if _, found := k.GetRegisteredReaction(ctx, reaction.ShortCode, reaction.Subspace); !found {
 			k.SaveRegisteredReaction(ctx, reaction)
 		}
 	}
 
-	for postID, postReactions := range data.PostReactions {
-		for _, postReaction := range postReactions {
-			postID := types.PostID(postID)
-			if !postID.Valid() {
-				panic(fmt.Errorf("invalid postID: %s", postID))
-			}
-			if err := k.SavePostReaction(ctx, postID, postReaction); err != nil {
+	// Save post reactions
+	for _, entry := range data.PostsReactions {
+		if !types.IsValidPostID(entry.PostId) {
+			panic(fmt.Errorf("invalid postID: %s", entry.PostId))
+		}
+
+		for _, reaction := range entry.Reactions {
+			err := k.SavePostReaction(ctx, entry.PostId, reaction)
+			if err != nil {
 				panic(err)
 			}
 		}
 	}
-
-	return []abci.ValidatorUpdate{}
 }

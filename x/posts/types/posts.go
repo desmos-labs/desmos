@@ -8,62 +8,6 @@ import (
 	"time"
 )
 
-// NewPostID returns a new PostID instance
-func NewPostID(value string) PostID {
-	return PostID{Id: value}
-}
-
-// Valid tells if the id can be used safely
-func (id PostID) Valid() bool {
-	return strings.TrimSpace(id.String()) != "" && IsValidPostID(id.String())
-}
-
-// ___________________________________________________________________________________________________________________
-
-// PostIDs represents a slice of PostID objects
-type PostIDs []PostID
-
-// Equals returns true iff the ids slice and the other
-// one contain the same data in the same order
-func (ids PostIDs) Equals(other PostIDs) bool {
-	if len(ids) != len(other) {
-		return false
-	}
-
-	for index, id := range ids {
-		if !id.Equal(other[index]) {
-			return false
-		}
-	}
-
-	return true
-}
-
-// AppendIfMissing appends the given postID to the ids slice if it does not exist inside it yet.
-// It returns a new slice of PostIDs containing such ID and a boolean indicating whether or not the original
-// slice has been modified.
-func (ids PostIDs) AppendIfMissing(id PostID) (PostIDs, bool) {
-	for _, ele := range ids {
-		if ele.Equal(id) {
-			return ids, false
-		}
-	}
-	return append(ids, id), true
-}
-
-// String implements fmt.Stringer
-func (ids PostIDs) String() string {
-	var stringIDs = make([]string, len(ids))
-	for index, id := range ids {
-		stringIDs[index] = id.String()
-	}
-
-	out := strings.Join(stringIDs, ", ")
-	return fmt.Sprintf("[%s]", strings.TrimSpace(out))
-}
-
-// ___________________________________________________________________________________________________________________
-
 func NewPost(
 	parentID string, message string, allowsComments bool, subspace string,
 	optionalData OptionalData, created time.Time, creator string,
@@ -257,6 +201,11 @@ func (attachments Attachment) Validate() error {
 
 // Attachments represents a slice of Attachment object
 type Attachments []Attachment
+
+// NewAttachments builds a new Attachments from the given attachments
+func NewAttachments(attachments ...Attachment) Attachments {
+	return attachments
+}
 
 // Equals returns true iff the atts slice contains the same
 // data in the same order of the other slice

@@ -3,10 +3,11 @@ package simulation
 // DONTCOVER
 
 import (
+	"math/rand"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
@@ -78,27 +79,27 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreatePost(k, ak),
+			SimulateMsgCreatePost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditPost,
-			SimulateMsgEditPost(k, ak),
+			SimulateMsgEditPost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRegisterReaction,
-			SimulateMsgRegisterReaction(k, ak),
+			SimulateMsgRegisterReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddPostReaction(k, ak),
+			SimulateMsgAddPostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemovePostReaction(k, ak),
+			SimulateMsgRemovePostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
-			SimulateMsgAnswerToPoll(k, ak),
+			SimulateMsgAnswerToPoll(k, ak, bk),
 		),
 	}
 }

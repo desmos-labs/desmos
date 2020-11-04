@@ -307,7 +307,7 @@ func (m *MsgRemovePostReaction) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemovePostReaction proto.InternalMessageInfo
 
-// MsgRemovePostReactionResponse defines the Msg/DeletePostReaction response type.
+// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response type.
 type MsgRemovePostReactionResponse struct {
 }
 
@@ -463,7 +463,7 @@ func (m *MsgRegisterReaction) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterReaction proto.InternalMessageInfo
 
-// MsgEditPostResponse defines the Msg/SaveRegisteredReaction response type.
+// MsgEditPostResponse defines the Msg/RegisterReaction response type.
 type MsgRegisterReactionResponse struct {
 }
 
@@ -642,7 +642,7 @@ func (c *msgClient) AddPostReaction(ctx context.Context, in *MsgAddPostReaction,
 
 func (c *msgClient) RemovePostReaction(ctx context.Context, in *MsgRemovePostReaction, opts ...grpc.CallOption) (*MsgRemovePostReactionResponse, error) {
 	out := new(MsgRemovePostReactionResponse)
-	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/DeletePostReaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/RemovePostReaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -651,7 +651,7 @@ func (c *msgClient) RemovePostReaction(ctx context.Context, in *MsgRemovePostRea
 
 func (c *msgClient) RegisterReaction(ctx context.Context, in *MsgRegisterReaction, opts ...grpc.CallOption) (*MsgRegisterReactionResponse, error) {
 	out := new(MsgRegisterReactionResponse)
-	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/SaveRegisteredReaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/RegisterReaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -697,10 +697,10 @@ func (*UnimplementedMsgServer) AddPostReaction(ctx context.Context, req *MsgAddP
 	return nil, status.Errorf(codes.Unimplemented, "method AddPostReaction not implemented")
 }
 func (*UnimplementedMsgServer) RemovePostReaction(ctx context.Context, req *MsgRemovePostReaction) (*MsgRemovePostReactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePostReaction not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method RemovePostReaction not implemented")
 }
 func (*UnimplementedMsgServer) RegisterReaction(ctx context.Context, req *MsgRegisterReaction) (*MsgRegisterReactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveRegisteredReaction not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterReaction not implemented")
 }
 func (*UnimplementedMsgServer) AnswerPoll(ctx context.Context, req *MsgAnswerPoll) (*MsgAnswerPollResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AnswerPoll not implemented")
@@ -774,7 +774,7 @@ func _Msg_RemovePostReaction_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.posts.v1beta1.Msg/DeletePostReaction",
+		FullMethod: "/desmos.posts.v1beta1.Msg/RemovePostReaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).RemovePostReaction(ctx, req.(*MsgRemovePostReaction))
@@ -792,7 +792,7 @@ func _Msg_RegisterReaction_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.posts.v1beta1.Msg/SaveRegisteredReaction",
+		FullMethod: "/desmos.posts.v1beta1.Msg/RegisterReaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).RegisterReaction(ctx, req.(*MsgRegisterReaction))
@@ -835,11 +835,11 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_AddPostReaction_Handler,
 		},
 		{
-			MethodName: "DeletePostReaction",
+			MethodName: "RemovePostReaction",
 			Handler:    _Msg_RemovePostReaction_Handler,
 		},
 		{
-			MethodName: "SaveRegisteredReaction",
+			MethodName: "RegisterReaction",
 			Handler:    _Msg_RegisterReaction_Handler,
 		},
 		{

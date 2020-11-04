@@ -7,8 +7,8 @@ func NewPostReactionsEntry(postID string, reactions []PostReaction) PostReaction
 	}
 }
 
-func NewUserPollAnswersEntry(postID string, answers []UserAnswer) UserPollAnswersEntry {
-	return UserPollAnswersEntry{
+func NewUserAnswersEntry(postID string, answers []UserAnswer) UserAnswersEntry {
+	return UserAnswersEntry{
 		PostId:      postID,
 		UserAnswers: answers,
 	}
@@ -18,7 +18,7 @@ func NewUserPollAnswersEntry(postID string, answers []UserAnswer) UserPollAnswer
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	posts Posts, userPollAnswers []UserPollAnswersEntry,
+	posts Posts, userPollAnswers []UserAnswersEntry,
 	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, params Params,
 ) *GenesisState {
 	return &GenesisState{

@@ -18,18 +18,6 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// REST Variable names
-// nolint
-const (
-	RestSortBy       = "sort_by"
-	RestSortOrder    = "sort_order"
-	RestParentID     = "parent_id"
-	RestCreationTime = "creation_time"
-	RestSubspace     = "subspace"
-	RestCreator      = "creator"
-	RestHashtags     = "hashtags"
-)
-
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/posts/parameters", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
@@ -78,15 +66,15 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		if v := r.URL.Query().Get(RestSortBy); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamSortBy); len(v) != 0 {
 			params.SortBy = v
 		}
 
-		if v := r.URL.Query().Get(RestSortOrder); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamSortOrder); len(v) != 0 {
 			params.SortOrder = v
 		}
 
-		if v := r.URL.Query().Get(RestParentID); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamParentID); len(v) != 0 {
 			parentID := v
 			if !types.IsValidPostID(parentID) {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
@@ -95,7 +83,7 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			params.ParentID = parentID
 		}
 
-		if v := r.URL.Query().Get(RestCreationTime); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamCreationTime); len(v) != 0 {
 			parsedTime, err := time.Parse(time.RFC3339, v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -104,11 +92,11 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			params.CreationTime = &parsedTime
 		}
 
-		if v := r.URL.Query().Get(RestSubspace); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamSubspace); len(v) != 0 {
 			params.Subspace = v
 		}
 
-		if v := r.URL.Query().Get(RestCreator); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamCreator); len(v) != 0 {
 			creatorAddr, err := sdk.AccAddressFromBech32(v)
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -117,7 +105,7 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			params.Creator = creatorAddr.String()
 		}
 
-		if v := r.URL.Query().Get(RestHashtags); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamHashtags); len(v) != 0 {
 			params.Hashtags = strings.Split(v, ",")
 		}
 

@@ -26,7 +26,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 
 	answers := []types.AnswerID{types.AnswerID(1)}
 
-	reaction := types.NewReaction(suite.testData.postOwner, ":like:", "https://smile.jpg", "")
+	reaction := types.NewRegisteredReaction(suite.testData.postOwner, ":like:", "https://smile.jpg", "")
 
 	tests := []struct {
 		name               string
@@ -168,30 +168,30 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			if test.registeredReaction != nil {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, *test.registeredReaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, *test.registeredReaction)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for postID, reactions := range test.storedReactions {
 				for _, reaction := range reactions {
-					err = suite.keeper.SavePostReaction(suite.ctx, types.PostID(postID), reaction)
+					err = suite.k.SavePostReaction(suite.ctx, types.PostID(postID), reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.k)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.k.cdc, &test.expResult)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}
@@ -299,19 +299,19 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
-			request := abci.RequestQuery{Data: suite.keeper.cdc.MustMarshalJSON(&test.params)}
+			querier := keeper.NewQuerier(suite.k)
+			request := abci.RequestQuery{Data: suite.k.cdc.MustMarshalJSON(&test.params)}
 			result, err := querier(suite.ctx, []string{types.QueryPosts}, request)
 			suite.Require().NoError(err)
 
-			expSerialized, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResponse)
+			expSerialized, err := codec.MarshalJSONIndent(suite.k.cdc, &test.expResponse)
 			suite.Require().NoError(err)
 			suite.Require().Equal(string(expSerialized), string(result))
 		})
@@ -392,19 +392,19 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.k)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.k.cdc, &test.expResult)
 				suite.Require().NoError(err)
 
 				suite.Require().Equal(string(expectedIndented), string(result))
@@ -435,16 +435,16 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 			name: "PostReactions returned properly",
 			path: []string{types.QueryRegisteredReactions},
 			storedReactions: types.Reactions{
-				types.NewReaction(creator, ":smile:", "http://smile.jpg",
+				types.NewRegisteredReaction(creator, ":smile:", "http://smile.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewReaction(creator, ":sad:", "http://sad.jpg",
+				types.NewRegisteredReaction(creator, ":sad:", "http://sad.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 			expError: nil,
 			expResult: types.Reactions{
-				types.NewReaction(creator, ":sad:", "http://sad.jpg",
+				types.NewRegisteredReaction(creator, ":sad:", "http://sad.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				types.NewReaction(creator, ":smile:", "http://smile.jpg",
+				types.NewRegisteredReaction(creator, ":smile:", "http://smile.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			},
 		},
@@ -454,15 +454,15 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, r := range test.storedReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, r)
+				suite.k.SaveRegisteredReaction(suite.ctx, r)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper)
+			querier := keeper.NewQuerier(suite.k)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.k.cdc, &test.expResult)
 				suite.Require().NoError(err)
 
 				suite.Require().Equal(string(expectedIndented), string(result))
@@ -493,13 +493,13 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			querier := keeper.NewQuerier(suite.keeper)
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			querier := keeper.NewQuerier(suite.k)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
 				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.cdc, &test.expResult)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.k.cdc, &test.expResult)
 				suite.Require().NoError(err)
 				suite.Require().Equal(string(expectedIndented), string(result))
 			}

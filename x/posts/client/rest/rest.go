@@ -13,6 +13,14 @@ import (
 
 const (
 	ParamPostID = "post_id"
+
+	ParamSortBy       = "sort_by"
+	ParamSortOrder    = "sort_order"
+	ParamParentID     = "parent_id"
+	ParamCreationTime = "creation_time"
+	ParamSubspace     = "subspace"
+	ParamCreator      = "creator"
+	ParamHashtags     = "hashtags"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application

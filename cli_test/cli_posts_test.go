@@ -825,7 +825,7 @@ func TestDesmosCLIRegisterReaction(t *testing.T) {
 	// Make sure the reaction is registered
 	registeredReactions := f.QueryReactions()
 	require.NotEmpty(t, registeredReactions)
-	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
+	require.Equal(t, registeredReactions, types.Reactions{types.NewRegisteredReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")
@@ -876,7 +876,7 @@ func TestDesmosCLIRegisterReactionEmojiValue(t *testing.T) {
 	// Make sure the reaction is registered
 	registeredReactions := f.QueryReactions()
 	require.NotEmpty(t, registeredReactions)
-	require.Equal(t, registeredReactions, types.Reactions{types.NewReaction(fooAddr, shortCode, value, subspace)})
+	require.Equal(t, registeredReactions, types.Reactions{types.NewRegisteredReaction(fooAddr, shortCode, value, subspace)})
 
 	// Test --dry-run
 	success, _, _ = f.TxPostsRegisterReaction(":second:", value, subspace, fooAddr, "--dry-run")

@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -21,30 +23,30 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &postB)
 			return fmt.Sprintf("PostA: %s\nPostB: %s\n", postA, postB)
 		case bytes.HasPrefix(kvA.Key, types.PostCommentsStorePrefix):
-			var commentsA, commentsB types.PostIDs
+			var commentsA, commentsB keeper.CommentIDs
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &commentsA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &commentsB)
 			return fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", commentsA, commentsB)
 		case bytes.HasPrefix(kvA.Key, types.PostReactionsStorePrefix):
-			var postReactionsA, postReactionsB types.PostReactions
+			var postReactionsA, postReactionsB keeper.WrappedPostReactions
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &postReactionsA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &postReactionsB)
 			return fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactionsA, postReactionsB)
 		case bytes.HasPrefix(kvA.Key, types.ReactionsStorePrefix):
-			var reactionA, reactionB types.Reaction
+			var reactionA, reactionB types.RegisteredReaction
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
 			return fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reactionA, reactionB)
 		case bytes.HasPrefix(kvA.Key, types.PostIndexedIDStorePrefix):
-			var indexedIDA, indexedIDB sdk.Int
+			var indexedIDA, indexedIDB keeper.WrappedUInt
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &indexedIDA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &indexedIDB)
-			return fmt.Sprintf("IndexedIDA: %s\nIndexedIDB: %s\n", indexedIDA, indexedIDB)
+			return fmt.Sprintf("IndexedIDA: %d\nIndexedIDB: %d\n", indexedIDA.Value, indexedIDB.Value)
 		case bytes.HasPrefix(kvA.Key, types.PostTotalNumberPrefix):
-			var totalPostsA, totalPostsB sdk.Int
+			var totalPostsA, totalPostsB keeper.WrappedUInt
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &totalPostsA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &totalPostsB)
-			return fmt.Sprintf("TotalPostsA: %s\nTotalPostsB: %s\n", totalPostsA, totalPostsB)
+			return fmt.Sprintf("TotalPostsA: %d\nTotalPostsB: %d\n", totalPostsA.Value, totalPostsB.Value)
 		default:
 			panic(fmt.Sprintf("invalid posts key %X", kvA.Key))
 		}

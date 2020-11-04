@@ -9,8 +9,8 @@ import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
-// NewReaction returns a new RegisteredReaction
-func NewReaction(creator string, shortCode, value, subspace string) RegisteredReaction {
+// NewRegisteredReaction returns a new RegisteredReaction
+func NewRegisteredReaction(creator string, shortCode, value, subspace string) RegisteredReaction {
 	return RegisteredReaction{
 		ShortCode: shortCode,
 		Value:     value,

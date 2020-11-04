@@ -4,23 +4,14 @@ import (
 	"strings"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestValidatePost() {
-	id := types.PostID("dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1")
-	id2 := types.PostID("e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163")
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	date, err := time.Parse(time.RFC3339, "2020-01-01T12:00:00.000Z")
 	suite.Require().NoError(err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	suite.Require().NoError(err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
 
 	tests := []struct {
 		name     string
@@ -30,14 +21,14 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Post message cannot be longer than 500 characters",
 			post: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        strings.Repeat("a", 550),
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has more than 500 characters"),
@@ -45,8 +36,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "post optional data cannot contain more than 10 key-value",
 			post: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        "Message",
 				Created:        date,
 				AllowsComments: true,
@@ -64,7 +55,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 					{"key10", "value"},
 					{"key11", "value"},
 				},
-				Creator: owner,
+				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains optional data with more than 10 key-value pairs"),
@@ -72,8 +63,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "post optional data values cannot exceed 200 characters",
 			post: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        "Message",
 				Created:        date,
 				AllowsComments: true,
@@ -84,7 +75,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 							sem eget neque metus.`,
 					},
 				},
-				Creator: owner,
+				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has optional data with key key1 which value exceeds 200 characters."),
@@ -92,13 +83,13 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Valid post",
 			post: types.Post{
-				PostID:         id,
+				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				Message:        "Message",
 				Created:        date,
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: nil,
 		},
@@ -107,8 +98,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			err := keeper.ValidatePost(suite.ctx, suite.keeper, test.post)
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			err := suite.k.ValidatePost(suite.ctx, test.post)
 			if test.expError != nil {
 				suite.Require().Equal(test.expError.Error(), err.Error())
 			} else {

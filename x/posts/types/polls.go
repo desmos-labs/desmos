@@ -28,6 +28,11 @@ func (answer PollAnswer) Validate() error {
 // PollAnswers represent a slice of PollAnswer objects
 type PollAnswers []PollAnswer
 
+// NewPollAnswers builds a new PollAnswers object from the given answers
+func NewPollAnswers(answers ...PollAnswer) PollAnswers {
+	return answers
+}
+
 // AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
 // It returns a new slice of PollAnswers containing such PollAnswer.
 func (answers PollAnswers) AppendIfMissing(newAnswer PollAnswer) PollAnswers {

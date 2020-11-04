@@ -3,10 +3,12 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"time"
 )
 
 type msgServer struct {
@@ -205,7 +207,7 @@ func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegiste
 			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace))
 	}
 
-	reaction := types.NewReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
+	reaction := types.NewRegisteredReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
 	k.SaveRegisteredReaction(ctx, reaction)
 
 	// Emit the event

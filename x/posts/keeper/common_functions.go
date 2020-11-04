@@ -27,9 +27,9 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	i := int64(0)
 	postsSorted := make(types.Posts, len(posts))
 	for _, post := range posts {
-		var index sdk.Int
+		var index WrappedUInt
 		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
-		postsSorted[index.Int64()-1] = post
+		postsSorted[index.Value-1] = post
 	}
 
 	//freeing up memory

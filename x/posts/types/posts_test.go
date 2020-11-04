@@ -6,146 +6,10 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/desmos/x/posts/types/models"
-
 	"github.com/stretchr/testify/require"
 )
 
-// ___________________________________________________________________________________________________________________
-
-func TestPostID_Equals(t *testing.T) {
-	tests := []struct {
-		name    string
-		postID  types.PostID
-		otherID types.PostID
-		expBool bool
-	}{
-		{
-			name:    "Equal IDs returns true",
-			postID:  types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			otherID: types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			expBool: true,
-		},
-		{
-			name:    "Non Equal IDs returns false",
-			postID:  types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			otherID: types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-			expBool: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			res := test.postID.Equals(test.otherID)
-			require.Equal(t, test.expBool, res)
-		})
-	}
-
-}
-
-func TestPostID_String(t *testing.T) {
-	postID := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-	require.Equal(t, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd", postID.String())
-}
-
-// ___________________________________________________________________________________________________________________
-
-func TestPostIDs_Equals(t *testing.T) {
-	tests := []struct {
-		name      string
-		first     types.PostIDs
-		second    types.PostIDs
-		expEquals bool
-	}{
-		{
-			name: "Different length",
-			first: types.PostIDs{
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-			},
-			second:    types.PostIDs{types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
-			expEquals: false,
-		},
-		{
-			name: "Different order",
-			first: types.PostIDs{
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-				types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			},
-			second: types.PostIDs{
-				types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-			},
-			expEquals: false,
-		},
-		{
-			name: "Same length and order",
-			first: types.PostIDs{
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-				types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			},
-			second: types.PostIDs{
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-				types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			},
-			expEquals: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equals(test.second))
-		})
-	}
-}
-
-func TestPostIDs_AppendIfMissing(t *testing.T) {
-	tests := []struct {
-		name      string
-		IDs       types.PostIDs
-		newID     types.PostID
-		expIDs    types.PostIDs
-		expEdited bool
-	}{
-		{
-			name:      "AppendIfMissing dont append anything",
-			IDs:       types.PostIDs{types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
-			newID:     types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-			expIDs:    types.PostIDs{types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
-			expEdited: false,
-		},
-		{
-			name:  "AppendIfMissing append something",
-			IDs:   types.PostIDs{types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
-			newID: types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			expIDs: types.PostIDs{
-				types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
-				types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
-			},
-			expEdited: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			newIDs, edited := test.IDs.AppendIfMissing(test.newID)
-			require.Equal(t, test.expIDs, newIDs)
-			require.Equal(t, test.expEdited, edited)
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
 func TestPost_NewPost(t *testing.T) {
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		post       types.Post
 		expectedId string
@@ -158,7 +22,7 @@ func TestPost_NewPost(t *testing.T) {
 				"my_subspace",
 				nil,
 				time.Date(2020, 1, 1, 12, 0, 0, 0, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expectedId: "16ee282c835ef2bdfeea5bbd035eb3bea91c2b54f3ce2c28bbccfc9e4173f174",
 		},
@@ -167,15 +31,12 @@ func TestPost_NewPost(t *testing.T) {
 	for index, test := range tests {
 		test := test
 		t.Run(strconv.Itoa(index), func(t *testing.T) {
-			require.Equal(t, test.expectedId, test.post.PostID.String())
+			require.Equal(t, test.expectedId, test.post.PostID)
 		})
 	}
 }
 
 func TestPost_String(t *testing.T) {
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		name      string
 		post      types.Post
@@ -190,7 +51,7 @@ func TestPost_String(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expString: "[ID] 7238e494e329def3bb2666e8a8fdd4bd3c64654f06c4a8e091be8c7cc441106d [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		},
@@ -203,12 +64,12 @@ func TestPost_String(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
-			).WithAttachments(models.NewAttachments(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment(
 					"https://uri.com",
 					"text/plain",
-					[]sdk.AccAddress{owner},
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 				),
 				types.NewAttachment(
 					"https://another.com",
@@ -227,13 +88,13 @@ func TestPost_String(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithPollData(types.NewPollData(
 				"poll?",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -249,12 +110,12 @@ func TestPost_String(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
-			).WithAttachments(models.NewAttachments(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment(
 					"https://uri.com",
 					"text/plain",
-					[]sdk.AccAddress{owner},
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 				),
 				types.NewAttachment(
 					"https://another.com",
@@ -264,9 +125,9 @@ func TestPost_String(t *testing.T) {
 			)).WithPollData(types.NewPollData(
 				"poll?",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -295,7 +156,7 @@ func TestPost_String(t *testing.T) {
 					},
 				},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expString: "[ID] 4c07f3e94fddbee872f54adeeca2e24b82e7bcc9f04e19f40e03901169d29cc2 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Optional Data] [[Key] [Value]\n[key1] [value] [Key] [Value]\n[key2] [value] [Key] [Value]\n[key3] [value]]",
 		},
@@ -310,11 +171,6 @@ func TestPost_String(t *testing.T) {
 }
 
 func TestPost_Validate(t *testing.T) {
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0))
-
 	tests := []struct {
 		name     string
 		post     types.Post
@@ -324,11 +180,11 @@ func TestPost_Validate(t *testing.T) {
 			name: "Invalid postID",
 			post: types.Post{
 				Message:        "Message",
-				Created:        date,
+				Created:        time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: "invalid postID: ",
 		},
@@ -340,16 +196,16 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				nil,
-			).WithAttachments(models.NewAttachments(
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			)).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -364,8 +220,8 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
@@ -377,8 +233,8 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
 		},
@@ -391,15 +247,15 @@ func TestPost_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Time{},
-				owner,
-			).WithAttachments(models.NewAttachments(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			)).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -409,12 +265,13 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post last edit time",
 			post: types.Post{
-				PostID:     "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				Creator:    owner,
-				Message:    "Message",
-				Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				Created:    date,
-				LastEdited: date.AddDate(0, 0, -1),
+				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Message:  "Message",
+				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Created:  time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				LastEdited: time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)).
+					AddDate(0, 0, -1),
 			},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
 		},
@@ -426,16 +283,16 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"",
 				nil,
-				date,
-				owner,
-			).WithAttachments(models.NewAttachments(
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			)).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -450,16 +307,16 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				" ",
 				nil,
-				date,
-				owner,
-			).WithAttachments(models.NewAttachments(
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			)).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -474,9 +331,9 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
-			).WithAttachments(models.NewAttachments(
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("htp:/uri.com", "text/plain", nil)),
 			),
 			expError: "invalid uri provided",
@@ -488,9 +345,9 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
-			).WithAttachments(models.NewAttachments(
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			)),
 			expError: "",
@@ -502,14 +359,14 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -523,14 +380,14 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				date,
-				owner,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithPollData(types.NewPollData(
 				"poll?",
 				time.Now().UTC().Add(time.Hour),
-				models.NewPollAnswers(
-					types.NewPollAnswer(models.AnswerID(1), "Yes"),
-					types.NewPollAnswer(models.AnswerID(2), "No"),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				false,
 				true,
@@ -552,35 +409,7 @@ func TestPost_Validate(t *testing.T) {
 }
 
 func TestPost_Equals(t *testing.T) {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	otherOwner, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, timeZone)
-	medias := models.Attachments{
-		types.Attachment{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-		},
-	}
-
-	pollData := types.NewPollData(
-		"poll?",
-		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-		models.NewPollAnswers(
-			types.NewPollAnswer(models.AnswerID(1), "Yes"),
-			types.NewPollAnswer(models.AnswerID(2), "No"),
-		),
-		false,
-		true,
-	)
+	date := time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTF", 0))
 
 	tests := []struct {
 		name      string
@@ -591,204 +420,232 @@ func TestPost_Equals(t *testing.T) {
 		{
 			name: "Different post ID",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id2,
-				ParentID:       id,
+				PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+				ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different parent ID",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different message",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "Another post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different creation time",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date.AddDate(0, 0, 1),
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different last edited",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 2),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different allows comments",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: false,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different subspace",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos-1",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "desmos-2",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different optional data",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
@@ -800,12 +657,14 @@ func TestPost_Equals(t *testing.T) {
 						Value: "value",
 					},
 				},
-				Creator:     owner,
-				Attachments: medias,
+				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
@@ -817,121 +676,155 @@ func TestPost_Equals(t *testing.T) {
 						Value: "other-value",
 					},
 				},
-				Creator:     owner,
-				Attachments: medias,
+				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different owner",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        otherOwner,
-				Attachments:    medias,
+				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different medias",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        otherOwner,
-				Attachments:    models.Attachments{},
+				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Attachments:    types.Attachments{},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Different polls",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-				Attachments:    medias,
-				PollData:       nil,
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
+				PollData: nil,
 			},
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        otherOwner,
-				Attachments:    medias,
-				PollData:       &types.PollData{},
+				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Attachments: types.Attachments{
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				},
+				PollData: &types.PollData{},
 			},
 			expEquals: false,
 		},
 		{
 			name: "Equals posts",
 			first: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-			}.WithAttachments(medias).WithPollData(pollData),
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			}.WithAttachments(types.Attachments{
+				types.NewAttachment("https://uri.com", "text/plain", nil),
+			}).WithPollData(types.NewPollData(
+				"poll?",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
+				),
+				false,
+				true,
+			)),
 			second: types.Post{
-				PostID:         id,
-				ParentID:       id2,
+				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:        "My post message",
 				Created:        date,
 				LastEdited:     date.AddDate(0, 0, 1),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
-				Creator:        owner,
-			}.WithAttachments(medias).WithPollData(pollData),
+				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			}.WithAttachments(types.Attachments{
+				types.NewAttachment("https://uri.com", "text/plain", nil),
+			}).WithPollData(types.NewPollData(
+				"poll?",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+				types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
+				),
+				false,
+				true,
+			)),
 			expEquals: true,
 		},
 	}
@@ -939,15 +832,12 @@ func TestPost_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equal(test.second))
 		})
 	}
 }
 
 func TestPost_GetPostHashtags(t *testing.T) {
-	owner, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		name        string
 		post        types.Post
@@ -962,7 +852,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{"test", "desmos"},
 		},
@@ -975,7 +865,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
 		},
@@ -988,7 +878,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
 		},
@@ -1001,7 +891,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
 		},
@@ -1014,7 +904,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
 		},
@@ -1027,7 +917,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				owner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{"hashtag"},
 		},
@@ -1045,12 +935,6 @@ func TestPost_GetPostHashtags(t *testing.T) {
 // ___________________________________________________________________________________________________________________
 
 func TestPosts_String(t *testing.T) {
-	owner1, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
-	owner2, err := sdk.AccAddressFromBech32("cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l")
-	require.NoError(t, err)
-
 	date := time.Date(2020, 1, 1, 12, 0, 00, 000, time.FixedZone("UTC", 0))
 
 	posts := types.Posts{
@@ -1061,15 +945,15 @@ func TestPosts_String(t *testing.T) {
 			"external-ref-1",
 			nil,
 			date,
-			owner1,
-		).WithAttachments(models.NewAttachments(
+			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		).WithAttachments(types.NewAttachments(
 			types.NewAttachment("https://uri.com", "text/plain", nil),
 		)).WithPollData(types.NewPollData(
 			"poll?",
 			date.Add(time.Hour),
-			models.NewPollAnswers(
-				types.NewPollAnswer(models.AnswerID(1), "Yes"),
-				types.NewPollAnswer(models.AnswerID(2), "No"),
+			types.NewPollAnswers(
+				types.NewPollAnswer("1", "Yes"),
+				types.NewPollAnswer("2", "No"),
 			),
 			false,
 			true,
@@ -1081,15 +965,15 @@ func TestPosts_String(t *testing.T) {
 			"external-ref-1",
 			nil,
 			date,
-			owner2,
-		).WithAttachments(models.NewAttachments(
+			"cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l",
+		).WithAttachments(types.NewAttachments(
 			types.NewAttachment("https://uri.com", "text/plain", nil),
 		)).WithPollData(types.NewPollData(
 			"poll?",
 			date.Add(time.Hour),
-			models.NewPollAnswers(
-				types.NewPollAnswer(models.AnswerID(1), "Yes"),
-				types.NewPollAnswer(models.AnswerID(2), "No"),
+			types.NewPollAnswers(
+				types.NewPollAnswer("1", "Yes"),
+				types.NewPollAnswer("2", "No"),
 			),
 			false,
 			true,
@@ -1102,226 +986,146 @@ func TestPosts_String(t *testing.T) {
 	require.Equal(t, expected, posts.String())
 }
 
-func TestNewAttachment(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	uri := "https://uri.com"
-	mimetype := "text/plain"
-	tags := []sdk.AccAddress{tag, tag2}
-	require.NoError(t, err2)
-	expAtt := types.Attachment{
-		URI:      uri,
-		MimeType: mimetype,
-		Tags:     tags,
-	}
-	att := types.NewAttachment(expAtt.URI, expAtt.MimeType, tags)
-	require.Equal(t, expAtt, att)
-}
-
-func TestNewAttachments(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	uri := "https://uri.com"
-	mimetype := "text/plain"
-	tags := []sdk.AccAddress{tag, tag2}
-	require.NoError(t, err2)
-	expAtts := common.Attachments{
-		types.Attachment{
-			URI:      uri,
-			MimeType: mimetype,
-			Tags:     tags,
-		},
-	}
-	atts := common.NewAttachments(expAtts...)
-	require.Equal(t, expAtts, atts)
-}
-
-func TestAttachments_String(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	require.NoError(t, err2)
-
-	postMedias := common.Attachments{
-		types.Attachment{
-			URI:      "https://uri.com",
-			MimeType: "text/plain",
-			Tags:     []sdk.AccAddress{tag, tag2},
-		},
-		types.Attachment{
-			URI:      "https://another.com",
-			MimeType: "application/json",
-			Tags:     []sdk.AccAddress{tag},
-		},
-	}
-
-	actual := postMedias.String()
-
-	expected := "[URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\ncosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h,\n] \n[https://another.com] [application/json] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n]"
-
-	require.Equal(t, expected, actual)
-}
+// ___________________________________________________________________________________________________________________
 
 func TestAttachments_Equals(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-	var tag2, err2 = sdk.AccAddressFromBech32("cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
-	require.NoError(t, err2)
-
 	tests := []struct {
 		name      string
-		first     common.Attachments
-		second    common.Attachments
+		first     types.Attachments
+		second    types.Attachments
 		expEquals bool
 	}{
 		{
 			name: "Same data returns true",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag, tag2},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag},
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag, tag2},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag},
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+			),
 			expEquals: true,
 		},
 		{
 			name: "different data returns false",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment("uri", "text/plain", nil),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment("uri", "application/json", nil),
+			),
 			expEquals: false,
 		},
 		{
 			name: "different length returns false",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment("uri", "text/plain", nil),
+				types.NewAttachment("uri", "application/json", nil),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment("uri", "text/plain", nil),
+			),
 			expEquals: false,
 		},
 		{
 			name: "different tags length returns false",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag, tag2},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag},
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag},
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+			),
 			expEquals: false,
 		},
 		{
 			name: "different tags returns false",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag2},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag},
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     []sdk.AccAddress{tag},
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     []sdk.AccAddress{tag2},
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					[]string{"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"},
+				),
+			),
 			expEquals: false,
 		},
 		{
 			name: "nil tags returns true",
-			first: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     nil,
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     nil,
-				},
-			},
-			second: common.Attachments{
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "text/plain",
-					Tags:     nil,
-				},
-				types.Attachment{
-					URI:      "uri",
-					MimeType: "application/json",
-					Tags:     nil,
-				},
-			},
+			first: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					nil,
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					nil,
+				),
+			),
+			second: types.NewAttachments(
+				types.NewAttachment(
+					"uri",
+					"text/plain",
+					nil,
+				),
+				types.NewAttachment(
+					"uri",
+					"application/json",
+					nil,
+				),
+			),
 			expEquals: true,
 		},
 	}
@@ -1329,7 +1133,7 @@ func TestAttachments_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equal(test.second))
 		})
 	}
 }
@@ -1337,14 +1141,14 @@ func TestAttachments_Equals(t *testing.T) {
 func TestAttachments_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
-		medias      common.Attachments
+		medias      types.Attachments
 		newMedia    types.Attachment
-		expMedias   common.Attachments
+		expMedias   types.Attachments
 		expAppended bool
 	}{
 		{
 			name: "append a new attachment and returns true",
-			medias: common.Attachments{
+			medias: types.Attachments{
 				types.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
@@ -1354,7 +1158,7 @@ func TestAttachments_AppendIfMissing(t *testing.T) {
 				URI:      "uri",
 				MimeType: "application/json",
 			},
-			expMedias: common.Attachments{
+			expMedias: types.Attachments{
 				types.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
@@ -1367,7 +1171,7 @@ func TestAttachments_AppendIfMissing(t *testing.T) {
 		},
 		{
 			name: "not append an existing attachment and returns false",
-			medias: common.Attachments{
+			medias: types.Attachments{
 				types.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
@@ -1377,7 +1181,7 @@ func TestAttachments_AppendIfMissing(t *testing.T) {
 				URI:      "uri",
 				MimeType: "text/plain",
 			},
-			expMedias: common.Attachments{
+			expMedias: types.Attachments{
 				types.Attachment{
 					URI:      "uri",
 					MimeType: "text/plain",
@@ -1395,67 +1199,9 @@ func TestAttachments_AppendIfMissing(t *testing.T) {
 	}
 }
 
-func TestAttachments_Validate(t *testing.T) {
-	tests := []struct {
-		postMedia common.Attachments
-		expErr    string
-	}{
-		{
-			postMedia: common.Attachments{
-				types.Attachment{
-					URI:      "",
-					MimeType: "text/plain",
-				},
-			},
-			expErr: "invalid uri provided",
-		},
-
-		{
-			postMedia: common.Attachments{
-				types.Attachment{
-					URI:      "htt://example.com",
-					MimeType: "text/plain",
-				},
-			},
-			expErr: "invalid uri provided",
-		},
-		{
-			postMedia: common.Attachments{
-				types.Attachment{
-					URI:      "https://example.com",
-					MimeType: "",
-				},
-			},
-			expErr: "mime type must be specified and cannot be empty",
-		},
-		{
-			postMedia: common.Attachments{
-				types.Attachment{
-					URI:      "https://example.com",
-					MimeType: "text/plain",
-				},
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.expErr, func(t *testing.T) {
-			if len(test.expErr) != 0 {
-				require.Equal(t, test.expErr, test.postMedia.Validate().Error())
-			} else {
-				require.Nil(t, test.postMedia.Validate())
-			}
-		})
-	}
-}
-
 // ___________________________________________________________________________________________________________________
 
 func TestPostMedia_Validate(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		name      string
 		postMedia types.Attachment
@@ -1463,53 +1209,56 @@ func TestPostMedia_Validate(t *testing.T) {
 	}{
 		{
 			name: "Empty URI",
-			postMedia: types.Attachment{
-				URI:      "",
-				MimeType: "text/plain",
-			},
+			postMedia: types.NewAttachment(
+				"",
+				"text/plain",
+				nil,
+			),
 			expErr: "invalid uri provided",
 		},
 		{
 			name: "Invalid URI",
-			postMedia: types.Attachment{
-				URI:      "htt://example.com",
-				MimeType: "text/plain",
-			},
+			postMedia: types.NewAttachment(
+				"htt://example.com",
+				"text/plain",
+				nil,
+			),
 			expErr: "invalid uri provided",
 		},
 		{
 			name: "Empty mime type",
-			postMedia: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "",
-			},
+			postMedia: types.NewAttachment(
+				"https://example.com",
+				"",
+				nil,
+			),
 			expErr: "mime type must be specified and cannot be empty",
 		},
 		{
 			name: "Invalid Tags",
-			postMedia: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{{}},
-			},
+			postMedia: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{""},
+			),
 			expErr: "invalid empty tag address: ",
 		},
 		{
 			name: "No errors attachment (with tags)",
-			postMedia: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{tag},
-			},
+			postMedia: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			),
 			expErr: "",
 		},
 		{
 			name: "No errors attachment (without tags)",
-			postMedia: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     nil,
-			},
+			postMedia: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				nil,
+			),
 			expErr: "",
 		},
 	}
@@ -1527,9 +1276,6 @@ func TestPostMedia_Validate(t *testing.T) {
 }
 
 func TestPostMedia_Equals(t *testing.T) {
-	var tag, err = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.NoError(t, err)
-
 	tests := []struct {
 		name      string
 		first     types.Attachment
@@ -1538,54 +1284,58 @@ func TestPostMedia_Equals(t *testing.T) {
 	}{
 		{
 			name: "Same data returns true",
-			first: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{tag},
-			},
-			second: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{tag},
-			},
+			first: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			),
+			second: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			),
 			expEquals: true,
 		},
 		{
 			name: "Different URI returns false",
-			first: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-			},
-			second: types.Attachment{
-				URI:      "https://another.com",
-				MimeType: "text/plain",
-			},
+			first: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				nil,
+			),
+			second: types.NewAttachment(
+				"https://another.com",
+				"text/plain",
+				nil,
+			),
 			expEquals: false,
 		},
 		{
 			name: "Different mime type returns false",
-			first: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-			},
-			second: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "application/json",
-			},
+			first: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				nil,
+			),
+			second: types.NewAttachment(
+				"https://example.com",
+				"application/json",
+				nil,
+			),
 			expEquals: false,
 		},
 		{
 			name: "Different tags returns false",
-			first: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{tag},
-			},
-			second: types.Attachment{
-				URI:      "https://example.com",
-				MimeType: "text/plain",
-				Tags:     []sdk.AccAddress{},
-			},
+			first: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			),
+			second: types.NewAttachment(
+				"https://example.com",
+				"text/plain",
+				[]string{},
+			),
 			expEquals: false,
 		},
 	}
@@ -1593,23 +1343,12 @@ func TestPostMedia_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equals(test.second))
+			require.Equal(t, test.expEquals, test.first.Equal(test.second))
 		})
 	}
 }
 
 // ___________________________________________________________________________________________________________________
-
-func TestNewOptionalData(t *testing.T) {
-	expOpd := types.OptionalDataEntry{
-		Key:   "key",
-		Value: "value",
-	}
-
-	opd := types.NewOptionalDataEntry("key", "value")
-
-	assert.Equal(t, expOpd, opd)
-}
 
 func TestOptionalData_Equals(t *testing.T) {
 	tests := []struct {
@@ -1635,12 +1374,12 @@ func TestOptionalData_Equals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expBool, test.optionalData.Equals(test.otherOpData))
+			require.Equal(t, test.expBool, test.optionalData.Equal(test.otherOpData))
 		})
 	}
 }
 
 func TestOptionalData_String(t *testing.T) {
 	opt := types.NewOptionalDataEntry("optional", "data")
-	assert.Equal(t, "[Key] [Value]\n[optional] [data]", opt.String())
+	require.Equal(t, "[Key] [Value]\n[optional] [data]", opt.String())
 }

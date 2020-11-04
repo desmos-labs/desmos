@@ -7,14 +7,6 @@ import "desmos/posts/v1beta1/polls.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/posts/types";
 
-// PostID represents the ID of a post
-message PostID {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  string id = 1;
-}
-
 // Post contains all the data of a Desmos post
 message Post {
   option (gogoproto.equal) = true;
@@ -100,4 +92,24 @@ message OptionalDataEntry {
 
   string key = 1;
   string value = 2;
+}
+
+// ___________________________________________________________________________________________________________________
+
+message QueryPostsParams {
+  int32 page = 1;
+  int32 limit = 2;
+
+  string sort_by = 3;
+  string sort_order = 4;
+
+  string parent_id = 5 [
+    (gogoproto.customname) = "ParentID"
+  ];
+  google.protobuf.Timestamp creation_time = 6 [
+    (gogoproto.stdtime) = true
+  ];
+  string subspace = 7;
+  string creator = 8;
+  repeated string hashtags = 9;
 }

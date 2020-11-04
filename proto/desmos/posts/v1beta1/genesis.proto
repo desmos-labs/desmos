@@ -16,7 +16,7 @@ message GenesisState {
     (gogoproto.nullable) = false
   ];
 
-  repeated UserPollAnswersEntry users_poll_answers = 2 [
+  repeated UserAnswersEntry users_poll_answers = 2 [
     (gogoproto.nullable) = false
   ];
   repeated PostReactionsEntry posts_reactions = 3 [
@@ -31,7 +31,7 @@ message GenesisState {
 }
 
 // UserPollAnswerEntry represents an entry containing all the answers to a poll
-message UserPollAnswersEntry {
+message UserAnswersEntry {
   string post_id = 1;
   repeated desmos.posts.v1beta1.UserAnswer user_answers = 2 [
     (gogoproto.nullable) = false

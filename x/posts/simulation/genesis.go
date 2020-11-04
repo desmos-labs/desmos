@@ -3,10 +3,11 @@ package simulation
 // DONTCOVER
 
 import (
+	"encoding/json"
 	"fmt"
+	"math/rand"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/tendermint/tendermint/crypto/ed25519"
@@ -24,16 +25,19 @@ func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	reactionsData := RandomReactionsData(simState.Rand, simState.Accounts)
 
-	postReactions := randomPostReactions(simState, posts, reactionsData[simState.Rand.Intn(len(reactionsData))])
-	registeredReactions := registeredReactions(reactionsData)
-	params := randomParams(simState)
-	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions, params)
-
-	fmt.Printf("Selected randomly generated posts parameters:\n%s\n%s\n%s\n",
-		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxPostMessageLength),
-		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxOptionalDataFieldsNumber),
-		codec.MustMarshalJSONIndent(simState.Cdc, postsGenesis.Params.MaxOptionalDataFieldValueLength),
+	postsGenesis := types.NewGenesisState(
+		posts,
+		nil,
+		randomPostReactionsEntries(simState.Rand, posts, reactionsData),
+		registeredReactions(reactionsData),
+		randomParams(simState),
 	)
+
+	bz, err := json.MarshalIndent(&postsGenesis, "", " ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Selected randomly generated posts parameters:\n%s\n", bz)
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
@@ -52,7 +56,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 			postData.Subspace,
 			postData.OptionalData,
 			time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC),
-			postData.Creator.Address,
+			postData.Creator.Address.String(),
 		).WithAttachments(postData.Attachments)
 
 		if postData.PollData != nil {
@@ -63,41 +67,46 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 	return posts
 }
 
-// randomPostReactions returns a randomly generated list of reactions
-func randomPostReactions(simState *module.SimulationState, posts types.Posts, reactionData ReactionData) (reactionsMap map[string]types.PostReactions) {
-	reactionsNumber := simState.Rand.Intn(len(posts))
+// randomPostReactionsEntries returns a randomly generated list of reactions entries
+func randomPostReactionsEntries(r *rand.Rand, posts types.Posts, reactionsData []ReactionData) []types.PostReactionsEntry {
+	reactionsNumber := r.Intn(len(posts))
 
-	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
+	entries := make([]types.PostReactionsEntry, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {
-		reactionsLen := simState.Rand.Intn(20)
+		reactionsLen := r.Intn(20)
 		reactions := make(types.PostReactions, reactionsLen)
+
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
-			reactions[j] = types.NewPostReaction(reactionData.ShortCode, reactionData.Value, sdk.AccAddress(privKey.Address()))
+			data := reactionsData[r.Intn(len(reactionsData))]
+
+			reactions[j] = types.NewPostReaction(data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
 		}
 
-		reactionsMap[RandomPostIDFromPosts(simState.Rand, posts).String()] = reactions
+		id := RandomPostIDFromPosts(r, posts)
+		entries = append(entries, types.NewPostReactionsEntry(id, reactions))
 	}
 
-	return reactionsMap
+	return entries
 }
 
 // registeredReactions returns all the possible registered reactions
 func registeredReactions(reactionsData []ReactionData) types.Reactions {
 	regReactions := types.Reactions{}
-
 	for _, reactionData := range reactionsData {
-		reaction := types.NewReaction(
-			reactionData.Creator.Address,
+		reaction := types.NewRegisteredReaction(
+			reactionData.Creator.Address.String(),
 			reactionData.ShortCode,
 			reactionData.Value,
 			reactionData.Subspace,
 		)
 		regReactions = append(regReactions, reaction)
 	}
+
 	return regReactions
 }
 
+// randomParams returns randomly generated module parameters
 func randomParams(simState *module.SimulationState) types.Params {
 	return RandomParams(simState.Rand)
 }
