@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
@@ -18,18 +19,18 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
-func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
+func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.CreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the receiver has blocked the sender before
-	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+	if k.HasUserBlocked(ctx, msg.Receiver, msg.Sender, msg.Subspace) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "The user with address %s has blocked you", msg.Receiver)
 	}
 
 	// Save the relationship
-	err := k.StoreRelationship(ctx, types.NewRelationship(msg.Sender, msg.Receiver, msg.Subspace))
+	err := k.SaveRelationship(ctx, types.NewRelationship(msg.Sender, msg.Receiver, msg.Subspace))
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -39,34 +40,34 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
-	return &types.MsgCreateRelationshipResponse{}, nil
+	return &types.CreateRelationshipResponse{}, nil
 }
 
-func (k msgServer) RemoveRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.MsgDeleteRelationshipResponse, error) {
+func (k msgServer) RemoveRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.RemoveRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteRelationship(ctx, types.NewRelationship(msg.Sender, msg.Counterparty, msg.Subspace))
+	err := k.DeleteRelationship(ctx, types.NewRelationship(msg.User, msg.Counterparty, msg.Subspace))
 	if err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeRelationshipsDeleted,
-		sdk.NewAttribute(types.AttributeRelationshipSender, msg.Sender),
+		sdk.NewAttribute(types.AttributeRelationshipSender, msg.User),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Counterparty),
 		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
-	return &types.MsgDeleteRelationshipResponse{}, nil
+	return &types.RemoveRelationshipResponse{}, nil
 }
 
-func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
+func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.BlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
-
-	if err := k.SaveUserBlock(ctx, userBlock); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	err := k.SaveUserBlock(ctx, userBlock)
+	if err != nil {
+		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -77,14 +78,15 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		sdk.NewAttribute(types.AttributeUserBlockReason, msg.Reason),
 	))
 
-	return &types.MsgBlockUserResponse{}, nil
+	return &types.BlockUserResponse{}, nil
 }
 
-func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockResponse, error) {
+func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.UnblockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.Subspace); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	err := k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.Subspace)
+	if err != nil {
+		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -94,5 +96,5 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
 	))
 
-	return &types.MsgUnblockResponse{}, nil
+	return &types.UnblockUserResponse{}, nil
 }

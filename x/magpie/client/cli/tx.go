@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/spf13/cobra"
@@ -39,6 +41,10 @@ func GetCmdCreateSession() *cobra.Command {
 			}
 
 			msg := types.NewMsgCreateSession(clientCtx.FromAddress.String(), args[0], args[1], args[2], args[3])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

@@ -2,10 +2,12 @@ package types
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 func NewPost(
@@ -37,9 +39,9 @@ func (post Post) WithAttachments(attachments []Attachment) Post {
 	return post
 }
 
-// WithPollData allows to easily set the given data as the poll data files associated with the p Post
-func (post Post) WithPollData(data PollData) Post {
-	post.PollData = &data
+// WithPollData allows to easily set the given poll as the poll poll files associated with the p Post
+func (post Post) WithPollData(data *PollData) Post {
+	post.PollData = data
 	post.PostID = ComputeID(post)
 	return post
 }
@@ -86,7 +88,7 @@ func (post Post) Validate() error {
 	return nil
 }
 
-// ContentsEquals returns true if and only if p and other contain the same data, without considering the ID
+// ContentsEquals returns true if and only if p and other contain the same poll, without considering the ID
 func (post Post) ContentsEquals(other Post) bool {
 	equalsOptionalData := len(post.OptionalData) == len(other.OptionalData)
 	if equalsOptionalData {
@@ -132,37 +134,20 @@ func (post Post) GetPostHashtags() []string {
 
 // ___________________________________________________________________________________________________________________
 
-// Posts represents a slice of Post objects
-type Posts []Post
-
-// String implements stringer interface
-func (posts Posts) String() string {
-	out := "ID - [Creator] Message\n"
-	for _, post := range posts {
-		out += fmt.Sprintf("%s - [%s] %s\n",
-			post.PostID, post.Creator, post.Message)
+// AppendIfMissing appends the given id to the ids slice, if not present yet.
+// If appended, returns the new slice and true. Otherwise, returns the original slice and false.
+func (ids CommentIDs) AppendIfMissing(id string) (CommentIDs, bool) {
+	for _, existing := range ids.Ids {
+		if existing == id {
+			return ids, false
+		}
 	}
-	return strings.TrimSpace(out)
-}
-
-// Len implements sort.Interface
-func (posts Posts) Len() int {
-	return len(posts)
-}
-
-// Swap implements sort.Interface
-func (posts Posts) Swap(i, j int) {
-	posts[i], posts[j] = posts[j], posts[i]
-}
-
-// Less implements sort.Interface
-func (posts Posts) Less(i, j int) bool {
-	return posts[i].Created.Before(posts[j].Created)
+	return CommentIDs{Ids: append(ids.Ids, id)}, true
 }
 
 // ___________________________________________________________________________________________________________________
 
-// NewAttachment builds a new Attachment instance with the provided data
+// NewAttachment builds a new Attachment instance with the provided poll
 func NewAttachment(uri, mimeType string, tags []string) Attachment {
 	return Attachment{
 		URI:      uri,
@@ -208,7 +193,7 @@ func NewAttachments(attachments ...Attachment) Attachments {
 }
 
 // Equals returns true iff the atts slice contains the same
-// data in the same order of the other slice
+// poll in the same order of the other slice
 func (attachments Attachments) Equal(other Attachments) bool {
 	if len(attachments) != len(other) {
 		return false
@@ -225,13 +210,13 @@ func (attachments Attachments) Equal(other Attachments) bool {
 
 // AppendIfMissing appends the given otherAttachment to the atts slice if it does not exist inside it yet.
 // It returns a new slice of Attachments containing such otherAttachment.
-func (atts Attachments) AppendIfMissing(otherAttachment Attachment) Attachments {
-	for _, att := range atts {
+func (attachments Attachments) AppendIfMissing(otherAttachment Attachment) Attachments {
+	for _, att := range attachments {
 		if att.Equal(otherAttachment) {
-			return atts
+			return attachments
 		}
 	}
-	return append(atts, otherAttachment)
+	return append(attachments, otherAttachment)
 }
 
 // ___________________________________________________________________________________________________________________

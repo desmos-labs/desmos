@@ -13,13 +13,6 @@ import (
 var _ types.QueryServer = Keeper{}
 
 // Profiles implements the Query/Profiles gRPC method
-func (k Keeper) Profiles(ctx context.Context, request *types.QueryProfilesRequest) (*types.QueryProfilesResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	profiles := k.GetProfiles(sdkCtx)
-	return &types.QueryProfilesResponse{Profiles: profiles}, nil
-}
-
-// Profiles implements the Query/Profiles gRPC method
 func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest) (*types.QueryProfileResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
@@ -30,7 +23,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := k.GetDtagRelatedAddress(sdkCtx, dTagOrAddress)
+		addr := k.GetDTagRelatedAddress(sdkCtx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)
@@ -60,7 +53,7 @@ func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTrans
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, request.User)
 	}
 
-	requests := k.GetUserDTagTransferRequests(sdkCtx, user.String())
+	requests := k.GetUserIncomingDTagTransferRequests(sdkCtx, user.String())
 	return &types.QueryDTagTransfersResponse{Requests: requests}, nil
 }
 

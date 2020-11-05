@@ -43,9 +43,11 @@ message PollData {
     (gogoproto.moretags) = "yaml\"end_date\""
   ];
   bool allows_multiple_answers = 4 [
+    (gogoproto.jsontag) = "allows_multiple_answers",
     (gogoproto.moretags) = "yaml\"allows_multiple_answers\""
   ];
   bool allows_answer_edits = 5 [
+    (gogoproto.jsontag) = "allows_answer_edits",
     (gogoproto.moretags) = "yaml\"allows_answer_edits\""
   ];
 }
@@ -59,4 +61,11 @@ message UserAnswer {
 
   string user = 1;
   repeated string answers = 2;
+}
+
+// UserAnswers wraps a list of UserAnswer
+message UserAnswers {
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1 [
+    (gogoproto.nullable) = false
+  ];
 }

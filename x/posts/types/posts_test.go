@@ -1,174 +1,13 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types"
-	"strconv"
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/posts/types"
+
 	"github.com/stretchr/testify/require"
 )
-
-func TestPost_NewPost(t *testing.T) {
-	tests := []struct {
-		post       types.Post
-		expectedId string
-	}{
-		{
-			post: types.NewPost(
-				"1",
-				"This is a message",
-				true,
-				"my_subspace",
-				nil,
-				time.Date(2020, 1, 1, 12, 0, 0, 0, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			expectedId: "16ee282c835ef2bdfeea5bbd035eb3bea91c2b54f3ce2c28bbccfc9e4173f174",
-		},
-	}
-
-	for index, test := range tests {
-		test := test
-		t.Run(strconv.Itoa(index), func(t *testing.T) {
-			require.Equal(t, test.expectedId, test.post.PostID)
-		})
-	}
-}
-
-func TestPost_String(t *testing.T) {
-	tests := []struct {
-		name      string
-		post      types.Post
-		expString string
-	}{
-		{
-			name: "Post without attachments and poll data",
-			post: types.NewPost(
-				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				"My post message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			expString: "[ID] 7238e494e329def3bb2666e8a8fdd4bd3c64654f06c4a8e091be8c7cc441106d [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		},
-		{
-			name: "Post with attachments and without poll data",
-			post: types.NewPost(
-				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				"My post message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment(
-					"https://uri.com",
-					"text/plain",
-					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
-				),
-				types.NewAttachment(
-					"https://another.com",
-					"application/json",
-					nil,
-				),
-			)),
-			expString: "[ID] 7b23bc67a9d163134261b0c77eb262da96e783861977ebfc6100bdf408b8a995 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] []",
-		},
-		{
-			name: "Post without attachments and with poll data",
-			post: types.NewPost(
-				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				"My post message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithPollData(types.NewPollData(
-				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
-			expString: "[ID] 048813e6e9f93a169234d10999e2f59bac14a364db11d4eb99309ac186cb78d9 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
-		},
-		{
-			name: "Post with attachments and with poll data",
-			post: types.NewPost(
-				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				"My post message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment(
-					"https://uri.com",
-					"text/plain",
-					[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
-				),
-				types.NewAttachment(
-					"https://another.com",
-					"application/json",
-					nil,
-				),
-			)).WithPollData(types.NewPollData(
-				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
-			expString: "[ID] 0b67394573f711c7e22d209abeab184b4eaadc7822d797232f959e40dfa3af0f [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Post Attachments]:\n [URI] [Mime-Type] [Tags]\n[https://uri.com] [text/plain] [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns,\n] \n[https://another.com] [application/json] [] [Poll Data] Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
-		},
-		{
-			name: "Post with optional data",
-			post: types.NewPost(
-				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				"My post message",
-				true,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]types.OptionalDataEntry{
-					{
-						"key1",
-						"value",
-					},
-					{
-						"key2",
-						"value",
-					},
-					{
-						"key3",
-						"value",
-					},
-				},
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			expString: "[ID] 4c07f3e94fddbee872f54adeeca2e24b82e7bcc9f04e19f40e03901169d29cc2 [Parent ID] e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163 [Message] My post message [Creation Time] 2020-01-01 12:00:00 +0000 UTC [Edited Time] 0001-01-01 00:00:00 +0000 UTC [Allows Comments] true [Subspace] 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e [Creator] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns [Optional Data] [[Key] [Value]\n[key1] [value] [Key] [Value]\n[key2] [value] [Key] [Value]\n[key3] [value]]",
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expString, test.post.String())
-		})
-	}
-}
 
 func TestPost_Validate(t *testing.T) {
 	tests := []struct {
@@ -180,7 +19,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "Invalid postID",
 			post: types.Post{
 				Message:        "Message",
-				Created:        time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				Created:        time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData:   nil,
@@ -196,7 +35,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"",
 			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
@@ -220,7 +59,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
@@ -233,7 +72,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expError: "post message, attachments or poll required, they cannot be all empty",
@@ -269,8 +108,8 @@ func TestPost_Validate(t *testing.T) {
 				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Message:  "Message",
 				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				Created:  time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
-				LastEdited: time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)).
+				Created:  time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				LastEdited: time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).
 					AddDate(0, 0, -1),
 			},
 			expError: "invalid post last edit time: 2019-12-31 12:00:00 +0000 UTC",
@@ -283,7 +122,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
@@ -307,7 +146,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				" ",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
@@ -331,7 +170,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("htp:/uri.com", "text/plain", nil)),
@@ -339,13 +178,13 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid uri provided",
 		},
 		{
-			name: "Valid post without poll data",
+			name: "Valid post without poll poll",
 			post: types.NewPost("",
 				"Message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithAttachments(types.NewAttachments(
 				types.NewAttachment("https://uri.com", "text/plain", nil),
@@ -359,7 +198,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithPollData(types.NewPollData(
 				"poll?",
@@ -380,7 +219,7 @@ func TestPost_Validate(t *testing.T) {
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			).WithPollData(types.NewPollData(
 				"poll?",
@@ -642,7 +481,7 @@ func TestPost_Equals(t *testing.T) {
 			expEquals: false,
 		},
 		{
-			name: "Different optional data",
+			name: "Different optional poll",
 			first: types.Post{
 				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -795,7 +634,7 @@ func TestPost_Equals(t *testing.T) {
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			}).WithPollData(types.NewPollData(
 				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
 					types.NewPollAnswer("1", "Yes"),
 					types.NewPollAnswer("2", "No"),
@@ -817,7 +656,7 @@ func TestPost_Equals(t *testing.T) {
 				types.NewAttachment("https://uri.com", "text/plain", nil),
 			}).WithPollData(types.NewPollData(
 				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
 					types.NewPollAnswer("1", "Yes"),
 					types.NewPollAnswer("2", "No"),
@@ -851,7 +690,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{"test", "desmos"},
@@ -864,7 +703,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
@@ -877,7 +716,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
@@ -890,7 +729,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
@@ -903,7 +742,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{},
@@ -916,7 +755,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTC", 0)),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expHashtags: []string{"hashtag"},
@@ -934,60 +773,6 @@ func TestPost_GetPostHashtags(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestPosts_String(t *testing.T) {
-	date := time.Date(2020, 1, 1, 12, 0, 00, 000, time.FixedZone("UTC", 0))
-
-	posts := types.Posts{
-		types.NewPost(
-			"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-			"Post 1",
-			false,
-			"external-ref-1",
-			nil,
-			date,
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		).WithAttachments(types.NewAttachments(
-			types.NewAttachment("https://uri.com", "text/plain", nil),
-		)).WithPollData(types.NewPollData(
-			"poll?",
-			date.Add(time.Hour),
-			types.NewPollAnswers(
-				types.NewPollAnswer("1", "Yes"),
-				types.NewPollAnswer("2", "No"),
-			),
-			false,
-			true,
-		)),
-		types.NewPost(
-			"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-			"Post 2",
-			false,
-			"external-ref-1",
-			nil,
-			date,
-			"cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l",
-		).WithAttachments(types.NewAttachments(
-			types.NewAttachment("https://uri.com", "text/plain", nil),
-		)).WithPollData(types.NewPollData(
-			"poll?",
-			date.Add(time.Hour),
-			types.NewPollAnswers(
-				types.NewPollAnswer("1", "Yes"),
-				types.NewPollAnswer("2", "No"),
-			),
-			false,
-			true,
-		)),
-	}
-
-	expected := `ID - [Creator] Message
-66dc5e1537c731ca1c9866940b13027d2aa79277888a61c1bd295e8e944c8054 - [cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns] Post 1
-4807d764063aa5465901ca66b821a29e4f1b8560299c760b65afbb89d0004d86 - [cosmos1r2plnngkwnahajl3d2a7fvzcsxf6djlt380f3l] Post 2`
-	require.Equal(t, expected, posts.String())
-}
-
-// ___________________________________________________________________________________________________________________
-
 func TestAttachments_Equals(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -996,7 +781,7 @@ func TestAttachments_Equals(t *testing.T) {
 		expEquals bool
 	}{
 		{
-			name: "Same data returns true",
+			name: "Same poll returns true",
 			first: types.NewAttachments(
 				types.NewAttachment(
 					"uri",
@@ -1024,7 +809,7 @@ func TestAttachments_Equals(t *testing.T) {
 			expEquals: true,
 		},
 		{
-			name: "different data returns false",
+			name: "different poll returns false",
 			first: types.NewAttachments(
 				types.NewAttachment("uri", "text/plain", nil),
 			),
@@ -1283,7 +1068,7 @@ func TestPostMedia_Equals(t *testing.T) {
 		expEquals bool
 	}{
 		{
-			name: "Same data returns true",
+			name: "Same poll returns true",
 			first: types.NewAttachment(
 				"https://example.com",
 				"text/plain",
@@ -1358,13 +1143,13 @@ func TestOptionalData_Equals(t *testing.T) {
 		expBool      bool
 	}{
 		{
-			name:         "Different optional data returns false",
+			name:         "Different optional poll returns false",
 			optionalData: types.NewOptionalDataEntry("key", "value"),
 			otherOpData:  types.NewOptionalDataEntry("key", "val"),
 			expBool:      false,
 		},
 		{
-			name:         "Same optional data returns true",
+			name:         "Same optional poll returns true",
 			optionalData: types.NewOptionalDataEntry("key", "value"),
 			otherOpData:  types.NewOptionalDataEntry("key", "value"),
 			expBool:      true,
@@ -1377,9 +1162,4 @@ func TestOptionalData_Equals(t *testing.T) {
 			require.Equal(t, test.expBool, test.optionalData.Equal(test.otherOpData))
 		})
 	}
-}
-
-func TestOptionalData_String(t *testing.T) {
-	opt := types.NewOptionalDataEntry("optional", "data")
-	require.Equal(t, "[Key] [Value]\n[optional] [data]", opt.String())
 }

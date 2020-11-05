@@ -29,16 +29,16 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak authkeeper.AccountKeeper,
 
 		sender, relationship, skip := randomRelationshipFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
 		}
 
-		msg := types.NewMsgCreateRelationship(sender.Address.String(), relationship.Recipient, relationship.Subspace)
+		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Recipient, relationship.Subspace)
 		err = sendMsgCreateRelationship(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreateRelationship"), nil, nil
 	}
 }
 
@@ -56,7 +56,7 @@ func sendMsgCreateRelationship(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -98,18 +98,14 @@ func randomRelationshipFields(
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
-	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
+	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
 	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace)
 
-	// skip if relationships already exists
-	relationships, err := k.GetUserRelationships(ctx, sender.Address.String())
-	if err != nil {
-		return sender, rel, false
-	}
-
+	// Skip if relationships already exists
+	relationships := k.GetUserRelationships(ctx, sender.Address.String())
 	for _, relationship := range relationships {
 		if relationship.Equal(rel) {
 			return simtypes.Account{}, types.Relationship{}, true
@@ -118,6 +114,8 @@ func randomRelationshipFields(
 
 	return sender, rel, false
 }
+
+// ___________________________________________________________________________________________________________________
 
 // SimulateMsgDeleteRelationship tests and runs a single msg delete relationships
 // nolint: funlen
@@ -128,18 +126,18 @@ func SimulateMsgDeleteRelationship(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		sender, relationship, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
+		user, counterparty, subspace, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, nil
 		}
 
-		msg := types.NewMsgDeleteRelationship(sender.Address.String(), relationship.Recipient, relationship.Subspace)
-		err = sendMsgDeleteRelationship(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey})
+		msg := types.NewMsgDeleteRelationship(user.Address.String(), counterparty, subspace)
+		err = sendMsgDeleteRelationship(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{user.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgDeleteRelationship"), nil, nil
 	}
 }
 
@@ -148,7 +146,7 @@ func sendMsgDeleteRelationship(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 	msg *types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
+	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	account := ak.GetAccount(ctx, addr)
 	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
@@ -157,7 +155,7 @@ func sendMsgDeleteRelationship(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -183,20 +181,31 @@ func sendMsgDeleteRelationship(
 // randomDeleteRelationshipFields returns random delete relationships fields
 func randomDeleteRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, types.Relationship, bool) {
+) (user simtypes.Account, counterparty string, subspace string, skip bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.Relationship{}, true
+		return simtypes.Account{}, "", "", true
 	}
 
-	// Get random accounts
-	user, _ := simtypes.RandomAcc(r, accs)
+	// Get a random account
+	user, _ = simtypes.RandomAcc(r, accs)
 
-	relationships, err := k.GetUserRelationships(ctx, user.Address.String())
+	// Get the user relationships
+	relationships := k.GetUserRelationships(ctx, user.Address.String())
 
-	// skip the test if the user has no relationships
-	if err != nil || len(relationships) == 0 {
-		return simtypes.Account{}, types.Relationship{}, true
+	// Remove all the relationships where the user is not the creator
+	var outgoingRelationships []types.Relationship
+	for _, relationship := range relationships {
+		if user.Address.String() == relationship.Creator {
+			outgoingRelationships = append(outgoingRelationships, relationship)
+		}
 	}
 
-	return user, RandomRelationship(r, relationships), false
+	// Skip the test if the user has no relationships
+	if len(outgoingRelationships) == 0 {
+		return simtypes.Account{}, "", "", true
+	}
+
+	// Get a random relationship
+	relationship := RandomRelationship(r, outgoingRelationships)
+	return user, relationship.Recipient, relationship.Subspace, false
 }

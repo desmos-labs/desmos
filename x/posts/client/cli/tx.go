@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,7 +32,7 @@ func NewTxCmd() *cobra.Command {
 	}
 
 	postsTxCmd.AddCommand(
-		GetCmdCreatePost(),
+		NewCmdCreatePost(),
 		GetCmdEditPost(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
@@ -44,9 +46,9 @@ func NewTxCmd() *cobra.Command {
 // getAttachments parses the attachments of a post.
 // If one or more attachments are found, it returns them. Otherwise returns `nil` instead.
 func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
-	mediasStrings, err := cmd.Flags().GetStringArray(flagAttachment)
+	mediasStrings, err := cmd.Flags().GetStringArray(FlagAttachment)
 	if err != nil {
-		return nil, fmt.Errorf("invalid flag value: %s", flagAttachment)
+		return nil, fmt.Errorf("invalid flag value: %s", FlagAttachment)
 	}
 
 	attachments := types.Attachments{}
@@ -70,18 +72,18 @@ func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 
 // getPollData parses the pollData of a post. If no poll data is found returns `nil` instead.
 func getPollData(cmd *cobra.Command) (*types.PollData, error) {
-	pollDetailsMap, err := cmd.Flags().GetStringToString(flagPollDetails)
+	pollDetailsMap, err := cmd.Flags().GetStringToString(FlagPollDetails)
 	if err != nil {
-		return nil, fmt.Errorf("invalid %s value", flagPollDetails)
+		return nil, fmt.Errorf("invalid %s value", FlagPollDetails)
 	}
 
-	pollAnswersSlice := viper.GetStringSlice(flagPollAnswer)
+	pollAnswersSlice := viper.GetStringSlice(FlagPollAnswer)
 	if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
-		return nil, fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", flagPollDetails)
+		return nil, fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", FlagPollDetails)
 	}
 
 	if len(pollDetailsMap) > 0 && len(pollAnswersSlice) == 0 {
-		return nil, fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", flagPollAnswer)
+		return nil, fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", FlagPollAnswer)
 	}
 
 	var pollData *types.PollData
@@ -120,28 +122,18 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 				return nil, fmt.Errorf("invalid answer text at index %d", index)
 			}
 
-			pollAnswer := types.PollAnswer{
-				ID:   fmt.Sprint(index),
-				Text: answer,
-			}
-
+			pollAnswer := types.NewPollAnswer(fmt.Sprint(index), answer)
 			answers = answers.AppendIfMissing(pollAnswer)
 		}
 
-		pollData = &types.PollData{
-			Question:              question,
-			EndDate:               date,
-			ProvidedAnswers:       answers,
-			AllowsMultipleAnswers: allowMultipleAnswers,
-			AllowsAnswerEdits:     allowsAnswerEdits,
-		}
+		pollData = types.NewPollData(question, date, answers, allowMultipleAnswers, allowsAnswerEdits)
 	}
 
 	return pollData, nil
 }
 
-// GetCmdCreatePost returns the CLI command to create a post
-func GetCmdCreatePost() *cobra.Command {
+// NewCmdCreatePost returns the CLI command to create a post
+func NewCmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace] [[message]]",
 		Short: "Create a new post",
@@ -206,8 +198,8 @@ E.g.
 			}
 
 			// Check parent id
-			parentID := viper.GetString(flagParentID)
-			if !types.IsValidPostID(parentID) {
+			parentID := viper.GetString(FlagParentID)
+			if parentID != "" && !types.IsValidPostID(parentID) {
 				return sdkerrors.Wrap(types.ErrInvalidPostID, parentID)
 			}
 
@@ -231,7 +223,7 @@ E.g.
 			msg := types.NewMsgCreatePost(
 				text,
 				parentID,
-				viper.GetBool(flagAllowsComments),
+				viper.GetBool(FlagAllowsComments),
 				args[0],
 				nil,
 				clientCtx.FromAddress.String(),
@@ -243,11 +235,12 @@ E.g.
 		},
 	}
 
-	cmd.Flags().Bool(flagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(flagParentID, "", "Id of the post to which this one should be an answer to")
-	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's attachment")
-	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
-	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
+	cmd.Flags().Bool(FlagAllowsComments, true, "Possibility to comment the post or not")
+	cmd.Flags().String(FlagParentID, "", "Id of the post to which this one should be an answer to")
+	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
+	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
+	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
@@ -329,16 +322,18 @@ E.g.
 		},
 	}
 
-	cmd.Flags().StringArray(flagAttachment, []string{}, "Current post's attachment")
-	cmd.Flags().StringToString(flagPollDetails, map[string]string{}, "Current post's poll details")
-	cmd.Flags().StringSlice(flagPollAnswer, []string{}, "Current post's poll answer")
+	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
+	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
+	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
 
 // GetCmdAddPostReaction returns the CLI command to add a reaction to a post
 func GetCmdAddPostReaction() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "add-reaction [post-id] [value]",
 		Short: "Adds a reaction to a post",
 		Long: fmt.Sprintf(`
@@ -365,11 +360,15 @@ E.g.
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdRemovePostReaction returns the CLI command to remove a reaction from a post
 func GetCmdRemovePostReaction() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "remove-reaction [post-id] [value]",
 		Short: "Removes an existing reaction from a post",
 		Long: fmt.Sprintf(`
@@ -396,11 +395,15 @@ E.g.
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdAnswerPoll returns the CLI command to answer a poll
 func GetCmdAnswerPoll() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "answer-poll [post-id] [answer...]",
 		Short: "Answer a post's poll'",
 		Args:  cobra.MinimumNArgs(2),
@@ -425,11 +428,15 @@ func GetCmdAnswerPoll() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdRegisterReaction returns the CLI command to register a new reaction
 func GetCmdRegisterReaction() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "register-reaction [short-code] [value] [subspace]",
 		Short: "Register a new reaction",
 		Args:  cobra.ExactArgs(3),
@@ -448,4 +455,8 @@ func GetCmdRegisterReaction() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }

@@ -7,10 +7,9 @@ import (
 
 func (suite *KeeperTestSuite) TestInvariants() {
 	tests := []struct {
-		name        string
-		report      types.Report
-		expBool     bool
-		expResponse string
+		name       string
+		report     types.Report
+		shouldStop bool
 	}{
 		{
 			name: "Invariants not violated",
@@ -20,8 +19,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expBool:     true,
-			expResponse: "Every invariant condition is fulfilled correctly",
+			shouldStop: true,
 		},
 		{
 			name: "ValidReportIDs invariant violated",
@@ -31,8 +29,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expBool:     true,
-			expResponse: "stored: invalid stored' IDs invariant\nThe following list contains invalid postIDs:\n 123\n\n",
+			shouldStop: true,
 		},
 	}
 
@@ -41,13 +38,10 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			err := suite.keeper.SaveReport(suite.ctx, test.report)
-			suite.Require().NoError(err)
+			suite.keeper.SaveReport(suite.ctx, test.report)
 
-			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
-
-			suite.Require().Equal(test.expResponse, res)
-			suite.Require().Equal(test.expBool, stop)
+			_, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			suite.Require().Equal(test.shouldStop, stop)
 		})
 	}
 }

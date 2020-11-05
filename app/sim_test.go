@@ -8,25 +8,28 @@ import (
 	"path/filepath"
 	"testing"
 
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
 	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/stretchr/testify/require"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -43,9 +46,6 @@ func init() {
 	sdkConfig := sdk.GetConfig()
 	SetupConfig(sdkConfig)
 	sdkConfig.Seal()
-
-	// SetupSimApp the overloads
-	Init()
 }
 
 type StoreKeysPrefixes struct {
@@ -101,7 +101,7 @@ func TestFullAppSimulation(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{},
-		DefaultNodeHome, simapp.FlagPeriodValue, MakeEncodingConfig(), fauxMerkleModeOpt,
+		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -115,6 +115,7 @@ func TestFullAppSimulation(t *testing.T) {
 		simapp.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
 		config,
+		app.AppCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked
@@ -141,7 +142,7 @@ func TestAppImportExport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeEncodingConfig(), fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -153,7 +154,9 @@ func TestAppImportExport(t *testing.T) {
 		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(app, app.AppCodec(), config),
-		app.ModuleAccountAddrs(), config,
+		app.ModuleAccountAddrs(),
+		config,
+		app.AppCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked
@@ -167,7 +170,7 @@ func TestAppImportExport(t *testing.T) {
 
 	fmt.Printf("exporting genesis...\n")
 
-	appState, _, err := app.ExportAppStateAndValidators(false, []string{})
+	exported, err := app.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err)
 
 	fmt.Printf("importing genesis...\n")
@@ -182,34 +185,34 @@ func TestAppImportExport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{},
-		DefaultNodeHome, simapp.FlagPeriodValue, MakeEncodingConfig(), fauxMerkleModeOpt,
+		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
 	var genesisState GenesisState
-	err = json.Unmarshal(appState, &genesisState)
+	err = json.Unmarshal(exported.AppState, &genesisState)
 	require.NoError(t, err)
 
 	ctxA := app.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 	ctxB := newApp.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 	newApp.mm.InitGenesis(ctxB, app.AppCodec(), genesisState)
+	newApp.StoreConsensusParams(ctxB, exported.ConsensusParams)
 
 	fmt.Printf("comparing stores...\n")
 
 	storeKeysPrefixes := []StoreKeysPrefixes{
 		{app.keys[authtypes.StoreKey], newApp.keys[authtypes.StoreKey], [][]byte{}},
-
-		// TODO: This has been currently commented out as HistoricalInfoKey is not properly handled from NewDecodeStore
-		//{app.keys[staking.storeKey], newApp.keys[staking.storeKey],
-		//	[][]byte{
-		//		staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,
-		//	}}, // ordering may change but it doesn't matter
-
+		{app.keys[stakingtypes.StoreKey], newApp.keys[stakingtypes.StoreKey],
+			[][]byte{
+				stakingtypes.UnbondingQueueKey, stakingtypes.RedelegationQueueKey, stakingtypes.ValidatorQueueKey,
+				stakingtypes.HistoricalInfoKey,
+			}},
 		{app.keys[slashingtypes.StoreKey], newApp.keys[slashingtypes.StoreKey], [][]byte{}},
 		{app.keys[distrtypes.StoreKey], newApp.keys[distrtypes.StoreKey], [][]byte{}},
-		{app.keys[banktypes.StoreKey], newApp.keys[banktypes.StoreKey], [][]byte{}},
+		{app.keys[banktypes.StoreKey], newApp.keys[banktypes.StoreKey], [][]byte{banktypes.BalancesPrefix}},
 		{app.keys[paramstypes.StoreKey], newApp.keys[paramstypes.StoreKey], [][]byte{}},
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
+		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
 		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
@@ -225,8 +228,8 @@ func TestAppImportExport(t *testing.T) {
 		failedKVAs, failedKVBs := sdk.DiffKVStores(storeA, storeB, skp.Prefixes)
 		require.Equal(t, len(failedKVAs), len(failedKVBs), "unequal sets of key-values to compare")
 
-		fmt.Printf("compared %d key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
-		require.Len(t, failedKVAs, 0, simapp.GetSimulationLog(skp.A.Name(), app.SimulationManager().StoreDecoders, failedKVAs, failedKVBs))
+		fmt.Printf("compared %d different key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
+		require.Len(t, failedKVAs, 0, GetSimulationLog(skp.A.Name(), app.SimulationManager().StoreDecoders, failedKVAs, failedKVBs))
 	}
 }
 
@@ -244,7 +247,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeEncodingConfig(), fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -258,6 +261,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simapp.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
 		config,
+		app.AppCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked
@@ -276,7 +280,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	fmt.Printf("exporting genesis...\n")
 
-	appState, _, err := app.ExportAppStateAndValidators(true, []string{})
+	exported, err := app.ExportAppStateAndValidators(true, []string{})
 	require.NoError(t, err)
 
 	fmt.Printf("importing genesis...\n")
@@ -291,12 +295,12 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeEncodingConfig(), fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
 	newApp.InitChain(abci.RequestInitChain{
-		AppStateBytes: appState,
+		AppStateBytes: exported.AppState,
 	})
 
 	_, _, err = simulation.SimulateFromSeed(
@@ -306,7 +310,9 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(newApp, newApp.AppCodec(), config),
-		newApp.ModuleAccountAddrs(), config,
+		newApp.ModuleAccountAddrs(),
+		config,
+		newApp.AppCodec(),
 	)
 	require.NoError(t, err)
 }
@@ -342,7 +348,7 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			app := NewDesmosApp(
 				logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-				simapp.FlagPeriodValue, MakeEncodingConfig(), interBlockCacheOpt(),
+				simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt(),
 			)
 
 			fmt.Printf(
@@ -357,7 +363,9 @@ func TestAppStateDeterminism(t *testing.T) {
 				simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
 				simtypes.RandomAccounts,
 				simapp.SimulationOperations(app, app.AppCodec(), config),
-				app.ModuleAccountAddrs(), config,
+				app.ModuleAccountAddrs(),
+				config,
+				app.AppCodec(),
 			)
 			require.NoError(t, err)
 

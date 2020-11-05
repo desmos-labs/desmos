@@ -8,55 +8,72 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
-	parentPost := types.Post{
-		PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		Message:      "Post without medias",
-		Created:      suite.testData.post.Created,
-		LastEdited:   time.Time{},
-		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: nil,
-		Creator:      suite.testData.post.Creator,
-		Attachments:  suite.testData.post.Attachments,
-		PollData:     suite.testData.post.PollData,
-	}
-
-	commentPost := types.Post{
-		PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-		ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		Message:        "Post without medias",
-		AllowsComments: false,
-		Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData:   nil,
-		Created:        suite.testData.post.Created.Add(time.Hour),
-		Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-	}
-
-	postReaction := types.NewPostReaction(":like:", "+1", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	reaction := types.NewRegisteredReaction(suite.testData.post.Creator, ":like:", "+1", suite.testData.post.Subspace)
-	answer := types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator)
-
 	tests := []struct {
-		name         string
-		posts        types.Posts
-		answers      *types.UserAnswer
-		postReaction *types.PostReaction
-		reaction     *types.RegisteredReaction
-		expResponse  string
-		expBool      bool
+		name                string
+		posts               []types.Post
+		answers             []types.UserAnswersEntry
+		postReactions       []types.PostReactionsEntry
+		registeredReactions []types.RegisteredReaction
+		expStop             bool
 	}{
 		{
-			name:         "All invariants are not violated",
-			posts:        types.Posts{parentPost, commentPost},
-			answers:      &answer,
-			postReaction: &postReaction,
-			reaction:     &reaction,
-			expResponse:  "Every invariant condition is fulfilled correctly",
-			expBool:      true,
+			name: "All invariants are not violated",
+			posts: []types.Post{
+				{
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:      "Post without medias",
+					Created:      suite.testData.post.Created,
+					LastEdited:   time.Time{},
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+					Attachments:  suite.testData.post.Attachments,
+					PollData:     suite.testData.post.PollData,
+				},
+				{
+					PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:        "Post without medias",
+					AllowsComments: false,
+					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData:   nil,
+					Created:        suite.testData.post.Created.Add(time.Hour),
+					Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				},
+			},
+			answers: []types.UserAnswersEntry{
+				types.NewUserAnswersEntry(
+					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					[]types.UserAnswer{
+						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
+					},
+				),
+			},
+			postReactions: []types.PostReactionsEntry{
+				types.NewPostReactionsEntry(
+					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					[]types.PostReaction{
+						types.NewPostReaction(
+							":like:",
+							"+1",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						),
+					},
+				),
+			},
+			registeredReactions: []types.RegisteredReaction{
+				types.NewRegisteredReaction(
+					suite.testData.post.Creator,
+					":like:",
+					"+1",
+					suite.testData.post.Subspace),
+			},
+			expStop: true,
 		},
 		{
 			name: "ValidPosts Invariants violated",
-			posts: types.Posts{
-				types.Post{
+			posts: []types.Post{
+				{
 					PostID:       "1234",
 					Message:      "Message",
 					Created:      suite.testData.post.Created,
@@ -64,18 +81,28 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					OptionalData: nil,
 					Creator:      suite.testData.post.Creator,
 				}},
-			answers:      nil,
-			postReaction: nil,
-			reaction:     nil,
-			expResponse:  "posts: invalid posts IDs invariant\nThe following posts are invalid:\n 1234\n\n",
-			expBool:      true,
+			answers:             nil,
+			postReactions:       nil,
+			registeredReactions: nil,
+			expStop:             true,
 		},
 		{
 			name: "ValidCommentsDate Invariants violated",
-			posts: types.Posts{parentPost,
-				types.Post{
-					PostID:       commentPost.PostID,
-					ParentID:     parentPost.PostID,
+			posts: []types.Post{
+				{
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:      "Post without medias",
+					Created:      suite.testData.post.Created,
+					LastEdited:   time.Time{},
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+					Attachments:  suite.testData.post.Attachments,
+					PollData:     suite.testData.post.PollData,
+				},
+				{
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Message",
 					Created:      suite.testData.postEndPollDateExpired,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -83,29 +110,62 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					Creator:      suite.testData.post.Creator,
 				},
 			},
-			answers:      nil,
-			postReaction: nil,
-			reaction:     nil,
-			expResponse:  "posts: comments dates before parent post date invariant\nThe following post IDs referred to posts which are invalid comments having creation date before parent post creation date:\n f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd\n\n",
-			expBool:      true,
+			answers:             nil,
+			postReactions:       nil,
+			registeredReactions: nil,
+			expStop:             true,
 		},
 		{
-			name:         "ValidPostForReactions Invariants violated",
-			posts:        types.Posts{},
-			answers:      nil,
-			postReaction: &postReaction,
-			reaction:     &reaction,
-			expResponse:  "posts: posts reactions refers to non existing posts invariant\nThe following reactions refer to posts that do not exist:\n [Shortcode] :like: [Value] +1 [Owner] cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns\n\n",
-			expBool:      true,
+			name:    "ValidPostForReactions Invariants violated",
+			posts:   []types.Post{},
+			answers: nil,
+			postReactions: []types.PostReactionsEntry{
+				types.NewPostReactionsEntry(
+					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					[]types.PostReaction{
+						types.NewPostReaction(
+							":like:",
+							"+1",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						),
+					},
+				),
+			},
+			registeredReactions: []types.RegisteredReaction{
+				types.NewRegisteredReaction(
+					suite.testData.post.Creator,
+					":like:",
+					"+1",
+					suite.testData.post.Subspace,
+				),
+			},
+			expStop: true,
 		},
 		{
-			name:         "ValidPollForPollAnswers Invariants violated",
-			posts:        types.Posts{commentPost},
-			answers:      &answer,
-			postReaction: nil,
-			reaction:     nil,
-			expResponse:  "posts: poll answers refers to posts without poll invariant\nThe following answers refer to a post that either does not exist or has no poll associated to it:\n User: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 \nAnswers IDs: 1 2\n\n",
-			expBool:      true,
+			name: "ValidPollForPollAnswers Invariants violated",
+			posts: []types.Post{
+				{
+					PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:        "Post without medias",
+					AllowsComments: false,
+					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData:   nil,
+					Created:        suite.testData.post.Created.Add(time.Hour),
+					Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				},
+			},
+			answers: []types.UserAnswersEntry{
+				types.NewUserAnswersEntry(
+					"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					[]types.UserAnswer{
+						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
+					},
+				),
+			},
+			postReactions:       nil,
+			registeredReactions: nil,
+			expStop:             true,
 		},
 	}
 
@@ -113,26 +173,31 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
 
 			for _, post := range test.posts {
-				suite.k.SavePost(suite.ctx, post)
+				suite.keeper.SavePost(suite.ctx, post)
 			}
 
-			if test.reaction != nil && test.postReaction != nil {
-				suite.k.SaveRegisteredReaction(suite.ctx, *test.reaction)
-
-				err := suite.k.SavePostReaction(suite.ctx, parentPost.PostID, *test.postReaction)
-				suite.Require().NoError(err)
-			}
-			if test.answers != nil {
-				suite.k.SavePollAnswers(suite.ctx, test.posts[0].PostID, *test.answers)
+			for _, reaction := range test.registeredReactions {
+				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			res, stop := keeper.AllInvariants(suite.k)(suite.ctx)
+			for _, entry := range test.postReactions {
+				for _, reaction := range entry.Reactions {
+					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					suite.Require().NoError(err)
+				}
+			}
 
-			suite.Require().Equal(test.expResponse, res)
-			suite.Require().Equal(test.expBool, stop)
+			for _, entry := range test.answers {
+				for _, answer := range entry.UserAnswers {
+					suite.keeper.SavePollAnswers(suite.ctx, entry.PostId, answer)
+				}
+			}
+
+			_, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			suite.Require().Equal(test.expStop, stop)
 		})
 	}
 }

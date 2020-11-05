@@ -3,8 +3,9 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 func TestValidateGenesis(t *testing.T) {

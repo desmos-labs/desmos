@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 const (
 	ModuleName = "relationships"
 	RouterKey  = ModuleName

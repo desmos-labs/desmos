@@ -15,8 +15,8 @@ import (
 )
 
 func TestDecodeStore(t *testing.T) {
-	desmosApp := app.SetupSimApp(false)
-	dec := simulation.NewDecodeStore(desmosApp.ReportsKeeper)
+	cdc, _ := app.MakeCodecs()
+	dec := simulation.NewDecodeStore(cdc)
 
 	address := ed25519.GenPrivKey().PubKey().Address().String()
 	reports := []types.Report{
@@ -34,7 +34,8 @@ func TestDecodeStore(t *testing.T) {
 		),
 	}
 
-	bz, err := desmosApp.ReportsKeeper.MarshalReports(reports)
+	wrapped := types.Reports{Reports: reports}
+	bz, err := cdc.MarshalBinaryBare(&wrapped)
 	require.NoError(t, err)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{

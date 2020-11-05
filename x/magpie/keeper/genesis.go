@@ -2,8 +2,9 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 // InitGenesis initializes the chain state based on the given GenesisState

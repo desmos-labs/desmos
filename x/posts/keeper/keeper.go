@@ -20,7 +20,7 @@ type Keeper struct {
 	cdc      codec.BinaryMarshaler
 
 	paramSubspace paramstypes.Subspace       // Reference to the ParamsStore to get and set posts specific params
-	rk            relationshipskeeper.Keeper // Relationships k to keep track of blocked users
+	rk            relationshipskeeper.Keeper // Relationships keeper to keep track of blocked users
 
 }
 
@@ -46,8 +46,8 @@ func NewKeeper(
 // -------------
 
 // IsUserBlocked tells if the given blocker has blocked the given blocked user
-func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
-	return k.rk.IsUserBlocked(ctx, blocker, blocked)
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked, subspace string) bool {
+	return k.rk.HasUserBlocked(ctx, blocker, blocked, subspace)
 }
 
 // SavePost allows to save the given post inside the current context.
@@ -62,23 +62,23 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	// Check if the postID got an associated post, if not, increment the number of posts
 	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
-		numberOfPosts := NewWrappedUInt(0)
+		postIndex := types.PostIndex{Value: 0}
 		if store.Has(types.PostTotalNumberPrefix) {
-			k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &numberOfPosts)
+			k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &postIndex)
 		}
 
-		numberOfPosts = numberOfPosts.Add(1)
+		postIndex = types.PostIndex{Value: postIndex.Value + 1}
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&numberOfPosts))
-		store.Set(types.PostTotalNumberPrefix, k.cdc.MustMarshalBinaryBare(&numberOfPosts))
+		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&postIndex))
+		store.Set(types.PostTotalNumberPrefix, k.cdc.MustMarshalBinaryBare(&postIndex))
 	}
 
 	// Save the comments to the parent post, if it is valid
 	if types.IsValidPostID(post.ParentID) {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
-		var commentsIDs CommentIDs
+		var commentsIDs types.CommentIDs
 		k.cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
 		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
 			store.Set(parentCommentsKey, k.cdc.MustMarshalBinaryBare(&editedIDs))
@@ -86,17 +86,21 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	}
 }
 
+// DoesPostExist returns true if the post with the given id exists inside the store.
+func (k Keeper) DoesPostExist(ctx sdk.Context, id string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.PostStoreKey(id))
+}
+
 // GetPost returns the post having the given id inside the current context.
 // If no post having the given id can be found inside the current context, false will be returned.
 func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool) {
-	store := ctx.KVStore(k.storeKey)
-
-	key := types.PostStoreKey(id)
-	if !store.Has(key) {
+	if !k.DoesPostExist(ctx, id) {
 		return types.Post{}, false
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &post)
+	store := ctx.KVStore(k.storeKey)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(id)), &post)
 	return post, true
 }
 
@@ -106,15 +110,15 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool
 func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID string) []string {
 	store := ctx.KVStore(k.storeKey)
 
-	var ids CommentIDs
+	var ids types.CommentIDs
 	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &ids)
 	return ids.Ids
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state
 //sorted by their incremental ID.
-func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
-	posts = types.Posts{}
+func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
+	var posts []types.Post
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 		posts = append(posts, post)
 		return false
@@ -128,10 +132,10 @@ func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
 //
 // NOTE: If no filters are provided, all posts will be returned in paginated
 // form.
-func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) types.Posts {
-	filteredPosts := types.Posts{}
+func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) []types.Post {
+	var filteredPosts []types.Post
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-		matchParentID, matchCreationTime, matchAllowsComments, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true, true
+		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
 		if types.IsValidPostID(params.ParentID) {
@@ -144,17 +148,17 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		}
 
 		// match subspace if provided
-		if len(params.Subspace) > 0 {
+		if params.Subspace != "" {
 			matchSubspace = params.Subspace == post.Subspace
 		}
 
 		// match creator address (if supplied)
-		if len(params.Creator) > 0 {
+		if params.Creator != "" {
 			matchCreator = params.Creator == post.Creator
 		}
 
 		// match hashtags if provided
-		if len(params.Hashtags) > 0 {
+		if params.Hashtags != nil {
 			postHashtags := post.GetPostHashtags()
 			matchHashtags = len(postHashtags) == len(params.Hashtags)
 			sort.Strings(postHashtags)
@@ -164,7 +168,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			}
 		}
 
-		if matchParentID && matchCreationTime && matchAllowsComments && matchSubspace && matchCreator && matchHashtags {
+		if matchParentID && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
 			filteredPosts = append(filteredPosts, post)
 		}
 
@@ -202,7 +206,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 
 	start, end := client.Paginate(len(filteredPosts), int(page), int(params.Limit), 100)
 	if start < 0 || end < 0 {
-		filteredPosts = types.Posts{}
+		filteredPosts = []types.Post{}
 	} else {
 		filteredPosts = filteredPosts[start:end]
 	}

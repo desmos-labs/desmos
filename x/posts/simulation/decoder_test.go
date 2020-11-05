@@ -7,11 +7,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/posts/keeper"
-
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/desmos-labs/desmos/x/posts/simulation"
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -48,12 +47,12 @@ func TestDecodeStore(t *testing.T) {
 		true,
 		true,
 	))
-	comments := keeper.CommentIDs{Ids: []string{
+	comments := types.CommentIDs{Ids: []string{
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}}
-	postReactions := keeper.WrappedPostReactions{Reactions: types.PostReactions{
+	postReactions := types.PostReactions{Reactions: []types.PostReaction{
 		types.NewPostReaction(":thumbsup:", "👍", address),
 		types.NewPostReaction("blue_heart:", "💙", address),
 	}}
@@ -65,7 +64,7 @@ func TestDecodeStore(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	totalPosts := keeper.WrappedUInt{Value: 10}
+	totalPosts := types.PostIndex{Value: 10}
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -98,7 +97,7 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post, post)},
+		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
 		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
 		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},

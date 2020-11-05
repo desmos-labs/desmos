@@ -45,6 +45,8 @@ func (k msgServer) CreateSession(goCtx context.Context, msg *types.MsgCreateSess
 	// Create the signature bytes using the given message  with an empty signature
 	clearMsg := msg
 	clearMsg.Signature = ""
+
+	//nolint:staticcheck
 	signedBytes := legacyauth.StdSignBytes(
 		msg.Namespace,
 		0,
@@ -80,20 +82,20 @@ func (k msgServer) CreateSession(goCtx context.Context, msg *types.MsgCreateSess
 
 	// Check for any previously existing session
 	if _, found := k.GetSession(ctx, session.SessionId); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("session with id %s already exists", session.SessionId))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"session with id %d already exists", session.SessionId)
 	}
 
 	// Save the session
 	k.SaveSession(ctx, session)
 
-	createSessionEvent := sdk.NewEvent(
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSession,
 		sdk.NewAttribute(types.AttributeKeySessionID, session.SessionId.String()),
 		sdk.NewAttribute(types.AttributeKeyNamespace, session.Namespace),
 		sdk.NewAttribute(types.AttributeKeyExternalOwner, session.ExternalOwner),
 		sdk.NewAttribute(types.AttributeKeyExpiry, fmt.Sprintf("%d", session.ExpirationTime)),
-	)
-	ctx.EventManager().EmitEvent(createSessionEvent)
+	))
 
 	return &types.MsgCreateSessionResponse{}, nil
 }

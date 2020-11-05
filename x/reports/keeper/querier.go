@@ -33,10 +33,7 @@ func queryReports(
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
 	}
 
-	reports, err := keeper.GetPostReports(ctx, path[0])
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, err.Error())
-	}
+	reports := keeper.GetPostReports(ctx, path[0])
 
 	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, &reports)
 	if err != nil {

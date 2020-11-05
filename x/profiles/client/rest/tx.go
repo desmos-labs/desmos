@@ -88,8 +88,6 @@ func deleteProfileHandler(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgDeleteProfile(addr.String())
-
-		err = msg.ValidateBasic()
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
@@ -117,7 +115,7 @@ func requestDTagTransferHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(receiver.String(), clientCtx.FromAddress.String())
+		msg := types.NewMsgRequestDTagTransfer(clientCtx.FromAddress.String(), receiver.String())
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
@@ -147,7 +145,7 @@ func acceptTransferRequestHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAcceptDTagTransfer(req.NewDTag, clientCtx.FromAddress.String(), receivingUser.String())
+		msg := types.NewMsgAcceptDTagTransfer(req.NewDTag, receivingUser.String(), clientCtx.FromAddress.String())
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
@@ -205,7 +203,7 @@ func cancelDTagTransferRequestHandler(clientCtx client.Context) http.HandlerFunc
 			return
 		}
 
-		msg := types.NewMsgRefuseDTagTransferRequest(clientCtx.FromAddress.String(), owner.String())
+		msg := types.NewMsgCancelDTagTransferRequest(clientCtx.FromAddress.String(), owner.String())
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}

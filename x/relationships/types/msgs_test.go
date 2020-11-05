@@ -3,6 +3,8 @@ package types_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -61,7 +63,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address"),
 		},
 		{
 			name: "Empty receiver returns error",
@@ -70,7 +72,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address"),
 		},
 		{
 			name: "Equals sender and receiver returns error",
@@ -79,7 +81,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sender and receiver must be different"),
 		},
 		{
 			name: "Invalid subspace returns error",
@@ -122,9 +124,8 @@ func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgCreateRelationship_GetSigners(t *testing.T) {
-	actual := msgCreateRelationship.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgCreateRelationship.Sender, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgCreateRelationship.Sender)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCreateRelationship.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
@@ -152,7 +153,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
 		},
 		{
 			name: "Empty receiver returns error",
@@ -161,7 +162,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address"),
 		},
 		{
 			name: "Equals sender and receiver returns error",
@@ -170,7 +171,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user and counterparty must be different"),
 		},
 		{
 			name: "Invalid subspace returns error",
@@ -208,14 +209,13 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
-	actual := msgDeleteRelationships.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgDeleteRelationships.Sender, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgDeleteRelationships.User)
+	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteRelationships.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
@@ -244,7 +244,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address"),
 		},
 		{
 			name: "Empty receiver returns error",
@@ -254,7 +254,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address"),
 		},
 		{
 			name: "Equals sender and receiver returns error",
@@ -264,7 +264,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different"),
 		},
 		{
 			name: "Invalid subspace returns error",
@@ -304,14 +304,13 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 
 func TestMsgBlockUser_GetSignBytes(t *testing.T) {
 	actual := msgBlockUser.GetSignBytes()
-	expected := `{"type":"desmos/MsgBlockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
+	expected := `{"type":"desmos/MsgBlockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","reason":"reason","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
 	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgBlockUser_GetSigners(t *testing.T) {
-	actual := msgBlockUser.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgBlockUser.Blocker, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgBlockUser.Blocker)
+	require.Equal(t, []sdk.AccAddress{addr}, msgBlockUser.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
@@ -339,7 +338,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker"),
 		},
 		{
 			name: "Empty receiver returns error",
@@ -348,7 +347,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked"),
 		},
 		{
 			name: "Equals sender and receiver returns error",
@@ -357,7 +356,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different"),
 		},
 		{
 			name: "Invalid subspace returns error",
@@ -400,7 +399,6 @@ func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgUnblockUser_GetSigners(t *testing.T) {
-	actual := msgUnblockUser.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgUnblockUser.Blocker, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgUnblockUser.Blocker)
+	require.Equal(t, []sdk.AccAddress{addr}, msgUnblockUser.GetSigners())
 }

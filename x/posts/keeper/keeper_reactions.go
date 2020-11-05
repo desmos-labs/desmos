@@ -2,7 +2,8 @@ package keeper
 
 import (
 	"bytes"
-	"fmt"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 
@@ -17,19 +18,19 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID string, reaction types.
 	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existent wrapped
-	var wrapped WrappedPostReactions
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)
+	var reactions types.PostReactions
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
 	// Check for double wrapped
-	reactions := types.NewPostReactions(wrapped.Reactions...)
 	if reactions.ContainsReactionFrom(reaction.Owner, reaction.ShortCode) {
-		return fmt.Errorf("%s has already reacted with %s to the post with id %s",
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"%s has already reacted with %s to the post with id %s",
 			reaction.Owner, reaction.ShortCode, postID)
 	}
 
 	// Save the new reaction
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&WrappedPostReactions{
-		Reactions: append(reactions, reaction),
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&types.PostReactions{
+		Reactions: append(reactions.Reactions, reaction),
 	}))
 
 	return nil
@@ -43,22 +44,23 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, postID string, reaction type
 	key := types.PostReactionsStoreKey(postID)
 
 	// Get the existing reactions
-	var wrapped WrappedPostReactions
+	var wrapped types.PostReactions
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)
 
 	// Check if the user exists
 	reactions := types.NewPostReactions(wrapped.Reactions...)
 	if !reactions.ContainsReactionFrom(reaction.Owner, reaction.ShortCode) {
-		return fmt.Errorf("cannot remove the reaction with value %s from user %s as it does not exist",
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"cannot remove the reaction with value %s from user %s as it does not exist",
 			reaction.ShortCode, reaction.Owner)
 	}
 
 	// Remove and save the reactions list
 	if appendedReactions, edited := reactions.RemoveReaction(reaction.Owner, reaction.ShortCode); edited {
-		if len(appendedReactions) == 0 {
+		if len(appendedReactions.Reactions) == 0 {
 			store.Delete(key)
 		} else {
-			store.Set(key, k.cdc.MustMarshalBinaryBare(&WrappedPostReactions{Reactions: appendedReactions}))
+			store.Set(key, k.cdc.MustMarshalBinaryBare(&appendedReactions))
 		}
 	}
 
@@ -66,10 +68,10 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, postID string, reaction type
 }
 
 // GetPostReactions returns the list of reactions that has been associated to the post having the given id
-func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) types.PostReactions {
+func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostReaction {
 	store := ctx.KVStore(k.storeKey)
 
-	var reactions WrappedPostReactions
+	var reactions types.PostReactions
 	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
 
 	return reactions.Reactions
@@ -84,7 +86,7 @@ func (k Keeper) GetPostReactionsEntries(ctx sdk.Context) []types.PostReactionsEn
 
 	var reactionsData []types.PostReactionsEntry
 	for ; iterator.Valid(); iterator.Next() {
-		var wrapped WrappedPostReactions
+		var wrapped types.PostReactions
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &wrapped)
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
 		reactionsData = append(reactionsData, types.NewPostReactionsEntry(string(idBytes), wrapped.Reactions))
@@ -101,7 +103,7 @@ func (k Keeper) SaveRegisteredReaction(ctx sdk.Context, reaction types.Registere
 	store.Set(types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace), k.cdc.MustMarshalBinaryBare(&reaction))
 }
 
-// GetRegisteredReaction returns the registered reaction which has the given shortcode
+// GetRegisteredReaction returns the registered reactions which has the given shortcode
 // and is registered to be used inside the given subspace.
 // If no reaction could be found, returns false instead.
 func (k Keeper) GetRegisteredReaction(
@@ -119,7 +121,7 @@ func (k Keeper) GetRegisteredReaction(
 }
 
 // GetRegisteredReactions returns all the registered reactions
-func (k Keeper) GetRegisteredReactions(ctx sdk.Context) (reactions types.Reactions) {
+func (k Keeper) GetRegisteredReactions(ctx sdk.Context) (reactions []types.RegisteredReaction) {
 	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)

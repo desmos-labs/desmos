@@ -44,34 +44,12 @@ func (reaction RegisteredReaction) Validate() error {
 	return nil
 }
 
-// Equals returns true if reaction and other contain the same data
+// Equals returns true if reaction and other contain the same poll
 func (reaction RegisteredReaction) Equals(other RegisteredReaction) bool {
 	return reaction.Value == other.Value &&
 		reaction.ShortCode == other.ShortCode &&
 		reaction.Subspace == other.Subspace &&
 		reaction.Creator == other.Creator
-}
-
-// ___________________________________________________________________________________________________________________
-
-// Reactions represents a slice of RegisteredReaction objects
-type Reactions []RegisteredReaction
-
-// NewReactions allows to create a Reactions object given a list of reactions
-func NewReactions(reactions ...RegisteredReaction) Reactions {
-	return reactions
-}
-
-// AppendIfMissing returns a new slice of RegisteredReaction objects containing
-// the given reaction if it wasn't already present.
-// It also returns the result of the append.
-func (reactions Reactions) AppendIfMissing(other RegisteredReaction) (Reactions, bool) {
-	for _, reaction := range reactions {
-		if reaction.Equals(other) {
-			return reactions, false
-		}
-	}
-	return append(reactions, other), true
 }
 
 // ___________________________________________________________________________________________________________________
@@ -102,7 +80,7 @@ func (reaction PostReaction) Validate() error {
 	return nil
 }
 
-// Equals returns true if reaction and other contain the same data
+// Equals returns true if reaction and other contain the same poll
 func (reaction PostReaction) Equals(other PostReaction) bool {
 	return reaction.Value == other.Value &&
 		reaction.ShortCode == other.ShortCode &&
@@ -111,24 +89,9 @@ func (reaction PostReaction) Equals(other PostReaction) bool {
 
 // ___________________________________________________________________________________________________________________
 
-// PostReactions represents a slice of PostReaction objects
-type PostReactions []PostReaction
-
 // NewPostReactions allows to create a new PostReactions object from the given reactions
 func NewPostReactions(reactions ...PostReaction) PostReactions {
-	return reactions
-}
-
-// AppendIfMissing returns a new slice of PostReaction objects containing
-// the given reaction if it wasn't already present.
-// It also returns the result of the append.
-func (reactions PostReactions) AppendIfMissing(other PostReaction) (PostReactions, bool) {
-	for _, reaction := range reactions {
-		if reaction.Equals(other) {
-			return reactions, false
-		}
-	}
-	return append(reactions, other), true
+	return PostReactions{Reactions: reactions}
 }
 
 // ContainsReactionFrom returns true if the reactions slice contain
@@ -147,7 +110,7 @@ func (reactions PostReactions) IndexOfByUserAndValue(owner string, value string)
 		reactEmoji = ej
 	}
 
-	for index, reaction := range reactions {
+	for index, reaction := range reactions.Reactions {
 		if reaction.Owner == owner {
 			if reactEmoji != nil {
 				// Check the emoji value
@@ -183,5 +146,7 @@ func (reactions PostReactions) RemoveReaction(user string, value string) (PostRe
 		return reactions, false
 	}
 
-	return append(reactions[:index], reactions[index+1:]...), true
+	return PostReactions{
+		Reactions: append(reactions.Reactions[:index], reactions.Reactions[index+1:]...),
+	}, true
 }

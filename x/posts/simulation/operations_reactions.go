@@ -35,16 +35,16 @@ func SimulateMsgAddPostReaction(
 
 		data, skip := randomAddPostReactionFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, nil
 		}
 
 		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address.String())
 		err := sendMsgAddPostReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgAddPostReaction"), nil, nil
 	}
 }
 
@@ -62,7 +62,7 @@ func sendMsgAddPostReaction(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -111,7 +111,7 @@ func randomAddPostReactionFields(
 	}
 
 	// Skip if the reaction already exists
-	reactions := k.GetPostReactions(ctx, post.PostID)
+	reactions := types.NewPostReactions(k.GetPostReactions(ctx, post.PostID)...)
 	if reactions.ContainsReactionFrom(reactionData.User.Address.String(), reactionData.Value) {
 		return nil, true
 	}
@@ -133,16 +133,16 @@ func SimulateMsgRemovePostReaction(
 
 		data, skip := randomRemovePostReactionFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address.String(), data.Shortcode)
 		err := sendMsgRemovePostReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReaction"), nil, nil
 	}
 }
 
@@ -160,7 +160,7 @@ func sendMsgRemovePostReaction(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -222,7 +222,7 @@ func SimulateMsgRegisterReaction(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		reactionData, skip := randomRegisteredReactionFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRegisterReaction"), nil, nil
 		}
 
 		msg := types.NewMsgRegisterReaction(
@@ -234,10 +234,10 @@ func SimulateMsgRegisterReaction(
 
 		err := sendMsgRegisterReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRegisterReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRegisterReaction"), nil, nil
 	}
 }
 
@@ -255,7 +255,7 @@ func sendMsgRegisterReaction(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},

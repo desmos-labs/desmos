@@ -43,10 +43,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 }
 
 // randomPosts returns randomly generated genesis accounts
-func randomPosts(simState *module.SimulationState) (posts types.Posts) {
+func randomPosts(simState *module.SimulationState) (posts []types.Post) {
 	postsNumber := simState.Rand.Intn(100)
 
-	posts = make(types.Posts, postsNumber)
+	posts = make([]types.Post, postsNumber)
 	for index := 0; index < postsNumber; index++ {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
 		posts[index] = types.NewPost(
@@ -60,7 +60,7 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 		).WithAttachments(postData.Attachments)
 
 		if postData.PollData != nil {
-			posts[index] = posts[index].WithPollData(*postData.PollData)
+			posts[index] = posts[index].WithPollData(postData.PollData)
 		}
 	}
 
@@ -68,13 +68,13 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 }
 
 // randomPostReactionsEntries returns a randomly generated list of reactions entries
-func randomPostReactionsEntries(r *rand.Rand, posts types.Posts, reactionsData []ReactionData) []types.PostReactionsEntry {
+func randomPostReactionsEntries(r *rand.Rand, posts []types.Post, reactionsData []ReactionData) []types.PostReactionsEntry {
 	reactionsNumber := r.Intn(len(posts))
 
 	entries := make([]types.PostReactionsEntry, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {
 		reactionsLen := r.Intn(20)
-		reactions := make(types.PostReactions, reactionsLen)
+		reactions := make([]types.PostReaction, reactionsLen)
 
 		for j := 0; j < reactionsLen; j++ {
 			privKey := ed25519.GenPrivKey().PubKey()
@@ -84,23 +84,22 @@ func randomPostReactionsEntries(r *rand.Rand, posts types.Posts, reactionsData [
 		}
 
 		id := RandomPostIDFromPosts(r, posts)
-		entries = append(entries, types.NewPostReactionsEntry(id, reactions))
+		entries[i] = types.NewPostReactionsEntry(id, reactions)
 	}
 
 	return entries
 }
 
 // registeredReactions returns all the possible registered reactions
-func registeredReactions(reactionsData []ReactionData) types.Reactions {
-	regReactions := types.Reactions{}
-	for _, reactionData := range reactionsData {
-		reaction := types.NewRegisteredReaction(
+func registeredReactions(reactionsData []ReactionData) []types.RegisteredReaction {
+	regReactions := make([]types.RegisteredReaction, len(reactionsData))
+	for index, reactionData := range reactionsData {
+		regReactions[index] = types.NewRegisteredReaction(
 			reactionData.Creator.Address.String(),
 			reactionData.ShortCode,
 			reactionData.Value,
 			reactionData.Subspace,
 		)
-		regReactions = append(regReactions, reaction)
 	}
 
 	return regReactions

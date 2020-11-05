@@ -11,6 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	posts "github.com/desmos-labs/desmos/x/posts/keeper"
 
 	"github.com/desmos-labs/desmos/app/params"
@@ -24,7 +25,7 @@ const (
 
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
-	appParams simtypes.AppParams, cdc codec.Marshaler,
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
 	pk posts.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgReportPost int

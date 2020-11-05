@@ -56,7 +56,7 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPostIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if post.Validate() != nil || k.ValidatePost(ctx, post) != nil {
+			if k.ValidatePost(ctx, post) != nil {
 				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false
@@ -95,7 +95,7 @@ func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 //____________________________________________________________________________
 
 // formatOutputReactions concatenate the reactions given into a unique string
-func formatOutputReactions(reactions types.PostReactions) (outputReactions string) {
+func formatOutputReactions(reactions []types.PostReaction) (outputReactions string) {
 	for _, reaction := range reactions {
 		outputReactions += reaction.String() + "\n"
 	}
@@ -105,10 +105,10 @@ func formatOutputReactions(reactions types.PostReactions) (outputReactions strin
 // ValidPostForReactionsInvariant checks that the post related to the reactions is valid and exists
 func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidReactions types.PostReactions
+		var invalidReactions []types.PostReaction
 		reactions := k.GetPostReactionsEntries(ctx)
 		for _, entry := range reactions {
-			if _, found := k.GetPost(ctx, entry.PostId); !found {
+			if !k.DoesPostExist(ctx, entry.PostId) {
 				invalidReactions = append(invalidReactions, entry.Reactions...)
 			}
 		}
@@ -123,7 +123,7 @@ func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 //____________________________________________________________________________
 
 // formatOutputPollAnswers concatenate the poll answers given into a unique string
-func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers string) {
+func formatOutputPollAnswers(pollAnswers []types.UserAnswer) (outputAnswers string) {
 	for _, answer := range pollAnswers {
 		outputAnswers += answer.String() + "\n"
 	}
@@ -133,7 +133,7 @@ func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers strin
 // ValidPollForPollAnswersInvariant check that the poll answers are referred to a valid post's poll
 func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPollAnswers types.UserAnswers
+		var invalidPollAnswers []types.UserAnswer
 		answers := k.GetUserAnswersEntries(ctx)
 		for _, entry := range answers {
 			if post, found := k.GetPost(ctx, entry.PostId); !found || (found && post.PollData == nil) {

@@ -2,8 +2,9 @@ package types_test
 
 import (
 	"errors"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -140,7 +141,7 @@ func TestReaction_Equals(t *testing.T) {
 			shouldBeEqual: false,
 		},
 		{
-			name: "Returns true with the same data",
+			name: "Returns true with the same poll",
 			first: types.NewRegisteredReaction(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				":smile:",
@@ -166,88 +167,6 @@ func TestReaction_Equals(t *testing.T) {
 }
 
 // ___________________________________________________________________________________________________________________
-
-func TestReactions_AppendIfMissing(t *testing.T) {
-	tests := []struct {
-		name        string
-		reactions   types.Reactions
-		newReaction types.RegisteredReaction
-		expReaction types.Reactions
-		expAppend   bool
-	}{
-		{
-			name:      "New reaction is appended properly to empty list",
-			reactions: types.Reactions{},
-			newReaction: types.NewRegisteredReaction(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				":smile:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			expReaction: types.Reactions{
-				types.NewRegisteredReaction(
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					":smile:",
-					"smile.jpg",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
-			},
-			expAppend: true,
-		},
-		{
-			name: "New reaction is appended properly to existing list",
-			reactions: types.Reactions{
-				types.NewRegisteredReaction(
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					":smile:",
-					"smile.jpg",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
-			},
-			newReaction: types.NewRegisteredReaction(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				":sad:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			expAppend: true,
-			expReaction: types.Reactions{
-				types.NewRegisteredReaction(
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					":smile:",
-					"smile.jpg",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
-				types.NewRegisteredReaction(
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					":sad:",
-					"smile.jpg",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actual, appended := test.reactions.AppendIfMissing(test.newReaction)
-			require.Equal(t, test.expReaction, actual)
-			require.Equal(t, test.expAppend, appended)
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func TestPostReaction_String(t *testing.T) {
-	reaction := types.NewPostReaction(
-		":smile:",
-		"reaction",
-		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-	)
-	require.Equal(t, "[Shortcode] :smile: [Value] reaction [Owner] cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4", reaction.String())
-}
 
 func TestPostReaction_Validate(t *testing.T) {
 	tests := []struct {
@@ -351,7 +270,7 @@ func TestPostReaction_Equals(t *testing.T) {
 			shouldBeEqual: false,
 		},
 		{
-			name: "Returns true with the same data",
+			name: "Returns true with the same poll",
 			first: types.NewPostReaction(
 				":smile:",
 				"reaction",
@@ -376,71 +295,6 @@ func TestPostReaction_Equals(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestPostReactions_AppendIfMissing(t *testing.T) {
-	tests := []struct {
-		name      string
-		reactions types.PostReactions
-		newLike   types.PostReaction
-		expLikes  types.PostReactions
-		expAppend bool
-	}{
-		{
-			name:      "New reaction is appended properly to empty list",
-			reactions: types.PostReactions{},
-			newLike: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			expLikes: types.PostReactions{
-				types.NewPostReaction(
-					":smile:",
-					"reaction",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				),
-			},
-			expAppend: true,
-		},
-		{
-			name: "New reaction is appended properly to existing list",
-			reactions: types.PostReactions{
-				types.NewPostReaction(
-					":smile:",
-					"reaction",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				),
-			},
-			newLike: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-			),
-			expAppend: true,
-			expLikes: types.PostReactions{
-				types.NewPostReaction(
-					":smile:",
-					"reaction",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				),
-				types.NewPostReaction(
-					":smile:",
-					"reaction",
-					"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-				),
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actual, appended := test.reactions.AppendIfMissing(test.newLike)
-			require.Equal(t, test.expLikes, actual)
-			require.Equal(t, test.expAppend, appended)
-		})
-	}
-}
-
 func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -451,46 +305,46 @@ func TestPostReactions_ContainsOwnerLike(t *testing.T) {
 	}{
 		{
 			name: "Non-empty list returns true with valid address",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:       "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			shortcode:   ":smile:",
 			expContains: true,
 		},
 		{
 			name:        "Empty list returns false",
-			reactions:   types.PostReactions{},
+			reactions:   types.NewPostReactions(),
 			owner:       "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			shortcode:   ":smile:",
 			expContains: false,
 		},
 		{
 			name: "Non-empty list returns false with not found address",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:       "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
 			shortcode:   ":smile:",
 			expContains: false,
 		},
 		{
 			name: "Non-empty list returns false with not found value",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:       "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			shortcode:   ":like:",
 			expContains: false,
@@ -515,124 +369,124 @@ func TestPostReactions_IndexOfByUserAndValue(t *testing.T) {
 	}{
 		{
 			name: "Non-empty list returns proper index with valid value (shortcode)",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":+1:",
 					"👍",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    ":+1:",
 			expIndex: 0,
 		},
 		{
 			name: "Non-empty list returns proper index with valid value (emoji - one code)",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":+1:",
 					"👍",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    "👍",
 			expIndex: 0,
 		},
 		{
 			name: "Non-empty list returns proper index with valid value (emoji - another code)",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":thumbsup:",
 					"👍",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    "👍",
 			expIndex: 0,
 		},
 		{
 			name:      "Empty list returns -1",
-			reactions: types.PostReactions{},
+			reactions: types.NewPostReactions(),
 			owner:     "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:     "reaction",
 			expIndex:  -1,
 		},
 		{
 			name: "Non-empty list returns -1 with not found address",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
 			value:    "reaction",
 			expIndex: -1,
 		},
 		{
 			name: "Non-empty list returns -1 with not found value",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
 			value:    "reaction-2",
 			expIndex: -1,
 		},
 		{
 			name: "Existing reaction search by code",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":reaction:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    ":reaction:",
 			expIndex: 0,
 		},
 		{
 			name: "Exiting emoji reaction stored by value search by code",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":fire:",
 					"🔥",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    ":fire:",
 			expIndex: 0,
 		},
 		{
 			name: "Exiting emoji reaction stored by code search by code",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":fire:",
 					"🔥",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    ":fire:",
 			expIndex: 0,
 		},
 		{
 			name: "Exiting emoji reaction stored by code search by value",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":fire:",
 					"🔥",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			value:    "🔥",
 			expIndex: 0,
@@ -658,64 +512,64 @@ func TestPostReactions_RemoveReaction(t *testing.T) {
 	}{
 		{
 			name: "PostReaction is removed from non-empty list",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:     "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			shortcode: ":smile:",
-			expResult: types.PostReactions{},
+			expResult: types.NewPostReactions([]types.PostReaction{}...),
 			expEdited: true,
 		},
 		{
 			name:      "Empty list is not edited",
-			reactions: types.PostReactions{},
+			reactions: types.NewPostReactions(),
 			owner:     "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			shortcode: ":smile:",
-			expResult: types.PostReactions{},
+			expResult: types.NewPostReactions(),
 			expEdited: false,
 		},
 		{
 			name: "Non-empty list with not found address is not edited",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:     "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
 			shortcode: ":smile:",
-			expResult: types.PostReactions{
+			expResult: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			expEdited: false,
 		},
 		{
 			name: "Non-empty list with not found value is not edited",
-			reactions: types.PostReactions{
+			reactions: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			owner:     "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
 			shortcode: ":like:",
-			expResult: types.PostReactions{
+			expResult: types.NewPostReactions(
 				types.NewPostReaction(
 					":smile:",
 					"reaction",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				),
-			},
+			),
 			expEdited: false,
 		},
 	}

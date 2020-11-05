@@ -301,9 +301,9 @@ proto-check-breaking-docker:
 	@$(DOCKER_BUF) check breaking --against-input $(HTTPS_GIT)#branch=master
 .PHONY: proto-check-breaking-ci
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.0-rc5/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.0-rc6/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/master/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.40.0-rc3/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 
@@ -368,7 +368,14 @@ build-docker-desmosnode:
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
-	@if ! [ -f build/node0/desmosd/config/genesis.json ]; then $(CURDIR)/build/desmosd testnet --v 4 -o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmosd-env 2>/dev/null),$(info found image desmoslabs/desmosd-env),$(MAKE) -C contrib/images desmosd-env)
+	if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run --rm \
+		--user $(shell id -u):$(shell id -g) \
+		-v $(BUILDDIR):/desmosd:Z \
+		-v /etc/group:/etc/group:ro \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v /etc/shadow:/etc/shadow:ro \
+		desmoslabs/desmosd-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet

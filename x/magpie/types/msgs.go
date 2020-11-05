@@ -30,7 +30,7 @@ func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 func (msg MsgCreateSession) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid owner address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, msg.Owner)
 	}
 
 	if len(strings.TrimSpace(msg.Namespace)) == 0 {

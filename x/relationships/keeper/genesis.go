@@ -2,31 +2,31 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	relationships, _ := k.GetAllRelationships(ctx)
-	blocks, _ := k.GetUsersBlocks(ctx)
-
-	return types.NewGenesisState(relationships, blocks)
+	return types.NewGenesisState(
+		k.GetAllRelationships(ctx),
+		k.GetAllUsersBlocks(ctx),
+	)
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
-func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.ValidatorUpdate {
+func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	for _, relationship := range data.Relationships {
-		if err := k.StoreRelationship(ctx, relationship); err != nil {
+		err := k.SaveRelationship(ctx, relationship)
+		if err != nil {
 			panic(err)
 		}
 	}
 
 	for _, userBlock := range data.Blocks {
-		if err := k.SaveUserBlock(ctx, userBlock); err != nil {
+		err := k.SaveUserBlock(ctx, userBlock)
+		if err != nil {
 			panic(err)
 		}
 	}
-
-	return nil
 }

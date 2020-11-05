@@ -42,19 +42,23 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-message PostResponse {
-  desmos.posts.v1beta1.Post post = 1 [
-    (gogoproto.nullable) = false
+// QueryPostsParams represent the parameters used to query for posts
+message QueryPostsParams {
+  uint64 page = 1;
+  uint64 limit = 2;
+
+  string sort_by = 3;
+  string sort_order = 4;
+
+  string parent_id = 5 [
+    (gogoproto.customname) = "ParentID"
   ];
-  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2 [
-    (gogoproto.nullable) = false
+  google.protobuf.Timestamp creation_time = 6 [
+    (gogoproto.stdtime) = true
   ];
-  repeated desmos.posts.v1beta1.PostReaction reactions = 3 [
-    (gogoproto.nullable) = false
-  ];
-  repeated string children = 4 [
-    (gogoproto.nullable) = false
-  ];
+  string subspace = 7;
+  string creator = 8;
+  repeated string hashtags = 9;
 }
 
 // ___________________________________________________________________________________________________________________
@@ -80,11 +84,10 @@ message QueryPostsRequest {
 
 // QueryPostsResponse is the response type for the Query/Profiles RPC method
 message QueryPostsResponse{
-  repeated desmos.posts.v1beta1.Post posts = 1 [
+  repeated QueryPostResponse posts = 1 [
     (gogoproto.nullable) = false
   ];
-
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________
@@ -98,10 +101,17 @@ message QueryPostRequest {
 }
 
 // QueryPostResponse is the response type for the Query/Posts RPC method
-message QueryPostResponse{
+message QueryPostResponse {
   desmos.posts.v1beta1.Post post = 1 [
     (gogoproto.nullable) = false
   ];
+  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2 [
+    (gogoproto.nullable) = false
+  ];
+  repeated desmos.posts.v1beta1.PostReaction reactions = 3 [
+    (gogoproto.nullable) = false
+  ];
+  repeated string children = 4;
 }
 
 // ___________________________________________________________________________________________________________________

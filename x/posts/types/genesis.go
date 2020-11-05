@@ -18,7 +18,7 @@ func NewUserAnswersEntry(postID string, answers []UserAnswer) UserAnswersEntry {
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	posts Posts, userPollAnswers []UserAnswersEntry,
+	posts []Post, userPollAnswers []UserAnswersEntry,
 	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, params Params,
 ) *GenesisState {
 	return &GenesisState{

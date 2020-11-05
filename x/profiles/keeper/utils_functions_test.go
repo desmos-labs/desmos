@@ -52,12 +52,12 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	}
 
 	for _, profile := range profiles {
-		err := suite.keeper.StoreProfile(suite.ctx, profile)
+		err := suite.k.StoreProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 	}
 
 	var validProfiles []types.Profile
-	suite.keeper.IterateProfiles(suite.ctx, func(_ int64, profile types.Profile) (stop bool) {
+	suite.k.IterateProfiles(suite.ctx, func(_ int64, profile types.Profile) (stop bool) {
 		if profile.Dtag == "not" {
 			return false
 		}

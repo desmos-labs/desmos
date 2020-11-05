@@ -21,13 +21,17 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
+
 type KeeperTestSuite struct {
 	suite.Suite
 
 	cdc            codec.BinaryMarshaler
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	k              keeper.Keeper
+	keeper         keeper.Keeper
 	storeKey       sdk.StoreKey
 	pk             paramskeeper.Keeper
 	rk             relationshipskeeper.Keeper
@@ -65,17 +69,23 @@ func (suite *KeeperTestSuite) SetupTest() {
 		panic(err)
 	}
 
-	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.ctx = sdk.NewContext(
+		ms,
+		tmproto.Header{ChainID: "test-chain-id", Time: blockTime},
+		false,
+		log.NewNopLogger(),
+	)
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 	suite.pk = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
-	suite.k = keeper.NewKeeper(suite.cdc, postKey, suite.pk.Subspace(types.DefaultParamspace), suite.rk)
+	suite.keeper = keeper.NewKeeper(suite.cdc, postKey, suite.pk.Subspace(types.DefaultParamSpace), suite.rk)
 
 	// Setup data
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
 	suite.testData.postOwner = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 
-	suite.testData.postCreationDate, _ = time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.testData.postCreationDate = blockTime
 	suite.testData.postEndPollDate, _ = time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
 	suite.testData.postEndPollDateExpired, _ = time.Parse(time.RFC3339, "2019-01-01T01:15:00.000Z")
 	suite.testData.answers = types.PollAnswers{
@@ -108,8 +118,4 @@ func (suite *KeeperTestSuite) SetupTest() {
 		"https://smile.jpg",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
-}
-
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
 }

@@ -23,7 +23,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid post errors",
 			genesis: types.NewGenesisState(
-				types.Posts{types.Post{PostID: ""}},
+				[]types.Post{{PostID: ""}},
 				nil,
 				nil,
 				nil,
@@ -34,10 +34,10 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid post reaction errors",
 			genesis: types.NewGenesisState(
-				types.Posts{},
+				[]types.Post{},
 				nil,
 				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry("1", []types.PostReaction{{Owner: nil}}),
+					types.NewPostReactionsEntry("1", []types.PostReaction{{Owner: ""}}),
 				},
 				nil,
 				types.DefaultParams(),
@@ -45,9 +45,9 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid poll answers errors",
+			name: "Genesis with invalid poll answer errors",
 			genesis: types.NewGenesisState(
-				types.Posts{},
+				[]types.Post{},
 				[]types.UserAnswersEntry{
 					types.NewUserAnswersEntry("1", []types.UserAnswer{
 						types.NewUserAnswer([]string{""}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
@@ -65,7 +65,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				nil,
-				types.Reactions{
+				[]types.RegisteredReaction{
 					types.NewRegisteredReaction(
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						":smile",

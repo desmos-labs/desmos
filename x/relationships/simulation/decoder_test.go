@@ -15,8 +15,8 @@ import (
 )
 
 func TestDecodeStore(t *testing.T) {
-	desmosApp := app.SetupSimApp(false)
-	dec := simulation.NewDecodeStore(desmosApp.RelationshipsKeeper)
+	cdc, _ := app.MakeCodecs()
+	dec := simulation.NewDecodeStore(cdc)
 
 	firstAddr := ed25519.GenPrivKey().PubKey().Address().String()
 	secondAddr := ed25519.GenPrivKey().PubKey().Address().String()
@@ -33,7 +33,7 @@ func TestDecodeStore(t *testing.T) {
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		),
 	}
-	relBz, err := desmosApp.RelationshipsKeeper.MarshalRelationships(relationships)
+	relBz, err := cdc.MarshalBinaryBare(&types.Relationships{Relationships: relationships})
 	require.NoError(t, err)
 
 	usersBlocks := []types.UserBlock{
@@ -50,7 +50,7 @@ func TestDecodeStore(t *testing.T) {
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		),
 	}
-	blocksBz, err := desmosApp.RelationshipsKeeper.MarshalUserBlocks(usersBlocks)
+	blocksBz, err := cdc.MarshalBinaryBare(&types.UserBlocks{Blocks: usersBlocks})
 	require.NoError(t, err)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
@@ -62,8 +62,8 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"Relationships", fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationships, relationships)},
-		{"UsersBlocks", fmt.Sprintf("UsersBlocks: %s\nUsersBlocks: %s\n", usersBlocks, usersBlocks)},
+		{"Relationships", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationships, relationships)},
+		{"UsersBlocks", fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},
 	}
 

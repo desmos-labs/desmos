@@ -1,12 +1,10 @@
 package keeper_test
 
 import (
-	"encoding/json"
+	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 func (suite *KeeperTestSuite) Test_queryReports() {
@@ -14,48 +12,48 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 		name          string
 		path          []string
 		storedReports []types.Report
-		expErr        error
-		expResponse   types.QueryPostReportsResponse
+		expErr        bool
+		expResponse   []types.Report
 	}{
 		{
-			name:          "Invalid ID",
+			name:          "Invalid Post ID",
 			path:          []string{types.QueryReports, "1234"},
 			storedReports: nil,
-			expErr:        sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1234"),
+			expErr:        true,
 		},
 		{
-			name: "Non empty stored and valid ID",
-			path: []string{types.QueryReports, "1234"},
+			name: "Valid request returns correctly",
+			path: []string{types.QueryReports, suite.testData.postID},
 			storedReports: []types.Report{
 				types.NewReport(
-					"1234",
+					suite.testData.postID,
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 				types.NewReport(
 					"other_post",
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 			},
-			expErr: nil,
-			expResponse: types.QueryPostReportsResponse{Reports: []types.Report{
+			expErr: false,
+			expResponse: []types.Report{
 				types.NewReport(
-					"1234",
+					suite.testData.postID,
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
-			}},
+			},
 		},
 		{
 			name:          "Empty stored and valid ID",
-			path:          []string{types.QueryReports, suite.testData.postID.String()},
+			path:          []string{types.QueryReports, suite.testData.postID},
 			storedReports: nil,
-			expErr:        nil,
-			expResponse:   types.QueryPostReportsResponse{Reports: []types.Report{}},
+			expErr:        false,
+			expResponse:   nil,
 		},
 	}
 
@@ -72,18 +70,14 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
-			if result != nil {
-				suite.Require().Nil(err)
-
-				expectedIndented, err := json.MarshalIndent(&test.expResponse, "", "")
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
 
-			if result == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-				suite.Require().Nil(result)
+				var reports []types.Report
+				suite.Require().NoError(suite.legacyAminoCdc.UnmarshalJSON(result, &reports))
+				suite.Require().Equal(test.expResponse, reports)
 			}
 		})
 	}

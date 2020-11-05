@@ -1,6 +1,6 @@
 package simulation
 
-// DONTCOVER
+//DONTCOVER
 
 import (
 	"math/rand"
@@ -9,6 +9,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -44,11 +45,12 @@ var (
 )
 
 // NewRandomProfile return a random ProfileData from random data and the given account
+// nolint:interfacer
 func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
 	return types.NewProfile(
 		RandomDTag(r),
-		RandomBio(r),
 		RandomMoniker(r),
+		RandomBio(r),
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
 		account.String(),

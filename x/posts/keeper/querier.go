@@ -43,7 +43,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	// Get the reactions
 	postReactions := keeper.GetPostReactions(ctx, post.PostID)
 	if postReactions == nil {
-		postReactions = types.PostReactions{}
+		postReactions = []types.PostReaction{}
 	}
 
 	// Get the children
@@ -68,12 +68,12 @@ func queryPost(
 ) ([]byte, error) {
 	id := path[0]
 	if !types.IsValidPostID(id) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "invalid postID: %s", id)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", id)
 	}
 
 	post, found := keeper.GetPost(ctx, id)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "post with id %s not found", id)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", id)
 	}
 
 	postResponse := getPostResponse(ctx, keeper, post)
@@ -117,7 +117,7 @@ func queryPollAnswers(
 ) ([]byte, error) {
 	id := path[0]
 	if !types.IsValidPostID(id) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid postID: %s", id)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", id)
 	}
 
 	post, found := keeper.GetPost(ctx, id)

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
+
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 
@@ -29,11 +30,11 @@ func TestDecodeStore(t *testing.T) {
 		ed25519.GenPrivKey().PubKey().Address().String(),
 	)
 
-	requests := keeper.NewDTagRequests([]types.DTagTransferRequest{
+	requests := keeper.NewWrappedDTagTransferRequests([]types.DTagTransferRequest{
 		types.NewDTagTransferRequest("dtag", profile.Creator, profile.Creator),
 	})
 
-	owner := keeper.NewDTagOwner(profile.Creator)
+	owner := keeper.NewWrappedDTagOwner(profile.Creator)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -56,7 +57,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
-		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests, requests)},
+		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests.Requests, requests.Requests)},
 		{"other", ""},
 	}
 

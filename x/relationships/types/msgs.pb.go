@@ -69,22 +69,22 @@ func (m *MsgCreateRelationship) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateRelationship proto.InternalMessageInfo
 
-// MsgCreateRelationshipResponse defines the Msg/CreateRelationship response type.
-type MsgCreateRelationshipResponse struct {
+// CreateRelationshipResponse defines the Msg/CreateRelationship response type.
+type CreateRelationshipResponse struct {
 }
 
-func (m *MsgCreateRelationshipResponse) Reset()         { *m = MsgCreateRelationshipResponse{} }
-func (m *MsgCreateRelationshipResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCreateRelationshipResponse) ProtoMessage()    {}
-func (*MsgCreateRelationshipResponse) Descriptor() ([]byte, []int) {
+func (m *CreateRelationshipResponse) Reset()         { *m = CreateRelationshipResponse{} }
+func (m *CreateRelationshipResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateRelationshipResponse) ProtoMessage()    {}
+func (*CreateRelationshipResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_452d94af952e9e01, []int{1}
 }
-func (m *MsgCreateRelationshipResponse) XXX_Unmarshal(b []byte) error {
+func (m *CreateRelationshipResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreateRelationshipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CreateRelationshipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreateRelationshipResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_CreateRelationshipResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -94,22 +94,22 @@ func (m *MsgCreateRelationshipResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgCreateRelationshipResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreateRelationshipResponse.Merge(m, src)
+func (m *CreateRelationshipResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRelationshipResponse.Merge(m, src)
 }
-func (m *MsgCreateRelationshipResponse) XXX_Size() int {
+func (m *CreateRelationshipResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreateRelationshipResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreateRelationshipResponse.DiscardUnknown(m)
+func (m *CreateRelationshipResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateRelationshipResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreateRelationshipResponse proto.InternalMessageInfo
+var xxx_messageInfo_CreateRelationshipResponse proto.InternalMessageInfo
 
 // MsgDeleteRelationship represents a message to delete the relationship
 // between two users.
 type MsgDeleteRelationship struct {
-	Sender       string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	User         string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	Counterparty string `protobuf:"bytes,2,opt,name=counterparty,proto3" json:"counterparty,omitempty" yaml:"counterparty"`
 	Subspace     string `protobuf:"bytes,3,opt,name=subspace,proto3" json:"subspace,omitempty" yaml:"subspace"`
 }
@@ -147,9 +147,9 @@ func (m *MsgDeleteRelationship) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteRelationship proto.InternalMessageInfo
 
-func (m *MsgDeleteRelationship) GetSender() string {
+func (m *MsgDeleteRelationship) GetUser() string {
 	if m != nil {
-		return m.Sender
+		return m.User
 	}
 	return ""
 }
@@ -168,22 +168,22 @@ func (m *MsgDeleteRelationship) GetSubspace() string {
 	return ""
 }
 
-// MsgDeleteRelationshipResponse defines the Msg/DeleteRelationship response type.
-type MsgDeleteRelationshipResponse struct {
+// RemoveRelationshipResponse defines the Msg/DeleteRelationship response type.
+type RemoveRelationshipResponse struct {
 }
 
-func (m *MsgDeleteRelationshipResponse) Reset()         { *m = MsgDeleteRelationshipResponse{} }
-func (m *MsgDeleteRelationshipResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgDeleteRelationshipResponse) ProtoMessage()    {}
-func (*MsgDeleteRelationshipResponse) Descriptor() ([]byte, []int) {
+func (m *RemoveRelationshipResponse) Reset()         { *m = RemoveRelationshipResponse{} }
+func (m *RemoveRelationshipResponse) String() string { return proto.CompactTextString(m) }
+func (*RemoveRelationshipResponse) ProtoMessage()    {}
+func (*RemoveRelationshipResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_452d94af952e9e01, []int{3}
 }
-func (m *MsgDeleteRelationshipResponse) XXX_Unmarshal(b []byte) error {
+func (m *RemoveRelationshipResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgDeleteRelationshipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *RemoveRelationshipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgDeleteRelationshipResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_RemoveRelationshipResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -193,17 +193,17 @@ func (m *MsgDeleteRelationshipResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgDeleteRelationshipResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeleteRelationshipResponse.Merge(m, src)
+func (m *RemoveRelationshipResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRelationshipResponse.Merge(m, src)
 }
-func (m *MsgDeleteRelationshipResponse) XXX_Size() int {
+func (m *RemoveRelationshipResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgDeleteRelationshipResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeleteRelationshipResponse.DiscardUnknown(m)
+func (m *RemoveRelationshipResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveRelationshipResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgDeleteRelationshipResponse proto.InternalMessageInfo
+var xxx_messageInfo_RemoveRelationshipResponse proto.InternalMessageInfo
 
 // MsgBlockUser represents a message to block another user specifying an
 // optional reason.
@@ -275,22 +275,22 @@ func (m *MsgBlockUser) GetSubspace() string {
 	return ""
 }
 
-// MsgBlockUserResponse defines the Msg/BlockUser response type.
-type MsgBlockUserResponse struct {
+// BlockUserResponse defines the Msg/BlockUser response type.
+type BlockUserResponse struct {
 }
 
-func (m *MsgBlockUserResponse) Reset()         { *m = MsgBlockUserResponse{} }
-func (m *MsgBlockUserResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockUserResponse) ProtoMessage()    {}
-func (*MsgBlockUserResponse) Descriptor() ([]byte, []int) {
+func (m *BlockUserResponse) Reset()         { *m = BlockUserResponse{} }
+func (m *BlockUserResponse) String() string { return proto.CompactTextString(m) }
+func (*BlockUserResponse) ProtoMessage()    {}
+func (*BlockUserResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_452d94af952e9e01, []int{5}
 }
-func (m *MsgBlockUserResponse) XXX_Unmarshal(b []byte) error {
+func (m *BlockUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *BlockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockUserResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_BlockUserResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -300,17 +300,17 @@ func (m *MsgBlockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockUserResponse.Merge(m, src)
+func (m *BlockUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BlockUserResponse.Merge(m, src)
 }
-func (m *MsgBlockUserResponse) XXX_Size() int {
+func (m *BlockUserResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockUserResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockUserResponse.DiscardUnknown(m)
+func (m *BlockUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_BlockUserResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockUserResponse proto.InternalMessageInfo
+var xxx_messageInfo_BlockUserResponse proto.InternalMessageInfo
 
 // MsgUnblockUser represents a message to unblock a previously blocked user.
 type MsgUnblockUser struct {
@@ -373,22 +373,22 @@ func (m *MsgUnblockUser) GetSubspace() string {
 	return ""
 }
 
-// MsgUnblockResponse defines the Msg/UnblockUser response type.
-type MsgUnblockResponse struct {
+// UnblockUserResponse defines the Msg/UnblockUser response type.
+type UnblockUserResponse struct {
 }
 
-func (m *MsgUnblockResponse) Reset()         { *m = MsgUnblockResponse{} }
-func (m *MsgUnblockResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUnblockResponse) ProtoMessage()    {}
-func (*MsgUnblockResponse) Descriptor() ([]byte, []int) {
+func (m *UnblockUserResponse) Reset()         { *m = UnblockUserResponse{} }
+func (m *UnblockUserResponse) String() string { return proto.CompactTextString(m) }
+func (*UnblockUserResponse) ProtoMessage()    {}
+func (*UnblockUserResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_452d94af952e9e01, []int{7}
 }
-func (m *MsgUnblockResponse) XXX_Unmarshal(b []byte) error {
+func (m *UnblockUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUnblockResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UnblockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUnblockResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UnblockUserResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -398,27 +398,27 @@ func (m *MsgUnblockResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *MsgUnblockResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUnblockResponse.Merge(m, src)
+func (m *UnblockUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnblockUserResponse.Merge(m, src)
 }
-func (m *MsgUnblockResponse) XXX_Size() int {
+func (m *UnblockUserResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUnblockResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUnblockResponse.DiscardUnknown(m)
+func (m *UnblockUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnblockUserResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUnblockResponse proto.InternalMessageInfo
+var xxx_messageInfo_UnblockUserResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateRelationship)(nil), "desmos.relationships.v1beta1.MsgCreateRelationship")
-	proto.RegisterType((*MsgCreateRelationshipResponse)(nil), "desmos.relationships.v1beta1.MsgCreateRelationshipResponse")
+	proto.RegisterType((*CreateRelationshipResponse)(nil), "desmos.relationships.v1beta1.CreateRelationshipResponse")
 	proto.RegisterType((*MsgDeleteRelationship)(nil), "desmos.relationships.v1beta1.MsgDeleteRelationship")
-	proto.RegisterType((*MsgDeleteRelationshipResponse)(nil), "desmos.relationships.v1beta1.MsgDeleteRelationshipResponse")
+	proto.RegisterType((*RemoveRelationshipResponse)(nil), "desmos.relationships.v1beta1.RemoveRelationshipResponse")
 	proto.RegisterType((*MsgBlockUser)(nil), "desmos.relationships.v1beta1.MsgBlockUser")
-	proto.RegisterType((*MsgBlockUserResponse)(nil), "desmos.relationships.v1beta1.MsgBlockUserResponse")
+	proto.RegisterType((*BlockUserResponse)(nil), "desmos.relationships.v1beta1.BlockUserResponse")
 	proto.RegisterType((*MsgUnblockUser)(nil), "desmos.relationships.v1beta1.MsgUnblockUser")
-	proto.RegisterType((*MsgUnblockResponse)(nil), "desmos.relationships.v1beta1.MsgUnblockResponse")
+	proto.RegisterType((*UnblockUserResponse)(nil), "desmos.relationships.v1beta1.UnblockUserResponse")
 }
 
 func init() {
@@ -426,39 +426,40 @@ func init() {
 }
 
 var fileDescriptor_452d94af952e9e01 = []byte{
-	// 504 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x94, 0x3d, 0x6f, 0xd3, 0x40,
-	0x18, 0xc7, 0x63, 0x82, 0x4a, 0x7b, 0x94, 0x22, 0xae, 0x01, 0xa2, 0x08, 0x6c, 0x74, 0x0b, 0x2f,
-	0x02, 0x9b, 0x36, 0x5b, 0xbb, 0x05, 0x56, 0x2f, 0x27, 0x75, 0x61, 0xf3, 0xcb, 0x23, 0x37, 0xaa,
-	0xed, 0xb3, 0xee, 0x71, 0x22, 0xf2, 0x05, 0x10, 0x23, 0x5f, 0x00, 0xa9, 0x9f, 0x00, 0xf1, 0x29,
-	0x10, 0x63, 0x47, 0xa6, 0x08, 0x25, 0x0b, 0x73, 0xf8, 0x02, 0x28, 0xb9, 0xb3, 0xe3, 0x34, 0x81,
-	0x26, 0x1d, 0xd8, 0x6c, 0x3f, 0xbf, 0xe7, 0xee, 0xff, 0xb3, 0x9e, 0x3b, 0xf2, 0x34, 0x04, 0x4c,
-	0x04, 0x3a, 0x12, 0x62, 0x2f, 0xef, 0x8a, 0x14, 0x4f, 0xbb, 0x19, 0x3a, 0xfd, 0x03, 0x1f, 0x72,
-	0xef, 0xc0, 0x49, 0x30, 0x42, 0x3b, 0x93, 0x22, 0x17, 0xf4, 0x91, 0x02, 0xed, 0x05, 0xd0, 0xd6,
-	0x60, 0xab, 0x11, 0x89, 0x48, 0xcc, 0x40, 0x67, 0xfa, 0xa4, 0x7a, 0xd8, 0x17, 0x83, 0xdc, 0x77,
-	0x31, 0x7a, 0x23, 0xc1, 0xcb, 0x81, 0x57, 0x1a, 0xe9, 0x73, 0xb2, 0x85, 0x90, 0x86, 0x20, 0x9b,
-	0xc6, 0x13, 0xe3, 0xd9, 0x4e, 0xe7, 0xde, 0x64, 0x68, 0xdd, 0x19, 0x78, 0x49, 0x7c, 0xc4, 0xd4,
-	0x77, 0xc6, 0x35, 0x40, 0x1d, 0xb2, 0x2d, 0x21, 0x80, 0x6e, 0x1f, 0x64, 0xf3, 0xc6, 0x0c, 0xde,
-	0x9f, 0x0c, 0xad, 0xbb, 0x0a, 0x2e, 0x2a, 0x8c, 0x97, 0xd0, 0xb4, 0x01, 0x7b, 0x3e, 0x66, 0x5e,
-	0x00, 0xcd, 0xfa, 0xe5, 0x86, 0xa2, 0xc2, 0x78, 0x09, 0x1d, 0x6d, 0x7f, 0x3c, 0xb7, 0x6a, 0xbf,
-	0xce, 0xad, 0x1a, 0xb3, 0xc8, 0xe3, 0x95, 0x79, 0x39, 0x60, 0x26, 0x52, 0x04, 0xf6, 0x55, 0x19,
-	0xbd, 0x85, 0x18, 0xae, 0x6f, 0x74, 0x4c, 0x76, 0x03, 0xd1, 0x4b, 0x73, 0x90, 0x99, 0x27, 0xf3,
-	0x81, 0xb6, 0x7a, 0x38, 0x19, 0x5a, 0xfb, 0xaa, 0xa1, 0x5a, 0x65, 0x7c, 0x01, 0xde, 0xd8, 0x4e,
-	0x3b, 0x2d, 0x27, 0x2e, 0x9d, 0xbe, 0x19, 0x64, 0xd7, 0xc5, 0xa8, 0x13, 0x8b, 0xe0, 0xec, 0x04,
-	0x41, 0xd2, 0x97, 0xe4, 0x96, 0x3f, 0x7d, 0x29, 0x5d, 0xe8, 0x64, 0x68, 0xed, 0xa9, 0x1d, 0x74,
-	0x81, 0xf1, 0x02, 0x99, 0xd3, 0xa1, 0x16, 0x59, 0xa2, 0xc3, 0x92, 0x0e, 0xa7, 0xbf, 0x49, 0x82,
-	0x87, 0x22, 0xd5, 0xe1, 0x2b, 0xbf, 0x49, 0x7d, 0x67, 0x5c, 0x03, 0x0b, 0xa6, 0x37, 0xd7, 0x31,
-	0x7d, 0x40, 0x1a, 0x55, 0x8f, 0x52, 0xf0, 0xb3, 0x41, 0xf6, 0x5c, 0x8c, 0x4e, 0x52, 0xff, 0xbf,
-	0x28, 0x6e, 0x9c, 0xbb, 0x41, 0xe8, 0x3c, 0x5e, 0x91, 0xfa, 0xf0, 0x77, 0x9d, 0xd4, 0x5d, 0x8c,
-	0xe8, 0x07, 0x83, 0xd0, 0x15, 0x27, 0xa8, 0x6d, 0xff, 0xeb, 0x40, 0xda, 0x2b, 0xc7, 0xb8, 0x75,
-	0x7c, 0x8d, 0xa6, 0x22, 0xd0, 0x2c, 0x08, 0x87, 0x44, 0xf4, 0x37, 0x0d, 0xb2, 0x3c, 0x7b, 0x6b,
-	0x04, 0xf9, 0xfb, 0xc0, 0xd2, 0x33, 0xb2, 0x33, 0x1f, 0xd6, 0x17, 0x57, 0xae, 0x54, 0xb2, 0xad,
-	0xc3, 0xf5, 0xd9, 0x72, 0xb3, 0x84, 0xdc, 0x5e, 0x18, 0x9c, 0x2b, 0x97, 0xa8, 0xd0, 0xad, 0xd7,
-	0xeb, 0xd2, 0xc5, 0x76, 0x1d, 0xf7, 0xfb, 0xc8, 0x34, 0x2e, 0x46, 0xa6, 0xf1, 0x73, 0x64, 0x1a,
-	0x9f, 0xc6, 0x66, 0xed, 0x62, 0x6c, 0xd6, 0x7e, 0x8c, 0xcd, 0xda, 0xbb, 0x76, 0xd4, 0xcd, 0x4f,
-	0x7b, 0xbe, 0x1d, 0x88, 0xc4, 0x51, 0xab, 0xbe, 0x8a, 0x3d, 0x1f, 0xf5, 0xb3, 0xf3, 0xfe, 0xd2,
-	0x15, 0x9e, 0x0f, 0x32, 0x40, 0x7f, 0x6b, 0x76, 0x11, 0xb7, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff,
-	0x8f, 0x1b, 0xfa, 0x8d, 0xe7, 0x05, 0x00, 0x00,
+	// 525 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x94, 0x3f, 0x6f, 0xd3, 0x4e,
+	0x18, 0xc7, 0xe3, 0x5f, 0xaa, 0xfe, 0xda, 0x6b, 0x69, 0x55, 0x87, 0x8a, 0xc8, 0xaa, 0x6c, 0x74,
+	0x0c, 0xfc, 0x11, 0xd8, 0x0a, 0x59, 0x50, 0xd9, 0x02, 0xab, 0x97, 0x93, 0xba, 0xb0, 0xf9, 0xcf,
+	0x23, 0x27, 0xc2, 0xf6, 0x59, 0x7e, 0x9c, 0x88, 0xcc, 0x2c, 0x8c, 0xbc, 0x01, 0xa4, 0xce, 0x0c,
+	0xbc, 0x0c, 0xc4, 0xd8, 0x91, 0xc9, 0x42, 0xc9, 0x82, 0xc4, 0xe6, 0x57, 0x80, 0xec, 0x73, 0x5c,
+	0x27, 0x4e, 0x93, 0x76, 0x61, 0xb3, 0xef, 0xf9, 0x3c, 0xbe, 0xef, 0x47, 0xf7, 0x9c, 0xc9, 0x63,
+	0x17, 0x30, 0xe0, 0x68, 0xc4, 0xe0, 0x5b, 0xc9, 0x88, 0x87, 0x38, 0x1c, 0x45, 0x68, 0x4c, 0x7a,
+	0x36, 0x24, 0x56, 0xcf, 0x08, 0xd0, 0x43, 0x3d, 0x8a, 0x79, 0xc2, 0xe5, 0x33, 0x01, 0xea, 0x4b,
+	0xa0, 0x5e, 0x82, 0xca, 0x7d, 0x8f, 0x7b, 0xbc, 0x00, 0x8d, 0xfc, 0x49, 0xf4, 0xd0, 0x6f, 0x12,
+	0x39, 0x35, 0xd1, 0x7b, 0x13, 0x83, 0x95, 0x00, 0xab, 0x35, 0xca, 0x4f, 0xc9, 0x2e, 0x42, 0xe8,
+	0x42, 0xdc, 0x95, 0x1e, 0x4a, 0x4f, 0xf6, 0x07, 0x27, 0x59, 0xaa, 0xdd, 0x9b, 0x5a, 0x81, 0x7f,
+	0x4e, 0xc5, 0x3a, 0x65, 0x25, 0x20, 0x1b, 0x64, 0x2f, 0x06, 0x07, 0x46, 0x13, 0x88, 0xbb, 0xff,
+	0x15, 0x70, 0x27, 0x4b, 0xb5, 0x63, 0x01, 0x2f, 0x2a, 0x94, 0x55, 0x50, 0xde, 0x80, 0x63, 0x1b,
+	0x23, 0xcb, 0x81, 0x6e, 0x7b, 0xb5, 0x61, 0x51, 0xa1, 0xac, 0x82, 0xce, 0xf7, 0x3e, 0x5d, 0x6a,
+	0xad, 0xdf, 0x97, 0x5a, 0x8b, 0x9e, 0x11, 0xa5, 0x19, 0x96, 0x01, 0x46, 0x3c, 0x44, 0xa0, 0x5f,
+	0x85, 0xce, 0x5b, 0xf0, 0x61, 0x45, 0xe7, 0x11, 0xd9, 0x19, 0x63, 0x25, 0x73, 0x9c, 0xa5, 0xda,
+	0x81, 0xd8, 0x2e, 0x5f, 0xa5, 0xac, 0x28, 0xca, 0xaf, 0xc9, 0xa1, 0xc3, 0xc7, 0x61, 0x02, 0x71,
+	0x64, 0xc5, 0xc9, 0xb4, 0x94, 0x79, 0x90, 0xa5, 0x5a, 0x47, 0xc0, 0xf5, 0x2a, 0x65, 0x4b, 0xf0,
+	0x9d, 0xa5, 0x72, 0x15, 0x06, 0x01, 0x9f, 0xac, 0x57, 0xf9, 0x2e, 0x91, 0x43, 0x13, 0xbd, 0x81,
+	0xcf, 0x9d, 0xf7, 0x17, 0x79, 0xb8, 0xe7, 0xe4, 0x7f, 0x3b, 0x7f, 0xa9, 0x24, 0xe4, 0x2c, 0xd5,
+	0x8e, 0xc4, 0xe7, 0xcb, 0x02, 0x65, 0x0b, 0xe4, 0x9a, 0x76, 0x4b, 0x8b, 0x06, 0xed, 0x56, 0xb4,
+	0x9b, 0x1f, 0x76, 0x0c, 0x16, 0xf2, 0xb0, 0x4c, 0x5e, 0x3b, 0x6c, 0xb1, 0x4e, 0x59, 0x09, 0x2c,
+	0x69, 0xee, 0xdc, 0x46, 0xb3, 0x43, 0x4e, 0x2a, 0x89, 0xca, 0xee, 0x8b, 0x44, 0x8e, 0x4c, 0xf4,
+	0x2e, 0x42, 0xfb, 0x9f, 0xf8, 0xdd, 0x39, 0xf4, 0x29, 0xe9, 0xd4, 0xb2, 0x2d, 0x62, 0xbf, 0xfc,
+	0xd3, 0x26, 0x6d, 0x13, 0x3d, 0xf9, 0xa3, 0x44, 0xe4, 0x35, 0x77, 0xa6, 0xaf, 0x6f, 0xba, 0x82,
+	0xfa, 0xda, 0x8b, 0xa6, 0xbc, 0xda, 0xdc, 0x74, 0xf3, 0xb4, 0x17, 0x29, 0x9a, 0x13, 0x74, 0x8b,
+	0x14, 0xcd, 0xfb, 0xb1, 0x2d, 0xc5, 0xcd, 0x83, 0x2a, 0x0f, 0xc9, 0xfe, 0xf5, 0x90, 0x3e, 0xdb,
+	0xba, 0x77, 0xc5, 0x2a, 0xc6, 0x66, 0xb6, 0x31, 0x34, 0x72, 0x48, 0x0e, 0x96, 0x06, 0x66, 0xeb,
+	0x5e, 0x35, 0x5a, 0xe9, 0x6d, 0xa6, 0xd7, 0x9c, 0xf6, 0xc0, 0xfc, 0x31, 0x53, 0xa5, 0xab, 0x99,
+	0x2a, 0xfd, 0x9a, 0xa9, 0xd2, 0xe7, 0xb9, 0xda, 0xba, 0x9a, 0xab, 0xad, 0x9f, 0x73, 0xb5, 0xf5,
+	0xae, 0xef, 0x8d, 0x92, 0xe1, 0xd8, 0xd6, 0x1d, 0x1e, 0x18, 0xe2, 0xb3, 0x2f, 0x7c, 0xcb, 0xc6,
+	0xf2, 0xd9, 0xf8, 0xb0, 0xf2, 0xb3, 0x4e, 0xa6, 0x11, 0xa0, 0xbd, 0x5b, 0xfc, 0x72, 0xfb, 0x7f,
+	0x03, 0x00, 0x00, 0xff, 0xff, 0x9b, 0x37, 0xc0, 0x4c, 0xd1, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -474,13 +475,13 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	// CreateRelationship defines a method for creating a new relationship
-	CreateRelationship(ctx context.Context, in *MsgCreateRelationship, opts ...grpc.CallOption) (*MsgCreateRelationshipResponse, error)
+	CreateRelationship(ctx context.Context, in *MsgCreateRelationship, opts ...grpc.CallOption) (*CreateRelationshipResponse, error)
 	// DeleteRelationship defines a method for deleting a relationship
-	RemoveRelationship(ctx context.Context, in *MsgDeleteRelationship, opts ...grpc.CallOption) (*MsgDeleteRelationshipResponse, error)
+	RemoveRelationship(ctx context.Context, in *MsgDeleteRelationship, opts ...grpc.CallOption) (*RemoveRelationshipResponse, error)
 	// BlockUser defines a method for blocking a user
-	BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*MsgBlockUserResponse, error)
+	BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*BlockUserResponse, error)
 	// UnblockUser defines a method for unblocking a user
-	UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*MsgUnblockResponse, error)
+	UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*UnblockUserResponse, error)
 }
 
 type msgClient struct {
@@ -491,8 +492,8 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) CreateRelationship(ctx context.Context, in *MsgCreateRelationship, opts ...grpc.CallOption) (*MsgCreateRelationshipResponse, error) {
-	out := new(MsgCreateRelationshipResponse)
+func (c *msgClient) CreateRelationship(ctx context.Context, in *MsgCreateRelationship, opts ...grpc.CallOption) (*CreateRelationshipResponse, error) {
+	out := new(CreateRelationshipResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Msg/CreateRelationship", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -500,8 +501,8 @@ func (c *msgClient) CreateRelationship(ctx context.Context, in *MsgCreateRelatio
 	return out, nil
 }
 
-func (c *msgClient) RemoveRelationship(ctx context.Context, in *MsgDeleteRelationship, opts ...grpc.CallOption) (*MsgDeleteRelationshipResponse, error) {
-	out := new(MsgDeleteRelationshipResponse)
+func (c *msgClient) RemoveRelationship(ctx context.Context, in *MsgDeleteRelationship, opts ...grpc.CallOption) (*RemoveRelationshipResponse, error) {
+	out := new(RemoveRelationshipResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Msg/RemoveRelationship", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -509,8 +510,8 @@ func (c *msgClient) RemoveRelationship(ctx context.Context, in *MsgDeleteRelatio
 	return out, nil
 }
 
-func (c *msgClient) BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*MsgBlockUserResponse, error) {
-	out := new(MsgBlockUserResponse)
+func (c *msgClient) BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*BlockUserResponse, error) {
+	out := new(BlockUserResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Msg/BlockUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -518,8 +519,8 @@ func (c *msgClient) BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grp
 	return out, nil
 }
 
-func (c *msgClient) UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*MsgUnblockResponse, error) {
-	out := new(MsgUnblockResponse)
+func (c *msgClient) UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*UnblockUserResponse, error) {
+	out := new(UnblockUserResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Msg/UnblockUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -530,29 +531,29 @@ func (c *msgClient) UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ..
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// CreateRelationship defines a method for creating a new relationship
-	CreateRelationship(context.Context, *MsgCreateRelationship) (*MsgCreateRelationshipResponse, error)
+	CreateRelationship(context.Context, *MsgCreateRelationship) (*CreateRelationshipResponse, error)
 	// DeleteRelationship defines a method for deleting a relationship
-	RemoveRelationship(context.Context, *MsgDeleteRelationship) (*MsgDeleteRelationshipResponse, error)
+	RemoveRelationship(context.Context, *MsgDeleteRelationship) (*RemoveRelationshipResponse, error)
 	// BlockUser defines a method for blocking a user
-	BlockUser(context.Context, *MsgBlockUser) (*MsgBlockUserResponse, error)
+	BlockUser(context.Context, *MsgBlockUser) (*BlockUserResponse, error)
 	// UnblockUser defines a method for unblocking a user
-	UnblockUser(context.Context, *MsgUnblockUser) (*MsgUnblockResponse, error)
+	UnblockUser(context.Context, *MsgUnblockUser) (*UnblockUserResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) CreateRelationship(ctx context.Context, req *MsgCreateRelationship) (*MsgCreateRelationshipResponse, error) {
+func (*UnimplementedMsgServer) CreateRelationship(ctx context.Context, req *MsgCreateRelationship) (*CreateRelationshipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRelationship not implemented")
 }
-func (*UnimplementedMsgServer) RemoveRelationship(ctx context.Context, req *MsgDeleteRelationship) (*MsgDeleteRelationshipResponse, error) {
+func (*UnimplementedMsgServer) RemoveRelationship(ctx context.Context, req *MsgDeleteRelationship) (*RemoveRelationshipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRelationship not implemented")
 }
-func (*UnimplementedMsgServer) BlockUser(ctx context.Context, req *MsgBlockUser) (*MsgBlockUserResponse, error) {
+func (*UnimplementedMsgServer) BlockUser(ctx context.Context, req *MsgBlockUser) (*BlockUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockUser not implemented")
 }
-func (*UnimplementedMsgServer) UnblockUser(ctx context.Context, req *MsgUnblockUser) (*MsgUnblockResponse, error) {
+func (*UnimplementedMsgServer) UnblockUser(ctx context.Context, req *MsgUnblockUser) (*UnblockUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnblockUser not implemented")
 }
 
@@ -701,7 +702,7 @@ func (m *MsgCreateRelationship) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCreateRelationshipResponse) Marshal() (dAtA []byte, err error) {
+func (m *CreateRelationshipResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -711,12 +712,12 @@ func (m *MsgCreateRelationshipResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreateRelationshipResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *CreateRelationshipResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreateRelationshipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CreateRelationshipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -758,17 +759,17 @@ func (m *MsgDeleteRelationship) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Sender) > 0 {
-		i -= len(m.Sender)
-		copy(dAtA[i:], m.Sender)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Sender)))
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgDeleteRelationshipResponse) Marshal() (dAtA []byte, err error) {
+func (m *RemoveRelationshipResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -778,12 +779,12 @@ func (m *MsgDeleteRelationshipResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgDeleteRelationshipResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *RemoveRelationshipResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgDeleteRelationshipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *RemoveRelationshipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -842,7 +843,7 @@ func (m *MsgBlockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgBlockUserResponse) Marshal() (dAtA []byte, err error) {
+func (m *BlockUserResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -852,12 +853,12 @@ func (m *MsgBlockUserResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockUserResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *BlockUserResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *BlockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -909,7 +910,7 @@ func (m *MsgUnblockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUnblockResponse) Marshal() (dAtA []byte, err error) {
+func (m *UnblockUserResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -919,12 +920,12 @@ func (m *MsgUnblockResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUnblockResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *UnblockUserResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUnblockResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UnblockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -964,7 +965,7 @@ func (m *MsgCreateRelationship) Size() (n int) {
 	return n
 }
 
-func (m *MsgCreateRelationshipResponse) Size() (n int) {
+func (m *CreateRelationshipResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -979,7 +980,7 @@ func (m *MsgDeleteRelationship) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Sender)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -994,7 +995,7 @@ func (m *MsgDeleteRelationship) Size() (n int) {
 	return n
 }
 
-func (m *MsgDeleteRelationshipResponse) Size() (n int) {
+func (m *RemoveRelationshipResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1028,7 +1029,7 @@ func (m *MsgBlockUser) Size() (n int) {
 	return n
 }
 
-func (m *MsgBlockUserResponse) Size() (n int) {
+func (m *BlockUserResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1058,7 +1059,7 @@ func (m *MsgUnblockUser) Size() (n int) {
 	return n
 }
 
-func (m *MsgUnblockResponse) Size() (n int) {
+func (m *UnblockUserResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1222,7 +1223,7 @@ func (m *MsgCreateRelationship) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCreateRelationshipResponse) Unmarshal(dAtA []byte) error {
+func (m *CreateRelationshipResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1245,10 +1246,10 @@ func (m *MsgCreateRelationshipResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateRelationshipResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: CreateRelationshipResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateRelationshipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: CreateRelationshipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1306,7 +1307,7 @@ func (m *MsgDeleteRelationship) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1334,7 +1335,7 @@ func (m *MsgDeleteRelationship) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Sender = string(dAtA[iNdEx:postIndex])
+			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1424,7 +1425,7 @@ func (m *MsgDeleteRelationship) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgDeleteRelationshipResponse) Unmarshal(dAtA []byte) error {
+func (m *RemoveRelationshipResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1447,10 +1448,10 @@ func (m *MsgDeleteRelationshipResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeleteRelationshipResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: RemoveRelationshipResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeleteRelationshipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: RemoveRelationshipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1658,7 +1659,7 @@ func (m *MsgBlockUser) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgBlockUserResponse) Unmarshal(dAtA []byte) error {
+func (m *BlockUserResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1681,10 +1682,10 @@ func (m *MsgBlockUserResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockUserResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: BlockUserResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: BlockUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1860,7 +1861,7 @@ func (m *MsgUnblockUser) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUnblockResponse) Unmarshal(dAtA []byte) error {
+func (m *UnblockUserResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1883,10 +1884,10 @@ func (m *MsgUnblockResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUnblockResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: UnblockUserResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUnblockResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UnblockUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

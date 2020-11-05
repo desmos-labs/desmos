@@ -11,6 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 )

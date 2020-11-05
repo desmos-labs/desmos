@@ -5,8 +5,9 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func TestValidateGenesis(t *testing.T) {

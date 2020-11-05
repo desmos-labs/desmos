@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -35,35 +34,40 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	).WithAttachments(msg.Attachments)
 
 	if msg.PollData != nil {
-		post = post.WithPollData(*msg.PollData)
+		post = post.WithPollData(msg.PollData)
+	}
+
+	// Validate the post
+	if err := k.ValidatePost(ctx, post); err != nil {
+		return nil, err
 	}
 
 	// Check for double posting
-	if existing, found := k.GetPost(ctx, post.PostID); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("the provided post conflicts with the one having id %s", existing.PostID))
+	if k.DoesPostExist(ctx, post.PostID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the provided post conflicts with the one having id %s", post.PostID)
+	}
+
+	// Check if any of the tags have blocked the post creator
+	if err := k.IsCreatorBlockedBySomeTags(ctx, post.Attachments, post.Creator, post.Subspace); err != nil {
+		return nil, err
 	}
 
 	// If valid, check the parent post
 	if types.IsValidPostID(post.ParentID) {
 		parentPost, found := k.GetPost(ctx, post.ParentID)
 		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("parent post with id %s not found", post.ParentID))
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"parent post with id %s not found", post.ParentID)
 		}
 
 		if !parentPost.AllowsComments {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s does not allow comments", parentPost.PostID))
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"post with id %s does not allow comments", parentPost.PostID)
 		}
 	}
 
-	// Check if any of the tags have blocked the post creator
-	if err := k.IsCreatorBlockedBySomeTags(ctx, post.Attachments, post.Creator); err != nil {
-		return nil, err
-	}
-
-	if err := k.ValidatePost(ctx, post); err != nil {
-		return nil, err
-	}
-
+	// Save the post
 	k.SavePost(ctx, post)
 
 	// Emit the event
@@ -84,7 +88,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	// Get the existing post
 	existing, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
 	}
 
 	// Checks if the the msg sender is the same as the current owner
@@ -102,7 +106,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	if msg.Attachments != nil {
 		// Check if any of the tags have blocked the post creator
-		if err := k.IsCreatorBlockedBySomeTags(ctx, msg.Attachments, existing.Creator); err != nil {
+		if err := k.IsCreatorBlockedBySomeTags(ctx, msg.Attachments, existing.Creator, existing.Subspace); err != nil {
 			return nil, err
 		}
 		existing.Attachments = msg.Attachments
@@ -135,7 +139,7 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	// Get the post
 	post, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
 	}
 
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
@@ -166,7 +170,7 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	// Get the post
 	post, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("post with id %s not found", msg.PostID))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
 	}
 
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
@@ -174,10 +178,10 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 		return nil, err
 	}
 
-	// Remove the reaction
+	// Remove the registeredReactions
 	reaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
 	if err := k.DeletePostReaction(ctx, post.PostID, reaction); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Emit the event
@@ -197,14 +201,14 @@ func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegiste
 
 	// Check if the shortcode is associated with an emoji
 	if _, found := types.GetEmojiByShortCodeOrValue(msg.ShortCode); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-			"shortcode %s represents an emoji and thus can't be used to register a new reaction", msg.ShortCode))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"shortcode %s represents an emoji and thus can't be used to register a new registeredReactions", msg.ShortCode)
 	}
 
-	// Make sure the reaction is already registered
+	// Make sure the registeredReactions is already registered
 	if _, isAlreadyRegistered := k.GetRegisteredReaction(ctx, msg.ShortCode, msg.Subspace); isAlreadyRegistered {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf(
-			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"registeredReactions with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace)
 	}
 
 	reaction := types.NewRegisteredReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
@@ -253,7 +257,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Check if the user answers are more than the answers provided by the poll
 	if len(msg.UserAnswers) > len(post.PollData.ProvidedAnswers) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			"user's answers are more than the available ones in Poll")
+			"user's answers are more than the available ones inside the poll")
 	}
 
 	// Make sure that each answer provided by the user
@@ -277,10 +281,8 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	// check if the poll allows to edit previous answers
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
-		return nil, sdkerrors.Wrap(
-			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with ID %s doesn't allow answers' edits", post.PostID),
-		)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"post with ID %s doesn't allow answers' edits", post.PostID)
 	}
 
 	userPollAnswers := types.NewUserAnswer(msg.UserAnswers, msg.Answerer)

@@ -1,8 +1,7 @@
 package keeper
 
 import (
-	"encoding/binary"
-	"fmt"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,14 +30,17 @@ func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey) Keeper {
 // SetDefaultSessionLength allows to set a default session length for new magpie sessions.
 // The specified length is intended to be in number of blocks.
 func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length uint64) error {
-	if length < 1 {
-		return fmt.Errorf("cannot set %d as default session length", length)
+	if length == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot set 0 as default session length")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 
-	var bz []byte
-	binary.LittleEndian.PutUint64(bz, length)
+	bz, err := k.cdc.MarshalBinaryBare(&WrappedSessionLength{Length: length})
+	if err != nil {
+		return err
+	}
+
 	store.Set(types.SessionLengthKey, bz)
 	return nil
 }
@@ -47,12 +49,13 @@ func (k Keeper) SetDefaultSessionLength(ctx sdk.Context, length uint64) error {
 func (k Keeper) GetDefaultSessionLength(ctx sdk.Context) uint64 {
 	store := ctx.KVStore(k.storeKey)
 
-	length := uint64(0)
-	if store.Has(types.SessionLengthKey) {
-		length = binary.LittleEndian.Uint64(store.Get(types.SessionLengthKey))
+	var wrapped WrappedSessionLength
+	err := k.cdc.UnmarshalBinaryBare(store.Get(types.SessionLengthKey), &wrapped)
+	if err != nil {
+		return 0
 	}
 
-	return length
+	return wrapped.Length
 }
 
 // -------------
@@ -102,12 +105,12 @@ func (k Keeper) GetSession(ctx sdk.Context, id types.SessionID) (session types.S
 }
 
 // GetSessions returns the list of all the sessions present inside the current context
-func (k Keeper) GetSessions(ctx sdk.Context) types.Sessions {
+func (k Keeper) GetSessions(ctx sdk.Context) []types.Session {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.SessionStorePrefix)
 	defer iterator.Close()
 
-	sessions := make(types.Sessions, 0)
+	var sessions []types.Session
 	for ; iterator.Valid(); iterator.Next() {
 		var session types.Session
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &session)

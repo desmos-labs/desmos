@@ -3,9 +3,12 @@ package cli
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // GetQueryCmd adds the query commands
@@ -25,9 +28,9 @@ func GetQueryCmd() *cobra.Command {
 
 // GetCmdQueryPostReports returns the command that allows to query the reports of a post
 func GetCmdQueryPostReports() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "post [id]",
-		Short: "Returns all the reports of the posts with the given ID",
+		Short: "Returns all the reports of the posts with the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -48,4 +51,8 @@ func GetCmdQueryPostReports() *cobra.Command {
 			return clientCtx.PrintOutput(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }

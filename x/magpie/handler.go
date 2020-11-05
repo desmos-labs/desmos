@@ -1,10 +1,9 @@
 package magpie
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
@@ -22,8 +21,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
-				fmt.Sprintf("unrecognized magpie message type: %v", msg.Type()))
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+				"unrecognized %s message type: %v", types.ModuleName, msg.Type())
 		}
 	}
 }

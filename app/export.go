@@ -37,7 +37,11 @@ func (app *DesmosApp) ExportAppStateAndValidators(
 		return servertypes.ExportedApp{}, err
 	}
 
-	validators := staking.WriteValidators(ctx, app.stakingKeeper)
+	validators, err := staking.WriteValidators(ctx, app.stakingKeeper)
+	if err != nil {
+		return servertypes.ExportedApp{}, err
+	}
+
 	return servertypes.ExportedApp{
 		AppState:        appState,
 		Validators:      validators,
@@ -183,7 +187,10 @@ func (app *DesmosApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []
 
 	iter.Close()
 
-	_ = app.stakingKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
+	_, err := app.stakingKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	/* Handle slashing state. */
 

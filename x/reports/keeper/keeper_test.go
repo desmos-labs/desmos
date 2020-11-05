@@ -2,25 +2,24 @@ package keeper_test
 
 import (
 	posts "github.com/desmos-labs/desmos/x/posts/types"
-
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
+func (suite *KeeperTestSuite) TestKeeper_CheckPostExistence() {
 	tests := []struct {
 		name         string
 		existentPost *posts.Post
-		postID       posts.PostID
+		postID       string
 		expBool      bool
 	}{
 		{
-			name:         "Post not exist",
+			name:         "post does not exist",
 			existentPost: nil,
-			postID:       suite.testData.postID,
+			postID:       "post_id",
 			expBool:      false,
 		},
 		{
-			name: "Post exist",
+			name: "post exists",
 			existentPost: &posts.Post{
 				PostID:       suite.testData.postID,
 				Message:      "Post",
@@ -49,28 +48,73 @@ func (suite *KeeperTestSuite) TestKeeper_CheckExistence() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
-	store := suite.ctx.KVStore(suite.storeKey)
+	tests := []struct {
+		name          string
+		storedReports []types.Report
+		report        types.Report
+		expErr        bool
+		expReports    []types.Report
+	}{
+		{
+			name:          "report is stored properly when existing slice is empty",
+			storedReports: nil,
+			report:        types.NewReport("post_id", "type", "message", "user"),
+			expErr:        false,
+			expReports: []types.Report{
+				types.NewReport("post_id", "type", "message", "user"),
+			},
+		},
+		{
+			name: "report is stored properly when existing slice is not empty",
+			storedReports: []types.Report{
+				types.NewReport("post_id", "type", "message", "user"),
+			},
+			report: types.NewReport("post_id", "type_2", "message", "user"),
+			expErr: false,
+			expReports: []types.Report{
+				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("post_id", "type_2", "message", "user"),
+			},
+		},
+		{
+			name: "trying to store double report returns error",
+			storedReports: []types.Report{
+				types.NewReport("post_id", "type", "message", "user"),
+			},
+			report: types.NewReport("post_id", "type", "message", "user"),
+			expErr: true,
+		},
+	}
 
-	report := types.NewReport(
-		suite.testData.postID.String(),
-		"type",
-		"message",
-		suite.testData.creator.String(),
-	)
-	err := suite.keeper.SaveReport(suite.ctx, report)
-	suite.Require().NoError(err)
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
 
-	reports, err := suite.keeper.UnmarshalReports(store.Get(types.ReportStoreKey(suite.testData.postID.String())))
-	suite.Require().NoError(err)
+			for _, report := range test.storedReports {
+				err := suite.keeper.SaveReport(suite.ctx, report)
+				suite.Require().NoError(err)
+			}
 
-	suite.Require().Equal(reports, []types.Report{report})
+			err := suite.keeper.SaveReport(suite.ctx, test.report)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				stored := suite.keeper.GetAllReports(suite.ctx)
+				suite.Require().Equal(test.expReports, stored)
+			}
+		})
+	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 	tests := []struct {
 		name     string
-		postID   string
 		stored   []types.Report
+		postID   string
 		expected []types.Report
 	}{
 		{
@@ -80,22 +124,22 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 					"post_id",
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 				types.NewReport(
 					"another_post_id",
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 			},
 			postID: "post_id",
 			expected: []types.Report{
 				types.NewReport(
-					suite.testData.postID.String(),
+					"post_id",
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 			},
 		},
@@ -117,14 +161,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 				suite.Require().NoError(err)
 			}
 
-			stored, err := suite.keeper.GetPostReports(suite.ctx, test.postID)
-			suite.Require().NoError(err)
+			stored := suite.keeper.GetPostReports(suite.ctx, test.postID)
 			suite.Require().Equal(test.expected, stored)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetReports() {
+func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 	tests := []struct {
 		name    string
 		reports []types.Report
@@ -133,10 +176,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetReports() {
 			name: "Empty stored are returned properly",
 			reports: []types.Report{
 				types.NewReport(
-					suite.testData.postID.String(),
+					suite.testData.postID,
 					"type",
 					"message",
-					suite.testData.creator.String(),
+					suite.testData.creator,
 				),
 			},
 		},
@@ -156,8 +199,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetReports() {
 				suite.Require().NoError(err)
 			}
 
-			stored, err := suite.keeper.GetReports(suite.ctx)
-			suite.Require().NoError(err)
+			stored := suite.keeper.GetAllReports(suite.ctx)
 			suite.Require().Equal(test.reports, stored)
 		})
 	}

@@ -15,3 +15,10 @@ message Report {
   string message = 3 [(gogoproto.moretags) = "yaml:\"message\""]; // Contains the user message
   string user = 4 [(gogoproto.moretags) = "yaml:\"user\""]; // Identifies the reporting user
 }
+
+// Reports wraps a list of Report objects
+message Reports {
+  repeated Report reports = 1 [
+    (gogoproto.nullable) = false
+  ];
+}

@@ -3,6 +3,8 @@ package types_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
@@ -52,7 +54,7 @@ func TestMsgCreateSession_ValidateBasic(t *testing.T) {
 				"cosmospub1addwnpepqf06gxm8tf4u9af99zsuphr2jmqvr2t956me5rcx9kywmrtg6jewy8gjtcs",
 				"QmZh...===",
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid session owner: "),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, ""),
 		},
 		{
 			name: "Invalid namespace",
@@ -131,7 +133,6 @@ func TestMsgCreateSession_GetSigners(t *testing.T) {
 		"QmZh...===",
 	)
 
-	actual := msg.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msg.Owner, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }

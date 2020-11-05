@@ -4,10 +4,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 	"strconv"
 	"strings"
 	"unicode"
+
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // GetEmojiByShortCodeOrValue returns the emoji that has either one of their shortcode equals to

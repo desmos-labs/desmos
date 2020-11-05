@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"fmt"
 
-	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -44,14 +45,16 @@ func GetCmdCreateRelationship() *cobra.Command {
 				return err
 			}
 
-			if !commons.IsValidSubspace(args[1]) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			msg := types.NewMsgCreateRelationship(clientCtx.FromAddress.String(), args[0], args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
 			}
 
-			msg := types.NewMsgCreateRelationship(clientCtx.FromAddress.String(), args[0], args[1])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
@@ -69,14 +72,16 @@ func GetCmdDeleteRelationship() *cobra.Command {
 				return err
 			}
 
-			if !commons.IsValidSubspace(args[1]) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			msg := types.NewMsgDeleteRelationship(clientCtx.FromAddress.String(), args[0], args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
 			}
 
-			msg := types.NewMsgDeleteRelationship(clientCtx.FromAddress.String(), args[0], args[1])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
@@ -94,19 +99,21 @@ func GetCmdBlockUser() *cobra.Command {
 				return err
 			}
 
-			var reason string
+			reason := ""
 			if len(args) == 3 {
 				reason = args[2]
 			}
 
-			if !commons.IsValidSubspace(args[1]) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			msg := types.NewMsgBlockUser(clientCtx.FromAddress.String(), args[0], reason, args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
 			}
 
-			msg := types.NewMsgBlockUser(clientCtx.FromAddress.String(), args[0], reason, args[1])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
@@ -124,14 +131,16 @@ func GetCmdUnblockUser() *cobra.Command {
 				return err
 			}
 
-			if !commons.IsValidSubspace(args[1]) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
+			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
 			}
 
-			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], args[1])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

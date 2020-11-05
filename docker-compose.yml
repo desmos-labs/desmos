@@ -3,67 +3,71 @@ version: '3'
 services:
   desmosnode0:
     container_name: desmosnode0
-    image: "desmoslabs/desmos"
+    image: "desmoslabs/desmosd-env"
     ports:
       - "26656-26657:26656-26657"
+      - "1317:1317"
+      - "9090:9090"
     environment:
       - ID=0
       - LOG=${LOG:-desmosd.log}
     volumes:
-      - ./build/node0:/root
+      # - ./build/node0:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.2
-    command: ["desmosd", "start"]
 
   desmosnode1:
     container_name: desmosnode1
-    image: "desmoslabs/desmos"
+    image: "desmoslabs/desmosd-env"
     ports:
-      - "26659-26660:26656-26657"
+      - "26666-26667:26656-26657"
+      - "1318:1317"
+      - "9091:9090"
     environment:
       - ID=1
       - LOG=${LOG:-desmosd.log}
     volumes:
-      - ./build/node1:/root
+      # - ./build/node1:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.3
-    command: ["desmosd", "start"]
 
   desmosnode2:
     container_name: desmosnode2
-    image: "desmoslabs/desmos"
+    image: "desmoslabs/desmosd-env"
     environment:
       - ID=2
       - LOG=${LOG:-desmosd.log}
     ports:
-      - "26661-26662:26656-26657"
+      - "26676-26677:26656-26657"
+      - "1319:1317"
+      - "9092:9090"
     volumes:
-      - ./build/node2:/root
+      # - ./build/node2:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.4
-    command: ["desmosd", "start"]
 
   desmosnode3:
     container_name: desmosnode3
-    image: "desmoslabs/desmos"
+    image: "desmoslabs/desmosd-env"
     environment:
       - ID=3
       - LOG=${LOG:-desmosd.log}
     ports:
-      - "26663-26664:26656-26657"
+      - "26686-26687:26656-26657"
+      - "1320:1317"
+      - "9093:9090"
     volumes:
-      - ./build/node3:/root
+      # - ./build/node3:/root
       - ./build:/desmosd:Z
     networks:
       localnet:
         ipv4_address: 192.168.10.5
-    command: ["desmosd", "start"]
 
 networks:
   localnet:

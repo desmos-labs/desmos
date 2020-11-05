@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
@@ -37,7 +39,7 @@ func GetQueryCmd() *cobra.Command {
 
 // GetCmdQueryPost returns the command allowing to query a post
 func GetCmdQueryPost() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "post [id]",
 		Short: "Retrieve the post having the given id, if any.",
 		Args:  cobra.ExactArgs(1),
@@ -53,10 +55,17 @@ func GetCmdQueryPost() *cobra.Command {
 				context.Background(),
 				&types.QueryPostRequest{PostId: args[0]},
 			)
+			if err != nil {
+				return err
+			}
 
 			return clientCtx.PrintOutput(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdQueryPosts returns the command allowing to query a list of posts
@@ -99,7 +108,7 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// ParentID
-			if parentID := viper.GetString(flagParentID); len(parentID) > 0 {
+			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
 				idParent := parentID
 				if !types.IsValidPostID(idParent) {
 					return fmt.Errorf("invalid postID: %s", idParent)
@@ -108,7 +117,7 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// CreationTime
-			if creationTime := viper.GetString(flagCreationTime); len(creationTime) > 0 {
+			if creationTime := viper.GetString(FlagCreationTime); len(creationTime) > 0 {
 				parsedTime, err := time.Parse(time.RFC3339, creationTime)
 				if err != nil {
 					return err
@@ -118,17 +127,17 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// Subspace
-			if subspace := viper.GetString(flagSubspace); len(subspace) > 0 {
+			if subspace := viper.GetString(FlagSubspace); len(subspace) > 0 {
 				params.Subspace = subspace
 			}
 
 			// Hashtags
-			if hashtags := viper.GetStringSlice(flagHashtag); len(hashtags) > 0 {
+			if hashtags := viper.GetStringSlice(FlagHashtag); len(hashtags) > 0 {
 				params.Hashtags = hashtags
 			}
 
 			// Creator
-			if bech32CreatorAddress := viper.GetString(flagCreator); len(bech32CreatorAddress) != 0 {
+			if bech32CreatorAddress := viper.GetString(FlagCreator); len(bech32CreatorAddress) != 0 {
 				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
 				if err != nil {
 					return err
@@ -151,18 +160,20 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
 	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
 
-	cmd.Flags().String(flagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().String(flagCreationTime, "", "(optional) filter the posts created at block height")
-	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
-	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(flagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
+	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
+	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
+	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
+	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")
+	cmd.Flags().StringSlice(FlagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
 
 // GetCmdQueryPollAnswer returns the command allowing to query the answers of a poll
 func GetCmdQueryPollAnswer() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "poll-answers [id]",
 		Short: "Retrieve tha poll answers of the post with given id",
 		Args:  cobra.ExactArgs(1),
@@ -185,11 +196,15 @@ func GetCmdQueryPollAnswer() *cobra.Command {
 			return clientCtx.PrintOutput(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
 func GetCmdQueryRegisteredReactions() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "registered-reactions",
 		Short: "Retrieve tha poll answers of the post with given id",
 		Args:  cobra.ExactArgs(0),
@@ -209,11 +224,15 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 			return clientCtx.PrintOutput(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdQueryPostsParams returns the command allowing to query the module params
 func GetCmdQueryPostsParams() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "parameters",
 		Short: "Retrieve all the posts module parameters",
 		Args:  cobra.ExactArgs(0),
@@ -233,4 +252,8 @@ func GetCmdQueryPostsParams() *cobra.Command {
 			return clientCtx.PrintOutput(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }

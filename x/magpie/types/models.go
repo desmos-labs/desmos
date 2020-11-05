@@ -4,9 +4,10 @@ import (
 	"strconv"
 )
 
-// ------------------
-// --- Session id
-// ------------------
+// NewSessionID returns a new SessionID value containing the given value
+func NewSessionID(value uint64) SessionID {
+	return SessionID{Value: value}
+}
 
 // Valid returns true if and only if this id can be considered
 // valid to be stored on the chain
@@ -30,9 +31,7 @@ func ParseSessionID(value string) (SessionID, error) {
 	return SessionID{Value: intVal}, err
 }
 
-// ------------------
-// --- Session
-// ------------------
+// ___________________________________________________________________________________________________________________
 
 // NewSession return a new session containing the given parameters
 func NewSession(
@@ -49,27 +48,4 @@ func NewSession(
 		PublicKey:      pubKey,
 		Signature:      signature,
 	}
-}
-
-// ---------------
-// --- Sessions
-// ---------------
-
-// Sessions represents a slice of Session objects
-type Sessions []Session
-
-// Equals returns true if and only if slice contains the
-// same session objects as the other slice, false otherwise
-func (slice Sessions) Equals(other Sessions) bool {
-	if len(slice) != len(other) {
-		return false
-	}
-
-	for index, s := range slice {
-		if !s.Equal(other[index]) {
-			return false
-		}
-	}
-
-	return true
 }

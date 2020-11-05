@@ -2,10 +2,11 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
-	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
 	"strings"
+
+	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
+	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -40,7 +41,7 @@ func (msg MsgCreatePost) Type() string { return ActionCreatePost }
 func (msg MsgCreatePost) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, msg.Creator)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator")
 	}
 
 	if msg.ParentID != "" && !IsValidPostID(msg.ParentID) {
@@ -114,12 +115,12 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
 	if !IsValidPostID(msg.PostID) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Invalid post id: %s", msg.PostID))
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Editor)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor")
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
@@ -180,7 +181,7 @@ func (msg MsgAddPostReaction) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.User)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user")
 	}
 
 	_, err = emoji.LookupEmoji(msg.Reaction)
@@ -227,7 +228,7 @@ func (msg MsgRemovePostReaction) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.User)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user")
 	}
 
 	_, err = emoji.LookupEmoji(msg.Reaction)
@@ -274,11 +275,17 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.Answerer)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Answerer)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer")
 	}
 
 	if len(msg.UserAnswers) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answers must contains at least one answer")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answer must contains at least one answer")
+	}
+
+	for _, answer := range msg.UserAnswers {
+		if strings.TrimSpace(answer) == "" {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid answer")
+		}
 	}
 
 	return nil
@@ -317,7 +324,7 @@ func (msg MsgRegisterReaction) Type() string { return ActionRegisterReaction }
 func (msg MsgRegisterReaction) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Creator)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator")
 	}
 
 	if !IsValidReactionCode(msg.ShortCode) {

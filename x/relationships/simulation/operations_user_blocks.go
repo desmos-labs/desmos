@@ -1,5 +1,7 @@
 package simulation
 
+//DONTCOVER
+
 import (
 	"math/rand"
 
@@ -11,12 +13,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
+
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
-	"github.com/tendermint/tendermint/crypto"
 )
-
-//DONTCOVER
 
 // SimulateMsgBlockUser tests and runs a single msg block user
 // nolint: funlen
@@ -59,7 +60,7 @@ func sendMsgBlockUser(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -100,11 +101,7 @@ func randomUserBlocksFields(
 	}
 
 	// skip if user block already exists
-	userBlocks, err := k.GetUserBlocks(ctx, blocker.Address.String())
-	if err != nil {
-		return blocker, blocked.Address, false
-	}
-
+	userBlocks := k.GetUserBlocks(ctx, blocker.Address.String())
 	for _, userBlock := range userBlocks {
 		if userBlock.Blocked == blocked.Address.String() {
 			return simtypes.Account{}, nil, true
@@ -149,10 +146,10 @@ func randomUnblockUserFields(
 
 	// Get random accounts
 	user, _ := simtypes.RandomAcc(r, accs)
-	userBlocks, err := k.GetUserBlocks(ctx, user.Address.String())
+	userBlocks := k.GetUserBlocks(ctx, user.Address.String())
 
 	// skip the test if the user has no userBlocks
-	if err != nil || len(userBlocks) == 0 {
+	if len(userBlocks) == 0 {
 		return simtypes.Account{}, types.UserBlock{}, true
 	}
 
@@ -173,7 +170,7 @@ func sendMsgUnblockUser(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},

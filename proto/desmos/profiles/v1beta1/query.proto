@@ -10,11 +10,6 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Profiles queries all the stored profiles
-  rpc Profiles(QueryProfilesRequest) returns (QueryProfilesResponse) {
-    option (google.api.http).get = "/desmos/profiles/v1beta1/profiles";
-  }
-
   // Profile queries the profile of a specific user
   rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
     option (google.api.http).get = "/desmos/relationships/v1beta1/profiles/{user}";
@@ -29,17 +24,6 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/relationships/v1beta1/params";
   }
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryProfilesRequest is the request type for the Query/Profiles RPC method.
-message QueryProfilesRequest {}
-
-// QueryProfilesResponse is the response type for the Query/Profiles RPC method
-message QueryProfilesResponse {
-  repeated desmos.profiles.v1beta1.Profile profiles = 1
-  [(gogoproto.nullable) = false];
 }
 
 // ___________________________________________________________________________________________________________________

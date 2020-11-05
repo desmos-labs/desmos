@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cosmos/cosmos-sdk/simapp/simd/cmd"
+	"github.com/cosmos/cosmos-sdk/x/crisis"
 
 	"github.com/desmos-labs/desmos/app"
 
@@ -29,6 +29,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	simcmd "github.com/cosmos/cosmos-sdk/simapp/simd/cmd"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
@@ -39,10 +40,10 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 )
 
-// NewRootCmd creates a new root command for simd. It is called once in the
+// NewRootCmd creates a new root command for desmosd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
-	encodingConfig := simapp.MakeEncodingConfig()
+	encodingConfig := simapp.MakeTestEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithJSONMarshaler(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
@@ -51,7 +52,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastBlock).
-		WithHomeDir(simapp.DefaultNodeHome)
+		WithHomeDir(app.DefaultNodeHome)
 
 	rootCmd := &cobra.Command{
 		Use:   "desmosd",
@@ -82,7 +83,7 @@ func Execute(rootCmd *cobra.Command) error {
 	ctx = context.WithValue(ctx, client.ClientContextKey, &client.Context{})
 	ctx = context.WithValue(ctx, server.ServerContextKey, server.NewDefaultContext())
 
-	executor := tmcli.PrepareBaseCmd(rootCmd, "", simapp.DefaultNodeHome)
+	executor := tmcli.PrepareBaseCmd(rootCmd, "", app.DefaultNodeHome)
 	return executor.ExecuteContext(ctx)
 }
 
@@ -95,13 +96,13 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		genutilcli.MigrateGenesisCmd(),
 		genutilcli.GenTxCmd(app.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics, encodingConfig.TxConfig),
-		cmd.AddGenesisAccountCmd(app.DefaultNodeHome),
+		simcmd.AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
 	)
 
-	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, createSimappAndExport)
+	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, createDesmosappAndExport, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
@@ -110,6 +111,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		txCommand(),
 		keys.Commands(app.DefaultNodeHome),
 	)
+}
+
+func addModuleInitFlags(startCmd *cobra.Command) {
+	crisis.AddModuleInitFlags(startCmd)
 }
 
 func queryCommand() *cobra.Command {
@@ -195,7 +200,8 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		app.MakeEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
+		app.MakeTestEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
+		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -210,23 +216,24 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 	)
 }
 
-// createSimappAndExport creates a new app (optionally at a given height)
+// createDesmosappAndExport creates a new app (optionally at a given height)
 // and exports state.
-func createSimappAndExport(
+func createDesmosappAndExport(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailAllowedAddrs []string,
+	appOpts servertypes.AppOptions,
 ) (servertypes.ExportedApp, error) {
-	encCfg := app.MakeEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
+	encCfg := app.MakeTestEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
-	var simApp *app.DesmosApp
+	var desmosApp *app.DesmosApp
 	if height != -1 {
-		simApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg)
-
-		if err := simApp.LoadHeight(height); err != nil {
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts)
+		err := desmosApp.LoadHeight(height)
+		if err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		simApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg)
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts)
 	}
 
-	return simApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }

@@ -29,7 +29,7 @@ func SimulateMsgReportPost(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		data, skip := randomReportPostFields(r, ctx, accs, ak, pk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, nil
 		}
 
 		msg := types.NewMsgReportPost(
@@ -41,10 +41,10 @@ func SimulateMsgReportPost(
 
 		err := sendMsgReportPost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgReportPost"), nil, nil
 	}
 }
 
@@ -62,7 +62,7 @@ func sendMsgReportPost(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},

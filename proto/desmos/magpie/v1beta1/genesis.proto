@@ -8,9 +8,11 @@ option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
 
 // GenesisState defines the magpie module's genesis state.
 message GenesisState {
-  uint64 default_session_length = 1
-  [(gogoproto.moretags) = "yaml:\"default_session_length\""];
+  uint64 default_session_length = 1 [
+    (gogoproto.moretags) = "yaml:\"default_session_length\""
+  ];
 
-  repeated desmos.magpie.v1beta1.Session sessions = 2
-  [(gogoproto.castrepeated) = "Sessions", (gogoproto.nullable) = false];
+  repeated desmos.magpie.v1beta1.Session sessions = 2[
+    (gogoproto.nullable) = false
+  ];
 }

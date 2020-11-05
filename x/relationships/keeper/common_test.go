@@ -16,6 +16,15 @@ import (
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 )
 
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
+
+type TestData struct {
+	user      string
+	otherUser string
+}
+
 type KeeperTestSuite struct {
 	suite.Suite
 
@@ -28,14 +37,9 @@ type KeeperTestSuite struct {
 	testData     TestData
 }
 
-type TestData struct {
-	user      string
-	otherUser string
-}
-
 func (suite *KeeperTestSuite) SetupTest() {
 	// define store keys
-	relationshipsKey := sdk.NewKVStoreKey("userBlocks")
+	relationshipsKey := sdk.NewKVStoreKey("storedBlocks")
 	suite.storeKey = relationshipsKey
 
 	// create an in-memory db
@@ -54,8 +58,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 }
 
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
+func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
+	if expected != nil {
+		suite.Require().Error(actual)
+		suite.Require().Equal(expected.Error(), actual.Error())
+	} else {
+		suite.Require().NoError(actual)
+	}
 }
 
 // newStrPtr allows to easily create a new string pointer starting

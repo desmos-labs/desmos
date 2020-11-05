@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 const (
 	ModuleName = "reports"
 	RouterKey  = ModuleName
@@ -13,8 +15,7 @@ const (
 )
 
 var (
-	ReportsStorePrefix     = []byte("reports")
-	ReportsTypeStorePrefix = []byte("report_type")
+	ReportsStorePrefix = []byte("reports")
 )
 
 // ReportsStoreKey turn an id to a key used to store a reports inside the reports store

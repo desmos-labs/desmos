@@ -8,16 +8,16 @@ option go_package = "github.com/desmos-labs/desmos/x/relationships/types";
 // Msg defines the relationships Msg service.
 service Msg {
   // CreateRelationship defines a method for creating a new relationship
-  rpc CreateRelationship(MsgCreateRelationship) returns (MsgCreateRelationshipResponse);
+  rpc CreateRelationship(MsgCreateRelationship) returns (CreateRelationshipResponse);
 
   // DeleteRelationship defines a method for deleting a relationship
-  rpc RemoveRelationship(MsgDeleteRelationship) returns (MsgDeleteRelationshipResponse);
+  rpc RemoveRelationship(MsgDeleteRelationship) returns (RemoveRelationshipResponse);
 
   // BlockUser defines a method for blocking a user
-  rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);
+  rpc BlockUser(MsgBlockUser) returns (BlockUserResponse);
 
   // UnblockUser defines a method for unblocking a user
-  rpc UnblockUser(MsgUnblockUser) returns (MsgUnblockResponse);
+  rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 }
 
 // ___________________________________________________________________________________________________________________
@@ -33,21 +33,21 @@ message MsgCreateRelationship {
   string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 
-// MsgCreateRelationshipResponse defines the Msg/CreateRelationship response type.
-message MsgCreateRelationshipResponse {}
+// CreateRelationshipResponse defines the Msg/CreateRelationship response type.
+message CreateRelationshipResponse {}
 
 // ___________________________________________________________________________________________________________________
 
 // MsgDeleteRelationship represents a message to delete the relationship
 // between two users.
 message MsgDeleteRelationship {
-  string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
+  string user = 1 [(gogoproto.moretags) = "yaml:\"user\""];
   string counterparty = 2 [(gogoproto.moretags) = "yaml:\"counterparty\""];
   string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 
-// MsgDeleteRelationshipResponse defines the Msg/DeleteRelationship response type.
-message MsgDeleteRelationshipResponse {}
+// RemoveRelationshipResponse defines the Msg/DeleteRelationship response type.
+message RemoveRelationshipResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -60,8 +60,8 @@ message MsgBlockUser {
   string subspace = 4 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 
-// MsgBlockUserResponse defines the Msg/BlockUser response type.
-message MsgBlockUserResponse {}
+// BlockUserResponse defines the Msg/BlockUser response type.
+message BlockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -72,5 +72,5 @@ message MsgUnblockUser {
   string subspace = 4 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 
-// MsgUnblockResponse defines the Msg/UnblockUser response type.
-message MsgUnblockResponse {}
+// UnblockUserResponse defines the Msg/UnblockUser response type.
+message UnblockUserResponse {}

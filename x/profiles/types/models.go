@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
@@ -54,7 +55,7 @@ func NewProfile(dtag string, moniker, bio string, pictures Pictures, creationDat
 // returned if the resulting profile contains invalid values.
 func (profile Profile) Update(p2 Profile) (Profile, error) {
 	if p2.Dtag == DoNotModify {
-		p2.Moniker = profile.Moniker
+		p2.Dtag = profile.Dtag
 	}
 
 	if p2.Moniker == DoNotModify {
@@ -71,6 +72,14 @@ func (profile Profile) Update(p2 Profile) (Profile, error) {
 
 	if p2.Pictures.Cover == DoNotModify {
 		p2.Pictures.Cover = profile.Pictures.Cover
+	}
+
+	if p2.CreationDate.IsZero() {
+		p2.CreationDate = profile.CreationDate
+	}
+
+	if p2.Creator == DoNotModify {
+		p2.Creator = profile.Creator
 	}
 
 	newProfile := NewProfile(p2.Dtag, p2.Moniker, p2.Bio, p2.Pictures, p2.CreationDate, p2.Creator)
@@ -114,7 +123,7 @@ func (profile Profile) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-func NewDTagTransferRequest(dtagToTrade string, receiver, sender string) DTagTransferRequest {
+func NewDTagTransferRequest(dtagToTrade string, sender, receiver string) DTagTransferRequest {
 	return DTagTransferRequest{
 		DtagToTrade: dtagToTrade,
 		Receiver:    receiver,

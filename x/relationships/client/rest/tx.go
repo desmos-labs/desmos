@@ -8,8 +8,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {

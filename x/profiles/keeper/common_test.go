@@ -21,6 +21,10 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
+
 type KeeperTestSuite struct {
 	suite.Suite
 
@@ -28,8 +32,8 @@ type KeeperTestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	storeKey       sdk.StoreKey
-	keeper         keeper.Keeper
-	relKeeper      relationshipskeeper.Keeper
+	k              keeper.Keeper
+	rk             relationshipskeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	testData       TestData
 }
@@ -64,13 +68,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	suite.relKeeper = relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
+	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
 	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
-	suite.keeper = keeper.NewKeeper(
+	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamspace),
-		suite.relKeeper,
+		suite.rk,
 	)
 
 	// setup Data
@@ -88,16 +92,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 }
 
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
-}
-
-// newStrPtr allows to easily create a new string pointer starting
-// from a string value, for easier test setup
-func newStrPtr(value string) *string {
-	return &value
-}
-
-func newProfilePtr(profile types.Profile) *types.Profile {
-	return &profile
+func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
+	if expected != nil {
+		suite.Require().Error(actual)
+		suite.Require().Equal(expected.Error(), actual.Error())
+	} else {
+		suite.Require().NoError(actual)
+	}
 }

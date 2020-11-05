@@ -45,10 +45,10 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		suite.Run(test.name, func() {
 			suite.SetupTest() //reset
 
-			err := suite.keeper.StoreProfile(suite.ctx, test.profile)
+			err := suite.k.StoreProfile(suite.ctx, test.profile)
 			suite.Require().NoError(err)
 
-			res, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			res, stop := keeper.AllInvariants(suite.k)(suite.ctx)
 
 			suite.Require().Equal(test.expResponse, res)
 			suite.Require().Equal(test.expBool, stop)

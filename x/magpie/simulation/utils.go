@@ -42,6 +42,8 @@ func RandomSessionData(simAccount simtypes.Account, r *rand.Rand) SessionData {
 
 	// Create the signature data
 	msg := types.NewMsgCreateSession(simAccount.Address.String(), namespace, extOwner, extPubKey, "")
+
+	//nolint:staticcheck
 	signBytes := legacyauth.StdSignBytes(
 		namespace,
 		0,

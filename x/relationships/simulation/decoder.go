@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/cosmos/cosmos-sdk/types/kv"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
@@ -16,37 +19,25 @@ type RelationshipsUnmarshaler interface {
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
 // to the corresponding relationships type
-func NewDecodeStore(cdc RelationshipsUnmarshaler) func(kvA, kvB kv.Pair) string {
+func NewDecodeStore(cdc codec.BinaryMarshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
-			relationshipsA, err := cdc.UnmarshalRelationships(kvA.Value)
-			if err != nil {
-				panic(err)
-			}
-
-			relationshipsB, err := cdc.UnmarshalRelationships(kvB.Value)
-			if err != nil {
-				panic(err)
-			}
-
-			return fmt.Sprintf("Relationships: %s\nRelationships: %s\n", relationshipsA, relationshipsB)
+			var relationshipsA, relationshipsB types.Relationships
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipsA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipsB)
+			return fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n",
+				relationshipsA.Relationships, relationshipsB.Relationships)
 
 		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
-			userBlocksA, err := cdc.UnmarshalUserBlocks(kvA.Value)
-			if err != nil {
-				panic(err)
-			}
-
-			userBlocksB, err := cdc.UnmarshalUserBlocks(kvB.Value)
-			if err != nil {
-				panic(err)
-			}
-
-			return fmt.Sprintf("UsersBlocks: %s\nUsersBlocks: %s\n", userBlocksA, userBlocksB)
+			var userBlocksA, userBlocksB types.UserBlocks
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlocksA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
+			return fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n",
+				userBlocksA.Blocks, userBlocksB.Blocks)
 
 		default:
-			panic(fmt.Sprintf("invalid relationships key %X", kvA.Key))
+			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}
 	}
 }

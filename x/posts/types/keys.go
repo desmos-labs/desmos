@@ -1,10 +1,11 @@
 package types
 
-// nolint
+// DONTCOVER
 
 import (
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"regexp"
+
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 	QuerierRoute             = ModuleName
 	QueryPost                = "post"
 	QueryPosts               = "posts"
-	QueryPollAnswers         = "poll-answers"
+	QueryPollAnswers         = "poll-answer"
 	QueryRegisteredReactions = "registered-reactions"
 	QueryParams              = "params"
 
@@ -85,7 +86,7 @@ func ReactionsStoreKey(shortCode, subspace string) []byte {
 	return append(ReactionsStorePrefix, []byte(shortCode+subspace)...)
 }
 
-// PollAnswersStoreKey turns an id to a key used to store a post's poll answers into the posts store
+// PollAnswersStoreKey turns an id to a key used to store a post's poll answer into the posts store
 func PollAnswersStoreKey(id string) []byte {
 	return append(PollAnswersStorePrefix, []byte(id)...)
 }

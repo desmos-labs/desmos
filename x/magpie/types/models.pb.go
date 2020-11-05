@@ -68,6 +68,7 @@ func (m *SessionID) GetValue() uint64 {
 	return 0
 }
 
+// Session represents an inter-chain session used to authenticate a user from another Cosmos chain
 type Session struct {
 	SessionId      SessionID `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id" yaml:"session_id"`
 	Owner          string    `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty" yaml:"owner"`

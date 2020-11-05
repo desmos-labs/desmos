@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.profiles.v1beta1;
+package desmos.profiles.v1beta1.keeper;
 
 import "gogoproto/gogo.proto";
 import "desmos/profiles/v1beta1/models.proto";
@@ -7,7 +7,7 @@ import "desmos/profiles/v1beta1/models.proto";
 option go_package = "github.com/desmos-labs/desmos/x/profiles/keeper";
 
 // DTagOwner represents the owner of a specific DTag
-message DTagOwner {
+message WrappedDTagOwner {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -16,7 +16,7 @@ message DTagOwner {
 }
 
 // DtagRequests contains the DTag transfer requests made towards a user
-message DTagRequests {
+message WrappedDTagTransferRequests {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 

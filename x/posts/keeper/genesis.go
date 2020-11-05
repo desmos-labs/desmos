@@ -44,17 +44,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		}
 	}
 
-	// Save registered reactions
-	for _, reaction := range data.RegisteredReactions {
-		if _, found := k.GetRegisteredReaction(ctx, reaction.ShortCode, reaction.Subspace); !found {
-			k.SaveRegisteredReaction(ctx, reaction)
-		}
-	}
-
 	// Save post reactions
 	for _, entry := range data.PostsReactions {
 		if !types.IsValidPostID(entry.PostId) {
-			panic(fmt.Errorf("invalid postID: %s", entry.PostId))
+			panic(fmt.Errorf("invalid post id: %s", entry.PostId))
 		}
 
 		for _, reaction := range entry.Reactions {
@@ -63,5 +56,15 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 				panic(err)
 			}
 		}
+	}
+
+	// Save registered reactions
+	for _, reaction := range data.RegisteredReactions {
+		_, found := k.GetRegisteredReaction(ctx, reaction.ShortCode, reaction.Subspace)
+		if found {
+			panic(fmt.Errorf("registeredReactions with shortcode %s already existing", reaction.ShortCode))
+		}
+
+		k.SaveRegisteredReaction(ctx, reaction)
 	}
 }

@@ -52,7 +52,7 @@ var (
 
 // RandomPost picks and returns a random post from an array and returns its
 // position in the array.
-func RandomPost(r *rand.Rand, posts types.Posts) (types.Post, int) {
+func RandomPost(r *rand.Rand, posts []types.Post) (types.Post, int) {
 	idx := r.Intn(len(posts))
 	return posts[idx], idx
 }
@@ -182,16 +182,13 @@ func RandomPollData(r *rand.Rand) *types.PollData {
 		answers[i] = types.NewPollAnswer(fmt.Sprint(i), RandomMessage(r))
 	}
 
-	closingDate := RandomDate(r)
-
-	poll := types.NewPollData(
+	return types.NewPollData(
 		RandomMessage(r),
-		closingDate,
+		RandomDate(r),
 		answers,
 		r.Intn(100) > 50, // 50% possibility of multiple answers
 		r.Intn(100) > 50, // 50% possibility of allowing answers edits
 	)
-	return &poll
 }
 
 // GetAccount gets the account having the given address from the accs list

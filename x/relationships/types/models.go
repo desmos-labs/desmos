@@ -3,6 +3,10 @@ package types
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
@@ -17,12 +21,14 @@ func NewRelationship(creator string, recipient string, subspace string) Relation
 
 // Validate implement Validator
 func (r Relationship) Validate() error {
-	if len(r.Creator) == 0 {
-		return fmt.Errorf("cretor cannot be empty")
+	_, err := sdk.AccAddressFromBech32(r.Creator)
+	if err != nil {
+		return fmt.Errorf("invalid creator address: %s", r.Creator)
 	}
 
-	if len(r.Recipient) == 0 {
-		return fmt.Errorf("recipient cannot be empty")
+	_, err = sdk.AccAddressFromBech32(r.Recipient)
+	if err != nil {
+		return fmt.Errorf("invalid recipient address: %s", r.Recipient)
 	}
 
 	if r.Creator == r.Recipient {
@@ -34,6 +40,34 @@ func (r Relationship) Validate() error {
 	}
 
 	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// RemoveRelationship removes the given relationships from the provided relationships slice.
+// If the relationship was found, returns the slice with it removed and true.
+// Otherwise, returns the original slice and false
+func RemoveRelationship(relationships []Relationship, relationship Relationship) ([]Relationship, bool) {
+	for index, rel := range relationships {
+		if rel.Equal(relationship) {
+			return append(relationships[:index], relationships[index+1:]...), true
+		}
+	}
+	return relationships, false
+}
+
+// MustMarshalRelationships serializes the given relationships using the provided BinaryMarshaler
+func MustMarshalRelationships(cdc codec.BinaryMarshaler, relationships []Relationship) []byte {
+	wrapped := Relationships{Relationships: relationships}
+	return cdc.MustMarshalBinaryBare(&wrapped)
+}
+
+// MustUnmarshalRelationships deserializes the given byte array as an array of relationships using
+// the provided BinaryMarshaler
+func MustUnmarshalRelationships(codec codec.BinaryMarshaler, bz []byte) []Relationship {
+	var wrapped Relationships
+	codec.MustUnmarshalBinaryBare(bz, &wrapped)
+	return wrapped.Relationships
 }
 
 // ___________________________________________________________________________________________________________________
@@ -68,4 +102,34 @@ func (ub UserBlock) Validate() error {
 	}
 
 	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// RemoveUserBlock removes the block made from the blocker towards the blocked inside the subspace,
+// from the provided slice of blocks.
+// If the block is found, returns the new slice with it removed and true.
+// If the block is not found, returns the original fl
+func RemoveUserBlock(blocks []UserBlock, blocker, blocked, subspace string) ([]UserBlock, bool) {
+	for index, ub := range blocks {
+		if ub.Blocker == blocker && ub.Blocked == blocked && ub.Subspace == subspace {
+			return append(blocks[:index], blocks[index+1:]...), true
+
+		}
+	}
+	return blocks, false
+}
+
+// MustMarshalUserBlocks serializes the given blocks using the provided BinaryMarshaler
+func MustMarshalUserBlocks(cdc codec.BinaryMarshaler, block []UserBlock) []byte {
+	wrapped := UserBlocks{Blocks: block}
+	return cdc.MustMarshalBinaryBare(&wrapped)
+}
+
+// MustUnmarshalUserBlocks deserializes the given byte array as an array of blocks using
+// the provided BinaryMarshaler
+func MustUnmarshalUserBlocks(cdc codec.BinaryMarshaler, bz []byte) []UserBlock {
+	var wrapped UserBlocks
+	cdc.MustUnmarshalBinaryBare(bz, &wrapped)
+	return wrapped.Blocks
 }

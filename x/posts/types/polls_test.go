@@ -1,17 +1,17 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/types"
+	"fmt"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/app"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 
 	"testing"
 	"time"
 )
-
-func TestPollAnswer_String(t *testing.T) {
-	answer := types.NewPollAnswer("1", "Yes")
-	require.Equal(t, `Answer - ID: 1 ; Text: Yes`, answer.String())
-}
 
 func TestPollAnswer_Validate(t *testing.T) {
 	answer := types.NewPollAnswer("0", "")
@@ -26,19 +26,19 @@ func TestPollAnswer_Equals(t *testing.T) {
 		expEquals   bool
 	}{
 		{
-			name:        "Different answers ID",
+			name:        "Different answer ID",
 			answer:      types.NewPollAnswer("1", "Yes"),
 			otherAnswer: types.NewPollAnswer("2", "Yes"),
 			expEquals:   false,
 		},
 		{
-			name:        "Different answers Text",
+			name:        "Different answer Text",
 			answer:      types.NewPollAnswer("1", "Yes"),
 			otherAnswer: types.NewPollAnswer("1", "No"),
 			expEquals:   false,
 		},
 		{
-			name:        "Equals answers",
+			name:        "Equals answer",
 			answer:      types.NewPollAnswer("1", "yes"),
 			otherAnswer: types.NewPollAnswer("1", "yes"),
 			expEquals:   true,
@@ -55,84 +55,161 @@ func TestPollAnswer_Equals(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestPollData_String(t *testing.T) {
-	var timeZone, _ = time.LoadLocation("UTC")
-	var pollEndDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
-
-	pollData := types.NewPollData(
-		"poll?",
-		pollEndDate,
-		types.NewPollAnswers(
-			types.NewPollAnswer("1", "Yes"),
-			types.NewPollAnswer("2", "No"),
-		),
-		false,
-		true,
-	)
-
-	require.Equal(
-		t,
-		"Question: poll?\nEndDate: 2050-01-01 15:15:00 +0000 UTC\nAllow multiple answers: false \nAllow answer edits: true \nProvided Answers:\n[ID] [Text]\n[1] [Yes]\n[2] [No]",
-		pollData.String(),
-	)
-}
-
-func TestPollData_Validate(t *testing.T) {
-	var timeZone, _ = time.LoadLocation("UTC")
-	var pollEndDate = time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone)
-
+func TestPollAnswers_AppendIfMissing(t *testing.T) {
 	tests := []struct {
-		pollData types.PollData
-		expError string
+		name     string
+		answers  types.PollAnswers
+		toAppend types.PollAnswer
+		expSlice types.PollAnswers
 	}{
 		{
-			pollData: types.NewPollData("", pollEndDate, types.PollAnswers{}, true, true),
-			expError: "missing poll title",
+			name:     "Answer is appended to empty slice",
+			answers:  nil,
+			toAppend: types.NewPollAnswer("id", "answer"),
+			expSlice: types.NewPollAnswers(
+				types.NewPollAnswer("id", "answer"),
+			),
 		},
 		{
-			pollData: types.NewPollData("title", time.Time{}, types.PollAnswers{}, true, true),
-			expError: "invalid poll's end date",
+			name: "Answer is appended to non empty slice",
+			answers: types.NewPollAnswers(
+				types.NewPollAnswer("id_1", "answer_1"),
+			),
+			toAppend: types.NewPollAnswer("id_2", "answer_2"),
+			expSlice: types.NewPollAnswers(
+				types.NewPollAnswer("id_1", "answer_1"),
+				types.NewPollAnswer("id_2", "answer_2"),
+			),
 		},
 		{
-			pollData: types.NewPollData("title", pollEndDate, types.PollAnswers{}, true, true),
-			expError: "poll answers must be at least two",
-		},
-	}
-
-	for _, test := range tests {
-		require.Equal(t, test.expError, test.pollData.Validate().Error())
-	}
-}
-
-func TestUserAnswer_String(t *testing.T) {
-	userPollAnswers := types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	require.Equal(t, "User: cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns \nAnswers IDs: 1 2", userPollAnswers.String())
-}
-
-func TestUserAnswer_Validate(t *testing.T) {
-	tests := []struct {
-		name            string
-		userPollAnswers types.UserAnswer
-		expErr          string
-	}{
-		{
-			name:            "Empty user returns error",
-			userPollAnswers: types.NewUserAnswer([]string{"1", "2"}, ""),
-			expErr:          "user cannot be empty",
-		},
-		{
-			name:            "Empty answers returns error",
-			userPollAnswers: types.NewUserAnswer(nil, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expErr:          "answers cannot be empty",
+			name: "Answer is not appended if existing",
+			answers: types.NewPollAnswers(
+				types.NewPollAnswer("id", "answer"),
+			),
+			toAppend: types.NewPollAnswer("id", "answer"),
+			expSlice: types.NewPollAnswers(
+				types.NewPollAnswer("id", "answer"),
+			),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			if err := test.userPollAnswers.Validate(); err != nil {
-				require.Equal(t, test.expErr, err.Error())
-			}
+			slice := test.answers.AppendIfMissing(test.toAppend)
+			require.Equal(t, test.expSlice, slice)
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestPollData_Validate(t *testing.T) {
+	tests := []struct {
+		name     string
+		poll     *types.PollData
+		expError error
+	}{
+		{
+			name: "missing poll question",
+			poll: types.NewPollData(
+				"",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+				types.PollAnswers{},
+				true,
+				true,
+			),
+			expError: fmt.Errorf("missing poll question"),
+		},
+		{
+			name: "invalid poll end date",
+			poll: types.NewPollData(
+				"title",
+				time.Time{},
+				types.PollAnswers{},
+				true,
+				true,
+			),
+			expError: fmt.Errorf("invalid poll end date"),
+		},
+		{
+			name: "not enough poll answer",
+			poll: types.NewPollData(
+				"title",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+				types.PollAnswers{},
+				true,
+				true,
+			),
+			expError: fmt.Errorf("poll answer must be at least two"),
+		},
+		{
+			name: "invalid answer",
+			poll: types.NewPollData(
+				"title",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+				types.NewPollAnswers(
+					types.NewPollAnswer("id_1", "answer_1"),
+					types.NewPollAnswer("id_2", ""),
+				),
+				true,
+				true,
+			),
+			expError: fmt.Errorf("answer text must be specified and cannot be empty"),
+		},
+		{
+			name: "valid poll",
+			poll: types.NewPollData(
+				"title",
+				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+				types.NewPollAnswers(
+					types.NewPollAnswer("id_1", "answer_1"),
+					types.NewPollAnswer("id_2", "answer_2"),
+				),
+				true,
+				true,
+			),
+			expError: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expError, test.poll.Validate())
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestUserAnswer_Validate(t *testing.T) {
+	tests := []struct {
+		name   string
+		answer types.UserAnswer
+		expErr error
+	}{
+		{
+			name:   "Empty user returns error",
+			answer: types.NewUserAnswer([]string{"1", "2"}, ""),
+			expErr: fmt.Errorf("user cannot be empty"),
+		},
+		{
+			name:   "Empty answer returns error",
+			answer: types.NewUserAnswer(nil, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+			expErr: fmt.Errorf("answer cannot be empty"),
+		},
+		{
+			name:   "Valid answer returns no error",
+			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expErr, test.answer.Validate())
 		})
 	}
 }
@@ -151,19 +228,19 @@ func TestUserAnswer_Equals(t *testing.T) {
 			expEquals: false,
 		},
 		{
-			name:      "Different answers lengths returns false",
+			name:      "Different answer lengths returns false",
 			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			second:    types.NewUserAnswer([]string{"1"}, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			expEquals: false,
 		},
 		{
-			name:      "Different answers return false",
+			name:      "Different answer return false",
 			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			second:    types.NewUserAnswer([]string{"1"}, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			expEquals: false,
 		},
 		{
-			name:      "Equals userPollAnswers returns true",
+			name:      "Equals answer returns true",
 			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			second:    types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			expEquals: true,
@@ -180,44 +257,44 @@ func TestUserAnswer_Equals(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestUserAnswers_AppendIfMissingOrIfUsersEquals(t *testing.T) {
+func TestAppendIfMissingOrIfUsersEquals(t *testing.T) {
 	tests := []struct {
 		name             string
-		answers          types.UserAnswers
+		answers          []types.UserAnswer
 		answer           types.UserAnswer
-		expectedSlice    types.UserAnswers
+		expectedSlice    []types.UserAnswer
 		expectedAppended bool
 	}{
 		{
-			name: "Missing user answers details appended correctly",
-			answers: types.UserAnswers{
+			name: "Missing user answer details appended correctly",
+			answers: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
 			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
-			expectedSlice: types.UserAnswers{
+			expectedSlice: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 			},
 			expectedAppended: true,
 		},
 		{
-			name: "Same user with different answers replace previous ones",
-			answers: types.UserAnswers{
+			name: "Same user with different answer replace previous ones",
+			answers: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
 			answer: types.NewUserAnswer([]string{"3"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expectedSlice: types.UserAnswers{
+			expectedSlice: []types.UserAnswer{
 				types.NewUserAnswer([]string{"3"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
 			expectedAppended: true,
 		},
 		{
-			name: "Equals user answers details returns the same users answers details",
-			answers: types.UserAnswers{
+			name: "Equals user answer details returns the same users answer details",
+			answers: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
 			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expectedSlice: types.UserAnswers{
+			expectedSlice: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
 			expectedAppended: false,
@@ -227,9 +304,20 @@ func TestUserAnswers_AppendIfMissingOrIfUsersEquals(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			actual, appended := test.answers.AppendIfMissingOrIfUsersEquals(test.answer)
+			actual, appended := types.AppendIfMissingOrIfUsersEquals(test.answers, test.answer)
 			require.Equal(t, test.expectedSlice, actual)
 			require.Equal(t, test.expectedAppended, appended)
 		})
 	}
+}
+
+func TestUserAnswersMarshaling(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	answers := []types.UserAnswer{
+		types.NewUserAnswer([]string{"1", "2"}, "user"),
+		types.NewUserAnswer([]string{"3", "4"}, "user_2"),
+	}
+	marshaled := types.MustMarshalUserAnswers(cdc, answers)
+	unmarshaled := types.MustUnmarshalUserAnswers(cdc, marshaled)
+	require.Equal(t, answers, unmarshaled)
 }

@@ -17,7 +17,7 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 	defer iterator.Close()
 
-	var posts types.Posts
+	var posts []types.Post
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
@@ -25,9 +25,9 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	}
 
 	i := int64(0)
-	postsSorted := make(types.Posts, len(posts))
+	postsSorted := make([]types.Post, len(posts))
 	for _, post := range posts {
-		var index WrappedUInt
+		var index types.PostIndex
 		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
 		postsSorted[index.Value-1] = post
 	}
@@ -71,15 +71,15 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 		}
 	}
 
-	return nil
+	return post.Validate()
 }
 
 // IsCreatorBlockedBySomeTags checks if some of the post's tags have blocked the post's creator
-func (k Keeper) IsCreatorBlockedBySomeTags(ctx sdk.Context, attachments types.Attachments, creator string) error {
+func (k Keeper) IsCreatorBlockedBySomeTags(ctx sdk.Context, attachments types.Attachments, creator, subspace string) error {
 	for _, attachment := range attachments {
 		for _, tag := range attachment.Tags {
 			// check if the request's receiver has blocked the sender before
-			if k.IsUserBlocked(ctx, tag, creator) {
+			if k.IsUserBlocked(ctx, tag, creator, subspace) {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 					fmt.Sprintf("The user with address %s has blocked you", tag))
 			}
@@ -88,18 +88,18 @@ func (k Keeper) IsCreatorBlockedBySomeTags(ctx sdk.Context, attachments types.At
 	return nil
 }
 
-// ExtractReactionValueAndShortcode parse the given reaction returning its correct value and shortcode
+// ExtractReactionValueAndShortcode parse the given registeredReactions returning its correct value and shortcode
 func (k Keeper) ExtractReactionValueAndShortcode(ctx sdk.Context, reaction string, subspace string) (string, string, error) {
 	var reactionShortcode, reactionValue string
 
-	// Parse reaction adding the variation selector-16 to let the emoji being readable
+	// Parse registeredReactions adding the variation selector-16 to let the emoji being readable
 	parsedReaction := strings.ReplaceAll(reaction, "️", "")
 
 	if emojiReact, found := types.GetEmojiByShortCodeOrValue(reaction); found {
 		reactionShortcode = emojiReact.Shortcodes[0]
 		reactionValue = emojiReact.Value
 	} else {
-		// The reaction is a shortcode that should be registered
+		// The registeredReactions is a shortcode that should be registered
 		regReaction, registered := k.GetRegisteredReaction(ctx, reaction, subspace)
 		if !registered {
 			return "", "", sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,

@@ -1,8 +1,6 @@
 package reports
 
 import (
-	"fmt"
-
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,8 +22,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
-				fmt.Sprintf("unrecognized posts message type: %v", msg.Type()))
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+				"unrecognized %s message type: %v", types.ModuleName, msg.Type())
 		}
 	}
 }

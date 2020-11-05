@@ -28,7 +28,7 @@ const (
 
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
-	appParams simtypes.AppParams, cdc codec.Marshaler, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
@@ -92,7 +92,7 @@ func sendMsgCreateSession(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},

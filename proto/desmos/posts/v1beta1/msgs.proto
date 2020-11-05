@@ -43,6 +43,7 @@ message MsgCreatePost {
     (gogoproto.moretags) = "yaml:\"message\""
   ];
   bool allows_comments = 3 [
+    (gogoproto.jsontag) = "allows_comments",
     (gogoproto.moretags) = "yaml:\"allows_comments\""
   ];
   string subspace = 4 [
@@ -51,6 +52,7 @@ message MsgCreatePost {
   repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 5 [
     (gogoproto.castrepeated) = "OptionalData",
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "optional_data,omitempty",
     (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
   ];
   string creator = 6 [
@@ -58,9 +60,11 @@ message MsgCreatePost {
   ];
   repeated desmos.posts.v1beta1.Attachment attachments = 7 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml\"attachments,omitempty\""
   ];
   desmos.posts.v1beta1.PollData poll_data = 8 [
+    (gogoproto.jsontag) = "poll_data,omitempty",
     (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
   ];
 }
@@ -84,9 +88,11 @@ message MsgEditPost {
   ];
   repeated desmos.posts.v1beta1.Attachment attachments = 3 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml\"attachments,omitempty\""
   ];
   desmos.posts.v1beta1.PollData poll_data = 4 [
+    (gogoproto.jsontag) = "poll_data,omitempty",
     (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
   ];
   string editor = 5 [
@@ -154,6 +160,7 @@ message MsgAnswerPoll {
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
   repeated string user_answers = 2 [
+    (gogoproto.jsontag) = "answers",
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
   string answerer = 3 [
@@ -173,6 +180,7 @@ message MsgRegisterReaction {
   option (gogoproto.goproto_getters) = false;
 
   string short_code = 1 [
+    (gogoproto.jsontag) = "short_code",
     (gogoproto.moretags) = "yaml:\"short_code\""
   ];
   string value = 2  [

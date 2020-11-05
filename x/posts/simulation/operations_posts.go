@@ -29,7 +29,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 
 		data, skip := randomPostCreateFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, nil
 		}
 
 		msg := types.NewMsgCreatePost(
@@ -45,10 +45,10 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 
 		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreatePost"), nil, nil
 	}
 }
 
@@ -66,7 +66,7 @@ func sendMsgCreatePost(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -109,7 +109,7 @@ func randomPostCreateFields(
 
 	for _, attachment := range postData.Attachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, postData.Creator.Address.String()) {
+			if k.IsUserBlocked(ctx, tag, postData.Creator.Address.String(), postData.Subspace) {
 				return nil, true
 			}
 		}
@@ -139,17 +139,17 @@ func SimulateMsgEditPost(
 
 		account, id, message, attachments, pollData, skip := randomPostEditFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, nil
 		}
 
 		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address.String())
 
 		err := sendMsgEditPost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgEditPost"), nil, nil
 	}
 }
 
@@ -167,7 +167,7 @@ func sendMsgEditPost(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},
@@ -207,7 +207,7 @@ func randomPostEditFields(
 
 	for _, attachment := range editedAttachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, post.Creator) {
+			if k.IsUserBlocked(ctx, tag, post.Creator, post.Subspace) {
 				return simtypes.Account{}, "", "", nil, nil, true
 			}
 		}

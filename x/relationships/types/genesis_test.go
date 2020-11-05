@@ -20,7 +20,7 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: false,
 		},
 		{
-			name: "Genesis with invalid relationship return error",
+			name: "Genesis with invalid relationship returns error",
 			genesis: types.NewGenesisState(
 				[]types.Relationship{
 					types.NewRelationship(
@@ -49,21 +49,21 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 			),
-			shouldError: false,
+			shouldError: true,
 		},
 		{
 			name: "Genesis with invalid users blocks return error",
 			genesis: types.NewGenesisState(
 				[]types.Relationship{
 					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-						"",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
 				[]types.UserBlock{

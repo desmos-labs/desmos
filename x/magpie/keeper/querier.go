@@ -6,8 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 // query endpoints supported by the magpie Querier
@@ -41,7 +42,7 @@ func querySession(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Ke
 
 	session, found := keeper.GetSession(ctx, id)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("session with id %s not found", id))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "session with id %d not found", id.Value)
 	}
 
 	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, &session)

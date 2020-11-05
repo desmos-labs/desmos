@@ -4,8 +4,9 @@ package simulation
 
 import (
 	"fmt"
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
+
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 

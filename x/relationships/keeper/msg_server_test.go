@@ -1,10 +1,8 @@
 package keeper_test
 
 import (
-	"context"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
@@ -12,32 +10,32 @@ import (
 func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	tests := []struct {
 		name                string
-		isBlocked           bool
-		msg                 *types.MsgCreateRelationship
+		storedBlock         []types.UserBlock
 		storedRelationships []types.Relationship
-		expErr              error
-		expEvent            sdk.Event
+		msg                 *types.MsgCreateRelationship
+		expErr              bool
+		expEvents           sdk.Events
+		expRelationships    []types.Relationship
 	}{
 		{
-			name: "Relationship sender been blocked from receiver returns error",
+			name: "Relationship sender blocked by receiver returns error",
+			storedBlock: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"test",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			isBlocked: true,
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest,
-				"The user with address cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns has blocked you",
-			),
+			expErr: true,
 		},
 		{
 			name: "Relationship already created returns error",
-			msg: types.NewMsgCreateRelationship(
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
 			storedRelationships: []types.Relationship{
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -45,10 +43,12 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest,
-				"relationship already exists with cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			msg: types.NewMsgCreateRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
+			expErr: true,
 		},
 		{
 			name: "Relationship has been saved correctly",
@@ -57,244 +57,292 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			storedRelationships: nil,
-			expErr:              nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypeRelationshipCreated,
-				sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-				sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-				sdk.NewAttribute(types.AttributeRelationshipSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-			),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeRelationshipCreated,
+					sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeRelationshipSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+				),
+			},
+			expRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
 		},
 	}
 
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			if test.storedRelationships != nil {
-				store := suite.ctx.KVStore(suite.storeKey)
-				bz, err := suite.keeper.MarshalRelationships(test.storedRelationships)
+			for _, rel := range test.storedRelationships {
+				err := suite.keeper.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
-
-				store.Set(types.RelationshipsStoreKey(test.msg.Sender), bz)
 			}
 
-			if test.isBlocked {
-				userBlock := types.NewUserBlock(test.msg.Receiver, test.msg.Sender, "test", "")
-				err := suite.keeper.SaveUserBlock(suite.ctx, userBlock)
+			for _, block := range test.storedBlock {
+				err := suite.keeper.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := handler.CreateRelationship(context.Background(), test.msg)
+			_, err := handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			if test.expErr == nil {
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
 				suite.Require().NoError(err)
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
-				// Check the events
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
-
-				userRelationships, err := suite.keeper.GetUserRelationships(suite.ctx, test.msg.Sender)
-				suite.Require().NoError(err)
-				suite.Len(userRelationships, 1)
-			}
-
-			if test.expErr != nil {
-				suite.Error(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
+				stored := suite.keeper.GetAllRelationships(suite.ctx)
+				suite.Require().Equal(test.expRelationships, stored)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
-	store := suite.ctx.KVStore(suite.storeKey)
-
-	// Store the initial relationships
-	bz, err := suite.keeper.MarshalRelationships([]types.Relationship{
-		types.NewRelationship(
-			suite.testData.user,
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-		types.NewRelationship(
-			suite.testData.user,
-			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-	})
-	store.Set(types.RelationshipsStoreKey(suite.testData.user), bz)
-
-	// Delete the relationship
-	msg := types.NewMsgDeleteRelationship(
-		suite.testData.user,
-		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	)
-	service := keeper.NewMsgServerImpl(suite.keeper)
-	_, err = service.RemoveRelationship(context.Background(), msg)
-	suite.Require().NoError(err)
-
-	// Verify the remaining relationships
-	expected := []types.Relationship{
-		types.NewRelationship(
-			suite.testData.user,
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
+	tests := []struct {
+		name             string
+		stored           []types.Relationship
+		msg              *types.MsgDeleteRelationship
+		expErr           bool
+		expEvents        sdk.Events
+		expRelationships []types.Relationship
+	}{
+		{
+			name: "relationship not found returns error",
+			stored: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "subspace"),
+			},
+			msg:    types.NewMsgDeleteRelationship("creator", "recipient", "other_subspace"),
+			expErr: true,
+		},
+		{
+			name: "existing relationship is removed properly and leaves empty array",
+			stored: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "subspace"),
+			},
+			msg:    types.NewMsgDeleteRelationship("creator", "recipient", "subspace"),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeRelationshipsDeleted,
+					sdk.NewAttribute(types.AttributeRelationshipSender, "creator"),
+					sdk.NewAttribute(types.AttributeRelationshipReceiver, "recipient"),
+					sdk.NewAttribute(types.AttributeRelationshipSubspace, "subspace"),
+				),
+			},
+		},
+		{
+			name: "existing relationship is removed properly and leaves not empty array",
+			stored: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "subspace"),
+				types.NewRelationship("creator", "recipient", "other_subspace"),
+			},
+			msg:    types.NewMsgDeleteRelationship("creator", "recipient", "subspace"),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeRelationshipsDeleted,
+					sdk.NewAttribute(types.AttributeRelationshipSender, "creator"),
+					sdk.NewAttribute(types.AttributeRelationshipReceiver, "recipient"),
+					sdk.NewAttribute(types.AttributeRelationshipSubspace, "subspace"),
+				),
+			},
+			expRelationships: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "other_subspace"),
+			},
+		},
 	}
-	actual, err := suite.keeper.GetUserRelationships(suite.ctx, suite.testData.user)
-	suite.Require().NoError(err)
 
-	suite.Require().Equal(expected, actual)
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
 
-	// Check the events
-	suite.Len(suite.ctx.EventManager().Events(), 1)
-	suite.Contains(suite.ctx.EventManager().Events(), sdk.NewEvent(
-		types.EventTypeRelationshipsDeleted,
-		sdk.NewAttribute(types.AttributeRelationshipSender, suite.testData.user),
-		sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-		sdk.NewAttribute(types.AttributeRelationshipSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-	))
+			for _, relationship := range test.stored {
+				err := suite.keeper.SaveRelationship(suite.ctx, relationship)
+				suite.Require().NoError(err)
+			}
+
+			service := keeper.NewMsgServerImpl(suite.keeper)
+			_, err := service.RemoveRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+				left := suite.keeper.GetAllRelationships(suite.ctx)
+				suite.Require().Equal(test.expRelationships, left)
+			}
+		})
+	}
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	tests := []struct {
-		name             string
-		msg              *types.MsgBlockUser
-		storedUserBlocks []types.UserBlock
-		expErr           error
-		expEvent         sdk.Event
+		name      string
+		msg       *types.MsgBlockUser
+		stored    []types.UserBlock
+		expErr    bool
+		expEvents sdk.Events
+		expBlocks []types.UserBlock
 	}{
 		{
 			name: "Relationship already created returns error",
-			msg: types.NewMsgBlockUser(
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			storedUserBlocks: []types.UserBlock{
+			stored: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				)},
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest,
-				"the user with address cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns has already been blocked",
-			),
-		},
-		{
-			name: "Relationship has been saved correctly",
+				),
+			},
 			msg: types.NewMsgBlockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			storedUserBlocks: nil,
-			expErr:           nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypeBlockUser,
-				sdk.NewAttribute(types.AttributeUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-				sdk.NewAttribute(types.AttributeUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-				sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-				sdk.NewAttribute(types.AttributeUserBlockReason, "reason"),
+			expErr: true,
+		},
+		{
+			name:   "Relationship has been saved correctly",
+			stored: nil,
+			msg: types.NewMsgBlockUser(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeBlockUser,
+					sdk.NewAttribute(types.AttributeUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeUserBlockReason, "reason"),
+				),
+			},
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
 		},
 	}
 
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
-			if test.storedUserBlocks != nil {
-				store := suite.ctx.KVStore(suite.storeKey)
-
-				bz, err := suite.keeper.MarshalUserBlocks(test.storedUserBlocks)
+			for _, block := range test.stored {
+				err := suite.keeper.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
-
-				store.Set(types.UsersBlocksStoreKey(test.msg.Blocker), bz)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := service.BlockUser(context.Background(), test.msg)
+			_, err := service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			if test.expErr != nil {
+			if test.expErr {
 				suite.Error(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
-
-			if test.expErr == nil {
+			} else {
 				suite.Require().NoError(err)
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
-				// Check the events
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
-
-				blocks, err := suite.keeper.GetUserBlocks(suite.ctx, test.msg.Blocker)
-				suite.Require().NoError(err)
-
-				suite.Len(blocks, 1)
+				blocks := suite.keeper.GetUserBlocks(suite.ctx, test.msg.Blocker)
+				suite.Require().Equal(test.expBlocks, blocks)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
-	store := suite.ctx.KVStore(suite.storeKey)
-
-	// Store the existing blocks
-	bz, err := suite.keeper.MarshalUserBlocks([]types.UserBlock{
-		types.NewUserBlock(
-			suite.testData.user,
-			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-		types.NewUserBlock(
-			suite.testData.user,
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-	})
-	suite.Require().NoError(err)
-	store.Set(types.UsersBlocksStoreKey(suite.testData.user), bz)
-
-	// Unblock a user
-	msg := types.NewMsgUnblockUser(
-		suite.testData.user,
-		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	)
-
-	service := keeper.NewMsgServerImpl(suite.keeper)
-	_, err = service.UnblockUser(context.Background(), msg)
-
-	suite.Require().NoError(err)
-
-	expected := []types.UserBlock{
-		types.NewUserBlock(
-			suite.testData.user,
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
+	tests := []struct {
+		name        string
+		storedBlock []types.UserBlock
+		msg         *types.MsgUnblockUser
+		expErr      bool
+		expEvents   sdk.Events
+		expBlocks   []types.UserBlock
+	}{
+		{
+			name:        "invalid block returns error",
+			storedBlock: []types.UserBlock{},
+			msg:         types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			expErr:      true,
+		},
+		{
+			name: "existing block is removed and leaves empty array",
+			storedBlock: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+			msg:    types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeUnblockUser,
+					sdk.NewAttribute(types.AttributeUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeUserBlockBlocked, "blocked"),
+					sdk.NewAttribute(types.AttributeSubspace, "subspace"),
+				),
+			},
+			expBlocks: nil,
+		},
+		{
+			name: "existing block is removed and leaves non empty array",
+			storedBlock: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked", "reason", "other_subspace"),
+			},
+			msg:    types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeUnblockUser,
+					sdk.NewAttribute(types.AttributeUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeUserBlockBlocked, "blocked"),
+					sdk.NewAttribute(types.AttributeSubspace, "subspace"),
+				),
+			},
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "other_subspace"),
+			},
+		},
 	}
 
-	userBlocks, err := suite.keeper.GetUserBlocks(suite.ctx, suite.testData.user)
-	suite.Require().NoError(err)
-	suite.Require().Equal(expected, userBlocks)
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
 
-	// Check the events
-	suite.Len(suite.ctx.EventManager().Events(), 1)
-	suite.Contains(suite.ctx.EventManager().Events(), sdk.NewEvent(
-		types.EventTypeUnblockUser,
-		sdk.NewAttribute(types.AttributeUserBlockBlocker, suite.testData.user),
-		sdk.NewAttribute(types.AttributeUserBlockBlocked, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-		sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-	))
+			for _, block := range test.storedBlock {
+				err := suite.keeper.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			service := keeper.NewMsgServerImpl(suite.keeper)
+			_, err := service.UnblockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+				stored := suite.keeper.GetAllUsersBlocks(suite.ctx)
+				suite.Require().Equal(test.expBlocks, stored)
+			}
+		})
+	}
 }

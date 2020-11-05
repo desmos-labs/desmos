@@ -29,43 +29,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryRelationships is the request type for the Query/Relationships RPC method
-type QueryRelationshipsRequest struct {
-}
-
-func (m *QueryRelationshipsRequest) Reset()         { *m = QueryRelationshipsRequest{} }
-func (m *QueryRelationshipsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryRelationshipsRequest) ProtoMessage()    {}
-func (*QueryRelationshipsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a57e6eef5da51e8, []int{0}
-}
-func (m *QueryRelationshipsRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryRelationshipsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryRelationshipsRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryRelationshipsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryRelationshipsRequest.Merge(m, src)
-}
-func (m *QueryRelationshipsRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryRelationshipsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryRelationshipsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryRelationshipsRequest proto.InternalMessageInfo
-
 // QueryUserRelationships is the request type for the Query/UserRelationships RPC method.
 type QueryUserRelationshipsRequest struct {
 	// address of the user to query the relationships for
@@ -76,7 +39,7 @@ func (m *QueryUserRelationshipsRequest) Reset()         { *m = QueryUserRelation
 func (m *QueryUserRelationshipsRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryUserRelationshipsRequest) ProtoMessage()    {}
 func (*QueryUserRelationshipsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a57e6eef5da51e8, []int{1}
+	return fileDescriptor_3a57e6eef5da51e8, []int{0}
 }
 func (m *QueryUserRelationshipsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -105,24 +68,25 @@ func (m *QueryUserRelationshipsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserRelationshipsRequest proto.InternalMessageInfo
 
-// QueryRelationshipsResult is the response type for the Query/UserRelationships RPC method.
-type QueryRelationshipsResult struct {
+// QueryUserRelationshipsResponse is the response type for the Query/UserRelationships RPC method.
+type QueryUserRelationshipsResponse struct {
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	// relationships represent the list of all the relationships for the queried user
-	Relationships []Relationship `protobuf:"bytes,1,rep,name=relationships,proto3" json:"relationships"`
+	Relationships []Relationship `protobuf:"bytes,2,rep,name=relationships,proto3" json:"relationships"`
 }
 
-func (m *QueryRelationshipsResult) Reset()         { *m = QueryRelationshipsResult{} }
-func (m *QueryRelationshipsResult) String() string { return proto.CompactTextString(m) }
-func (*QueryRelationshipsResult) ProtoMessage()    {}
-func (*QueryRelationshipsResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a57e6eef5da51e8, []int{2}
+func (m *QueryUserRelationshipsResponse) Reset()         { *m = QueryUserRelationshipsResponse{} }
+func (m *QueryUserRelationshipsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserRelationshipsResponse) ProtoMessage()    {}
+func (*QueryUserRelationshipsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3a57e6eef5da51e8, []int{1}
 }
-func (m *QueryRelationshipsResult) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserRelationshipsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryRelationshipsResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserRelationshipsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryRelationshipsResult.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserRelationshipsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -132,19 +96,26 @@ func (m *QueryRelationshipsResult) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *QueryRelationshipsResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryRelationshipsResult.Merge(m, src)
+func (m *QueryUserRelationshipsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserRelationshipsResponse.Merge(m, src)
 }
-func (m *QueryRelationshipsResult) XXX_Size() int {
+func (m *QueryUserRelationshipsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryRelationshipsResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryRelationshipsResult.DiscardUnknown(m)
+func (m *QueryUserRelationshipsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserRelationshipsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryRelationshipsResult proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserRelationshipsResponse proto.InternalMessageInfo
 
-func (m *QueryRelationshipsResult) GetRelationships() []Relationship {
+func (m *QueryUserRelationshipsResponse) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *QueryUserRelationshipsResponse) GetRelationships() []Relationship {
 	if m != nil {
 		return m.Relationships
 	}
@@ -161,7 +132,7 @@ func (m *QueryUserBlocksRequest) Reset()         { *m = QueryUserBlocksRequest{}
 func (m *QueryUserBlocksRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryUserBlocksRequest) ProtoMessage()    {}
 func (*QueryUserBlocksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a57e6eef5da51e8, []int{3}
+	return fileDescriptor_3a57e6eef5da51e8, []int{2}
 }
 func (m *QueryUserBlocksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -190,24 +161,24 @@ func (m *QueryUserBlocksRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserBlocksRequest proto.InternalMessageInfo
 
-// QueryBlocksResult is the response type for the Query/UserBlocks RPC method.
-type QueryBlocksResult struct {
+// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC method.
+type QueryUserBlocksResponse struct {
 	// relationships represent the list of all the blocks for the queried user
 	Blocks []UserBlock `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
 }
 
-func (m *QueryBlocksResult) Reset()         { *m = QueryBlocksResult{} }
-func (m *QueryBlocksResult) String() string { return proto.CompactTextString(m) }
-func (*QueryBlocksResult) ProtoMessage()    {}
-func (*QueryBlocksResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a57e6eef5da51e8, []int{4}
+func (m *QueryUserBlocksResponse) Reset()         { *m = QueryUserBlocksResponse{} }
+func (m *QueryUserBlocksResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserBlocksResponse) ProtoMessage()    {}
+func (*QueryUserBlocksResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3a57e6eef5da51e8, []int{3}
 }
-func (m *QueryBlocksResult) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserBlocksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryBlocksResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserBlocksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryBlocksResult.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserBlocksResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -217,19 +188,19 @@ func (m *QueryBlocksResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *QueryBlocksResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryBlocksResult.Merge(m, src)
+func (m *QueryUserBlocksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserBlocksResponse.Merge(m, src)
 }
-func (m *QueryBlocksResult) XXX_Size() int {
+func (m *QueryUserBlocksResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryBlocksResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryBlocksResult.DiscardUnknown(m)
+func (m *QueryUserBlocksResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserBlocksResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryBlocksResult proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserBlocksResponse proto.InternalMessageInfo
 
-func (m *QueryBlocksResult) GetBlocks() []UserBlock {
+func (m *QueryUserBlocksResponse) GetBlocks() []UserBlock {
 	if m != nil {
 		return m.Blocks
 	}
@@ -237,11 +208,10 @@ func (m *QueryBlocksResult) GetBlocks() []UserBlock {
 }
 
 func init() {
-	proto.RegisterType((*QueryRelationshipsRequest)(nil), "desmos.relationships.v1beta1.QueryRelationshipsRequest")
 	proto.RegisterType((*QueryUserRelationshipsRequest)(nil), "desmos.relationships.v1beta1.QueryUserRelationshipsRequest")
-	proto.RegisterType((*QueryRelationshipsResult)(nil), "desmos.relationships.v1beta1.QueryRelationshipsResult")
+	proto.RegisterType((*QueryUserRelationshipsResponse)(nil), "desmos.relationships.v1beta1.QueryUserRelationshipsResponse")
 	proto.RegisterType((*QueryUserBlocksRequest)(nil), "desmos.relationships.v1beta1.QueryUserBlocksRequest")
-	proto.RegisterType((*QueryBlocksResult)(nil), "desmos.relationships.v1beta1.QueryBlocksResult")
+	proto.RegisterType((*QueryUserBlocksResponse)(nil), "desmos.relationships.v1beta1.QueryUserBlocksResponse")
 }
 
 func init() {
@@ -249,34 +219,33 @@ func init() {
 }
 
 var fileDescriptor_3a57e6eef5da51e8 = []byte{
-	// 428 bytes of a gzipped FileDescriptorProto
+	// 403 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0x48, 0x49, 0x2d, 0xce,
 	0xcd, 0x2f, 0xd6, 0x2f, 0x4a, 0xcd, 0x49, 0x2c, 0xc9, 0xcc, 0xcf, 0x2b, 0xce, 0xc8, 0x2c, 0x28,
 	0xd6, 0x2f, 0x33, 0x4c, 0x4a, 0x2d, 0x49, 0x34, 0xd4, 0x2f, 0x2c, 0x4d, 0x2d, 0xaa, 0xd4, 0x2b,
 	0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x81, 0xa8, 0xd4, 0x43, 0x51, 0xa9, 0x07, 0x55, 0x29, 0x25,
 	0x92, 0x9e, 0x9f, 0x9e, 0x0f, 0x56, 0xa8, 0x0f, 0x62, 0x41, 0xf4, 0x48, 0xc9, 0xa4, 0xe7, 0xe7,
 	0xa7, 0xe7, 0xa4, 0xea, 0x27, 0x16, 0x64, 0xea, 0x27, 0xe6, 0xe5, 0xe5, 0x97, 0x40, 0x74, 0x42,
-	0x65, 0x35, 0xf1, 0xda, 0x9d, 0x9b, 0x9f, 0x92, 0x9a, 0x03, 0x55, 0xaa, 0x24, 0xcd, 0x25, 0x19,
-	0x08, 0x72, 0x4b, 0x10, 0xb2, 0xd2, 0xa0, 0xd4, 0xc2, 0xd2, 0xd4, 0xe2, 0x12, 0x25, 0x5b, 0x2e,
-	0x59, 0xb0, 0x64, 0x68, 0x71, 0x6a, 0x11, 0x36, 0x05, 0x42, 0x42, 0x5c, 0x2c, 0xa5, 0xc5, 0xa9,
-	0x45, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x41, 0x60, 0xb6, 0x15, 0x47, 0xc7, 0x02, 0x79, 0x86,
-	0x17, 0x0b, 0xe4, 0x19, 0x94, 0x8a, 0xb8, 0x24, 0xb0, 0x99, 0x5d, 0x5c, 0x9a, 0x53, 0x22, 0x14,
-	0xc6, 0xc5, 0x8b, 0xe2, 0x3a, 0x09, 0x46, 0x05, 0x66, 0x0d, 0x6e, 0x23, 0x2d, 0x3d, 0x7c, 0x81,
-	0xa1, 0x87, 0x6c, 0x92, 0x13, 0xcb, 0x89, 0x7b, 0xf2, 0x0c, 0x41, 0xa8, 0xc6, 0x28, 0x99, 0x71,
-	0x89, 0xc1, 0x9d, 0xec, 0x94, 0x93, 0x9f, 0x9c, 0x4d, 0xa4, 0x5b, 0xa3, 0xb8, 0x04, 0xc1, 0xfa,
-	0x60, 0x7a, 0xc0, 0x8e, 0x74, 0xe5, 0x62, 0x4b, 0x02, 0xf3, 0xa1, 0xae, 0x53, 0xc7, 0xef, 0x3a,
-	0xb8, 0x9d, 0x50, 0xa7, 0x41, 0x35, 0x1b, 0x6d, 0x64, 0xe1, 0x62, 0x05, 0x1b, 0x2e, 0xb4, 0x95,
-	0x91, 0x8b, 0x17, 0x25, 0x34, 0x84, 0xcc, 0xf1, 0x1b, 0x89, 0x33, 0x6e, 0xa4, 0xcc, 0x48, 0xd7,
-	0x08, 0xf2, 0x93, 0x92, 0x71, 0xd3, 0xe5, 0x27, 0x93, 0x99, 0x74, 0x85, 0xb4, 0xf5, 0xf1, 0x26,
-	0x12, 0x14, 0x51, 0xa1, 0x23, 0x8c, 0x5c, 0x82, 0x18, 0x89, 0x40, 0xc8, 0x9a, 0x08, 0x27, 0xe0,
-	0x4a, 0x3a, 0x64, 0xbb, 0xdf, 0x0a, 0xec, 0x7e, 0x13, 0x21, 0x23, 0x12, 0xdc, 0xaf, 0x5f, 0x0d,
-	0x8a, 0xed, 0x5a, 0xa1, 0x15, 0x8c, 0x5c, 0x5c, 0x88, 0x84, 0x21, 0x64, 0x42, 0xa4, 0xfb, 0x51,
-	0xd2, 0x91, 0x94, 0x3e, 0x11, 0xba, 0x90, 0x53, 0x11, 0xb1, 0x21, 0x0e, 0x49, 0x2c, 0x50, 0xa7,
-	0x3a, 0xf9, 0x9e, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13,
-	0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x71, 0x7a, 0x66,
-	0x49, 0x46, 0x69, 0x92, 0x5e, 0x72, 0x7e, 0x2e, 0xd4, 0x40, 0xdd, 0x9c, 0xc4, 0xa4, 0x62, 0x98,
-	0xe1, 0x15, 0x68, 0xc6, 0x97, 0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0x73, 0xbb, 0x31, 0x20,
-	0x00, 0x00, 0xff, 0xff, 0xc5, 0xab, 0xde, 0xcb, 0x96, 0x04, 0x00, 0x00,
+	0x65, 0x35, 0xf1, 0xda, 0x9d, 0x9b, 0x9f, 0x92, 0x9a, 0x03, 0x55, 0xaa, 0x64, 0xcb, 0x25, 0x1b,
+	0x08, 0x72, 0x4b, 0x68, 0x71, 0x6a, 0x51, 0x10, 0xb2, 0xf2, 0xa0, 0xd4, 0xc2, 0xd2, 0xd4, 0xe2,
+	0x12, 0x21, 0x21, 0x2e, 0x96, 0xd2, 0xe2, 0xd4, 0x22, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20,
+	0x30, 0xdb, 0x8a, 0xa3, 0x63, 0x81, 0x3c, 0xc3, 0x8b, 0x05, 0xf2, 0x0c, 0x4a, 0x3d, 0x8c, 0x5c,
+	0x72, 0xb8, 0xf4, 0x17, 0x17, 0xe4, 0xe7, 0x15, 0xa7, 0x62, 0x33, 0x40, 0x28, 0x8c, 0x8b, 0x17,
+	0xc5, 0x6d, 0x12, 0x4c, 0x0a, 0xcc, 0x1a, 0xdc, 0x46, 0x5a, 0x7a, 0xf8, 0x82, 0x42, 0x0f, 0xd9,
+	0x7c, 0x27, 0x96, 0x13, 0xf7, 0xe4, 0x19, 0x82, 0x50, 0x8d, 0x51, 0x32, 0xe3, 0x12, 0x83, 0xbb,
+	0xc6, 0x29, 0x27, 0x3f, 0x39, 0x9b, 0x48, 0x6f, 0x24, 0x70, 0x89, 0x63, 0xe8, 0x83, 0x3a, 0xdf,
+	0x95, 0x8b, 0x2d, 0x09, 0x2c, 0x22, 0xc1, 0x08, 0x76, 0xa3, 0x3a, 0x7e, 0x37, 0xc2, 0x4d, 0x80,
+	0x3a, 0x10, 0xaa, 0xd9, 0xa8, 0x95, 0x99, 0x8b, 0x15, 0x6c, 0x85, 0xd0, 0x29, 0x46, 0x2e, 0x41,
+	0x8c, 0xd0, 0x12, 0xb2, 0xc6, 0x6f, 0x2c, 0xde, 0x38, 0x92, 0xb2, 0x21, 0x4f, 0x33, 0xc4, 0x87,
+	0x4a, 0x56, 0x4d, 0x97, 0x9f, 0x4c, 0x66, 0x32, 0x11, 0x32, 0xd2, 0xc7, 0x9b, 0x6c, 0x50, 0x45,
+	0xab, 0x41, 0x21, 0x58, 0x2b, 0xb4, 0x8e, 0x91, 0x8b, 0x0b, 0x11, 0x68, 0x42, 0x26, 0x44, 0x3a,
+	0x04, 0x25, 0x6e, 0xa4, 0x4c, 0x49, 0xd4, 0x05, 0x75, 0xb7, 0x31, 0xd8, 0xdd, 0xba, 0x42, 0xda,
+	0xf8, 0xdd, 0x0d, 0x89, 0x00, 0xa8, 0x83, 0x9d, 0x7c, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48,
+	0x8e, 0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1,
+	0x58, 0x8e, 0x21, 0xca, 0x38, 0x3d, 0xb3, 0x24, 0xa3, 0x34, 0x49, 0x2f, 0x39, 0x3f, 0x17, 0x6a,
+	0xa0, 0x6e, 0x4e, 0x62, 0x52, 0x31, 0xcc, 0xf0, 0x0a, 0x34, 0xe3, 0x4b, 0x2a, 0x0b, 0x52, 0x8b,
+	0x93, 0xd8, 0xc0, 0xb9, 0xc8, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0x03, 0x0b, 0x8d, 0x50, 0xee,
+	0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -291,12 +260,10 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// Relationships queries all the stored relationships
-	Relationships(ctx context.Context, in *QueryRelationshipsRequest, opts ...grpc.CallOption) (*QueryRelationshipsResult, error)
 	// UserRelationships queries the relationships for the user having the given address
-	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryRelationshipsResult, error)
+	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error)
 	// UserRelationships queries the user blocks for the user having the given address
-	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryBlocksResult, error)
+	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
 }
 
 type queryClient struct {
@@ -307,17 +274,8 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Relationships(ctx context.Context, in *QueryRelationshipsRequest, opts ...grpc.CallOption) (*QueryRelationshipsResult, error) {
-	out := new(QueryRelationshipsResult)
-	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Query/Relationships", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryRelationshipsResult, error) {
-	out := new(QueryRelationshipsResult)
+func (c *queryClient) UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error) {
+	out := new(QueryUserRelationshipsResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Query/UserRelationships", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -325,8 +283,8 @@ func (c *queryClient) UserRelationships(ctx context.Context, in *QueryUserRelati
 	return out, nil
 }
 
-func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryBlocksResult, error) {
-	out := new(QueryBlocksResult)
+func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error) {
+	out := new(QueryUserBlocksResponse)
 	err := c.cc.Invoke(ctx, "/desmos.relationships.v1beta1.Query/UserBlocks", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -336,48 +294,25 @@ func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// Relationships queries all the stored relationships
-	Relationships(context.Context, *QueryRelationshipsRequest) (*QueryRelationshipsResult, error)
 	// UserRelationships queries the relationships for the user having the given address
-	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryRelationshipsResult, error)
+	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error)
 	// UserRelationships queries the user blocks for the user having the given address
-	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryBlocksResult, error)
+	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Relationships(ctx context.Context, req *QueryRelationshipsRequest) (*QueryRelationshipsResult, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Relationships not implemented")
-}
-func (*UnimplementedQueryServer) UserRelationships(ctx context.Context, req *QueryUserRelationshipsRequest) (*QueryRelationshipsResult, error) {
+func (*UnimplementedQueryServer) UserRelationships(ctx context.Context, req *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserRelationships not implemented")
 }
-func (*UnimplementedQueryServer) UserBlocks(ctx context.Context, req *QueryUserBlocksRequest) (*QueryBlocksResult, error) {
+func (*UnimplementedQueryServer) UserBlocks(ctx context.Context, req *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBlocks not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
-}
-
-func _Query_Relationships_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryRelationshipsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).Relationships(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/desmos.relationships.v1beta1.Query/Relationships",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Relationships(ctx, req.(*QueryRelationshipsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Query_UserRelationships_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -421,10 +356,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Relationships",
-			Handler:    _Query_Relationships_Handler,
-		},
-		{
 			MethodName: "UserRelationships",
 			Handler:    _Query_UserRelationships_Handler,
 		},
@@ -435,29 +366,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/relationships/v1beta1/query.proto",
-}
-
-func (m *QueryRelationshipsRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryRelationshipsRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
 }
 
 func (m *QueryUserRelationshipsRequest) Marshal() (dAtA []byte, err error) {
@@ -490,7 +398,7 @@ func (m *QueryUserRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryRelationshipsResult) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserRelationshipsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -500,12 +408,12 @@ func (m *QueryRelationshipsResult) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryRelationshipsResult) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserRelationshipsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryRelationshipsResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -521,8 +429,15 @@ func (m *QueryRelationshipsResult) MarshalToSizedBuffer(dAtA []byte) (int, error
 				i = encodeVarintQuery(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0xa
+			dAtA[i] = 0x12
 		}
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -557,7 +472,7 @@ func (m *QueryUserBlocksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryBlocksResult) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserBlocksResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -567,12 +482,12 @@ func (m *QueryBlocksResult) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryBlocksResult) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserBlocksResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryBlocksResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserBlocksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -605,15 +520,6 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryRelationshipsRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
 func (m *QueryUserRelationshipsRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -627,12 +533,16 @@ func (m *QueryUserRelationshipsRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryRelationshipsResult) Size() (n int) {
+func (m *QueryUserRelationshipsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	if len(m.Relationships) > 0 {
 		for _, e := range m.Relationships {
 			l = e.Size()
@@ -655,7 +565,7 @@ func (m *QueryUserBlocksRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryBlocksResult) Size() (n int) {
+func (m *QueryUserBlocksResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -675,59 +585,6 @@ func sovQuery(x uint64) (n int) {
 }
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *QueryRelationshipsRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryRelationshipsRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryRelationshipsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -814,7 +671,7 @@ func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryRelationshipsResult) Unmarshal(dAtA []byte) error {
+func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -837,13 +694,45 @@ func (m *QueryRelationshipsResult) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryRelationshipsResult: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserRelationshipsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryRelationshipsResult: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserRelationshipsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Relationships", wireType)
 			}
@@ -986,7 +875,7 @@ func (m *QueryUserBlocksRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryBlocksResult) Unmarshal(dAtA []byte) error {
+func (m *QueryUserBlocksResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1009,10 +898,10 @@ func (m *QueryBlocksResult) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryBlocksResult: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserBlocksResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryBlocksResult: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserBlocksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

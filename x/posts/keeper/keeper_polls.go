@@ -20,22 +20,16 @@ func (k Keeper) SavePollAnswers(ctx sdk.Context, postID string, userPollAnswers 
 	})
 
 	answers := k.GetPollAnswers(ctx, postID)
-	if appendedAnswers, appended := answers.AppendIfMissingOrIfUsersEquals(userPollAnswers); appended {
-		store.Set(types.PollAnswersStoreKey(postID), k.cdc.MustMarshalBinaryBare(&WrappedUserAnswers{
-			Answers: appendedAnswers,
-		}))
+	if appendedAnswers, appended := types.AppendIfMissingOrIfUsersEquals(answers, userPollAnswers); appended {
+		bz := types.MustMarshalUserAnswers(k.cdc, appendedAnswers)
+		store.Set(types.PollAnswersStoreKey(postID), bz)
 	}
 }
 
 // GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetPollAnswers(ctx sdk.Context, postID string) types.UserAnswers {
+func (k Keeper) GetPollAnswers(ctx sdk.Context, postID string) []types.UserAnswer {
 	store := ctx.KVStore(k.storeKey)
-
-	var answers WrappedUserAnswers
-	answersBz := store.Get(types.PollAnswersStoreKey(postID))
-	k.cdc.MustUnmarshalBinaryBare(answersBz, &answers)
-
-	return answers.Answers
+	return types.MustUnmarshalUserAnswers(k.cdc, store.Get(types.PollAnswersStoreKey(postID)))
 }
 
 // GetUserPollAnswersEntries allows to returns the list of answers that have been stored inside the given context
@@ -45,10 +39,9 @@ func (k Keeper) GetUserAnswersEntries(ctx sdk.Context) []types.UserAnswersEntry 
 
 	var usersAnswersData []types.UserAnswersEntry
 	for ; iterator.Valid(); iterator.Next() {
-		var userAnswers WrappedUserAnswers
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &userAnswers)
+		userAnswers := types.MustUnmarshalUserAnswers(k.cdc, iterator.Value())
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.PollAnswersStorePrefix)
-		usersAnswersData = append(usersAnswersData, types.NewUserAnswersEntry(string(idBytes), userAnswers.Answers))
+		usersAnswersData = append(usersAnswersData, types.NewUserAnswersEntry(string(idBytes), userAnswers))
 	}
 
 	return usersAnswersData

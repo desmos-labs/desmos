@@ -1,10 +1,8 @@
 package keeper_test
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -15,38 +13,35 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 	tests := []struct {
 		name                string
 		path                []string
-		storedPosts         types.Posts
+		storedPosts         []types.Post
 		storedReactions     []types.PostReactionsEntry
 		registeredReactions []types.RegisteredReaction
 		storedAnswers       []types.UserAnswer
+		expError            bool
 		expResult           types.PostQueryResponse
-		expError            error
 	}{
 		{
 			name:                "Invalid query endpoint",
 			path:                []string{"invalid", ""},
 			registeredReactions: nil,
-			expError:            fmt.Errorf("unknown post query endpoint"),
+			expError:            true,
 		},
 		{
 			name:                "Invalid ID returns error",
 			path:                []string{types.QueryPost, ""},
 			registeredReactions: nil,
-			expError:            sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: "),
+			expError:            true,
 		},
 		{
 			name:                "Post not found returns error",
 			path:                []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			registeredReactions: nil,
-			expError: sdkerrors.Wrap(
-				sdkerrors.ErrUnknownRequest,
-				"Post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found",
-			),
+			expError:            true,
 		},
 		{
 			name: "Post without reactions is returned properly",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -55,7 +50,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					Attachments:  suite.testData.post.Attachments,
 					PollData:     suite.testData.post.PollData,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -71,6 +66,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			},
 			registeredReactions: nil,
 			path:                []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expError:            false,
 			expResult: types.NewPostResponse(
 				types.Post{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -90,8 +86,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 		},
 		{
 			name: "Post without children is returned properly",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -107,6 +103,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			},
 			registeredReactions: nil,
 			path:                []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expError:            false,
 			expResult: types.NewPostResponse(
 				types.Post{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -122,13 +119,13 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				},
 				[]types.PostReaction{},
-				nil,
+				[]string{},
 			),
 		},
 		{
 			name: "Post without medias is returned properly",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -137,7 +134,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					PollData:     suite.testData.post.PollData,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -175,7 +172,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					"",
 				),
 			},
-			path: []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			path:     []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -206,8 +204,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 		},
 		{
 			name: "Post without poll and poll answers is returned properly",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -216,7 +214,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					Attachments:  suite.testData.post.Attachments,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -252,7 +250,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					"",
 				),
 			},
-			path: []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			path:     []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -281,8 +280,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 		},
 		{
 			name: "Post with all data is returned properly",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -292,7 +291,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					Attachments:  suite.testData.post.Attachments,
 					PollData:     suite.testData.post.PollData,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -331,7 +330,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					"",
 				),
 			},
-			path: []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			path:     []string{types.QueryPost, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -369,38 +369,34 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			suite.SetupTest()
 
 			for _, reaction := range test.registeredReactions {
-				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, p := range test.storedPosts {
-				suite.k.SavePost(suite.ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
-			if result != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
 
-			if result == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expError.Error(), err.Error())
-				suite.Require().Nil(result)
+				expected := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+				suite.Require().Equal(string(expected), string(result))
 			}
 		})
 	}
@@ -409,15 +405,15 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 func (suite *KeeperTestSuite) Test_queryPosts() {
 	tests := []struct {
 		name          string
-		storedPosts   types.Posts
+		storedPosts   []types.Post
 		storedAnswers []types.UserAnswer
 		params        types.QueryPostsParams
 		expResponse   []types.PostQueryResponse
 	}{
 		{
 			name: "Empty params returns all",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					ParentID:     "",
 					Message:      "Parent",
@@ -428,7 +424,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					Attachments:  suite.testData.post.Attachments,
 					PollData:     suite.testData.post.PollData,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -481,8 +477,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 		},
 		{
 			name: "Empty params returns all posts without medias",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -519,8 +515,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 		},
 		{
 			name: "Empty params returns all posts without poll data and poll answers",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -529,7 +525,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					Attachments:  suite.testData.post.Attachments,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -560,8 +556,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 		},
 		{
 			name: "Non empty params return proper posts",
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
@@ -571,7 +567,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					Attachments:  suite.testData.post.Attachments,
 					PollData:     suite.testData.post.PollData,
 				},
-				types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
@@ -611,23 +607,24 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
+			suite.SetupTest()
+
 			for _, p := range test.storedPosts {
-				suite.k.SavePost(suite.ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			request := abci.RequestQuery{Data: suite.legacyAminoCdc.MustMarshalJSON(&test.params)}
+
 			result, err := querier(suite.ctx, []string{types.QueryPosts}, request)
 			suite.Require().NoError(err)
 
-			expSerialized, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResponse)
-			suite.Require().NoError(err)
-			suite.Require().Equal(string(expSerialized), string(result))
+			expected := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResponse)
+			suite.Require().Equal(string(expected), string(result))
 		})
 	}
 }
@@ -636,34 +633,31 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 	tests := []struct {
 		name          string
 		path          []string
-		storedPosts   types.Posts
+		storedPosts   []types.Post
 		storedAnswers []types.UserAnswer
+		expError      bool
 		expResult     types.QueryPollAnswersResponse
-		expError      error
 	}{
 		{
 			name:     "Invalid post id returns error",
 			path:     []string{types.QueryPollAnswers, ""},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: "),
+			expError: true,
 		},
 		{
 			name:     "Post not found returns error",
 			path:     []string{types.QueryPollAnswers, "1"},
-			expError: sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "invalid postID: 1"),
+			expError: true,
 		},
 		{
-			name: "No post associated with ID given",
-			path: []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
-			expError: sdkerrors.Wrapf(
-				sdkerrors.ErrUnknownRequest, "Post with id %s not found",
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-			),
+			name:     "No post associated with ID given",
+			path:     []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
+			expError: true,
 		},
 		{
 			name: "Post without poll returns error",
 			path: []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					Message:      "post with poll",
 					Created:      suite.testData.post.Created,
@@ -673,16 +667,13 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 					Attachments:  suite.testData.post.Attachments,
 				},
 			},
-			expError: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest,
-				"Post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd has no poll associated",
-			),
+			expError: true,
 		},
 		{
 			name: "Returns answers details of the post correctly",
 			path: []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
-			storedPosts: types.Posts{
-				types.Post{
+			storedPosts: []types.Post{
+				{
 					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					Message:      "post with poll",
 					Created:      suite.testData.post.Created,
@@ -698,7 +689,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			},
 			expResult: types.QueryPollAnswersResponse{
 				PostId: "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Answers: types.UserAnswers{
+				Answers: []types.UserAnswer{
 					types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				},
 			},
@@ -709,46 +700,40 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				suite.k.SavePost(suite.ctx, p)
+				suite.keeper.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
+				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
-			if result != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
 				suite.Require().NoError(err)
 
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
-
-			if result == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expError.Error(), err.Error())
-				suite.Require().Nil(result)
+				expected := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+				suite.Require().Equal(string(expected), string(result))
 			}
 		})
 	}
-
 }
 
 func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 	tests := []struct {
 		name            string
 		path            []string
-		storedReactions types.Reactions
-		expError        error
-		expResult       types.Reactions
+		storedReactions []types.RegisteredReaction
+		expError        bool
+		expResult       []types.RegisteredReaction
 	}{
 		{
 			name: "PostReactions returned properly",
 			path: []string{types.QueryRegisteredReactions},
-			storedReactions: types.Reactions{
+			storedReactions: []types.RegisteredReaction{
 				types.NewRegisteredReaction(
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					":smile:",
@@ -762,8 +747,8 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
-			expError: nil,
-			expResult: types.Reactions{
+			expError: false,
+			expResult: []types.RegisteredReaction{
 				types.NewRegisteredReaction(
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					":sad:",
@@ -784,24 +769,19 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, r := range test.storedReactions {
-				suite.k.SaveRegisteredReaction(suite.ctx, r)
+				suite.keeper.SaveRegisteredReaction(suite.ctx, r)
 			}
 
-			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
-			if result != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
 				suite.Require().NoError(err)
 
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
-
-			if result == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expError.Error(), err.Error())
-				suite.Require().Nil(result)
+				actual := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+				suite.Require().Equal(string(actual), string(result))
 			}
 		})
 	}
@@ -809,30 +789,38 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 
 func (suite *KeeperTestSuite) Test_queryParams() {
 	tests := []struct {
-		name      string
-		path      []string
-		expResult types.Params
+		name         string
+		storedParams types.Params
+		path         []string
+		expResult    types.Params
 	}{
 		{
-			name:      "Returning posts parameters correctly",
-			path:      []string{types.QueryParams},
-			expResult: types.DefaultParams(),
+			name:         "Returning posts parameters correctly",
+			storedParams: types.DefaultParams(),
+			path:         []string{types.QueryParams},
+			expResult:    types.DefaultParams(),
+		},
+		{
+			name:         "Non default params",
+			storedParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			path:         []string{types.QueryParams},
+			expResult:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.k.SetParams(suite.ctx, types.DefaultParams())
-			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
-			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+			suite.SetupTest()
 
-			if result != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
-				suite.Require().NoError(err)
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
+			suite.keeper.SetParams(suite.ctx, test.storedParams)
+
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+			suite.Require().Nil(err)
+
+			actual := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			suite.Require().Equal(string(actual), string(result))
 		})
 	}
 }

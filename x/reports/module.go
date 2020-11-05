@@ -69,8 +69,8 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 	rest.RegisterRoutes(clientCtx, rtr)
 }
 
-// RegisterGRPCRoutes registers the gRPC Gateway routes for the reports module.
-func (AppModuleBasic) RegisterGRPCRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+// RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the reports module.
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
@@ -197,7 +197,7 @@ func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	sdr[types.ModuleName] = simulation.NewDecodeStore(am.keeper)
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the reports module operations with their respective weights.

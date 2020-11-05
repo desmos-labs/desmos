@@ -3,14 +3,14 @@ package cli
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -31,7 +31,7 @@ func NewTxCmd() *cobra.Command {
 
 // GetCmdReportPost returns the command allowing to report a post
 func GetCmdReportPost() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "create [post-id] [reports-type] [reports-message]",
 		Short: "reports a post",
 		Long: fmt.Sprintf(`
@@ -48,13 +48,16 @@ E.g.
 				return err
 			}
 
-			postID := args[0]
-			if !poststypes.IsValidPostID(postID) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
+			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
 			}
 
-			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }

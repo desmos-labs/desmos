@@ -33,10 +33,10 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank"),
 		},
 		{
-			name:          "Profile doesnt exist (dtag given)",
+			name:          "Profile doesnt exist (DTag given)",
 			path:          []string{types.QueryProfile, "monk"},
 			storedAccount: suite.testData.profile,
-			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this dtag: monk"),
+			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this DTag: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
@@ -57,10 +57,10 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			err := suite.keeper.StoreProfile(suite.ctx, test.storedAccount)
+			err := suite.k.StoreProfile(suite.ctx, test.storedAccount)
 			suite.Require().Nil(err)
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
@@ -71,57 +71,13 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 			}
 
 			if result == nil {
-				suite.NotNil(err)
+				suite.Require().Error(err)
 				suite.Require().Equal(test.expErr.Error(), err.Error())
 				suite.Require().Nil(result)
 			}
 		})
 	}
 
-}
-
-func (suite *KeeperTestSuite) Test_queryProfiles() {
-	tests := []struct {
-		name          string
-		path          []string
-		storedAccount *types.Profile
-		expResult     []types.Profile
-	}{
-		{
-			name:          "Empty Profiles",
-			path:          []string{types.QueryProfiles},
-			storedAccount: nil,
-			expResult:     []types.Profile{},
-		},
-		{
-			name:          "Profile returned correctly",
-			path:          []string{types.QueryProfiles},
-			storedAccount: &suite.testData.profile,
-			expResult:     []types.Profile{suite.testData.profile},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-
-			if test.storedAccount != nil {
-				err := suite.keeper.StoreProfile(suite.ctx, *test.storedAccount)
-				suite.Require().Nil(err)
-			}
-
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
-			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
-
-			if result != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
-				suite.Require().NoError(err)
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
-		})
-	}
 }
 
 func (suite *KeeperTestSuite) Test_queryParams() {
@@ -151,9 +107,9 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.keeper.SetParams(suite.ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
+			suite.k.SetParams(suite.ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if result != nil {
@@ -177,24 +133,24 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 	}{
 		{
 			name:           "Invalid address returns error",
-			path:           []string{types.QueryDTagRequests, "invalid"},
+			path:           []string{types.QueryIncomingDTagRequests, "invalid"},
 			storedRequests: nil,
 			expResult:      nil,
 			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalid"),
 		},
 		{
-			name:           "Empty dTag requests returns correctly",
-			path:           []string{types.QueryDTagRequests, suite.testData.user},
+			name:           "Empty DTag requests returns correctly",
+			path:           []string{types.QueryIncomingDTagRequests, suite.testData.user},
 			storedRequests: nil,
 			expResult:      nil,
 			expErr:         nil,
 		},
 		{
 			name: "Stored dTag requests returns correctly",
-			path: []string{types.QueryDTagRequests, suite.testData.user},
 			storedRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
+			path: []string{types.QueryIncomingDTagRequests, suite.testData.otherUser},
 			expResult: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -206,24 +162,19 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
 			for _, req := range test.storedRequests {
-				err := suite.keeper.SaveDTagTransferRequest(suite.ctx, req)
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+			suite.RequireErrorsEqual(test.expErr, err)
 
-			if test.expResult != nil {
-				suite.Require().Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			if test.expErr == nil {
+				var requests []types.DTagTransferRequest
+				err = suite.legacyAminoCdc.UnmarshalJSON(result, &requests)
 				suite.Require().NoError(err)
-				suite.Require().Equal(string(expectedIndented), string(result))
-			}
-
-			if result == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-				suite.Require().Nil(result)
+				suite.Require().Equal(test.expResult, requests)
 			}
 		})
 	}

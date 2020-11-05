@@ -7,10 +7,10 @@ import (
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
-func NewMsgCreateRelationship(sender, receiver string, subspace string) *MsgCreateRelationship {
+func NewMsgCreateRelationship(creator, recipient string, subspace string) *MsgCreateRelationship {
 	return &MsgCreateRelationship{
-		Sender:   sender,
-		Receiver: receiver,
+		Sender:   creator,
+		Receiver: recipient,
 		Subspace: subspace,
 	}
 }
@@ -27,16 +27,16 @@ func (msg MsgCreateRelationship) Type() string {
 func (msg MsgCreateRelationship) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Sender)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Receiver)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address")
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sender and receiver must be different")
 	}
 
 	if !commons.IsValidSubspace(msg.Subspace) {
@@ -59,10 +59,10 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgDeleteRelationship(sender, receiver string, subspace string) *MsgDeleteRelationship {
+func NewMsgDeleteRelationship(user, counterparty string, subspace string) *MsgDeleteRelationship {
 	return &MsgDeleteRelationship{
-		Sender:       sender,
-		Counterparty: receiver,
+		User:         user,
+		Counterparty: counterparty,
 		Subspace:     subspace,
 	}
 }
@@ -77,18 +77,18 @@ func (msg MsgDeleteRelationship) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteRelationship) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Sender)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Counterparty)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Counterparty)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address")
 	}
 
-	if msg.Sender == msg.Counterparty {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "sender and receiver must be different")
+	if msg.User == msg.Counterparty {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user and counterparty must be different")
 	}
 
 	if !commons.IsValidSubspace(msg.Subspace) {
@@ -105,7 +105,7 @@ func (msg MsgDeleteRelationship) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
-	sender, _ := sdk.AccAddressFromBech32(msg.Sender)
+	sender, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{sender}
 }
 
@@ -132,16 +132,16 @@ func (msg MsgBlockUser) Type() string {
 func (msg MsgBlockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocker)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Blocked)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocked)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address")
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
 	if !commons.IsValidSubspace(msg.Subspace) {
@@ -184,16 +184,16 @@ func (msg MsgUnblockUser) Type() string {
 func (msg MsgUnblockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocker)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Blocked)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Blocked)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked")
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "blocker and blocked must be different")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
 	if !commons.IsValidSubspace(msg.Subspace) {

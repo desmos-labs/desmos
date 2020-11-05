@@ -17,6 +17,10 @@ import (
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
+
 type KeeperTestSuite struct {
 	suite.Suite
 
@@ -62,6 +66,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 }
 
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
+func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
+	if expected != nil {
+		suite.Require().Error(actual)
+		suite.Require().Equal(expected.Error(), actual.Error())
+	} else {
+		suite.Require().NoError(actual)
+	}
 }

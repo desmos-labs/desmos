@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/x/relationships"
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -39,9 +39,9 @@ type KeeperTestSuite struct {
 }
 
 type TestData struct {
-	postID       poststypes.PostID
+	postID       string
 	creationDate time.Time
-	creator      sdk.AccAddress
+	creator      string
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -69,18 +69,17 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// define keepers
-	relationshipsKeeper := relationships.NewKeeper(suite.cdc, relationshipsKey)
+	rk := relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
-	suite.postsKeeper = postskeeper.NewKeeper(suite.legacyAminoCdc, postsKey, paramsKeeper.Subspace("poststypes"))
+	suite.postsKeeper = postskeeper.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("poststypes"), rk)
 	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.postsKeeper)
 
 	// setup data
-	addr, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	date, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
 	suite.testData = TestData{
 		postID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		creationDate: date,
-		creator:      addr,
+		creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	}
 }
 

@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
@@ -17,31 +19,26 @@ import (
 // --- MsgCreatePost
 // ----------------------
 
-var testOwner = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-var timeZone, _ = time.LoadLocation("UTC")
-var pollData = types.NewPollData(
-	"poll?",
-	time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-	types.NewPollAnswers(
-		types.NewPollAnswer("1", "Yes"),
-		types.NewPollAnswer("2", "No"),
-	),
-	false,
-	true,
-)
-var attachments = types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil))
-
-// ___________________________________________________________________________________________________________________
-
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	false,
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	nil,
-	testOwner,
-	attachments,
-	&pollData,
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	types.NewAttachments(
+		types.NewAttachment("https://uri.com", "text/plain", nil),
+	),
+	types.NewPollData(
+		"poll?",
+		time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+		types.NewPollAnswers(
+			types.NewPollAnswer("1", "Yes"),
+			types.NewPollAnswer("2", "No"),
+		),
+		false,
+		true,
+	),
 )
 
 func TestMsgCreatePost_Route(t *testing.T) {
@@ -53,14 +50,6 @@ func TestMsgCreatePost_Type(t *testing.T) {
 }
 
 func TestMsgCreatePost_ValidateBasic(t *testing.T) {
-	invalidPollData := types.NewPollData(
-		"",
-		msgCreatePost.PollData.EndDate,
-		msgCreatePost.PollData.ProvidedAnswers,
-		true,
-		true,
-	)
-
 	tests := []struct {
 		name  string
 		msg   *types.MsgCreatePost
@@ -78,10 +67,10 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Attachments,
 				msgCreatePost.PollData,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator"),
 		},
 		{
-			name: "Empty message returns error if attachments, poll data and message are empty",
+			name: "Empty message returns error if attachments, poll poll and message are empty",
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
@@ -216,7 +205,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
 		},
 		{
-			name: "Message with invalid pollData returns error",
+			name: "Message with invalid PollData returns error",
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
@@ -225,9 +214,15 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				nil,
-				&invalidPollData,
+				types.NewPollData(
+					"",
+					msgCreatePost.PollData.EndDate,
+					msgCreatePost.PollData.ProvidedAnswers,
+					true,
+					true,
+				),
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll question"),
 		},
 		{
 			name: "Valid message does not return any error",
@@ -366,7 +361,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				[]types.OptionalDataEntry{{"field", "value"}},
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				},
@@ -382,7 +377,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
 					types.Attachment{
 						URI:      "https://uri.com",
@@ -401,21 +396,21 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{},
 				msgCreatePost.PollData,
 			),
 			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"id":"1","text":"Yes"},{"id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
-			name: "Message with empty poll data",
+			name: "Message with empty poll poll",
 			msg: types.NewMsgCreatePost(
 				"My Post without attachments",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
 					types.Attachment{
 						URI:      "https://uri.com",
@@ -437,9 +432,8 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgCreatePost_GetSigners(t *testing.T) {
-	actual := msgCreatePost.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgCreatePost.Creator, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgCreatePost.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCreatePost.GetSigners())
 }
 
 func TestMsgCreatePost_ReadJSON(t *testing.T) {
@@ -455,9 +449,20 @@ func TestMsgCreatePost_ReadJSON(t *testing.T) {
 var msgEditPost = types.NewMsgEditPost(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	"Edited post message",
-	attachments,
-	&pollData,
-	testOwner,
+	types.NewAttachments(
+		types.NewAttachment("https://uri.com", "text/plain", nil),
+	),
+	types.NewPollData(
+		"poll?",
+		time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+		types.NewPollAnswers(
+			types.NewPollAnswer("1", "Yes"),
+			types.NewPollAnswer("2", "No"),
+		),
+		false,
+		true,
+	),
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
 func TestMsgEditPost_Route(t *testing.T) {
@@ -479,22 +484,42 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"",
 				"Edited post message",
-				attachments,
-				&pollData,
-				testOwner,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				types.NewPollData(
+					"poll?",
+					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Invalid post id: "),
+			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
 		},
 		{
 			name: "Invalid editor returns error",
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"Edited post message",
-				attachments,
-				&pollData,
+				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
+				types.NewPollData(
+					"poll?",
+					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid editor address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor"),
 		},
 		{
 			name: "Non-empty message returns no error if attachments are empty",
@@ -503,7 +528,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				"message",
 				nil,
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -514,7 +539,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				"message",
 				msgCreatePost.Attachments,
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -525,7 +550,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				"",
 				nil,
 				msgCreatePost.PollData,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -536,7 +561,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				"message",
 				nil,
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -547,7 +572,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				"",
 				nil,
 				nil,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"post message, attachments or poll are required and cannot be all blank or empty"),
@@ -561,7 +586,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					types.NewAttachment("", "text/plain", nil),
 				},
 				msgCreatePost.PollData,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
@@ -574,7 +599,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					types.NewAttachment("invalid-uri", "text/plain", nil),
 				},
 				msgCreatePost.PollData,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid uri provided"),
 		},
@@ -587,28 +612,28 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					types.NewAttachment("https://example.com", "", nil),
 				},
 				msgCreatePost.PollData,
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "mime type must be specified and cannot be empty"),
 		},
 		{
-			name: "Invalid pollData returns error",
+			name: "Message with invalid PollData returns error",
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
-				attachments,
+				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
 				&types.PollData{
 					Question: "",
 					ProvidedAnswers: types.NewPollAnswers(
 						types.NewPollAnswer("1", "Yes"),
 						types.NewPollAnswer("2", "No"),
 					),
-					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
+					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					AllowsAnswerEdits: true,
 				},
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll title"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "missing poll question"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -637,9 +662,8 @@ func TestMsgEditPost_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgEditPost_GetSigners(t *testing.T) {
-	actual := msgEditPost.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgEditPost.Editor, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgEditPost.Editor)
+	require.Equal(t, []sdk.AccAddress{addr}, msgEditPost.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
@@ -647,7 +671,7 @@ func TestMsgEditPost_GetSigners(t *testing.T) {
 var msgPostReaction = types.NewMsgAddPostReaction(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	"like",
-	testOwner,
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
 func TestShortCodeRegEx(t *testing.T) {
@@ -678,7 +702,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgAddPostReaction("", ":like:", testOwner),
+			msg:   types.NewMsgAddPostReaction("", ":like:", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
 		},
 		{
@@ -688,14 +712,14 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 				":like:",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user"),
 		},
 		{
 			name: "Invalid value returns error",
 			msg: types.NewMsgAddPostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"like",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: sdkerrors.Wrap(types.ErrInvalidReactionCode, "like"),
 		},
@@ -704,7 +728,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgAddPostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				":like:",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -713,7 +737,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgAddPostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"🤩",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			error: nil,
 		},
@@ -737,25 +761,24 @@ func TestMsgAddPostReaction_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgAddPostReaction_GetSigners(t *testing.T) {
-	actual := msgPostReaction.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgPostReaction.User, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgPostReaction.User)
+	require.Equal(t, []sdk.AccAddress{addr}, msgPostReaction.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
 
-var msgUnlikePost = types.NewMsgRemovePostReaction(
+var msgRemovePostReaction = types.NewMsgRemovePostReaction(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-	testOwner,
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"like",
 )
 
 func TestMsgRemovePostReaction_Route(t *testing.T) {
-	require.Equal(t, "posts", msgUnlikePost.Route())
+	require.Equal(t, "posts", msgRemovePostReaction.Route())
 }
 
 func TestMsgRemovePostReaction_Type(t *testing.T) {
-	require.Equal(t, "remove_post_reaction", msgUnlikePost.Type())
+	require.Equal(t, "remove_post_reaction", msgRemovePostReaction.Type())
 }
 
 func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
@@ -766,7 +789,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:  "Invalid post id returns error",
-			msg:   types.NewMsgRemovePostReaction("", testOwner, ":+1:"),
+			msg:   types.NewMsgRemovePostReaction("", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", ":+1:"),
 			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
 		},
 		{
@@ -776,13 +799,13 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 				"",
 				":like:",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user"),
 		},
 		{
 			name: "Blank value returns no error",
 			msg: types.NewMsgRemovePostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 			),
 			error: sdkerrors.Wrap(types.ErrInvalidReactionCode, ""),
@@ -791,7 +814,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 			name: "Valid message returns no error (with shortcode)",
 			msg: types.NewMsgRemovePostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":+1:",
 			),
 			error: nil,
@@ -800,7 +823,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 			name: "Valid message returns no error (with emoji)",
 			msg: types.NewMsgRemovePostReaction(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"🤩",
 			),
 			error: nil,
@@ -820,13 +843,12 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 
 func TestMsgRemovePostReaction_GetSignBytes(t *testing.T) {
 	expected := `{"type":"desmos/MsgRemovePostReaction","value":{"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","reaction":"like","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(msgUnlikePost.GetSignBytes()))
+	require.Equal(t, expected, string(msgRemovePostReaction.GetSignBytes()))
 }
 
 func TestMsgRemovePostReaction_GetSigners(t *testing.T) {
-	actual := msgUnlikePost.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgUnlikePost.User, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgRemovePostReaction.User)
+	require.Equal(t, []sdk.AccAddress{addr}, msgRemovePostReaction.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
@@ -834,7 +856,7 @@ func TestMsgRemovePostReaction_GetSigners(t *testing.T) {
 var msgAnswerPollPost = types.NewMsgAnswerPoll(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	[]string{"1", "2"},
-	testOwner,
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
 func TestMsgAnswerPollPost_Route(t *testing.T) {
@@ -863,16 +885,16 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 				[]string{"1", "2"},
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer"),
 		},
 		{
 			name: "Returns error when no answer is provided",
 			msg: types.NewMsgAnswerPoll(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				[]string{""},
+				[]string{},
 				msgAnswerPollPost.Answerer,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answers must contains at least one answer"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answer must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
@@ -904,15 +926,14 @@ func TestMsgAnswerPollPost_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgAnswerPollPost_GetSigners(t *testing.T) {
-	actual := msgAnswerPollPost.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgAnswerPollPost.Answerer, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgAnswerPollPost.Answerer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgAnswerPollPost.GetSigners())
 }
 
 // ___________________________________________________________________________________________________________________
 
 var msgRegisterReaction = types.NewMsgRegisterReaction(
-	testOwner,
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	":smile:",
 	"https://smile.jpg",
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -940,12 +961,12 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address: "),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator"),
 		},
 		{
 			name: "Empty short code returns error",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -955,7 +976,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid short code returns error",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -965,7 +986,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty value returns error",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile:",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -975,7 +996,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid value returns error (url)",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile:",
 				"htp://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -985,7 +1006,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid value returns error (unicode)",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile:",
 				"U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -995,7 +1016,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Valid emoji value returns no error",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile:",
 				"💙",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -1005,7 +1026,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid subspace returns error",
 			msg: types.NewMsgRegisterReaction(
-				testOwner,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				":smile:",
 				"https://smile.jpg",
 				"1234",
@@ -1028,12 +1049,11 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgRegisterReaction_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRegisterReaction","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","shortcode":":smile:","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","value":"https://smile.jpg"}}`
+	expected := `{"type":"desmos/MsgRegisterReaction","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","short_code":":smile:","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","value":"https://smile.jpg"}}`
 	require.Equal(t, expected, string(msgRegisterReaction.GetSignBytes()))
 }
 
 func TestMsgRegisterReaction_GetSigners(t *testing.T) {
-	actual := msgRegisterReaction.GetSigners()
-	require.Equal(t, 1, len(actual))
-	require.Equal(t, msgRegisterReaction.Creator, actual[0])
+	addr, _ := sdk.AccAddressFromBech32(msgRegisterReaction.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msgRegisterReaction.GetSigners())
 }

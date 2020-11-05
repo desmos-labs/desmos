@@ -1,23 +1,57 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
-	params := types.DefaultParams()
-	suite.k.SetParams(suite.ctx, params)
+	tests := []struct {
+		name      string
+		params    types.Params
+		expError  bool
+		expParams types.Params
+	}{
+		{
+			name:     "Storing empty params returns error",
+			params:   types.Params{},
+			expError: true,
+		},
+		{
+			name:      "Default params are stored properly",
+			params:    types.DefaultParams(),
+			expError:  false,
+			expParams: types.DefaultParams(),
+		},
+		{
+			name:      "Non default params are stored properly",
+			params:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			expError:  false,
+			expParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+		},
+	}
 
-	actualParams := suite.k.GetParams(suite.ctx)
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
 
-	suite.Require().Equal(params, actualParams)
+			if test.expError {
+				suite.Require().Panics(func() { suite.keeper.SetParams(suite.ctx, test.params) })
+			} else {
+				suite.keeper.SetParams(suite.ctx, test.params)
+				suite.Require().Equal(test.expParams, suite.keeper.GetParams(suite.ctx))
+			}
+		})
+	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	params := types.DefaultParams()
-	suite.k.SetParams(suite.ctx, params)
+	suite.keeper.SetParams(suite.ctx, params)
 
-	actualParams := suite.k.GetParams(suite.ctx)
+	actualParams := suite.keeper.GetParams(suite.ctx)
 
 	suite.Require().Equal(params, actualParams)
 
@@ -42,11 +76,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 		test := test
 		suite.Run(test.name, func() {
 			if test.params != nil {
-				suite.k.SetParams(suite.ctx, *test.params)
+				suite.keeper.SetParams(suite.ctx, *test.params)
 			}
 
 			if test.expParams != nil {
-				suite.Require().Equal(*test.expParams, suite.k.GetParams(suite.ctx))
+				suite.Require().Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
 			}
 		})
 	}

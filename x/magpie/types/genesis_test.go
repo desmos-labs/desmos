@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -13,10 +14,6 @@ func TestValidateGenesis(t *testing.T) {
 		Genesis  *types.GenesisState
 		ExpError error
 	}{
-		{
-			Genesis:  types.NewGenesisState(-1, nil),
-			ExpError: fmt.Errorf("invalid default session length: -1"),
-		},
 		{
 			Genesis:  types.NewGenesisState(0, nil),
 			ExpError: fmt.Errorf("invalid default session length: 0"),

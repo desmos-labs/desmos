@@ -57,7 +57,7 @@ func RandomPost() types.Post {
 
 	if r.Intn(101) <= 50 {
 		if pollData := simulation.RandomPollData(r); pollData != nil {
-			post = post.WithPollData(*pollData)
+			post = post.WithPollData(pollData)
 		}
 	}
 
@@ -78,14 +78,14 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 	}
 
 	return types.QueryPostsParams{
-		Page:         int32(r.Intn(10)),
-		Limit:        int32(r.Intn(100)),
+		Page:         r.Uint64(),
+		Limit:        r.Uint64(),
 		SortBy:       sortBy,
 		SortOrder:    sortOrder,
-		ParentID:     nil,
+		ParentID:     "",
 		CreationTime: nil,
 		Subspace:     "",
-		Creator:      nil,
+		Creator:      "",
 		Hashtags:     nil,
 	}
 }
@@ -97,7 +97,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePost(b *testing.B) {
 	b.SetParallelism(10)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, post)
+		suite.keeper.SavePost(suite.ctx, post)
 	}
 }
 
@@ -106,15 +106,15 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.k.GetPosts(suite.ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	randomPost := posts[r.Intn(len(posts))]
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPost(suite.ctx, randomPost.PostID)
+		suite.keeper.GetPost(suite.ctx, randomPost.PostID)
 	}
 
 }
@@ -123,12 +123,12 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
 	fmt.Println("Benchmark: GetPosts")
 
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPosts(suite.ctx)
+		suite.keeper.GetPosts(suite.ctx)
 	}
 }
 
@@ -137,55 +137,55 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
 	randomQueryParams := RandomQueryParams(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = suite.k.GetPostsFiltered(suite.ctx, randomQueryParams)
+		_ = suite.keeper.GetPostsFiltered(suite.ctx, randomQueryParams)
 	}
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
-	fmt.Println("Benchmark Save a post reaction")
+	fmt.Println("Benchmark Save a post registeredReactions")
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.k.GetPosts(suite.ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 		suite.Require().NoError(err)
 	}
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
-	fmt.Println("Benchmark Get a post reaction")
+	fmt.Println("Benchmark Get a post registeredReactions")
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
+		suite.keeper.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.k.GetPosts(suite.ctx)
+	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
 	reaction := simulation.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
 		suite.Require().NoError(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPostReactions(suite.ctx, post.PostID)
+		suite.keeper.GetPostReactions(suite.ctx, post.PostID)
 	}
 }

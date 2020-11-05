@@ -9,10 +9,6 @@ import (
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
-func newStrPtr(value string) *string {
-	return &value
-}
-
 func TestUnique(t *testing.T) {
 	tests := []struct {
 		value []string
@@ -45,48 +41,7 @@ func TestUnique(t *testing.T) {
 	}
 }
 
-func TestStringPtrsEqual(t *testing.T) {
-	tests := []struct {
-		first     *string
-		second    *string
-		expEquals bool
-	}{
-		{
-			first:     newStrPtr("first"),
-			second:    newStrPtr("second"),
-			expEquals: false,
-		},
-		{
-			first:     nil,
-			second:    newStrPtr("second"),
-			expEquals: false,
-		},
-		{
-			first:     newStrPtr("first"),
-			second:    nil,
-			expEquals: false,
-		},
-		{
-			first:     newStrPtr("first"),
-			second:    newStrPtr("first"),
-			expEquals: true,
-		},
-		{
-			first:     nil,
-			second:    nil,
-			expEquals: true,
-		},
-	}
-
-	for index, test := range tests {
-		test := test
-		t.Run(strconv.Itoa(index), func(t *testing.T) {
-			require.Equal(t, test.expEquals, commons.StringPtrsEqual(test.first, test.second))
-		})
-	}
-}
-
-func TestPostMedia_ParseURI(t *testing.T) {
+func TestIsURIValid(t *testing.T) {
 	tests := []struct {
 		uri      string
 		expValid bool

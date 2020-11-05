@@ -13,6 +13,7 @@ message SessionID {
   uint64 value = 1;
 }
 
+// Session represents an inter-chain session used to authenticate a user from another Cosmos chain
 message Session {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;

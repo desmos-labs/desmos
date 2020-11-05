@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -33,23 +32,21 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 	}
 
 	if exist := k.CheckPostExistence(ctx, postID); !exist {
-		return nil, sdkerrors.Wrap(
-			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with ID: %s doesn't exist", postID),
-		)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with ID: %s doesn't exist", postID)
 	}
 
+	// Create and store the report
 	report := types.NewReport(postID, msg.ReportType, msg.Message, msg.User)
-	if err := k.SaveReport(ctx, report); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, err.Error())
+	err := k.SaveReport(ctx, report)
+	if err != nil {
+		return nil, err
 	}
 
-	createEvent := sdk.NewEvent(
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReported,
 		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyReportOwner, msg.User),
-	)
-	ctx.EventManager().EmitEvent(createEvent)
+	))
 
 	return &types.MsgReportPostResponse{}, nil
 }

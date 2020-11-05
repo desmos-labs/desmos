@@ -31,16 +31,16 @@ func SimulateMsgAnswerToPoll(
 
 		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, nil
 		}
 
 		msg := types.NewMsgAnswerPoll(postID, answers, acc.Address.String())
 		err := sendMsgAnswerPoll(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgAnswerToPoll"), nil, nil
 	}
 }
 
@@ -58,7 +58,7 @@ func sendMsgAnswerPoll(
 		return err
 	}
 
-	txGen := simappparams.MakeEncodingConfig().TxConfig
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
 		txGen,
 		[]sdk.Msg{msg},

@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"context"
 	"time"
 
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
@@ -16,12 +15,13 @@ import (
 
 func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 	tests := []struct {
-		name             string
-		existentProfiles []types.Profile
-		msg              *types.MsgSaveProfile
-		expProfiles      []types.Profile
-		expErr           error
-		expEvent         sdk.Event
+		name              string
+		existentProfiles  []types.Profile
+		blockTime         time.Time
+		msg               *types.MsgSaveProfile
+		expErr            error
+		expEvents         sdk.Events
+		expStoredProfiles []types.Profile
 	}{
 		{
 			name: "Profile saved (with no previous profile created)",
@@ -33,7 +33,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"https://test.com/cover-pic",
 				suite.testData.profile.Creator,
 			),
-			expProfiles: []types.Profile{
+			expStoredProfiles: []types.Profile{
 				types.NewProfile(
 					"custom_dtag",
 					"my-moniker",
@@ -46,15 +46,18 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					suite.testData.profile.Creator,
 				),
 			},
-			expEvent: sdk.NewEvent(
-				types.EventTypeProfileSaved,
-				sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
-				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
-				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
-			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeProfileSaved,
+					sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
+				),
+			},
 		},
 		{
-			name: "Profile saved (with previous profile created)",
+			name:      "Profile saved (with previous profile created)",
+			blockTime: suite.testData.profile.CreationDate,
 			existentProfiles: []types.Profile{
 				types.NewProfile(
 					"test_dtag",
@@ -76,7 +79,15 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"https://test.com/cover-pic",
 				suite.testData.profile.Creator,
 			),
-			expProfiles: []types.Profile{
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeProfileSaved,
+					sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
+				),
+			},
+			expStoredProfiles: []types.Profile{
 				types.NewProfile(
 					"other_dtag",
 					"moniker",
@@ -89,17 +100,11 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					suite.testData.profile.Creator,
 				),
 			},
-			expEvent: sdk.NewEvent(
-				types.EventTypeProfileSaved,
-				sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
-				sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
-				sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
-			),
 		},
 		{
-			name: "Profile not edited because of the invalid profile picture",
+			name:      "Profile not edited because of the invalid profile picture",
+			blockTime: suite.testData.profile.CreationDate,
 			existentProfiles: []types.Profile{
-				suite.testData.profile,
 				types.NewProfile(
 					"custom_dtag",
 					"biography",
@@ -117,7 +122,18 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"",
 				suite.testData.profile.Creator,
 			),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
+			expEvents: sdk.EmptyEvents(),
+			expErr:    sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
+			expStoredProfiles: []types.Profile{
+				types.NewProfile(
+					"custom_dtag",
+					"biography",
+					"",
+					types.NewPictures("", ""),
+					suite.testData.profile.CreationDate,
+					suite.testData.profile.Creator,
+				),
+			},
 		},
 	}
 
@@ -125,35 +141,24 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
-			suite.ctx = suite.ctx.WithBlockTime(suite.testData.profile.CreationDate)
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-
+			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 			for _, acc := range test.existentProfiles {
-				err := suite.keeper.StoreProfile(suite.ctx, acc)
+				err := suite.k.StoreProfile(suite.ctx, acc)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := server.SaveProfile(context.Background(), test.msg)
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.SaveProfile(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			if test.expErr != nil {
-				suite.Error(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
+			suite.RequireErrorsEqual(test.expErr, err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
-			if test.expErr == nil {
-				suite.Require().NoError(err)
-
-				profs := suite.keeper.GetProfiles(suite.ctx)
-				suite.Len(profs, len(test.expProfiles))
-				for index, profile := range profs {
-					suite.True(profile.Equal(test.expProfiles[index]))
-				}
-
-				// Check the events
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
+			stored := suite.k.GetProfiles(suite.ctx)
+			suite.Require().Len(stored, len(test.expStoredProfiles))
+			for _, profile := range stored {
+				suite.Require().Contains(test.expStoredProfiles, profile)
 			}
 		})
 	}
@@ -161,25 +166,34 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 
 func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 	tests := []struct {
-		name            string
-		existentAccount *types.Profile
-		msg             *types.MsgDeleteProfile
-		expErr          error
+		name           string
+		storedProfiles []types.Profile
+		msg            *types.MsgDeleteProfile
+		expErr         error
+		expEvents      sdk.Events
 	}{
 		{
-			name:            "Profile doesn't exists",
-			existentAccount: nil,
-			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
+			name:           "Profile doesn't exists",
+			storedProfiles: nil,
+			msg:            types.NewMsgDeleteProfile(suite.testData.profile.Creator),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
-				"no profile associated with this address: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"no profile associated with the following address found: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
+			expEvents: sdk.EmptyEvents(),
 		},
 		{
-			name:            "Profile deleted successfully",
-			existentAccount: &suite.testData.profile,
-			msg:             types.NewMsgDeleteProfile(suite.testData.profile.Creator),
-			expErr:          nil,
+			name: "Profile deleted successfully",
+			storedProfiles: []types.Profile{
+				suite.testData.profile,
+			},
+			msg: types.NewMsgDeleteProfile(suite.testData.profile.Creator),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeProfileDeleted,
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+				),
+			},
 		},
 	}
 
@@ -188,28 +202,19 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			if test.existentAccount != nil {
-				err := suite.keeper.StoreProfile(suite.ctx, *test.existentAccount)
+			for _, profile := range test.storedProfiles {
+				err := suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			res, err := server.DeleteProfile(context.Background(), test.msg)
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.DeleteProfile(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			if res == nil {
-				suite.NotNil(err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+			if test.expErr != nil {
+				suite.Require().Error(err)
 				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
-			if res != nil {
-				// Check the events
-				createAccountEv := sdk.NewEvent(
-					types.EventTypeProfileDeleted,
-					sdk.NewAttribute(types.AttributeProfileDtag, "dtag"),
-					sdk.NewAttribute(types.AttributeProfileCreator, test.msg.Creator),
-				)
-
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), createAccountEv)
 			}
 		})
 	}
@@ -218,59 +223,75 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 	tests := []struct {
 		name           string
-		msg            *types.MsgRequestDTagTransfer
-		isBlocked      bool
-		hasProfile     bool
+		storedProfiles []types.Profile
 		storedDTagReqs []types.DTagTransferRequest
+		storedBlocks   []relationshipstypes.UserBlock
+		msg            *types.MsgRequestDTagTransfer
 		expErr         error
-		expEvent       sdk.Event
+		expEvents      sdk.Events
 	}{
 		{
-			name:      "Blocked receiver making request returns error",
+			name: "Blocked receiver making request returns error",
+			storedBlocks: []relationshipstypes.UserBlock{
+				relationshipstypes.NewUserBlock(
+					suite.testData.otherUser,
+					suite.testData.user,
+					"This user has been blocked",
+					"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				),
+			},
 			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
-			isBlocked: true,
+			expEvents: sdk.EmptyEvents(),
 			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
-				"The user with address %s has blocked you",
-				suite.testData.user,
+				"the user with address %s has blocked you",
+				suite.testData.otherUser,
 			),
 		},
 		{
-			name:           "No DTag to transfer returns error",
-			msg:            types.NewMsgRequestDTagTransfer(suite.testData.otherUser, suite.testData.user),
-			storedDTagReqs: nil,
-			hasProfile:     false,
+			name:      "No DTag to transfer returns error",
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
 			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
-				"The user with address %s doesn't have a profile yet so their DTag cannot be transferred",
+				"the user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 				suite.testData.otherUser,
 			),
 		},
 		{
 			name: "Already present request returns error",
-			msg:  types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
-			storedDTagReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			storedProfiles: []types.Profile{
+				suite.testData.profile,
+				{
+					Dtag:    "test-dtag",
+					Creator: suite.testData.otherUser,
+				},
 			},
-			hasProfile: true,
+			storedDTagReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest("dtag", suite.testData.profile.Creator, suite.testData.otherUser),
+			},
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.profile.Creator, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
 			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
 				"the transfer request from %s to %s has already been made",
-				suite.testData.otherUser, suite.testData.user,
+				suite.testData.profile.Creator, suite.testData.otherUser,
 			),
 		},
 		{
-			name:           "Not already present request saved correctly",
-			msg:            types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
-			storedDTagReqs: nil,
-			hasProfile:     true,
-			expErr:         nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferRequest,
-				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-			),
+			name: "Not already present request saved correctly",
+			storedProfiles: []types.Profile{
+				suite.testData.profile,
+			},
+			msg: types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.profile.Creator),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferRequest,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.profile.Creator),
+				),
+			},
 		},
 	}
 
@@ -278,43 +299,25 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
 			for _, req := range test.storedDTagReqs {
-				err := suite.keeper.SaveDTagTransferRequest(suite.ctx, req)
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			if test.hasProfile {
-				suite.keeper.AssociateDtagWithAddress(suite.ctx, "dtag", suite.testData.user)
-			}
-
-			if test.isBlocked {
-				err := suite.relKeeper.SaveUserBlock(suite.ctx, relationshipstypes.NewUserBlock(
-					suite.testData.user,
-					suite.testData.otherUser,
-					"test",
-					"",
-				))
+			for _, profile := range test.storedProfiles {
+				err := suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			res, err := server.RequestDTagTransfer(context.Background(), test.msg)
-
-			if res == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
+			for _, block := range test.storedBlocks {
+				err := suite.rk.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
 			}
-			if res != nil {
-				// Check the events
-				createAccountEv := sdk.NewEvent(
-					types.EventTypeDTagTransferRequest,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-				)
 
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), createAccountEv)
-			}
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.RequestDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			suite.RequireErrorsEqual(test.expErr, err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 		})
 	}
 }
@@ -322,31 +325,30 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 	tests := []struct {
 		name           string
-		msg            *types.MsgAcceptDTagTransfer
 		storedDTagReqs []types.DTagTransferRequest
 		storedProfiles []types.Profile
+		msg            *types.MsgAcceptDTagTransfer
 		expErr         error
-		expEvent       sdk.Event
+		expEvents      sdk.Events
 	}{
 		{
-			name:   "No request made from the receiving user returns error",
-			msg:    types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "no request made from %s", suite.testData.otherUser),
+			name:      "No request made from the receiving user returns error",
+			msg:       types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
+			expErr:    sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "no request made from %s", suite.testData.user),
 		},
 		{
-			name: "No existent profile for the dTag owner returns error",
+			name: "Return an error if the request receiver does not have a profile",
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
-			msg:    types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "profile of %s doesn't exist", suite.testData.user),
+			msg:       types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
+			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"profile of %s doesn't exist", suite.testData.otherUser),
 		},
 		{
-			name: "Already existent dTag for current owner edited profile returns error",
-			msg:  types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			storedDTagReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
+			name: "Return an error if the new DTag has already been chosen by another user",
 			storedProfiles: []types.Profile{
 				types.NewProfile(
 					"dtag",
@@ -354,7 +356,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.user,
+					suite.testData.otherUser,
 				),
 				types.NewProfile(
 					"newDtag",
@@ -365,13 +367,15 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"cosmos1lkqrqrns0ekttzrs678thh5f4prcgasthqcxph",
 				),
 			},
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with dtag: newDtag has already been created"),
-		},
-		{
-			name: "Current owner DTag different that the requested one",
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
+			msg:       types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
+			expErr:    sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "a profile with dtag newDtag has already been created"),
+		},
+		{
+			name: "Return an error when current owner DTag is different from the requested one",
 			storedProfiles: []types.Profile{
 				types.NewProfile(
 					"dtag1",
@@ -379,15 +383,19 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.user,
+					suite.testData.otherUser,
 				),
 			},
-			msg:    types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged"),
+			storedDTagReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			},
+			msg:       types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.EmptyEvents(),
+			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				"the owner's DTag is different from the one to be exchanged"),
 		},
 		{
-			name:           "Dtag exchanged correctly (not existent receiver profile)",
-			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			name: "DTag exchanged correctly (not existent sender profile)",
 			storedProfiles: []types.Profile{
 				types.NewProfile(
 					"dtag",
@@ -395,21 +403,25 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.user,
+					suite.testData.otherUser,
 				),
 			},
+			storedDTagReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			},
 			msg: types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferAccept,
-				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferAccept,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.otherUser),
+				),
+			},
 		},
 		{
-			name:           "Dtag exchanged correctly (already existent receiver profile)",
-			storedDTagReqs: []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser)},
+			name: "DTag exchanged correctly (already existent sender profile)",
 			storedProfiles: []types.Profile{
 				types.NewProfile(
 					"dtag",
@@ -428,51 +440,41 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					suite.testData.otherUser,
 				),
 			},
+			storedDTagReqs: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest("previous", suite.testData.user, suite.testData.otherUser),
+			},
 			msg: types.NewMsgAcceptDTagTransfer("newDtag", suite.testData.user, suite.testData.otherUser),
-			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferAccept,
-				sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-				sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferAccept,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "previous"),
+					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.otherUser),
+				),
+			},
 		},
 	}
 
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+
 			for _, req := range test.storedDTagReqs {
-				err := suite.keeper.SaveDTagTransferRequest(suite.ctx, req)
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
 			for _, prof := range test.storedProfiles {
-				err := suite.keeper.StoreProfile(suite.ctx, prof)
+				err := suite.k.StoreProfile(suite.ctx, prof)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := server.AcceptDTagTransfer(context.Background(), test.msg)
-
-			if err == nil {
-				// Check the events
-				createAccountEv := sdk.NewEvent(
-					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "newDtag"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-				)
-
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), createAccountEv)
-			}
-
-			if err != nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.AcceptDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
+			suite.RequireErrorsEqual(test.expErr, err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 		})
 	}
 }
@@ -483,26 +485,30 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 		msg            *types.MsgRefuseDTagTransfer
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
-		expEvent       sdk.Event
+		expEvents      sdk.Events
 	}{
 		{
 			name:           "No requests found returns error",
-			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
+			msg:            types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			expEvents:      sdk.EmptyEvents(),
+			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"request from %s to %s not found", suite.testData.user, suite.testData.otherUser),
 		},
 		{
 			name: "Deletion runs correctly",
-			msg:  types.NewMsgRefuseDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
+			msg: types.NewMsgRefuseDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferRefuse,
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.otherUser),
+				),
+			},
 			expErr: nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferRefuse,
-				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-			),
 		},
 	}
 
@@ -510,23 +516,15 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
 			for _, req := range test.storedDTagReqs {
-				err := suite.keeper.SaveDTagTransferRequest(suite.ctx, req)
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := server.RefuseDTagTransfer(context.Background(), test.msg)
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.RefuseDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			if err == nil {
-				// Check the data
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
-			}
-
-			if err != nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
+			suite.RequireErrorsEqual(test.expErr, err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 		})
 	}
 }
@@ -537,26 +535,32 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 		msg            *types.MsgCancelDTagTransfer
 		storedDTagReqs []types.DTagTransferRequest
 		expErr         error
-		expEvent       sdk.Event
+		expEvents      sdk.Events
 	}{
 		{
 			name:           "No requests found returns error",
-			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
 			storedDTagReqs: nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no requests to be deleted"),
+			msg:            types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			expEvents:      sdk.EmptyEvents(),
+			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"request from %s to %s not found",
+				suite.testData.user, suite.testData.otherUser,
+			),
 		},
 		{
 			name: "Deletion runs correctly",
-			msg:  types.NewMsgCancelDTagTransferRequest(suite.testData.otherUser, suite.testData.user),
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
+			msg: types.NewMsgCancelDTagTransferRequest(suite.testData.user, suite.testData.otherUser),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferCancel,
+					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.otherUser),
+				),
+			},
 			expErr: nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypeDTagTransferCancel,
-				sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.user),
-				sdk.NewAttribute(types.AttributeRequestSender, suite.testData.otherUser),
-			),
 		},
 	}
 
@@ -564,22 +568,14 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
 			for _, req := range test.storedDTagReqs {
-				err := suite.keeper.SaveDTagTransferRequest(suite.ctx, req)
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := server.CancelDTagTransfer(context.Background(), test.msg)
-
-			if err == nil {
-				suite.Len(suite.ctx.EventManager().Events(), 1)
-				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
-			}
-
-			if err != nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.CancelDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
+			suite.RequireErrorsEqual(test.expErr, err)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 		})
 	}
 }

@@ -25,6 +25,13 @@ message RegisteredReaction {
   ];
 }
 
+// RegisteredReactions wraps a list of post reactions
+message RegisteredReactions {
+  repeated desmos.posts.v1beta1.RegisteredReaction reactions = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
 // ___________________________________________________________________________________________________________________
 
 // PostReaction is a struct of a user reaction to a post
@@ -40,5 +47,12 @@ message PostReaction {
   ];
   string owner = 3 [
     (gogoproto.moretags) = "yaml\"owner\""
+  ];
+}
+
+// PostReactions wraps a list of registered reactions
+message PostReactions {
+  repeated desmos.posts.v1beta1.PostReaction reactions = 1 [
+    (gogoproto.nullable) = false
   ];
 }

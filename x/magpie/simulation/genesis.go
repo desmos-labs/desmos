@@ -18,10 +18,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 }
 
 // randomSessions returns a randomly generated list of sessions
-func randomSessions(simState *module.SimulationState) types.Sessions {
+func randomSessions(simState *module.SimulationState) []types.Session {
 	sessionsLength := 0
 
-	sessions := make(types.Sessions, sessionsLength)
+	sessions := make([]types.Session, sessionsLength)
 	for i := 0; i < sessionsLength; i++ {
 
 		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)

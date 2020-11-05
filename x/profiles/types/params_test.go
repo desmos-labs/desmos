@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func TestDefaultParams(t *testing.T) {
@@ -70,12 +71,6 @@ func TestDefaultDTagParams(t *testing.T) {
 	dTagParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	defaultDTagParams := types.DefaultDtagParams()
 	require.Equal(t, defaultDTagParams, dTagParams)
-}
-
-func TestMonikerParams_String(t *testing.T) {
-	monikerParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	actual := monikerParams.String()
-	require.Equal(t, "Moniker params lengths:\nMin accepted length: 2\nMax accepted length: 1000", actual)
 }
 
 func TestValidateMonikerParams(t *testing.T) {

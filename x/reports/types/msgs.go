@@ -1,8 +1,12 @@
 package types
 
 import (
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // NewMsgReportPost returns a MsgReportPost object
@@ -23,15 +27,21 @@ func (msg MsgReportPost) Type() string { return ActionReportPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.User)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.User)
+	if !poststypes.IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrapf(poststypes.ErrInvalidPostID, msg.PostId)
 	}
 
-	report := NewReport(msg.PostId, msg.ReportType, msg.Message, msg.User)
-	err = report.Validate()
+	if strings.TrimSpace(msg.ReportType) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report type cannot be empty")
+	}
+
+	if strings.TrimSpace(msg.Message) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report message cannot be empty")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid report creator: %s", msg.User)
 	}
 
 	return nil
