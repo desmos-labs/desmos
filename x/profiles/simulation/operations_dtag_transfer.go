@@ -96,8 +96,8 @@ func randomDtagRequestTransferFields(
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
-	if k.IsUserBlocked(ctx, receiver.Address, sender.Address) {
-		return sim.Account{}, types.DTagTransferRequest{}, true
+	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
+		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	randomDTag := RandomDTag(r)

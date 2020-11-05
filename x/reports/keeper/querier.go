@@ -6,9 +6,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // NewQuerier is the module level router for state queries
@@ -27,8 +28,8 @@ func NewQuerier(keeper Keeper, legacyQuerierCodec *codec.LegacyAmino) sdk.Querie
 func queryReports(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
-	id := posts.PostID(path[0])
-	if !id.Valid() {
+	id := path[0]
+	if !poststypes.IsValidPostID(id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
 	}
 

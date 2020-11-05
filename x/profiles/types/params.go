@@ -95,17 +95,6 @@ func DefaultMonikerParams() MonikerParams {
 		DefaultMaxMonikerLength)
 }
 
-// String implements stringer interface
-func (params MonikerParams) String() string {
-	out := "Moniker params lengths:\n"
-	out += fmt.Sprintf("Min accepted length: %s\nMax accepted length: %s",
-		params.MinMonikerLength,
-		params.MaxMonikerLength,
-	)
-
-	return strings.TrimSpace(out)
-}
-
 func ValidateMonikerParams(i interface{}) error {
 	params, isNameSurnParams := i.(MonikerParams)
 

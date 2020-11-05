@@ -8,9 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // NewTxCmd returns a new command allowing to perform reports transactions
@@ -47,8 +48,8 @@ E.g.
 				return err
 			}
 
-			postID := posts.PostID(args[0])
-			if !postID.Valid() {
+			postID := args[0]
+			if !poststypes.IsValidPostID(postID) {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid postID: %s", postID))
 			}
 

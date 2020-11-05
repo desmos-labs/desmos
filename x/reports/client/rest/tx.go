@@ -9,9 +9,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/gorilla/mux"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
@@ -41,13 +42,13 @@ func reportPostHandler(cliCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		postID := posts.PostID(vars[ParamPostID])
-		if !postID.Valid() {
+		postID := vars[ParamPostID]
+		if !poststypes.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
 
-		msg := types.NewMsgReportPost(postID.String(), req.ReportType, req.ReportMessage, addr.String())
+		msg := types.NewMsgReportPost(postID, req.ReportType, req.ReportMessage, addr.String())
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}

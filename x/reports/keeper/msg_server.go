@@ -6,7 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	posttypes "github.com/desmos-labs/desmos/x/posts/types"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -26,19 +27,19 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the post to stored exists
-	postID, err := posttypes.ParsePostID(msg.PostId)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, err.Error())
+	postID := msg.PostId
+	if !poststypes.IsValidPostID(postID) {
+		return nil, sdkerrors.Wrap(poststypes.ErrInvalidPostID, postID)
 	}
 
 	if exist := k.CheckPostExistence(ctx, postID); !exist {
 		return nil, sdkerrors.Wrap(
 			sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with ID: %s doesn't exist", msg.PostId),
+			fmt.Sprintf("post with ID: %s doesn't exist", postID),
 		)
 	}
 
-	report := types.NewReport(msg.PostId, msg.ReportType, msg.Message, msg.User)
+	report := types.NewReport(postID, msg.ReportType, msg.Message, msg.User)
 	if err := k.SaveReport(ctx, report); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, err.Error())
 	}

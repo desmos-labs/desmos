@@ -55,21 +55,21 @@ func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []simtypes.Account
 
 	return ReportsData{
 		Creator: simAccount,
-		PostID:  post.PostID.String(),
+		PostID:  post.PostID,
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}
 }
 
 // RandomPostID returns a randomly generated postID
-func RandomPostID(r *rand.Rand) posts.PostID {
+func RandomPostID(r *rand.Rand) string {
 	randBytes := make([]byte, 4)
 	_, err := r.Read(randBytes)
 	if err != nil {
 		panic(err)
 	}
 	hash := sha256.Sum256(randBytes)
-	return posts.PostID(hex.EncodeToString(hash[:]))
+	return hex.EncodeToString(hash[:])
 }
 
 func RandomReportMessage(r *rand.Rand) string {

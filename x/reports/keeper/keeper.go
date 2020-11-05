@@ -3,8 +3,8 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
@@ -27,7 +27,7 @@ func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, pk postskeeper.
 
 // CheckPostExistence checks if a post with the given postID is present inside
 // the current context and returns a boolean indicating that.
-func (k Keeper) CheckPostExistence(ctx sdk.Context, postID posts.PostID) bool {
+func (k Keeper) CheckPostExistence(ctx sdk.Context, postID string) bool {
 	_, exist := k.postKeeper.GetPost(ctx, postID)
 	return exist
 }

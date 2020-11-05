@@ -98,8 +98,8 @@ func randomRelationshipFields(
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
-	if k.IsUserBlocked(ctx, receiver.Address, sender.Address) {
-		return sim.Account{}, types.Relationship{}, true
+	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
+		return simtypes.Account{}, types.Relationship{}, true
 	}
 
 	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace)

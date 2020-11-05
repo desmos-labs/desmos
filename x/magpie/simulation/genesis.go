@@ -5,6 +5,7 @@ package simulation
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
@@ -32,7 +33,7 @@ func randomSessions(simState *module.SimulationState) types.Sessions {
 		// Create the session
 		sessions[i] = types.NewSession(
 			types.SessionID{Value: uint64(i)},
-			data.Owner,
+			data.Owner.Address.String(),
 			uint64(created),
 			uint64(expiry),
 			data.Namespace,

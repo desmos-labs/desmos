@@ -131,9 +131,9 @@ func queryPollAnswers(
 
 	pollAnswers := keeper.GetPollAnswers(ctx, id)
 
-	pollAnswersResponse := types.PollAnswersQueryResponse{
-		PostID:         id,
-		AnswersDetails: pollAnswers,
+	pollAnswersResponse := types.QueryPollAnswersResponse{
+		PostId:  id,
+		Answers: pollAnswers,
 	}
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &pollAnswersResponse)
 

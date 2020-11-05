@@ -19,8 +19,7 @@ func NewReport(postID string, reportType string, message string, user string) Re
 
 // Validate implements validator
 func (r Report) Validate() error {
-	_, err := postsTypes.ParsePostID(r.PostId)
-	if err != nil {
+	if !postsTypes.IsValidPostID(r.PostId) {
 		return fmt.Errorf("invalid post id: %s", r.PostId)
 	}
 

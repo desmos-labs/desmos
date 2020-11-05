@@ -1,16 +1,13 @@
 package keeper_test
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+
 	"github.com/desmos-labs/desmos/x/posts"
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
-
-	"github.com/desmos-labs/desmos/x/relationships"
-
-	"github.com/desmos-labs/desmos/x/posts/types/models"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -20,17 +17,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
-	createPostMessage := types.NewMsgCreatePost(
-		suite.testData.post.Message,
-		suite.testData.post.ParentID,
-		suite.testData.post.AllowsComments,
-		suite.testData.post.Subspace,
-		suite.testData.post.OptionalData,
-		suite.testData.post.Creator,
-		suite.testData.post.Attachments,
-		suite.testData.post.PollData,
-	)
-
 	tests := []struct {
 		name        string
 		storedPosts types.Posts
@@ -52,13 +38,31 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					Creator:        suite.testData.post.Creator,
 				},
 			},
-			msg: createPostMessage,
+			msg: types.NewMsgCreatePost(
+				suite.testData.post.Message,
+				suite.testData.post.ParentID,
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				suite.testData.post.Creator,
+				suite.testData.post.Attachments,
+				suite.testData.post.PollData,
+			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"the provided post conflicts with the one having id 040b0c16cd541101d24100e4a9c90e4dbaebbee977a94d673f79591cbb5f4465"),
 		},
 		{
 			name: "Post with new id is stored properly",
-			msg:  createPostMessage,
+			msg: types.NewMsgCreatePost(
+				suite.testData.post.Message,
+				suite.testData.post.ParentID,
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				suite.testData.post.Creator,
+				suite.testData.post.Attachments,
+				suite.testData.post.PollData,
+			),
 			expPost: types.NewPost(
 				suite.testData.post.ParentID,
 				suite.testData.post.Message,
@@ -67,7 +71,11 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 				suite.testData.post.OptionalData,
 				suite.ctx.BlockTime(),
 				suite.testData.post.Creator,
-			).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
+			).WithAttachments(
+				suite.testData.post.Attachments,
+			).WithPollData(
+				*suite.testData.post.PollData,
+			),
 		},
 		{
 			name: "Storing a valid post with missing parent id returns expError",
@@ -125,7 +133,16 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 					suite.testData.post.Creator,
 				).WithAttachments(suite.testData.post.Attachments).WithPollData(*suite.testData.post.PollData),
 			},
-			msg: createPostMessage,
+			msg: types.NewMsgCreatePost(
+				suite.testData.post.Message,
+				suite.testData.post.ParentID,
+				suite.testData.post.AllowsComments,
+				suite.testData.post.Subspace,
+				suite.testData.post.OptionalData,
+				suite.testData.post.Creator,
+				suite.testData.post.Attachments,
+				suite.testData.post.PollData,
+			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				"the provided post conflicts with the one having id 040b0c16cd541101d24100e4a9c90e4dbaebbee977a94d673f79591cbb5f4465"),
 		},
@@ -172,7 +189,8 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
+			suite.SetupTest()
+
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 			store := suite.ctx.KVStore(suite.storeKey)
 
@@ -181,39 +199,41 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 			}
 
 			if test.msg.Message == "blocked" {
-				_ = suite.rk.SaveUserBlock(suite.ctx,
-					relationshipstypes.NewUserBlock(otherCreator, suite.testData.post.Creator, "test", ""))
+				for _, attachment := range test.msg.Attachments {
+					for _, tag := range attachment.Tags {
+						block := relationshipstypes.NewUserBlock(tag, suite.testData.post.Creator, "test", "")
+						err := suite.rk.SaveUserBlock(suite.ctx, block)
+						suite.Require().NoError(err)
+					}
+				}
 			}
 
-			handler := posts.NewHandler(suite.k)
-			res, err := handler(suite.ctx, test.msg)
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.CreatePost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			// Valid response
-			if res != nil {
+			if test.expError == nil {
 				// Check the post
 				var stored types.Post
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(postID)), &stored)
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.expPost.PostID)), &stored)
 
-				suite.True(stored.Equals(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
-
-				// Check the data
-				suite.Require().Equal(suite.k.cdc.MustMarshalBinaryLengthPrefixed(test.expPost.PostID), res.Data)
+				suite.True(stored.Equal(test.expPost), "Expected: %s, actual: %s", test.expPost, stored)
 
 				// Check the events
 				creationEvent := sdk.NewEvent(
 					types.EventTypePostCreated,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID.String()),
-					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostID, test.expPost.PostID),
+					sdk.NewAttribute(types.AttributeKeyPostParentID, test.expPost.ParentID),
 					sdk.NewAttribute(types.AttributeKeyPostCreationTime, test.expPost.Created.Format(time.RFC3339)),
-					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator.String()),
+					sdk.NewAttribute(types.AttributeKeyPostOwner, test.expPost.Creator),
 				)
-				suite.Len(res.Events, 1)
-				suite.Contains(res.Events, creationEvent)
+				suite.Len(suite.ctx.EventManager(), 1)
+				suite.Contains(suite.ctx.EventManager(), creationEvent)
 			}
 
 			// Invalid response
-			if res == nil {
-				suite.NotNil(err)
+			if test.expError != nil {
+				suite.Require().Error(err)
 				suite.Require().Equal(test.expError.Error(), err.Error())
 			}
 		})
@@ -222,63 +242,93 @@ func (suite *KeeperTestSuite) Test_handleMsgCreatePost() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	editor, err := sdk.AccAddressFromBech32("cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63")
-	suite.Require().NoError(err)
-	timeZone, _ := time.LoadLocation("UTC")
-
 	editedPollData := types.NewPollData(
 		"poll?",
-		time.Date(2050, 1, 1, 15, 15, 00, 000, timeZone),
-		models.NewPollAnswers(
-			types.NewPollAnswer(models.AnswerID(1), "No"),
-			types.NewPollAnswer(models.AnswerID(2), "No"),
+		time.Date(2050, 1, 1, 15, 15, 00, 000, time.FixedZone("UTC", 0)),
+		types.NewPollAnswers(
+			types.NewPollAnswer("1", "No"),
+			types.NewPollAnswer("2", "No"),
 		),
 		false,
 		true,
 	)
-
-	editedAttachments := models.NewAttachments(types.NewAttachment("https://edited.com", "text/plain", nil))
+	editedAttachments := types.NewAttachments(types.NewAttachment("https://edited.com", "text/plain", nil))
 
 	testData := []struct {
 		name       string
 		storedPost *types.Post
-		msg        types.MsgEditPost
+		msg        *types.MsgEditPost
 		expError   error
 		expPost    *types.Post
 	}{
 		{
 			name:       "Post not found",
 			storedPost: nil,
-			msg:        types.NewMsgEditPost(id, "Edited message", nil, nil, suite.testData.post.Creator),
-			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found"),
+			msg: types.NewMsgEditPost(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"Edited message",
+				nil,
+				nil,
+				suite.testData.post.Creator,
+			),
+			expError: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"post with id 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af not found",
+			),
 		},
 		{
 			name:       "Invalid editor",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", nil, nil, editor),
-			expError:   sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
+			msg: types.NewMsgEditPost(
+				suite.testData.post.PostID,
+				"Edited message",
+				nil,
+				nil,
+				"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner"),
 		},
 		{
 			name:       "Edit date before creation date",
 			storedPost: &suite.testData.post,
-			msg:        types.NewMsgEditPost(suite.testData.post.PostID, "Edited message", nil, nil, suite.testData.post.Creator),
-			expError:   sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
+			msg: types.NewMsgEditPost(
+				suite.testData.post.PostID,
+				"Edited message",
+				nil,
+				nil,
+				suite.testData.post.Creator,
+			),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date"),
 		},
 		{
 			name:       "Blocked creator from tags",
 			storedPost: &suite.testData.post,
-			msg: types.NewMsgEditPost(suite.testData.post.PostID, "blocked",
-				models.NewAttachments(types.NewAttachment("https://edited.com", "text/plain",
-					[]sdk.AccAddress{otherCreator})), nil, suite.testData.post.Creator),
+			msg: types.NewMsgEditPost(
+				suite.testData.post.PostID,
+				"blocked",
+				types.NewAttachments(
+					types.NewAttachment(
+						"https://edited.com",
+						"text/plain",
+						[]string{"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63"},
+					),
+				),
+				nil,
+				suite.testData.post.Creator,
+			),
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf(fmt.Sprintf("The user with address %s has blocked you", otherCreator))),
+				"The user with address cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63 has blocked you"),
 		},
 		{
 			name:       "Valid request is handled properly without attachments and pollData",
 			storedPost: &suite.testData.post,
-			msg: types.NewMsgEditPost(suite.testData.post.PostID, "Edited message",
-				editedAttachments, &editedPollData, suite.testData.post.Creator),
+			msg: types.NewMsgEditPost(
+				suite.testData.post.PostID,
+				"Edited message",
+				editedAttachments,
+				&editedPollData,
+				suite.testData.post.Creator,
+			),
 			expPost: &types.Post{
 				PostID:         suite.testData.post.PostID,
 				ParentID:       suite.testData.post.ParentID,
@@ -301,11 +351,16 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 			suite.SetupTest()
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
-			store := suite.ctx.KVStore(suite.k.storeKey)
+			store := suite.ctx.KVStore(suite.storeKey)
 
 			if test.msg.Message == "blocked" {
-				_ = suite.rk.SaveUserBlock(suite.ctx,
-					relationships.NewUserBlock(otherCreator, suite.testData.post.Creator, "test", ""))
+				for _, attachment := range test.msg.Attachments {
+					for _, tag := range attachment.Tags {
+						block := relationshipstypes.NewUserBlock(tag, suite.testData.post.Creator, "test", "")
+						err := suite.rk.SaveUserBlock(suite.ctx, block)
+						suite.Require().NoError(err)
+					}
+				}
 				test.storedPost.Created = suite.ctx.BlockTime()
 				suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
 			}
@@ -316,27 +371,27 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 					suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().AddDate(0, 0, 1))
 					test.expPost.LastEdited = suite.ctx.BlockTime()
 				}
-				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.k.cdc.MustMarshalBinaryBare(&test.storedPost))
+				store.Set(types.PostStoreKey(test.storedPost.PostID), suite.cdc.MustMarshalBinaryBare(test.storedPost))
 			}
 
-			handler := posts.NewHandler(suite.k)
-			res, err := handler(suite.ctx, test.msg)
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.EditPost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			// Valid response
-			if res != nil {
-				suite.Contains(res.Events, sdk.NewEvent(
+			if err == nil {
+				suite.Contains(suite.ctx.EventManager().Events(), sdk.NewEvent(
 					types.EventTypePostEdited,
-					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID.String()),
+					sdk.NewAttribute(types.AttributeKeyPostID, test.msg.PostID),
 					sdk.NewAttribute(types.AttributeKeyPostEditTime, test.expPost.LastEdited.Format(time.RFC3339)),
 				))
 
 				var stored types.Post
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
-				suite.True(test.expPost.Equals(stored))
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.storedPost.PostID)), &stored)
+				suite.True(test.expPost.Equal(stored))
 			}
 
 			// Invalid response
-			if res == nil {
+			if err != nil {
 				suite.NotNil(err)
 				suite.Require().Equal(test.expError.Error(), err.Error())
 			}
@@ -345,36 +400,45 @@ func (suite *KeeperTestSuite) Test_handleMsgEditPost() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
-	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.Require().NoError(err)
-
 	tests := []struct {
 		name               string
 		existingPost       *types.Post
-		msg                types.MsgAddPostReaction
-		registeredReaction *types.Reaction
+		msg                *types.MsgAddPostReaction
+		registeredReaction *types.RegisteredReaction
 		error              error
 		expEvent           sdk.Event
 	}{
 		{
-			name:  "Post not found",
-			msg:   types.NewMsgAddPostReaction("invalid", ":smile:", user),
+			name: "Post not found",
+			msg: types.NewMsgAddPostReaction(
+				"invalid",
+				":smile:",
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id invalid not found"),
 		},
 		{
 			name:         "Registered Reaction not found",
 			existingPost: &suite.testData.post,
-			msg:          types.NewMsgAddPostReaction(suite.testData.post.PostID, ":super-smile:", user),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "short code :super-smile: must be registered before using it"),
+			msg: types.NewMsgAddPostReaction(
+				suite.testData.post.PostID,
+				":super-smile:",
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "short code :super-smile: must be registered before using it"),
 		},
 		{
-			name:               "Valid message works properly (shortcode)",
-			existingPost:       &suite.testData.post,
-			msg:                types.NewMsgAddPostReaction(suite.testData.post.PostID, ":smile:", user),
+			name:         "Valid message works properly (shortcode)",
+			existingPost: &suite.testData.post,
+			msg: types.NewMsgAddPostReaction(
+				suite.testData.post.PostID,
+				":smile:",
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+			),
 			registeredReaction: &suite.testData.registeredReaction,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
@@ -383,10 +447,10 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 		{
 			name:         "Valid message works properly (emoji)",
 			existingPost: &suite.testData.post,
-			msg:          types.NewMsgAddPostReaction(suite.testData.post.PostID, "🙂", user),
+			msg:          types.NewMsgAddPostReaction(suite.testData.post.PostID, "🙂", "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionAdded,
-				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID.String()),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "🙂"),
 				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
@@ -398,9 +462,9 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest() // reset
-			store := suite.ctx.KVStore(suite.k.storeKey)
+			store := suite.ctx.KVStore(suite.storeKey)
 			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.k.cdc.MustMarshalBinaryBare(&test.existingPost))
+				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.cdc.MustMarshalBinaryBare(test.existingPost))
 			}
 
 			if test.registeredReaction != nil {
@@ -416,8 +480,8 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 
 				// Check the post
 				var storedPost types.Post
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
-				suite.True(test.existingPost.Equals(storedPost))
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.msg.PostID)), &storedPost)
+				suite.True(test.existingPost.Equal(storedPost))
 
 				// Check the post reactions
 				var reactValue, reactShortcode string
@@ -433,9 +497,9 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 					reactValue = e.Value
 				}
 
-				var storedReactions types.PostReactions
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				suite.Contains(storedReactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
+				var storedReactions keeper.WrappedPostReactions
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.Contains(storedReactions.Reactions, types.NewPostReaction(reactShortcode, reactValue, test.msg.User))
 
 				// Check the registered reactions
 				registeredReactions := suite.k.GetRegisteredReactions(suite.ctx)
@@ -460,88 +524,152 @@ func (suite *KeeperTestSuite) Test_handleMsgAddPostReaction() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
-	post := types.Post{
-		PostID:       suite.testData.postID,
-		Message:      "Post message",
-		Created:      suite.testData.post.Created,
-		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: nil,
-		Creator:      suite.testData.post.Creator,
-	}
-
-	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.Require().NoError(err)
-
-	regReaction := types.NewRegisteredReaction(user, ":reaction:", "react", suite.testData.post.Subspace)
-	reaction := types.NewPostReaction(":reaction:", "react", user)
-	emojiShortcodeReaction := types.NewPostReaction(":smile:", "😄", user)
-
-	emoji, err := emoji.LookupEmojiByCode(":+1:")
-	suite.Require().NoError(err)
-
-	emojiReaction := types.NewPostReaction(emoji.Shortcodes[0], emoji.Value, user)
-
 	tests := []struct {
-		name               string
-		existingPost       *types.Post
-		registeredReaction *types.Reaction
-		existingReaction   *types.PostReaction
-		msg                types.MsgRemovePostReaction
-		error              error
-		expEvent           sdk.Event
+		name                string
+		storedPosts         []types.Post
+		registeredReactions []types.RegisteredReaction
+		existingReactions   []types.PostReaction
+		msg                 *types.MsgRemovePostReaction
+		error               error
+		expEvent            sdk.Event
 	}{
 		{
-			name:  "Post not found",
-			msg:   types.NewMsgRemovePostReaction("invalid", user, "reaction"),
+			name: "Post not found",
+			msg: types.NewMsgRemovePostReaction(
+				"invalid",
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				"reaction",
+			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id invalid not found"),
 		},
 		{
-			name:         "Reaction not found",
-			existingPost: &post,
-			msg:          types.NewMsgRemovePostReaction(post.PostID, user, "😄"),
-			error:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("cannot remove the reaction with value :smile: from user %s as it does not exist", user)),
-		},
-		{
-			name:               "Removing a reaction using the code works properly (registered reaction)",
-			existingPost:       &post,
-			existingReaction:   &reaction,
-			registeredReaction: &regReaction,
-			msg:                types.NewMsgRemovePostReaction(post.PostID, user, reaction.Shortcode),
-			error:              nil,
-			expEvent: sdk.NewEvent(
-				types.EventTypePostReactionRemoved,
-				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
-				sdk.NewAttribute(types.AttributeKeyPostReactionValue, regReaction.Value),
-				sdk.NewAttribute(types.AttributeKeyReactionShortCode, regReaction.ShortCode),
+			name: "Reaction not found",
+			storedPosts: []types.Post{
+				{
+					PostID:       suite.testData.postID,
+					Message:      "Post message",
+					Created:      suite.testData.post.Created,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+				},
+			},
+			msg: types.NewMsgRemovePostReaction(
+				suite.testData.postID,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				"😄",
+			),
+			error: sdkerrors.Wrapf(
+				sdkerrors.ErrInvalidRequest,
+				"cannot remove the reaction with value :smile: from user %s as it does not exist",
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 			),
 		},
 		{
-			name:             "Removing a reaction using the code works properly (emoji shortcode)",
-			existingPost:     &post,
-			existingReaction: &emojiShortcodeReaction,
-			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emojiShortcodeReaction.Shortcode),
-			error:            nil,
+			name: "Removing a reaction using the code works properly (registered reaction)",
+			storedPosts: []types.Post{
+				{
+					PostID:       suite.testData.postID,
+					Message:      "Post message",
+					Created:      suite.testData.post.Created,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+				},
+			},
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					":reaction:",
+					"react",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
+			},
+			registeredReactions: []types.RegisteredReaction{
+				types.NewRegisteredReaction(
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+					":reaction:",
+					"react",
+					suite.testData.post.Subspace,
+				),
+			},
+			msg: types.NewMsgRemovePostReaction(
+				suite.testData.postID,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				":reaction:",
+			),
+			error: nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionRemoved,
-				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "react"),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":reaction:"),
+			),
+		},
+		{
+			name: "Removing a reaction using the code works properly (emoji shortcode)",
+			storedPosts: []types.Post{
+				{
+					PostID:       suite.testData.postID,
+					Message:      "Post message",
+					Created:      suite.testData.post.Created,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+				},
+			},
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					":smile:",
+					"😄",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
+			},
+			msg: types.NewMsgRemovePostReaction(
+				suite.testData.postID,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				":smile:",
+			),
+			error: nil,
+			expEvent: sdk.NewEvent(
+				types.EventTypePostReactionRemoved,
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
-				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiShortcodeReaction.Shortcode),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
 			),
 		},
 		{
-			name:             "Removing a reaction using the emoji works properly",
-			existingPost:     &post,
-			existingReaction: &emojiReaction,
-			msg:              types.NewMsgRemovePostReaction(post.PostID, user, emoji.Value),
-			error:            nil,
+			name: "Removing a reaction using the emoji works properly",
+			storedPosts: []types.Post{
+				{
+					PostID:       suite.testData.postID,
+					Message:      "Post message",
+					Created:      suite.testData.post.Created,
+					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					OptionalData: nil,
+					Creator:      suite.testData.post.Creator,
+				},
+			},
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					":+1:",
+					"👍",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
+			},
+			msg: types.NewMsgRemovePostReaction(
+				suite.testData.postID,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				"👍",
+			),
+			error: nil,
 			expEvent: sdk.NewEvent(
 				types.EventTypePostReactionRemoved,
-				sdk.NewAttribute(types.AttributeKeyPostID, post.PostID.String()),
-				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, user.String()),
-				sdk.NewAttribute(types.AttributeKeyPostReactionValue, emoji.Value),
-				sdk.NewAttribute(types.AttributeKeyReactionShortCode, emojiReaction.Shortcode),
+				sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
+				sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
+				sdk.NewAttribute(types.AttributeKeyPostReactionValue, "👍"),
+				sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":+1:"),
 			),
 		},
 	}
@@ -549,41 +677,39 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.k.storeKey)
-			if test.existingPost != nil {
-				store.Set(types.PostStoreKey(test.existingPost.PostID), suite.k.cdc.MustMarshalBinaryBare(&test.existingPost))
+			store := suite.ctx.KVStore(suite.storeKey)
+
+			for _, reaction := range test.registeredReactions {
+				key := types.ReactionsStoreKey(reaction.ShortCode, reaction.Subspace)
+				store.Set(key, suite.cdc.MustMarshalBinaryBare(&reaction))
 			}
 
-			if test.registeredReaction != nil {
-				store.Set(types.ReactionsStoreKey(test.registeredReaction.ShortCode, test.registeredReaction.Subspace),
-					suite.k.cdc.MustMarshalBinaryBare(&test.registeredReaction))
+			for _, post := range test.storedPosts {
+				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshalBinaryBare(&post))
+
+				key := types.PostReactionsStoreKey(post.PostID)
+				wrapped := keeper.WrappedPostReactions{Reactions: test.existingReactions}
+				store.Set(key, suite.cdc.MustMarshalBinaryBare(&wrapped))
 			}
 
-			if test.existingReaction != nil {
-				store.Set(
-					types.PostReactionsStoreKey(test.existingPost.PostID),
-					suite.k.cdc.MustMarshalBinaryBare(&types.PostReactions{*test.existingReaction}),
-				)
-			}
-
-			handler := posts.NewHandler(suite.k)
-			res, err := handler(suite.ctx, test.msg)
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.RemovePostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			// Valid response
-			if res != nil {
-				suite.Contains(res.Events, test.expEvent)
+			if err == nil {
+				suite.Contains(suite.ctx.EventManager().Events(), test.expEvent)
 
 				var storedPost types.Post
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(suite.testData.post.PostID)), &storedPost)
-				suite.True(test.existingPost.Equals(storedPost))
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(suite.testData.post.PostID)), &storedPost)
+				suite.Require().Contains(test.storedPosts, storedPost)
 
-				var storedReactions types.PostReactions
-				suite.k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
-				suite.NotContains(storedReactions, test.existingReaction)
+				var storedReactions keeper.WrappedPostReactions
+				suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(storedPost.PostID)), &storedReactions)
+				suite.NotContains(storedReactions.Reactions, test.existingReactions)
 			}
 
 			// Invalid response
-			if res == nil {
+			if err != nil {
 				suite.NotNil(err)
 				suite.Require().Equal(test.error.Error(), err.Error())
 			}
@@ -592,21 +718,20 @@ func (suite *KeeperTestSuite) Test_handleMsgRemovePostReaction() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
-	id := types.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-	id2 := types.PostID("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd")
-	answers := []types.AnswerID{types.AnswerID(1), types.AnswerID(2)}
-	userPollAnswers := types.NewUserAnswer(answers, suite.testData.post.Creator)
-
 	tests := []struct {
 		name          string
-		msg           types.MsgAnswerPoll
 		storedPost    types.Post
-		storedAnswers *types.UserAnswer
+		storedAnswers []types.UserAnswer
+		msg           *types.MsgAnswerPoll
 		expErr        error
 	}{
 		{
 			name: "Post not found",
-			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+				[]string{"1", "2"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.NewPost(
 				"",
 				"Post message",
@@ -622,26 +747,40 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				true,
 				true,
 			)),
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd doesn't exist"),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"post with id f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd doesn't exist",
+			),
 		},
 		{
 			name: "No poll associated with post",
-			msg:  types.NewMsgAnswerPoll(id2, []types.AnswerID{1, 2}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+				[]string{"1", "2"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id2,
+				PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
 				OptionalData: nil,
 				Creator:      suite.testData.post.Creator,
 			},
-			expErr: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no poll associated with ID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"),
+			expErr: sdkerrors.Wrap(
+				sdkerrors.ErrInvalidRequest,
+				"no poll associated with ID: f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+			),
 		},
 		{
 			name: "Answer after poll closure",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
@@ -654,15 +793,22 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 					AllowsAnswerEdits: true,
 				},
 			},
-			expErr: sdkerrors.Wrap(
+			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("the poll associated with ID %s was closed at %s", id, suite.testData.postEndPollDateExpired)),
+				"the poll associated with ID %s was closed at %s",
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				suite.testData.postEndPollDateExpired,
+			),
 		},
 		{
 			name: "Poll doesn't allow multiple answers",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1", "2"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
@@ -676,14 +822,21 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 					AllowsMultipleAnswers: false,
 				},
 			},
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "the poll associated with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow multiple answers"),
+			expErr: sdkerrors.Wrapf(
+				sdkerrors.ErrInvalidRequest,
+				"the poll associated with ID %s doesn't allow multiple answers",
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			),
 		},
 		{
 			name: "Creator provide too many answers",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2, 3}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1", "2", "3"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     suite.testData.post.Subspace,
@@ -698,13 +851,19 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 				},
 			},
 			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "user's answers are more than the available ones in Poll"),
+				sdkerrors.ErrInvalidRequest,
+				"user's answers are more than the available ones in Poll",
+			),
 		},
 		{
 			name: "Creator provide answers that are not the ones provided by the poll",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 3}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1", "3"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     "desmos",
@@ -723,9 +882,13 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 		},
 		{
 			name: "Poll doesn't allow answers' edits",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1", "2"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				Subspace:     "desmos",
@@ -738,15 +901,24 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 					AllowsMultipleAnswers: true,
 				},
 			},
-			storedAnswers: &userPollAnswers,
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest, "post with ID 19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af doesn't allow answers' edits"),
+			storedAnswers: []types.UserAnswer{
+				types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
+			},
+			expErr: sdkerrors.Wrapf(
+				sdkerrors.ErrInvalidRequest,
+				"post with ID %s doesn't allow answers' edits",
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			),
 		},
 		{
 			name: "Answered correctly to post's poll",
-			msg:  types.NewMsgAnswerPoll(id, []types.AnswerID{1, 2}, suite.testData.post.Creator),
+			msg: types.NewMsgAnswerPoll(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{"1", "2"},
+				suite.testData.post.Creator,
+			),
 			storedPost: types.Post{
-				PostID:       id,
+				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Message:      "Post message",
 				Created:      suite.testData.post.Created,
 				LastEdited:   suite.testData.post.LastEdited,
@@ -767,42 +939,38 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.k.storeKey)
-			store.Set(types.PostStoreKey(test.storedPost.PostID), suite.k.cdc.MustMarshalBinaryBare(&test.storedPost))
+			store := suite.ctx.KVStore(suite.storeKey)
+			store.Set(types.PostStoreKey(test.storedPost.PostID), suite.cdc.MustMarshalBinaryBare(&test.storedPost))
 
-			if test.storedAnswers != nil {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPost.PostID, *test.storedAnswers)
+			for _, answer := range test.storedAnswers {
+				suite.k.SavePollAnswers(suite.ctx, test.storedPost.PostID, answer)
 			}
 
 			if test.storedPost.PollData != nil && test.storedPost.PollData.EndDate == suite.testData.postEndPollDateExpired {
 				suite.ctx = suite.ctx.WithBlockTime(suite.testData.postEndPollDate)
 			}
 
-			handler := posts.NewHandler(suite.k)
-			res, err := handler(suite.ctx, test.msg)
-
-			// Invalid response
-			if res == nil {
-				suite.NotNil(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
-			}
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.AnswerPoll(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			// Valid response
-			if res != nil {
-				{
-					// Check the data
-					suite.Require().Equal(suite.k.cdc.MustMarshalBinaryLengthPrefixed("Answered to poll correctly"), res.Data)
+			if err == nil {
 
-					// Check the events
-					answerEvent := sdk.NewEvent(
-						types.EventTypeAnsweredPoll,
-						sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID.String()),
-						sdk.NewAttribute(types.AttributeKeyPollAnswerer, suite.testData.post.Creator.String()),
-					)
+				// Check the events
+				answerEvent := sdk.NewEvent(
+					types.EventTypeAnsweredPoll,
+					sdk.NewAttribute(types.AttributeKeyPostID, test.storedPost.PostID),
+					sdk.NewAttribute(types.AttributeKeyPollAnswerer, suite.testData.post.Creator),
+				)
 
-					suite.Len(res.Events, 1)
-					suite.Contains(res.Events, answerEvent)
-				}
+				suite.Len(suite.ctx.EventManager().Events(), 1)
+				suite.Contains(suite.ctx.EventManager().Events(), answerEvent)
+			}
+
+			// Invalid response
+			if err != nil {
+				suite.NotNil(err)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
 			}
 		})
 	}
@@ -810,19 +978,16 @@ func (suite *KeeperTestSuite) Test_handleMsgAnswerPollPost() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
-	user, err := sdk.AccAddressFromBech32("cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg")
-	suite.Require().NoError(err)
-
 	tests := []struct {
 		name              string
-		existingReactions []types.Reaction
-		msg               types.MsgRegisterReaction
+		existingReactions []types.RegisteredReaction
+		msg               *types.MsgRegisterReaction
 		error             error
 	}{
 		{
 			name: "Reaction registered without error",
 			msg: types.NewMsgRegisterReaction(
-				user,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 				":test:",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -832,7 +997,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 		{
 			name: "Emoji reaction returns error",
 			msg: types.NewMsgRegisterReaction(
-				user,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 				":smile:",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -844,16 +1009,16 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 		},
 		{
 			name: "Already registered reaction returns error",
-			existingReactions: []types.Reaction{
+			existingReactions: []types.RegisteredReaction{
 				types.NewRegisteredReaction(
-					user,
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 					":test:",
 					"https://smile.jpg",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
 			msg: types.NewMsgRegisterReaction(
-				user,
+				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 				":test:",
 				"https://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -868,37 +1033,42 @@ func (suite *KeeperTestSuite) Test_handleMsgRegisterReaction() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			store := suite.ctx.KVStore(suite.k.storeKey)
+			store := suite.ctx.KVStore(suite.storeKey)
+
 			for _, react := range test.existingReactions {
-				react := react
-				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), suite.k.cdc.MustMarshalBinaryBare(&react))
+				store.Set(types.ReactionsStoreKey(react.ShortCode, react.Subspace), suite.cdc.MustMarshalBinaryBare(&react))
 			}
 
-			handler := posts.NewHandler(suite.k)
-			res, err := handler(suite.ctx, test.msg)
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.RegisterReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			// Valid response
-			if res != nil {
-				suite.Contains(res.Events, sdk.NewEvent(
+			if err == nil {
+				suite.Contains(suite.ctx.EventManager().Events(), sdk.NewEvent(
 					types.EventTypeRegisterReaction,
-					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator.String()),
+					sdk.NewAttribute(types.AttributeKeyReactionCreator, test.msg.Creator),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, test.msg.ShortCode),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, test.msg.Value),
 					sdk.NewAttribute(types.AttributeKeyReactionSubSpace, test.msg.Subspace),
 				))
 
-				var storedReaction types.Reaction
-				suite.k.cdc.MustUnmarshalBinaryBare(
+				var storedReaction types.RegisteredReaction
+				suite.cdc.MustUnmarshalBinaryBare(
 					store.Get(types.ReactionsStoreKey(test.msg.ShortCode, test.msg.Subspace)),
 					&storedReaction,
 				)
 
-				expected := types.NewRegisteredReaction(user, test.msg.ShortCode, test.msg.Value, test.msg.Subspace)
+				expected := types.NewRegisteredReaction(
+					test.msg.Creator,
+					test.msg.ShortCode,
+					test.msg.Value,
+					test.msg.Subspace,
+				)
 				suite.True(expected.Equals(storedReaction))
 			}
 
 			// Invalid response
-			if res == nil {
+			if err != nil {
 				suite.NotNil(err)
 				suite.Require().Equal(test.error.Error(), err.Error())
 			}

@@ -159,6 +159,7 @@ func (m *WrappedUserAnswers) GetAnswers() []types.UserAnswer {
 	return nil
 }
 
+// WrappedRegisteredReactions wraps a list of post reactions
 type WrappedRegisteredReactions struct {
 	Reactions []types.RegisteredReaction `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions"`
 }
@@ -203,6 +204,7 @@ func (m *WrappedRegisteredReactions) GetReactions() []types.RegisteredReaction {
 	return nil
 }
 
+// WrappedPostReactions wraps a list of registered reactions
 type WrappedPostReactions struct {
 	Reactions []types.PostReaction `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions"`
 }
