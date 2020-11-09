@@ -142,6 +142,7 @@ module.exports = {
                             },
                         ]
                     },
+                    ["validatos/migrating", "Migrating"],
                     ["validators/halting", "Halting"],
                     ["validators/common-problems", "Common problems"],
                 ]

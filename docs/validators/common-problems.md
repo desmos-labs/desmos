@@ -103,8 +103,8 @@ Sometimes, it might happen that your node cannot connect to the persistent peers
 
 In order to solve this problem, there are two alternative way: 
 
-1. Use a seed node instead of a persistent peer;
-2. **OR**, use different persistent peers.
+1. use a seed node instead of a persistent peer, **OR** 
+2. use different persistent peers.
 
 ### Using a seed node
 Seed nodes are a particular type of nodes that provide every validator with a set of peers to connect with, based on the current network status. What will happen when you use seed nodes is the following: 
@@ -116,11 +116,7 @@ Seed nodes are a particular type of nodes that provide every validator with a se
 
 In order to use this particular type of nodes, all you have to do is:
 
-1. Open the file located as
-   ```
-   ~/.desmosd/config/config.toml
-   ```
-
+1. Open the `~/.desmosd/config/config.toml` file
 2. Find the line starting with 
    ```
    seeds = ""
@@ -129,6 +125,11 @@ In order to use this particular type of nodes, all you have to do is:
 3. Replace that line with the following: 
    ```
    seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"
+   ```
+   
+4. Empty your persistent peers list by replacing the `pesistent_peers = "..."` line with 
+   ```
+   persistent_peers = ""
    ```
    
 4. Save the file and exit the editor. 
@@ -143,7 +144,7 @@ Instead of using a seed node, you can also keep relying on persistent peers. In 
 
 For example, you can use the public RPC endpoint [here](http://rpc.morpheus.desmos.network:26657/net_info). 
 
-From that page, you can see all the peers that a node is connect to. To do this, you can reference the `peers` field, which contains a list of objects made as follows: 
+From that page, you can see all the peers connected to that node. Their info is present inside the `peers` field, which contains a list of objects made as follows: 
 
 ```json{4,5,17}
 {
@@ -166,28 +167,27 @@ From that page, you can see all the peers that a node is connect to. To do this,
 }
 ```
 
-In order to get new peer addresses, all you have to do is to combine the `id`, `remote_ip` and `listen_addr` field values as follows: 
+In order to get new peers addresses, all you have to do is to combine the `id`, `remote_ip` and `listen_addr` field values as follows: 
 
 ```
 id@remote_ip:listen_addr(port)
 ```
 
-In the above case, this peer's address would be: 
+In the above case, that peer's address would be: 
 
 ```
 d45d4e0a6a6c393d58cfa1c5fed6286164fbfceb@35.193.251.165:26656
 ``` 
 
-You can do this with as many peers as you want. Once you have a list of peers, you can use those inside the `persisten_peers` field of your `~/.desmosd/config/config.toml` file.
+You can do this with as many peers as you want. Once you have a list of peers, you can use those inside the `persistent_peers` field of your `~/.desmosd/config/config.toml` file.
 
 ## Problem #6: The `desmoscli keys list` command does not work
 Starting with v0.38, the Cosmos SDK uses os-native keyring to store all the private keys. Unfortunately, in some cases this does not work well by default. For example, it might return some errors when used in GUI-less machines.
 
 In order to solve this problem, you have two options: 
 
-1. Store the private keys inside a file on your machine
-2. **OR**, use a password manager.
-
+1. store the private keys inside a file on your machine, **OR**
+2. use a password manager.
 
 We highly suggest you to use a password manager. However, if you want to use a file-based approach you can execute the following commands:
 
