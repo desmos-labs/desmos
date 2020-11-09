@@ -31,6 +31,12 @@ func NewHandler(keeper Keeper) sdk.Handler {
 
 // handleMsgCreateRelationship handles the creation of a relationship
 func handleMsgCreateRelationship(ctx sdk.Context, keeper Keeper, msg types.MsgCreateRelationship) (*sdk.Result, error) {
+	// Check if the receiver has blocked the sender before
+	if keeper.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("The user with address %s has blocked you", msg.Receiver))
+	}
+
 	// Save the relationship
 	err := keeper.StoreRelationship(ctx, msg.Sender, types.NewRelationship(msg.Receiver, msg.Subspace))
 	if err != nil {

@@ -8,19 +8,21 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	params "github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/relationships"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	// The reference to the ParamsStore to get and set posts specific params
 	paramSubspace params.Subspace
+	relKeeper     relationships.Keeper // Relationships keeper to keep track of blocked users
 
 	StoreKey sdk.StoreKey // Unexposed key to access store from sdk.Context
 	Cdc      *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
 // NewKeeper creates new instances of the posts Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspace, relKeeper relationships.Keeper) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
@@ -29,12 +31,18 @@ func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, paramSpace params.Subspa
 		StoreKey:      storeKey,
 		Cdc:           cdc,
 		paramSubspace: paramSpace,
+		relKeeper:     relKeeper,
 	}
 }
 
 // -------------
 // --- Posts
 // -------------
+
+// IsUserBlocked tells if the given blocker has blocked the given blocked user
+func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked sdk.AccAddress) bool {
+	return k.relKeeper.IsUserBlocked(ctx, blocker, blocked)
+}
 
 // SavePost allows to save the given post inside the current context.
 // It assumes that the given post has already been validated.

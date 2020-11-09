@@ -133,14 +133,14 @@ type DesmosApp struct {
 	subspaces map[string]params.Subspace
 
 	// Keepers
-	AccountKeeper  auth.AccountKeeper
-	BankKeeper     bank.Keeper
-	SupplyKeeper   supply.Keeper
+	accountKeeper  auth.AccountKeeper
+	bankKeeper     bank.Keeper
+	supplyKeeper   supply.Keeper
 	stakingKeeper  staking.Keeper
-	SlashingKeeper slashing.Keeper
-	DistrKeeper    distr.Keeper
-	GovKeeper      gov.Keeper
-	CrisisKeeper   crisis.Keeper
+	slashingKeeper slashing.Keeper
+	distrKeeper    distr.Keeper
+	govKeeper      gov.Keeper
+	crisisKeeper   crisis.Keeper
 	upgradeKeeper  upgrade.Keeper
 	paramsKeeper   params.Keeper
 	evidenceKeeper evidence.Keeper
@@ -176,8 +176,8 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		gov.StoreKey, upgrade.StoreKey, params.StoreKey, evidence.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, postsTypes.StoreKey, profilesTypes.StoreKey, reportsTypes.StoreKey,
-		relationshipsTypes.StoreKey,
+		magpieTypes.StoreKey, postsTypes.StoreKey, reportsTypes.StoreKey,
+		profilesTypes.StoreKey, relationshipsTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -205,49 +205,49 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.subspaces[profilesTypes.ModuleName] = app.paramsKeeper.Subspace(profilesTypes.DefaultParamspace)
 
 	// Add keepers
-	app.AccountKeeper = auth.NewAccountKeeper(
+	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
 		keys[auth.StoreKey],
 		app.subspaces[auth.ModuleName],
 		auth.ProtoBaseAccount,
 	)
-	app.BankKeeper = bank.NewBaseKeeper(
-		app.AccountKeeper,
+	app.bankKeeper = bank.NewBaseKeeper(
+		app.accountKeeper,
 		app.subspaces[bank.ModuleName],
 		app.BlacklistedAccAddrs(),
 	)
-	app.SupplyKeeper = supply.NewKeeper(
+	app.supplyKeeper = supply.NewKeeper(
 		app.cdc,
 		keys[supply.StoreKey],
-		app.AccountKeeper,
-		app.BankKeeper,
+		app.accountKeeper,
+		app.bankKeeper,
 		maccPerms,
 	)
 	stakingKeeper := staking.NewKeeper(
 		app.cdc,
 		keys[staking.StoreKey],
-		app.SupplyKeeper,
+		app.supplyKeeper,
 		app.subspaces[staking.ModuleName],
 	)
-	app.DistrKeeper = distr.NewKeeper(
+	app.distrKeeper = distr.NewKeeper(
 		app.cdc,
 		keys[distr.StoreKey],
 		app.subspaces[distr.ModuleName],
 		&stakingKeeper,
-		app.SupplyKeeper,
+		app.supplyKeeper,
 		auth.FeeCollectorName,
 		app.ModuleAccountAddrs(),
 	)
-	app.SlashingKeeper = slashing.NewKeeper(
+	app.slashingKeeper = slashing.NewKeeper(
 		app.cdc,
 		keys[slashing.StoreKey],
 		&stakingKeeper,
 		app.subspaces[slashing.ModuleName],
 	)
-	app.CrisisKeeper = crisis.NewKeeper(
+	app.crisisKeeper = crisis.NewKeeper(
 		app.subspaces[crisis.ModuleName],
 		app.invCheckPeriod,
-		app.SupplyKeeper,
+		app.supplyKeeper,
 		auth.FeeCollectorName,
 	)
 	app.upgradeKeeper = upgrade.NewKeeper(
@@ -262,7 +262,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		keys[evidence.StoreKey],
 		app.subspaces[evidence.ModuleName],
 		&app.stakingKeeper,
-		app.SlashingKeeper,
+		app.slashingKeeper,
 	)
 	evidenceRouter := evidence.NewRouter()
 	evidenceKeeper.SetRouter(evidenceRouter)
@@ -273,14 +273,14 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	govRouter.
 		AddRoute(gov.RouterKey, gov.ProposalHandler).
 		AddRoute(params.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
+		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
 		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
 
-	app.GovKeeper = gov.NewKeeper(
+	app.govKeeper = gov.NewKeeper(
 		app.cdc,
 		keys[gov.StoreKey],
 		app.subspaces[gov.ModuleName],
-		app.SupplyKeeper,
+		app.supplyKeeper,
 		&stakingKeeper,
 		govRouter,
 	)
@@ -290,15 +290,21 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		app.cdc,
 		keys[magpieTypes.StoreKey],
 	)
+	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
+		app.cdc,
+		keys[relationshipsTypes.StoreKey],
+	)
 	app.postsKeeper = postsKeeper.NewKeeper(
 		app.cdc,
 		keys[postsTypes.StoreKey],
 		app.subspaces[postsTypes.ModuleName],
+		app.relationshipsKeeper,
 	)
 	app.profileKeeper = profilesKeeper.NewKeeper(
 		app.cdc,
 		keys[profilesTypes.StoreKey],
 		app.subspaces[profilesTypes.ModuleName],
+		app.relationshipsKeeper,
 	)
 	app.reportsKeeper = reportsKeeper.NewKeeper(
 		app.postsKeeper,
@@ -306,41 +312,36 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		keys[reportsTypes.StoreKey],
 	)
 
-	app.relationshipsKeeper = relationshipsKeeper.NewKeeper(
-		app.cdc,
-		keys[relationshipsTypes.StoreKey],
-	)
-
 	// Register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
-			app.DistrKeeper.Hooks(),
-			app.SlashingKeeper.Hooks()),
+			app.distrKeeper.Hooks(),
+			app.slashingKeeper.Hooks()),
 	)
 
 	// Create the module manager
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
-		genutil.NewAppModule(app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
-		auth.NewAppModule(app.AccountKeeper),
-		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		crisis.NewAppModule(&app.CrisisKeeper),
-		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
+		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
+		auth.NewAppModule(app.accountKeeper),
+		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
+		crisis.NewAppModule(&app.crisisKeeper),
+		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
+		gov.NewAppModule(app.govKeeper, app.accountKeeper, app.supplyKeeper),
+		slashing.NewAppModule(app.slashingKeeper, app.accountKeeper, app.stakingKeeper),
+		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
+		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
-		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
-		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
+		magpie.NewAppModule(app.magpieKeeper, app.accountKeeper),
+		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -358,15 +359,17 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		staking.ModuleName, bank.ModuleName, slashing.ModuleName,
 		gov.ModuleName, evidence.ModuleName,
 
-		magpieTypes.ModuleName, postsTypes.ModuleName, profilesTypes.ModuleName, reportsTypes.ModuleName,
-		relationshipsTypes.ModuleName, // custom modules
+		// custom modules
+		magpieTypes.ModuleName,
+		profilesTypes.ModuleName, relationshipsTypes.ModuleName,
+		postsTypes.ModuleName, reportsTypes.ModuleName,
 
 		supply.ModuleName,  // calculates the total supply from account - should run after modules that modify accounts in genesis
 		crisis.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutil.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
 	)
 
-	app.mm.RegisterInvariants(&app.CrisisKeeper)
+	app.mm.RegisterInvariants(&app.crisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
@@ -374,20 +377,20 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// NOTE: this is not required apps that don't use the simulator for fuzz testing
 	// transactions
 	app.sm = module.NewSimulationManager(
-		auth.NewAppModule(app.AccountKeeper),
-		bank.NewAppModule(app.BankKeeper, app.AccountKeeper),
-		supply.NewAppModule(app.SupplyKeeper, app.AccountKeeper),
-		gov.NewAppModule(app.GovKeeper, app.AccountKeeper, app.SupplyKeeper),
-		distr.NewAppModule(app.DistrKeeper, app.AccountKeeper, app.SupplyKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.AccountKeeper, app.SupplyKeeper),
-		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.stakingKeeper),
+		auth.NewAppModule(app.accountKeeper),
+		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
+		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
+		gov.NewAppModule(app.govKeeper, app.accountKeeper, app.supplyKeeper),
+		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
+		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
+		slashing.NewAppModule(app.slashingKeeper, app.accountKeeper, app.stakingKeeper),
 
 		// Custom modules
-		posts.NewAppModule(app.postsKeeper, app.AccountKeeper),
-		magpie.NewAppModule(app.magpieKeeper, app.AccountKeeper),
-		profiles.NewAppModule(app.profileKeeper, app.AccountKeeper),
-		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
-		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
+		posts.NewAppModule(app.postsKeeper, app.accountKeeper),
+		magpie.NewAppModule(app.magpieKeeper, app.accountKeeper),
+		profiles.NewAppModule(app.profileKeeper, app.accountKeeper),
+		reports.NewAppModule(app.reportsKeeper, app.accountKeeper, app.postsKeeper),
+		relationships.NewAppModule(app.relationshipsKeeper, app.accountKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -399,7 +402,7 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetAnteHandler(ante.NewAnteHandler(app.AccountKeeper, app.SupplyKeeper, auth.DefaultSigVerificationGasConsumer))
+	app.SetAnteHandler(ante.NewAnteHandler(app.accountKeeper, app.supplyKeeper, auth.DefaultSigVerificationGasConsumer))
 	app.SetEndBlocker(app.EndBlocker)
 
 	if loadLatest {
@@ -414,9 +417,18 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 
 // SetupConfig sets up the given config as it should be for Desmos
 func SetupConfig(config *sdk.Config) {
-	config.SetBech32PrefixForAccount(Bech32MainPrefix, Bech32MainPrefix+sdk.PrefixPublic)
-	config.SetBech32PrefixForValidator(Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator, Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator+sdk.PrefixPublic)
-	config.SetBech32PrefixForConsensusNode(Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus, Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus+sdk.PrefixPublic)
+	config.SetBech32PrefixForAccount(
+		Bech32MainPrefix,
+		Bech32MainPrefix+sdk.PrefixPublic,
+	)
+	config.SetBech32PrefixForValidator(
+		Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator,
+		Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator+sdk.PrefixPublic,
+	)
+	config.SetBech32PrefixForConsensusNode(
+		Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus,
+		Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus+sdk.PrefixPublic,
+	)
 
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md

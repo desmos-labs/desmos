@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/desmos-labs/desmos/x/relationships"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,11 +20,12 @@ import (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc          *codec.Codec
-	ctx          sdk.Context
-	keeper       keeper.Keeper
-	paramsKeeper params.Keeper
-	testData     TestData
+	cdc                 *codec.Codec
+	ctx                 sdk.Context
+	keeper              keeper.Keeper
+	relationshipsKeeper relationships.Keeper
+	paramsKeeper        params.Keeper
+	testData            TestData
 }
 
 type TestData struct {
@@ -37,6 +39,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	profileKey := sdk.NewKVStoreKey("profiles")
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	relationshipsKey := sdk.NewKVStoreKey("relationships")
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
@@ -44,6 +47,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(profileKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
+
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -51,7 +56,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc = testCodec()
 	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
-	suite.keeper = keeper.NewKeeper(suite.cdc, profileKey, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+	suite.relationshipsKeeper = relationships.NewKeeper(suite.cdc, relationshipsKey)
+	suite.keeper = keeper.NewKeeper(
+		suite.cdc,
+		profileKey,
+		suite.paramsKeeper.Subspace(types.DefaultParamspace),
+		suite.relationshipsKeeper,
+	)
 
 	// setup Data
 	// nolint - errcheck
