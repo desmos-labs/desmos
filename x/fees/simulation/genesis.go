@@ -46,11 +46,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 			minFees = GenMinFees(r)
 		})
 
-	feesGenesis := types.NewGenesisState(types.NewParams(sdk.DefaultBondDenom, minFees))
+	feesGenesis := types.NewGenesisState(types.NewParams(minFees))
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(feesGenesis)
 
-	fmt.Printf("Selected randomly generated fees parameters:\n%s\n%s\n",
-		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.FeeDenom),
+	fmt.Printf("Selected randomly generated fees parameters:\n%s\n",
 		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.MinFees),
 	)
 }
@@ -59,7 +58,8 @@ func RandomizedGenState(simState *module.SimulationState) {
 func GenMinFees(r *rand.Rand) (fees []types.MinFee) {
 	randFixedFeeNum := simulation.RandIntBetween(r, 0, len(msgsTypes))
 	for i := 0; i < randFixedFeeNum; i++ {
-		fees = append(fees, types.NewMinFee(msgsTypes[i], simulation.RandomDecAmount(r, sdk.NewDec(5))))
+		amt := simulation.RandIntBetween(r, 1, 100)
+		fees = append(fees, types.NewMinFee(msgsTypes[i], sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt))))))
 	}
 	return fees
 }

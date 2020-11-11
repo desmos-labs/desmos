@@ -13,12 +13,6 @@ import (
 func ParamChanges(r *rand.Rand) []simulation.ParamChange {
 	params := types.DefaultParams()
 	return []simulation.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.FeeDenomStoreKey),
-			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"fee_denom":"%s"`,
-					params.FeeDenom)
-			},
-		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MinFeesStoreKey),
 			func(r *rand.Rand) string {
 				return fmt.Sprintf(`{"min_fees":"%s"`,

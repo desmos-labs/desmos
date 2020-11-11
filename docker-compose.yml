@@ -15,7 +15,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.168.10.2
-    command: [ "desmosd", "start" ]
+    command: ["desmosd", "start"]
 
   desmosnode1:
     container_name: desmosnode1
@@ -31,7 +31,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.168.10.3
-    command: [ "desmosd", "start" ]
+    command: ["desmosd", "start"]
 
   desmosnode2:
     container_name: desmosnode2
@@ -47,7 +47,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.168.10.4
-    command: [ "desmosd", "start" ]
+    command: ["desmosd", "start"]
 
   desmosnode3:
     container_name: desmosnode3
@@ -63,7 +63,7 @@ services:
     networks:
       localnet:
         ipv4_address: 192.168.10.5
-    command: [ "desmosd", "start" ]
+    command: ["desmosd", "start"]
 
 networks:
   localnet:

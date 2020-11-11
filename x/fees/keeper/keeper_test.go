@@ -84,8 +84,8 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 	}{
 		{
 			name: "Not enough fees returns error",
-			params: types.NewParams(sdk.DefaultBondDenom, []types.MinFee{
-				types.NewMinFee("create_post", sdk.NewDecWithPrec(1, 2)),
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			givenFees: authtypes.NewStdFee(100000,
 				sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 150)),
@@ -102,12 +102,13 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 					&pollData,
 				),
 			},
-			expError: sdkerrors.Wrap(sdkerrors.ErrInsufficientFee, "Expected 10000.000000000000000000 stake amount, got 150.000000000000000000"),
+			expError: sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
+				"Expected at least 10000stake, got 150stake"),
 		},
 		{
 			name: "Enough fees works properly",
-			params: types.NewParams(sdk.DefaultBondDenom, []types.MinFee{
-				types.NewMinFee("create_post", sdk.NewDecWithPrec(1, 2)),
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			givenFees: authtypes.NewStdFee(100000,
 				sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),

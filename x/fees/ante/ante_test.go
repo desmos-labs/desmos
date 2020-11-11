@@ -103,28 +103,28 @@ func TestAnteHandlerFees_MsgCreatePost(t *testing.T) {
 	privs, accnums, seqs := []crypto.PrivKey{priv}, []uint64{0}, []uint64{0}
 	msgs := []sdk.Msg{msgCreatePost}
 
-	feesParams := fees.NewParams(sdk.DefaultBondDenom, []feesTypes.MinFee{
-		feesTypes.NewMinFee("create_post", sdk.NewDecWithPrec(1, 2)),
+	feesParams := fees.NewParams([]feesTypes.MinFee{
+		feesTypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 	})
 
 	app.FeesKeeper.SetParams(ctx, feesParams)
 
 	// Signer has not specified the fees
 	var tx sdk.Tx
-	fees := sdk.NewCoins()
-	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
+	feez := sdk.NewCoins()
+	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, feez))
 	checkInvalidTx(t, anteHandler, ctx, tx, false, sdkerrors.ErrInsufficientFee)
 
 	// Signer has not specified enough fee
-	fees = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 9999))
+	feez = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 9999))
 	seqs = []uint64{0}
-	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
+	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, feez))
 	checkInvalidTx(t, anteHandler, ctx, tx, false, sdkerrors.ErrInsufficientFee)
 
 	// Signer has specified enough fee
-	fees = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000))
-	_ = app.BankKeeper.SetCoins(ctx, addr, fees)
+	feez = sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000))
+	_ = app.BankKeeper.SetCoins(ctx, addr, feez)
 	seqs = []uint64{1}
-	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, fees))
+	tx = authtypes.NewTestTx(ctx, msgs, privs, accnums, seqs, auth.NewStdFee(200000, feez))
 	checkValidTx(t, anteHandler, ctx, tx, true)
 }

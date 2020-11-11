@@ -17,17 +17,12 @@ func TestMinFee_Validate(t *testing.T) {
 	}{
 		{
 			name:     "empty message type returns error",
-			minFee:   types.NewMinFee("", sdk.NewDecWithPrec(1, 2)),
+			minFee:   types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			expError: fmt.Errorf("invalid minimum fee message type"),
 		},
 		{
-			name:     "negative minimum fee amount returns error",
-			minFee:   types.NewMinFee("desmos/createPost", sdk.NewDec(-1)),
-			expError: fmt.Errorf("minimum fee amout cannot be negative"),
-		},
-		{
-			name:     "no errors",
-			minFee:   types.NewMinFee("desmos/createPost", sdk.NewDec(1)),
+			name:     "correct fee returns no errors",
+			minFee:   types.NewMinFee("desmos/createPost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			expError: nil,
 		},
 	}

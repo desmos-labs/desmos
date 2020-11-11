@@ -20,31 +20,28 @@ const (
 
 var (
 	// functions aliases
-	GetQueryCmd              = cli.GetQueryCmd
-	GetCmdQueryFeesParams    = cli.GetCmdQueryFeesParams
-	RegisterRoutes           = rest.RegisterRoutes
-	NewQuerier               = keeper.NewQuerier
-	NewKeeper                = keeper.NewKeeper
-	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	RegisterCodec            = types.RegisterCodec
-	ParamKeyTable            = types.ParamKeyTable
-	NewParams                = types.NewParams
-	DefaultParams            = types.DefaultParams
-	ValidateFeeDenomParam    = types.ValidateFeeDenomParam
-	ValidateRequiredFeeParam = types.ValidateMinFeesParam
+	RegisterRoutes        = rest.RegisterRoutes
+	NewKeeper             = keeper.NewKeeper
+	NewQuerier            = keeper.NewQuerier
+	ParamKeyTable         = types.ParamKeyTable
+	NewParams             = types.NewParams
+	DefaultParams         = types.DefaultParams
+	ValidateMinFeesParam  = types.ValidateMinFeesParam
+	NewGenesisState       = types.NewGenesisState
+	DefaultGenesisState   = types.DefaultGenesisState
+	ValidateGenesis       = types.ValidateGenesis
+	NewMinFee             = types.NewMinFee
+	GetQueryCmd           = cli.GetQueryCmd
+	GetCmdQueryFeesParams = cli.GetCmdQueryFeesParams
 
 	// variable aliases
-	ModuleCdc           = types.ModuleCdc
-	DefaultFeeDenom     = types.DefaultFeeDenom
-	DefaultRequiredFee  = types.DefaultMinFees
-	FeeDenomStoreKey    = types.FeeDenomStoreKey
-	RequiredFeeStoreKey = types.MinFeesStoreKey
+	DefaultMinFees  = types.DefaultMinFees
+	MinFeesStoreKey = types.MinFeesStoreKey
 )
 
 type (
 	Keeper       = keeper.Keeper
-	GenesisState = types.GenesisState
 	Params       = types.Params
+	GenesisState = types.GenesisState
+	MinFee       = types.MinFee
 )

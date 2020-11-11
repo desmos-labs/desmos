@@ -62,7 +62,7 @@ jobs:
 
   Test-Sim-Import-Export:
     runs-on: ubuntu-latest
-    needs: [ build, install-runsim ]
+    needs: [build, install-runsim]
     steps:
       - uses: actions/checkout@v2
       - uses: technote-space/get-diff-action@v1
@@ -85,7 +85,7 @@ jobs:
 
   Test-Sim-After-Import:
     runs-on: ubuntu-latest
-    needs: [ build, install-runsim ]
+    needs: [build, install-runsim]
     steps:
       - uses: actions/checkout@v2
       - uses: technote-space/get-diff-action@v1
@@ -108,7 +108,7 @@ jobs:
 
   Test-Sim-Multi-Seed-Short:
     runs-on: ubuntu-latest
-    needs: [ build, install-runsim ]
+    needs: [build, install-runsim]
     steps:
       - uses: actions/checkout@v2
       - uses: technote-space/get-diff-action@v1

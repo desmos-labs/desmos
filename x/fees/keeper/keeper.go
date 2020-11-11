@@ -45,24 +45,18 @@ func (k Keeper) CheckFees(ctx sdk.Context, fees authtypes.StdFee, msgs []sdk.Msg
 	feesParams := k.GetParams(ctx)
 
 	// calculate required fees for the given messages
-	requiredFees := sdk.NewDec(0)
+	requiredFees := sdk.NewCoins()
 	for _, msg := range msgs {
 		for _, minFee := range feesParams.MinFees {
 			if msg.Type() == minFee.MessageType {
-				requiredFees = requiredFees.Add(minFee.Amount)
+				requiredFees = requiredFees.Add(minFee.Amount...)
 			}
 		}
 	}
 
-	stableRequiredQty := requiredFees.Mul(sdk.NewDec(1000000))
-	givenFeeAmount := sdk.NewDecFromInt(fees.Amount.AmountOf(feesParams.FeeDenom))
-
-	if !stableRequiredQty.IsZero() && stableRequiredQty.GT(givenFeeAmount) {
-		if stableRequiredQty.GT(givenFeeAmount) {
-			return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
-				fmt.Sprintf("Expected %s %s amount, got %s", stableRequiredQty,
-					feesParams.FeeDenom, givenFeeAmount))
-		}
+	if !requiredFees.IsZero() && (requiredFees.IsAnyGT(fees.Amount) || fees.Amount.IsZero()) {
+		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
+			fmt.Sprintf("Expected at least %s, got %s", requiredFees, fees.Amount))
 	}
 
 	return nil
