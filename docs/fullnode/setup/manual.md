@@ -62,19 +62,19 @@ rm $HOME/.desmosd/config/genesis.json
 curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
 ```
 
-## 4. Connect to persistent peer
-To properly run your node, you will need to connect it to other full nodes running with the same software and genesis file. This can be done configuring the `persisten_peers` value inside the `config.toml` file localed under the `.desmosd` working directory.
+## 4. Connect to seed nodes
+To properly run your node, you will need to connect it to other full nodes running with the same software and genesis file. This can be done configuring the `seeds` value inside the `config.toml` file localed under the `.desmosd` working directory.
 
 ```bash
 # Open the config.toml file using text editor
 nano $HOME/.desmosd/config/config.toml
 ```
 
-Locate the `persistent_peers = ""` text at line 164. Update its value to a node address of a peer. The format of a node address must be `<node_id>@<node_ip_address>:<port>`
+Locate the `seeds = ""` text at line 164. Update its value to a node address of a seed node. The format of a node address must be `<node_id>@<node_ip_address>:<port>`
 
 ```bash
 # Example
-persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"
+seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"
 ```
 
 Save the file and exit the text editor.
