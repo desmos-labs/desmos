@@ -19,10 +19,6 @@ func NewMinFee(messageType string, amount sdk.Coins) MinFee {
 	}
 }
 
-func (mf MinFee) String() string {
-	return fmt.Sprintf("Message Type: %s\nAmount: %s\n", mf.MessageType, mf.Amount)
-}
-
 // Validate check if the min fee parameters are valid
 func (mf MinFee) Validate() error {
 	if mf.MessageType == "" {

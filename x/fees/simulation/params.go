@@ -15,7 +15,7 @@ func ParamChanges(r *rand.Rand) []simulation.ParamChange {
 	return []simulation.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.MinFeesStoreKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"min_fees":"%s"`,
+				return fmt.Sprintf(`"min_fees":"%s"`,
 					params.MinFees)
 			},
 		),
