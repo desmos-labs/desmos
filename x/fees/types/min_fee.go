@@ -25,5 +25,9 @@ func (mf MinFee) Validate() error {
 		return fmt.Errorf("invalid minimum fee message type")
 	}
 
+	if !mf.Amount.IsValid() {
+		return fmt.Errorf("invalid minimum fee amount")
+	}
+
 	return nil
 }
