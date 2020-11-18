@@ -5,13 +5,14 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/x/reports/keeper"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
+	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/tendermint/tendermint/crypto"
 
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
@@ -20,7 +21,7 @@ import (
 
 // SimulateMsgReportPost tests and runs a single msg reports post created by a random account.
 // nolint: funlen
-func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeeper.Keeper) sim.Operation {
+func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeeper.Keeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -37,7 +38,7 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeepe
 			data.Creator.Address,
 		)
 
-		err := sendMsgReportPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
+		err := sendMsgReportPost(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -48,20 +49,26 @@ func SimulateMsgReportPost(ak auth.AccountKeeper, k keeper.Keeper, pk postskeepe
 
 // sendMsgReportPost sends a transaction with a MsgReportPost from a provided random account.
 func sendMsgReportPost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgReportPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
 	account := ak.GetAccount(ctx, msg.Report.User)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
+		return nil
+	}
+
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

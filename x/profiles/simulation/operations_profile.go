@@ -8,6 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -19,7 +21,7 @@ import (
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 // nolint: funlen
-func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -36,7 +38,7 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 		}
 
 		msg := types.NewMsgSaveProfile(data.DTag, data.Moniker, data.Bio, profilePic, coverPic, acc.Address)
-		if err := sendMsgSaveProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
+		if err := sendMsgSaveProfile(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey}); err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
 
@@ -46,21 +48,26 @@ func SimulateMsgSaveProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operatio
 
 // sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
 func sendMsgSaveProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
+		return nil
+	}
+
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -109,7 +116,7 @@ func randomProfileSaveFields(
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
 // nolint: funlen
-func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
 	) (OperationMsg sim.OperationMsg, futureOps []sim.FutureOperation, err error) {
@@ -120,7 +127,7 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 
 		msg := types.NewMsgDeleteProfile(acc.Address)
 
-		err = sendMsgDeleteProfile(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgDeleteProfile(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -131,21 +138,26 @@ func SimulateMsgDeleteProfile(k keeper.Keeper, ak auth.AccountKeeper) sim.Operat
 
 // sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
 func sendMsgDeleteProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
+		return nil
+	}
+
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},

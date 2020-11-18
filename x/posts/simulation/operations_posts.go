@@ -9,7 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -18,7 +20,7 @@ import (
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists
 // nolint: funlen
-func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -40,7 +42,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 			data.PollData,
 		)
 
-		err := sendMsgCreatePost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
+		err := sendMsgCreatePost(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -51,21 +53,26 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation
 
 // sendMsgCreatePost sends a transaction with a MsgCreatePost from a provided random account.
 func sendMsgCreatePost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Creator)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
+		return nil
+	}
+
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -119,7 +126,7 @@ func randomPostCreateFields(
 
 // SimulateMsgEditPost tests and runs a single msg edit post where the post creator account already exists
 // nolint: funlen
-func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []sim.Account, chainID string,
@@ -132,7 +139,7 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 
 		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address)
 
-		err := sendMsgEditPost(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
+		err := sendMsgEditPost(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {
 			return sim.NoOpMsg(types.ModuleName), nil, err
 		}
@@ -143,21 +150,26 @@ func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper) sim.Operation {
 
 // sendMsgEditPost sends a transaction with a MsgEditPost from a provided random account.
 func sendMsgEditPost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
 	msg types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-
 	account := ak.GetAccount(ctx, msg.Editor)
 	coins := account.SpendableCoins(ctx.BlockTime())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	randFees, err := sim.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
+	msgs := []sdk.Msg{msg}
+
+	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
+		return nil
+	}
+
 	tx := helpers.GenTx(
-		[]sdk.Msg{msg},
-		fees,
+		msgs,
+		randFees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
@@ -178,7 +190,11 @@ func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
 ) (sim.Account, types.PostID, string, types.Attachments, *types.PollData, bool) {
 
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if posts == nil {
+		return sim.Account{}, "", "", nil, nil, true
+	}
+	post, _ := RandomPost(r, posts)
 	acc := GetAccount(post.Creator, accs)
 
 	// Skip the operation without error as the account is not valid
