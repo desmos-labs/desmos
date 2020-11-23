@@ -108,7 +108,6 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID types.PostID) types.P
 // GetPosts returns the list of all the posts that are stored into the current state
 //sorted by their incremental ID.
 func (k Keeper) GetPosts(ctx sdk.Context) (posts types.Posts) {
-	posts = types.Posts{}
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 		posts = append(posts, post)
 		return false

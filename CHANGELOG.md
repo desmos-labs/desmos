@@ -1,7 +1,10 @@
 # Version 0.14.0
+## Changes
+- Implemented blocked users checks (#298)
+- Implemented the possibility to set a minimum messages fee (#230) 
+
 ## Bug fixes
 - Fixed height not working in REST queries (#299)
-- Implemented blocked users checks (#298)
 
 # Version 0.13.0
 ## Changes

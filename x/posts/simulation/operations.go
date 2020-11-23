@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/fees"
 
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -26,7 +27,8 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper,
+	fk fees.Keeper) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
@@ -73,27 +75,27 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreatePost(k, ak),
+			SimulateMsgCreatePost(k, ak, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditPost,
-			SimulateMsgEditPost(k, ak),
+			SimulateMsgEditPost(k, ak, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRegisterReaction,
-			SimulateMsgRegisterReaction(k, ak),
+			SimulateMsgRegisterReaction(k, ak, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddPostReaction(k, ak),
+			SimulateMsgAddPostReaction(k, ak, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemovePostReaction(k, ak),
+			SimulateMsgRemovePostReaction(k, ak, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
-			SimulateMsgAnswerToPoll(k, ak),
+			SimulateMsgAnswerToPoll(k, ak, fk),
 		),
 	}
 }

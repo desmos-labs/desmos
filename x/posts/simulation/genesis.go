@@ -24,7 +24,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState)
 	reactionsData := RandomReactionsData(simState.Rand, simState.Accounts)
 
-	postReactions := randomPostReactions(simState, posts, reactionsData[simState.Rand.Intn(len(reactionsData))])
+	var postReactions map[string]types.PostReactions
+	if len(reactionsData) != 0 {
+		postReactions = randomPostReactions(simState, posts, reactionsData[simState.Rand.Intn(len(reactionsData))])
+	}
 	registeredReactions := registeredReactions(reactionsData)
 	params := randomParams(simState)
 	postsGenesis := types.NewGenesisState(posts, postReactions, registeredReactions, params)
@@ -65,7 +68,10 @@ func randomPosts(simState *module.SimulationState) (posts types.Posts) {
 
 // randomPostReactions returns a randomly generated list of reactions
 func randomPostReactions(simState *module.SimulationState, posts types.Posts, reactionData ReactionData) (reactionsMap map[string]types.PostReactions) {
-	reactionsNumber := simState.Rand.Intn(len(posts))
+	var reactionsNumber = 0
+	if len(posts) != 0 {
+		reactionsNumber = simState.Rand.Intn(len(posts))
+	}
 
 	reactionsMap = make(map[string]types.PostReactions, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {

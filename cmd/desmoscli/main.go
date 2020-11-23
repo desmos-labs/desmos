@@ -25,9 +25,6 @@ import (
 func main() {
 	cdc := app.MakeCodec()
 
-	// Initialize the app overriding the various methods we want to customize
-	app.Init()
-
 	// Read in the configuration file for the sdk
 	config := sdk.GetConfig()
 	app.SetupConfig(config)
