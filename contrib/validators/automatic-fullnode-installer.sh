@@ -101,11 +101,11 @@ echo "====> Downloading Desmos"
   cd ~/desmos || exit
   git fetch -a
   git checkout tags/v0.12.2
-  make build
+  make build install
 
   mkdir -p ~/.desmosd/cosmovisor/genesis/bin
   mkdir -p ~/.desmosd/cosmovisor/upgrades
-  mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
+  mv build/desmosd ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
   alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
