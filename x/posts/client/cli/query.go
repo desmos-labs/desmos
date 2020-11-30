@@ -30,9 +30,9 @@ func GetQueryCmd() *cobra.Command {
 	postQueryCmd.AddCommand(
 		GetCmdQueryPost(),
 		GetCmdQueryPosts(),
-		GetCmdQueryPollAnswer(),
+		GetCmdQueryPollAnswers(),
 		GetCmdQueryRegisteredReactions(),
-		GetCmdQueryPostsParams(),
+		GetCmdQueryParams(),
 	)
 	return postQueryCmd
 }
@@ -171,8 +171,8 @@ $ %s query posts posts --page=2 --limit=100
 	return cmd
 }
 
-// GetCmdQueryPollAnswer returns the command allowing to query the answers of a poll
-func GetCmdQueryPollAnswer() *cobra.Command {
+// GetCmdQueryPollAnswers returns the command allowing to query the answers of a poll
+func GetCmdQueryPollAnswers() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "poll-answers [id]",
 		Short: "Retrieve tha poll answers of the post with given id",
@@ -230,8 +230,8 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryPostsParams returns the command allowing to query the module params
-func GetCmdQueryPostsParams() *cobra.Command {
+// GetCmdQueryParams returns the command allowing to query the module params
+func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "parameters",
 		Short: "Retrieve all the posts module parameters",

@@ -76,6 +76,131 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 
 // ___________________________________________________________________________________________________________________
 
+func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryUserRelationshipsResponse
+	}{
+		{
+			name: "empty array is returned properly",
+			args: []string{
+				s.network.Validators[2].Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserRelationshipsResponse{
+				User:          s.network.Validators[2].Address.String(),
+				Relationships: []types.Relationship{},
+			},
+		},
+		{
+			name: "existing relationship is returned properly",
+			args: []string{
+				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserRelationshipsResponse{
+				User: "cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+				Relationships: []types.Relationship{
+					types.NewRelationship(
+						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+					),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserRelationships()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserRelationshipsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryUserBlocksResponse
+	}{
+		{
+			name: "empty slice is returned properly",
+			args: []string{
+				s.network.Validators[2].Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserBlocksResponse{
+				Blocks: []types.UserBlock{},
+			},
+		},
+		{
+			name: "existing user blocks are returned properly",
+			args: []string{
+				"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserBlocksResponse{
+				Blocks: []types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
+						"Test block",
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+					),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserBlocks()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserBlocksResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
 func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 	val := s.network.Validators[0]
 
@@ -374,131 +499,6 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			} else {
 				s.Require().NoError(err)
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryUserRelationshipsResponse
-	}{
-		{
-			name: "empty array is returned properly",
-			args: []string{
-				s.network.Validators[2].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
-				User:          s.network.Validators[2].Address.String(),
-				Relationships: []types.Relationship{},
-			},
-		},
-		{
-			name: "existing relationship is returned properly",
-			args: []string{
-				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
-				User: "cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-				Relationships: []types.Relationship{
-					types.NewRelationship(
-						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserRelationships()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryUserRelationshipsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryUserBlocksResponse
-	}{
-		{
-			name: "empty slice is returned properly",
-			args: []string{
-				s.network.Validators[2].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
-				Blocks: []types.UserBlock{},
-			},
-		},
-		{
-			name: "existing user blocks are returned properly",
-			args: []string{
-				"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
-				Blocks: []types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
-						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"Test block",
-						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserBlocks()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryUserBlocksResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})
 	}

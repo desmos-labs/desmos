@@ -1,3 +1,5 @@
+// +build norace
+
 package cli_test
 
 import (
@@ -73,6 +75,165 @@ func (s *IntegrationTestSuite) SetupSuite() {
 func (s *IntegrationTestSuite) TearDownSuite() {
 	s.T().Log("tearing down integration test suite")
 	s.network.Cleanup()
+}
+
+// ___________________________________________________________________________________________________________________
+
+func (s *IntegrationTestSuite) TestCmdQueryProfile() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryProfileResponse
+	}{
+		{
+			name: "non existing profile",
+			args: []string{
+				s.network.Validators[1].Address.String(),
+			},
+			expectErr: true,
+		},
+		{
+			name: "existing profile is returned properly",
+			args: []string{
+				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryProfileResponse{
+				Profile: types.NewProfile(
+					"dtag",
+					"moniker",
+					"bio",
+					types.Pictures{},
+					time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryProfile()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryProfileResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryDTagTransfersResponse
+	}{
+		{
+			name: "empty slice is returned properly",
+			args: []string{
+				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryDTagTransfersResponse{
+				Requests: []types.DTagTransferRequest{},
+			},
+		},
+		{
+			name: "existing requests are returned properly",
+			args: []string{
+				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryDTagTransfersResponse{
+				Requests: []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryDTagRequests()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryDTagTransfersResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryParams() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryParamsResponse
+	}{
+		{
+			name:      "existing params are returned properly",
+			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			expectErr: false,
+			expectedOutput: types.QueryParamsResponse{
+				Params: types.DefaultParams(),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryParams()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryParamsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
 }
 
 // ___________________________________________________________________________________________________________________
@@ -405,165 +566,6 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 			} else {
 				s.Require().NoError(err)
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func (s *IntegrationTestSuite) TestCmdQueryProfile() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryProfileResponse
-	}{
-		{
-			name: "non existing profile",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-			},
-			expectErr: true,
-		},
-		{
-			name: "existing profile is returned properly",
-			args: []string{
-				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryProfileResponse{
-				Profile: types.NewProfile(
-					"dtag",
-					"moniker",
-					"bio",
-					types.Pictures{},
-					time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				),
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryProfile()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryProfileResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryDTagTransfersResponse
-	}{
-		{
-			name: "empty slice is returned properly",
-			args: []string{
-				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{},
-			},
-		},
-		{
-			name: "existing requests are returned properly",
-			args: []string{
-				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(
-						"dtag",
-						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryDTagRequests()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryDTagTransfersResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryParams() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryParamsResponse
-	}{
-		{
-			name:      "existing params are returned properly",
-			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			expectErr: false,
-			expectedOutput: types.QueryParamsResponse{
-				Params: types.DefaultParams(),
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryParams()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})
 	}

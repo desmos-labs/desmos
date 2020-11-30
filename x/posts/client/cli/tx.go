@@ -32,7 +32,7 @@ func NewTxCmd() *cobra.Command {
 	}
 
 	postsTxCmd.AddCommand(
-		NewCmdCreatePost(),
+		GetCmdCreatePost(),
 		GetCmdEditPost(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
@@ -132,8 +132,8 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 	return pollData, nil
 }
 
-// NewCmdCreatePost returns the CLI command to create a post
-func NewCmdCreatePost() *cobra.Command {
+// GetCmdCreatePost returns the CLI command to create a post
+func GetCmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace] [[message]]",
 		Short: "Create a new post",
@@ -230,6 +230,9 @@ E.g.
 				attachments,
 				pollData,
 			)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -294,13 +297,13 @@ E.g.
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, postID)
 			}
 
-			// check for attachments
+			// Check for attachments
 			attachments, err := getAttachments(cmd)
 			if err != nil {
 				return err
 			}
 
-			// check for poll
+			// Check for poll
 			pollData, err := getPollData(cmd)
 			if err != nil {
 				return err
@@ -318,6 +321,10 @@ E.g.
 				pollData,
 				clientCtx.FromAddress.String(),
 			)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -357,6 +364,10 @@ E.g.
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], clientCtx.GetFromAddress().String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -392,6 +403,10 @@ E.g.
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, clientCtx.FromAddress.String(), args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -425,6 +440,10 @@ func GetCmdAnswerPoll() *cobra.Command {
 			}
 
 			msg := types.NewMsgAnswerPoll(postID, answers, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -452,6 +471,10 @@ func GetCmdRegisterReaction() *cobra.Command {
 			}
 
 			msg := types.NewMsgRegisterReaction(clientCtx.FromAddress.String(), args[0], args[1], args[2])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

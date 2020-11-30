@@ -29,7 +29,7 @@ func MsgCreatePost(clientCtx client.Context, from, subspace string, extraArgs ..
 
 	args = append(args, extraArgs...)
 
-	return clitestutil.ExecTestCLICmd(clientCtx, postscli.NewCmdCreatePost(), args)
+	return clitestutil.ExecTestCLICmd(clientCtx, postscli.GetCmdCreatePost(), args)
 }
 
 // QueryPostsExec queries the posts present on chain
