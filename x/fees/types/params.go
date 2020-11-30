@@ -2,9 +2,7 @@ package types
 
 import (
 	"fmt"
-	"strings"
-
-	paramsModule "github.com/cosmos/cosmos-sdk/x/params/subspace"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 const (
@@ -22,12 +20,8 @@ var (
 )
 
 // ParamKeyTable Key declaration for parameters
-func ParamKeyTable() paramsModule.KeyTable {
-	return paramsModule.NewKeyTable().RegisterParamSet(&Params{})
-}
-
-type Params struct {
-	MinFees []MinFee `json:"min_fees" yaml:"min_fees"`
+func ParamKeyTable() paramstypes.KeyTable {
+	return paramstypes.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 // NewParams create a new params object with the given data
@@ -44,16 +38,9 @@ func DefaultParams() Params {
 	}
 }
 
-// String implements Stringer
-func (params Params) String() string {
-	out := "Fee parameters:\n"
-	out += fmt.Sprintf("MinFees: %s\n", params.MinFees)
-	return strings.TrimSpace(out)
-}
-
-func (params *Params) ParamSetPairs() paramsModule.ParamSetPairs {
-	return paramsModule.ParamSetPairs{
-		paramsModule.NewParamSetPair(MinFeesStoreKey, &params.MinFees, ValidateMinFeesParam),
+func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
+	return paramstypes.ParamSetPairs{
+		paramstypes.NewParamSetPair(MinFeesStoreKey, &params.MinFees, ValidateMinFeesParam),
 	}
 }
 

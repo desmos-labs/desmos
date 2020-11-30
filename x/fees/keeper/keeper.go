@@ -2,28 +2,28 @@ package keeper
 
 import (
 	"fmt"
+	legacyauth "github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
 type Keeper struct {
 	// The reference to the ParamsStore to get and set params
-	paramSubspace params.Subspace
-	Cdc           *codec.Codec
+	paramSubspace paramstypes.Subspace
+	cdc           *codec.BinaryMarshaler
 }
 
-func NewKeeper(cdc *codec.Codec, paramSpace params.Subspace) Keeper {
+func NewKeeper(cdc *codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
-		Cdc:           cdc,
+		cdc:           cdc,
 		paramSubspace: paramSpace,
 	}
 }
@@ -41,7 +41,7 @@ func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
 
 // CheckFees checks whether the given fees are sufficient to pay for all the given messages.
 // The check is performed considering the minimum fee amounts specified inside the module parameters.
-func (k Keeper) CheckFees(ctx sdk.Context, fees authtypes.StdFee, msgs []sdk.Msg) error {
+func (k Keeper) CheckFees(ctx sdk.Context, fees legacyauth.StdFee, msgs []sdk.Msg) error {
 	feesParams := k.GetParams(ctx)
 
 	// calculate required fees for the given messages

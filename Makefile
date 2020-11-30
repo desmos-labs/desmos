@@ -10,7 +10,8 @@ BUILDDIR ?= $(CURDIR)/build
 SIMAPP = ./app
 MOCKS_DIR = $(CURDIR)/tests/mocks
 HTTPS_GIT := https://github.com/desmos-labs/desmos.git
-DOCKER_BUF := docker run -v $(shell pwd):/workspace --workdir /workspace bufbuild/buf
+DOCKER := $(shell which docker)
+DOCKER_BUF := $(DOCKER) run -v $(shell pwd):/workspace --workdir /workspace bufbuild/buf
 
 export GO111MODULE = on
 
@@ -320,7 +321,9 @@ CONFIO_TYPES        = third_party/proto/confio
 
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
+	@mkdir -p $(COSMOS_TYPES)/base/v1beta1
 	@curl -sSL $(COSMOS_URL)/base/query/v1beta1/pagination.proto > $(COSMOS_TYPES)/base/query/v1beta1/pagination.proto
+	@curl -sSL $(COSMOS_URL)/base/v1beta1/coin.proto > $(COSMOS_TYPES)/base/v1beta1/coin.proto
 
 	@mkdir -p $(GOGO_PROTO_TYPES)
 	@curl -sSL $(GOGO_PROTO_URL)/gogoproto/gogo.proto > $(GOGO_PROTO_TYPES)/gogo.proto

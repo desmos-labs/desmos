@@ -13,14 +13,14 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/golang/protobuf/descriptor"
-	"github.com/golang/protobuf/proto"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/grpc-ecosystem/grpc-gateway/utilities"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 // Suppress "imported and not used" errors
@@ -29,7 +29,7 @@ var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
-var _ = descriptor.ForMessage
+var _ = metadata.Join
 
 var (
 	filter_Query_Posts_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
@@ -84,7 +84,6 @@ func request_Query_Post_0(ctx context.Context, marshaler runtime.Marshaler, clie
 	}
 
 	protoReq.PostId, err = runtime.String(val)
-
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "post_id", err)
 	}
@@ -111,7 +110,6 @@ func local_request_Query_Post_0(ctx context.Context, marshaler runtime.Marshaler
 	}
 
 	protoReq.PostId, err = runtime.String(val)
-
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "post_id", err)
 	}
@@ -138,7 +136,6 @@ func request_Query_PollAnswers_0(ctx context.Context, marshaler runtime.Marshale
 	}
 
 	protoReq.PostId, err = runtime.String(val)
-
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "post_id", err)
 	}
@@ -165,7 +162,6 @@ func local_request_Query_PollAnswers_0(ctx context.Context, marshaler runtime.Ma
 	}
 
 	protoReq.PostId, err = runtime.String(val)
-
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "post_id", err)
 	}
@@ -214,19 +210,22 @@ func local_request_Query_Params_0(ctx context.Context, marshaler runtime.Marshal
 // RegisterQueryHandlerServer registers the http handlers for service Query to "mux".
 // UnaryRPC     :call QueryServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features (such as grpc.SendHeader, etc) to stop working. Consider using RegisterQueryHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterQueryHandlerFromEndpoint instead.
 func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, server QueryServer) error {
 
 	mux.Handle("GET", pattern_Query_Posts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Posts")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 		resp, md, err := local_request_Query_Posts_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -240,13 +239,16 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 	mux.Handle("GET", pattern_Query_Post_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Post")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 		resp, md, err := local_request_Query_Post_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -260,13 +262,16 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 	mux.Handle("GET", pattern_Query_PollAnswers_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/PollAnswers")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 		resp, md, err := local_request_Query_PollAnswers_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -280,13 +285,16 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 	mux.Handle("GET", pattern_Query_RegisteredReactions_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/RegisteredReactions")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 		resp, md, err := local_request_Query_RegisteredReactions_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -300,13 +308,16 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 	mux.Handle("GET", pattern_Query_Params_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Params")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 		resp, md, err := local_request_Query_Params_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -362,7 +373,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Posts")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -382,7 +393,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Post")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -402,7 +413,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/PollAnswers")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -422,7 +433,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/RegisteredReactions")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -442,7 +453,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/desmos.posts.v1beta1.Query/Params")
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -462,15 +473,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Posts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1}, []string{"desmos", "posts", "v1beta1"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Posts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1}, []string{"desmos", "posts", "v1beta1"}, ""))
 
-	pattern_Query_Post_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3}, []string{"desmos", "posts", "v1beta1", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Post_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3}, []string{"desmos", "posts", "v1beta1", "post_id"}, ""))
 
-	pattern_Query_PollAnswers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "posts", "v1beta1", "post_id", "answers"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PollAnswers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "posts", "v1beta1", "post_id", "answers"}, ""))
 
-	pattern_Query_RegisteredReactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 2, 3}, []string{"desmos", "posts", "v1beta1", "registered-reactions"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RegisteredReactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 2, 3}, []string{"desmos", "posts", "v1beta1", "registered-reactions"}, ""))
 
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 2, 3}, []string{"desmos", "posts", "v1beta1", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 2, 3}, []string{"desmos", "posts", "v1beta1", "params"}, ""))
 )
 
 var (

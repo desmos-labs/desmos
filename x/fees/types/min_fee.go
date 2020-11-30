@@ -6,12 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// MinFee contains the minimum amount of coins that should be paid as a fee for each message of the specified type sent
-type MinFee struct {
-	MessageType string    `json:"message_type" yaml:"message_type"`
-	Amount      sdk.Coins `json:"amount" yaml:"amount"`
-}
-
 func NewMinFee(messageType string, amount sdk.Coins) MinFee {
 	return MinFee{
 		MessageType: messageType,
@@ -31,3 +25,5 @@ func (mf MinFee) Validate() error {
 
 	return nil
 }
+
+type MinFees []MinFee
