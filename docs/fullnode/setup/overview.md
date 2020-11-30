@@ -49,6 +49,10 @@ This process depends on your working environment.
 The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by default. Please run the equivalent commands if you are running other Linux distributions.
 
 ```bash
+# Update the system
+sudo apt update 
+sudo apt upgrade 
+
 # Install git, gcc and make
 sudo apt install build-essential --yes
 

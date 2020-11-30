@@ -101,11 +101,11 @@ echo "====> Downloading Desmos"
   cd ~/desmos || exit
   git fetch -a
   git checkout tags/v0.12.2
-  make build
+  make build install
 
   mkdir -p ~/.desmosd/cosmovisor/genesis/bin
   mkdir -p ~/.desmosd/cosmovisor/upgrades
-  mv build/desmos* ~/.desmosd/cosmovisor/genesis/bin
+  mv build/desmosd ~/.desmosd/cosmovisor/genesis/bin
 
   alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
   alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
@@ -134,7 +134,7 @@ echo "====> Downloading the genesis file"
 # Setup the persistent peers
 echo "====> Setting persistent peers"
 {
-  sed -i -e 's/persistent_peers = ""/persistent_peers = "7fed5624ca577eb0333d3631b5e4f16ba1736979@54.180.98.75:26656"/g' ~/.desmosd/config/config.toml
+  sed -i -e 's/seeds = ""/seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"/g' ~/.desmosd/config/config.toml
 } &> /dev/null
 
 echo "===> Completed Desmos setup"
