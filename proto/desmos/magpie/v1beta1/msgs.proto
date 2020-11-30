@@ -11,7 +11,7 @@ service Msg {
   rpc CreateSession(MsgCreateSession) returns (MsgCreateSessionResponse);
 }
 
-// MsgSend represents a message to send coins from one account to another.
+// MsgCreateSession represents a message to create a session for a user from a different cosmos chain.
 message MsgCreateSession {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;

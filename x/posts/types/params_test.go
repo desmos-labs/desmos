@@ -27,14 +27,14 @@ func TestValidateParams(t *testing.T) {
 			expErr: fmt.Errorf("invalid max post message length param: -1"),
 		},
 		{
-			name:   "invalid max optional poll number param returns error",
+			name:   "invalid max optional data number param returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(-1), sdk.NewInt(8)),
-			expErr: fmt.Errorf("invalid max optional poll fields number param: -1"),
+			expErr: fmt.Errorf("invalid max optional data fields number param: -1"),
 		},
 		{
-			name:   "invalid max optional poll field value length returns error",
+			name:   "invalid max optional data field value length returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(-1)),
-			expErr: fmt.Errorf("invalid max optional poll fields value length param: -1"),
+			expErr: fmt.Errorf("invalid max optional data fields value length param: -1"),
 		},
 		{
 			name:   "valid params returns no error",
@@ -97,7 +97,7 @@ func TestValidateMaxOptionalDataFieldNumberParam(t *testing.T) {
 		{
 			name:            "invalid param returns error",
 			maxOpDataNumber: sdk.NewInt(-1),
-			expErr:          fmt.Errorf("invalid max optional poll fields number param: -1"),
+			expErr:          fmt.Errorf("invalid max optional data fields number param: -1"),
 		},
 		{
 			name:            "valid param returns no errors",
@@ -129,7 +129,7 @@ func TestValidateMaxOptionalDataFieldValueLengthParam(t *testing.T) {
 		{
 			name:              "invalid param returns error",
 			maxOpDataFieldLen: sdk.NewInt(-1),
-			expErr:            fmt.Errorf("invalid max optional poll fields value length param: -1"),
+			expErr:            fmt.Errorf("invalid max optional data fields value length param: -1"),
 		},
 		{
 			name:              "valid param returns no errors",

@@ -57,18 +57,3 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 }
-
-func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
-	if expected != nil {
-		suite.Require().Error(actual)
-		suite.Require().Equal(expected.Error(), actual.Error())
-	} else {
-		suite.Require().NoError(actual)
-	}
-}
-
-// newStrPtr allows to easily create a new string pointer starting
-// from a string value, for easier test setup
-func newStrPtr(value string) *string {
-	return &value
-}

@@ -10,7 +10,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// UserRelationships implements the Query/Session gRPC method
+// UserRelationships implements the Query/UserRelationships gRPC method
 func (k Keeper) UserRelationships(
 	ctx context.Context, request *types.QueryUserRelationshipsRequest,
 ) (*types.QueryUserRelationshipsResponse, error) {
@@ -19,7 +19,7 @@ func (k Keeper) UserRelationships(
 	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships}, nil
 }
 
-// UserBlocks implements the Query/Session gRPC method
+// UserBlocks implements the Query/UserBlocks gRPC method
 func (k Keeper) UserBlocks(
 	ctx context.Context, request *types.QueryUserBlocksRequest,
 ) (*types.QueryUserBlocksResponse, error) {

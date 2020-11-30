@@ -11,7 +11,7 @@ service Msg {
   rpc CreateRelationship(MsgCreateRelationship) returns (CreateRelationshipResponse);
 
   // DeleteRelationship defines a method for deleting a relationship
-  rpc RemoveRelationship(MsgDeleteRelationship) returns (RemoveRelationshipResponse);
+  rpc DeleteRelationship(MsgDeleteRelationship) returns (DeleteRelationshipResponse);
 
   // BlockUser defines a method for blocking a user
   rpc BlockUser(MsgBlockUser) returns (BlockUserResponse);
@@ -46,8 +46,8 @@ message MsgDeleteRelationship {
   string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 
-// RemoveRelationshipResponse defines the Msg/DeleteRelationship response type.
-message RemoveRelationshipResponse {}
+// DeleteRelationshipResponse defines the Msg/DeleteRelationship response type.
+message DeleteRelationshipResponse {}
 
 // ___________________________________________________________________________________________________________________
 

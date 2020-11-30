@@ -29,7 +29,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryUserRelationships is the request type for the Query/UserRelationships RPC method.
+// QueryUserRelationshipsRequest is the request type for the Query/UserRelationships RPC method.
 type QueryUserRelationshipsRequest struct {
 	// address of the user to query the relationships for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -122,7 +122,7 @@ func (m *QueryUserRelationshipsResponse) GetRelationships() []Relationship {
 	return nil
 }
 
-// QueryUserBlocks is the request type for the Query/UserBlocks RPC endpoint
+// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC endpoint
 type QueryUserBlocksRequest struct {
 	// address of the user to query the blocks for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -163,7 +163,7 @@ var xxx_messageInfo_QueryUserBlocksRequest proto.InternalMessageInfo
 
 // QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC method.
 type QueryUserBlocksResponse struct {
-	// relationships represent the list of all the blocks for the queried user
+	// blocks represent the list of all the blocks for the queried user
 	Blocks []UserBlock `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
 }
 
@@ -262,7 +262,7 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// UserRelationships queries the relationships for the user having the given address
 	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error)
-	// UserRelationships queries the user blocks for the user having the given address
+	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
 }
 
@@ -296,7 +296,7 @@ func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest
 type QueryServer interface {
 	// UserRelationships queries the relationships for the user having the given address
 	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error)
-	// UserRelationships queries the user blocks for the user having the given address
+	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
 }
 

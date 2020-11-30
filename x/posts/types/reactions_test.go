@@ -117,55 +117,6 @@ func TestReaction_Validate(t *testing.T) {
 	}
 }
 
-func TestReaction_Equals(t *testing.T) {
-	tests := []struct {
-		name          string
-		first         types.RegisteredReaction
-		second        types.RegisteredReaction
-		shouldBeEqual bool
-	}{
-		{
-			name: "Returns false with different user",
-			first: types.NewRegisteredReaction(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				":smile:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			second: types.NewRegisteredReaction(
-				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-				":smile:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			shouldBeEqual: false,
-		},
-		{
-			name: "Returns true with the same poll",
-			first: types.NewRegisteredReaction(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				":smile:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			second: types.NewRegisteredReaction(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				":smile:",
-				"smile.jpg",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			shouldBeEqual: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.shouldBeEqual, test.first.Equals(test.second))
-		})
-	}
-}
-
 // ___________________________________________________________________________________________________________________
 
 func TestPostReaction_Validate(t *testing.T) {
@@ -216,79 +167,6 @@ func TestPostReaction_Validate(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.error, test.reaction.Validate())
-		})
-	}
-}
-
-func TestPostReaction_Equals(t *testing.T) {
-	tests := []struct {
-		name          string
-		first         types.PostReaction
-		second        types.PostReaction
-		shouldBeEqual bool
-	}{
-		{
-			name: "Returns false with different user",
-			first: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			second: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-			),
-			shouldBeEqual: false,
-		},
-		{
-			name: "Returns false with different value",
-			first: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			second: types.NewPostReaction(
-				":smile:",
-				"reactions",
-				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-			),
-			shouldBeEqual: false,
-		},
-		{
-			name: "Returns false with different shortcode",
-			first: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			second: types.NewPostReaction(
-				":face:",
-				"reaction",
-				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
-			),
-			shouldBeEqual: false,
-		},
-		{
-			name: "Returns true with the same poll",
-			first: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			second: types.NewPostReaction(
-				":smile:",
-				"reaction",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			),
-			shouldBeEqual: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.shouldBeEqual, test.first.Equals(test.second))
 		})
 	}
 }

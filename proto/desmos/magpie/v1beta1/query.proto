@@ -15,7 +15,7 @@ service Query {
   }
 }
 
-// QueryBalanceRequest is the request type for the Query/Balance RPC method.
+// QuerySessionRequest is the request type for the Query/Session RPC method.
 message QuerySessionRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -24,7 +24,7 @@ message QuerySessionRequest {
   string id = 1;
 }
 
-// QueryBalanceResponse is the response type for the Query/Balance RPC method.
+// QuerySessionResponse is the response type for the Query/Session RPC method.
 message QuerySessionResponse {
   // balance is the balance of the coin.
   desmos.magpie.v1beta1.Session session = 1;

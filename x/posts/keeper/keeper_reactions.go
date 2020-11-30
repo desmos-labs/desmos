@@ -17,11 +17,11 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID string, reaction types.
 	store := ctx.KVStore(k.storeKey)
 	key := types.PostReactionsStoreKey(postID)
 
-	// Get the existent wrapped
+	// Get the existent reactions
 	var reactions types.PostReactions
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
 
-	// Check for double wrapped
+	// Check for double reactions
 	if reactions.ContainsReactionFrom(reaction.Owner, reaction.ShortCode) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"%s has already reacted with %s to the post with id %s",

@@ -178,7 +178,7 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid uri provided",
 		},
 		{
-			name: "Valid post without poll poll",
+			name: "Valid post without poll data",
 			post: types.NewPost("",
 				"Message",
 				true,
@@ -243,435 +243,6 @@ func TestPost_Validate(t *testing.T) {
 			} else {
 				require.Nil(t, test.post.Validate())
 			}
-		})
-	}
-}
-
-func TestPost_Equals(t *testing.T) {
-	date := time.Date(2020, 1, 1, 12, 00, 00, 000, time.FixedZone("UTF", 0))
-
-	tests := []struct {
-		name      string
-		first     types.Post
-		second    types.Post
-		expEquals bool
-	}{
-		{
-			name: "Different post ID",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different parent ID",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different message",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "Another post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different creation time",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date.AddDate(0, 0, 1),
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different last edited",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 2),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different allows comments",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: false,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different subspace",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "desmos-1",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "desmos-2",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different optional poll",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []types.OptionalDataEntry{
-					{
-						Key:   "field",
-						Value: "value",
-					},
-				},
-				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []types.OptionalDataEntry{
-					{
-						Key:   "field",
-						Value: "other-value",
-					},
-				},
-				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different owner",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different medias",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Attachments:    types.Attachments{},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Different polls",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-				PollData: nil,
-			},
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Attachments: types.Attachments{
-					types.NewAttachment("https://uri.com", "text/plain", nil),
-				},
-				PollData: &types.PollData{},
-			},
-			expEquals: false,
-		},
-		{
-			name: "Equals posts",
-			first: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			}.WithAttachments(types.Attachments{
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			}).WithPollData(types.NewPollData(
-				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
-			second: types.Post{
-				PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				ParentID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				Message:        "My post message",
-				Created:        date,
-				LastEdited:     date.AddDate(0, 0, 1),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			}.WithAttachments(types.Attachments{
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			}).WithPollData(types.NewPollData(
-				"poll?",
-				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
-			expEquals: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equal(test.second))
 		})
 	}
 }
@@ -773,7 +344,7 @@ func TestPost_GetPostHashtags(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestAttachments_Equals(t *testing.T) {
+func TestAttachments_Equal(t *testing.T) {
 	tests := []struct {
 		name      string
 		first     types.Attachments
@@ -986,15 +557,15 @@ func TestAttachments_AppendIfMissing(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func TestPostMedia_Validate(t *testing.T) {
+func TestAttachment_Validate(t *testing.T) {
 	tests := []struct {
-		name      string
-		postMedia types.Attachment
-		expErr    string
+		name       string
+		attachment types.Attachment
+		expErr     string
 	}{
 		{
 			name: "Empty URI",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"",
 				"text/plain",
 				nil,
@@ -1003,7 +574,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid URI",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"htt://example.com",
 				"text/plain",
 				nil,
@@ -1012,7 +583,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Empty mime type",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"https://example.com",
 				"",
 				nil,
@@ -1021,7 +592,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "Invalid Tags",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"https://example.com",
 				"text/plain",
 				[]string{""},
@@ -1030,7 +601,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "No errors attachment (with tags)",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"https://example.com",
 				"text/plain",
 				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
@@ -1039,7 +610,7 @@ func TestPostMedia_Validate(t *testing.T) {
 		},
 		{
 			name: "No errors attachment (without tags)",
-			postMedia: types.NewAttachment(
+			attachment: types.NewAttachment(
 				"https://example.com",
 				"text/plain",
 				nil,
@@ -1052,114 +623,10 @@ func TestPostMedia_Validate(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			if len(test.expErr) != 0 {
-				require.Equal(t, test.expErr, test.postMedia.Validate().Error())
+				require.Equal(t, test.expErr, test.attachment.Validate().Error())
 			} else {
-				require.Nil(t, test.postMedia.Validate())
+				require.Nil(t, test.attachment.Validate())
 			}
-		})
-	}
-}
-
-func TestPostMedia_Equals(t *testing.T) {
-	tests := []struct {
-		name      string
-		first     types.Attachment
-		second    types.Attachment
-		expEquals bool
-	}{
-		{
-			name: "Same poll returns true",
-			first: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
-			),
-			second: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
-			),
-			expEquals: true,
-		},
-		{
-			name: "Different URI returns false",
-			first: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				nil,
-			),
-			second: types.NewAttachment(
-				"https://another.com",
-				"text/plain",
-				nil,
-			),
-			expEquals: false,
-		},
-		{
-			name: "Different mime type returns false",
-			first: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				nil,
-			),
-			second: types.NewAttachment(
-				"https://example.com",
-				"application/json",
-				nil,
-			),
-			expEquals: false,
-		},
-		{
-			name: "Different tags returns false",
-			first: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
-			),
-			second: types.NewAttachment(
-				"https://example.com",
-				"text/plain",
-				[]string{},
-			),
-			expEquals: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equal(test.second))
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func TestOptionalData_Equals(t *testing.T) {
-	tests := []struct {
-		name         string
-		optionalData types.OptionalDataEntry
-		otherOpData  types.OptionalDataEntry
-		expBool      bool
-	}{
-		{
-			name:         "Different optional poll returns false",
-			optionalData: types.NewOptionalDataEntry("key", "value"),
-			otherOpData:  types.NewOptionalDataEntry("key", "val"),
-			expBool:      false,
-		},
-		{
-			name:         "Same optional poll returns true",
-			optionalData: types.NewOptionalDataEntry("key", "value"),
-			otherOpData:  types.NewOptionalDataEntry("key", "value"),
-			expBool:      true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expBool, test.optionalData.Equal(test.otherOpData))
 		})
 	}
 }

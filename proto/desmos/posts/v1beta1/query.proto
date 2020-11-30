@@ -82,7 +82,7 @@ message QueryPostsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 8;
 }
 
-// QueryPostsResponse is the response type for the Query/Profiles RPC method
+// QueryPostsResponse is the response type for the Query/Posts RPC method
 message QueryPostsResponse{
   repeated QueryPostResponse posts = 1 [
     (gogoproto.nullable) = false
@@ -100,17 +100,20 @@ message QueryPostRequest {
   string post_id = 1;
 }
 
-// QueryPostResponse is the response type for the Query/Posts RPC method
+// QueryPostResponse is the response type for the Query/Post RPC method
 message QueryPostResponse {
   desmos.posts.v1beta1.Post post = 1 [
     (gogoproto.nullable) = false
   ];
+
   repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2 [
     (gogoproto.nullable) = false
   ];
+
   repeated desmos.posts.v1beta1.PostReaction reactions = 3 [
     (gogoproto.nullable) = false
   ];
+
   repeated string children = 4;
 }
 
@@ -124,7 +127,7 @@ message QueryPollAnswersRequest {
   string post_id = 1;
 }
 
-// QueryPollAnswersResponse is the response type for the Query/Post RPC method
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
 message QueryPollAnswersResponse{
   string post_id = 1;
   repeated desmos.posts.v1beta1.UserAnswer answers = 2 [
@@ -137,7 +140,7 @@ message QueryPollAnswersResponse{
 // QueryRegisteredReactionsRequest is the request type for the Query/RegisteredReactions RPC method.
 message QueryRegisteredReactionsRequest {}
 
-// QueryRegisteredReactionsResponse is the response type for the Query/PollAnswers RPC method
+// QueryRegisteredReactionsResponse is the response type for the Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse{
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1 [
     (gogoproto.nullable) = false

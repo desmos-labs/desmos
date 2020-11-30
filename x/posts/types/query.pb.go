@@ -245,7 +245,7 @@ func (m *QueryPostsRequest) GetPagination() *query.PageRequest {
 	return nil
 }
 
-// QueryPostsResponse is the response type for the Query/Profiles RPC method
+// QueryPostsResponse is the response type for the Query/Posts RPC method
 type QueryPostsResponse struct {
 	Posts      []QueryPostResponse `protobuf:"bytes,1,rep,name=posts,proto3" json:"posts"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -336,7 +336,7 @@ func (m *QueryPostRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryPostRequest proto.InternalMessageInfo
 
-// QueryPostResponse is the response type for the Query/Posts RPC method
+// QueryPostResponse is the response type for the Query/Post RPC method
 type QueryPostResponse struct {
 	Post        Post           `protobuf:"bytes,1,opt,name=post,proto3" json:"post"`
 	PollAnswers []UserAnswer   `protobuf:"bytes,2,rep,name=poll_answers,json=pollAnswers,proto3" json:"poll_answers"`
@@ -443,7 +443,7 @@ func (m *QueryPollAnswersRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryPollAnswersRequest proto.InternalMessageInfo
 
-// QueryPollAnswersResponse is the response type for the Query/Post RPC method
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
 type QueryPollAnswersResponse struct {
 	PostId  string       `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	Answers []UserAnswer `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers"`
@@ -533,7 +533,7 @@ func (m *QueryRegisteredReactionsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryRegisteredReactionsRequest proto.InternalMessageInfo
 
-// QueryRegisteredReactionsResponse is the response type for the Query/PollAnswers RPC method
+// QueryRegisteredReactionsResponse is the response type for the Query/RegisteredReactions RPC method
 type QueryRegisteredReactionsResponse struct {
 	RegisteredReactions []RegisteredReaction `protobuf:"bytes,1,rep,name=registered_reactions,json=registeredReactions,proto3" json:"registered_reactions"`
 }

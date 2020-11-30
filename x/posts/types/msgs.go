@@ -205,7 +205,7 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnlikePostPost is the constructor of MsgRemovePostReaction
+// NewMsgRemovePostReaction is the constructor of MsgRemovePostReaction
 func NewMsgRemovePostReaction(postID string, user string, value string) *MsgRemovePostReaction {
 	return &MsgRemovePostReaction{
 		PostID:   postID,

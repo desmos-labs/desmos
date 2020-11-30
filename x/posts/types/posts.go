@@ -39,7 +39,7 @@ func (post Post) WithAttachments(attachments []Attachment) Post {
 	return post
 }
 
-// WithPollData allows to easily set the given poll as the poll poll files associated with the p Post
+// WithPollData allows to easily set the given poll as the poll data files associated with the p Post
 func (post Post) WithPollData(data *PollData) Post {
 	post.PollData = data
 	post.PostID = ComputeID(post)
@@ -147,7 +147,7 @@ func (ids CommentIDs) AppendIfMissing(id string) (CommentIDs, bool) {
 
 // ___________________________________________________________________________________________________________________
 
-// NewAttachment builds a new Attachment instance with the provided poll
+// NewAttachment builds a new Attachment instance with the provided data
 func NewAttachment(uri, mimeType string, tags []string) Attachment {
 	return Attachment{
 		URI:      uri,
@@ -192,8 +192,7 @@ func NewAttachments(attachments ...Attachment) Attachments {
 	return attachments
 }
 
-// Equals returns true iff the atts slice contains the same
-// poll in the same order of the other slice
+// Equals returns true iff the atts slice contains the same data in the same order of the other slice
 func (attachments Attachments) Equal(other Attachments) bool {
 	if len(attachments) != len(other) {
 		return false

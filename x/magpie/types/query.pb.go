@@ -29,7 +29,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryBalanceRequest is the request type for the Query/Balance RPC method.
+// QuerySessionRequest is the request type for the Query/Session RPC method.
 type QuerySessionRequest struct {
 	// id is the session it to query for
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -68,7 +68,7 @@ func (m *QuerySessionRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QuerySessionRequest proto.InternalMessageInfo
 
-// QueryBalanceResponse is the response type for the Query/Balance RPC method.
+// QuerySessionResponse is the response type for the Query/Session RPC method.
 type QuerySessionResponse struct {
 	// balance is the balance of the coin.
 	Session *Session `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`

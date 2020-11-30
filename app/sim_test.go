@@ -42,7 +42,7 @@ import (
 func init() {
 	simapp.GetSimulatorFlags()
 
-	// SetupSimApp the config
+	// Setup the config
 	sdkConfig := sdk.GetConfig()
 	SetupConfig(sdkConfig)
 	sdkConfig.Seal()

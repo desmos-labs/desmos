@@ -24,7 +24,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Params contains the parameters for the relationships module
+// Params contains the parameters for the profiles module
 type Params struct {
 	MonikerParams MonikerParams                          `protobuf:"bytes,1,opt,name=moniker_params,json=monikerParams,proto3" json:"moniker_params" yaml:"moniker_params"`
 	DtagParams    DTagParams                             `protobuf:"bytes,2,opt,name=dtag_params,json=dtagParams,proto3" json:"dtag_params" yaml:"dtag_params"`

@@ -35,7 +35,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			expErr: true,
 		},
 		{
-			name: "Relationship already created returns error",
+			name: "Existing relationship returns error",
 			storedRelationships: []types.Relationship{
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -115,7 +115,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 		expRelationships []types.Relationship
 	}{
 		{
-			name: "relationship not found returns error",
+			name: "Relationship not found returns error",
 			stored: []types.Relationship{
 				types.NewRelationship("creator", "recipient", "subspace"),
 			},
@@ -123,7 +123,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 			expErr: true,
 		},
 		{
-			name: "existing relationship is removed properly and leaves empty array",
+			name: "Existing relationship is removed properly and leaves empty array",
 			stored: []types.Relationship{
 				types.NewRelationship("creator", "recipient", "subspace"),
 			},
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 			},
 		},
 		{
-			name: "existing relationship is removed properly and leaves not empty array",
+			name: "Existing relationship is removed properly and leaves not empty array",
 			stored: []types.Relationship{
 				types.NewRelationship("creator", "recipient", "subspace"),
 				types.NewRelationship("creator", "recipient", "other_subspace"),
@@ -171,7 +171,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.keeper)
-			_, err := service.RemoveRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := service.DeleteRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)
@@ -196,7 +196,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 		expBlocks []types.UserBlock
 	}{
 		{
-			name: "Relationship already created returns error",
+			name: "Existing relationship returns error",
 			stored: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -214,7 +214,7 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			expErr: true,
 		},
 		{
-			name:   "Relationship has been saved correctly",
+			name:   "Block has been saved correctly",
 			stored: nil,
 			msg: types.NewMsgBlockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -277,13 +277,13 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 		expBlocks   []types.UserBlock
 	}{
 		{
-			name:        "invalid block returns error",
+			name:        "Invalid block returns error",
 			storedBlock: []types.UserBlock{},
 			msg:         types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
 			expErr:      true,
 		},
 		{
-			name: "existing block is removed and leaves empty array",
+			name: "Existing block is removed and leaves empty array",
 			storedBlock: []types.UserBlock{
 				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 			},
@@ -300,7 +300,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 			expBlocks: nil,
 		},
 		{
-			name: "existing block is removed and leaves non empty array",
+			name: "Existing block is removed and leaves non empty array",
 			storedBlock: []types.UserBlock{
 				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				types.NewUserBlock("blocker", "blocked", "reason", "other_subspace"),

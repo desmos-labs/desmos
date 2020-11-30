@@ -97,7 +97,7 @@ func ValidateMaxOptionalDataFieldNumberParam(i interface{}) error {
 	}
 
 	if params.IsZero() || params.IsNegative() {
-		return fmt.Errorf("invalid max optional poll fields number param: %s", params)
+		return fmt.Errorf("invalid max optional data fields number param: %s", params)
 	}
 
 	return nil
@@ -111,7 +111,7 @@ func ValidateMaxOptionalDataFieldValueLengthParam(i interface{}) error {
 	}
 
 	if params.IsZero() || params.IsNegative() {
-		return fmt.Errorf("invalid max optional poll fields value length param: %s", params)
+		return fmt.Errorf("invalid max optional data fields value length param: %s", params)
 	}
 
 	return nil

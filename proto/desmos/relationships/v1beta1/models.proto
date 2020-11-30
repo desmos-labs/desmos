@@ -24,14 +24,13 @@ message Relationships {
 }
 
 // UserBlock represents the fact that the Blocker has blocked the given Blocked user.
-// The Reason field represents the reason the user has been blocked for, and is optional.
 message UserBlock {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   string blocker = 1 [(gogoproto.moretags) = "yaml:\"blocker\""];
   string blocked = 2 [(gogoproto.moretags) = "yaml:\"blocked\""];
-  string reason = 3 [(gogoproto.moretags) = "yaml:\"reason\""];
+  string reason = 3 [(gogoproto.moretags) = "yaml:\"reason\""]; // Reason the user has been blocked for (optional).
   string subspace = 4 [(gogoproto.moretags) = "yaml:\"subspace\""];
 }
 

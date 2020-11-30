@@ -32,7 +32,7 @@ func formatOutputIDs(ids []string) (outputIDs string) {
 	return strings.Join(ids, "\n")
 }
 
-// ValidReportsIDs checks that all stored are associated with a valid postID that correspond to an existent post
+// ValidReportsIDs checks that all reports are associated with a valid post id that corresponds to an existent post
 func ValidReportsIDs(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidIDs []string
@@ -47,7 +47,7 @@ func ValidReportsIDs(k Keeper) sdk.Invariant {
 			}
 		}
 
-		return sdk.FormatInvariant(types.ModuleName, "invalid stored' IDs",
+		return sdk.FormatInvariant(types.ModuleName, "invalid reports",
 			fmt.Sprintf("The following list contains invalid postIDs:\n %s",
 				formatOutputIDs(invalidIDs))), invalidIDs != nil
 	}

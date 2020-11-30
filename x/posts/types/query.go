@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 )
 
-// PostQueryResponse represents the poll of a post
-// that is returned to user upon a query
+// PostQueryResponse represents the data of a post that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
 	PollAnswers []UserAnswer   `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
@@ -24,8 +23,7 @@ func NewPostResponse(
 	}
 }
 
-// MarshalJSON implements json.Marshaler as Amino does
-// not respect default json composition
+// MarshalJSON implements json.Marshaler as Amino does not respect default json composition
 func (response PostQueryResponse) MarshalJSON() ([]byte, error) {
 	type temp PostQueryResponse
 	return json.Marshal(temp(response))

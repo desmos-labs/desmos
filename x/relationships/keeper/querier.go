@@ -25,8 +25,10 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 	}
 }
 
-// queryUserRelationships handles the request of listing all the users' stored
-func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
+// queryUserRelationships handles the request of listing all the users' stored relationships
+func queryUserRelationships(
+	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
+) ([]byte, error) {
 	relationships := keeper.GetUserRelationships(ctx, path[0])
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &relationships)
@@ -38,7 +40,9 @@ func queryUserRelationships(ctx sdk.Context, path []string, _ abci.RequestQuery,
 }
 
 // queryUserBlocks handles the request of listing all the users' blocked users
-func queryUserBlocks(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
+func queryUserBlocks(
+	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
+) ([]byte, error) {
 	userBlocks := keeper.GetUserBlocks(ctx, path[0])
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &userBlocks)

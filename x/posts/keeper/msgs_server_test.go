@@ -80,7 +80,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 		},
 		{
-			name: "Storing a valid post with missing parent id returns expError",
+			name: "Storing a valid post with missing parent id returns error",
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -94,7 +94,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expError: true,
 		},
 		{
-			name: "Storing a valid post with parent stored but not accepting comments returns expError",
+			name: "Storing a valid post with parent stored but not accepting comments returns error",
 			storedPosts: []types.Post{
 				{
 					PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -120,7 +120,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expError: true,
 		},
 		{
-			name: "Post with exact same data is not posted again",
+			name: "Post with the exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
 					suite.testData.post.ParentID,
@@ -301,6 +301,69 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "Valid request is handled properly without attachments and poll data",
+			storedPosts: []types.Post{
+				{
+					PostID:         suite.testData.post.PostID,
+					ParentID:       suite.testData.post.ParentID,
+					Message:        "Message",
+					Created:        suite.ctx.BlockTime(),
+					LastEdited:     suite.testData.post.Created.AddDate(0, 0, 1),
+					AllowsComments: suite.testData.post.AllowsComments,
+					Subspace:       suite.testData.post.Subspace,
+					OptionalData:   suite.testData.post.OptionalData,
+					Creator:        suite.testData.post.Creator,
+					Attachments: types.NewAttachments(
+						types.NewAttachment("https://edited.com", "text/plain", nil),
+					),
+					PollData: types.NewPollData(
+						"poll?",
+						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+						types.NewPollAnswers(
+							types.NewPollAnswer("1", "No"),
+							types.NewPollAnswer("2", "No"),
+						),
+						false,
+						true,
+					),
+				},
+			},
+			timeDifference: time.Hour * 24,
+			msg: types.NewMsgEditPost(
+				suite.testData.post.PostID,
+				"Edited message",
+				nil,
+				nil,
+				suite.testData.post.Creator,
+			),
+			expPosts: []types.Post{
+				{
+					PostID:         suite.testData.post.PostID,
+					ParentID:       suite.testData.post.ParentID,
+					Message:        "Edited message",
+					Created:        suite.ctx.BlockTime(),
+					LastEdited:     suite.testData.post.Created.AddDate(0, 0, 1),
+					AllowsComments: suite.testData.post.AllowsComments,
+					Subspace:       suite.testData.post.Subspace,
+					OptionalData:   suite.testData.post.OptionalData,
+					Creator:        suite.testData.post.Creator,
+					Attachments: types.NewAttachments(
+						types.NewAttachment("https://edited.com", "text/plain", nil),
+					),
+					PollData: types.NewPollData(
+						"poll?",
+						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
+						types.NewPollAnswers(
+							types.NewPollAnswer("1", "No"),
+							types.NewPollAnswer("2", "No"),
+						),
+						false,
+						true,
+					),
+				},
+			},
+		},
+		{
+			name: "Valid request is handled properly with attachments and poll data",
 			storedPosts: []types.Post{
 				suite.testData.post,
 			},

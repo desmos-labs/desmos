@@ -25,7 +25,7 @@ var _ types.MsgServer = msgServer{}
 func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (*types.MsgReportPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the post to stored exists
+	// Check if the post to report exists
 	postID := msg.PostId
 	if !poststypes.IsValidPostID(postID) {
 		return nil, sdkerrors.Wrap(poststypes.ErrInvalidPostID, postID)

@@ -204,7 +204,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 				suite.Require().NoError(err)
 			}
 
-			err := suite.keeper.DeleteRelationship(suite.ctx, test.relationshipToDelete)
+			err := suite.keeper.RemoveRelationship(suite.ctx, test.relationshipToDelete)
 
 			if test.expErr {
 				suite.Require().Error(err)

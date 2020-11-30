@@ -45,7 +45,7 @@ type TestData struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	// define store keys
+	// Define store keys
 	postsKey := sdk.NewKVStoreKey(poststypes.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
@@ -53,7 +53,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	relationshipsKey := sdk.NewKVStoreKey("relationships")
 	suite.storeKey = reportsKey
 
-	// create an in-memory db for stored
+	// Create an in-memory db for the reports
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	ms.MountStoreWithDB(postsKey, sdk.StoreTypeIAVL, memDB)
@@ -68,13 +68,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	// define keepers
+	// Define keepers
 	rk := relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.postsKeeper = postskeeper.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("poststypes"), rk)
 	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.postsKeeper)
 
-	// setup data
+	// Setup data
 	date, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
 	suite.testData = TestData{
 		postID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",

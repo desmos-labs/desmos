@@ -11,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
-// NewHandler returns a handler for "profile" type messages.
+// NewHandler returns a handler for "relationships" type messages.
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	msgServer := keeper.NewMsgServerImpl(k)
 
@@ -24,7 +24,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteRelationship:
-			res, err := msgServer.RemoveRelationship(sdk.WrapSDKContext(ctx), msg)
+			res, err := msgServer.DeleteRelationship(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgBlockUser:

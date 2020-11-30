@@ -12,17 +12,17 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 service Query {
   // Profile queries the profile of a specific user
   rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
-    option (google.api.http).get = "/desmos/relationships/v1beta1/profiles/{user}";
+    option (google.api.http).get = "/desmos/profiles/v1beta1/profiles/{user}";
   }
 
   // DTagTransfers queries all the DTag transfers requests
   rpc DTagTransfers(QueryDTagTransfersRequest) returns (QueryDTagTransfersResponse) {
-    option (google.api.http).get = "/desmos/relationships/v1beta1/dtag_transfers";
+    option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
   }
 
   // Params queries the profiles module params
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/desmos/relationships/v1beta1/params";
+    option (google.api.http).get = "/desmos/profiles/v1beta1/params";
   }
 }
 
@@ -45,7 +45,7 @@ message QueryProfileResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserBlocks is the request type for the Query/DTagTransfers RPC endpoint
+// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC endpoint
 message QueryDTagTransfersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -54,7 +54,7 @@ message QueryDTagTransfersRequest {
   string user = 1;
 }
 
-// QueryBlocksResult is the response type for the Query/DTagTransfers RPC method.
+// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers RPC method.
 message QueryDTagTransfersResponse {
   // relationships represent the list of all the blocks for the queried user
   repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1

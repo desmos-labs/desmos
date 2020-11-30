@@ -50,7 +50,7 @@ func TestProfile_Update(t *testing.T) {
 		expProfile types.Profile
 	}{
 		{
-			name: "DoNotModify and empty fields doe not update original values",
+			name: "DoNotModify and empty fields do not update original values",
 			original: types.NewProfile(
 				"dtag",
 				"moniker",

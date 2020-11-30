@@ -57,8 +57,8 @@ import (
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/desmos-labs/desmos/x/posts"
-	postsKeeper "github.com/desmos-labs/desmos/x/posts/keeper"
-	postsyypes "github.com/desmos-labs/desmos/x/posts/types"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
@@ -151,7 +151,7 @@ var _ simapp.App = (*DesmosApp)(nil)
 
 // DesmosApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
-// capabilities arKen't needed for testing.
+// capabilities aren't needed for testing.
 type DesmosApp struct {
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
@@ -178,7 +178,7 @@ type DesmosApp struct {
 
 	// Custom modules
 	magpieKeeper        magpieKeeper.Keeper
-	postsKeeper         postsKeeper.Keeper
+	postsKeeper         postskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	ReportsKeeper       reportsKeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
@@ -224,7 +224,7 @@ func NewDesmosApp(
 		evidencetypes.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, postsyypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		magpieTypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
 		relationshipstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -299,10 +299,10 @@ func NewDesmosApp(
 		appCodec,
 		keys[relationshipstypes.StoreKey],
 	)
-	app.postsKeeper = postsKeeper.NewKeeper(
+	app.postsKeeper = postskeeper.NewKeeper(
 		app.appCodec,
-		keys[postsyypes.StoreKey],
-		app.GetSubspace(postsyypes.ModuleName),
+		keys[poststypes.StoreKey],
+		app.GetSubspace(poststypes.ModuleName),
 		app.RelationshipsKeeper,
 	)
 	app.ProfileKeeper = profileskeeper.NewKeeper(
@@ -366,7 +366,7 @@ func NewDesmosApp(
 		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
 		govtypes.ModuleName, evidencetypes.ModuleName,
 
-		magpieTypes.ModuleName, postsyypes.ModuleName, profilestypes.ModuleName, reportsTypes.ModuleName,
+		magpieTypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, reportsTypes.ModuleName,
 		relationshipstypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
@@ -607,7 +607,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 
-	paramsKeeper.Subspace(postsyypes.ModuleName)
+	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
 	return paramsKeeper

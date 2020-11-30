@@ -145,7 +145,7 @@ func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
 
-// LegacyQuerierHandler returns the relationships module sdk.Querier.
+// LegacyQuerierHandler returns the reports module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }

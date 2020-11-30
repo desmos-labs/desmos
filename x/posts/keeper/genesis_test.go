@@ -112,6 +112,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+			suite.keeper.SetParams(suite.ctx, test.data.params)
 
 			for _, reaction := range test.data.registeredReactions {
 				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
@@ -133,8 +134,6 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					suite.Require().NoError(err)
 				}
 			}
-
-			suite.keeper.SetParams(suite.ctx, test.data.params)
 
 			exported := suite.keeper.ExportGenesis(suite.ctx)
 			suite.Require().Equal(test.expected, exported)

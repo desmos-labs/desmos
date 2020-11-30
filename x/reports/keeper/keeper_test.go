@@ -118,7 +118,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 		expected []types.Report
 	}{
 		{
-			name: "Returns a non-empty stored array",
+			name: "Returns a non-empty array",
 			stored: []types.Report{
 				types.NewReport(
 					"post_id",
@@ -144,7 +144,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			},
 		},
 		{
-			name:     "Returns an empty stored array",
+			name:     "Returns an empty array",
 			postID:   "post_id",
 			stored:   nil,
 			expected: nil,
@@ -184,7 +184,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 			},
 		},
 		{
-			name:    "Returns an empty stored map",
+			name:    "Returns an empty array",
 			reports: nil,
 		},
 	}

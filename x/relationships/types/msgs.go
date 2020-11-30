@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
-func NewMsgCreateRelationship(creator, recipient string, subspace string) *MsgCreateRelationship {
+func NewMsgCreateRelationship(creator, recipient, subspace string) *MsgCreateRelationship {
 	return &MsgCreateRelationship{
 		Sender:   creator,
 		Receiver: recipient,
@@ -59,7 +59,7 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgDeleteRelationship(user, counterparty string, subspace string) *MsgDeleteRelationship {
+func NewMsgDeleteRelationship(user, counterparty, subspace string) *MsgDeleteRelationship {
 	return &MsgDeleteRelationship{
 		User:         user,
 		Counterparty: counterparty,
@@ -111,7 +111,7 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgBlockUser(blocker, blocked string, reason, subspace string) *MsgBlockUser {
+func NewMsgBlockUser(blocker, blocked, reason, subspace string) *MsgBlockUser {
 	return &MsgBlockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,
@@ -164,7 +164,7 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgUnblockUser(blocker, blocked string, subspace string) *MsgUnblockUser {
+func NewMsgUnblockUser(blocker, blocked, subspace string) *MsgUnblockUser {
 	return &MsgUnblockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,

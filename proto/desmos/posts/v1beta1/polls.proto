@@ -16,6 +16,7 @@ message PollAnswer {
     (gogoproto.jsontag) = "id",
     (gogoproto.moretags) = "yaml\"id\""
   ];
+
   string text = 2 [
     (gogoproto.jsontag) = "text",
     (gogoproto.moretags) = "yaml\"text\""
@@ -30,22 +31,25 @@ message PollData {
   option (gogoproto.goproto_stringer) = true;
 
   string question = 1;
+
   repeated PollAnswer provided_answers = 2 [
     (gogoproto.customname) = "ProvidedAnswers",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "provided_answers",
     (gogoproto.moretags) = "yaml\"provided_answers\""
   ];
+
   google.protobuf.Timestamp end_date = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.jsontag) = "end_date",
     (gogoproto.moretags) = "yaml\"end_date\""
   ];
+
   bool allows_multiple_answers = 4 [
     (gogoproto.jsontag) = "allows_multiple_answers",
     (gogoproto.moretags) = "yaml\"allows_multiple_answers\""
   ];
+
   bool allows_answer_edits = 5 [
     (gogoproto.jsontag) = "allows_answer_edits",
     (gogoproto.moretags) = "yaml\"allows_answer_edits\""

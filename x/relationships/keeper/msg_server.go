@@ -43,10 +43,10 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 	return &types.CreateRelationshipResponse{}, nil
 }
 
-func (k msgServer) RemoveRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.RemoveRelationshipResponse, error) {
+func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.DeleteRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteRelationship(ctx, types.NewRelationship(msg.User, msg.Counterparty, msg.Subspace))
+	err := k.RemoveRelationship(ctx, types.NewRelationship(msg.User, msg.Counterparty, msg.Subspace))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (k msgServer) RemoveRelationship(goCtx context.Context, msg *types.MsgDelet
 		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
-	return &types.RemoveRelationshipResponse{}, nil
+	return &types.DeleteRelationshipResponse{}, nil
 }
 
 func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.BlockUserResponse, error) {

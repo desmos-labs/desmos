@@ -17,7 +17,7 @@ type Keeper struct {
 	postKeeper postskeeper.Keeper // Post's keeper to perform checks on the postIDs
 }
 
-// NewKeeper creates new instances of the stored Keeper
+// NewKeeper creates new instances of the reports Keeper
 func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, pk postskeeper.Keeper) Keeper {
 	return Keeper{
 		cdc:        cdc,
@@ -32,14 +32,14 @@ func (k Keeper) CheckPostExistence(ctx sdk.Context, postID string) bool {
 	return k.postKeeper.DoesPostExist(ctx, postID)
 }
 
-// SaveReport allows to save the given stored inside the current context.
-// It assumes that the given stored has already been validated.
-// If the same stored has already been inserted, nothing will be changed.
+// SaveReport allows to save the given report inside the current context.
+// It assumes that the given report has already been validated.
+// If the same report has already been inserted, nothing will be changed.
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ReportStoreKey(report.PostId)
 
-	// Get the list of stored related to the given postID
+	// Get the list of reports related to the given postID
 	reports := types.MustUnmarshalReports(store.Get(key), k.cdc)
 
 	// Append the given report
@@ -52,14 +52,14 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	return nil
 }
 
-// GetPostReports returns the list of stored associated with the given postID.
-// If no stored is associated with the given postID the function will returns an empty list.
+// GetPostReports returns the list of reports associated with the given postID.
+// If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
 	store := ctx.KVStore(k.storeKey)
 	return types.MustUnmarshalReports(store.Get(types.ReportStoreKey(postID)), k.cdc)
 }
 
-// GetAllReports returns the list of all the stored that have been stored inside the given context
+// GetAllReports returns the list of all the reports that have been stored inside the given context
 func (k Keeper) GetAllReports(ctx sdk.Context) []types.Report {
 	store := ctx.KVStore(k.storeKey)
 

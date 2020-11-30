@@ -49,7 +49,7 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 			},
 		},
 		{
-			name:          "Empty stored and valid ID",
+			name:          "Empty reports and valid id",
 			path:          []string{types.QueryReports, suite.testData.postID},
 			storedReports: nil,
 			expErr:        false,

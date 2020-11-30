@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// Params contains the parameters for the relationships module
+// Params contains the parameters for the profiles module
 message Params {
   MonikerParams moniker_params = 1 [
     (gogoproto.nullable) = false,

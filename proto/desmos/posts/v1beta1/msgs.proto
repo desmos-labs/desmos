@@ -37,39 +37,47 @@ message MsgCreatePost {
 
   string parent_id = 1 [
     (gogoproto.customname) = "ParentID",
-    (gogoproto.moretags) = "yaml:\"parent_id\""
+    (gogoproto.moretags) = "yaml:\"parent_id\"",
+    (gogoproto.jsontag) = "parent_id"
   ];
+
   string message = 2 [
     (gogoproto.moretags) = "yaml:\"message\""
   ];
+
   bool allows_comments = 3 [
     (gogoproto.jsontag) = "allows_comments",
     (gogoproto.moretags) = "yaml:\"allows_comments\""
   ];
+
   string subspace = 4 [
     (gogoproto.moretags) = "yaml:\"subspace\""
   ];
+
   repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 5 [
     (gogoproto.castrepeated) = "OptionalData",
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "optional_data,omitempty",
     (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
   ];
+
   string creator = 6 [
     (gogoproto.moretags) = "yaml:\"creator\""
   ];
+
   repeated desmos.posts.v1beta1.Attachment attachments = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml\"attachments,omitempty\""
   ];
+
   desmos.posts.v1beta1.PollData poll_data = 8 [
     (gogoproto.jsontag) = "poll_data,omitempty",
     (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
   ];
 }
 
-// MsgSaveProfileResponse defines the Msg/CreatePost response type.
+// MsgCreatePostResponse defines the Msg/CreatePost response type.
 message MsgCreatePostResponse {}
 
 // ___________________________________________________________________________________________________________________
@@ -81,20 +89,25 @@ message MsgEditPost {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\""
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
   ];
+
   string message = 2 [
     (gogoproto.moretags) = "yaml:\"message\""
   ];
+
   repeated desmos.posts.v1beta1.Attachment attachments = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml\"attachments,omitempty\""
   ];
+
   desmos.posts.v1beta1.PollData poll_data = 4 [
     (gogoproto.jsontag) = "poll_data,omitempty",
     (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
   ];
+
   string editor = 5 [
     (gogoproto.moretags) = "yaml:\"editor\""
   ];
@@ -112,11 +125,14 @@ message MsgAddPostReaction {
 
   string post_id = 1[
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\""
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
   ];
+
   string reaction = 2[
     (gogoproto.moretags) = "yaml:\"reaction\""
   ];
+
   string user = 3[
     (gogoproto.moretags) = "yaml:\"user\""
   ];
@@ -135,11 +151,14 @@ message MsgRemovePostReaction {
 
   string post_id = 1[
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\""
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
   ];
+
   string reaction = 2[
     (gogoproto.moretags) = "yaml:\"reaction\""
   ];
+
   string user = 3[
     (gogoproto.moretags) = "yaml:\"user\""
   ];
@@ -157,12 +176,15 @@ message MsgAnswerPoll {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\""
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
   ];
+
   repeated string user_answers = 2 [
     (gogoproto.jsontag) = "answers",
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
+
   string answerer = 3 [
     (gogoproto.moretags) = "yaml:\"answerer\""
   ];
@@ -183,16 +205,19 @@ message MsgRegisterReaction {
     (gogoproto.jsontag) = "short_code",
     (gogoproto.moretags) = "yaml:\"short_code\""
   ];
+
   string value = 2  [
     (gogoproto.moretags) = "yaml:\"value\""
   ];
+
   string subspace = 3 [
     (gogoproto.moretags) = "yaml:\"subspace\""
   ];
+
   string creator = 4 [
     (gogoproto.moretags) = "yaml:\"creator\""
   ];
 }
 
-// MsgEditPostResponse defines the Msg/RegisterReaction response type.
+// MsgRegisterReactionResponse defines the Msg/RegisterReaction response type.
 message MsgRegisterReactionResponse {}

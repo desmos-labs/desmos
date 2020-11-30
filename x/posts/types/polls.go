@@ -87,7 +87,7 @@ func (data PollData) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewUserAnswer returns a new AnswerDetails object containing the given poll
+// NewUserAnswer returns a new UserAnswer object containing the given poll
 func NewUserAnswer(answers []string, user string) UserAnswer {
 	return UserAnswer{
 		Answers: answers,

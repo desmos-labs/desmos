@@ -14,7 +14,7 @@ service Query {
     option (google.api.http).get = "/desmos/relationships/v1beta1/relationships/{user}";
   }
 
-  // UserRelationships queries the user blocks for the user having the given address
+  // UserBlocks queries the user blocks for the user having the given address
   rpc UserBlocks(QueryUserBlocksRequest) returns (QueryUserBlocksResponse) {
     option (google.api.http).get = "/desmos/relationships/v1beta1/blocks/{user}";
   }
@@ -22,7 +22,7 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserRelationships is the request type for the Query/UserRelationships RPC method.
+// QueryUserRelationshipsRequest is the request type for the Query/UserRelationships RPC method.
 message QueryUserRelationshipsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -43,7 +43,7 @@ message QueryUserRelationshipsResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserBlocks is the request type for the Query/UserBlocks RPC endpoint
+// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC endpoint
 message QueryUserBlocksRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -54,7 +54,7 @@ message QueryUserBlocksRequest {
 
 // QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC method.
 message QueryUserBlocksResponse {
-  // relationships represent the list of all the blocks for the queried user
+  // blocks represent the list of all the blocks for the queried user
   repeated desmos.relationships.v1beta1.UserBlock blocks = 1 [
     (gogoproto.nullable) = false
   ];

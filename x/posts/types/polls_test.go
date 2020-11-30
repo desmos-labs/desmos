@@ -18,41 +18,6 @@ func TestPollAnswer_Validate(t *testing.T) {
 	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
-func TestPollAnswer_Equals(t *testing.T) {
-	tests := []struct {
-		name        string
-		answer      types.PollAnswer
-		otherAnswer types.PollAnswer
-		expEquals   bool
-	}{
-		{
-			name:        "Different answer ID",
-			answer:      types.NewPollAnswer("1", "Yes"),
-			otherAnswer: types.NewPollAnswer("2", "Yes"),
-			expEquals:   false,
-		},
-		{
-			name:        "Different answer Text",
-			answer:      types.NewPollAnswer("1", "Yes"),
-			otherAnswer: types.NewPollAnswer("1", "No"),
-			expEquals:   false,
-		},
-		{
-			name:        "Equals answer",
-			answer:      types.NewPollAnswer("1", "yes"),
-			otherAnswer: types.NewPollAnswer("1", "yes"),
-			expEquals:   true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.answer.Equal(test.otherAnswer))
-		})
-	}
-}
-
 // ___________________________________________________________________________________________________________________
 
 func TestPollAnswers_AppendIfMissing(t *testing.T) {
@@ -214,47 +179,6 @@ func TestUserAnswer_Validate(t *testing.T) {
 	}
 }
 
-func TestUserAnswer_Equals(t *testing.T) {
-	tests := []struct {
-		name      string
-		first     types.UserAnswer
-		second    types.UserAnswer
-		expEquals bool
-	}{
-		{
-			name:      "Different users returns false",
-			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			second:    types.NewUserAnswer([]string{"1", "2"}, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			expEquals: false,
-		},
-		{
-			name:      "Different answer lengths returns false",
-			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			second:    types.NewUserAnswer([]string{"1"}, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			expEquals: false,
-		},
-		{
-			name:      "Different answer return false",
-			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			second:    types.NewUserAnswer([]string{"1"}, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			expEquals: false,
-		},
-		{
-			name:      "Equals answer returns true",
-			first:     types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			second:    types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expEquals: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expEquals, test.first.Equal(test.second))
-		})
-	}
-}
-
 // ___________________________________________________________________________________________________________________
 
 func TestAppendIfMissingOrIfUsersEquals(t *testing.T) {
@@ -266,7 +190,7 @@ func TestAppendIfMissingOrIfUsersEquals(t *testing.T) {
 		expectedAppended bool
 	}{
 		{
-			name: "Missing user answer details appended correctly",
+			name: "Missing user answer appended correctly",
 			answers: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},
@@ -289,7 +213,7 @@ func TestAppendIfMissingOrIfUsersEquals(t *testing.T) {
 			expectedAppended: true,
 		},
 		{
-			name: "Equals user answer details returns the same users answer details",
+			name: "Equals user answers returns the same users answer details",
 			answers: []types.UserAnswer{
 				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			},

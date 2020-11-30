@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"sort"
+	"strings"
 
 	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 
@@ -95,11 +96,11 @@ func (k Keeper) DoesPostExist(ctx sdk.Context, id string) bool {
 // GetPost returns the post having the given id inside the current context.
 // If no post having the given id can be found inside the current context, false will be returned.
 func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool) {
-	if !k.DoesPostExist(ctx, id) {
+	store := ctx.KVStore(k.storeKey)
+	if !store.Has(types.PostStoreKey(id)) {
 		return types.Post{}, false
 	}
 
-	store := ctx.KVStore(k.storeKey)
 	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(id)), &post)
 	return post, true
 }
@@ -148,12 +149,12 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		}
 
 		// match subspace if provided
-		if params.Subspace != "" {
+		if strings.TrimSpace(params.Subspace) != "" {
 			matchSubspace = params.Subspace == post.Subspace
 		}
 
 		// match creator address (if supplied)
-		if params.Creator != "" {
+		if strings.TrimSpace(params.Creator) != "" {
 			matchCreator = params.Creator == post.Creator
 		}
 

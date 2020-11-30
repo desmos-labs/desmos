@@ -44,14 +44,6 @@ func (reaction RegisteredReaction) Validate() error {
 	return nil
 }
 
-// Equals returns true if reaction and other contain the same poll
-func (reaction RegisteredReaction) Equals(other RegisteredReaction) bool {
-	return reaction.Value == other.Value &&
-		reaction.ShortCode == other.ShortCode &&
-		reaction.Subspace == other.Subspace &&
-		reaction.Creator == other.Creator
-}
-
 // ___________________________________________________________________________________________________________________
 
 // NewPostReaction returns a new PostReaction
@@ -78,13 +70,6 @@ func (reaction PostReaction) Validate() error {
 	}
 
 	return nil
-}
-
-// Equals returns true if reaction and other contain the same poll
-func (reaction PostReaction) Equals(other PostReaction) bool {
-	return reaction.Value == other.Value &&
-		reaction.ShortCode == other.ShortCode &&
-		reaction.Owner == other.Owner
 }
 
 // ___________________________________________________________________________________________________________________

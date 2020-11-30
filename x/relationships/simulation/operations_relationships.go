@@ -141,7 +141,7 @@ func SimulateMsgDeleteRelationship(
 	}
 }
 
-// sendMsgDeleteRelationship sends a transaction with a MsgDenyBidirectionalRelationship from a provided random account
+// sendMsgDeleteRelationship sends a transaction with a MsgDeleteRelationship from a provided random account
 func sendMsgDeleteRelationship(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 	msg *types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,

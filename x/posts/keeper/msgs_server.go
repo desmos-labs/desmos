@@ -205,7 +205,7 @@ func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegiste
 			"shortcode %s represents an emoji and thus can't be used to register a new registeredReactions", msg.ShortCode)
 	}
 
-	// Make sure the registeredReactions is already registered
+	// Make sure the given reaction isn't already registered
 	if _, isAlreadyRegistered := k.GetRegisteredReaction(ctx, msg.ShortCode, msg.Subspace); isAlreadyRegistered {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"registeredReactions with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace)
@@ -260,9 +260,8 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 			"user's answers are more than the available ones inside the poll")
 	}
 
-	// Make sure that each answer provided by the user
+	// Make sure that each answer provided by the user matches with one of the provided ones by the poll creator
 	for _, answer := range msg.UserAnswers {
-
 		var found = false
 		for _, providedAnswer := range post.PollData.ProvidedAnswers {
 			if answer == providedAnswer.ID {
@@ -279,7 +278,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	pollAnswers := k.GetPollAnswersByUser(ctx, post.PostID, msg.Answerer)
 
-	// check if the poll allows to edit previous answers
+	// Check if the poll allows to edit previous answers
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"post with ID %s doesn't allow answers' edits", post.PostID)

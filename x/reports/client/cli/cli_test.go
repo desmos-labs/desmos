@@ -88,7 +88,7 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 			args:   []string{"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "", "message"},
 		},
 		{
-			name:   "valid id",
+			name:   "valid report",
 			expErr: false,
 			args: []string{
 				"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",

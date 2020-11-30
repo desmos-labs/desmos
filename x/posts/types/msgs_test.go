@@ -70,7 +70,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator"),
 		},
 		{
-			name: "Empty message returns error if attachments, poll poll and message are empty",
+			name: "Empty message returns error if attachments, poll and message are empty",
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
@@ -545,6 +545,17 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "Empty message returns no error if poll isn't empty",
+			msg: types.NewMsgEditPost(
+				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				"",
+				nil,
+				msgCreatePost.PollData,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			error: nil,
+		},
+		{
+			name: "Empty message returns no error if attachments aren't empty",
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
