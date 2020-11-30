@@ -4,6 +4,8 @@ import (
 	"io"
 	"os"
 
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -389,6 +391,13 @@ func NewDesmosApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		reports.NewAppModule(app.reportsKeeper, app.AccountKeeper, app.postsKeeper),
 		relationships.NewAppModule(app.relationshipsKeeper, app.AccountKeeper),
 	)
+
+	// Register the upgrade handler for the relationships upgrade
+	app.upgradeKeeper.SetUpgradeHandler("relationships", func(ctx sdk.Context, plan upgrade.Plan) {
+		app.SetStoreLoader(bam.StoreLoaderWithUpgrade(&storeTypes.StoreUpgrades{
+			Added: []string{relationships.ModuleName},
+		}))
+	})
 
 	app.sm.RegisterStoreDecoders()
 
