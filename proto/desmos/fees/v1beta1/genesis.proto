@@ -1,5 +1,5 @@
 syntax = "proto3";
-package  desmos.fees.v1beta1;
+package desmos.fees.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "desmos/fees/v1beta1/params.proto";
@@ -8,7 +8,5 @@ option go_package = "github.com/desmos-labs/desmos/x/fees/types";
 
 // GenesisState contains the data of the genesis state for the fees module
 message GenesisState {
-  desmos.fees.v1beta1.Params params = 1 [
-    (gogoproto.nullable) = false
-  ];
+  desmos.fees.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }

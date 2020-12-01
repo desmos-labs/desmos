@@ -20,7 +20,6 @@ message WrappedDTagTransferRequests {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1 [
-    (gogoproto.nullable) = false
-  ];
+  repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1
+      [ (gogoproto.nullable) = false ];
 }

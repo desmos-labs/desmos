@@ -242,8 +242,9 @@ func (m *CommentIDs) GetIds() []string {
 	return nil
 }
 
-// Attachment contains the information representing any type of file provided with a post.
-// This file can be an image or a multimedia file (vocals, video, documents, etc.).
+// Attachment contains the information representing any type of file provided
+// with a post. This file can be an image or a multimedia file (vocals, video,
+// documents, etc.).
 type Attachment struct {
 	URI      string   `protobuf:"bytes,1,opt,name=uri,proto3" json:"uri" yaml"uri"`
 	MimeType string   `protobuf:"bytes,2,opt,name=mime_type,json=mimeType,proto3" json:"mime_type" yaml"mime_type"`
@@ -304,8 +305,8 @@ func (m *Attachment) GetTags() []string {
 	return nil
 }
 
-// OptionalDataEntry represents a Posts' optional data entry and allows for custom
-// Amino and JSON serialization and deserialization.
+// OptionalDataEntry represents a Posts' optional data entry and allows for
+// custom Amino and JSON serialization and deserialization.
 type OptionalDataEntry struct {
 	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`

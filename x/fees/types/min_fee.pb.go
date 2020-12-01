@@ -25,7 +25,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MinFee contains the minimum amount of coins that should be paid as a fee for each message of the specific type sent
+// MinFee contains the minimum amount of coins that should be paid as a fee for
+// each message of the specific type sent
 type MinFee struct {
 	MessageType string                                   `protobuf:"bytes,1,opt,name=message_type,json=messageType,proto3" json:"message_type" yaml"message_type"`
 	Amount      github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=amount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"amount"`

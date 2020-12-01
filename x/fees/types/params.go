@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -11,7 +12,7 @@ const (
 )
 
 var (
-	DefaultMinFees []MinFee
+	DefaultMinFees MinFees
 )
 
 // Parameters store keys
@@ -25,7 +26,7 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams create a new params object with the given data
-func NewParams(minFees []MinFee) Params {
+func NewParams(minFees MinFees) Params {
 	return Params{
 		MinFees: minFees,
 	}
@@ -54,7 +55,7 @@ func (params Params) Validate() error {
 }
 
 func ValidateMinFeesParam(i interface{}) error {
-	fees, isCorrectParam := i.([]MinFee)
+	fees, isCorrectParam := i.(MinFees)
 
 	if !isCorrectParam {
 		return fmt.Errorf("invalid parameter type: %s", i)

@@ -2,22 +2,22 @@ package keeper
 
 import (
 	"fmt"
-	legacyauth "github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/desmos-labs/desmos/x/fees/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/fees/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type Keeper struct {
 	// The reference to the ParamsStore to get and set params
 	paramSubspace paramstypes.Subspace
-	cdc           *codec.BinaryMarshaler
+	cdc           codec.BinaryMarshaler
 }
 
-func NewKeeper(cdc *codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
+func NewKeeper(cdc codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
@@ -41,7 +41,7 @@ func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
 
 // CheckFees checks whether the given fees are sufficient to pay for all the given messages.
 // The check is performed considering the minimum fee amounts specified inside the module parameters.
-func (k Keeper) CheckFees(ctx sdk.Context, fees legacyauth.StdFee, msgs []sdk.Msg) error {
+func (k Keeper) CheckFees(ctx sdk.Context, fees sdk.Coins, msgs []sdk.Msg) error {
 	feesParams := k.GetParams(ctx)
 
 	// calculate required fees for the given messages
@@ -54,9 +54,9 @@ func (k Keeper) CheckFees(ctx sdk.Context, fees legacyauth.StdFee, msgs []sdk.Ms
 		}
 	}
 
-	if !requiredFees.IsZero() && (requiredFees.IsAnyGT(fees.Amount) || fees.Amount.IsZero()) {
+	if !requiredFees.IsZero() && (requiredFees.IsAnyGT(fees) || fees.IsZero()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
-			fmt.Sprintf("Expected at least %s, got %s", requiredFees, fees.Amount))
+			fmt.Sprintf("Expected at least %s, got %s", requiredFees, fees))
 	}
 
 	return nil

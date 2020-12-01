@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/gorilla/mux"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
+func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/fees/parameters", queryFeesParamsHandlerFun(cliCtx)).Methods("GET")
 }
 
-// HTTP request handler to query list of posts' module params
-func queryFeesParamsHandlerFun(cliCtx context.CLIContext) http.HandlerFunc {
+// HTTP request handler to query list of fees' module params
+func queryFeesParamsHandlerFun(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
 		res, height, err := cliCtx.QueryWithData(route, nil)

@@ -5,19 +5,20 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
-	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/desmos-labs/desmos/x/fees"
+	feeskeeper "github.com/desmos-labs/desmos/x/fees/keeper"
 )
 
 // NewAnteHandler returns a custom AnteHandler that besides all the default checks
 //(sequence number increment, signature and account number checks, fee deduction) make sure that each
 // transaction has a minimum fee based on messages types
 func NewAnteHandler(
-	ak keeper.AccountKeeper,
-	supplyKeeper types.SupplyKeeper,
+	ak cosmosante.AccountKeeper,
+	bankKeeper types.BankKeeper,
 	sigGasConsumer cosmosante.SignatureVerificationGasConsumer,
-	feesKeeper fees.Keeper,
+	feesKeeper feeskeeper.Keeper,
+	signModeHandler signing.SignModeHandler,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
 		cosmosante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
@@ -28,31 +29,31 @@ func NewAnteHandler(
 		cosmosante.NewConsumeGasForTxSizeDecorator(ak),
 		cosmosante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		cosmosante.NewValidateSigCountDecorator(ak),
-		cosmosante.NewDeductFeeDecorator(ak, supplyKeeper),
+		cosmosante.NewDeductFeeDecorator(ak, bankKeeper),
 		cosmosante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
-		cosmosante.NewSigVerificationDecorator(ak),
+		cosmosante.NewSigVerificationDecorator(ak, signModeHandler),
 		cosmosante.NewIncrementSequenceDecorator(ak),
 	)
 }
 
 type MinFeeDecorator struct {
-	feesKeeper fees.Keeper
+	feesKeeper feeskeeper.Keeper
 }
 
-func NewMinFeeDecorator(feesKeeper fees.Keeper) MinFeeDecorator {
+func NewMinFeeDecorator(feesKeeper feeskeeper.Keeper) MinFeeDecorator {
 	return MinFeeDecorator{
 		feesKeeper: feesKeeper,
 	}
 }
 
 func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	// all transactions must be of type auth.StdTx
-	stdTx, ok := tx.(types.StdTx)
+	// all transactions must be of type feeTx
+	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
 		// Set a gas meter with limit 0 as to prevent an infinite gas meter attack
 		// during runTx.
 		newCtx = setGasMeter(simulate, ctx, 0)
-		return newCtx, errors.New("tx must be StdTx")
+		return newCtx, errors.New("tx must be FeeTx")
 	}
 
 	// skip block with height 0, otherwise no chain initialization could happen!
@@ -61,7 +62,7 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	}
 
 	// Check the minimum fees of the transaction
-	if err := mfd.feesKeeper.CheckFees(ctx, stdTx.Fee, stdTx.Msgs); err != nil {
+	if err := mfd.feesKeeper.CheckFees(ctx, feeTx.GetFee(), feeTx.GetMsgs()); err != nil {
 		return ctx, err
 	}
 

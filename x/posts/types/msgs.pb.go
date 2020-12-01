@@ -189,7 +189,8 @@ func (m *MsgEditPostResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgEditPostResponse proto.InternalMessageInfo
 
-// MsgAddPostReaction represents the message to be used to add a reaction to a post
+// MsgAddPostReaction represents the message to be used to add a reaction to a
+// post
 type MsgAddPostReaction struct {
 	PostID   string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
 	Reaction string `protobuf:"bytes,2,opt,name=reaction,proto3" json:"reaction,omitempty" yaml:"reaction"`
@@ -266,8 +267,8 @@ func (m *MsgAddPostReactionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAddPostReactionResponse proto.InternalMessageInfo
 
-// MsgRemovePostReaction represents the message to be used when wanting to remove
-// an existing reaction from a specific user having a specific value
+// MsgRemovePostReaction represents the message to be used when wanting to
+// remove an existing reaction from a specific user having a specific value
 type MsgRemovePostReaction struct {
 	PostID   string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
 	Reaction string `protobuf:"bytes,2,opt,name=reaction,proto3" json:"reaction,omitempty" yaml:"reaction"`
@@ -307,7 +308,8 @@ func (m *MsgRemovePostReaction) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemovePostReaction proto.InternalMessageInfo
 
-// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response type.
+// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response
+// type.
 type MsgRemovePostReactionResponse struct {
 }
 

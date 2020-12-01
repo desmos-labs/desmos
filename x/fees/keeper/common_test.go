@@ -1,27 +1,33 @@
 package keeper_test
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/fees/keeper"
 	"github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/suite"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
-	"testing"
 )
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
+}
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc          *codec.Codec
-	ctx          sdk.Context
-	keeper       keeper.Keeper
-	paramsKeeper params.Keeper
+	cdc            codec.BinaryMarshaler
+	legacyAminoCdc *codec.LegacyAmino
+	ctx            sdk.Context
+	keeper         keeper.Keeper
+	paramsKeeper   paramskeeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -38,21 +44,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 		panic(err)
 	}
 
-	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
-	suite.cdc = testCodec()
-	suite.paramsKeeper = params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
+	suite.ctx = sdk.NewContext(
+		ms,
+		tmproto.Header{ChainID: "test-chain-id"},
+		false,
+		log.NewNopLogger(),
+	)
+
+	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
+	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.keeper = keeper.NewKeeper(suite.cdc, suite.paramsKeeper.Subspace(types.DefaultParamspace))
-}
-
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
-}
-
-func testCodec() *codec.Codec {
-	var cdc = codec.New()
-
-	// register the different types
-	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
-	cdc.Seal()
-	return cdc
 }

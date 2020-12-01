@@ -26,12 +26,15 @@ service Query {
 
   // PollAnswers queries the poll answers of the post having a specific id
   rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
-    option (google.api.http).get = "/desmos/posts/v1beta1/posts/{post_id}/answers";
+    option (google.api.http).get =
+        "/desmos/posts/v1beta1/posts/{post_id}/answers";
   }
 
   // RegisteredReactions queries all the registered reactions
-  rpc RegisteredReactions(QueryRegisteredReactionsRequest) returns (QueryRegisteredReactionsResponse) {
-    option (google.api.http).get = "/desmos/posts/v1beta1/posts/registered-reactions";
+  rpc RegisteredReactions(QueryRegisteredReactionsRequest)
+      returns (QueryRegisteredReactionsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v1beta1/posts/registered-reactions";
   }
 
   // Params queries the posts module params
@@ -50,12 +53,8 @@ message QueryPostsParams {
   string sort_by = 3;
   string sort_order = 4;
 
-  string parent_id = 5 [
-    (gogoproto.customname) = "ParentID"
-  ];
-  google.protobuf.Timestamp creation_time = 6 [
-    (gogoproto.stdtime) = true
-  ];
+  string parent_id = 5 [ (gogoproto.customname) = "ParentID" ];
+  google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
   string subspace = 7;
   string creator = 8;
   repeated string hashtags = 9;
@@ -68,12 +67,8 @@ message QueryPostsRequest {
   string sort_by = 1;
   string sort_order = 2;
 
-  string parent_id = 3 [
-    (gogoproto.customname) = "ParentID"
-  ];
-  google.protobuf.Timestamp creation_time = 4 [
-    (gogoproto.stdtime) = true
-  ];
+  string parent_id = 3 [ (gogoproto.customname) = "ParentID" ];
+  google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
   string subspace = 5;
   string creator = 6;
   repeated string hashtags = 7;
@@ -83,10 +78,8 @@ message QueryPostsRequest {
 }
 
 // QueryPostsResponse is the response type for the Query/Posts RPC method
-message QueryPostsResponse{
-  repeated QueryPostResponse posts = 1 [
-    (gogoproto.nullable) = false
-  ];
+message QueryPostsResponse {
+  repeated QueryPostResponse posts = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -102,24 +95,21 @@ message QueryPostRequest {
 
 // QueryPostResponse is the response type for the Query/Post RPC method
 message QueryPostResponse {
-  desmos.posts.v1beta1.Post post = 1 [
-    (gogoproto.nullable) = false
-  ];
+  desmos.posts.v1beta1.Post post = 1 [ (gogoproto.nullable) = false ];
 
-  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2 [
-    (gogoproto.nullable) = false
-  ];
+  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2
+      [ (gogoproto.nullable) = false ];
 
-  repeated desmos.posts.v1beta1.PostReaction reactions = 3 [
-    (gogoproto.nullable) = false
-  ];
+  repeated desmos.posts.v1beta1.PostReaction reactions = 3
+      [ (gogoproto.nullable) = false ];
 
   repeated string children = 4;
 }
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC method.
+// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
+// method.
 message QueryPollAnswersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -127,24 +117,25 @@ message QueryPollAnswersRequest {
   string post_id = 1;
 }
 
-// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
-message QueryPollAnswersResponse{
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
+// method
+message QueryPollAnswersResponse {
   string post_id = 1;
-  repeated desmos.posts.v1beta1.UserAnswer answers = 2 [
-    (gogoproto.nullable) = false
-  ];
+  repeated desmos.posts.v1beta1.UserAnswer answers = 2
+      [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
 
-// QueryRegisteredReactionsRequest is the request type for the Query/RegisteredReactions RPC method.
+// QueryRegisteredReactionsRequest is the request type for the
+// Query/RegisteredReactions RPC method.
 message QueryRegisteredReactionsRequest {}
 
-// QueryRegisteredReactionsResponse is the response type for the Query/RegisteredReactions RPC method
-message QueryRegisteredReactionsResponse{
-  repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1 [
-    (gogoproto.nullable) = false
-  ];
+// QueryRegisteredReactionsResponse is the response type for the
+// Query/RegisteredReactions RPC method
+message QueryRegisteredReactionsResponse {
+  repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1
+      [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -153,9 +144,6 @@ message QueryRegisteredReactionsResponse{
 message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method
-message QueryParamsResponse{
-  desmos.posts.v1beta1.Params params = 1 [
-    (gogoproto.nullable) = false
-  ];
+message QueryParamsResponse {
+  desmos.posts.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }
-

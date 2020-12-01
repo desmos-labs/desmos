@@ -29,7 +29,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryPostReportsRequest is the request type for the Query/PostReports RPC method.
+// QueryPostReportsRequest is the request type for the Query/PostReports RPC
+// method.
 type QueryPostReportsRequest struct {
 	// ID of the post to which query the reports for
 	PostId string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
@@ -68,9 +69,11 @@ func (m *QueryPostReportsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryPostReportsRequest proto.InternalMessageInfo
 
-// QueryPostReportsResponse is the response type for the Query/PostReports RPC method.
+// QueryPostReportsResponse is the response type for the Query/PostReports RPC
+// method.
 type QueryPostReportsResponse struct {
-	// relationships represent the list of all the relationships for the queried user
+	// relationships represent the list of all the relationships for the queried
+	// user
 	Reports []Report `protobuf:"bytes,1,rep,name=reports,proto3" json:"reports"`
 }
 

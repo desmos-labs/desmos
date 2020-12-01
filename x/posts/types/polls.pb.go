@@ -80,7 +80,8 @@ func (m *PollAnswer) GetText() string {
 	return ""
 }
 
-// PollAnswer contains the data of a single poll answer inserted by the creator inside a PollData object
+// PollAnswer contains the data of a single poll answer inserted by the creator
+// inside a PollData object
 type PollData struct {
 	Question              string       `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
 	ProvidedAnswers       []PollAnswer `protobuf:"bytes,2,rep,name=provided_answers,json=providedAnswers,proto3" json:"provided_answers" yaml"provided_answers"`

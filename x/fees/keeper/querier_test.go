@@ -23,17 +23,16 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
+
 			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			querier := keeper.NewQuerier(suite.keeper)
+
+			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+			suite.Require().Nil(err)
 
-			if result != nil {
-				suite.Nil(err)
-				expectedIndented, err := codec.MarshalJSONIndent(suite.keeper.Cdc, &test.expResult)
-				suite.NoError(err)
-				suite.Equal(string(expectedIndented), string(result))
-			}
-
+			expected := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+			suite.Equal(string(expected), string(result))
 		})
 	}
 }

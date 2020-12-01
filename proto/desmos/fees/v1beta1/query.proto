@@ -18,11 +18,9 @@ service Query {
 // ___________________________________________________________________________________________________________________
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
-message QueryParamsRequest{}
+message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC
 message QueryParamsResponse {
-  desmos.fees.v1beta1.Params params = 1 [
-    (gogoproto.nullable) = false
-  ];
+  desmos.fees.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }

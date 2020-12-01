@@ -3,13 +3,13 @@ package simulation
 // DONTCOVER
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
@@ -47,11 +47,15 @@ func RandomizedGenState(simState *module.SimulationState) {
 		})
 
 	feesGenesis := types.NewGenesisState(types.NewParams(minFees))
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(feesGenesis)
 
-	fmt.Printf("Selected randomly generated fees parameters:\n%s\n",
-		codec.MustMarshalJSONIndent(simState.Cdc, feesGenesis.Params.MinFees),
-	)
+	bz, err := json.MarshalIndent(&feesGenesis, "", "")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Selected randomly generated fees parameters:\n%s\n", bz)
+
+	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(feesGenesis)
 }
 
 // GenMinFees randomized MinFees

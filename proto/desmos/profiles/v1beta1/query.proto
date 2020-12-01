@@ -16,7 +16,8 @@ service Query {
   }
 
   // DTagTransfers queries all the DTag transfers requests
-  rpc DTagTransfers(QueryDTagTransfersRequest) returns (QueryDTagTransfersResponse) {
+  rpc DTagTransfers(QueryDTagTransfersRequest)
+      returns (QueryDTagTransfersResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
   }
 
@@ -39,13 +40,13 @@ message QueryProfileRequest {
 
 // QueryProfileResponse is the response type for the Query/Profile RPC method.
 message QueryProfileResponse {
-  desmos.profiles.v1beta1.Profile profile = 1
-  [(gogoproto.nullable) = false];
+  desmos.profiles.v1beta1.Profile profile = 1 [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
 
-// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC endpoint
+// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
+// endpoint
 message QueryDTagTransfersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -54,11 +55,12 @@ message QueryDTagTransfersRequest {
   string user = 1;
 }
 
-// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers RPC method.
+// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
+// RPC method.
 message QueryDTagTransfersResponse {
   // relationships represent the list of all the blocks for the queried user
   repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -68,6 +70,5 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  desmos.profiles.v1beta1.Params params = 1
-  [(gogoproto.nullable) = false];
+  desmos.profiles.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }

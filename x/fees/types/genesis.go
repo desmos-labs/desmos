@@ -13,7 +13,7 @@ func DefaultGenesisState() *GenesisState {
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
-func ValidateGenesis(data GenesisState) error {
+func ValidateGenesis(data *GenesisState) error {
 	if err := data.Params.Validate(); err != nil {
 		return err
 	}
