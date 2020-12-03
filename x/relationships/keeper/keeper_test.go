@@ -318,7 +318,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 			expError: false,
 		},
 		{
-			name:             "deleting a relationship that does not exist returns an error",
+			name:             "deleting a user block that does not exist returns an error",
 			storedUserBlocks: nil,
 			data: struct {
 				blocker  string
