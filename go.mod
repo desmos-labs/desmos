@@ -8,9 +8,9 @@ require (
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.3
+	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.15.2
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.1
@@ -20,7 +20,6 @@ require (
 	github.com/tendermint/tm-db v0.6.2
 	google.golang.org/genproto v0.0.0-20201019141844-1ed22bb0c154
 	google.golang.org/grpc v1.33.1
-	google.golang.org/protobuf v1.25.0
 )
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
