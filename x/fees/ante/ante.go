@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
+	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	feeskeeper "github.com/desmos-labs/desmos/x/fees/keeper"
@@ -14,25 +14,25 @@ import (
 //(sequence number increment, signature and account number checks, fee deduction) make sure that each
 // transaction has a minimum fee based on messages types
 func NewAnteHandler(
-	ak cosmosante.AccountKeeper,
+	ak authante.AccountKeeper,
 	bankKeeper types.BankKeeper,
-	sigGasConsumer cosmosante.SignatureVerificationGasConsumer,
+	sigGasConsumer authante.SignatureVerificationGasConsumer,
 	feesKeeper feeskeeper.Keeper,
 	signModeHandler signing.SignModeHandler,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
-		cosmosante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
-		cosmosante.NewMempoolFeeDecorator(),
-		cosmosante.NewValidateBasicDecorator(),
-		cosmosante.NewValidateMemoDecorator(ak),
+		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		authante.NewMempoolFeeDecorator(),
+		authante.NewValidateBasicDecorator(),
+		authante.NewValidateMemoDecorator(ak),
 		NewMinFeeDecorator(feesKeeper),
-		cosmosante.NewConsumeGasForTxSizeDecorator(ak),
-		cosmosante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
-		cosmosante.NewValidateSigCountDecorator(ak),
-		cosmosante.NewDeductFeeDecorator(ak, bankKeeper),
-		cosmosante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
-		cosmosante.NewSigVerificationDecorator(ak, signModeHandler),
-		cosmosante.NewIncrementSequenceDecorator(ak),
+		authante.NewConsumeGasForTxSizeDecorator(ak),
+		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
+		authante.NewValidateSigCountDecorator(ak),
+		authante.NewDeductFeeDecorator(ak, bankKeeper),
+		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
+		authante.NewSigVerificationDecorator(ak, signModeHandler),
+		authante.NewIncrementSequenceDecorator(ak),
 	)
 }
 
@@ -62,7 +62,8 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	}
 
 	// Check the minimum fees of the transaction
-	if err := mfd.feesKeeper.CheckFees(ctx, feeTx.GetFee(), feeTx.GetMsgs()); err != nil {
+	err = mfd.feesKeeper.CheckFees(ctx, feeTx.GetFee(), feeTx.GetMsgs())
+	if err != nil {
 		return ctx, err
 	}
 

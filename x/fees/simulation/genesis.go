@@ -7,6 +7,12 @@ import (
 	"fmt"
 	"math/rand"
 
+	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
@@ -18,24 +24,24 @@ const (
 )
 
 var msgsTypes = []string{
-	"create_session",
-	"create_post",
-	"edit_post",
-	"answer_poll",
-	"add_post_reaction",
-	"remove_post_reaction",
-	"register_reaction",
-	"save_profile",
-	"delete_profile",
-	"request_dtag",
-	"accept_dtag_request",
-	"refuse_dtag_request",
-	"cancel_dtag_request",
-	"create_relationship",
-	"delete_relationship",
-	"block_user",
-	"unblock_user",
-	"report_post",
+	magpieTypes.ActionCreationSession,
+	postsTypes.ActionCreatePost,
+	postsTypes.ActionEditPost,
+	postsTypes.ActionAnswerPoll,
+	postsTypes.ActionAddPostReaction,
+	postsTypes.ActionRemovePostReaction,
+	postsTypes.ActionRegisterReaction,
+	profilesTypes.ActionSaveProfile,
+	profilesTypes.ActionDeleteProfile,
+	profilesTypes.ActionRequestDtag,
+	profilesTypes.ActionAcceptDtagTransfer,
+	profilesTypes.ActionRefuseDTagTransferRequest,
+	profilesTypes.ActionCancelDTagTransferRequest,
+	relationshipsTypes.ActionCreateRelationship,
+	relationshipsTypes.ActionDeleteRelationship,
+	relationshipsTypes.ActionBlockUser,
+	relationshipsTypes.ActionUnblockUser,
+	reportsTypes.ActionReportPost,
 }
 
 // RandomizedGenState generates a random GenesisState for fees
@@ -60,10 +66,13 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 // GenMinFees randomized MinFees
 func GenMinFees(r *rand.Rand) (fees []types.MinFee) {
-	randFixedFeeNum := simulation.RandIntBetween(r, 0, len(msgsTypes))
-	for i := 0; i < randFixedFeeNum; i++ {
-		amt := simulation.RandIntBetween(r, 1, 100)
-		fees = append(fees, types.NewMinFee(msgsTypes[i], sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt))))))
+	// 50% chance to have min fee
+	if randFixedFeeNum := r.Intn(101); randFixedFeeNum <= 50 {
+		for i := 0; i < randFixedFeeNum; i++ {
+			amt := simulation.RandIntBetween(r, 1, 100)
+			fees = append(fees, types.NewMinFee(msgsTypes[i], sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt))))))
+		}
 	}
+
 	return fees
 }

@@ -11,17 +11,17 @@ import (
 
 // GetQueryCmd adds the query commands
 func GetQueryCmd() *cobra.Command {
-	postQueryCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the fees module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(
+	cmd.AddCommand(
 		GetCmdQueryFeesParams(),
 	)
-	return postQueryCmd
+	return cmd
 }
 
 // GetCmdQueryFeesParams queries all the fees' module params

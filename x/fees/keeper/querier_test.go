@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/fees/keeper"
 	"github.com/desmos-labs/desmos/x/fees/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -11,12 +12,24 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 	tests := []struct {
 		name      string
 		path      []string
+		params    types.Params
 		expResult types.Params
 	}{
 		{
-			name:      "Returning posts parameters correctly",
+			name:      "Returning fees default parameters correctly",
+			params:    types.DefaultParams(),
 			path:      []string{types.QueryParams},
 			expResult: types.DefaultParams(),
+		},
+		{
+			name: "Returning fees parameters correctly",
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			}),
+			path: []string{types.QueryParams},
+			expResult: types.NewParams([]types.MinFee{
+				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			}),
 		},
 	}
 
@@ -25,7 +38,7 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			suite.keeper.SetParams(suite.ctx, test.params)
 
 			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})

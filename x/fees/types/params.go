@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	DefaultMinFees MinFees
+	DefaultMinFees []MinFee
 )
 
 // Parameters store keys
@@ -26,7 +26,7 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams create a new params object with the given data
-func NewParams(minFees MinFees) Params {
+func NewParams(minFees []MinFee) Params {
 	return Params{
 		MinFees: minFees,
 	}
@@ -55,7 +55,7 @@ func (params Params) Validate() error {
 }
 
 func ValidateMinFeesParam(i interface{}) error {
-	fees, isCorrectParam := i.(MinFees)
+	fees, isCorrectParam := i.([]MinFee)
 
 	if !isCorrectParam {
 		return fmt.Errorf("invalid parameter type: %s", i)

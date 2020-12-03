@@ -50,9 +50,7 @@ func createTestApp(isCheckTx bool) (*desmos.DesmosApp, sdk.Context) {
 
 	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
 	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
-	app.FeesKeeper.SetParams(ctx, feesTypes.NewParams([]feesTypes.MinFee{
-		feesTypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
-	}))
+	app.FeesKeeper.SetParams(ctx, feesTypes.DefaultParams())
 
 	return app, ctx
 }

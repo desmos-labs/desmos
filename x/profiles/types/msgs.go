@@ -150,7 +150,7 @@ func NewMsgCancelDTagTransferRequest(sender, receiver string) *MsgCancelDTagTran
 func (msg MsgCancelDTagTransfer) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCancelDTagTransfer) Type() string { return CancelDTagTransferRequest }
+func (msg MsgCancelDTagTransfer) Type() string { return ActionCancelDTagTransferRequest }
 
 func (msg MsgCancelDTagTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
@@ -245,7 +245,7 @@ func NewMsgRefuseDTagTransferRequest(sender, receiver string) *MsgRefuseDTagTran
 func (msg MsgRefuseDTagTransfer) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRefuseDTagTransfer) Type() string { return RefuseDTagTransferRequest }
+func (msg MsgRefuseDTagTransfer) Type() string { return ActionRefuseDTagTransferRequest }
 
 func (msg MsgRefuseDTagTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
