@@ -17,7 +17,8 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPostReportsRequest is the request type for the Query/PostReports RPC method.
+// QueryPostReportsRequest is the request type for the Query/PostReports RPC
+// method.
 message QueryPostReportsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -26,9 +27,11 @@ message QueryPostReportsRequest {
   string post_id = 1;
 }
 
-// QueryPostReportsResponse is the response type for the Query/PostReports RPC method.
+// QueryPostReportsResponse is the response type for the Query/PostReports RPC
+// method.
 message QueryPostReportsResponse {
-  // relationships represent the list of all the relationships for the queried user
+  // relationships represent the list of all the relationships for the queried
+  // user
   repeated desmos.reports.v1beta1.Report reports = 1
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
 }

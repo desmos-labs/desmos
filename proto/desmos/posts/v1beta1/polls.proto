@@ -11,21 +11,20 @@ message PollAnswer {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string answer_id = 1[
+  string answer_id = 1 [
     (gogoproto.customname) = "ID",
     (gogoproto.jsontag) = "id",
     (gogoproto.moretags) = "yaml\"id\""
   ];
 
-  string text = 2 [
-    (gogoproto.jsontag) = "text",
-    (gogoproto.moretags) = "yaml\"text\""
-  ];
+  string text = 2
+      [ (gogoproto.jsontag) = "text", (gogoproto.moretags) = "yaml\"text\"" ];
 }
 
 // ___________________________________________________________________________________________________________________
 
-// PollAnswer contains the data of a single poll answer inserted by the creator inside a PollData object
+// PollAnswer contains the data of a single poll answer inserted by the creator
+// inside a PollData object
 message PollData {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
@@ -69,7 +68,6 @@ message UserAnswer {
 
 // UserAnswers wraps a list of UserAnswer
 message UserAnswers {
-  repeated desmos.posts.v1beta1.UserAnswer answers = 1 [
-    (gogoproto.nullable) = false
-  ];
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1
+      [ (gogoproto.nullable) = false ];
 }

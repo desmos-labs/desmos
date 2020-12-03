@@ -405,7 +405,8 @@ func (m *QueryPostResponse) GetChildren() []string {
 	return nil
 }
 
-// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC method.
+// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
+// method.
 type QueryPollAnswersRequest struct {
 	PostId string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 }
@@ -443,7 +444,8 @@ func (m *QueryPollAnswersRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryPollAnswersRequest proto.InternalMessageInfo
 
-// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
+// method
 type QueryPollAnswersResponse struct {
 	PostId  string       `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	Answers []UserAnswer `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers"`
@@ -496,7 +498,8 @@ func (m *QueryPollAnswersResponse) GetAnswers() []UserAnswer {
 	return nil
 }
 
-// QueryRegisteredReactionsRequest is the request type for the Query/RegisteredReactions RPC method.
+// QueryRegisteredReactionsRequest is the request type for the
+// Query/RegisteredReactions RPC method.
 type QueryRegisteredReactionsRequest struct {
 }
 
@@ -533,7 +536,8 @@ func (m *QueryRegisteredReactionsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryRegisteredReactionsRequest proto.InternalMessageInfo
 
-// QueryRegisteredReactionsResponse is the response type for the Query/RegisteredReactions RPC method
+// QueryRegisteredReactionsResponse is the response type for the
+// Query/RegisteredReactions RPC method
 type QueryRegisteredReactionsResponse struct {
 	RegisteredReactions []RegisteredReaction `protobuf:"bytes,1,rep,name=registered_reactions,json=registeredReactions,proto3" json:"registered_reactions"`
 }

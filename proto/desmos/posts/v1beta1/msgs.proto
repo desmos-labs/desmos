@@ -19,10 +19,12 @@ service Msg {
   rpc AddPostReaction(MsgAddPostReaction) returns (MsgAddPostReactionResponse);
 
   // RemoveReaction defines the method to remove a reaction from a post
-  rpc RemovePostReaction(MsgRemovePostReaction) returns (MsgRemovePostReactionResponse);
+  rpc RemovePostReaction(MsgRemovePostReaction)
+      returns (MsgRemovePostReactionResponse);
 
   // RegisterReaction defines the method to register a new reaction
-  rpc RegisterReaction(MsgRegisterReaction) returns (MsgRegisterReactionResponse);
+  rpc RegisterReaction(MsgRegisterReaction)
+      returns (MsgRegisterReactionResponse);
 
   // AnswerPoll defines the method to answer a poll
   rpc AnswerPoll(MsgAnswerPoll) returns (MsgAnswerPollResponse);
@@ -41,18 +43,14 @@ message MsgCreatePost {
     (gogoproto.jsontag) = "parent_id"
   ];
 
-  string message = 2 [
-    (gogoproto.moretags) = "yaml:\"message\""
-  ];
+  string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   bool allows_comments = 3 [
     (gogoproto.jsontag) = "allows_comments",
     (gogoproto.moretags) = "yaml:\"allows_comments\""
   ];
 
-  string subspace = 4 [
-    (gogoproto.moretags) = "yaml:\"subspace\""
-  ];
+  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
   repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 5 [
     (gogoproto.castrepeated) = "OptionalData",
@@ -61,9 +59,7 @@ message MsgCreatePost {
     (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
   ];
 
-  string creator = 6 [
-    (gogoproto.moretags) = "yaml:\"creator\""
-  ];
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 
   repeated desmos.posts.v1beta1.Attachment attachments = 7 [
     (gogoproto.nullable) = false,
@@ -93,9 +89,7 @@ message MsgEditPost {
     (gogoproto.jsontag) = "post_id"
   ];
 
-  string message = 2 [
-    (gogoproto.moretags) = "yaml:\"message\""
-  ];
+  string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   repeated desmos.posts.v1beta1.Attachment attachments = 3 [
     (gogoproto.nullable) = false,
@@ -108,9 +102,7 @@ message MsgEditPost {
     (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
   ];
 
-  string editor = 5 [
-    (gogoproto.moretags) = "yaml:\"editor\""
-  ];
+  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
 }
 
 // MsgEditPostResponse defines the Msg/EditPost response type.
@@ -118,53 +110,47 @@ message MsgEditPostResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgAddPostReaction represents the message to be used to add a reaction to a post
+// MsgAddPostReaction represents the message to be used to add a reaction to a
+// post
 message MsgAddPostReaction {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1[
+  string post_id = 1 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
 
-  string reaction = 2[
-    (gogoproto.moretags) = "yaml:\"reaction\""
-  ];
+  string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
 
-  string user = 3[
-    (gogoproto.moretags) = "yaml:\"user\""
-  ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // MsgAddPostReactionResponse defines the Msg/AddReaction response type.
-message MsgAddPostReactionResponse{}
+message MsgAddPostReactionResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgRemovePostReaction represents the message to be used when wanting to remove
-// an existing reaction from a specific user having a specific value
+// MsgRemovePostReaction represents the message to be used when wanting to
+// remove an existing reaction from a specific user having a specific value
 message MsgRemovePostReaction {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1[
+  string post_id = 1 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
 
-  string reaction = 2[
-    (gogoproto.moretags) = "yaml:\"reaction\""
-  ];
+  string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
 
-  string user = 3[
-    (gogoproto.moretags) = "yaml:\"user\""
-  ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
-// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response type.
+// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response
+// type.
 message MsgRemovePostReactionResponse {}
 
 // ___________________________________________________________________________________________________________________
@@ -185,9 +171,7 @@ message MsgAnswerPoll {
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
 
-  string answerer = 3 [
-    (gogoproto.moretags) = "yaml:\"answerer\""
-  ];
+  string answerer = 3 [ (gogoproto.moretags) = "yaml:\"answerer\"" ];
 }
 
 // MsgAnswerPollResponse defines the Msg/AnswerPoll response type.
@@ -206,17 +190,11 @@ message MsgRegisterReaction {
     (gogoproto.moretags) = "yaml:\"short_code\""
   ];
 
-  string value = 2  [
-    (gogoproto.moretags) = "yaml:\"value\""
-  ];
+  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 
-  string subspace = 3 [
-    (gogoproto.moretags) = "yaml:\"subspace\""
-  ];
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
-  string creator = 4 [
-    (gogoproto.moretags) = "yaml:\"creator\""
-  ];
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgRegisterReactionResponse defines the Msg/RegisterReaction response type.

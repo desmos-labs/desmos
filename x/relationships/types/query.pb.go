@@ -29,7 +29,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryUserRelationshipsRequest is the request type for the Query/UserRelationships RPC method.
+// QueryUserRelationshipsRequest is the request type for the
+// Query/UserRelationships RPC method.
 type QueryUserRelationshipsRequest struct {
 	// address of the user to query the relationships for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -68,10 +69,12 @@ func (m *QueryUserRelationshipsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserRelationshipsRequest proto.InternalMessageInfo
 
-// QueryUserRelationshipsResponse is the response type for the Query/UserRelationships RPC method.
+// QueryUserRelationshipsResponse is the response type for the
+// Query/UserRelationships RPC method.
 type QueryUserRelationshipsResponse struct {
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	// relationships represent the list of all the relationships for the queried user
+	// relationships represent the list of all the relationships for the queried
+	// user
 	Relationships []Relationship `protobuf:"bytes,2,rep,name=relationships,proto3" json:"relationships"`
 }
 
@@ -122,7 +125,8 @@ func (m *QueryUserRelationshipsResponse) GetRelationships() []Relationship {
 	return nil
 }
 
-// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC endpoint
+// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
+// endpoint
 type QueryUserBlocksRequest struct {
 	// address of the user to query the blocks for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -161,7 +165,8 @@ func (m *QueryUserBlocksRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserBlocksRequest proto.InternalMessageInfo
 
-// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC method.
+// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
+// method.
 type QueryUserBlocksResponse struct {
 	// blocks represent the list of all the blocks for the queried user
 	Blocks []UserBlock `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
@@ -260,7 +265,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// UserRelationships queries the relationships for the user having the given address
+	// UserRelationships queries the relationships for the user having the given
+	// address
 	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
@@ -294,7 +300,8 @@ func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// UserRelationships queries the relationships for the user having the given address
+	// UserRelationships queries the relationships for the user having the given
+	// address
 	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)

@@ -28,4 +28,3 @@ message Params {
     (gogoproto.moretags) = "yaml:\"max_optional_data_field_value_length\""
   ];
 }
-

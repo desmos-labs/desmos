@@ -28,7 +28,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgCreateSession represents a message to create a session for a user from a different cosmos chain.
+// MsgCreateSession represents a message to create a session for a user from a
+// different cosmos chain.
 type MsgCreateSession struct {
 	Owner         string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty" yaml:"owner"`
 	Namespace     string `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty" yaml:"namespace"`

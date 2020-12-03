@@ -7,12 +7,12 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionSaveProfile         = "save_profile"
-	ActionDeleteProfile       = "delete_profile"
-	ActionRequestDtag         = "request_dtag"
-	ActionAcceptDtagTransfer  = "accept_dtag_request"
-	RefuseDTagTransferRequest = "refuse_dtag_request"
-	CancelDTagTransferRequest = "cancel_dtag_request"
+	ActionSaveProfile               = "save_profile"
+	ActionDeleteProfile             = "delete_profile"
+	ActionRequestDtag               = "request_dtag"
+	ActionAcceptDtagTransfer        = "accept_dtag_request"
+	ActionRefuseDTagTransferRequest = "refuse_dtag_request"
+	ActionCancelDTagTransferRequest = "cancel_dtag_request"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"

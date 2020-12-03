@@ -130,7 +130,8 @@ func (m *Relationships) GetRelationships() []Relationship {
 	return nil
 }
 
-// UserBlock represents the fact that the Blocker has blocked the given Blocked user.
+// UserBlock represents the fact that the Blocker has blocked the given Blocked
+// user.
 type UserBlock struct {
 	Blocker  string `protobuf:"bytes,1,opt,name=blocker,proto3" json:"blocker,omitempty" yaml:"blocker"`
 	Blocked  string `protobuf:"bytes,2,opt,name=blocked,proto3" json:"blocked,omitempty" yaml:"blocked"`

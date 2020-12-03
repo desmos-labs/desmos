@@ -80,7 +80,8 @@ func (m *Pictures) GetCover() string {
 	return ""
 }
 
-// Profile represents a generic first on Desmos, containing the information of a single user
+// Profile represents a generic first on Desmos, containing the information of a
+// single user
 type Profile struct {
 	Dtag         string    `protobuf:"bytes,1,opt,name=dtag,proto3" json:"dtag,omitempty" yaml:"dtag"`
 	Moniker      string    `protobuf:"bytes,2,opt,name=moniker,proto3" json:"moniker,omitempty" yaml:"moniker"`

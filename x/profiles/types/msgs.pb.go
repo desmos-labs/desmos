@@ -183,7 +183,8 @@ func (m *MsgDeleteProfileResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteProfileResponse proto.InternalMessageInfo
 
-// MsgRequestDTagTransfer represents the message used to request the DTag transfer to another user.
+// MsgRequestDTagTransfer represents the message used to request the DTag
+// transfer to another user.
 type MsgRequestDTagTransfer struct {
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
@@ -222,7 +223,8 @@ func (m *MsgRequestDTagTransfer) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRequestDTagTransfer proto.InternalMessageInfo
 
-// MsgRequestDTagTransferResponse defines the Msg/RequestDTagTransfer response type.
+// MsgRequestDTagTransferResponse defines the Msg/RequestDTagTransfer response
+// type.
 type MsgRequestDTagTransferResponse struct {
 }
 
@@ -259,7 +261,8 @@ func (m *MsgRequestDTagTransferResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRequestDTagTransferResponse proto.InternalMessageInfo
 
-// MsgCancelDTagTransfer represents the message used to cancel a DTag transfer request.
+// MsgCancelDTagTransfer represents the message used to cancel a DTag transfer
+// request.
 type MsgCancelDTagTransfer struct {
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
@@ -298,7 +301,8 @@ func (m *MsgCancelDTagTransfer) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCancelDTagTransfer proto.InternalMessageInfo
 
-// MsgCancelDTagTransferResponse represents the Msg/CancelDTagTransfer response type.
+// MsgCancelDTagTransferResponse represents the Msg/CancelDTagTransfer response
+// type.
 type MsgCancelDTagTransferResponse struct {
 }
 
@@ -335,7 +339,8 @@ func (m *MsgCancelDTagTransferResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCancelDTagTransferResponse proto.InternalMessageInfo
 
-// MsgAcceptDTagTransfer represents the message used to accept a DTag transfer request.
+// MsgAcceptDTagTransfer represents the message used to accept a DTag transfer
+// request.
 type MsgAcceptDTagTransfer struct {
 	NewDtag  string `protobuf:"bytes,1,opt,name=new_dtag,json=newDtag,proto3" json:"new_dtag" yaml:"new_dtag"`
 	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
@@ -412,7 +417,8 @@ func (m *MsgAcceptDTagTransferResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAcceptDTagTransferResponse proto.InternalMessageInfo
 
-// MsgRefuseDTagTransfer represents the message used to refuse a DTag transfer request.
+// MsgRefuseDTagTransfer represents the message used to refuse a DTag transfer
+// request.
 type MsgRefuseDTagTransfer struct {
 	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
@@ -569,13 +575,17 @@ type MsgClient interface {
 	SaveProfile(ctx context.Context, in *MsgSaveProfile, opts ...grpc.CallOption) (*MsgSaveProfileResponse, error)
 	// DeleteProfile defines the method to delete an existing profile
 	DeleteProfile(ctx context.Context, in *MsgDeleteProfile, opts ...grpc.CallOption) (*MsgDeleteProfileResponse, error)
-	// RequestDTagTransfer defines the method to request another user to transfer their DTag to you
+	// RequestDTagTransfer defines the method to request another user to transfer
+	// their DTag to you
 	RequestDTagTransfer(ctx context.Context, in *MsgRequestDTagTransfer, opts ...grpc.CallOption) (*MsgRequestDTagTransferResponse, error)
-	// CancelDTagTransfer defines the method to cancel an outgoing DTag transfer request
+	// CancelDTagTransfer defines the method to cancel an outgoing DTag transfer
+	// request
 	CancelDTagTransfer(ctx context.Context, in *MsgCancelDTagTransfer, opts ...grpc.CallOption) (*MsgCancelDTagTransferResponse, error)
-	// AcceptDTagTransfer defines the method to accept an incoming DTag transfer request
+	// AcceptDTagTransfer defines the method to accept an incoming DTag transfer
+	// request
 	AcceptDTagTransfer(ctx context.Context, in *MsgAcceptDTagTransfer, opts ...grpc.CallOption) (*MsgAcceptDTagTransferResponse, error)
-	// RefuseDTagTransfer defines the method to refuse an incoming DTag transfer request
+	// RefuseDTagTransfer defines the method to refuse an incoming DTag transfer
+	// request
 	RefuseDTagTransfer(ctx context.Context, in *MsgRefuseDTagTransfer, opts ...grpc.CallOption) (*MsgRefuseDTagTransferResponse, error)
 }
 
@@ -647,13 +657,17 @@ type MsgServer interface {
 	SaveProfile(context.Context, *MsgSaveProfile) (*MsgSaveProfileResponse, error)
 	// DeleteProfile defines the method to delete an existing profile
 	DeleteProfile(context.Context, *MsgDeleteProfile) (*MsgDeleteProfileResponse, error)
-	// RequestDTagTransfer defines the method to request another user to transfer their DTag to you
+	// RequestDTagTransfer defines the method to request another user to transfer
+	// their DTag to you
 	RequestDTagTransfer(context.Context, *MsgRequestDTagTransfer) (*MsgRequestDTagTransferResponse, error)
-	// CancelDTagTransfer defines the method to cancel an outgoing DTag transfer request
+	// CancelDTagTransfer defines the method to cancel an outgoing DTag transfer
+	// request
 	CancelDTagTransfer(context.Context, *MsgCancelDTagTransfer) (*MsgCancelDTagTransferResponse, error)
-	// AcceptDTagTransfer defines the method to accept an incoming DTag transfer request
+	// AcceptDTagTransfer defines the method to accept an incoming DTag transfer
+	// request
 	AcceptDTagTransfer(context.Context, *MsgAcceptDTagTransfer) (*MsgAcceptDTagTransferResponse, error)
-	// RefuseDTagTransfer defines the method to refuse an incoming DTag transfer request
+	// RefuseDTagTransfer defines the method to refuse an incoming DTag transfer
+	// request
 	RefuseDTagTransfer(context.Context, *MsgRefuseDTagTransfer) (*MsgRefuseDTagTransferResponse, error)
 }
 

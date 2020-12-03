@@ -113,7 +113,8 @@ func (m *QueryProfileResponse) GetProfile() Profile {
 	return Profile{}
 }
 
-// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC endpoint
+// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
+// endpoint
 type QueryDTagTransfersRequest struct {
 	// Address or DTag of the user to query the transfer requests for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -152,7 +153,8 @@ func (m *QueryDTagTransfersRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryDTagTransfersRequest proto.InternalMessageInfo
 
-// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers RPC method.
+// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
+// RPC method.
 type QueryDTagTransfersResponse struct {
 	// relationships represent the list of all the blocks for the queried user
 	Requests []DTagTransferRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`

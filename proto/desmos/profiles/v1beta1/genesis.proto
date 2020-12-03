@@ -14,10 +14,11 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"profiles\""
   ];
 
-  repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests = 2 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\""
-  ];
+  repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests =
+      2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\""
+      ];
 
   desmos.profiles.v1beta1.Params params = 3 [
     (gogoproto.nullable) = false,

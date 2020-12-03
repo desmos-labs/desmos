@@ -1,0 +1,16 @@
+syntax = "proto3";
+package desmos.fees.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/fees/v1beta1/min_fee.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/fees/types";
+
+// Params contains the parameters for the fees module
+message Params {
+  repeated desmos.fees.v1beta1.MinFee min_fees = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "min_fees",
+    (gogoproto.moretags) = "yaml\"min_fees\""
+  ];
+}

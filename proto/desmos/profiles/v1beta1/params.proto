@@ -46,7 +46,7 @@ message MonikerParams {
 
 // DTagParams defines the parameters related to profile DTags
 message DTagParams {
-  string reg_ex = 1 [(gogoproto.moretags) = "yaml:\"reg_ex\""];
+  string reg_ex = 1 [ (gogoproto.moretags) = "yaml:\"reg_ex\"" ];
 
   bytes min_dtag_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",

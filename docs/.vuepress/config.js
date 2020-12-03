@@ -28,13 +28,13 @@ module.exports = {
         ['meta', {property: "og:locale", content: "en_US"}],
     ],
     markdown: {
-        lineNumbers: true,
+        lineNumbers: false,
     },
     plugins: [
         'tabs',
         '@vuepress/google-analytics',
         {
-            'ga': 'UA-108489905-8' // UA-00000000-0
+            'ga': 'UA-108489905-8'
         }
     ],
     themeConfig: {
@@ -48,7 +48,7 @@ module.exports = {
         nav: [
             {text: "Website", link: "https://desmos.network", target: "_blank"},
         ],
-        sidebarDepth: 2,
+        sidebarDepth: 1,
         sidebar: [
             {
                 title: "Types",
@@ -142,6 +142,7 @@ module.exports = {
                             },
                         ]
                     },
+                    ["validators/migrating", "Migrating"],
                     ["validators/halting", "Halting"],
                     ["validators/common-problems", "Common problems"],
                 ]
