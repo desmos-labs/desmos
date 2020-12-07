@@ -10,7 +10,7 @@ import (
 func TestValidateGenesis(t *testing.T) {
 	tests := []struct {
 		name        string
-		genesis     types.GenesisState
+		genesis     *types.GenesisState
 		shouldError bool
 	}{
 		{

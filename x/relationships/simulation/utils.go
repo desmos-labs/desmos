@@ -20,7 +20,7 @@ var (
 )
 
 // RandomRelationship picks and returns a random relationships from an array
-func RandomRelationship(r *rand.Rand, relationships types.Relationships) types.Relationship {
+func RandomRelationship(r *rand.Rand, relationships []types.Relationship) types.Relationship {
 	idx := r.Intn(len(relationships))
 	return relationships[idx]
 }

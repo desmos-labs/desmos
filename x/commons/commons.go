@@ -23,16 +23,6 @@ func Unique(input []string) []string {
 	return unique
 }
 
-// StringPtrsEqual returns true iff the given first and second string pointers
-// are equals. This is true only if both are nil, or if they point to the same value.
-func StringPtrsEqual(first, second *string) bool {
-	if first == nil || second == nil {
-		return first == second
-	}
-
-	return *first == *second
-}
-
 // IsURIValid tells whether the given uri is valid or not
 func IsURIValid(uri string) bool {
 	_, err := url.ParseRequestURI(uri)

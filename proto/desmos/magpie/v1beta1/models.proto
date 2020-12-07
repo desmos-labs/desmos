@@ -1,0 +1,35 @@
+syntax = "proto3";
+package desmos.magpie.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
+
+// SessionID represents a unique session id
+message SessionID {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 value = 1;
+}
+
+// Session represents an inter-chain session used to authenticate a user from
+// another Cosmos chain
+message Session {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  SessionID session_id = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"session_id\""
+  ];
+  string owner = 2 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  uint64 creation_time = 3 [ (gogoproto.moretags) = "yaml:\"creation_time\"" ];
+  uint64 expiration_time = 4
+      [ (gogoproto.moretags) = "yaml:\"expiration_time\"" ];
+  string namespace = 5 [ (gogoproto.moretags) = "yaml:\"namespace\"" ];
+  string external_owner = 6
+      [ (gogoproto.moretags) = "yaml:\"external_owner\"" ];
+  string public_key = 7 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
+  string signature = 8 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+}

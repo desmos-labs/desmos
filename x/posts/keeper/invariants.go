@@ -2,8 +2,10 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -42,20 +44,19 @@ func AllInvariants(k Keeper) sdk.Invariant {
 	}
 }
 
+//____________________________________________________________________________
+
 // formatOutputIDs concatenate the ids given into a unique string
-func formatOutputIDs(ids types.PostIDs) (outputIDs string) {
-	for _, id := range ids {
-		outputIDs += id.String() + "\n"
-	}
-	return outputIDs
+func formatOutputIDs(ids []string) (outputIDs string) {
+	return strings.Join(ids, "\n")
 }
 
 // ValidPostsInvariant checks that the all posts are valid
 func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPostIDs types.PostIDs
+		var invalidPostIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if post.Validate() != nil || ValidatePost(ctx, k, post) != nil {
+			if k.ValidatePost(ctx, post) != nil {
 				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false
@@ -67,12 +68,14 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	}
 }
 
+//____________________________________________________________________________
+
 // ValidCommentsDateInvariant checks that comments creation date is always greater than parent creation date
 func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidCommentsIDs types.PostIDs
+		var invalidCommentsIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if post.ParentID.Valid() {
+			if types.IsValidPostID(post.ParentID) {
 				parentPost, _ := k.GetPost(ctx, post.ParentID)
 				if post.Created.Before(parentPost.Created) {
 					invalidCommentsIDs = append(invalidCommentsIDs, post.PostID)
@@ -89,8 +92,10 @@ func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 	}
 }
 
+//____________________________________________________________________________
+
 // formatOutputReactions concatenate the reactions given into a unique string
-func formatOutputReactions(reactions types.PostReactions) (outputReactions string) {
+func formatOutputReactions(reactions []types.PostReaction) (outputReactions string) {
 	for _, reaction := range reactions {
 		outputReactions += reaction.String() + "\n"
 	}
@@ -100,12 +105,11 @@ func formatOutputReactions(reactions types.PostReactions) (outputReactions strin
 // ValidPostForReactionsInvariant checks that the post related to the reactions is valid and exists
 func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidReactions types.PostReactions
-		reactions := k.GetReactions(ctx)
-		for key, value := range reactions {
-			postID := types.PostID(key)
-			if _, found := k.GetPost(ctx, postID); !found {
-				invalidReactions = append(invalidReactions, value...)
+		var invalidReactions []types.PostReaction
+		reactions := k.GetPostReactionsEntries(ctx)
+		for _, entry := range reactions {
+			if !k.DoesPostExist(ctx, entry.PostId) {
+				invalidReactions = append(invalidReactions, entry.Reactions...)
 			}
 		}
 
@@ -116,8 +120,10 @@ func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 	}
 }
 
+//____________________________________________________________________________
+
 // formatOutputPollAnswers concatenate the poll answers given into a unique string
-func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers string) {
+func formatOutputPollAnswers(pollAnswers []types.UserAnswer) (outputAnswers string) {
 	for _, answer := range pollAnswers {
 		outputAnswers += answer.String() + "\n"
 	}
@@ -127,12 +133,11 @@ func formatOutputPollAnswers(pollAnswers types.UserAnswers) (outputAnswers strin
 // ValidPollForPollAnswersInvariant check that the poll answers are referred to a valid post's poll
 func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPollAnswers types.UserAnswers
-		answers := k.GetPollAnswersMap(ctx)
-		for key, value := range answers {
-			postID := types.PostID(key)
-			if post, found := k.GetPost(ctx, postID); !found || (found && post.PollData == nil) {
-				invalidPollAnswers = append(invalidPollAnswers, value...)
+		var invalidPollAnswers []types.UserAnswer
+		answers := k.GetUserAnswersEntries(ctx)
+		for _, entry := range answers {
+			if post, found := k.GetPost(ctx, entry.PostId); !found || (found && post.PollData == nil) {
+				invalidPollAnswers = append(invalidPollAnswers, entry.UserAnswers...)
 			}
 		}
 

@@ -1,0 +1,73 @@
+syntax = "proto3";
+package desmos.posts.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+
+// PollAnswer contains the data of a single poll answer inserted by the creator
+message PollAnswer {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string answer_id = 1 [
+    (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id",
+    (gogoproto.moretags) = "yaml\"id\""
+  ];
+
+  string text = 2
+      [ (gogoproto.jsontag) = "text", (gogoproto.moretags) = "yaml\"text\"" ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// PollAnswer contains the data of a single poll answer inserted by the creator
+// inside a PollData object
+message PollData {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string question = 1;
+
+  repeated PollAnswer provided_answers = 2 [
+    (gogoproto.customname) = "ProvidedAnswers",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml\"provided_answers\""
+  ];
+
+  google.protobuf.Timestamp end_date = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.jsontag) = "end_date",
+    (gogoproto.moretags) = "yaml\"end_date\""
+  ];
+
+  bool allows_multiple_answers = 4 [
+    (gogoproto.jsontag) = "allows_multiple_answers",
+    (gogoproto.moretags) = "yaml\"allows_multiple_answers\""
+  ];
+
+  bool allows_answer_edits = 5 [
+    (gogoproto.jsontag) = "allows_answer_edits",
+    (gogoproto.moretags) = "yaml\"allows_answer_edits\""
+  ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// UserAnswer contains the data of a user's answer to a poll
+message UserAnswer {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string user = 1;
+  repeated string answers = 2;
+}
+
+// UserAnswers wraps a list of UserAnswer
+message UserAnswers {
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1
+      [ (gogoproto.nullable) = false ];
+}

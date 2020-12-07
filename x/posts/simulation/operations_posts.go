@@ -5,13 +5,14 @@ package simulation
 import (
 	"math/rand"
 
+	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/fees"
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
@@ -20,15 +21,15 @@ import (
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists
 // nolint: funlen
-func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
+func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []sim.Account, chainID string,
-	) (sim.OperationMsg, []sim.FutureOperation, error) {
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		data, skip := randomPostCreateFields(r, ctx, accs, k, ak)
 		if skip {
-			return sim.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, nil
 		}
 
 		msg := types.NewMsgCreatePost(
@@ -37,50 +38,50 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keepe
 			data.AllowsComments,
 			data.Subspace,
 			data.OptionalData,
-			data.Creator.Address,
+			data.Creator.Address.String(),
 			data.Attachments,
 			data.PollData,
 		)
 
-		err := sendMsgCreatePost(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
+		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
 		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, err
 		}
 
-		return sim.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreatePost"), nil, nil
 	}
 }
 
 // sendMsgCreatePost sends a transaction with a MsgCreatePost from a provided random account.
 func sendMsgCreatePost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
-	msg types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	msg *types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-	account := ak.GetAccount(ctx, msg.Creator)
-	coins := account.SpendableCoins(ctx.BlockTime())
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
+	account := ak.GetAccount(ctx, addr)
+	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
-	randFees, err := sim.RandomFees(r, ctx, coins)
+	fees, err := simtypes.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	msgs := []sdk.Msg{msg}
-
-	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
-		return nil
-	}
-
-	tx := helpers.GenTx(
-		msgs,
-		randFees,
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
+	tx, err := helpers.GenTx(
+		txGen,
+		[]sdk.Msg{msg},
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
 		privkeys...,
 	)
+	if err != nil {
+		return err
+	}
 
-	_, _, err = app.Deliver(tx)
+	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 	if err != nil {
 		return err
 	}
@@ -90,7 +91,7 @@ func sendMsgCreatePost(
 
 // randomPostCreateFields returns the creator of the post as well as the parent id
 func randomPostCreateFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, ak auth.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
@@ -108,7 +109,7 @@ func randomPostCreateFields(
 
 	for _, attachment := range postData.Attachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, postData.Creator.Address) {
+			if k.IsUserBlocked(ctx, tag, postData.Creator.Address.String(), postData.Subspace) {
 				return nil, true
 			}
 		}
@@ -124,60 +125,64 @@ func randomPostCreateFields(
 	return &postData, false
 }
 
+// ___________________________________________________________________________________________________________________
+
 // SimulateMsgEditPost tests and runs a single msg edit post where the post creator account already exists
 // nolint: funlen
-func SimulateMsgEditPost(k keeper.Keeper, ak auth.AccountKeeper, fk fees.Keeper) sim.Operation {
+func SimulateMsgEditPost(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []sim.Account, chainID string,
-	) (sim.OperationMsg, []sim.FutureOperation, error) {
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		account, id, message, attachments, pollData, skip := randomPostEditFields(r, ctx, accs, k, ak)
+		account, id, message, attachments, pollData, skip := randomPostEditFields(r, ctx, accs, k)
 		if skip {
-			return sim.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address)
+		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address.String())
 
-		err := sendMsgEditPost(r, app, ak, fk, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
+		err := sendMsgEditPost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
 		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, err
 		}
 
-		return sim.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgEditPost"), nil, nil
 	}
 }
 
 // sendMsgEditPost sends a transaction with a MsgEditPost from a provided random account.
 func sendMsgEditPost(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper, fk fees.Keeper,
-	msg types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	msg *types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
 ) error {
-	account := ak.GetAccount(ctx, msg.Editor)
-	coins := account.SpendableCoins(ctx.BlockTime())
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	account := ak.GetAccount(ctx, addr)
+	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
-	randFees, err := sim.RandomFees(r, ctx, coins)
+	fees, err := simtypes.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	msgs := []sdk.Msg{msg}
-
-	if err := fk.CheckFees(ctx, authtypes.NewStdFee(helpers.DefaultGenTxGas, randFees), msgs); err != nil {
-		return nil
-	}
-
-	tx := helpers.GenTx(
-		msgs,
-		randFees,
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
+	tx, err := helpers.GenTx(
+		txGen,
+		[]sdk.Msg{msg},
+		fees,
 		DefaultGasValue,
 		chainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
 		privkeys...,
 	)
+	if err != nil {
+		return err
+	}
 
-	_, _, err = app.Deliver(tx)
+	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 	if err != nil {
 		return err
 	}
@@ -187,27 +192,23 @@ func sendMsgEditPost(
 
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, k keeper.Keeper, _ auth.AccountKeeper,
-) (sim.Account, types.PostID, string, types.Attachments, *types.PollData, bool) {
-
-	posts := k.GetPosts(ctx)
-	if posts == nil {
-		return sim.Account{}, "", "", nil, nil, true
-	}
-	post, _ := RandomPost(r, posts)
-	acc := GetAccount(post.Creator, accs)
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (simtypes.Account, string, string, types.Attachments, *types.PollData, bool) {
+	post, _ := RandomPost(r, k.GetPosts(ctx))
+	addr, _ := sdk.AccAddressFromBech32(post.Creator)
+	acc := GetAccount(addr, accs)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return sim.Account{}, "", "", nil, nil, true
+		return simtypes.Account{}, "", "", nil, nil, true
 	}
 
 	editedAttachments := RandomAttachments(r, accs)
 
 	for _, attachment := range editedAttachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, post.Creator) {
-				return sim.Account{}, "", "", nil, nil, true
+			if k.IsUserBlocked(ctx, tag, post.Creator, post.Subspace) {
+				return simtypes.Account{}, "", "", nil, nil, true
 			}
 		}
 	}

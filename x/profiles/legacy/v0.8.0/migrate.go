@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v060profile "github.com/desmos-labs/desmos/x/profiles/legacy/v0.6.0"
 )
 

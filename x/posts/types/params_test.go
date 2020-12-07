@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func TestDefaultParams(t *testing.T) {
@@ -14,13 +15,7 @@ func TestDefaultParams(t *testing.T) {
 	require.Equal(t, params, types.DefaultParams())
 }
 
-func TestParams_String(t *testing.T) {
-	params := types.DefaultParams()
-	require.Equal(t, "Posts parameters:\nMaxPostMessageLength: 500\nMaxOptionalDataFieldsNumber: 10\nMaxOptionalDataFieldValueLength: 200", params.String())
-}
-
 func TestValidateParams(t *testing.T) {
-
 	tests := []struct {
 		name   string
 		params types.Params
@@ -33,13 +28,13 @@ func TestValidateParams(t *testing.T) {
 		},
 		{
 			name:   "invalid max optional data number param returns error",
-			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(200)),
-			expErr: fmt.Errorf("invalid max optional data fields number param: 8"),
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(-1), sdk.NewInt(8)),
+			expErr: fmt.Errorf("invalid max optional data fields number param: -1"),
 		},
 		{
 			name:   "invalid max optional data field value length returns error",
-			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(10)),
-			expErr: fmt.Errorf("invalid max optional data fields value length param: %s", sdk.NewInt(10)),
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(-1)),
+			expErr: fmt.Errorf("invalid max optional data fields value length param: -1"),
 		},
 		{
 			name:   "valid params returns no error",

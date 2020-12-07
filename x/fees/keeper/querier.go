@@ -9,21 +9,21 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func NewQuerier(keeper Keeper) sdk.Querier {
+func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
 		case types.QueryParams:
-			return queryParams(ctx, req, keeper)
+			return queryParams(ctx, req, keeper, legacyQuerierCdc)
 		default:
 			return nil, fmt.Errorf("unknown fees endpoint")
 		}
 	}
 }
 
-func queryParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper) ([]byte, error) {
+func queryParams(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
 	params := keeper.GetParams(ctx)
 
-	bz, err := codec.MarshalJSONIndent(keeper.Cdc, &params)
+	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &params)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

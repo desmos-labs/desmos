@@ -1,24 +1,22 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// GetTxCmd set the tx commands
-func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
+// NewTxCmd returns a new command allowing to perform profiles transactions
+func NewTxCmd() *cobra.Command {
 	profileTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Profiles transaction subcommands",
@@ -27,28 +25,20 @@ func GetTxCmd(_ string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	profileTxCmd.AddCommand(flags.PostCommands(
-		GetCmdSaveProfile(cdc),
-		GetCmdDeleteProfile(cdc),
-		GetCmdRequestDTagTransfer(cdc),
-		GetCmdAcceptDTagTransfer(cdc),
-		GetCmdRefuseDTagTransfer(cdc),
-		GetCmdCancelDTagTransfer(cdc),
-	)...)
+	profileTxCmd.AddCommand(
+		GetCmdSaveProfile(),
+		GetCmdDeleteProfile(),
+		GetCmdRequestDTagTransfer(),
+		GetCmdAcceptDTagTransfer(),
+		GetCmdRefuseDTagTransfer(),
+		GetCmdCancelDTagTransfer(),
+	)
 
 	return profileTxCmd
 }
 
-func getFlagValueOrNilOnDefault(flag string) *string {
-	flagValue := viper.GetString(flag)
-	if flagValue == "" {
-		return nil
-	}
-	return &flagValue
-}
-
-// GetCmdSaveProfile is the CLI command for saving an profile
-func GetCmdSaveProfile(cdc *codec.Codec) *cobra.Command {
+// GetCmdSaveProfile returns the command used to save a profile
+func GetCmdSaveProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "save [dtag]",
 		Args:  cobra.ExactArgs(1),
@@ -64,147 +54,185 @@ will be removed.
 	%s "Hollywood actor. Proud environmentalist" \
 	%s "https://profilePic.jpg"
 	%s "https://profileCover.jpg"
-`, version.ClientName, flagMoniker, flagBio, flagProfilePic, flagCoverPic),
+`, version.AppName, FlagMoniker, FlagBio, FlagProfilePic, FlagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			moniker := getFlagValueOrNilOnDefault(flagMoniker)
-			picture := getFlagValueOrNilOnDefault(flagProfilePic)
-			cover := getFlagValueOrNilOnDefault(flagCoverPic)
-			bio := getFlagValueOrNilOnDefault(flagBio)
+			dTag := args[0]
+			moniker, _ := cmd.Flags().GetString(FlagMoniker)
+			bio, _ := cmd.Flags().GetString(FlagBio)
+			profilePic, _ := cmd.Flags().GetString(FlagProfilePic)
+			coverPic, _ := cmd.Flags().GetString(FlagCoverPic)
 
-			msg := types.NewMsgSaveProfile(args[0], moniker, bio, picture, cover, cliCtx.FromAddress)
+			msg := types.NewMsgSaveProfile(dTag, moniker, bio, profilePic, coverPic, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
-	cmd.Flags().String(flagMoniker, "", "Moniker to be used")
-	cmd.Flags().String(flagBio, "", "Biography to be used")
-	cmd.Flags().String(flagProfilePic, "", "Profile picture")
-	cmd.Flags().String(flagCoverPic, "", "Cover picture")
+	cmd.Flags().String(FlagMoniker, types.DoNotModify, "Moniker to be used")
+	cmd.Flags().String(FlagBio, types.DoNotModify, "Biography to be used")
+	cmd.Flags().String(FlagProfilePic, types.DoNotModify, "Profile picture")
+	cmd.Flags().String(FlagCoverPic, types.DoNotModify, "Cover picture")
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
 
-// GetCmdDeleteProfile is the CLI command for deleting an profile
-func GetCmdDeleteProfile(cdc *codec.Codec) *cobra.Command {
+// GetCmdDeleteProfile returns the command used to delete an existing profile
+func GetCmdDeleteProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete an existent profile related to the user's address",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-			msg := types.NewMsgDeleteProfile(cliCtx.FromAddress)
+			msg := types.NewMsgDeleteProfile(clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
 
-// GetCmdRequestDTagTransfer is the CLI command for request an existent dTag to the given owner
-func GetCmdRequestDTagTransfer(cdc *codec.Codec) *cobra.Command {
+// GetCmdRequestDTagTransfer returns the command to create a DTag transfer request
+func GetCmdRequestDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "transfer-dtag [address]",
 		Short: "Make a request to get the DTag of the user having the given address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			currentOwnerAddr, err := sdk.AccAddressFromBech32(args[0])
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgRequestDTagTransfer(currentOwnerAddr, cliCtx.FromAddress)
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdAcceptDTagTransfer is the CLI command to accept the request to transfer a dTag
-func GetCmdAcceptDTagTransfer(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "accept-dtag-transfer [newDTag] [address]",
-		Short: "Accept a DTag transfer request made by the user with the given address",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			receivingUser, err := sdk.AccAddressFromBech32(args[1])
+			requestRecipient, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAcceptDTagTransfer(args[0], cliCtx.FromAddress, receivingUser)
+			msg := types.NewMsgRequestDTagTransfer(clientCtx.FromAddress.String(), requestRecipient.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
 
-// GetCmdRefuseDTagTransfer is the CLI command to refuse a DTag transfer request from the owner's side
-func GetCmdRefuseDTagTransfer(cdc *codec.Codec) *cobra.Command {
+// GetCmdCancelDTagTransfer returns the command to cancel an outgoing DTag transfer request
+func GetCmdCancelDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "refuse-dtag-transfer [sender]",
-		Short: "Refuse a DTag transfer made by the given sender address",
+		Use:   "cancel-dtag-transfer [recipient]",
+		Short: "Cancel a DTag transfer made to the given recipient address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			sender, err := sdk.AccAddressFromBech32(args[0])
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
 			if err != nil {
 				return err
 			}
-
-			msg := types.NewMsgRefuseDTagTransferRequest(sender, cliCtx.FromAddress)
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	return cmd
-}
-
-// GetCmdCancelDTagTransfer is the CLI command to cancel a DTag transfer request from the sender's side
-func GetCmdCancelDTagTransfer(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "cancel-dtag-transfer [owner]",
-		Short: "Cancel a DTag transfer made to the given owner address",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			owner, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCancelDTagTransferRequest(cliCtx.FromAddress, owner)
+			msg := types.NewMsgCancelDTagTransferRequest(clientCtx.FromAddress.String(), owner.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdAcceptDTagTransfer returns the command to accept a DTag transfer request
+func GetCmdAcceptDTagTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "accept-dtag-transfer [newDTag] [address]",
+		Short: "Accept a DTag transfer request made by the user with the given address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			receivingUser, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAcceptDTagTransfer(args[0], receivingUser.String(), clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdRefuseDTagTransfer returns the command to refuse an incoming DTag transfer request
+func GetCmdRefuseDTagTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "refuse-dtag-transfer [sender]",
+		Short: "Refuse a DTag transfer made by the given sender address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRefuseDTagTransferRequest(args[0], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

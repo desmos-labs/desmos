@@ -4,7 +4,8 @@ package simulation
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
@@ -19,33 +20,40 @@ func RandomizedGenState(simsState *module.SimulationState) {
 }
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
-func randomRelationships(simState *module.SimulationState) map[string]types.Relationships {
-	relationshipsNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 30))
-	usersRelationships := map[string]types.Relationships{}
-	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
+func randomRelationships(simState *module.SimulationState) []types.Relationship {
+	relationshipsNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
 
+	relationships := make([]types.Relationship, relationshipsNumber)
 	for index := 0; index < relationshipsNumber; index++ {
-		sender, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		receiver, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
+		sender, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		receiver, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		if !sender.Equals(receiver) {
-			usersRelationships[sender.Address.String()] = types.Relationships{types.NewRelationship(receiver.Address, subspace)}
+			relationships[index] = types.NewRelationship(
+				sender.Address.String(),
+				receiver.Address.String(),
+				RandomSubspace(simState.Rand),
+			)
 		}
 	}
 
-	return usersRelationships
+	return relationships
 }
 
 // randomUsersBlocks
 func randomUsersBlocks(simState *module.SimulationState) []types.UserBlock {
-	usersBlocksNumber := simState.Rand.Intn(sim.RandIntBetween(simState.Rand, 1, 30))
-	var usersBlocks = make([]types.UserBlock, usersBlocksNumber)
+	usersBlocksNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
 
+	usersBlocks := make([]types.UserBlock, usersBlocksNumber)
 	for index := 0; index < usersBlocksNumber; index++ {
-		blocker, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		blocked, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
+		blocker, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		blocked, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		if !blocker.Equals(blocked) {
-			usersBlocks[index] = types.NewUserBlock(blocker.Address, blocked.Address,
-				"reason", "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+			usersBlocks[index] = types.NewUserBlock(
+				blocker.Address.String(),
+				blocked.Address.String(),
+				"reason",
+				RandomSubspace(simState.Rand),
+			)
 		}
 	}
 
