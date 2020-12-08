@@ -1,0 +1,43 @@
+syntax = "proto3";
+package desmos.relationships.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/relationships/types";
+
+// Relationship is the struct of a relationship.
+// It represent the concept of "follow" of traditional social networks.
+message Relationship {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string recipient = 2 [ (gogoproto.moretags) = "yaml:\"recipient\"" ];
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+}
+
+// Relationships wraps a list of Relationship objects
+message Relationships {
+  repeated desmos.relationships.v1beta1.Relationship relationships = 1
+      [ (gogoproto.nullable) = false ];
+}
+
+// UserBlock represents the fact that the Blocker has blocked the given Blocked
+// user.
+message UserBlock {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+  string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+  string reason = 3 [
+    (gogoproto.moretags) = "yaml:\"reason\""
+  ]; // Reason the user has been blocked for (optional).
+  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+}
+
+// UserBlocks wraps a list of UserBlock objects
+message UserBlocks {
+  repeated desmos.relationships.v1beta1.UserBlock blocks = 1
+      [ (gogoproto.nullable) = false ];
+}

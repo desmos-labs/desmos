@@ -4,43 +4,46 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/reports/simulation"
+
+	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
-	"github.com/tendermint/tendermint/libs/kv"
 
-	posts "github.com/desmos-labs/desmos/x/posts/types"
-	sim "github.com/desmos-labs/desmos/x/reports/simulation"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
-// nolint
-var (
-	privKey           = ed25519.GenPrivKey().PubKey()
-	reportCreatorAddr = sdk.AccAddress(privKey.Address())
-	id                = posts.PostID("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")
-)
-
-func makeTestCodec() (cdc *codec.Codec) {
-	cdc = codec.New()
-	sdk.RegisterCodec(cdc)
-	codec.RegisterCrypto(cdc)
-	types.RegisterCodec(cdc)
-	return
-}
-
 func TestDecodeStore(t *testing.T) {
-	cdc := makeTestCodec()
+	cdc, _ := app.MakeCodecs()
+	dec := simulation.NewDecodeStore(cdc)
 
-	reports := types.Reports{
-		types.NewReport("offense", "it offends me", reportCreatorAddr),
-		types.NewReport("scam", "it's a scam", reportCreatorAddr),
+	address := ed25519.GenPrivKey().PubKey().Address().String()
+	reports := []types.Report{
+		types.NewReport(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			"offense",
+			"it offends me",
+			address,
+		),
+		types.NewReport(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			"scam",
+			"it's a scam",
+			address,
+		),
 	}
 
-	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.ReportStoreKey(id), Value: cdc.MustMarshalBinaryBare(&reports)},
-	}
+	wrapped := types.Reports{Reports: reports}
+	bz, err := cdc.MarshalBinaryBare(&wrapped)
+	require.NoError(t, err)
+
+	kvPairs := kv.Pairs{Pairs: []kv.Pair{
+		{
+			Key:   types.ReportStoreKey("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+			Value: bz,
+		},
+	}}
 
 	tests := []struct {
 		name        string
@@ -55,9 +58,9 @@ func TestDecodeStore(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			switch i {
 			case len(tests) - 1:
-				require.Panics(t, func() { sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
+				require.Panics(t, func() { dec(kvPairs.Pairs[i], kvPairs.Pairs[i]) }, tt.name)
 			default:
-				require.Equal(t, tt.expectedLog, sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
+				require.Equal(t, tt.expectedLog, dec(kvPairs.Pairs[i], kvPairs.Pairs[i]), tt.name)
 			}
 		})
 	}

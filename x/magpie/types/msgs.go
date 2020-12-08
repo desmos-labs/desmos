@@ -1,25 +1,17 @@
 package types
 
 import (
-	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// MsgCreateSession defines the MsgCreateSession message
-type MsgCreateSession struct {
-	Owner         sdk.AccAddress `json:"owner" yaml:"owner"`
-	Namespace     string         `json:"namespace" yaml:"namespace"`
-	ExternalOwner string         `json:"external_owner" yaml:"external_owner"`
-	PubKey        string         `json:"pub_key" yaml:"pub_key"`
-	Signature     string         `json:"signature" yaml:"signature"`
-}
-
 // NewMsgCreateSession is the constructor of MsgCreateSession
-func NewMsgCreateSession(owner sdk.AccAddress, namespace string, externalOwner string, pubkey string, signature string) MsgCreateSession {
-	return MsgCreateSession{
+func NewMsgCreateSession(
+	owner string, namespace string, externalOwner string, pubkey string, signature string,
+) *MsgCreateSession {
+	return &MsgCreateSession{
 		Owner:         owner,
 		Namespace:     namespace,
 		ExternalOwner: externalOwner,
@@ -36,8 +28,9 @@ func (msg MsgCreateSession) Type() string { return ActionCreationSession }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSession) ValidateBasic() error {
-	if msg.Owner.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid session owner: %s", msg.Owner))
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, msg.Owner)
 	}
 
 	if len(strings.TrimSpace(msg.Namespace)) == 0 {
@@ -62,10 +55,11 @@ func (msg MsgCreateSession) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateSession) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgCreateSession) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	owner, _ := sdk.AccAddressFromBech32(msg.Owner)
+	return []sdk.AccAddress{owner}
 }

@@ -1,0 +1,31 @@
+syntax = "proto3";
+package desmos.magpie.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/magpie/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Sessions queries the sessions having a specific ID.
+  rpc Session(QuerySessionRequest) returns (QuerySessionResponse) {
+    option (google.api.http).get = "/desmos/magpie/v1beta1/sessions/{id}";
+  }
+}
+
+// QuerySessionRequest is the request type for the Query/Session RPC method.
+message QuerySessionRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // id is the session it to query for
+  string id = 1;
+}
+
+// QuerySessionResponse is the response type for the Query/Session RPC method.
+message QuerySessionResponse {
+  // balance is the balance of the coin.
+  desmos.magpie.v1beta1.Session session = 1;
+}

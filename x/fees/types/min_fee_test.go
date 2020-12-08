@@ -22,7 +22,7 @@ func TestMinFee_Validate(t *testing.T) {
 		},
 		{
 			name:     "invalid min fee amount returns error",
-			minFee:   types.NewMinFee("create_post", sdk.Coins{sdk.Coin{Denom: "stakE", Amount: sdk.NewInt(10000)}}),
+			minFee:   types.NewMinFee("create_post", sdk.Coins{sdk.Coin{Denom: "stakE", Amount: sdk.NewInt(0)}}),
 			expError: fmt.Errorf("invalid minimum fee amount"),
 		},
 		{

@@ -8,16 +8,6 @@ import (
 	"testing"
 )
 
-func TestDefaultParams(t *testing.T) {
-	params := types.NewParams(types.DefaultMinFees)
-	require.Equal(t, params, types.DefaultParams())
-}
-
-func TestParams_String(t *testing.T) {
-	params := types.DefaultParams()
-	require.Equal(t, "Fee parameters:\nMinFees: []", params.String())
-}
-
 func TestValidateParams(t *testing.T) {
 
 	tests := []struct {
@@ -28,12 +18,13 @@ func TestValidateParams(t *testing.T) {
 		{
 			name: "invalid min fees param returns error",
 			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1))))},
+				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+			},
 			),
 			expErr: fmt.Errorf("invalid minimum fee message type"),
 		},
 		{
-			name:   "valid params returns no error",
+			name:   "default params returns no error",
 			params: types.DefaultParams(),
 			expErr: nil,
 		},
@@ -60,14 +51,18 @@ func TestValidateMinFeesParam(t *testing.T) {
 		},
 		{
 			name: "invalid param returns error",
-			requiredFee: []types.MinFee{types.NewMinFee("",
-				sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1))))},
+			requiredFee: []types.MinFee{
+				types.NewMinFee("",
+					sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+			},
 			expErr: fmt.Errorf("invalid minimum fee message type"),
 		},
 		{
 			name: "valid param returns no errors",
-			requiredFee: []types.MinFee{types.NewMinFee("desmos/createPost",
-				sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000))))},
+			requiredFee: []types.MinFee{
+				types.NewMinFee("desmos/createPost",
+					sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			},
 			expErr: nil,
 		},
 	}

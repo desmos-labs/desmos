@@ -1,87 +1,106 @@
 package fees
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/desmos-labs/desmos/x/fees/client/cli"
 	"github.com/desmos-labs/desmos/x/fees/client/rest"
 	"github.com/desmos-labs/desmos/x/fees/keeper"
 	"github.com/desmos-labs/desmos/x/fees/simulation"
 	"github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented
 var (
-	_   module.AppModule           = AppModule{}
-	_   module.AppModuleBasic      = AppModuleBasic{}
-	_   module.AppModuleSimulation = AppModule{}
-	cdc                            = codec.New()
+	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
-// AppModuleBasic defines the basic application module used by the posts module.
-type AppModuleBasic struct{}
+// AppModuleBasic defines the basic application module used by the fees module.
+type AppModuleBasic struct {
+	_ codec.Marshaler
+}
 
-// Name returns the posts module's name.
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+
+// Name returns the fees module's name.
 func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
-// RegisterCodec registers the posts module's types for the given codec.
-func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {}
+// RegisterCodec registers the fees module's types for the given codec.
+func (AppModuleBasic) RegisterCodec(_ *codec.LegacyAmino) {}
 
 // DefaultGenesis returns default genesis state as raw bytes for the auth
 // module.
-func (AppModuleBasic) DefaultGenesis() json.RawMessage {
+func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 	return cdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
-// ValidateGenesis performs genesis state validation for the posts module.
-func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
+// ValidateGenesis performs genesis state validation for the fees module.
+func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
-	err := cdc.UnmarshalJSON(bz, &data)
-	if err != nil {
-		return err
+	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
+		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
-	// Once json successfully marshalled, passes along to genesis.go
-	return types.ValidateGenesis(data)
+	return types.ValidateGenesis(&data)
 }
 
-// RegisterRESTRoutes registers the REST routes for the posts module.
-func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
+// RegisterRESTRoutes registers the REST routes for the fees module.
+func (AppModuleBasic) RegisterRESTRoutes(ctx client.Context, rtr *mux.Router) {
 	rest.RegisterRoutes(ctx, rtr)
 }
 
-// GetTxCmd returns the root tx command for the posts module.
-func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetQueryCmd(cdc)
+// RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the fees module.
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// GetQueryCmd returns the root query command for the posts module.
-func (AppModuleBasic) GetTxCmd(_ *codec.Codec) *cobra.Command {
+// GetTxCmd returns the root tx command for the fees module.
+func (AppModuleBasic) GetQueryCmd() *cobra.Command {
+	return cli.GetQueryCmd()
+}
+
+// GetQueryCmd returns the root query command for the fees module.
+func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return nil
 }
 
+// RegisterInterfaces registers interfaces and implementations of the fees module.
+func (AppModuleBasic) RegisterInterfaces(_ codectypes.InterfaceRegistry) {}
+
 //____________________________________________________________________________
 
-// AppModule implements an application module for the posts module.
+// AppModule implements an application module for the fees module.
 type AppModule struct {
 	AppModuleBasic
-	ak     auth.AccountKeeper
+	ak     authkeeper.AccountKeeper
 	keeper keeper.Keeper
 }
 
+// RegisterServices registers module services.
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+}
+
 // NewAppModule creates a new AppModule Object
-func NewAppModule(keeper keeper.Keeper, accountKeeper auth.AccountKeeper) AppModule {
+func NewAppModule(
+	keeper keeper.Keeper, accountKeeper authkeeper.AccountKeeper,
+) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		ak:             accountKeeper,
@@ -89,7 +108,7 @@ func NewAppModule(keeper keeper.Keeper, accountKeeper auth.AccountKeeper) AppMod
 	}
 }
 
-// Name returns the posts module's name.
+// Name returns the fees module's name.
 func (AppModule) Name() string {
 	return types.ModuleName
 }
@@ -97,46 +116,47 @@ func (AppModule) Name() string {
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the posts module.
-func (am AppModule) Route() string {
-	return types.RouterKey
+// Route returns the message routing key for the fees module.
+func (am AppModule) Route() sdk.Route {
+	return sdk.NewRoute(types.RouterKey, nil)
 }
 
-// NewHandler returns an sdk.Handler for the posts module.
+// NewHandler returns an sdk.Handler for the fees module.
 func (am AppModule) NewHandler() sdk.Handler {
 	return nil
 }
 
-// QuerierRoute returns the posts module's querier route name.
+// QuerierRoute returns the fees module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
 
-// NewQuerierHandler returns the posts module sdk.Querier.
-func (am AppModule) NewQuerierHandler() sdk.Querier {
-	return keeper.NewQuerier(am.keeper)
+// LegacyQuerierHandler returns the fees module sdk.Querier.
+func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }
 
-// InitGenesis performs genesis initialization for the posts module. It returns
+// InitGenesis performs genesis initialization for the fees module. It returns
 // no validator updates.
-func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
+func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
-	return InitGenesis(ctx, am.keeper, genesisState)
+	am.keeper.InitGenesis(ctx, genesisState)
+	return []abci.ValidatorUpdate{}
 }
 
 // ExportGenesis returns the exported genesis state as raw bytes for the auth
 // module.
-func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
-	gs := ExportGenesis(ctx, am.keeper)
+func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json.RawMessage {
+	gs := am.keeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(gs)
 }
 
-// BeginBlock returns the begin blocker for the posts module.
+// BeginBlock returns the begin blocker for the fees module.
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
 }
 
-// EndBlock returns the end blocker for the posts module. It returns no validator
+// EndBlock returns the end blocker for the fees module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
@@ -144,28 +164,28 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 
 //____________________________________________________________________________
 
-// AppModuleSimulation defines the module simulation functions used by the posts module.
+// AppModuleSimulation defines the module simulation functions used by the fees module.
 type AppModuleSimulation struct{}
 
-// GenerateGenesisState creates a randomized GenState of the bank module.
+// GenerateGenesisState creates a randomized GenState of the fees module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
 	return nil
 }
 
-// RandomizedParams creates randomized posts param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []sim.ParamChange {
+// RandomizedParams creates randomized fees param changes for the simulator.
+func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
 	return simulation.ParamChanges(r)
 }
 
 // RegisterStoreDecoder performs a no-op.
-func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {}
+func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 
-// WeightedOperations returns the all the posts module operations with their respective weights.
-func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
+// WeightedOperations returns the all the fees module operations with their respective weights.
+func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
 	return nil
 }

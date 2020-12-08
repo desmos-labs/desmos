@@ -1,52 +1,59 @@
 package keeper_test
 
+// NOLINT
+
 import (
-	"github.com/desmos-labs/desmos/x/relationships"
 	"testing"
 	"time"
+
+	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
+
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	postsK "github.com/desmos-labs/desmos/x/posts/keeper"
-	postsT "github.com/desmos-labs/desmos/x/posts/types"
-	"github.com/desmos-labs/desmos/x/reports/keeper"
-	"github.com/desmos-labs/desmos/x/reports/types"
-	"github.com/desmos-labs/desmos/x/reports/types/models/common"
 	"github.com/stretchr/testify/suite"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/reports/keeper"
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc         *codec.Codec
-	ctx         sdk.Context
-	keeper      keeper.Keeper
-	postsKeeper postsK.Keeper
-	testData    TestData
+	cdc            codec.Marshaler
+	legacyAminoCdc *codec.LegacyAmino
+	ctx            sdk.Context
+	keeper         keeper.Keeper
+	storeKey       sdk.StoreKey
+	postsKeeper    postskeeper.Keeper
+	testData       TestData
 }
 
 type TestData struct {
-	creator          sdk.AccAddress
-	postID           postsT.PostID
-	timeZone         *time.Location
-	postCreationDate time.Time
+	postID       string
+	creationDate time.Time
+	creator      string
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	// define store keys
-	postsKey := sdk.NewKVStoreKey(postsT.StoreKey)
-	reportsKey := sdk.NewKVStoreKey(common.StoreKey)
+	// Define store keys
+	postsKey := sdk.NewKVStoreKey(poststypes.StoreKey)
 	paramsKey := sdk.NewKVStoreKey("params")
 	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	reportsKey := sdk.NewKVStoreKey(types.StoreKey)
 	relationshipsKey := sdk.NewKVStoreKey("relationships")
+	suite.storeKey = reportsKey
 
-	// create an in-memory db for reports
+	// Create an in-memory db for the reports
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	ms.MountStoreWithDB(postsKey, sdk.StoreTypeIAVL, memDB)
@@ -58,35 +65,24 @@ func (suite *KeeperTestSuite) SetupTest() {
 		panic(err)
 	}
 
-	suite.ctx = sdk.NewContext(ms, abci.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
-	suite.cdc = testCodec()
+	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
+	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	// define keepers
-	paramsKeeper := params.NewKeeper(suite.cdc, paramsKey, paramsTKey)
-	relationshipsKeeper := relationships.NewKeeper(suite.cdc, relationshipsKey)
-	suite.postsKeeper = postsK.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("postsT"), relationshipsKeeper)
-	suite.keeper = keeper.NewKeeper(suite.postsKeeper, suite.cdc, reportsKey)
+	// Define keepers
+	rk := relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
+	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
+	suite.postsKeeper = postskeeper.NewKeeper(suite.cdc, postsKey, paramsKeeper.Subspace("poststypes"), rk)
+	suite.keeper = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.postsKeeper)
 
-	// setup data
-	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
-	// nolint - errcheck
-	suite.testData.creator, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	// nolint - errcheck
-	suite.testData.timeZone, _ = time.LoadLocation("UTC")
-	suite.testData.postCreationDate = time.Date(2020, 1, 1, 15, 15, 00, 000, suite.testData.timeZone)
+	// Setup data
+	date, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.testData = TestData{
+		postID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		creationDate: date,
+		creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	}
 }
 
 func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
-}
-
-func testCodec() *codec.Codec {
-	var cdc = codec.New()
-
-	// register the different types
-	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
-	types.RegisterCodec(cdc)
-
-	cdc.Seal()
-	return cdc
 }

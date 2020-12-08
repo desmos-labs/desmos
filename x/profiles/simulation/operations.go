@@ -5,10 +5,12 @@ package simulation
 import (
 	"math/rand"
 
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/desmos-labs/desmos/x/fees"
 
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -27,8 +29,10 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper,
-	fk fees.Keeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
@@ -74,27 +78,27 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
-			SimulateMsgSaveProfile(k, ak, fk),
+			SimulateMsgSaveProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
-			SimulateMsgDeleteProfile(k, ak, fk),
+			SimulateMsgDeleteProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRequestDTagTransfer,
-			SimulateMsgRequestDTagTransfer(k, ak, fk),
+			SimulateMsgRequestDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
-			SimulateMsgAcceptDTagTransfer(k, ak, fk),
+			SimulateMsgAcceptDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRefuseDTagTransfer,
-			SimulateMsgRefuseDTagTransfer(k, ak, fk),
+			SimulateMsgRefuseDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
-			SimulateMsgCancelDTagTransfer(k, ak, fk),
+			SimulateMsgCancelDTagTransfer(k, ak, bk),
 		),
 	}
 }

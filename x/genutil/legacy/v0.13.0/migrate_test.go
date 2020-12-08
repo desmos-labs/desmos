@@ -3,9 +3,11 @@ package v0130_test
 import (
 	"testing"
 
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/stretchr/testify/require"
 	tm "github.com/tendermint/tendermint/types"
 
@@ -16,8 +18,8 @@ import (
 )
 
 func TestMigrate0120(t *testing.T) {
-	cdc := codec.New()
-	codec.RegisterCrypto(cdc)
+	cdc := codec.NewLegacyAmino()
+	cryptocodec.RegisterCrypto(cdc)
 
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount("desmos", "desmos"+sdk.PrefixPublic)
@@ -28,7 +30,7 @@ func TestMigrate0120(t *testing.T) {
 	require.NoError(t, err)
 
 	// Read the whole app state
-	var v012state genutil.AppMap
+	var v012state genutiltypes.AppMap
 	err = cdc.UnmarshalJSON(genesis.AppState, &v012state)
 	require.NoError(t, err)
 

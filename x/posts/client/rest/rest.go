@@ -3,16 +3,30 @@ package rest
 import (
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
+)
+
+const (
+	ParamPostID = "post_id"
+
+	ParamSortBy       = "sort_by"
+	ParamSortOrder    = "sort_order"
+	ParamParentID     = "parent_id"
+	ParamCreationTime = "creation_time"
+	ParamSubspace     = "subspace"
+	ParamCreator      = "creator"
+	ParamHashtags     = "hashtags"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	registerTxRoutes(cliCtx, r)
+func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)
+	registerTxRoutes(cliCtx, r)
 }
 
 // CreatePostReq defines the properties of a post creation request's body.

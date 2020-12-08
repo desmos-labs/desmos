@@ -7,9 +7,9 @@ import (
 	"encoding/hex"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/x/posts/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/desmos-labs/desmos/x/posts/simulation"
 
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -42,16 +42,16 @@ var (
 )
 
 type ReportsData struct {
-	Creator sim.Account
-	PostID  posts.PostID
+	PostID  string
 	Message string
 	Type    string
+	Creator simtypes.Account
 }
 
 // RandomReportsData returns a randomly generated ReportsData based on the given random posts and accounts list
-func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []sim.Account) ReportsData {
+func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []simtypes.Account) ReportsData {
 	post, _ := simulation.RandomPost(r, posts)
-	simAccount, _ := sim.RandomAcc(r, accs)
+	simAccount, _ := simtypes.RandomAcc(r, accs)
 
 	return ReportsData{
 		Creator: simAccount,
@@ -62,14 +62,14 @@ func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []sim.Account) Rep
 }
 
 // RandomPostID returns a randomly generated postID
-func RandomPostID(r *rand.Rand) posts.PostID {
+func RandomPostID(r *rand.Rand) string {
 	randBytes := make([]byte, 4)
 	_, err := r.Read(randBytes)
 	if err != nil {
 		panic(err)
 	}
 	hash := sha256.Sum256(randBytes)
-	return posts.PostID(hex.EncodeToString(hash[:]))
+	return hex.EncodeToString(hash[:])
 }
 
 func RandomReportMessage(r *rand.Rand) string {

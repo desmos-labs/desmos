@@ -2,11 +2,11 @@
 # > docker build -t desmos .
 #
 # Simple usage with a mounted data directory:
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd -v ~/.desmoscli:/root/.desmoscli desmos desmosd init
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd -v ~/.desmoscli:/root/.desmoscli desmos desmosd start
+# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd desmos desmosd init
+# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd desmos desmosd start
 #
 # If you want to run this container as a daemon, you can do so by executing
-# > docker run -td -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd -v ~/.desmoscli:/root/.desmoscli --name desmos desmos
+# > docker run -td -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd --name desmos desmos
 #
 # Once you have done so, you can enter the container shell by executing
 # > docker exec -it desmos bash
@@ -16,7 +16,8 @@
 FROM golang:alpine AS build-env
 
 # Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev py-pip
+ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
+RUN apk add --no-cache $PACKAGES
 
 # Set working directory for the build
 WORKDIR /go/src/github.com/desmos-labs/desmos
@@ -24,11 +25,9 @@ WORKDIR /go/src/github.com/desmos-labs/desmos
 # Add source files
 COPY . .
 
-# Install minimum necessary dependencies, build Cosmos SDK, remove packages
-RUN apk update
-RUN apk add --no-cache $PACKAGES && \
-    make tools && \
-    make install
+# Install Desmos, remove packages
+RUN make build-linux
+
 
 # Final image
 FROM alpine:edge
@@ -41,8 +40,9 @@ WORKDIR /root
 RUN apk add --no-cache bash
 
 # Copy over binaries from the build-env
-COPY --from=build-env /go/bin/desmosd /usr/bin/desmosd
-COPY --from=build-env /go/bin/desmoscli /usr/bin/desmoscli
+COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmosd /usr/bin/desmosd
+
+EXPOSE 26656 26657 1317 9090
 
 # Run desmosd by default, omit entrypoint to ease using container with desmoscli
 CMD ["desmosd"]

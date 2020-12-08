@@ -16,23 +16,19 @@ func RandomizedGenState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(reportsGenesis)
 }
 
-func randomReports(simState *module.SimulationState) (reportsMap map[string]types.Reports) {
+func randomReports(simState *module.SimulationState) (reportsMap []types.Report) {
 	reportsMapLen := simState.Rand.Intn(50)
 
-	reportsMap = make(map[string]types.Reports, reportsMapLen)
+	reports := make([]types.Report, reportsMapLen)
 	for i := 0; i < reportsMapLen; i++ {
-		reportsLen := simState.Rand.Intn(20)
-		reports := make(types.Reports, reportsLen)
-		for j := 0; j < reportsLen; j++ {
-			privKey := ed25519.GenPrivKey().PubKey()
-			reports[j] = types.NewReport(
-				RandomReportTypes(simState.Rand),
-				RandomReportMessage(simState.Rand),
-				sdk.AccAddress(privKey.Address()),
-			)
-		}
-		reportsMap[RandomPostID(simState.Rand).String()] = reports
+		privKey := ed25519.GenPrivKey().PubKey()
+		reports[i] = types.NewReport(
+			RandomPostID(simState.Rand),
+			RandomReportTypes(simState.Rand),
+			RandomReportMessage(simState.Rand),
+			sdk.AccAddress(privKey.Address()).String(),
+		)
 	}
 
-	return reportsMap
+	return reports
 }

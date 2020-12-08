@@ -2,6 +2,7 @@ package v060
 
 import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 )
 

@@ -1,0 +1,37 @@
+syntax = "proto3";
+package desmos.reports.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/reports/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/reports/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // PostReports queries the reports for the post having the given id
+  rpc PostReports(QueryPostReportsRequest) returns (QueryPostReportsResponse) {
+    option (google.api.http).get = "/desmos/reports/v1beta1/reports/{post_id}";
+  }
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryPostReportsRequest is the request type for the Query/PostReports RPC
+// method.
+message QueryPostReportsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // ID of the post to which query the reports for
+  string post_id = 1;
+}
+
+// QueryPostReportsResponse is the response type for the Query/PostReports RPC
+// method.
+message QueryPostReportsResponse {
+  // relationships represent the list of all the relationships for the queried
+  // user
+  repeated desmos.reports.v1beta1.Report reports = 1
+      [ (gogoproto.nullable) = false ];
+}

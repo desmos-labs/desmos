@@ -1,0 +1,29 @@
+syntax = "proto3";
+package desmos.magpie.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/magpie/types";
+
+// Msg defines the magpie Msg service.
+service Msg {
+  // CreateSession defines a method for creating a new session
+  rpc CreateSession(MsgCreateSession) returns (MsgCreateSessionResponse);
+}
+
+// MsgCreateSession represents a message to create a session for a user from a
+// different cosmos chain.
+message MsgCreateSession {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string namespace = 2 [ (gogoproto.moretags) = "yaml:\"namespace\"" ];
+  string external_owner = 3
+      [ (gogoproto.moretags) = "yaml:\"external_owner\"" ];
+  string pub_key = 4 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
+  string signature = 5 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+}
+
+// MsgCreateSessionResponse defines the Msg/CreateSession response type.
+message MsgCreateSessionResponse {}
