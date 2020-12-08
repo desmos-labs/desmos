@@ -257,10 +257,10 @@ benchmark:
 ###############################################################################
 
 lint:
-	golangci-lint run --out-format=tab
+	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --out-format=tab
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0
+	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --fix --out-format=tab --issues-exit-code=0
 .PHONY: lint lint-fix
 
 format:
