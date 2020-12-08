@@ -44,7 +44,7 @@ var msgsTypes = []string{
 	reportsTypes.ActionReportPost,
 }
 
-// RandomizedGenState generates a random GenesisState for fees
+// RandomizedGenState generates a random GenesisState for the fees module
 func RandomizedGenState(simState *module.SimulationState) {
 	var minFees []types.MinFee
 	simState.AppParams.GetOrGenerate(
@@ -64,14 +64,21 @@ func RandomizedGenState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(feesGenesis)
 }
 
-// GenMinFees randomized MinFees
-func GenMinFees(r *rand.Rand) (fees []types.MinFee) {
-	// 50% chance to have min fee
-	if randFixedFeeNum := r.Intn(101); randFixedFeeNum <= 50 {
-		for i := 0; i < randFixedFeeNum; i++ {
-			amt := simulation.RandIntBetween(r, 1, 100)
-			fees = append(fees, types.NewMinFee(msgsTypes[i], sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt))))))
-		}
+// GenMinFees returns a randomly generated types.MinFee slice
+func GenMinFees(r *rand.Rand) []types.MinFee {
+	// 50% chance of not having min fees
+	randFixedFeeNum := r.Intn(101)
+	if randFixedFeeNum <= 50 {
+		return nil
+	}
+
+	fees := make([]types.MinFee, r.Intn(20))
+	for i := 0; i < randFixedFeeNum; i++ {
+		amt := simulation.RandIntBetween(r, 1, 100)
+		fees[i] = types.NewMinFee(
+			msgsTypes[i%len(msgsTypes)],
+			sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt)))),
+		)
 	}
 
 	return fees
