@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	v0150 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.15.0"
 	"sort"
 	"time"
 
@@ -24,6 +25,7 @@ import (
 // too if needed.
 var migrationMap = map[string]types.MigrationCallback{
 	"v0.13.0": v0130.Migrate,
+	"v0.15.0": v0150.Migrate,
 }
 
 const (
