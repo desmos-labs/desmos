@@ -16,6 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
@@ -72,11 +73,14 @@ func GenMinFees(r *rand.Rand) []types.MinFee {
 		return nil
 	}
 
-	fees := make([]types.MinFee, r.Intn(20))
-	for i := 0; i < randFixedFeeNum; i++ {
+	feesLength := r.Intn(20)
+	fees := make([]types.MinFee, feesLength)
+	for i := 0; i < feesLength; i++ {
 		amt := simulation.RandIntBetween(r, 1, 100)
+
+		msgIndex := r.Intn(len(msgsTypes))
 		fees[i] = types.NewMinFee(
-			msgsTypes[i%len(msgsTypes)],
+			msgsTypes[msgIndex],
 			sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(int64(amt)))),
 		)
 	}
