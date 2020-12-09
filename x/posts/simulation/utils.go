@@ -145,7 +145,7 @@ func RandomSubspace(r *rand.Rand) string {
 // RandomDate returns a random post creation date
 func RandomDate(r *rand.Rand) time.Time {
 	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
-	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Date(2010, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
 	delta := max - min
 
 	sec := r.Int63n(delta) + min
