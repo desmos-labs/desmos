@@ -85,8 +85,13 @@ func sendMsgAnswerPoll(
 func randomPollAnswerFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, []string, string, bool) {
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip cause there are no posts
+		return simtypes.Account{}, nil, "", true
+	}
 
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	post, _ := RandomPost(r, posts)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {

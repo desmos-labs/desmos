@@ -187,7 +187,13 @@ func sendMsgRemovePostReaction(
 func randomRemovePostReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*PostReactionData, bool) {
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip cause there are no posts
+		return nil, true
+	}
+
+	post, _ := RandomPost(r, posts)
 	reactions := k.GetPostReactions(ctx, post.PostID)
 
 	// Skip if the post has no reactions

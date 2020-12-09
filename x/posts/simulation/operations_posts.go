@@ -194,7 +194,13 @@ func sendMsgEditPost(
 func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (simtypes.Account, string, string, types.Attachments, *types.PollData, bool) {
-	post, _ := RandomPost(r, k.GetPosts(ctx))
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip cause there are no posts
+		return simtypes.Account{}, "", "", nil, nil, true
+	}
+
+	post, _ := RandomPost(r, posts)
 	addr, _ := sdk.AccAddressFromBech32(post.Creator)
 	acc := GetAccount(addr, accs)
 
