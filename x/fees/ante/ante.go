@@ -10,9 +10,9 @@ import (
 	feeskeeper "github.com/desmos-labs/desmos/x/fees/keeper"
 )
 
-// NewAnteHandler returns a custom AnteHandler that besides all the default checks
-//(sequence number increment, signature and account number checks, fee deduction) make sure that each
-// transaction has a minimum fee based on messages types
+// NewAnteHandler returns a custom AnteHandler that, besides all the default checks
+// (sequence number increment, signature and account number checks, fee deduction),
+// makes sure that each transaction has a minimum fee based on the contained messages.
 func NewAnteHandler(
 	ak authante.AccountKeeper,
 	bankKeeper types.BankKeeper,
@@ -21,13 +21,13 @@ func NewAnteHandler(
 	signModeHandler signing.SignModeHandler,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
-		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		authante.NewSetUpContextDecorator(),
 		authante.NewMempoolFeeDecorator(),
 		authante.NewValidateBasicDecorator(),
 		authante.NewValidateMemoDecorator(ak),
 		NewMinFeeDecorator(feesKeeper),
 		authante.NewConsumeGasForTxSizeDecorator(ak),
-		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
+		authante.NewSetPubKeyDecorator(ak),
 		authante.NewValidateSigCountDecorator(ak),
 		authante.NewDeductFeeDecorator(ak, bankKeeper),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),

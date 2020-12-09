@@ -69,6 +69,10 @@ func randomPosts(simState *module.SimulationState) (posts []types.Post) {
 
 // randomPostReactionsEntries returns a randomly generated list of reactions entries
 func randomPostReactionsEntries(r *rand.Rand, posts []types.Post, reactionsData []ReactionData) []types.PostReactionsEntry {
+	if len(posts) == 0 {
+		return nil
+	}
+
 	reactionsNumber := r.Intn(len(posts))
 
 	entries := make([]types.PostReactionsEntry, reactionsNumber)
