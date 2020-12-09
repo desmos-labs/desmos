@@ -10,46 +10,39 @@ import (
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
+// NewPost allows to build a new Post instance with the provided data
 func NewPost(
-	parentID string, message string, allowsComments bool, subspace string,
-	optionalData OptionalData, created time.Time, creator string,
+	postID string, parentID string, message string, allowsComments bool, subspace string,
+	optionalData OptionalData, attachments []Attachment, pollData *PollData,
+	lastEdited time.Time, created time.Time, creator string,
 ) Post {
-	post := Post{
-		PostID:         "",
+	return Post{
+		PostID:         postID,
 		ParentID:       parentID,
 		Message:        message,
 		Created:        created,
-		LastEdited:     time.Time{},
+		LastEdited:     lastEdited,
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
+		Attachments:    attachments,
+		PollData:       pollData,
 		Creator:        creator,
 	}
-
-	// postID calculation
-	post.PostID = ComputeID(post)
-
-	return post
-}
-
-// WithAttachments allows to easily set the given attachments as the multimedia files associated with the p Post
-func (post Post) WithAttachments(attachments []Attachment) Post {
-	post.Attachments = attachments
-	post.PostID = ComputeID(post)
-	return post
-}
-
-// WithPollData allows to easily set the given poll as the poll data files associated with the p Post
-func (post Post) WithPollData(data *PollData) Post {
-	post.PollData = data
-	post.PostID = ComputeID(post)
-	return post
 }
 
 // Validate implements validator
 func (post Post) Validate() error {
 	if !IsValidPostID(post.PostID) {
-		return fmt.Errorf("invalid postID: %s", post.PostID)
+		return fmt.Errorf("invalid post id: %s", post.PostID)
+	}
+
+	if post.PostID == post.ParentID {
+		return fmt.Errorf("post id and parent id cannot be the same")
+	}
+
+	if len(strings.TrimSpace(post.ParentID)) != 0 && !IsValidPostID(post.ParentID) {
+		return fmt.Errorf("invalid parent id: %s", post.ParentID)
 	}
 
 	if post.Creator == "" {
@@ -80,7 +73,8 @@ func (post Post) Validate() error {
 	}
 
 	if post.PollData != nil {
-		if err := post.PollData.Validate(); err != nil {
+		err := post.PollData.Validate()
+		if err != nil {
 			return err
 		}
 	}

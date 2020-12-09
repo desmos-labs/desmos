@@ -25,40 +25,48 @@ func TestPost_Validate(t *testing.T) {
 				OptionalData:   nil,
 				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
-			expError: "invalid postID: ",
+			expError: "invalid post id: ",
 		},
 		{
 			name: "Invalid post owner",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			)).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "invalid post owner: ",
 		},
 		{
 			name: "Empty post message, attachment and poll",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				nil,
+				nil,
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -67,11 +75,15 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Empty post message (blank), attachment and poll",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				" ",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				nil,
+				nil,
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -80,25 +92,29 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post creation time",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Time{},
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			)).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "invalid post creation time: 0001-01-01 00:00:00 +0000 UTC",
 		},
 		{
@@ -117,120 +133,144 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post subspace",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
 				true,
 				"",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			)).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name: "Invalid post subspace(blank)",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
 				true,
 				" ",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			)).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "post subspace must be a valid sha-256 hash",
 		},
 		{
 			name: "Invalid post attachments",
 			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("htp:/uri.com", "text/plain", nil),
+				),
+				nil,
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("htp:/uri.com", "text/plain", nil)),
 			),
 			expError: "invalid uri provided",
 		},
 		{
 			name: "Valid post without poll data",
-			post: types.NewPost("",
+			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				nil,
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithAttachments(types.NewAttachments(
-				types.NewAttachment("https://uri.com", "text/plain", nil),
-			)),
+			),
 			expError: "",
 		},
 		{
 			name: "Valid post without attachs",
-			post: types.NewPost("",
+			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				nil,
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "",
 		},
 		{
 			name: "Valid post without text and attachs, but with poll",
-			post: types.NewPost("",
+			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"",
 				true,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
+				nil,
+				types.NewPollData(
+					"poll?",
+					time.Now().UTC().Add(time.Hour),
+					types.NewPollAnswers(
+						types.NewPollAnswer("1", "Yes"),
+						types.NewPollAnswer("2", "No"),
+					),
+					false,
+					true,
+				),
+				time.Time{},
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			).WithPollData(types.NewPollData(
-				"poll?",
-				time.Now().UTC().Add(time.Hour),
-				types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
-				),
-				false,
-				true,
-			)),
+			),
 			expError: "",
 		},
 	}
@@ -255,80 +295,44 @@ func TestPost_GetPostHashtags(t *testing.T) {
 	}{
 		{
 			name: "Hashtags in message extracted correctly (spaced hashtags)",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with #test #desmos",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with #test #desmos",
+			},
 			expHashtags: []string{"test", "desmos"},
 		},
 		{
 			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with #test#desmos",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with #test#desmos",
+			},
 			expHashtags: []string{},
 		},
 		{
 			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with #test_#desmos",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with #test_#desmos",
+			},
 			expHashtags: []string{},
 		},
 		{
 			name: "Hashtags in message extracted correctly (only number hashtag)",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with #101112",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with #101112",
+			},
 			expHashtags: []string{},
 		},
 		{
 			name: "No hashtags in message",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with no hashtag",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with no hashtag",
+			},
 			expHashtags: []string{},
 		},
 		{
 			name: "No same hashtags inside string array",
-			post: types.NewPost(
-				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				"Post with double #hashtag #hashtag",
-				false,
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				nil,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
+			post: types.Post{
+				Message: "Post with double #hashtag #hashtag",
+			},
 			expHashtags: []string{"hashtag"},
 		},
 	}

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -49,19 +48,7 @@ func randomPosts(simState *module.SimulationState) (posts []types.Post) {
 	posts = make([]types.Post, postsNumber)
 	for index := 0; index < postsNumber; index++ {
 		postData := RandomPostData(simState.Rand, simState.Accounts)
-		posts[index] = types.NewPost(
-			"",
-			postData.Message,
-			postData.AllowsComments,
-			postData.Subspace,
-			postData.OptionalData,
-			time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC),
-			postData.Creator.Address.String(),
-		).WithAttachments(postData.Attachments)
-
-		if postData.PollData != nil {
-			posts[index] = posts[index].WithPollData(postData.PollData)
-		}
+		posts[index] = postData.Post
 	}
 
 	return posts

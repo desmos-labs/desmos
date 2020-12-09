@@ -59,27 +59,37 @@ func RandomPost(r *rand.Rand, posts []types.Post) (types.Post, int) {
 
 // PostData contains the randomly generated data of a post
 type PostData struct {
-	Creator        simtypes.Account
-	ParentID       string
-	Message        string
-	AllowsComments bool
-	Subspace       string
-	OptionalData   types.OptionalData
-	Attachments    types.Attachments
-	PollData       *types.PollData
+	types.Post
+	CreatorAccount simtypes.Account
 }
 
 // RandomPostData returns a randomly generated PostData based on the given random and accounts list
 func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	simAccount, _ := simtypes.RandomAcc(r, accs)
+
+	// Create a random post
+	post := types.NewPost(
+		"",
+		RandomPostID(r),
+		RandomMessage(r)+RandomHashtag(r),
+		r.Intn(101) <= 50, // 50% chance of allowing comments
+		RandomSubspace(r),
+		nil,
+		RandomAttachments(r, accs),
+		RandomPollData(r),
+		time.Time{},
+		RandomDate(r),
+		simAccount.Address.String(),
+	)
+
+	// Get the post id
+	bytes, _ := post.Marshal()
+	hash := sha256.Sum256(bytes)
+	post.PostID = hex.EncodeToString(hash[:])
+
 	return PostData{
-		Creator:        simAccount,
-		ParentID:       "",
-		Message:        RandomMessage(r) + RandomHashtag(r),
-		AllowsComments: r.Intn(101) <= 50, // 50% chance of allowing comments
-		Subspace:       RandomSubspace(r),
-		Attachments:    RandomAttachments(r, accs),
-		PollData:       RandomPollData(r),
+		Post:           post,
+		CreatorAccount: simAccount,
 	}
 }
 

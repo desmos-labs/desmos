@@ -1,9 +1,6 @@
 package types
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
 	"strconv"
 	"strings"
 	"unicode"
@@ -59,27 +56,4 @@ func GetTags(s string) []string {
 func IsNumeric(s string) bool {
 	_, err := strconv.ParseFloat(s, 64)
 	return err == nil
-}
-
-// IsEmoji checks whether the value is an emoji or an emoji unicode
-func IsEmoji(value string) bool {
-
-	_, err := emoji.LookupEmoji(value)
-	if err == nil {
-		return true
-	}
-
-	trimmed := strings.TrimPrefix(value, "U+")
-	emo := emoji.Emojis[trimmed]
-	return len(emo.Key) != 0
-}
-
-// ComputeID computes a post ID based on the content of the given post.
-func ComputeID(post Post) string {
-	jsonPost, err := json.Marshal(post)
-	if err != nil {
-		panic(err)
-	}
-	hash := sha256.Sum256(jsonPost)
-	return hex.EncodeToString(hash[:])
 }

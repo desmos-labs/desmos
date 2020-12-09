@@ -38,12 +38,12 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 			data.AllowsComments,
 			data.Subspace,
 			data.OptionalData,
-			data.Creator.Address.String(),
+			data.CreatorAccount.Address.String(),
 			data.Attachments,
 			data.PollData,
 		)
 
-		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.Creator.PrivKey})
+		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.CreatorAccount.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, err
 		}
@@ -95,7 +95,7 @@ func randomPostCreateFields(
 ) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
-	acc := ak.GetAccount(ctx, postData.Creator.Address)
+	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
@@ -107,14 +107,17 @@ func randomPostCreateFields(
 		return nil, true
 	}
 
+	// Check to make sure none that is tagged, is also blocked
 	for _, attachment := range postData.Attachments {
 		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, postData.Creator.Address.String(), postData.Subspace) {
+			if k.IsUserBlocked(ctx, tag, postData.CreatorAccount.Address.String(), postData.Subspace) {
 				return nil, true
 			}
 		}
 	}
 
+	// Set the parent id properly
+	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
 		if parent, _ := RandomPost(r, posts); parent.AllowsComments {

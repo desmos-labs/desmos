@@ -26,7 +26,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Trying to store post with same id returns error",
 			storedPosts: []types.Post{
 				{
-					PostID:         "1c912b9baadb335453db4c7e49bc15725b3f397a027d60af147a20cdf22841ca",
+					PostID:         "1be6efe53a22ecf6e501ab6c8963b6dc3ae2259eacf9d012816c8bd2c8d9b73f",
 					ParentID:       suite.testData.post.ParentID,
 					Message:        suite.testData.post.Message,
 					Created:        suite.testData.post.Created,
@@ -65,17 +65,17 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expError: false,
 			expPosts: []types.Post{
 				types.NewPost(
+					"1be6efe53a22ecf6e501ab6c8963b6dc3ae2259eacf9d012816c8bd2c8d9b73f",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
 					suite.testData.post.Subspace,
 					suite.testData.post.OptionalData,
+					suite.testData.post.Attachments,
+					suite.testData.post.PollData,
+					time.Time{},
 					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
-				).WithAttachments(
-					suite.testData.post.Attachments,
-				).WithPollData(
-					suite.testData.post.PollData,
 				),
 			},
 		},
@@ -123,17 +123,17 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Post with the exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
+					"1be6efe53a22ecf6e501ab6c8963b6dc3ae2259eacf9d012816c8bd2c8d9b73f",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.AllowsComments,
 					suite.testData.post.Subspace,
 					suite.testData.post.OptionalData,
+					suite.testData.post.Attachments,
+					suite.testData.post.PollData,
+					time.Time{},
 					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
-				).WithAttachments(
-					suite.testData.post.Attachments,
-				).WithPollData(
-					suite.testData.post.PollData,
 				),
 			},
 			msg: types.NewMsgCreatePost(
