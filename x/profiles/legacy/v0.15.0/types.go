@@ -1,9 +1,10 @@
 package v0150
 
 import (
+	"time"
+
 	v080 "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 	v0130 "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
-	"time"
 )
 
 // GenesisState contains the data of a v0.15.0 genesis state for the profiles module

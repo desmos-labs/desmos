@@ -7,7 +7,7 @@ import (
 )
 
 // Migrate accepts exported genesis state from v0.13.0 and migrates it to v0.15.0
-// genesis state. This migration replace the old optional data map with the new struct
+// genesis state.
 func Migrate(oldGenState v0130posts.GenesisState) GenesisState {
 	return GenesisState{
 		Posts:               ConvertPosts(oldGenState.Posts),
@@ -39,7 +39,7 @@ func ConvertPosts(oldPosts []v0130posts.Post) []Post {
 }
 
 func ConvertUsersPollAnswers(oldUsersPollAnswers map[string][]v040posts.UserAnswer) []UserAnswersEntry {
-	userAnswersEntries := make([]UserAnswersEntry, len(oldUsersPollAnswers))
+	var userAnswersEntries []UserAnswersEntry
 	for key, value := range oldUsersPollAnswers {
 		userAnswersEntries = append(userAnswersEntries, newUserAnswerEntry(key, value))
 	}
@@ -48,7 +48,7 @@ func ConvertUsersPollAnswers(oldUsersPollAnswers map[string][]v040posts.UserAnsw
 }
 
 func ConvertPostReactions(oldPostReactions map[string][]v060.PostReaction) []PostReactionsEntry {
-	postReactionsEntries := make([]PostReactionsEntry, len(oldPostReactions))
+	var postReactionsEntries []PostReactionsEntry
 	for key, value := range oldPostReactions {
 		postReactionsEntries = append(postReactionsEntries, newPostReactionEntry(key, value))
 	}

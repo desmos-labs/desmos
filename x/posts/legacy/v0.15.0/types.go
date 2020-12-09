@@ -1,14 +1,15 @@
 package v0150
 
 import (
+	"strconv"
+	"time"
+
 	v0100 "github.com/desmos-labs/desmos/x/posts/legacy/v0.10.0"
 	v0120 "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
 	v0130 "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
 	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
-	"strconv"
-	"time"
 )
 
 // GenesisState contains the data of a v0.15.0 genesis state for the posts module
@@ -22,7 +23,7 @@ type GenesisState struct {
 
 // UserPollAnswerEntry represents an entry containing all the answers to a poll
 type UserAnswersEntry struct {
-	PostId      string       `json:"post_id,omitempty" yaml:"post_id,omitempty"`
+	PostID      string       `json:"post_id,omitempty" yaml:"post_id,omitempty"`
 	UserAnswers []UserAnswer `json:"user_answers"`
 }
 
@@ -48,14 +49,14 @@ func newUserAnswerEntry(postID string, oldUsersAnswers []v040posts.UserAnswer) U
 	}
 
 	return UserAnswersEntry{
-		PostId:      postID,
+		PostID:      postID,
 		UserAnswers: userAnswers,
 	}
 }
 
 // PostReactionEntry represents an entry containing all the reactions to a post
 type PostReactionsEntry struct {
-	PostId    string         `json:"post_id,omitempty" yaml:"post_id,omitempty"`
+	PostID    string         `json:"post_id,omitempty" yaml:"post_id,omitempty"`
 	Reactions []PostReaction `json:"reactions" yaml:"reactions"`
 }
 
@@ -79,7 +80,7 @@ func newPostReactionEntry(postID string, oldPostReactions []v060.PostReaction) P
 	}
 
 	return PostReactionsEntry{
-		PostId:    postID,
+		PostID:    postID,
 		Reactions: reactions,
 	}
 }

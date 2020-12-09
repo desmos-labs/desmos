@@ -4,6 +4,8 @@ import (
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 )
 
+// Migrate accepts exported genesis state from v0.13.0 and migrates it to v0.15.0
+// genesis state.
 func Migrate(oldGenState v0130profiles.GenesisState) GenesisState {
 	return GenesisState{
 		Profiles:             ConvertProfiles(oldGenState.Profiles),

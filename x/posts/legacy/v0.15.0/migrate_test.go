@@ -117,7 +117,7 @@ func TestMigrate(t *testing.T) {
 		},
 		UsersPollAnswers: []v0150posts.UserAnswersEntry{
 			{
-				PostId: string(postID),
+				PostID: string(postID),
 				UserAnswers: []v0150posts.UserAnswer{
 					{
 						User:    postCreator.String(),
@@ -128,7 +128,7 @@ func TestMigrate(t *testing.T) {
 		},
 		PostReactions: []v0150posts.PostReactionsEntry{
 			{
-				PostId: string(postID),
+				PostID: string(postID),
 				Reactions: []v0150posts.PostReaction{
 					{
 						ShortCode: ":fire:",
@@ -171,7 +171,7 @@ func TestMigrate(t *testing.T) {
 	// Check for users poll answers
 	require.Len(t, expectedGenState.UsersPollAnswers, len(migrated.UsersPollAnswers))
 	for index, userAnswersEntry := range migrated.UsersPollAnswers {
-		require.Equal(t, expectedGenState.UsersPollAnswers[index].PostId, userAnswersEntry.PostId)
+		require.Equal(t, expectedGenState.UsersPollAnswers[index].PostID, userAnswersEntry.PostID)
 		for idx, answers := range userAnswersEntry.UserAnswers {
 			require.Equal(t, expectedGenState.UsersPollAnswers[index].UserAnswers[idx], answers)
 		}
@@ -180,9 +180,9 @@ func TestMigrate(t *testing.T) {
 	// Check for post reactions
 	require.Len(t, expectedGenState.PostReactions, len(migrated.PostReactions))
 	for index, postReactionEntry := range migrated.PostReactions {
-		require.Equal(t, expectedGenState.PostReactions[index].PostId, postReactionEntry.PostId)
+		require.Equal(t, expectedGenState.PostReactions[index].PostID, postReactionEntry.PostID)
 		for idx, postReaction := range postReactionEntry.Reactions {
-			require.Equal(t, t, expectedGenState.PostReactions[index].Reactions[idx], postReaction)
+			require.Equal(t, expectedGenState.PostReactions[index].Reactions[idx], postReaction)
 		}
 	}
 

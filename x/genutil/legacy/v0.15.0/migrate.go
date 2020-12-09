@@ -10,6 +10,10 @@ import (
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 	v0150profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.15.0"
 	v080profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.8.0"
+	v0130relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.13.0"
+	v0150relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.15.0"
+	v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
+	v0150reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.15.0"
 )
 
 // Migrate migrates exported state from v0.13.0 to a v0.15.0 genesis state.
@@ -37,6 +41,26 @@ func Migrate(appState genutiltypes.AppMap, values ...interface{}) genutiltypes.A
 
 		appState[v080profiles.ModuleName] = v0150Codec.MustMarshalJSON(
 			v0150profiles.Migrate(genDocs),
+		)
+	}
+
+	// Migrate relationships state
+	if appState[v0130relationships.ModuleName] != nil {
+		var genDocs v0130relationships.GenesisState
+		v0130Codec.MustUnmarshalJSON(appState[v0130relationships.ModuleName], &genDocs)
+
+		appState[v0130relationships.ModuleName] = v0150Codec.MustMarshalJSON(
+			v0150relationships.Migrate(genDocs),
+		)
+	}
+
+	// Migrate reports state
+	if appState[v0130reports.ModuleName] != nil {
+		var genDocs v0130reports.GenesisState
+		v0130Codec.MustUnmarshalJSON(appState[v0130reports.ModuleName], &genDocs)
+
+		appState[v0130reports.ModuleName] = v0150Codec.MustMarshalJSON(
+			v0150reports.Migrate(genDocs),
 		)
 	}
 

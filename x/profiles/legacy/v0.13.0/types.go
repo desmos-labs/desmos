@@ -1,9 +1,10 @@
 package v0130
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	v080 "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
-	"time"
 )
 
 // GenesisState contains the data of a v0.13.0 genesis state for the profiles module
