@@ -39,18 +39,22 @@ func ConvertPosts(oldPosts []v0130posts.Post) []Post {
 }
 
 func ConvertUsersPollAnswers(oldUsersPollAnswers map[string][]v040posts.UserAnswer) []UserAnswersEntry {
-	var userAnswersEntries []UserAnswersEntry
+	userAnswersEntries := make([]UserAnswersEntry, len(oldUsersPollAnswers))
+	index := 0
 	for key, value := range oldUsersPollAnswers {
-		userAnswersEntries = append(userAnswersEntries, newUserAnswerEntry(key, value))
+		userAnswersEntries[index] = newUserAnswerEntry(key, value)
+		index++
 	}
 
 	return userAnswersEntries
 }
 
 func ConvertPostReactions(oldPostReactions map[string][]v060.PostReaction) []PostReactionsEntry {
-	var postReactionsEntries []PostReactionsEntry
+	postReactionsEntries := make([]PostReactionsEntry, len(oldPostReactions))
+	index := 0
 	for key, value := range oldPostReactions {
-		postReactionsEntries = append(postReactionsEntries, newPostReactionEntry(key, value))
+		postReactionsEntries[index] = newPostReactionEntry(key, value)
+		index++
 	}
 
 	return postReactionsEntries

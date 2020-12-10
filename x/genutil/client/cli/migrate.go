@@ -22,8 +22,8 @@ import (
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
 var migrationMap = map[string]types.MigrationCallback{
-	"v0.13.0": v0130.Migrate,
-	"v0.15.0": v0150.Migrate,
+	"v0.13.0":  v0130.Migrate,
+	"stargate": v0150.Migrate,
 }
 
 const (

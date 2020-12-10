@@ -163,9 +163,7 @@ func TestMigrate(t *testing.T) {
 	// Check for posts
 	require.Len(t, expectedGenState.Posts, len(migrated.Posts))
 	for index, post := range migrated.Posts {
-		require.Equal(t, expectedGenState.Posts[index].PostID, post.PostID)
-		require.Equal(t, expectedGenState.Posts[index].ParentID, post.ParentID)
-		require.Equal(t, expectedGenState.Posts[index].OptionalData, post.OptionalData)
+		require.Equal(t, expectedGenState.Posts[index], post)
 	}
 
 	// Check for users poll answers
@@ -189,10 +187,7 @@ func TestMigrate(t *testing.T) {
 	// Check for registered reactions
 	require.Len(t, expectedGenState.RegisteredReactions, len(migrated.RegisteredReactions))
 	for index, regReaction := range migrated.RegisteredReactions {
-		require.Equal(t, expectedGenState.RegisteredReactions[index].Creator, regReaction.Creator)
-		require.Equal(t, expectedGenState.RegisteredReactions[index].ShortCode, regReaction.ShortCode)
-		require.Equal(t, expectedGenState.RegisteredReactions[index].Subspace, regReaction.Subspace)
-		require.Equal(t, expectedGenState.RegisteredReactions[index].Value, regReaction.Value)
+		require.Equal(t, expectedGenState.RegisteredReactions[index], regReaction)
 	}
 
 	// Check for params
