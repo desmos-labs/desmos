@@ -1,4 +1,4 @@
-name: Tests / Code Coverage
+name: Tests
 # Tests / Code Coverage workflow runs unit tests and uploads a code coverage report
 # This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed
 on:
@@ -224,12 +224,3 @@ jobs:
         run: |
           ./contrib/localnet_liveness.sh 100 5 50 localhost
         if: env.GIT_DIFF
-
-  Docker-build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - name: build docker image
-        run: |
-          docker build --pull --rm -f "Dockerfile" -t desmoslabs/desmos:latest "."
