@@ -17,7 +17,7 @@ import (
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 )
 
-func TestMigrate0120(t *testing.T) {
+func TestMigrate0130(t *testing.T) {
 	cdc := codec.NewLegacyAmino()
 	cryptocodec.RegisterCrypto(cdc)
 
