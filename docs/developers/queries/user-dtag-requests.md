@@ -11,8 +11,8 @@ desmoscli query profiles dtag-requests [address]
 
 **REST**
 ```
-/dtag/requests/{address}
+/profiles/{address}/incoming-dtag-requests
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/dtag/requests/desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# curl http://lcd.morpheus.desmos.network:1317/profiles/desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud/incoming-dtag-requests
 ```
