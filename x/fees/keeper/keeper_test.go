@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/fees/types"
 	posts "github.com/desmos-labs/desmos/x/posts/types"
 )

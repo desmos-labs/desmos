@@ -2,6 +2,9 @@ package keeper
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,22 +23,43 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{keeper}
 }
 
+func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
+	post := types.Post{
+		ParentID:       msg.ParentID,
+		Message:        msg.Message,
+		Created:        ctx.BlockTime(),
+		AllowsComments: msg.AllowsComments,
+		Subspace:       msg.Subspace,
+		OptionalData:   msg.OptionalData,
+		Creator:        msg.Creator,
+		Attachments:    msg.Attachments,
+		PollData:       msg.PollData,
+	}
+
+	jsonPost, err := json.Marshal(&post)
+	if err != nil {
+		panic(err)
+	}
+	hash := sha256.Sum256(jsonPost)
+	return hex.EncodeToString(hash[:])
+}
+
 func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (*types.MsgCreatePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	post := types.NewPost(
+		computePostID(ctx, msg),
 		msg.ParentID,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
 		msg.OptionalData,
+		msg.Attachments,
+		msg.PollData,
+		time.Time{},
 		ctx.BlockTime(),
 		msg.Creator,
-	).WithAttachments(msg.Attachments)
-
-	if msg.PollData != nil {
-		post = post.WithPollData(msg.PollData)
-	}
+	)
 
 	// Validate the post
 	if err := k.ValidatePost(ctx, post); err != nil {

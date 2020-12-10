@@ -1,9 +1,10 @@
 package ante_test
 
 import (
+	"time"
+
 	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/desmos-labs/desmos/x/posts/types"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"

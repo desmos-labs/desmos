@@ -48,11 +48,15 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			}{
 				posts: []types.Post{
 					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 						"",
 						"message",
 						true,
 						"subspace",
 						nil,
+						nil,
+						nil,
+						time.Time{},
 						time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 						"creator",
 					),
@@ -78,11 +82,15 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			expected: types.NewGenesisState(
 				[]types.Post{
 					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 						"",
 						"message",
 						true,
 						"subspace",
 						nil,
+						nil,
+						nil,
+						time.Time{},
 						time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 						"creator",
 					),
@@ -177,11 +185,15 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			genesis: types.NewGenesisState(
 				[]types.Post{
 					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 						"",
 						"message",
 						true,
 						"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
 						nil,
+						nil,
+						nil,
+						time.Time{},
 						time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 						"creator",
 					),
@@ -237,11 +249,15 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			}{
 				posts: []types.Post{
 					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 						"",
 						"message",
 						true,
 						"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
 						nil,
+						nil,
+						nil,
+						time.Time{},
 						time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 						"creator",
 					),
@@ -292,7 +308,19 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			name: "Invalid post",
 			genesis: types.NewGenesisState(
 				[]types.Post{
-					types.NewPost("", "", true, "", nil, time.Now(), ""),
+					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+						"",
+						"",
+						true,
+						"",
+						nil,
+						nil,
+						nil,
+						time.Time{},
+						time.Now(),
+						"",
+					),
 				},
 				nil,
 				nil,

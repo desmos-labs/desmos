@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/desmos-labs/desmos/x/fees/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -24,29 +24,34 @@ func TestDecodeStore(t *testing.T) {
 	address := ed25519.GenPrivKey().PubKey().Address().String()
 
 	post := types.NewPost(
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"",
 		"Post message",
 		false,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		nil,
+		types.NewAttachments(
+			types.NewAttachment(
+				"https://uri.com",
+				"text/plain",
+				[]string{address},
+			),
+		),
+		types.NewPollData(
+			"title",
+			time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
+			types.NewPollAnswers(
+				types.NewPollAnswer("0", "first"),
+				types.NewPollAnswer("1", "second"),
+			),
+			true,
+			true,
+		),
+		time.Time{},
 		time.Date(2020, 1, 1, 15, 15, 00, 000, timeZone),
 		address,
-	).WithAttachments(types.NewAttachments(
-		types.NewAttachment(
-			"https://uri.com",
-			"text/plain",
-			[]string{address},
-		),
-	)).WithPollData(types.NewPollData(
-		"title",
-		time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
-		types.NewPollAnswers(
-			types.NewPollAnswer("0", "first"),
-			types.NewPollAnswer("1", "second"),
-		),
-		true,
-		true,
-	))
+	)
+
 	comments := types.CommentIDs{Ids: []string{
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",

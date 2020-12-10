@@ -3,9 +3,10 @@ package keeper_test
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/desmos-labs/desmos/x/fees/keeper"
 	"github.com/desmos-labs/desmos/x/fees/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 func (suite *KeeperTestSuite) Test_queryParams() {
