@@ -61,7 +61,7 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 // GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user
 func GetCmdQueryUserBlocks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "blacklist [address]",
+		Use:   "blocklist [address]",
 		Short: "Retrieve the list of all the blocked users of the given address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

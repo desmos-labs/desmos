@@ -174,7 +174,7 @@ If attachments are provided, the post could be created even without any message 
 If you want to add a poll to your post you need to specify it through two flags:
   1. --poll-details, which accepts a map with the following keys:
      * question: the question of the poll
-     * date: the end date of your poll after which no further answers will be accepted
+     * date: the end date of your poll after which no further answers will be accepted
      * multiple-answers: a boolean indicating the possibility of multiple answers from users
      * allows-answers-edits: a boolean value that indicates the possibility to edit the answers in the future
   2. --poll-answer, which accepts a slice of answers that will be provided to the users once they want to take part in the poll votations.	

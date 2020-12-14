@@ -3,16 +3,16 @@ This query endpoint allows you to retrieve the user blocked by the user with the
 
 **CLI**
 ```bash
-desmoscli query relationships blacklist [address]
+desmoscli query relationships blocklist [address]
 
 # Example
-# desmoscli query relationships blacklist desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmoscli query relationships blocklist desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
 
 **REST**
 ```
-/blacklist/{address}
+/blocklist/{address}
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/blacklist/desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# curl http://lcd.morpheus.desmos.network:1317/blocklist/desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
