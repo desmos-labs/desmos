@@ -55,8 +55,6 @@ sudo make install-shared
 sudo ldconfig
 ```
 
-
-
 :::
 
 ::: tab MacOS
