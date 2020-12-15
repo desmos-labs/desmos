@@ -4,7 +4,7 @@
 If you have previously run a fullnode and you wish to update it instead, please follow the [updating guide](../update.md).   
 :::
 
-## Hardware requirements
+## Requirements
 ### Understanding pruning
 In order to run a full node, different hardware requirements should be met based on the pruning strategy you would like to use.
 
@@ -23,9 +23,9 @@ You can easily understand how using a pruning strategy of `nothing` will use mor
 
 | Pruning strategy | Minimum disk space | Recommended disk space |
 | :--------------: | :----------------: | :--------------------: |
-| `nothing` | 20 GB | 40 GB | 
+| `everything` | 20 GB | 40 GB | 
 | `default` | 80 GB | 120 GB |
-| `everything` | 120 GB | \> 240 GB |
+| `nothing` | 120 GB | \> 240 GB |
 
 A part from disk space, the following requirements should be met.
 
@@ -49,6 +49,10 @@ This process depends on your working environment.
 The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by default. Please run the equivalent commands if you are running other Linux distributions.
 
 ```bash
+# Update the system
+sudo apt update 
+sudo apt upgrade 
+
 # Install git, gcc and make
 sudo apt install build-essential --yes
 
@@ -57,7 +61,8 @@ sudo snap install go --classic
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+echo 'export GOBIN="$GOPATH/bin"' >> ~/.profile
+echo 'export PATH="$GOBIN:$PATH"' >> ~/.profile
 source ~/.profile
 ```
 
@@ -87,7 +92,8 @@ brew install git
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
-echo 'export PATH="$GOPATH/bin:$PATH"' >> ~/.profile
+echo 'export GOBIN="$GOPATH/bin"' >> ~/.profile
+echo 'export PATH="$GOBIN:$PATH"' >> ~/.profile
 source ~/.profile
 ```
 

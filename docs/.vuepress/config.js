@@ -28,13 +28,13 @@ module.exports = {
         ['meta', {property: "og:locale", content: "en_US"}],
     ],
     markdown: {
-        lineNumbers: true,
+        lineNumbers: false,
     },
     plugins: [
         'tabs',
         '@vuepress/google-analytics',
         {
-            'ga': 'UA-108489905-8' // UA-00000000-0
+            'ga': 'UA-108489905-8'
         }
     ],
     themeConfig: {
@@ -48,7 +48,7 @@ module.exports = {
         nav: [
             {text: "Website", link: "https://desmos.network", target: "_blank"},
         ],
-        sidebarDepth: 2,
+        sidebarDepth: 1,
         sidebar: [
             {
                 title: "Types",
@@ -70,9 +70,24 @@ module.exports = {
                         children: [
                             ["types/profiles/profile", "Profile"],
                             ["types/profiles/profile-pictures", "Profile pictures"],
+                            ["types/profiles/dtag-transfer-request", "DTag transfer request"],
                         ]
                     },
-                    ["types/reports/report", "Report"]
+                    {
+                        title: "Relationships",
+                        collapsable: true,
+                        children: [
+                            ["types/relationships/relationship", "Relationship"],
+                            ["types/relationships/user-block", "User block"],
+                        ]
+                    },
+                    {
+                        title: "Reports",
+                        collapsable: true,
+                        children: [
+                            ["types/reports/report", "Report"],
+                        ]
+                    },
                 ]
             },
             {
@@ -127,6 +142,7 @@ module.exports = {
                             },
                         ]
                     },
+                    ["validators/migrating", "Migrating"],
                     ["validators/halting", "Halting"],
                     ["validators/common-problems", "Common problems"],
                 ]

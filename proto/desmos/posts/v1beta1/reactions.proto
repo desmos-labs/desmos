@@ -1,0 +1,53 @@
+syntax = "proto3";
+package desmos.posts.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+
+// RegisteredReaction represents a registered reaction that can be referenced
+// by its shortCode inside post reactions
+message RegisteredReaction {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string short_code = 1 [
+    (gogoproto.moretags) = "yaml\"short_code\"",
+    (gogoproto.jsontag) = "short_code"
+  ];
+
+  string value = 2 [ (gogoproto.moretags) = "yaml\"value\"" ];
+
+  string subspace = 3 [ (gogoproto.moretags) = "yaml\"subspace\"" ];
+
+  string creator = 4 [ (gogoproto.moretags) = "yaml\"creator\"" ];
+}
+
+// RegisteredReactions wraps a list of registered reactions
+message RegisteredReactions {
+  repeated desmos.posts.v1beta1.RegisteredReaction reactions = 1
+      [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// PostReaction is a struct of a user reaction to a post
+message PostReaction {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string short_code = 1 [
+    (gogoproto.moretags) = "yaml\"short_code\"",
+    (gogoproto.jsontag) = "short_code"
+  ];
+
+  string value = 2 [ (gogoproto.moretags) = "yaml\"value\"" ];
+
+  string owner = 3 [ (gogoproto.moretags) = "yaml\"owner\"" ];
+}
+
+// PostReactions wraps a list of post reactions
+message PostReactions {
+  repeated desmos.posts.v1beta1.PostReaction reactions = 1
+      [ (gogoproto.nullable) = false ];
+}

@@ -1,0 +1,95 @@
+syntax = "proto3";
+package desmos.posts.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "desmos/posts/v1beta1/polls.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+
+// PostIndex represents a post index
+message PostIndex { uint64 value = 1; }
+
+// Post contains all the data of a Desmos post
+message Post {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "id",
+    (gogoproto.moretags) = "yaml\"id\""
+  ];
+  string parent_id = 2 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.moretags) = "yaml\"parent_id\""
+  ];
+  string message = 3 [ (gogoproto.moretags) = "yaml\"message\"" ];
+  google.protobuf.Timestamp created = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml\"created\""
+  ];
+  google.protobuf.Timestamp last_edited = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml\"created\""
+  ];
+  bool allows_comments = 6 [
+    (gogoproto.moretags) = "yaml\"allows_comments\"",
+    (gogoproto.jsontag) = "allows_comments"
+  ];
+  string subspace = 7 [ (gogoproto.moretags) = "yaml\"subspace\"" ];
+  repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 8 [
+    (gogoproto.castrepeated) = "OptionalData",
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "optional_data,omitempty",
+    (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
+  ];
+  string creator = 9 [ (gogoproto.moretags) = "yaml\"creator\"" ];
+  repeated Attachment attachments = 10 [
+    (gogoproto.castrepeated) = "Attachments",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+  ];
+  desmos.posts.v1beta1.PollData poll_data = 11
+      [ (gogoproto.moretags) = "yaml\"poll_data,omitempty\"" ];
+}
+
+// CommentIDs wraps the list of comments of a post
+message CommentIDs { repeated string ids = 1; }
+
+// ___________________________________________________________________________________________________________________
+
+// Attachment contains the information representing any type of file provided
+// with a post. This file can be an image or a multimedia file (vocals, video,
+// documents, etc.).
+message Attachment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string uri = 1 [
+    (gogoproto.customname) = "URI",
+    (gogoproto.jsontag) = "uri",
+    (gogoproto.moretags) = "yaml\"uri\""
+  ];
+  string mime_type = 2 [
+    (gogoproto.customname) = "MimeType",
+    (gogoproto.jsontag) = "mime_type",
+    (gogoproto.moretags) = "yaml\"mime_type\""
+  ];
+  repeated string tags = 3 [ (gogoproto.moretags) = "yaml\"tags,omitempty\"" ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// OptionalDataEntry represents a Posts' optional data entry and allows for
+// custom Amino and JSON serialization and deserialization.
+message OptionalDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string key = 1;
+  string value = 2;
+}

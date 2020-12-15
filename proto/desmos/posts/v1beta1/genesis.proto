@@ -1,0 +1,37 @@
+syntax = "proto3";
+package desmos.posts.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/posts/v1beta1/posts.proto";
+import "desmos/posts/v1beta1/polls.proto";
+import "desmos/posts/v1beta1/reactions.proto";
+import "desmos/posts/v1beta1/params.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+
+// GenesisState contains the data of the genesis state for the posts module
+message GenesisState {
+  repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
+
+  repeated UserAnswersEntry users_poll_answers = 2
+      [ (gogoproto.nullable) = false ];
+  repeated PostReactionsEntry posts_reactions = 3
+      [ (gogoproto.nullable) = false ];
+  repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 4
+      [ (gogoproto.nullable) = false ];
+  desmos.posts.v1beta1.Params params = 5 [ (gogoproto.nullable) = false ];
+}
+
+// UserPollAnswerEntry represents an entry containing all the answers to a poll
+message UserAnswersEntry {
+  string post_id = 1;
+  repeated desmos.posts.v1beta1.UserAnswer user_answers = 2
+      [ (gogoproto.nullable) = false ];
+}
+
+// PostReactionEntry represents an entry containing all the reactions to a post
+message PostReactionsEntry {
+  string post_id = 1;
+  repeated desmos.posts.v1beta1.PostReaction reactions = 2
+      [ (gogoproto.nullable) = false ];
+}

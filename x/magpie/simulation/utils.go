@@ -6,11 +6,12 @@ import (
 	"encoding/base64"
 	"math/rand"
 
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	legacyauth "github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+
 	secp256k1 "github.com/btcsuite/btcd/btcec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/tendermint/tendermint/libs/bech32"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
@@ -20,14 +21,14 @@ var (
 )
 
 type SessionData struct {
-	Owner         simulation.Account
+	Owner         simtypes.Account
 	Namespace     string
 	ExternalOwner string
 	PubKey        string
 	Signature     string
 }
 
-func RandomSessionData(simAccount simulation.Account, r *rand.Rand) SessionData {
+func RandomSessionData(simAccount simtypes.Account, r *rand.Rand) SessionData {
 	namespace := RandomNamespaces[r.Intn(len(RandomNamespaces))]
 
 	extOwner, err := bech32.ConvertAndEncode(namespace, simAccount.Address.Bytes())
@@ -40,8 +41,18 @@ func RandomSessionData(simAccount simulation.Account, r *rand.Rand) SessionData 
 	extPubKey := base64.StdEncoding.EncodeToString(bytes)
 
 	// Create the signature data
-	msg := types.NewMsgCreateSession(simAccount.Address, namespace, extOwner, extPubKey, "")
-	signBytes := auth.StdSignBytes(namespace, 0, 0, auth.NewStdFee(200000, nil), []sdk.Msg{msg}, "")
+	msg := types.NewMsgCreateSession(simAccount.Address.String(), namespace, extOwner, extPubKey, "")
+
+	//nolint:staticcheck
+	signBytes := legacyauth.StdSignBytes(
+		namespace,
+		0,
+		0,
+		0,
+		legacyauth.NewStdFee(200000, nil),
+		[]sdk.Msg{msg},
+		"",
+	)
 
 	// Create the signature
 	signedBytes, err := simAccount.PrivKey.Sign(signBytes)

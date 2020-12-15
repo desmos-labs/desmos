@@ -1,0 +1,14 @@
+syntax = "proto3";
+package desmos.magpie.v1beta1.keeper;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/magpie/keeper";
+
+// WrappedSessionLength wraps the session length
+message WrappedSessionLength {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 length = 1;
+}

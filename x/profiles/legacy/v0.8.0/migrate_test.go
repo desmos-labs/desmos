@@ -8,9 +8,10 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	v060 "github.com/desmos-labs/desmos/x/profiles/legacy/v0.6.0"
 	v080 "github.com/desmos-labs/desmos/x/profiles/legacy/v0.8.0"
-	"github.com/stretchr/testify/require"
 )
 
 // newStrPtr returns a new string pointer

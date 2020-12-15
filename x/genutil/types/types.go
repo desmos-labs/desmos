@@ -1,9 +1,9 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/genutil"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 )
 
 type (
-	MigrationCallback func(appMap genutil.AppMap, args ...interface{}) genutil.AppMap
+	MigrationCallback func(appMap genutiltypes.AppMap, args ...interface{}) genutiltypes.AppMap
 )

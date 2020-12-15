@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: lint
-        run: make proto-lint-docker
+        run: make proto-lint
   Breakage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: check-breakage
-        run: make proto-check-breaking-docker
+        run: make proto-check-breaking

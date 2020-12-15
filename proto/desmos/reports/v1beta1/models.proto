@@ -1,0 +1,32 @@
+syntax = "proto3";
+package desmos.reports.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/reports/types";
+
+// Report is the struct of a post's reports
+message Report {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // ID of the post for which the report has been created
+  string post_id = 1 [
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Identifies the type of the reports
+  string type = 2 [ (gogoproto.moretags) = "yaml:\"type\"" ];
+
+  // User message
+  string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  // Identifies the reporting user
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// Reports wraps a list of Report objects
+message Reports {
+  repeated Report reports = 1 [ (gogoproto.nullable) = false ];
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+package desmos.relationships.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/relationships/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/relationships/types";
+
+// GenesisState defines the relationships module's genesis state.
+message GenesisState {
+  repeated desmos.relationships.v1beta1.Relationship relationships = 1 [
+    (gogoproto.moretags) = "yaml:\"users_relationships\"",
+    (gogoproto.nullable) = false
+  ];
+
+  repeated desmos.relationships.v1beta1.UserBlock blocks = 2 [
+    (gogoproto.moretags) = "yaml:\"users_blocks\"",
+    (gogoproto.nullable) = false
+  ];
+}

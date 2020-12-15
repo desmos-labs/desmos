@@ -8,9 +8,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+	"github.com/stretchr/testify/require"
+
 	v040 "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
 	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMigrate(t *testing.T) {
