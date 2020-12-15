@@ -20,10 +20,10 @@ func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/relationships",
 		deleteRelationshipHandler(cliCtx)).Methods("DELETE")
 
-	r.HandleFunc("/blacklist",
+	r.HandleFunc("/blocklist",
 		blockUserHandler(cliCtx)).Methods("POST")
 
-	r.HandleFunc("/blacklist",
+	r.HandleFunc("/blocklist",
 		unblockUserHandler(cliCtx)).Methods("DELETE")
 }
 

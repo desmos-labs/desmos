@@ -16,7 +16,7 @@ func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc(fmt.Sprintf("/relationships/{%s}", ParamAddress),
 		queryUserRelationships(cliCtx)).Methods("GET")
 
-	r.HandleFunc(fmt.Sprintf("/blacklist/{%s}", ParamAddress),
+	r.HandleFunc(fmt.Sprintf("/blocklist/{%s}", ParamAddress),
 		queryUserBlocks(cliCtx)).Methods("GET")
 }
 
