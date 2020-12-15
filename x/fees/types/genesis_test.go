@@ -1,10 +1,12 @@
 package types_test
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/fees/types"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
 func TestValidateGenesis(t *testing.T) {

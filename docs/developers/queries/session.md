@@ -11,7 +11,7 @@ desmoscli query sessions session [id]
 
 **REST**
 ```
-/sessions/{sessionId}
+/sessions/{session_id}
 
 # Example
 # curl http://lcd.morpheus.desmos.network:1317/sessions/66

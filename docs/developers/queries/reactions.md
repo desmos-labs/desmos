@@ -11,8 +11,8 @@ desmoscli query posts registered-reactions
 
 **REST**
 ```
-/reactions
+/registered-reactions
 
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/reactions
+# curl http://lcd.morpheus.desmos.network:1317/registered-reactions
 ```

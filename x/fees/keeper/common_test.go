@@ -7,13 +7,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/fees/keeper"
-	"github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/fees/keeper"
+	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {

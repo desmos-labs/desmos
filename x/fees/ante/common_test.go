@@ -13,14 +13,15 @@ import (
 	cosmosante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	desmos "github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/fees/ante"
-	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/stretchr/testify/suite"
 	cryptotypes "github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+
+	desmos "github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/fees/ante"
+	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 )
 
 // TestAccount represents an account used in the ante handler tests

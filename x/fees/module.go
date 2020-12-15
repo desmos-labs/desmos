@@ -13,15 +13,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/desmos-labs/desmos/x/fees/client/cli"
 	"github.com/desmos-labs/desmos/x/fees/client/rest"
 	"github.com/desmos-labs/desmos/x/fees/keeper"
 	"github.com/desmos-labs/desmos/x/fees/simulation"
 	"github.com/desmos-labs/desmos/x/fees/types"
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented

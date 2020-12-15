@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
-	"time"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/x/posts/simulation"
+	postssim "github.com/desmos-labs/desmos/x/posts/simulation"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
@@ -40,28 +39,8 @@ func RandomMessage(r *rand.Rand) string {
 func RandomPost() types.Post {
 	r := rand.New(rand.NewSource(100))
 	accounts := simtypes.RandomAccounts(r, r.Intn(20))
-
-	post := types.NewPost(
-		RandomPostIDOrSubspace(),
-		RandomMessage(r),
-		r.Intn(101) <= 50,
-		RandomPostIDOrSubspace(),
-		nil,
-		time.Now(),
-		accounts[r.Intn(len(accounts))].Address.String(),
-	)
-
-	if r.Intn(101) <= 50 {
-		post = post.WithAttachments(simulation.RandomAttachments(r, accounts))
-	}
-
-	if r.Intn(101) <= 50 {
-		if pollData := simulation.RandomPollData(r); pollData != nil {
-			post = post.WithPollData(pollData)
-		}
-	}
-
-	return post
+	post := postssim.RandomPostData(r, accounts)
+	return post.Post
 }
 
 //RandomQueryParams returns randomized QueryPostsParams
@@ -158,7 +137,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 
 	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
-	reaction := simulation.RandomEmojiPostReaction(r)
+	reaction := postssim.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -177,7 +156,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 
 	posts := suite.keeper.GetPosts(suite.ctx)
 	post := posts[r.Intn(len(posts))]
-	reaction := simulation.RandomEmojiPostReaction(r)
+	reaction := postssim.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
 		err := suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)

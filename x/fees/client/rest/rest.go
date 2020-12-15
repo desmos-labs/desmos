@@ -6,8 +6,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application

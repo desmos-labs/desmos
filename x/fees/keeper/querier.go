@@ -5,8 +5,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/fees/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/x/fees/types"
 )
 
 func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
