@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"io"
 	"net/http"
 	"os"
@@ -573,7 +574,7 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
 
 	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
-	ModuleBasics.RegisterGRPCGatewayRoutes(apiSvr.ClientCtx, apiSvr.GRPCRouter)
+	ModuleBasics.RegisterGRPCGatewayRoutes(apiSvr.ClientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register swagger API from root so that other applications can override easily
 	if apiConfig.Swagger {
@@ -584,6 +585,10 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 // RegisterTxService implements the Application.RegisterTxService method.
 func (app *DesmosApp) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
+}
+
+func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
+	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

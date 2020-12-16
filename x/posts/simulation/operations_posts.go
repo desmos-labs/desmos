@@ -11,9 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -43,7 +43,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 			data.PollData,
 		)
 
-		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.CreatorAccount.PrivKey})
+		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.CreatorAccount.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, err
 		}
@@ -55,7 +55,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 // sendMsgCreatePost sends a transaction with a MsgCreatePost from a provided random account.
 func sendMsgCreatePost(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgCreatePost, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	account := ak.GetAccount(ctx, addr)
@@ -147,7 +147,7 @@ func SimulateMsgEditPost(
 
 		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address.String())
 
-		err := sendMsgEditPost(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{account.PrivKey})
+		err := sendMsgEditPost(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{account.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, err
 		}
@@ -159,7 +159,7 @@ func SimulateMsgEditPost(
 // sendMsgEditPost sends a transaction with a MsgEditPost from a provided random account.
 func sendMsgEditPost(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgEditPost, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	account := ak.GetAccount(ctx, addr)

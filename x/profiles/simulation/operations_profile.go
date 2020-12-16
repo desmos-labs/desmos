@@ -11,9 +11,8 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
-	"github.com/tendermint/tendermint/crypto"
-
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
@@ -43,7 +42,7 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		err = sendMsgSaveProfile(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgSaveProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
@@ -55,7 +54,7 @@ func SimulateMsgSaveProfile(
 // sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
 func sendMsgSaveProfile(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	account := ak.GetAccount(ctx, addr)
@@ -143,7 +142,7 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		err = sendMsgDeleteProfile(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgDeleteProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
@@ -155,7 +154,7 @@ func SimulateMsgDeleteProfile(
 // sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
 func sendMsgDeleteProfile(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	account := ak.GetAccount(ctx, addr)

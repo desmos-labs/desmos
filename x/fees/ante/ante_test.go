@@ -6,8 +6,8 @@ import (
 	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/desmos-labs/desmos/x/posts/types"
 
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
@@ -19,7 +19,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 		givenFee sdk.Coins
 		params   feesTypes.Params
 		msgs     []sdk.Msg
-		privs    []crypto.PrivKey
+		privs    []cryptotypes.PrivKey
 		accNums  []uint64
 		accSeqs  []uint64
 		expError bool
@@ -52,7 +52,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					),
 				),
 			},
-			privs:    []crypto.PrivKey{account.privKey},
+			privs:    []cryptotypes.PrivKey{account.privKey},
 			accNums:  []uint64{0},
 			accSeqs:  []uint64{0},
 			expError: true,
@@ -85,7 +85,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					),
 				),
 			},
-			privs:    []crypto.PrivKey{account.privKey},
+			privs:    []cryptotypes.PrivKey{account.privKey},
 			accNums:  []uint64{0},
 			accSeqs:  []uint64{0},
 			expError: true,
@@ -118,7 +118,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					),
 				),
 			},
-			privs:    []crypto.PrivKey{account.privKey},
+			privs:    []cryptotypes.PrivKey{account.privKey},
 			accNums:  []uint64{0},
 			accSeqs:  []uint64{0},
 			expError: false,

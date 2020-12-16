@@ -11,10 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
-
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
@@ -35,7 +34,7 @@ func SimulateMsgAnswerToPoll(
 		}
 
 		msg := types.NewMsgAnswerPoll(postID, answers, acc.Address.String())
-		err := sendMsgAnswerPoll(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err := sendMsgAnswerPoll(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, err
 		}
@@ -47,7 +46,7 @@ func SimulateMsgAnswerToPoll(
 // sendMsgAnswerPoll sends a transaction with a MsgAnswerPoll from a provided random account.
 func sendMsgAnswerPoll(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgAnswerPoll, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgAnswerPoll, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Answerer)
 	account := ak.GetAccount(ctx, addr)
