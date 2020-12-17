@@ -1,11 +1,13 @@
 package v0150_test
 
 import (
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	v0130relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.13.0"
 	v0150relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.15.0"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestMigrate(t *testing.T) {

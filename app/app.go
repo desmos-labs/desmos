@@ -1,11 +1,12 @@
 package app
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"

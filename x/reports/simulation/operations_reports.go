@@ -14,6 +14,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )

@@ -5,10 +5,11 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 	v0150profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.15.0"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMigrate(t *testing.T) {

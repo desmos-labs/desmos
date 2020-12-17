@@ -3,8 +3,9 @@ package simulation
 // DONTCOVER
 
 import (
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"math/rand"
+
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -14,6 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
