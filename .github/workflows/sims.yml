@@ -21,17 +21,20 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip-sims')"
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          make build
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - run: make build
 
   Install-runsim:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
       - name: install runsim
-        run: |
-          export GO111MODULE="on" && go get github.com/cosmos/tools/cmd/runsim@v1.0.0
+        run: export GO111MODULE="on" && go get github.com/cosmos/tools/cmd/runsim@v1.0.0
       - uses: actions/cache@v2
         with:
           path: ~/go/bin
