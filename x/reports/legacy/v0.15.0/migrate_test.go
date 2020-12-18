@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
 	v0150reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.15.0"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMigrate(t *testing.T) {

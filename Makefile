@@ -53,7 +53,7 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
  	-X 'github.com/cosmos/cosmos-sdk/version.AppName=desmos' \
  	-X 'github.com/cosmos/cosmos-sdk/version.Version=$(VERSION)' \
     -X 'github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)' \
-  	-X 'github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)'
+  	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)"
 
 ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
@@ -96,13 +96,6 @@ include contrib/devtools/Makefile
 ###############################################################################
 
 all: tools build lint test
-
-###############################################################################
-###                                 Install                                 ###
-###############################################################################
-
-install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/desmos
 
 ###############################################################################
 ###                                  Build                                  ###
@@ -257,10 +250,10 @@ benchmark:
 ###############################################################################
 
 lint:
-	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --out-format=tab
+	golangci-lint run --out-format=tab --timeout=10m
 
 lint-fix:
-	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --fix --out-format=tab --issues-exit-code=0
+	golangci-lint run --fix --out-format=tab --issues-exit-code=0 --timeout=10m
 .PHONY: lint lint-fix
 
 format:

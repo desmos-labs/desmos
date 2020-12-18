@@ -11,9 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -37,7 +37,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 			"reason",
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		)
-		err = sendMsgBlockUser(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey})
+		err = sendMsgBlockUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{blocker.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, err
 		}
@@ -49,7 +49,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 // sendMsgBlockUser sends a transaction with a MsgBlockUser from a provided random account
 func sendMsgBlockUser(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgBlockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgBlockUser, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	account := ak.GetAccount(ctx, addr)
@@ -128,7 +128,7 @@ func SimulateMsgUnblockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk ban
 			userBlock.Blocked,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		)
-		if err := sendMsgUnblockUser(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{blocker.PrivKey}); err != nil {
+		if err := sendMsgUnblockUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{blocker.PrivKey}); err != nil {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, err
 		}
 
@@ -159,7 +159,7 @@ func randomUnblockUserFields(
 // sendMsgUnblockUser sends a transaction with a MsgUnblockUser from a provided random account
 func sendMsgUnblockUser(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	account := ak.GetAccount(ctx, addr)

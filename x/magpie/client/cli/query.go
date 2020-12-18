@@ -29,8 +29,7 @@ func GetCmdSession() *cobra.Command {
 		Short: "Returns the session having the specified id, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-			clientCtx, err := client.ReadQueryCommandFlags(clientCtx, cmd.Flags())
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
 			}
@@ -44,7 +43,7 @@ func GetCmdSession() *cobra.Command {
 				return err
 			}
 
-			return clientCtx.PrintOutput(res.Session)
+			return clientCtx.PrintProto(res.Session)
 		},
 	}
 }
