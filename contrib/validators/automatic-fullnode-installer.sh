@@ -24,8 +24,8 @@ if [ -z "$GOPATH" ]; then
 fi
 
 if [ -z "$GOBIN" ]; then
-  echo "export GOBIN=$GOPATH/bin" >> ~/.profile
-  source ~/.profile
+  echo "export GOBIN=$GOPATH/bin" >> "$HOME/.profile"
+  source "$HOME/.profile"
 fi
 
 if [ -z "$DAEMON_NAME" ]; then
@@ -35,8 +35,8 @@ if [ -z "$DAEMON_NAME" ]; then
     echo "export DAEMON_NAME=desmosd"
     echo "export DAEMON_HOME=$HOME/.desmosd"
     echo "export DAEMON_RESTART_AFTER_UPGRADE=on"
-  } >> ~/.profile
-  source ~/.profile
+  } >> "$HOME/.profile"
+  source "$HOME/.profile"
 fi
 
 echo "===> Completed environmental variables setup"
@@ -51,11 +51,11 @@ if [ ! -f "$COSMOVISOR_FILE" ]; then
   echo "===> Installing Cosmovisor"
 
   {
-    git clone https://github.com/cosmos/cosmos-sdk.git ~/cosmos
-    cd ~/cosmos/cosmovisor
+    git clone https://github.com/cosmos/cosmos-sdk.git "$HOME/cosmos"
+    cd "$HOME/cosmos/cosmovisor" || exit 1
     make cosmovisor
     mkdir -p "$GOBIN" && cp cosmovisor --target-directory="$GOBIN"
-    cd ~
+    cd "$HOME" || exit 1
   } &> /dev/null
 
   echo "===> Cosmovisor installed"
@@ -76,39 +76,36 @@ if [ -f "$VALIDATOR_PRIV_KEY" ]; then
   cp "$VALIDATOR_PRIV_KEY" "$BACKUP_FILE"
 fi
 
-# Delete the old ~/.desmosd folder
+# Delete the old $HOME/.desmosd folder
 DESMOSD_FOLDER="$HOME/.desmosd"
 if [ -d "$DESMOSD_FOLDER" ]; then
   echo "====> Removing existing desmosd folder"
-  sudo rm -r ~/.desmosd
+  sudo rm -r DESMOSD_FOLDER
 fi
 
-# Delete the old ~/.desmoscli folder
+# Delete the old $HOME/.desmoscli folder
 DESMOSCLI_FOLDER="$HOME/.desmoscli"
 if [ -d "$DESMOSCLI_FOLDER" ]; then
   echo "====> Removing existing desmoscli folder"
-  sudo rm -r ~/.desmoscli
+  sudo rm -r DESMOSCLI_FOLDER
 fi
 
 # Clone Desmos
 echo "====> Downloading Desmos"
 {
-  DESMOS_FOLDER=~/desmos
+  DESMOS_FOLDER="$HOME/desmos"
   if [ ! -d "$DESMOS_FOLDER" ]; then
-    git clone https://github.com/desmos-labs/desmos.git ~/desmos
+    git clone https://github.com/desmos-labs/desmos.git DESMOS_FOLDER
   fi
 
-  cd ~/desmos || exit
+  cd DESMOS_FOLDER || exit 1
   git fetch -a
   git checkout tags/v0.12.2
   make build install
 
-  mkdir -p ~/.desmosd/cosmovisor/genesis/bin
-  mkdir -p ~/.desmosd/cosmovisor/upgrades
-  mv build/desmosd ~/.desmosd/cosmovisor/genesis/bin
-
-  alias desmosd=~/.desmosd/cosmovisor/current/bin/desmosd
-  alias desmoscli=~/.desmosd/cosmovisor/current/bin/desmoscli
+  mkdir -p "$HOME/.desmosd/cosmovisor/genesis/bin"
+  mkdir -p "$HOME/.desmosd/cosmovisor/upgrades"
+  mv build/desmosd "$HOME/.desmosd/cosmovisor/genesis/bin"
 } &> /dev/null
 
 # Initialize the chain
@@ -128,13 +125,13 @@ fi
 # Download the genesis file
 echo "====> Downloading the genesis file"
 {
-  curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
+  curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o "$HOME/.desmosd/config/genesis.json"
 } &> /dev/null
 
 # Setup the persistent peers
 echo "====> Setting persistent peers"
 {
-  sed -i -e 's/seeds = ""/seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"/g' ~/.desmosd/config/config.toml
+  sed -i -e 's/seeds = ""/seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"/g' "$HOME/.desmosd/config/config.toml"
 } &> /dev/null
 
 echo "===> Completed Desmos setup"
