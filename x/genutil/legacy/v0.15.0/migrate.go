@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
 	v0150posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.15.0"
 	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"

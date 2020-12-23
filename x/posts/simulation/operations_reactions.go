@@ -11,9 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -39,7 +39,7 @@ func SimulateMsgAddPostReaction(
 		}
 
 		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address.String())
-		err := sendMsgAddPostReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgAddPostReaction(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, err
 		}
@@ -51,7 +51,7 @@ func SimulateMsgAddPostReaction(
 // sendMsgAddPostReaction sends a transaction with a MsgAddReaction from a provided random account.
 func sendMsgAddPostReaction(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgAddPostReaction, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	account := ak.GetAccount(ctx, addr)
@@ -137,7 +137,7 @@ func SimulateMsgRemovePostReaction(
 		}
 
 		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address.String(), data.Shortcode)
-		err := sendMsgRemovePostReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.User.PrivKey})
+		err := sendMsgRemovePostReaction(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, err
 		}
@@ -149,7 +149,7 @@ func SimulateMsgRemovePostReaction(
 // sendMsgRemovePostReaction sends a transaction with a MsgRemoveReaction from a provided random account.
 func sendMsgRemovePostReaction(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgRemovePostReaction, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	account := ak.GetAccount(ctx, addr)
@@ -238,7 +238,7 @@ func SimulateMsgRegisterReaction(
 			reactionData.Subspace,
 		)
 
-		err := sendMsgRegisterReaction(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{reactionData.Creator.PrivKey})
+		err := sendMsgRegisterReaction(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{reactionData.Creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRegisterReaction"), nil, err
 		}
@@ -250,7 +250,7 @@ func SimulateMsgRegisterReaction(
 // sendMsgRegisterReaction sends a transaction with a MsgRegisterReaction from a provided random account.
 func sendMsgRegisterReaction(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgRegisterReaction, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	account := ak.GetAccount(ctx, addr)

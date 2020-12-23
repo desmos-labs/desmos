@@ -12,10 +12,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/magpie/types"
@@ -68,7 +68,7 @@ func SimulateMsgCreateSession(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper)
 			data.Signature,
 		)
 
-		err := sendMsgCreateSession(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
+		err := sendMsgCreateSession(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.Owner.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ActionCreationSession, ""), nil, nil
 		}
@@ -80,7 +80,7 @@ func SimulateMsgCreateSession(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper)
 // sendMsgCreateSession sends a transaction with a MsgCreateSession from a provided random account.
 func sendMsgCreateSession(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 
 	address, _ := sdk.AccAddressFromBech32(msg.Owner)

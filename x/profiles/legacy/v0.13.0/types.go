@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v080 "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 )
 

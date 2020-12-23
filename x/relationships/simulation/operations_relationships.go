@@ -11,9 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -33,7 +33,7 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak authkeeper.AccountKeeper,
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Recipient, relationship.Subspace)
-		err = sendMsgCreateRelationship(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey})
+		err = sendMsgCreateRelationship(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
 		}
@@ -45,7 +45,7 @@ func SimulateMsgCreateRelationship(k keeper.Keeper, ak authkeeper.AccountKeeper,
 // sendMsgCreateRelationship sends a transaction with a Relationship from a provided random account
 func sendMsgCreateRelationship(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	account := ak.GetAccount(ctx, addr)
@@ -132,7 +132,7 @@ func SimulateMsgDeleteRelationship(
 		}
 
 		msg := types.NewMsgDeleteRelationship(user.Address.String(), counterparty, subspace)
-		err = sendMsgDeleteRelationship(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{user.PrivKey})
+		err = sendMsgDeleteRelationship(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{user.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
 		}
@@ -144,7 +144,7 @@ func SimulateMsgDeleteRelationship(
 // sendMsgDeleteRelationship sends a transaction with a MsgDeleteRelationship from a provided random account
 func sendMsgDeleteRelationship(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	account := ak.GetAccount(ctx, addr)

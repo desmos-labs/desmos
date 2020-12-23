@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -13,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -35,7 +36,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(request.Sender, request.Receiver)
 
-		err = sendMsgRequestDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey})
+		err = sendMsgRequestDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
 		}
@@ -47,7 +48,7 @@ func SimulateMsgRequestDTagTransfer(
 // sendMsgRequestDTagTransfer sends a transaction with a MsgRequestDTagTransfer from a provided random account.
 func sendMsgRequestDTagTransfer(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgRequestDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgRequestDTagTransfer, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	account := ak.GetAccount(ctx, addr)
@@ -145,7 +146,7 @@ func SimulateMsgAcceptDTagTransfer(
 			request.Receiver,
 		)
 
-		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{acc.PrivKey})
+		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
 		}
@@ -157,7 +158,7 @@ func SimulateMsgAcceptDTagTransfer(
 // sendMsgMsgAcceptDTagTransfer sends a transaction with a MsgAcceptDTagTransfer from a provided random account.
 func sendMsgMsgAcceptDTagTransfer(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgAcceptDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgAcceptDTagTransfer, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	account := ak.GetAccount(ctx, addr)
@@ -266,7 +267,7 @@ func SimulateMsgRefuseDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{receiver.PrivKey})
+		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{receiver.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err
 		}
@@ -278,7 +279,7 @@ func SimulateMsgRefuseDTagTransfer(
 // sendMsgMsgRefuseDTagTransfer sends a transaction with a MsgRefuseDTagTransfer from a provided random account.
 func sendMsgMsgRefuseDTagTransfer(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgRefuseDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgRefuseDTagTransfer, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	account := ak.GetAccount(ctx, addr)
@@ -363,7 +364,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		err = sendMsgMsgCancelDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []crypto.PrivKey{sender.PrivKey})
+		err = sendMsgMsgCancelDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
@@ -375,7 +376,7 @@ func SimulateMsgCancelDTagTransfer(
 // sendMsgMsgCancelDTagTransfer sends a transaction with a MsgCancelDTagTransfer from a provided random account.
 func sendMsgMsgCancelDTagTransfer(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgCancelDTagTransfer, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	msg *types.MsgCancelDTagTransfer, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	account := ak.GetAccount(ctx, addr)
