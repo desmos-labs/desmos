@@ -9,7 +9,8 @@ If you got jailed for downtime, you can get your voting power back to your valid
 desmosd start
 ```
 
-Wait for your full node to catch up to the latest block. Then, you can [unjail your validator](#unjail-validator)
+Wait for your full node to catch up to the latest block. Then, you
+can [unjail your validator](#problem-4-my-validator-is-jailed).
 
 Lastly, check your validator again to see if your voting power is back.
 
@@ -196,10 +197,33 @@ mkdir -p ~/.desmoscli
 desmoscli config keyring-backend file
 ```
 
-Once you have executed those commands, you will be required to re-add your key by using your mnemonic phrase. To do so, run:
+Once you have executed those commands, you will be required to re-add your key by using your mnemonic phrase. To do so,
+run:
 
 ```
 desmoscli keys add <your_key_name> --recover
 ```
 
-This will require you to input the mnemonic phrase and then the keyring password. Once done, you should be able to execute all the `desmoscli keys`-related commands properly.
+This will require you to input the mnemonic phrase and then the keyring password. Once done, you should be able to
+execute all the `desmoscli keys`-related commands properly.
+
+## Problem #7: I tried unjailing my validator, but it keeps getting jailed after some time
+
+If you have [tried to unjail](#problem-4-my-validator-is-jailed), but you've seen that your node is jailed again shortly
+after, it most probably means that your validator has been **tombstoned**.
+
+A validator is put in a tombstone status only when it double signs. Since this is way more egregious than a liveliness
+fault, once your validator double signs it will no longer be able to re-join the active set with the same validator key.
+
+In order to avoid this, you need to always make sure that each of your nodes **do not** validate with the same private
+key.
+
+Also, once your validator is tombstoned all you can do is create a new one, and earn again all the delegations that you
+had before.
+
+##### NOTE
+
+Previous delegators will still be able to unbond from a tombstoned validator.
+
+More information about the slashing penalties and tombstoning can be
+found [here](https://docs.cosmos.network/master/modules/slashing/07_tombstone.html).
