@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/btcsuite/btcd v0.21.0-beta
-	github.com/cosmos/cosmos-sdk v0.40.0-rc5
+	github.com/cosmos/cosmos-sdk v0.40.0-rc6
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.3
@@ -18,7 +18,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tendermint/tendermint v0.34.0
 	github.com/tendermint/tm-db v0.6.3
-	google.golang.org/genproto v0.0.0-20201111145450-ac7456db90a6
+	google.golang.org/genproto v0.0.0-20201214200347-8c77b98c765d
 	google.golang.org/grpc v1.33.2
 )
 
