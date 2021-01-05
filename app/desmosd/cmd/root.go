@@ -43,6 +43,11 @@ import (
 // NewRootCmd creates a new root command for desmosd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
+	// Read in the configuration file for the sdk
+	config := sdk.GetConfig()
+	app.SetupConfig(config)
+	config.Seal()
+
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithJSONMarshaler(encodingConfig.Marshaler).
