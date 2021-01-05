@@ -421,7 +421,7 @@ func NewDesmosApp(
 	app.upgradeKeeper.SetUpgradeHandler("relationships", func(ctx sdk.Context, plan upgradetypes.Plan) {
 		app.SetStoreLoader(func(ms sdk.CommitMultiStore) error {
 			return ms.LoadLatestVersionAndUpgrade(&storetypes.StoreUpgrades{
-				Added: []string{relationshipstypes.ModuleName},
+				Added: []string{reportsTypes.ModuleName},
 			})
 		})
 	})
