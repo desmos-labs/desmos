@@ -5,8 +5,11 @@ package simulation
 import (
 	"math/rand"
 
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/app/params"
@@ -22,11 +25,14 @@ const (
 	OpWeightMsgAnswerPoll       = "op_weight_msg_answer_poll"
 	OpWeightMsgRegisterReaction = "op_weight_msg_register_reaction"
 
-	DefaultGasValue = 800000
+	DefaultGasValue = 5_000_000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
@@ -73,27 +79,27 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreatePost(k, ak),
+			SimulateMsgCreatePost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditPost,
-			SimulateMsgEditPost(k, ak),
+			SimulateMsgEditPost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRegisterReaction,
-			SimulateMsgRegisterReaction(k, ak),
+			SimulateMsgRegisterReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddPostReaction(k, ak),
+			SimulateMsgAddPostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemovePostReaction(k, ak),
+			SimulateMsgRemovePostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
-			SimulateMsgAnswerToPoll(k, ak),
+			SimulateMsgAnswerToPoll(k, ak, bk),
 		),
 	}
 }

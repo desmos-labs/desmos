@@ -5,8 +5,11 @@ package simulation
 import (
 	"math/rand"
 
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/app/params"
@@ -19,12 +22,17 @@ const (
 	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
 	OpWeightMsgRequestDTagTransfer = "op_weight_msg_request_dtag_transfer"
 	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
+	OpWeightMsgRefuseDTagTransfer  = "op_weight_msg_refuse_dtag_transfer_request"
+	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
 
 	DefaultGasValue = 200000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
@@ -53,22 +61,44 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 		},
 	)
 
+	var weightMsgRefuseDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRefuseDTagTransfer, &weightMsgRefuseDTagTransfer, nil,
+		func(r *rand.Rand) {
+			weightMsgRefuseDTagTransfer = params.DefaultWeightMsgRefuseDTagTransfer
+		},
+	)
+
+	var weightMsgCancelDTagTransfer int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCancelDTagTransfer, &weightMsgCancelDTagTransfer, nil,
+		func(r *rand.Rand) {
+			weightMsgCancelDTagTransfer = params.DefaultWeightMsgCancelDTagTransfer
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
-			SimulateMsgSaveProfile(k, ak),
+			SimulateMsgSaveProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
-			SimulateMsgDeleteProfile(k, ak),
+			SimulateMsgDeleteProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRequestDTagTransfer,
-			SimulateMsgRequestDTagTransfer(k, ak),
+			SimulateMsgRequestDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
-			SimulateMsgAcceptDTagTransfer(k, ak),
+			SimulateMsgAcceptDTagTransfer(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRefuseDTagTransfer,
+			SimulateMsgRefuseDTagTransfer(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgCancelDTagTransfer,
+			SimulateMsgCancelDTagTransfer(k, ak, bk),
 		),
 	}
 }

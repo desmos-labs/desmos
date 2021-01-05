@@ -1,26 +1,25 @@
 package cli
 
 import (
+	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// GetQueryCmd adds the query commands
-func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
+// GetQueryCmd returns the command allowing to perform queries
+func GetQueryCmd() *cobra.Command {
 	postQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the posts module",
@@ -28,41 +27,48 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(flags.GetCommands(
-		GetCmdQueryPost(cdc),
-		GetCmdQueryPosts(cdc),
-		GetCmdQueryPollAnswer(cdc),
-		GetCmdQueryRegisteredReactions(cdc),
-		GetCmdQueryPostsParams(cdc),
-	)...)
+	postQueryCmd.AddCommand(
+		GetCmdQueryPost(),
+		GetCmdQueryPosts(),
+		GetCmdQueryPollAnswers(),
+		GetCmdQueryRegisteredReactions(),
+		GetCmdQueryParams(),
+	)
 	return postQueryCmd
 }
 
-// GetCmdQueryPost queries a post
-func GetCmdQueryPost(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryPost returns the command allowing to query a post
+func GetCmdQueryPost() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "post [id]",
 		Short: "Retrieve the post having the given id, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			postID := args[0]
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPost, postID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find post with id %s \n", postID)
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Post(
+				context.Background(),
+				&types.QueryPostRequest{PostId: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.PostQueryResponse
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
-func GetCmdQueryPosts(cdc *codec.Codec) *cobra.Command {
+// GetCmdQueryPosts returns the command allowing to query a list of posts
+func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "posts",
 		Short: "Query posts with optional filters",
@@ -73,15 +79,21 @@ Example:
 $ %s query posts posts --creator desmos1qugw5ux0ea0v3cdxj7n9jnrz69f9wyc4668ek5
 $ %s query posts posts --page=2 --limit=100
 `,
-				version.ClientName, version.ClientName,
+				version.AppName, version.AppName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			page := viper.GetInt(flagPage)
-			limit := viper.GetInt(flagNumLimit)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			page := viper.GetUint64(flagPage)
+			limit := viper.GetUint64(flagNumLimit)
 
 			// Default params
-			params := types.DefaultQueryPostsParams(page, limit)
+			params := DefaultQueryPostsRequest(page, limit)
 
 			// SortBy
 			if sortBy := viper.GetString(flagSortBy); len(sortBy) > 0 {
@@ -94,16 +106,16 @@ $ %s query posts posts --page=2 --limit=100
 			}
 
 			// ParentID
-			if parentID := viper.GetString(flagParentID); len(parentID) > 0 {
-				idParent := types.PostID(parentID)
-				if !idParent.Valid() {
+			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
+				idParent := parentID
+				if !types.IsValidPostID(idParent) {
 					return fmt.Errorf("invalid postID: %s", idParent)
 				}
-				params.ParentID = &idParent
+				params.ParentID = parentID
 			}
 
 			// CreationTime
-			if creationTime := viper.GetString(flagCreationTime); len(creationTime) > 0 {
+			if creationTime := viper.GetString(FlagCreationTime); len(creationTime) > 0 {
 				parsedTime, err := time.Parse(time.RFC3339, creationTime)
 				if err != nil {
 					return err
@@ -112,142 +124,134 @@ $ %s query posts posts --page=2 --limit=100
 				params.CreationTime = &parsedTime
 			}
 
-			// AllowsComments
-			if allowsComments := viper.GetString(flagAllowsComments); len(allowsComments) > 0 {
-				allowsCommentsBool, err := strconv.ParseBool(allowsComments)
-				if err != nil {
-					return err
-				}
-				params.AllowsComments = &allowsCommentsBool
-			}
-
 			// Subspace
-			if subspace := viper.GetString(flagSubspace); len(subspace) > 0 {
+			if subspace := viper.GetString(FlagSubspace); len(subspace) > 0 {
 				params.Subspace = subspace
 			}
 
 			// Hashtags
-			if hashtags := viper.GetStringSlice(flagHashtag); len(hashtags) > 0 {
+			if hashtags := viper.GetStringSlice(FlagHashtag); len(hashtags) > 0 {
 				params.Hashtags = hashtags
 			}
 
 			// Creator
-			if bech32CreatorAddress := viper.GetString(flagCreator); len(bech32CreatorAddress) != 0 {
+			if bech32CreatorAddress := viper.GetString(FlagCreator); len(bech32CreatorAddress) != 0 {
 				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
 				if err != nil {
 					return err
 				}
-				params.Creator = depositorAddr
+				params.Creator = depositorAddr.String()
 			}
 
-			bz, err := cdc.MarshalJSON(params)
+			res, err := queryClient.Posts(context.Background(), &params)
 			if err != nil {
 				return err
 			}
 
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryPosts)
-			res, height, err := cliCtx.QueryWithData(route, bz)
-			if err != nil {
-				return err
-			}
-
-			var matchingPosts types.Posts
-			err = cdc.UnmarshalJSON(res, &matchingPosts)
-			if err != nil {
-				return err
-			}
-
-			if matchingPosts == nil {
-				matchingPosts = types.Posts{}
-			}
-
-			cliCtx = cliCtx.WithHeight(height)
-			return cliCtx.PrintOutput(matchingPosts) // nolint:errcheck
+			return clientCtx.PrintProto(res)
 		},
 	}
 
-	cmd.Flags().Int(flagPage, 1, "pagination page of posts to to query for")
-	cmd.Flags().Int(flagNumLimit, 100, "pagination limit of posts to query for")
+	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
+	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
 
 	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
 	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
 
-	cmd.Flags().String(flagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().String(flagCreationTime, "", "(optional) filter the posts created at block height")
-	cmd.Flags().String(flagAllowsComments, "", "(optional) filter the posts allowing comments")
-	cmd.Flags().String(flagSubspace, "", "(optional) filter the posts part of the subspace")
-	cmd.Flags().String(flagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(flagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
+	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
+	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
+	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
+	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")
+	cmd.Flags().StringSlice(FlagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
 
-func GetCmdQueryPollAnswer(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryPollAnswers returns the command allowing to query the answers of a poll
+func GetCmdQueryPollAnswers() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "poll-answers [id]",
 		Short: "Retrieve tha poll answers of the post with given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			postID := args[0]
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPollAnswers, postID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find post with id %s \n", postID)
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.PollAnswers(
+				context.Background(),
+				&types.QueryPollAnswersRequest{PostId: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.PollAnswersQueryResponse
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
-func GetCmdQueryRegisteredReactions(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
+func GetCmdQueryRegisteredReactions() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "registered-reactions",
 		Short: "Retrieve tha poll answers of the post with given id",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryRegisteredReactions)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find any registered reaction \n")
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{})
+			if err != nil {
+				return err
 			}
 
-			var out types.Reactions
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
-// GetCmdQueryPostsParams queries all the posts' module params
-func GetCmdQueryPostsParams(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryParams returns the command allowing to query the module params
+func GetCmdQueryParams() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "parameters",
 		Short: "Retrieve all the posts module parameters",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find posts parameters")
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Params(
+				context.Background(),
+				&types.QueryParamsRequest{},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.Params
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }

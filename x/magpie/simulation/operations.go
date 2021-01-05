@@ -5,16 +5,19 @@ package simulation
 import (
 	"math/rand"
 
+	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/desmos-labs/desmos/app/params"
-	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
@@ -24,7 +27,9 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
@@ -36,7 +41,7 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreateSession(ak),
+			SimulateMsgCreateSession(ak, bk),
 		),
 	}
 }
@@ -44,49 +49,52 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 // SimulateMsgCreateSession tests and runs a single msg create session where the post creator
 // account already exists
 // nolint: funlen
-func SimulateMsgCreateSession(ak auth.AccountKeeper) sim.Operation {
+func SimulateMsgCreateSession(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []sim.Account, chainID string,
-	) (sim.OperationMsg, []sim.FutureOperation, error) {
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		data, skip := randomSessionFields(r, ctx, accs, ak)
 		if skip {
-			return sim.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ActionCreationSession, ""), nil, nil
 		}
 
 		msg := types.NewMsgCreateSession(
-			data.Owner.Address,
+			data.Owner.Address.String(),
 			data.Namespace,
 			data.ExternalOwner,
 			data.PubKey,
 			data.Signature,
 		)
 
-		err := sendMsgCreateSession(r, app, ak, msg, ctx, chainID, []crypto.PrivKey{data.Owner.PrivKey})
+		err := sendMsgCreateSession(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.Owner.PrivKey})
 		if err != nil {
-			return sim.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ActionCreationSession, ""), nil, nil
 		}
 
-		return sim.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 
 // sendMsgCreateSession sends a transaction with a MsgCreateSession from a provided random account.
 func sendMsgCreateSession(
-	r *rand.Rand, app *baseapp.BaseApp, ak auth.AccountKeeper,
-	msg types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []crypto.PrivKey,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	msg *types.MsgCreateSession, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
 ) error {
 
-	account := ak.GetAccount(ctx, msg.Owner)
-	coins := account.SpendableCoins(ctx.BlockTime())
+	address, _ := sdk.AccAddressFromBech32(msg.Owner)
+	account := ak.GetAccount(ctx, address)
+	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
-	fees, err := sim.RandomFees(r, ctx, coins)
+	fees, err := simtypes.RandomFees(r, ctx, coins)
 	if err != nil {
 		return err
 	}
 
-	tx := helpers.GenTx(
+	txGen := simappparams.MakeTestEncodingConfig().TxConfig
+	tx, err := helpers.GenTx(
+		txGen,
 		[]sdk.Msg{msg},
 		fees,
 		helpers.DefaultGenTxGas,
@@ -95,8 +103,11 @@ func sendMsgCreateSession(
 		[]uint64{account.GetSequence()},
 		privkeys...,
 	)
+	if err != nil {
+		return err
+	}
 
-	_, _, err = app.Deliver(tx)
+	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 	if err != nil {
 		return err
 	}
@@ -106,10 +117,10 @@ func sendMsgCreateSession(
 
 // randomSessionFields returns all the random fields that are needed to create a MsgCreateSession
 func randomSessionFields(
-	r *rand.Rand, ctx sdk.Context, accs []sim.Account, ak auth.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, ak authkeeper.AccountKeeper,
 ) (*SessionData, bool) {
 
-	simAccount, _ := sim.RandomAcc(r, accs)
+	simAccount, _ := simtypes.RandomAcc(r, accs)
 	acc := ak.GetAccount(ctx, simAccount.Address)
 	if acc == nil {
 		return nil, true

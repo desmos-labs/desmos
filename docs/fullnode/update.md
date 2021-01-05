@@ -18,7 +18,7 @@ Make sure that every node has a unique `priv_validator.json`. Do not copy the `p
 ## 2. Upgrade the software
 Now it is time to upgrade the software.
 
-Go into the directory in which you have installed `desmos`. If you have followed the [installation instructions](setup.md) and didn't change the path, it should be `/home/$USER/desmos`: 
+Go into the directory in which you have installed `desmos`. If you have followed the [installation instructions](setup/overview.md) and didn't change the path, it should be `/home/$USER/desmos`: 
 
 ```bash
 cd <installation-path> 

@@ -9,7 +9,8 @@ If you got jailed for downtime, you can get your voting power back to your valid
 desmosd start
 ```
 
-Wait for your full node to catch up to the latest block. Then, you can [unjail your validator](#unjail-validator)
+Wait for your full node to catch up to the latest block. Then, you
+can [unjail your validator](#problem-4-my-validator-is-jailed).
 
 Lastly, check your validator again to see if your voting power is back.
 
@@ -22,7 +23,7 @@ You may notice that your voting power is less than it used to be. That's because
 ## Problem #2: My `desmosd` crashes because of `too many open files`
 The default number of files Linux can open (per-process) is `1024`. `desmosd` is known to open more than `1024` files. This causes the process to crash. A quick fix is to run `ulimit -n 4096` (increase the number of open files allowed) and then restart the process with `desmosd start`. If you are using `systemd` or another process manager to launch `desmosd` this may require some configuration at that level. A sample `systemd` file to fix this issue is below:
 
-```toml
+```{12}
 # /etc/systemd/system/desmosd.service
 [Unit]
 Description=Desmos Full Node
@@ -30,7 +31,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu # This is the user that running the software in the background. Change it to your username if needed.
+User=ubuntu # This is the user that is running the software in the background. Change it to your username if needed.
 WorkingDirectory=/home/ubuntu # This is the home directory of the user that running the software in the background. Change it to your username if needed.
 ExecStart=/home/ubuntu/go/bin/desmosd start # The path should point to the correct location of the software you have installed.
 Restart=on-failure
@@ -97,3 +98,132 @@ desmoscli tx slashing unjail --chain-id <chain_id> --from <your_key>
 This will perform an unjail transaction that will set your validator as active again from the next block. 
 
 If the problem still persists, please make sure you have [enough tokens delegated to your validator](#problem-3-my-validator-is-inactiveunbonding).
+
+## Problem #5: The persistent peers do not work properly
+Sometimes, it might happen that your node cannot connect to the persistent peers we have provided inside the [testnet repository](https://github.com/desmos-labs/morpheus). This happens because all nodes have a limit of inbound connections that they can accept. Once that limit is exceed, the nodes will not accept any more connections. 
+
+In order to solve this problem, there are two alternative way: 
+
+1. use a seed node instead of a persistent peer, **OR** 
+2. use different persistent peers.
+
+### Using a seed node
+Seed nodes are a particular type of nodes that provide every validator with a set of peers to connect with, based on the current network status. What will happen when you use seed nodes is the following: 
+
+1. Your node will connect to a seed node. 
+2. The seed node will provide your node with a list of peers. 
+3. Your node will disconnect from the seed node and connect to the peers. 
+4. Your node will start syncing with the chain. 
+
+In order to use this particular type of nodes, all you have to do is:
+
+1. Open the `~/.desmosd/config/config.toml` file
+2. Find the line starting with 
+   ```
+   seeds = ""
+   ```
+
+3. Replace that line with the following: 
+   ```
+   seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"
+   ```
+   
+4. Empty your persistent peers list by replacing the `pesistent_peers = "..."` line with 
+   ```
+   persistent_peers = ""
+   ```
+   
+4. Save the file and exit the editor. 
+5. Restart your node.
+
+### Changing your persistent peers
+Instead of using a seed node, you can also keep relying on persistent peers. In this case, you will need to find new ones to connect your node to. To do this, you can query the current peers of any chain node using the following RPC endpoint: 
+
+```
+/net_info
+```
+
+For example, you can use the public RPC endpoint [here](http://rpc.morpheus.desmos.network:26657/net_info). 
+
+From that page, you can see all the peers connected to that node. Their info is present inside the `peers` field, which contains a list of objects made as follows: 
+
+```json{4,5,17}
+{
+  "node_info": {
+    "protocol_version": {},
+    "id": "d45d4e0a6a6c393d58cfa1c5fed6286164fbfceb",
+    "listen_addr": "tcp://0.0.0.0:26656",
+    "network": "morpheus-10000",
+    "version": "0.33.7",
+    "channels": "4020212223303800",
+    "moniker": "Maria",
+    "other": {
+      "tx_index": "on",
+      "rpc_address": "tcp://127.0.0.1:26657"
+    }
+  },
+  "is_outbound": false,
+  "connection_status": {},
+  "remote_ip": "35.193.251.165"
+}
+```
+
+In order to get new peers addresses, all you have to do is to combine the `id`, `remote_ip` and `listen_addr` field values as follows: 
+
+```
+id@remote_ip:listen_addr(port)
+```
+
+In the above case, that peer's address would be: 
+
+```
+d45d4e0a6a6c393d58cfa1c5fed6286164fbfceb@35.193.251.165:26656
+``` 
+
+You can do this with as many peers as you want. Once you have a list of peers, you can use those inside the `persistent_peers` field of your `~/.desmosd/config/config.toml` file.
+
+## Problem #6: The `desmoscli keys list` command does not work
+Starting with v0.38, the Cosmos SDK uses os-native keyring to store all the private keys. Unfortunately, in some cases this does not work well by default. For example, it might return some errors when used in GUI-less machines.
+
+In order to solve this problem, you have two options: 
+
+1. store the private keys inside a file on your machine, **OR**
+2. use a password manager.
+
+We highly suggest you to use a password manager. However, if you want to use a file-based approach you can execute the following commands:
+
+```
+mkdir -p ~/.desmoscli
+desmoscli config keyring-backend file
+```
+
+Once you have executed those commands, you will be required to re-add your key by using your mnemonic phrase. To do so,
+run:
+
+```
+desmoscli keys add <your_key_name> --recover
+```
+
+This will require you to input the mnemonic phrase and then the keyring password. Once done, you should be able to
+execute all the `desmoscli keys`-related commands properly.
+
+## Problem #7: I tried unjailing my validator, but it keeps getting jailed after some time
+
+If you have [tried to unjail](#problem-4-my-validator-is-jailed), but you've seen that your node is jailed again shortly
+after, it most probably means that your validator has been **tombstoned**.
+
+A validator is put in a tombstone status only when it double signs. Since this is way more egregious than a liveliness
+fault, once your validator double signs it will no longer be able to re-join the active set with the same validator key.
+
+In order to avoid this, you need to always make sure that each of your nodes **do not** validate with the same private
+key.
+
+Also, once your validator is tombstoned all you can do is create a new one, and earn again all the delegations that you
+had before.
+
+##### NOTE
+
+Previous delegators will still be able to unbond from a tombstoned validator.
+
+More information about the slashing penalties and tombstoning can be
+found [here](https://docs.cosmos.network/master/modules/slashing/07_tombstone.html).

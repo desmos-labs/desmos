@@ -1,0 +1,15 @@
+syntax = "proto3";
+package desmos.reports.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/reports/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/reports/types";
+
+// GenesisState defines the reports module's genesis state.
+message GenesisState {
+  repeated desmos.reports.v1beta1.Report reports = 1 [
+    (gogoproto.moretags) = "yaml:\"reports\"",
+    (gogoproto.nullable) = false
+  ];
+}

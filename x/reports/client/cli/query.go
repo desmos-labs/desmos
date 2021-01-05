@@ -1,18 +1,18 @@
 package cli
 
 import (
-	"fmt"
+	"context"
+
+	"github.com/cosmos/cosmos-sdk/client/flags"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/reports/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
 // GetQueryCmd adds the query commands
-func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
+func GetQueryCmd() *cobra.Command {
 	postQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the reports module",
@@ -20,32 +20,38 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	postQueryCmd.AddCommand(flags.GetCommands(
-		GetCmdQueryPostReports(cdc),
-	)...)
+	postQueryCmd.AddCommand(
+		GetCmdQueryPostReports(),
+	)
 	return postQueryCmd
 }
 
-// GetCmdQueryPostReports queries a post's reports
-func GetCmdQueryPostReports(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryPostReports returns the command that allows to query the reports of a post
+func GetCmdQueryPostReports() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "post [id]",
-		Short: "Returns all the reports of the posts with the given ID",
+		Short: "Returns all the reports of the posts with the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			postID := args[0]
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryReports, postID)
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find post with id %s \n", postID)
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.PostReports(
+				context.Background(),
+				&types.QueryPostReportsRequest{PostId: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.ReportsQueryResponse
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }

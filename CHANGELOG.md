@@ -1,3 +1,31 @@
+# Version 0.14.0
+## Changes
+- Implemented blocked users checks (#298)
+- Implemented the possibility to set a minimum messages fee (#230) 
+
+## Bug fixes
+- Fixed height not working in REST queries (#299)
+
+# Version 0.13.0
+## Changes
+- Removed the relationship event attribute key prefix (#300)
+- Removed the user_block event attribute key prefix (#291)
+- Changed posts' optional data representation (#272)
+- Fixed bugs inside the DTag transfer process (#295, #296)
+- Implemented the possibility to refuse and cancel DTag requests from both receiver and sender side (#297)
+
+## Bug fixes
+- Fixed the possibility of requesting a transfer of an empty DTag (#292)
+- Fixed the impossibility  of querying all the relationships on chain (#306)
+
+# Version 0.12.3
+## Changes
+- Renamed the `accept-dtag-transfer` CLI command to remove the `.md` suffix (#282)
+
+# Version 0.12.2
+## Changes
+- Added the migration command from v0.10.0 to v0.12.0
+
 # Version 0.12.1
 ## Bug fixes
 - Fixed an upgrade migration bug

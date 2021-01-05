@@ -5,9 +5,13 @@ package simulation
 import (
 	"math/rand"
 
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 )
@@ -22,7 +26,10 @@ const (
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
-func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keeper, ak auth.AccountKeeper) sim.WeightedOperations {
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
 	var weightMsgCreateRelationship int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreateRelationship, &weightMsgCreateRelationship, nil,
 		func(_ *rand.Rand) {
@@ -54,19 +61,19 @@ func WeightedOperations(appParams sim.AppParams, cdc *codec.Codec, k keeper.Keep
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
-			SimulateMsgCreateRelationship(k, ak),
+			SimulateMsgCreateRelationship(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,
-			SimulateMsgDeleteRelationship(k, ak),
+			SimulateMsgDeleteRelationship(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgBlockUser,
-			SimulateMsgBlockUser(k, ak),
+			SimulateMsgBlockUser(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgUnblockUser,
-			SimulateMsgUnblockUser(k, ak),
+			SimulateMsgUnblockUser(k, ak, bk),
 		),
 	}
 }

@@ -1,29 +1,40 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/profiles/{address}", saveProfileHandler(cliCtx)).Methods("PUT")
-	r.HandleFunc("/profiles/{address}", deleteProfileHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/dtag-transfer-requests", requestDTagTransferHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/dtag-transfer-requests/accept", acceptTransferRequestHandler(cliCtx)).Methods("POST")
+func registerTxRoutes(clientCtx client.Context, r *mux.Router) {
+	r.HandleFunc(fmt.Sprintf("/profiles/%s", ParamsAddress),
+		saveProfileHandler(clientCtx)).Methods("PUT")
+	r.HandleFunc(fmt.Sprintf("/profiles/{%s}", ParamsAddress),
+		deleteProfileHandler(clientCtx)).Methods("DELETE")
+	r.HandleFunc("/profiles/dtag-requests",
+		requestDTagTransferHandler(clientCtx)).Methods("POST")
+	r.HandleFunc(fmt.Sprintf("/profiles/dtag-requests/{%s}/acceptances", ParamsAddress),
+		acceptTransferRequestHandler(clientCtx)).Methods("POST")
+	r.HandleFunc(fmt.Sprintf("/profiles/dtag-requests/{%s}", ParamsAddress),
+		refuseDTagTransferRequestHandler(clientCtx)).Methods("DELETE")
+	r.HandleFunc(fmt.Sprintf("/profiles/dtag-requests/{%s}", ParamsAddress),
+		cancelDTagTransferRequestHandler(clientCtx)).Methods("DELETE")
 }
 
-func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func saveProfileHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		var req SaveProfileReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -33,28 +44,34 @@ func saveProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(vars["address"])
+		addr, err := sdk.AccAddressFromBech32(vars[ParamsAddress])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgSaveProfile(req.DTag, req.Moniker, req.Bio, req.Pictures.Profile, req.Pictures.Cover, addr)
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgSaveProfile(
+			req.DTag,
+			req.Moniker,
+			req.Bio,
+			req.Pictures.Profile,
+			req.Pictures.Cover,
+			addr.String(),
+		)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func deleteProfileHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		var req DeleteProfileReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -64,28 +81,25 @@ func deleteProfileHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		addr, err := sdk.AccAddressFromBech32(vars["address"])
+		addr, err := sdk.AccAddressFromBech32(vars[ParamsAddress])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgDeleteProfile(addr)
-
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgDeleteProfile(addr.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func requestDTagTransferHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req TransferDTagReq
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -95,27 +109,27 @@ func requestDTagTransferHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		currentOwner, err := sdk.AccAddressFromBech32(req.CurrentOwner)
+		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(currentOwner, cliCtx.FromAddress)
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgRequestDTagTransfer(clientCtx.FromAddress.String(), receiver.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func acceptTransferRequestHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 		var req AcceptDTagTransferReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -125,18 +139,75 @@ func acceptTransferRequestHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		receivingUser, err := sdk.AccAddressFromBech32(req.ReceivingUser)
+		receivingUser, err := sdk.AccAddressFromBech32(vars[ParamsAddress])
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgAcceptDTagTransfer(req.NewDTag, cliCtx.FromAddress, receivingUser)
-		if err := msg.ValidateBasic(); err != nil {
+		msg := types.NewMsgAcceptDTagTransfer(req.NewDTag, receivingUser.String(), clientCtx.FromAddress.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
+func refuseDTagTransferRequestHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req rest.BaseReq
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		req = req.Sanitize()
+		if !req.ValidateBasic(w) {
+			return
+		}
+
+		sender, err := sdk.AccAddressFromBech32(vars[ParamsAddress])
+		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		msg := types.NewMsgRefuseDTagTransferRequest(sender.String(), clientCtx.FromAddress.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req, msg)
+	}
+}
+
+func cancelDTagTransferRequestHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req rest.BaseReq
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		req = req.Sanitize()
+		if !req.ValidateBasic(w) {
+			return
+		}
+
+		owner, err := sdk.AccAddressFromBech32(vars[ParamsAddress])
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgCancelDTagTransferRequest(clientCtx.FromAddress.String(), owner.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req, msg)
 	}
 }

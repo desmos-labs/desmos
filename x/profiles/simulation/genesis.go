@@ -5,9 +5,10 @@ package simulation
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/cosmos/cosmos-sdk/types/module"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -16,15 +17,19 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 	profileGenesis := types.NewGenesisState(
 		randomProfiles(simsState),
-		types.NewParams(RandomMonikerParams(simsState.Rand), RandomDTagParams(simsState.Rand), RandomBioParams(simsState.Rand)),
 		randomDTagTransferRequests(simsState),
+		types.NewParams(
+			RandomMonikerParams(simsState.Rand),
+			RandomDTagParams(simsState.Rand),
+			RandomBioParams(simsState.Rand),
+		),
 	)
 
-	fmt.Printf("Selected randomly generated profile parameters:\n%s\n%s\n%s\n",
-		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.MonikerParams),
-		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.DtagParams),
-		codec.MustMarshalJSONIndent(simsState.Cdc, profileGenesis.Params.MaxBioLen),
-	)
+	bz, err := simsState.Cdc.MarshalJSON(profileGenesis)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Selected randomly generated profile parameters:\n%s\n", bz)
 
 	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
 }
@@ -35,21 +40,25 @@ func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTr
 
 	dtagTransferRequests := make([]types.DTagTransferRequest, dtagTransferRequestsNumber)
 	for i := 0; i < dtagTransferRequestsNumber; i++ {
-		simAccount, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		simAccount2, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
-		dtagTransferRequests[i] = types.NewDTagTransferRequest(RandomDTag(simState.Rand), simAccount.Address, simAccount2.Address)
+		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		simAccount2, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		dtagTransferRequests[i] = types.NewDTagTransferRequest(
+			RandomDTag(simState.Rand),
+			simAccount.Address.String(),
+			simAccount2.Address.String(),
+		)
 	}
 
 	return dtagTransferRequests
 }
 
 // randomProfiles returns randomly generated genesis profiles
-func randomProfiles(simState *module.SimulationState) (accounts types.Profiles) {
+func randomProfiles(simState *module.SimulationState) (accounts []types.Profile) {
 	accountsNumber := simState.Rand.Intn(50)
 
-	accounts = make(types.Profiles, accountsNumber)
+	accounts = make([]types.Profile, accountsNumber)
 	for i := 0; i < accountsNumber; i++ {
-		simAccount, _ := sim.RandomAcc(simState.Rand, simState.Accounts)
+		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		accounts[i] = NewRandomProfile(simState.Rand, simAccount.Address)
 	}
 

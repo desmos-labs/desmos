@@ -1,0 +1,27 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/profiles/v1beta1/params.proto";
+import "desmos/profiles/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// GenesisState defines the profiles module's genesis state.
+message GenesisState {
+  repeated desmos.profiles.v1beta1.Profile profiles = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"profiles\""
+  ];
+
+  repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests =
+      2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\""
+      ];
+
+  desmos.profiles.v1beta1.Params params = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
+}

@@ -5,37 +5,18 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/x/profiles/types"
-	"github.com/desmos-labs/desmos/x/profiles/types/common"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func TestNewGenesis(t *testing.T) {
-	expGenState := types.GenesisState{
-		Profiles:             types.Profiles{},
-		Params:               types.NewParams(types.MonikerParams{}, types.DtagParams{}, sdk.Int{}),
-		DTagTransferRequests: []types.DTagTransferRequest{},
-	}
-
-	actualGenState := types.NewGenesisState(expGenState.Profiles, expGenState.Params, expGenState.DTagTransferRequests)
-	require.Equal(t, expGenState, actualGenState)
-}
-
 func TestValidateGenesis(t *testing.T) {
-	var user, err = sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
-
-	timeZone, err := time.LoadLocation("UTC")
-	require.NoError(t, err)
-
-	date := time.Date(2010, 10, 02, 12, 10, 00, 00, timeZone)
-
-	otherUser, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
 	require.NoError(t, err)
 
 	tests := []struct {
 		name        string
-		genesis     types.GenesisState
+		genesis     *types.GenesisState
 		shouldError bool
 	}{
 		{
@@ -44,64 +25,97 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: false,
 		},
 		{
-			name: "Genesis with invalid profile errors",
-			genesis: types.GenesisState{
-				Profiles: types.NewProfiles(
-					types.NewProfile("", user, date), // An empty tag should return an error
-				),
-				Params: types.DefaultParams(),
-			},
+			name: "Genesis with invalid profile returns error (empty DTag)",
+			genesis: types.NewGenesisState(
+				[]types.Profile{
+					types.NewProfile(
+						"",
+						"",
+						"",
+						types.NewPictures("", ""),
+						date,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					), // An empty tag should return an error
+				},
+				nil,
+				types.DefaultParams(),
+			),
 			shouldError: true,
 		},
 		{
 			name: "Invalid params returns error",
-			genesis: types.GenesisState{
-				Profiles: types.NewProfiles(
-					types.NewProfile("custom_dtag1", user, date).
-						WithBio(common.NewStrPtr("biography")).
-						WithPictures(
-							common.NewStrPtr("https://test.com/profile-pic"),
-							common.NewStrPtr("https://test.com/cover-pic"),
-						),
+			genesis: types.NewGenesisState(
+				[]types.Profile{
+					types.NewProfile(
+						"custom_dtag1",
+						"",
+						"biography",
+						types.NewPictures("https://test.com/profile-pic", "https://test.com/cover-pic"),
+						date,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+				},
+				nil,
+				types.NewParams(
+					types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)),
+					types.DefaultDtagParams(),
+					types.DefaultMaxBioLength,
 				),
-				Params: types.NewParams(types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)), types.DefaultDtagParams(), types.DefaultMaxBioLength),
-			},
+			),
 			shouldError: true,
 		},
 		{
 			name: "Invalid dTag requests returns error",
-			genesis: types.GenesisState{
-				Profiles: types.NewProfiles(
-					types.NewProfile("custom_dtag1", user, date).
-						WithBio(common.NewStrPtr("biography")).
-						WithPictures(
-							common.NewStrPtr("https://test.com/profile-pic"),
-							common.NewStrPtr("https://test.com/cover-pic"),
+			genesis: types.NewGenesisState(
+				[]types.Profile{
+					types.NewProfile(
+						"custom_dtag1",
+						"",
+						"biography",
+						types.NewPictures(
+							"https://test.com/profile-pic",
+							"https://test.com/cover-pic",
 						),
-				),
-				Params: types.DefaultParams(),
-				DTagTransferRequests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag", nil, user),
+						date,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
 				},
-			},
+				[]types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+				},
+				types.DefaultParams(),
+			),
 			shouldError: true,
 		},
 		{
 			name: "Valid Genesis returns no errors",
-			genesis: types.GenesisState{
-				Profiles: types.NewProfiles(
-					types.NewProfile("custom_dtag1", user, date).
-						WithBio(common.NewStrPtr("biography")).
-						WithPictures(
-							common.NewStrPtr("https://test.com/profile-pic"),
-							common.NewStrPtr("https://test.com/cover-pic"),
+			genesis: types.NewGenesisState(
+				[]types.Profile{
+					types.NewProfile(
+						"custom_dtag1",
+						"",
+						"biography",
+						types.NewPictures(
+							"https://test.com/profile-pic",
+							"https://test.com/cover-pic",
 						),
-				),
-				Params: types.DefaultParams(),
-				DTagTransferRequests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag", user, otherUser),
+						date,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
 				},
-			},
+				[]types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
+				types.DefaultParams(),
+			),
 			shouldError: false,
 		},
 	}

@@ -3,4 +3,4 @@ A full-node is a program that fully validates transactions and blocks of a block
 
 Of course, it is possible and encouraged for users to run full-nodes even if they do not plan to be validators.
 
-If you would like to become a **Desmos** validator, you must first run a **Desmos** fullnode. To do so, please refer to the [installation instructions](setup.md).
+If you would like to become a **Desmos** validator, you must first run a **Desmos** fullnode. To do so, please refer to the [installation instructions](setup/overview.md).

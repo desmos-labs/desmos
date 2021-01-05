@@ -1,18 +1,18 @@
 package cli
 
 import (
-	"fmt"
+	"context"
+
+	"github.com/cosmos/cosmos-sdk/client/flags"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// GetQueryCmd adds the query commands
-func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
+// GetQueryCmd returns the command allowing to perform queries
+func GetQueryCmd() *cobra.Command {
 	profileQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the profiles module",
@@ -20,102 +20,97 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	profileQueryCmd.AddCommand(flags.GetCommands(
-		GetCmdQueryProfile(cdc),
-		GetCmdQueryProfiles(cdc),
-		GetCmdQueryProfileParams(cdc),
-		GetCmdQueryDTagRequests(cdc),
-	)...)
+	profileQueryCmd.AddCommand(
+		GetCmdQueryProfile(),
+		GetCmdQueryParams(),
+		GetCmdQueryDTagRequests(),
+	)
 	return profileQueryCmd
 }
 
-// GetCmdQueryProfile queries a profile from the given address or dtag
-func GetCmdQueryProfile(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryProfile returns the command that allows to query the profile of a specific user
+func GetCmdQueryProfile() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "profile [address_or_dtag]",
 		Short: "Retrieve the profile having the specified user address or profile dtag, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryProfile, args[0])
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find a profile with dtag %s \n", args[0])
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Profile(
+				context.Background(),
+				&types.QueryProfileRequest{User: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.Profile
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
-// GetCmdQueryProfiles queries all the profiles
-func GetCmdQueryProfiles(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "all",
-		Short: "Retrieve all the registered profiles.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryProfiles)
-			res, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				fmt.Printf("Could not find any profile")
-				return nil
-			}
-
-			var out types.Profiles
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
-		},
-	}
-}
-
-// GetCmdQueryProfileParams queries all the profiles' module params
-func GetCmdQueryProfileParams(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "parameters",
-		Short: "Retrieve all the profile module parameters",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
-			res, _, err := cliCtx.QueryWithData(route, nil)
-			if err != nil {
-				fmt.Printf("Could not find profile parameters")
-				return nil
-			}
-
-			var out types.Params
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
-		},
-	}
-}
-
-func GetCmdQueryDTagRequests(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+// GetCmdQueryDTagRequests returns the command allowing to query all the DTag transfer requests made towards a user
+func GetCmdQueryDTagRequests() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "dtag-requests [address]",
 		Short: "Retrieve the requests made to the given address to transfer its profile's dTag",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryDTagRequests, args[0])
-			res, _, err := cliCtx.QueryWithData(route, nil)
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find a dTag requests %s \n", args[0])
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.DTagTransfers(
+				context.Background(),
+				&types.QueryDTagTransfersRequest{User: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out []types.DTagTransferRequest
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res)
 		},
 	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryParams returns the command allowing to query the profiles module params
+func GetCmdQueryParams() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "parameters",
+		Short: "Retrieve all the profile module parameters",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }

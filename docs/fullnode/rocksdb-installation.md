@@ -50,6 +50,9 @@ DEBUG_LEVEL=0 make shared_lib
 
 # Install RocksDB so that Desmos can access it
 sudo make install-shared
+
+# Make sure the newly built library is linked correctly
+sudo ldconfig
 ```
 
 :::

@@ -10,12 +10,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@vuepress/plugin-google-analytics": "^1.5.2",
+    "@vuepress/plugin-google-analytics": "^1.7.1",
     "lodash": "^4.17.19",
     "markdown-it": "^8.4.2",
     "markdown-it-meta": "0.0.1",
-    "vuepress": "^1.5.2",
-    "vuepress-plugin-element-tabs": "^0.2.8"
+    "vuepress": "^1.7.1",
+    "vue-tabs-component": "^1.5.0",
+    "vuepress-plugin-tabs": "^0.3.0"
   },
   "dependencies": {
     "axios": "^0.19.2",

@@ -4,27 +4,38 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/posts", createPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/reactions", addReactionToPostHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/posts/reactions", removeReactionToPostHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/posts/{postID}/answers", addAnswerToPostPollHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/registeredReactions", registerReactionHandler(cliCtx)).Methods("POST")
+func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
+	r.HandleFunc("/posts",
+		createPostHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/posts/reactions",
+		addReactionToPostHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/posts/reactions",
+		removeReactionToPostHandler(cliCtx)).Methods("DELETE")
+
+	r.HandleFunc(fmt.Sprintf("/posts/{%s}/answers", ParamPostID),
+		addAnswerToPostPollHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/registeredReactions",
+		registerReactionHandler(cliCtx)).Methods("POST")
 }
 
-func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func createPostHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CreatePostReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -40,29 +51,34 @@ func createPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		parentID := types.PostID(req.ParentID)
-		if !parentID.Valid() {
+		parentID := req.ParentID
+		if !types.IsValidPostID(parentID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 			return
 		}
 
-		msg := types.NewMsgCreatePost(req.Message, parentID, req.AllowsComments, req.Subspace, req.OptionalData,
-			addr, req.Medias, req.PollData)
-
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgCreatePost(
+			req.Message,
+			parentID,
+			req.AllowsComments,
+			req.Subspace,
+			req.OptionalData,
+			addr.String(),
+			req.Medias,
+			req.PollData,
+		)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func addReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func addReactionToPostHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req AddReactionReq
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -78,27 +94,25 @@ func addReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		postID := types.PostID(req.PostID)
-		if !postID.Valid() {
+		postID := req.PostID
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
 
-		msg := types.NewMsgAddPostReaction(postID, req.Reaction, addr)
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgAddPostReaction(postID, req.Reaction, addr.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func removeReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func removeReactionToPostHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req RemoveReactionReq
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -114,29 +128,27 @@ func removeReactionToPostHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		postID := types.PostID(req.PostID)
-		if !postID.Valid() {
+		postID := req.PostID
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
 
-		msg := types.NewMsgRemovePostReaction(postID, addr, req.Reaction)
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgRemovePostReaction(postID, addr.String(), req.Reaction)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func addAnswerToPostPollHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
 		var req AnswerPollPostReq
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -152,36 +164,25 @@ func addAnswerToPostPollHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		postID := types.PostID(vars["postID"])
-		if !postID.Valid() {
+		postID := vars[ParamPostID]
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
 
-		answers := make([]types.AnswerID, len(req.Answers))
-		for index, answer := range req.Answers {
-			answers[index], err = types.ParseAnswerID(answer)
-			if err != nil {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			}
-		}
-
-		msg := types.NewMsgAnswerPoll(postID, answers, addr)
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgAnswerPoll(postID, req.Answers, addr.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func registerReactionHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func registerReactionHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req RegisterReactionReq
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -197,13 +198,11 @@ func registerReactionHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRegisterReaction(creator, req.Shortcode, req.Value, req.Subspace)
-		err = msg.ValidateBasic()
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgRegisterReaction(creator.String(), req.Shortcode, req.Value, req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }

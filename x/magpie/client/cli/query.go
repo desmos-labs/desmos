@@ -1,18 +1,16 @@
 package cli
 
 import (
-	"fmt"
+	"context"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/desmos/x/magpie/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/magpie/types"
 )
 
 // GetQueryCmd adds the query commands
-func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
+func GetQueryCmd() *cobra.Command {
 	magpieQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the magpie module",
@@ -20,32 +18,32 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	magpieQueryCmd.AddCommand(flags.GetCommands(
-		GetCmdSession(storeKey, cdc),
-	)...)
+	magpieQueryCmd.AddCommand(GetCmdSession())
 	return magpieQueryCmd
 }
 
 // GetCmdSession queries a session by PostID
-func GetCmdSession(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdSession() *cobra.Command {
 	return &cobra.Command{
 		Use:   "session [id]",
 		Short: "Returns the session having the specified id, if any.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			sessionsID := args[0]
-
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/session/%s", queryRoute, sessionsID), nil)
-
+			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				fmt.Printf("Could not find session with id %s \n", sessionsID)
-				return nil
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Session(
+				context.Background(),
+				&types.QuerySessionRequest{Id: args[0]},
+			)
+			if err != nil {
+				return err
 			}
 
-			var out types.Session
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			return clientCtx.PrintProto(res.Session)
 		},
 	}
 }

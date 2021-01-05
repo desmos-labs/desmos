@@ -3,47 +3,53 @@ package simulation_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/kv"
+
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/profiles/keeper"
+
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
-	"github.com/tendermint/tendermint/libs/kv"
 
-	sim "github.com/desmos-labs/desmos/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-var (
-	privKey            = ed25519.GenPrivKey().PubKey()
-	accountCreatorAddr = sdk.AccAddress(privKey.Address())
-	bio                = "Hollywood Actor. Proud environmentalist"
-
-	profile = types.Profile{
-		DTag:    "leoDiCap",
-		Bio:     &bio,
-		Creator: accountCreatorAddr,
-	}
-
-	requests = []types.DTagTransferRequest{types.NewDTagTransferRequest("dtag", accountCreatorAddr, accountCreatorAddr)}
-)
-
-func makeTestCodec() (cdc *codec.Codec) {
-	cdc = codec.New()
-	sdk.RegisterCodec(cdc)
-	codec.RegisterCrypto(cdc)
-	types.RegisterCodec(cdc)
-	return
-}
-
 func TestDecodeStore(t *testing.T) {
-	cdc := makeTestCodec()
+	cdc, _ := app.MakeCodecs()
+	dec := simulation.NewDecodeStore(cdc)
 
-	kvPairs := kv.Pairs{
-		kv.Pair{Key: types.ProfileStoreKey(profile.Creator), Value: cdc.MustMarshalBinaryBare(&profile)},
-		kv.Pair{Key: types.DtagStoreKey(profile.DTag), Value: cdc.MustMarshalBinaryBare(&profile.Creator)},
-		kv.Pair{Key: types.DtagTransferRequestStoreKey(accountCreatorAddr), Value: cdc.MustMarshalBinaryBare(&requests)},
-	}
+	profile := types.NewProfile(
+		"leoDiCap",
+		"",
+		"Hollywood Actor. Proud environmentalist",
+		types.NewPictures("", ""),
+		time.Time{},
+		ed25519.GenPrivKey().PubKey().Address().String(),
+	)
+
+	requests := keeper.NewWrappedDTagTransferRequests([]types.DTagTransferRequest{
+		types.NewDTagTransferRequest("dtag", profile.Creator, profile.Creator),
+	})
+
+	owner := keeper.NewWrappedDTagOwner(profile.Creator)
+
+	kvPairs := kv.Pairs{Pairs: []kv.Pair{
+		{
+			Key:   types.ProfileStoreKey(profile.Creator),
+			Value: cdc.MustMarshalBinaryBare(&profile),
+		},
+		{
+			Key:   types.DtagStoreKey(profile.Dtag),
+			Value: cdc.MustMarshalBinaryBare(&owner),
+		},
+		{
+			Key:   types.DtagTransferRequestStoreKey(profile.Creator),
+			Value: cdc.MustMarshalBinaryBare(&requests),
+		},
+	}}
 
 	tests := []struct {
 		name        string
@@ -51,7 +57,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Profile", fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profile, profile)},
 		{"Address", fmt.Sprintf("AddressA: %s\nAddressB: %s\n", profile.Creator, profile.Creator)},
-		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests, requests)},
+		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests.Requests, requests.Requests)},
 		{"other", ""},
 	}
 
@@ -60,9 +66,9 @@ func TestDecodeStore(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			switch i {
 			case len(tests) - 1:
-				require.Panics(t, func() { sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]) }, tt.name)
+				require.Panics(t, func() { dec(kvPairs.Pairs[i], kvPairs.Pairs[i]) }, tt.name)
 			default:
-				require.Equal(t, tt.expectedLog, sim.DecodeStore(cdc, kvPairs[i], kvPairs[i]), tt.name)
+				require.Equal(t, tt.expectedLog, dec(kvPairs.Pairs[i], kvPairs.Pairs[i]), tt.name)
 			}
 		})
 	}

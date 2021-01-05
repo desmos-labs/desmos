@@ -3,15 +3,17 @@ package keeper
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	posts "github.com/desmos-labs/desmos/x/posts/types"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/reports/types"
 )
 
-// RegisterInvariants registers all posts invariants
+// RegisterInvariants registers all reports invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
-	ir.RegisterRoute(types.ModuleName, "valid-reports-ids",
+	ir.RegisterRoute(types.ModuleName, "valid-stored-ids",
 		ValidReportsIDs(keeper))
 }
 
@@ -26,28 +28,26 @@ func AllInvariants(k Keeper) sdk.Invariant {
 }
 
 // formatOutputIDs concatenate the ids given into a unique string
-func formatOutputIDs(ids posts.PostIDs) (outputIDs string) {
-	for _, id := range ids {
-		outputIDs += id.String() + "\n"
-	}
-	return outputIDs
+func formatOutputIDs(ids []string) (outputIDs string) {
+	return strings.Join(ids, "\n")
 }
 
-// ValidReportsIDs checks that all reports are associated with a valid postID that correspond to an existent post
+// ValidReportsIDs checks that all reports are associated with a valid post id that corresponds to an existent post
 func ValidReportsIDs(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidIDs posts.PostIDs
-		store := ctx.KVStore(k.StoreKey)
+		var invalidIDs []string
+		store := ctx.KVStore(k.storeKey)
 		iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
 		defer iterator.Close()
+
 		for ; iterator.Valid(); iterator.Next() {
-			postID := posts.PostID(bytes.TrimPrefix(iterator.Key(), types.ReportsStorePrefix))
-			if valid := postID.Valid(); !valid {
+			postID := string(bytes.TrimPrefix(iterator.Key(), types.ReportsStorePrefix))
+			if !poststypes.IsValidPostID(postID) {
 				invalidIDs = append(invalidIDs, postID)
 			}
 		}
 
-		return sdk.FormatInvariant(types.ModuleName, "invalid reports' IDs",
+		return sdk.FormatInvariant(types.ModuleName, "invalid reports",
 			fmt.Sprintf("The following list contains invalid postIDs:\n %s",
 				formatOutputIDs(invalidIDs))), invalidIDs != nil
 	}

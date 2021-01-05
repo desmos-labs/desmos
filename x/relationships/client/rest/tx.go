@@ -3,26 +3,35 @@ package rest
 import (
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/desmos-labs/desmos/x/relationships/types"
 	"github.com/gorilla/mux"
+
+	"github.com/desmos-labs/desmos/x/relationships/types"
 )
 
-func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/relationships", createRelationshipHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/relationships", deleteRelationshipHandler(cliCtx)).Methods("DELETE")
-	r.HandleFunc("/blacklist", blockUserHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/blacklist", unblockUserHandler(cliCtx)).Methods("DELETE")
+func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
+	r.HandleFunc("/relationships",
+		createRelationshipHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/relationships",
+		deleteRelationshipHandler(cliCtx)).Methods("DELETE")
+
+	r.HandleFunc("/blocklist",
+		blockUserHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc("/blocklist",
+		unblockUserHandler(cliCtx)).Methods("DELETE")
 }
 
-func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func createRelationshipHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CommonRelationshipReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -44,21 +53,20 @@ func createRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreateRelationship(sender, receiver, req.Subspace)
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		msg := types.NewMsgCreateRelationship(sender.String(), receiver.String(), req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func deleteRelationshipHandler(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CommonRelationshipReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -77,24 +85,23 @@ func deleteRelationshipHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		receiver, err := sdk.AccAddressFromBech32(req.Receiver)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid receiver given")
-		}
-
-		msg := types.NewMsgDeleteRelationship(receiver, user, req.Subspace)
-
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		msg := types.NewMsgDeleteRelationship(receiver.String(), user.String(), req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 	}
 }
 
-func blockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func blockUserHandler(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req UserBlockReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -113,24 +120,23 @@ func blockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		blocked, err := sdk.AccAddressFromBech32(req.Blocked)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
-		}
-
-		msg := types.NewMsgBlockUser(user, blocked, req.Reason, req.Subspace)
-
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		msg := types.NewMsgBlockUser(user.String(), blocked.String(), req.Reason, req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 	}
 }
 
-func unblockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func unblockUserHandler(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req UserUnblockReq
 
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -149,15 +155,14 @@ func unblockUserHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		blocked, err := sdk.AccAddressFromBech32(req.Blocked)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid blocked user given")
-		}
-
-		msg := types.NewMsgUnblockUser(user, blocked, req.Subspace)
-
-		if err := msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		msg := types.NewMsgUnblockUser(user.String(), blocked.String(), req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 	}
 }

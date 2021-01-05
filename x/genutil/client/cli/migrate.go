@@ -1,20 +1,21 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
-	extypes "github.com/cosmos/cosmos-sdk/x/genutil"
+	extypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 
-	v0100 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.10.0"
-	v080 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.8.0"
+	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
+	v0150 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.15.0"
 	"github.com/desmos-labs/desmos/x/genutil/types"
 )
 
@@ -22,8 +23,8 @@ import (
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
 var migrationMap = map[string]types.MigrationCallback{
-	"v0.8.0":  v080.Migrate,
-	"v0.10.0": v0100.Migrate,
+	"v0.13.0":  v0130.Migrate,
+	"stargate": v0150.Migrate,
 }
 
 const (
@@ -54,7 +55,7 @@ func MigrationsListCmd() *cobra.Command {
 	}
 }
 
-func MigrateGenesisCmd(cdc *codec.Codec) *cobra.Command {
+func MigrateGenesisCmd(cdc codec.Marshaler) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate [target-version] [genesis-file]",
 		Short: "Migrate genesis to a specified target version",
@@ -75,7 +76,7 @@ To see get a full list of available migrations, use the migrations-list command.
 
 Example:
 $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-time=2019-11-31T18:00:00Z
-`, version.ServerName, version.ServerName, version.ServerName),
+`, version.AppName, version.AppName, version.AppName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			target := args[0]
@@ -87,7 +88,9 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			}
 
 			var initialState extypes.AppMap
-			cdc.MustUnmarshalJSON(genDoc.AppState, &initialState)
+			if err := json.Unmarshal(genDoc.AppState, &initialState); err != nil {
+				return errors.Wrap(err, "failed to JSON unmarshal initial genesis state")
+			}
 
 			migration := migrationMap[target]
 			if migration == nil {
@@ -106,20 +109,12 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 			}
 
 			// Perform the migration
-			newGenState := initialState
-			if target == "v0.2.0" {
-				// v0.2.0 migration needs to have the previous version's genesis time and the
-				// block interval to convert the block height dates into timestamps
+			newGenState := migration(initialState, genesisTime)
 
-				blockInterval, err := strconv.Atoi(cmd.Flag(flagBlockInterval).Value.String())
-				if err != nil {
-					panic(err)
-				}
-				newGenState = migration(newGenState, genDoc.GenesisTime, blockInterval)
-			} else {
-				newGenState = migration(newGenState, genesisTime)
+			genDoc.AppState, err = json.Marshal(newGenState)
+			if err != nil {
+				return errors.Wrap(err, "failed to JSON marshal migrated genesis state")
 			}
-			genDoc.AppState = cdc.MustMarshalJSON(newGenState)
 
 			// Set genesis time
 			if !genesisTime.IsZero() {
@@ -132,7 +127,7 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 				genDoc.ChainID = chainID
 			}
 
-			out, err := cdc.MarshalJSONIndent(genDoc, "", "  ")
+			out, err := json.MarshalIndent(genDoc, "", "  ")
 			if err != nil {
 				return err
 			}

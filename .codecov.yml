@@ -32,7 +32,6 @@ flags:
   app:
     paths:
       - "app/"
-      - "baseapp/"
   modules:
     paths:
       - "x/"
@@ -47,10 +46,12 @@ ignore:
   - "*.md"
   - "*.rst"
   - "**/*.pb.go"
+  - "**/*.pb.gw.go"
   - "types/*.pb.go"
   - "tests/*"
   - "tests/**/*"
   - "x/**/*.pb.go"
+  - "x/**/*.pb.gw.go"
   - "x/**/test_common.go"
   - "scripts/"
   - "contrib"

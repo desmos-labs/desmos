@@ -1,0 +1,201 @@
+syntax = "proto3";
+package desmos.posts.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/posts/v1beta1/posts.proto";
+import "desmos/posts/v1beta1/polls.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+
+// Msg defines the relationships Msg service.
+service Msg {
+  // CreatePost defines the method to create a post
+  rpc CreatePost(MsgCreatePost) returns (MsgCreatePostResponse);
+
+  // EditPost defines the method to edit an existing post
+  rpc EditPost(MsgEditPost) returns (MsgEditPostResponse);
+
+  // AddReaction defines the method to add a reaction to a post
+  rpc AddPostReaction(MsgAddPostReaction) returns (MsgAddPostReactionResponse);
+
+  // RemoveReaction defines the method to remove a reaction from a post
+  rpc RemovePostReaction(MsgRemovePostReaction)
+      returns (MsgRemovePostReactionResponse);
+
+  // RegisterReaction defines the method to register a new reaction
+  rpc RegisterReaction(MsgRegisterReaction)
+      returns (MsgRegisterReactionResponse);
+
+  // AnswerPoll defines the method to answer a poll
+  rpc AnswerPoll(MsgAnswerPoll) returns (MsgAnswerPollResponse);
+}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgCreatePost represents the message to be used to create a post.
+message MsgCreatePost {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string parent_id = 1 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.moretags) = "yaml:\"parent_id\"",
+    (gogoproto.jsontag) = "parent_id"
+  ];
+
+  string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  bool allows_comments = 3 [
+    (gogoproto.jsontag) = "allows_comments",
+    (gogoproto.moretags) = "yaml:\"allows_comments\""
+  ];
+
+  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+
+  repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 5 [
+    (gogoproto.castrepeated) = "OptionalData",
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "optional_data,omitempty",
+    (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
+  ];
+
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  repeated desmos.posts.v1beta1.Attachment attachments = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
+    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+  ];
+
+  desmos.posts.v1beta1.PollData poll_data = 8 [
+    (gogoproto.jsontag) = "poll_data,omitempty",
+    (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
+  ];
+}
+
+// MsgCreatePostResponse defines the Msg/CreatePost response type.
+message MsgCreatePostResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgEditPost represents the message used to edit a post.
+message MsgEditPost {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+
+  string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  repeated desmos.posts.v1beta1.Attachment attachments = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
+    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+  ];
+
+  desmos.posts.v1beta1.PollData poll_data = 4 [
+    (gogoproto.jsontag) = "poll_data,omitempty",
+    (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
+  ];
+
+  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+}
+
+// MsgEditPostResponse defines the Msg/EditPost response type.
+message MsgEditPostResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgAddPostReaction represents the message to be used to add a reaction to a
+// post
+message MsgAddPostReaction {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+
+  string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
+
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgAddPostReactionResponse defines the Msg/AddReaction response type.
+message MsgAddPostReactionResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgRemovePostReaction represents the message to be used when wanting to
+// remove an existing reaction from a specific user having a specific value
+message MsgRemovePostReaction {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+
+  string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
+
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgRemovePostReactionResponse defines the Msg/RemovePostReaction response
+// type.
+message MsgRemovePostReactionResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgAnswerPoll represents the message to be used when wanting to answer a poll
+message MsgAnswerPoll {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\"",
+    (gogoproto.jsontag) = "post_id"
+  ];
+
+  repeated string user_answers = 2 [
+    (gogoproto.jsontag) = "answers",
+    (gogoproto.moretags) = "yaml:\"answers\""
+  ];
+
+  string answerer = 3 [ (gogoproto.moretags) = "yaml:\"answerer\"" ];
+}
+
+// MsgAnswerPollResponse defines the Msg/AnswerPoll response type.
+message MsgAnswerPollResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgRegisterReaction represents the message that must be used when wanting
+// to register a new reaction shortCode and the associated value
+message MsgRegisterReaction {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string short_code = 1 [
+    (gogoproto.jsontag) = "short_code",
+    (gogoproto.moretags) = "yaml:\"short_code\""
+  ];
+
+  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+}
+
+// MsgRegisterReactionResponse defines the Msg/RegisterReaction response type.
+message MsgRegisterReactionResponse {}
