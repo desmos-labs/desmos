@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -414,6 +416,15 @@ func NewDesmosApp(
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
+
+	// Register the upgrade handler for the relationships upgrade
+	app.upgradeKeeper.SetUpgradeHandler("relationships", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		app.SetStoreLoader(func(ms sdk.CommitMultiStore) error {
+			return ms.LoadLatestVersionAndUpgrade(&storetypes.StoreUpgrades{
+				Added: []string{relationshipstypes.ModuleName},
+			})
+		})
+	})
 
 	app.sm.RegisterStoreDecoders()
 
