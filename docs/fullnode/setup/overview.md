@@ -54,7 +54,7 @@ sudo apt update
 sudo apt upgrade 
 
 # Install git, gcc and make
-sudo apt install build-essential --yes
+sudo apt install git build-essential --yes
 
 # Install Go with Snap
 sudo snap install go --classic
