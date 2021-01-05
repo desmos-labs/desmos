@@ -14,18 +14,13 @@ import (
 	"github.com/spf13/cobra"
 	tm "github.com/tendermint/tendermint/types"
 
-	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
-	v0150 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.15.0"
 	"github.com/desmos-labs/desmos/x/genutil/types"
 )
 
 // migrationMap contains the list of migrations that should be performed when migrating
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
-var migrationMap = map[string]types.MigrationCallback{
-	"v0.13.0":  v0130.Migrate,
-	"stargate": v0150.Migrate,
-}
+var migrationMap = map[string]types.MigrationCallback{}
 
 const (
 	flagGenesisTime   = "genesis-time"
