@@ -454,8 +454,8 @@ func SetupConfig(config *sdk.Config) {
 }
 
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
-// simapp. It is useful for tests and clients who do not want to construct the
-// full simapp
+// DesmosApp. It is useful for tests and clients who do not want to construct the
+// full DesmosApp
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 	cfg := MakeTestEncodingConfig()
 	return cfg.Marshaler, cfg.Amino
