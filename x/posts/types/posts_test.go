@@ -348,6 +348,49 @@ func TestPost_GetPostHashtags(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
+func TestCommentIDs_AppendIfMissing(t *testing.T) {
+	usecases := []struct {
+		name        string
+		ids         types.CommentIDs
+		toAppend    string
+		expAppended bool
+		expSlice    types.CommentIDs
+	}{
+		{
+			name:        "id is appended correctly to empty slice",
+			ids:         types.CommentIDs{},
+			toAppend:    "1",
+			expAppended: true,
+			expSlice:    types.CommentIDs{Ids: []string{"1"}},
+		},
+		{
+			name:        "missing id is appended properly",
+			ids:         types.CommentIDs{Ids: []string{"1"}},
+			toAppend:    "2",
+			expAppended: true,
+			expSlice:    types.CommentIDs{Ids: []string{"1", "2"}},
+		},
+		{
+			name:        "present id is not appended",
+			ids:         types.CommentIDs{Ids: []string{"1"}},
+			toAppend:    "1",
+			expAppended: false,
+			expSlice:    types.CommentIDs{Ids: []string{"1"}},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		t.Run(uc.name, func(t *testing.T) {
+			slice, appended := uc.ids.AppendIfMissing(uc.toAppend)
+			require.Equal(t, uc.expAppended, appended)
+			require.Equal(t, uc.expSlice, slice)
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
 func TestAttachments_Equal(t *testing.T) {
 	tests := []struct {
 		name      string
