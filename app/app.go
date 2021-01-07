@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -415,6 +417,26 @@ func NewDesmosApp(
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
+	// Register the upgrade handler for the relationships upgrade
+	app.upgradeKeeper.SetUpgradeHandler("test", func(ctx sdk.Context, plan upgradetypes.Plan) {
+
+	})
+
+	upgradeInfo, err := app.upgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		// handle error
+	}
+
+	// Set the store loader for the upgrade to work properly
+	if upgradeInfo.Name == "my-fancy-upgrade" && !app.upgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{reportsTypes.ModuleName},
+		}
+	
+		// configure store loader that checks if version == upgradeHeight and applies store upgrades
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+	}
+
 	app.sm.RegisterStoreDecoders()
 
 	// Initialize stores
@@ -454,8 +476,8 @@ func SetupConfig(config *sdk.Config) {
 }
 
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
-// simapp. It is useful for tests and clients who do not want to construct the
-// full simapp
+// DesmosApp. It is useful for tests and clients who do not want to construct the
+// full DesmosApp
 func MakeCodecs() (codec.Marshaler, *codec.LegacyAmino) {
 	cfg := MakeTestEncodingConfig()
 	return cfg.Marshaler, cfg.Amino
