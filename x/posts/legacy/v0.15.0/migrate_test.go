@@ -7,13 +7,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	v0100posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.10.0"
 	v0130 "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
 	v0150posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.15.0"
-	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
-	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
-	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 )
 
 func TestMigrate(t *testing.T) {
@@ -28,13 +24,10 @@ func TestMigrate(t *testing.T) {
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
-	parentID := v040posts.ComputeID(parentCreationTime, parentPostCreator, subspace)
-	postID := v040posts.ComputeID(postCreationTime, postCreator, subspace)
-
 	v0130genesisState := v0130posts.GenesisState{
 		Posts: []v0130posts.Post{
 			{
-				PostID:         parentID,
+				PostID:         "parent_id",
 				ParentID:       "",
 				Message:        "Message",
 				AllowsComments: true,
@@ -43,11 +36,11 @@ func TestMigrate(t *testing.T) {
 				Created:        parentCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        parentPostCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 			{
-				PostID:         postID,
-				ParentID:       parentID,
+				PostID:         "post_id_1",
+				ParentID:       "parent_id",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -55,26 +48,32 @@ func TestMigrate(t *testing.T) {
 				Created:        postCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        postCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 		},
-		UsersPollAnswers: map[string][]v040posts.UserAnswer{string(postID): {v040posts.UserAnswer{
-			Answers: []v040posts.AnswerID{1, 2},
-			User:    postCreator,
-		}}},
-		PostReactions: map[string][]v060.PostReaction{string(postID): {
-			v060.PostReaction{
-				Owner:     postCreator,
-				Shortcode: ":fire:",
-				Value:     "🔥",
+		UsersPollAnswers: map[string][]v0130posts.UserAnswer{
+			"post_id_1": {
+				v0130posts.UserAnswer{
+					Answers: []uint64{1, 2},
+					User:    postCreator,
+				},
 			},
-			v060.PostReaction{
-				Owner:     postCreator,
-				Shortcode: ":my_house:",
-				Value:     "https://myHouse.png",
+		},
+		PostReactions: map[string][]v0130posts.PostReaction{
+			"post_id_1": {
+				v0130posts.PostReaction{
+					Owner:     postCreator,
+					Shortcode: ":fire:",
+					Value:     "🔥",
+				},
+				v0130posts.PostReaction{
+					Owner:     postCreator,
+					Shortcode: ":my_house:",
+					Value:     "https://myHouse.png",
+				},
 			},
-		}},
-		RegisteredReactions: []v040posts.Reaction{
+		},
+		RegisteredReactions: []v0130posts.RegisteredReaction{
 			{
 				ShortCode: ":my_house:",
 				Value:     "https://myHouse.png",
@@ -82,7 +81,7 @@ func TestMigrate(t *testing.T) {
 				Creator:   postCreator,
 			},
 		},
-		Params: v080posts.Params{
+		Params: v0130posts.Params{
 			MaxPostMessageLength:            sdk.NewInt(10),
 			MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
 			MaxOptionalDataFieldValueLength: sdk.NewInt(10),
@@ -92,33 +91,55 @@ func TestMigrate(t *testing.T) {
 	expectedGenState := v0150posts.GenesisState{
 		Posts: []v0150posts.Post{
 			{
-				PostID:         string(parentID),
+				PostID:         "parent_id",
 				ParentID:       "",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
-				Created:        parentCreationTime,
-				LastEdited:     time.Time{},
-				Creator:        parentPostCreator.String(),
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				OptionalData: []v0150posts.OptionalDataEntry{
+					{
+						Key:   "optional",
+						Value: "data",
+					},
+				},
+				Created:    parentCreationTime,
+				LastEdited: time.Time{},
+				Creator:    parentPostCreator.String(),
+				Attachments: []v0150posts.Attachment{
+					{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+						Tags:     []string{},
+					},
+				},
 			},
 			{
-				PostID:         string(postID),
-				ParentID:       string(parentID),
+				PostID:         "post_id_1",
+				ParentID:       "parent_id",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   []v0130.OptionalDataEntry{{Key: "optional", Value: "data"}},
-				Created:        postCreationTime,
-				LastEdited:     time.Time{},
-				Creator:        postCreator.String(),
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				OptionalData: []v0150posts.OptionalDataEntry{
+					{
+						Key:   "optional",
+						Value: "data",
+					},
+				},
+				Created:    postCreationTime,
+				LastEdited: time.Time{},
+				Creator:    postCreator.String(),
+				Attachments: []v0150posts.Attachment{
+					{
+						URI:      "https://uri.com",
+						MimeType: "text/plain",
+						Tags:     []string{},
+					},
+				},
 			},
 		},
 		UsersPollAnswers: []v0150posts.UserAnswersEntry{
 			{
-				PostID: string(postID),
+				PostID: "post_id_1",
 				UserAnswers: []v0150posts.UserAnswer{
 					{
 						User:    postCreator.String(),
@@ -129,7 +150,7 @@ func TestMigrate(t *testing.T) {
 		},
 		PostReactions: []v0150posts.PostReactionsEntry{
 			{
-				PostID: string(postID),
+				PostID: "post_id_1",
 				Reactions: []v0150posts.PostReaction{
 					{
 						ShortCode: ":fire:",
@@ -152,7 +173,7 @@ func TestMigrate(t *testing.T) {
 				Creator:   postCreator.String(),
 			},
 		},
-		Params: v080posts.Params{
+		Params: v0150posts.Params{
 			MaxPostMessageLength:            sdk.NewInt(10),
 			MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
 			MaxOptionalDataFieldValueLength: sdk.NewInt(10),

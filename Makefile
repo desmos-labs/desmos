@@ -257,9 +257,9 @@ lint-fix:
 .PHONY: lint lint-fix
 
 format:
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -path "./tests/mocks/*" -not -name '*.pb.go' | xargs gofmt -w -s
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -path "./tests/mocks/*" -not -name '*.pb.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -path "./tests/mocks/*" -not -name '*.pb.go' | xargs goimports -w -local github.com/desmos-labs/desmos
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs goimports -w -local github.com/desmos-labs/desmos
 .PHONY: format
 
 ###############################################################################
@@ -289,7 +289,7 @@ proto-lint:
 	@$(DOCKER_BUF) check lint --error-format=json
 
 proto-check-breaking:
-	@$(DOCKER_BUF) check breaking --against-input $(HTTPS_GIT)#branch=master
+	@$(DOCKER_BUF) check breaking --against $(HTTPS_GIT)#branch=master
 
 TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.0-rc6/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
