@@ -34,7 +34,7 @@ func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 	return types.QueryPostsRequest{
 		Pagination: &query.PageRequest{
 			Key:        nil,
-			Offset:     page * limit,
+			Offset:     (page - 1) * limit,
 			Limit:      limit,
 			CountTotal: false,
 		},

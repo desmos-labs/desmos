@@ -3,24 +3,27 @@ package v0150
 import (
 	"time"
 
-	v080 "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	v0130 "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 )
 
 // GenesisState contains the data of a v0.15.0 genesis state for the profiles module
 type GenesisState struct {
-	Profiles             []Profile             `json:"profiles" yaml:"profiles"`
-	DtagTransferRequests []DTagTransferRequest `json:"dtag_transfer_requests" yaml:"dtag_transfer_requests"`
-	Params               v080.Params           `json:"params" yaml:"params"`
+	Profiles             []Profile             `json:"profiles"`
+	DtagTransferRequests []DTagTransferRequest `json:"dtag_transfer_requests"`
+	Params               Params                `json:"params"`
 }
 
+// ----------------------------------------------------------------------------------------------------------------
+
 type Profile struct {
-	Dtag         string    `json:"dtag,omitempty" yaml:"dtag"`
-	Moniker      string    `json:"moniker,omitempty" yaml:"moniker,omitempty"`
-	Bio          string    `json:"bio,omitempty" yaml:"bio,omitempty"`
-	Pictures     Pictures  `json:"pictures" yaml:"pictures"`
-	Creator      string    `json:"creator,omitempty" yaml:"creator,omitempty"`
-	CreationDate time.Time `json:"creation_date" yaml:"creation_date"`
+	Dtag         string    `json:"dtag,omitempty"`
+	Moniker      string    `json:"moniker,omitempty"`
+	Bio          string    `json:"bio,omitempty"`
+	Pictures     Pictures  `json:"pictures"`
+	Creator      string    `json:"creator,omitempty"`
+	CreationDate time.Time `json:"creation_date"`
 }
 
 func newProfile(profile v0130.Profile) Profile {
@@ -60,12 +63,33 @@ func newProfile(profile v0130.Profile) Profile {
 }
 
 type Pictures struct {
-	Profile string `json:"profile,omitempty" yaml:"profile,omitempty"`
-	Cover   string `json:"cover,omitempty" yaml:"cover,omitempty"`
+	Profile string `json:"profile,omitempty" `
+	Cover   string `json:"cover,omitempty" `
 }
 
+// ----------------------------------------------------------------------------------------------------------------
+
 type DTagTransferRequest struct {
-	DtagToTrade string `json:"dtag_to_trade"    yaml:"dtag_to_trade"`
-	Sender      string `json:"sender,omitempty" yaml:"sender,omitempty"`
-	Receiver    string `json:"receiver,omitempty" yaml:"receiver,omitempty"`
+	DtagToTrade string `json:"dtag_to_trade"`
+	Sender      string `json:"sender,omitempty"`
+	Receiver    string `json:"receiver,omitempty"`
+}
+
+// ----------------------------------------------------------------------------------------------------------------
+
+type Params struct {
+	MonikerParams MonikerParams `json:"moniker_params"`
+	DtagParams    DTagParams    `json:"dtag_params"`
+	MaxBioLength  sdk.Int       `json:"max_bio_length"`
+}
+
+type MonikerParams struct {
+	MinMonikerLength sdk.Int `json:"min_length"`
+	MaxMonikerLength sdk.Int `json:"max_length"`
+}
+
+type DTagParams struct {
+	RegEx         string  `json:"reg_ex"`
+	MinDtagLength sdk.Int `json:"min_length"`
+	MaxDtagLength sdk.Int `json:"max_length"`
 }

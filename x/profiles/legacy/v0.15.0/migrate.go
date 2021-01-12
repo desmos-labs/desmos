@@ -4,15 +4,21 @@ import (
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 )
 
+const (
+	ModuleName = "profiles"
+)
+
 // Migrate accepts exported genesis state from v0.13.0 and migrates it to v0.15.0
 // genesis state.
 func Migrate(oldGenState v0130profiles.GenesisState) GenesisState {
 	return GenesisState{
 		Profiles:             ConvertProfiles(oldGenState.Profiles),
 		DtagTransferRequests: ConvertDtagTransferRequest(oldGenState.DTagTransferRequests),
-		Params:               oldGenState.Params,
+		Params:               ConvertParams(oldGenState.Params),
 	}
 }
+
+// ------------------------------------------------------------------------------------------------------------------
 
 func ConvertProfiles(oldProfiles []v0130profiles.Profile) []Profile {
 	profiles := make([]Profile, len(oldProfiles))
@@ -23,6 +29,8 @@ func ConvertProfiles(oldProfiles []v0130profiles.Profile) []Profile {
 
 	return profiles
 }
+
+// ------------------------------------------------------------------------------------------------------------------
 
 func ConvertDtagTransferRequest(oldDTagTransferRequests []v0130profiles.DTagTransferRequest) []DTagTransferRequest {
 	dTagTransferRequests := make([]DTagTransferRequest, len(oldDTagTransferRequests))
@@ -36,4 +44,21 @@ func ConvertDtagTransferRequest(oldDTagTransferRequests []v0130profiles.DTagTran
 	}
 
 	return dTagTransferRequests
+}
+
+// ------------------------------------------------------------------------------------------------------------------
+
+func ConvertParams(old v0130profiles.Params) Params {
+	return Params{
+		MonikerParams: MonikerParams{
+			MinMonikerLength: old.MonikerParams.MinMonikerLen,
+			MaxMonikerLength: old.MonikerParams.MaxMonikerLen,
+		},
+		DtagParams: DTagParams{
+			RegEx:         old.DtagParams.RegEx,
+			MinDtagLength: old.DtagParams.MinDtagLen,
+			MaxDtagLength: old.DtagParams.MaxDtagLen,
+		},
+		MaxBioLength: old.MaxBioLen,
+	}
 }

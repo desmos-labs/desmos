@@ -1,6 +1,12 @@
 package v0150
 
-import v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
+import (
+	v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
+)
+
+const (
+	ModuleName = "reports"
+)
 
 // Migrate accepts exported genesis state from v0.13.0 and migrates it to v0.15.0
 // genesis state.

@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	v080posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.8.0"
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 	v0150profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.15.0"
 )
@@ -56,10 +55,17 @@ func TestMigrate(t *testing.T) {
 				Sender:      profileCreator,
 			},
 		},
-		Params: v080posts.Params{
-			MaxPostMessageLength:            sdk.NewInt(10),
-			MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
-			MaxOptionalDataFieldValueLength: sdk.NewInt(10),
+		Params: v0130profiles.Params{
+			MonikerParams: v0130profiles.MonikerParams{
+				MinMonikerLen: sdk.NewIntFromUint64(2),
+				MaxMonikerLen: sdk.NewIntFromUint64(50),
+			},
+			DtagParams: v0130profiles.DtagParams{
+				RegEx:      "reg_ex",
+				MinDtagLen: sdk.NewIntFromUint64(3),
+				MaxDtagLen: sdk.NewIntFromUint64(15),
+			},
+			MaxBioLen: sdk.NewIntFromUint64(200),
 		},
 	}
 
@@ -95,10 +101,17 @@ func TestMigrate(t *testing.T) {
 				Sender:      profileCreator.String(),
 			},
 		},
-		Params: v080posts.Params{
-			MaxPostMessageLength:            sdk.NewInt(10),
-			MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
-			MaxOptionalDataFieldValueLength: sdk.NewInt(10),
+		Params: v0150profiles.Params{
+			MonikerParams: v0150profiles.MonikerParams{
+				MinMonikerLength: sdk.NewIntFromUint64(2),
+				MaxMonikerLength: sdk.NewIntFromUint64(50),
+			},
+			DtagParams: v0150profiles.DTagParams{
+				RegEx:         "reg_ex",
+				MinDtagLength: sdk.NewIntFromUint64(3),
+				MaxDtagLength: sdk.NewIntFromUint64(15),
+			},
+			MaxBioLength: sdk.NewIntFromUint64(200),
 		},
 	}
 
@@ -114,7 +127,8 @@ func TestMigrate(t *testing.T) {
 		require.Equal(t, expectedGenState.Profiles[index].Pictures.Cover, profile.Pictures.Cover)
 	}
 
-	// Check for dTag transfers requests
+	// Check fo
+	//r dTag transfers requests
 	require.Len(t, migrated.DtagTransferRequests, len(expectedGenState.DtagTransferRequests))
 	for index, request := range migrated.DtagTransferRequests {
 		require.Equal(t, expectedGenState.DtagTransferRequests[index], request)

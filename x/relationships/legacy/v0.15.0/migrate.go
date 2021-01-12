@@ -4,6 +4,10 @@ import (
 	v0130relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.13.0"
 )
 
+const (
+	ModuleName = "relationships"
+)
+
 // Migrate accepts exported genesis state from v0.13.0 and migrates it to v0.15.0
 // genesis state.
 func Migrate(oldGenState v0130relationships.GenesisState) GenesisState {
