@@ -1,6 +1,7 @@
 package v0130
 
 import (
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
@@ -10,7 +11,7 @@ import (
 )
 
 // Migrate migrates exported state from v0.12.0 to a v0.13.0 genesis state.
-func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap {
+func Migrate(appState genutiltypes.AppMap, _ client.Context) genutiltypes.AppMap {
 	v0120Codec := codec.NewLegacyAmino()
 	cryptocodec.RegisterCrypto(v0120Codec)
 
@@ -22,9 +23,7 @@ func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap
 		var genDocs v0120posts.GenesisState
 		v0120Codec.MustUnmarshalJSON(appState[v0120posts.ModuleName], &genDocs)
 
-		appState[v0130posts.ModuleName] = v0130Codec.MustMarshalJSON(
-			v0130posts.Migrate(genDocs),
-		)
+		appState[v0130posts.ModuleName] = v0130Codec.MustMarshalJSON(v0130posts.Migrate(genDocs))
 	}
 
 	return appState
