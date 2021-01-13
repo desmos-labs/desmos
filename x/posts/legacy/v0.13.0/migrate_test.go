@@ -7,12 +7,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	v0100posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.10.0"
 	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
 	v0130 "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
-	v040posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.4.0"
-	v060 "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 )
 
 func TestMigrate(t *testing.T) {
@@ -27,8 +24,8 @@ func TestMigrate(t *testing.T) {
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
-	parentID := v040posts.ComputeID(parentCreationTime, parentPostCreator, subspace)
-	postID := v040posts.ComputeID(postCreationTime, postCreator, subspace)
+	parentID := v0120posts.ComputeID(parentCreationTime, parentPostCreator, subspace)
+	postID := v0120posts.ComputeID(postCreationTime, postCreator, subspace)
 
 	v0120GenState := v0120posts.GenesisState{
 		Posts: []v0120posts.Post{
@@ -42,7 +39,7 @@ func TestMigrate(t *testing.T) {
 				Created:        parentCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        parentPostCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
+				Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 			},
 			{
 				PostID:         postID,
@@ -54,26 +51,26 @@ func TestMigrate(t *testing.T) {
 				Created:        postCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        postCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
+				Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 			},
 		},
-		UsersPollAnswers: map[string][]v040posts.UserAnswer{string(postID): {v040posts.UserAnswer{
-			Answers: []v040posts.AnswerID{1, 2},
+		UsersPollAnswers: map[string][]v0120posts.UserAnswer{string(postID): {v0120posts.UserAnswer{
+			Answers: []uint64{1, 2},
 			User:    postCreator,
 		}}},
-		PostReactions: map[string][]v060.PostReaction{string(postID): {
-			v060.PostReaction{
+		PostReactions: map[string][]v0120posts.PostReaction{string(postID): {
+			v0120posts.PostReaction{
 				Owner:     postCreator,
 				Shortcode: ":fire:",
 				Value:     "🔥",
 			},
-			v060.PostReaction{
+			v0120posts.PostReaction{
 				Owner:     postCreator,
 				Shortcode: ":my_house:",
 				Value:     "https://myHouse.png",
 			},
 		}},
-		RegisteredReactions: []v040posts.Reaction{
+		RegisteredReactions: []v0120posts.RegisteredReaction{
 			{
 				ShortCode: ":my_house:",
 				Value:     "https://myHouse.png",
@@ -95,7 +92,7 @@ func TestMigrate(t *testing.T) {
 				Created:        parentCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        parentPostCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 			{
 				PostID:         postID,
@@ -107,26 +104,32 @@ func TestMigrate(t *testing.T) {
 				Created:        postCreationTime,
 				LastEdited:     time.Time{},
 				Creator:        postCreator,
-				Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 		},
-		UsersPollAnswers: map[string][]v040posts.UserAnswer{string(postID): {v040posts.UserAnswer{
-			Answers: []v040posts.AnswerID{1, 2},
-			User:    postCreator,
-		}}},
-		PostReactions: map[string][]v060.PostReaction{string(postID): {
-			v060.PostReaction{
-				Owner:     postCreator,
-				Shortcode: ":fire:",
-				Value:     "🔥",
+		UsersPollAnswers: map[string][]v0130posts.UserAnswer{
+			string(postID): {
+				v0130posts.UserAnswer{
+					Answers: []uint64{1, 2},
+					User:    postCreator,
+				},
 			},
-			v060.PostReaction{
-				Owner:     postCreator,
-				Shortcode: ":my_house:",
-				Value:     "https://myHouse.png",
+		},
+		PostReactions: map[string][]v0130posts.PostReaction{
+			string(postID): {
+				v0130posts.PostReaction{
+					Owner:     postCreator,
+					Shortcode: ":fire:",
+					Value:     "🔥",
+				},
+				v0130posts.PostReaction{
+					Owner:     postCreator,
+					Shortcode: ":my_house:",
+					Value:     "https://myHouse.png",
+				},
 			},
-		}},
-		RegisteredReactions: []v040posts.Reaction{
+		},
+		RegisteredReactions: []v0130posts.RegisteredReaction{
 			{
 				ShortCode: ":my_house:",
 				Value:     "https://myHouse.png",
@@ -159,8 +162,8 @@ func TestConvertPosts(t *testing.T) {
 
 	subspace := "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
 
-	parentID := v040posts.ComputeID(parentCreationTime, parentPostCreator, subspace)
-	postID := v040posts.ComputeID(postCreationTime, postCreator, subspace)
+	parentID := v0120posts.ComputeID(parentCreationTime, parentPostCreator, subspace)
+	postID := v0120posts.ComputeID(postCreationTime, postCreator, subspace)
 
 	var posts = []v0120posts.Post{
 		{
@@ -173,7 +176,7 @@ func TestConvertPosts(t *testing.T) {
 			Created:        parentCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        parentPostCreator,
-			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
+			Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 		},
 		{
 			PostID:         postID,
@@ -185,7 +188,7 @@ func TestConvertPosts(t *testing.T) {
 			Created:        postCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        postCreator,
-			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
+			Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 		},
 	}
 
@@ -200,7 +203,7 @@ func TestConvertPosts(t *testing.T) {
 			Created:        parentCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        parentPostCreator,
-			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+			Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 		},
 		{
 			PostID:         postID,
@@ -212,7 +215,7 @@ func TestConvertPosts(t *testing.T) {
 			Created:        postCreationTime,
 			LastEdited:     time.Time{},
 			Creator:        postCreator,
-			Attachments:    []v0100posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
+			Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 		},
 	}
 
@@ -223,7 +226,7 @@ func TestConvertPosts(t *testing.T) {
 }
 
 func TestConvertOptionalData(t *testing.T) {
-	oldOptionalData := v040posts.OptionalData{
+	oldOptionalData := v0120posts.OptionalData{
 		"optional": "data",
 		"old":      "version",
 		"another":  "data",

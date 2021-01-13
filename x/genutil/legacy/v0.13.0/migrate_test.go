@@ -14,7 +14,6 @@ import (
 	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
 	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
-	v060posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.6.0"
 )
 
 func TestMigrate0130(t *testing.T) {
@@ -36,14 +35,14 @@ func TestMigrate0130(t *testing.T) {
 
 	// Make sure that all the posts are migrated
 	var v012postsState v0120posts.GenesisState
-	err = cdc.UnmarshalJSON(v012state[v060posts.ModuleName], &v012postsState)
+	err = cdc.UnmarshalJSON(v012state[v0120posts.ModuleName], &v012postsState)
 	require.NoError(t, err)
 
 	// Migrate everything
 	v0130state := v0130.Migrate(v012state)
 
 	var v0130postsState v0130posts.GenesisState
-	err = cdc.UnmarshalJSON(v0130state[v060posts.ModuleName], &v0130postsState)
+	err = cdc.UnmarshalJSON(v0130state[v0120posts.ModuleName], &v0130postsState)
 	require.NoError(t, err)
 	require.Equal(t, len(v012postsState.Posts), len(v0130postsState.Posts))
 

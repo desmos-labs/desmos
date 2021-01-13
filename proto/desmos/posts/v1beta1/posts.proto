@@ -18,43 +18,43 @@ message Post {
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "id",
-    (gogoproto.moretags) = "yaml\"id\""
+    (gogoproto.moretags) = "yaml:\"id\""
   ];
   string parent_id = 2 [
     (gogoproto.customname) = "ParentID",
     (gogoproto.jsontag) = "parent_id",
-    (gogoproto.moretags) = "yaml\"parent_id\""
+    (gogoproto.moretags) = "yaml:\"parent_id\""
   ];
-  string message = 3 [ (gogoproto.moretags) = "yaml\"message\"" ];
+  string message = 3 [(gogoproto.moretags) = "yaml:\"message\""];
   google.protobuf.Timestamp created = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml\"created\""
+    (gogoproto.moretags) = "yaml:\"created\""
   ];
   google.protobuf.Timestamp last_edited = 5 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml\"created\""
+    (gogoproto.moretags) = "yaml:\"created\""
   ];
   bool allows_comments = 6 [
-    (gogoproto.moretags) = "yaml\"allows_comments\"",
+    (gogoproto.moretags) = "yaml:\"allows_comments\"",
     (gogoproto.jsontag) = "allows_comments"
   ];
-  string subspace = 7 [ (gogoproto.moretags) = "yaml\"subspace\"" ];
+  string subspace = 7 [(gogoproto.moretags) = "yaml:\"subspace\""];
   repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 8 [
     (gogoproto.castrepeated) = "OptionalData",
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "optional_data,omitempty",
-    (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
+    (gogoproto.moretags) = "yaml:\"optional_data,omitempty\""
   ];
-  string creator = 9 [ (gogoproto.moretags) = "yaml\"creator\"" ];
+  string creator = 9 [(gogoproto.moretags) = "yaml:\"creator\""];
   repeated Attachment attachments = 10 [
     (gogoproto.castrepeated) = "Attachments",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+    (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
   desmos.posts.v1beta1.PollData poll_data = 11
-      [ (gogoproto.moretags) = "yaml\"poll_data,omitempty\"" ];
+  [(gogoproto.moretags) = "yaml:\"poll_data,omitempty\""];
 }
 
 // CommentIDs wraps the list of comments of a post
@@ -72,14 +72,14 @@ message Attachment {
   string uri = 1 [
     (gogoproto.customname) = "URI",
     (gogoproto.jsontag) = "uri",
-    (gogoproto.moretags) = "yaml\"uri\""
+    (gogoproto.moretags) = "yaml:\"uri\""
   ];
   string mime_type = 2 [
     (gogoproto.customname) = "MimeType",
     (gogoproto.jsontag) = "mime_type",
-    (gogoproto.moretags) = "yaml\"mime_type\""
+    (gogoproto.moretags) = "yaml:\"mime_type\""
   ];
-  repeated string tags = 3 [ (gogoproto.moretags) = "yaml\"tags,omitempty\"" ];
+  repeated string tags = 3 [(gogoproto.moretags) = "yaml:\"tags,omitempty\""];
 }
 
 // ___________________________________________________________________________________________________________________

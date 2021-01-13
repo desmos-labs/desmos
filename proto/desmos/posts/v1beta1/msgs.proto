@@ -56,7 +56,7 @@ message MsgCreatePost {
     (gogoproto.castrepeated) = "OptionalData",
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "optional_data,omitempty",
-    (gogoproto.moretags) = "yaml\"optional_data,omitempty\""
+    (gogoproto.moretags) = "yaml:\"optional_data,omitempty\""
   ];
 
   string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
@@ -64,12 +64,12 @@ message MsgCreatePost {
   repeated desmos.posts.v1beta1.Attachment attachments = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "attachments,omitempty",
-    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+    (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
   desmos.posts.v1beta1.PollData poll_data = 8 [
     (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
+    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
   ];
 }
 
@@ -94,12 +94,12 @@ message MsgEditPost {
   repeated desmos.posts.v1beta1.Attachment attachments = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "attachments,omitempty",
-    (gogoproto.moretags) = "yaml\"attachments,omitempty\""
+    (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
   desmos.posts.v1beta1.PollData poll_data = 4 [
     (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml\"poll_data,omitempty\""
+    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
   ];
 
   string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];

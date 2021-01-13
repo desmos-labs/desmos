@@ -101,13 +101,15 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				},
 			},
 			newPost: types.Post{
-				PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				Message:      "New post greater",
-				Created:      suite.testData.post.Created,
-				LastEdited:   suite.testData.post.LastEdited,
-				Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData: []types.OptionalDataEntry{{"key", "value"}},
-				Creator:      suite.testData.postOwner,
+				PostID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				Message:    "New post greater",
+				Created:    suite.testData.post.Created,
+				LastEdited: suite.testData.post.LastEdited,
+				Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				OptionalData: []types.OptionalDataEntry{
+					types.NewOptionalDataEntry("key", "value"),
+				},
+				Creator: suite.testData.postOwner,
 			},
 		},
 		{

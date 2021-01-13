@@ -82,27 +82,6 @@ func (post Post) Validate() error {
 	return nil
 }
 
-// ContentsEquals returns true if and only if p and other contain the same poll, without considering the ID
-func (post Post) ContentsEquals(other Post) bool {
-	equalsOptionalData := len(post.OptionalData) == len(other.OptionalData)
-	if equalsOptionalData {
-		for index, opd := range post.OptionalData {
-			equalsOptionalData = equalsOptionalData && opd == other.OptionalData[index]
-		}
-	}
-
-	return post.ParentID == other.ParentID &&
-		post.Message == other.Message &&
-		post.Created.Equal(other.Created) &&
-		post.LastEdited.Equal(other.LastEdited) &&
-		post.AllowsComments == other.AllowsComments &&
-		post.Subspace == other.Subspace &&
-		equalsOptionalData &&
-		post.Creator == other.Creator &&
-		post.Attachments.Equal(other.Attachments) &&
-		post.PollData.Equal(other.PollData)
-}
-
 // GetPostHashtags returns all the post's hashtags without duplicates
 func (post Post) GetPostHashtags() []string {
 	hashtags := GetTags(post.Message)

@@ -360,7 +360,9 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]types.OptionalDataEntry{{"field", "value"}},
+				[]types.OptionalDataEntry{
+					types.NewOptionalDataEntry("field", "value"),
+				},
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
 					types.NewAttachment("https://uri.com", "text/plain", nil),
@@ -379,10 +381,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
-					types.Attachment{
-						URI:      "https://uri.com",
-						MimeType: "text/plain",
-					},
+					types.NewAttachment("https://uri.com", "text/plain", nil),
 				},
 				msgCreatePost.PollData,
 			),
