@@ -42,7 +42,7 @@ func ValidReportsIDs(k Keeper) sdk.Invariant {
 
 		for ; iterator.Valid(); iterator.Next() {
 			postID := string(bytes.TrimPrefix(iterator.Key(), types.ReportsStorePrefix))
-			if !poststypes.IsValidPostId(postID) {
+			if !poststypes.IsValidPostID(postID) {
 				invalidIDs = append(invalidIDs, postID)
 			}
 		}

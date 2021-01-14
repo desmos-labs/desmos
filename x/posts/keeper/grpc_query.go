@@ -57,11 +57,11 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 			return false, status.Error(codes.Internal, err.Error())
 		}
 
-		matchParentId, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
+		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostId(req.ParentId) {
-			matchParentId = req.ParentId == post.ParentId
+		if types.IsValidPostID(req.ParentId) {
+			matchParentID = req.ParentId == post.ParentId
 		}
 
 		// match creation time if valid height
@@ -90,7 +90,7 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 			}
 		}
 
-		if matchParentId && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
+		if matchParentID && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
 			if accumulate {
 				filteredPosts = append(filteredPosts, k.getPostResponse(ctx, post))
 			}
@@ -109,7 +109,7 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 }
 
 func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
-	if !types.IsValidPostId(req.PostId) {
+	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
 
@@ -124,7 +124,7 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 }
 
 func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
-	if !types.IsValidPostId(req.PostId) {
+	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
 

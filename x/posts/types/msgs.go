@@ -44,8 +44,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator")
 	}
 
-	if msg.ParentId != "" && !IsValidPostId(msg.ParentId) {
-		return sdkerrors.Wrap(ErrInvalidPostId, msg.ParentId)
+	if msg.ParentId != "" && !IsValidPostID(msg.ParentId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentId)
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
@@ -114,8 +114,8 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
-	if !IsValidPostId(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostId, msg.PostId)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
@@ -175,8 +175,8 @@ func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
-	if !IsValidPostId(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostId, msg.PostId)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -222,8 +222,8 @@ func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
-	if !IsValidPostId(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostId, msg.PostId)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -269,8 +269,8 @@ func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
-	if !IsValidPostId(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostId, msg.PostId)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Answerer)

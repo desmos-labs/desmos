@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ParamPostId = "post_id"
+	ParamPostID = "post_id"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application

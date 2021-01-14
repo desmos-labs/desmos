@@ -23,7 +23,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{keeper}
 }
 
-func computePostId(ctx sdk.Context, msg *types.MsgCreatePost) string {
+func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 	post := types.Post{
 		ParentId:       msg.ParentId,
 		Message:        msg.Message,
@@ -48,7 +48,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	post := types.NewPost(
-		computePostId(ctx, msg),
+		computePostID(ctx, msg),
 		msg.ParentId,
 		msg.Message,
 		msg.AllowsComments,
@@ -78,7 +78,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// If valid, check the parent post
-	if types.IsValidPostId(post.ParentId) {
+	if types.IsValidPostID(post.ParentId) {
 		parentPost, found := k.GetPost(ctx, post.ParentId)
 		if !found {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -97,8 +97,8 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostCreated,
-		sdk.NewAttribute(types.AttributeKeyPostId, post.PostId),
-		sdk.NewAttribute(types.AttributeKeyPostParentId, post.ParentId),
+		sdk.NewAttribute(types.AttributeKeyPostID, post.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentId),
 		sdk.NewAttribute(types.AttributeKeyPostCreationTime, post.Created.Format(time.RFC3339)),
 		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator),
 	))
@@ -150,7 +150,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostEdited,
-		sdk.NewAttribute(types.AttributeKeyPostId, existing.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostID, existing.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.Format(time.RFC3339)),
 	))
 
@@ -179,7 +179,7 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReactionAdded,
-		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User),
 		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
@@ -211,7 +211,7 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReactionRemoved,
-		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User),
 		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
@@ -315,7 +315,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeAnsweredPoll,
-		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPollAnswerer, msg.Answerer),
 	))
 

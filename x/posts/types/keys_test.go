@@ -48,7 +48,7 @@ func TestIsValidPostId(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.postID, func(t *testing.T) {
-			require.Equal(t, test.expValid, types.IsValidPostId(test.postID))
+			require.Equal(t, test.expValid, types.IsValidPostID(test.postID))
 		})
 	}
 }

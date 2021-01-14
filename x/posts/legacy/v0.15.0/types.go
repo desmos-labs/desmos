@@ -7,7 +7,7 @@ import (
 // GenesisState contains the data of a v0.15.0 genesis state for the posts module
 type GenesisState = v0150posts.GenesisState
 
-func FindUserAnswerEntryForPostId(state GenesisState, postID string) (bool, *UserAnswersEntry) {
+func FindUserAnswerEntryForPostID(state GenesisState, postID string) (bool, *UserAnswersEntry) {
 	for _, entry := range state.UsersPollAnswers {
 		if entry.PostId == postID {
 			return true, &entry
@@ -16,7 +16,7 @@ func FindUserAnswerEntryForPostId(state GenesisState, postID string) (bool, *Use
 	return false, nil
 }
 
-func FindPostReactionEntryForPostId(state GenesisState, postID string) (bool, *PostReactionsEntry) {
+func FindPostReactionEntryForPostID(state GenesisState, postID string) (bool, *PostReactionsEntry) {
 	for _, entry := range state.PostsReactions {
 		if entry.PostId == postID {
 			return true, &entry

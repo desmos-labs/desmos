@@ -42,7 +42,7 @@ var (
 )
 
 type ReportsData struct {
-	PostId  string
+	PostID  string
 	Message string
 	Type    string
 	Creator simtypes.Account
@@ -55,14 +55,14 @@ func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []simtypes.Account
 
 	return ReportsData{
 		Creator: simAccount,
-		PostId:  post.PostId,
+		PostID:  post.PostId,
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}
 }
 
-// RandomPostId returns a randomly generated postID
-func RandomPostId(r *rand.Rand) string {
+// RandomPostID returns a randomly generated postID
+func RandomPostID(r *rand.Rand) string {
 	randBytes := make([]byte, 4)
 	_, err := r.Read(randBytes)
 	if err != nil {

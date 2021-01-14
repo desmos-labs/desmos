@@ -67,7 +67,7 @@ func queryPost(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
 	id := path[0]
-	if !types.IsValidPostId(id) {
+	if !types.IsValidPostID(id) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", id)
 	}
 
@@ -116,7 +116,7 @@ func queryPollAnswers(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
 	id := path[0]
-	if !types.IsValidPostId(id) {
+	if !types.IsValidPostID(id) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", id)
 	}
 

@@ -75,7 +75,7 @@ func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidCommentsIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if types.IsValidPostId(post.ParentId) {
+			if types.IsValidPostID(post.ParentId) {
 				parentPost, _ := k.GetPost(ctx, post.ParentId)
 				if post.Created.Before(parentPost.Created) {
 					invalidCommentsIDs = append(invalidCommentsIDs, post.PostId)

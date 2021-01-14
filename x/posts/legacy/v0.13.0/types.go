@@ -1,3 +1,4 @@
+//nolint
 package v0130
 
 import (

@@ -76,7 +76,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	}
 
 	// Save the comments to the parent post, if it is valid
-	if types.IsValidPostId(post.ParentId) {
+	if types.IsValidPostID(post.ParentId) {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentId)
 
 		var commentsIDs types.CommentIDs
@@ -136,11 +136,11 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams) []types.Post {
 	var filteredPosts []types.Post
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-		matchParentId, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
+		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostId(params.ParentId) {
-			matchParentId = params.ParentId == post.ParentId
+		if types.IsValidPostID(params.ParentId) {
+			matchParentID = params.ParentId == post.ParentId
 		}
 
 		// match creation time if valid height
@@ -169,7 +169,7 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			}
 		}
 
-		if matchParentId && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
+		if matchParentID && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
 			filteredPosts = append(filteredPosts, post)
 		}
 

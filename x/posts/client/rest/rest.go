@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	ParamPostId = "post_id"
+	ParamPostID = "post_id"
 
 	ParamSortBy       = "sort_by"
 	ParamSortOrder    = "sort_order"
-	ParamParentId     = "parent_id"
+	ParamParentID     = "parent_id"
 	ParamCreationTime = "creation_time"
 	ParamSubspace     = "subspace"
 	ParamCreator      = "creator"
@@ -33,7 +33,7 @@ func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 type CreatePostReq struct {
 	BaseReq        rest.BaseReq       `json:"base_req"`
 	Message        string             `json:"message"`
-	ParentId       string             `json:"parent_id"`
+	ParentID       string             `json:"parent_id"`
 	AllowsComments bool               `json:"allows_comments"`
 	Subspace       string             `json:"subspace"`
 	OptionalData   types.OptionalData `json:"optional_data"`
@@ -45,14 +45,14 @@ type CreatePostReq struct {
 // AddReactionReq defines the properties of a reaction adding request's body.
 type AddReactionReq struct {
 	BaseReq  rest.BaseReq `json:"base_req"`
-	PostId   string       `json:"post_id"`
+	PostID   string       `json:"post_id"`
 	Reaction string       `json:"reaction"`
 }
 
 // RemoveReactionReq defines the properties of a reaction removal request's body.
 type RemoveReactionReq struct {
 	BaseReq  rest.BaseReq `json:"base_req"`
-	PostId   string       `json:"post_id"`
+	PostID   string       `json:"post_id"`
 	Reaction string       `json:"reaction"`
 }
 

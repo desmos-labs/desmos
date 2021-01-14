@@ -22,7 +22,7 @@ func GetQueryCmd() *cobra.Command {
 	return magpieQueryCmd
 }
 
-// GetCmdSession queries a session by PostId
+// GetCmdSession queries a session by PostID
 func GetCmdSession() *cobra.Command {
 	return &cobra.Command{
 		Use:   "session [id]",

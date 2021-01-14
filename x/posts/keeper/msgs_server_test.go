@@ -493,7 +493,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReactionAdded,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
@@ -526,7 +526,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReactionAdded,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, "🙂"),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
@@ -650,7 +650,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, "react"),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":registeredReactions:"),
@@ -687,7 +687,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, "😄"),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
@@ -724,7 +724,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReactionRemoved,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyPostReactionOwner, "cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg"),
 					sdk.NewAttribute(types.AttributeKeyPostReactionValue, "👍"),
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":+1:"),
@@ -966,7 +966,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeAnsweredPoll,
-					sdk.NewAttribute(types.AttributeKeyPostId, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
+					sdk.NewAttribute(types.AttributeKeyPostID, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 					sdk.NewAttribute(types.AttributeKeyPollAnswerer, suite.testData.post.Creator),
 				),
 			},

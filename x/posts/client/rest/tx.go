@@ -24,7 +24,7 @@ func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/posts/reactions",
 		removeReactionToPostHandler(cliCtx)).Methods("DELETE")
 
-	r.HandleFunc(fmt.Sprintf("/posts/{%s}/answers", ParamPostId),
+	r.HandleFunc(fmt.Sprintf("/posts/{%s}/answers", ParamPostID),
 		addAnswerToPostPollHandler(cliCtx)).Methods("POST")
 
 	r.HandleFunc("/registeredReactions",
@@ -51,8 +51,8 @@ func createPostHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parentID := req.ParentId
-		if !types.IsValidPostId(parentID) {
+		parentID := req.ParentID
+		if !types.IsValidPostID(parentID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 			return
 		}
@@ -94,8 +94,8 @@ func addReactionToPostHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		postID := req.PostId
-		if !types.IsValidPostId(postID) {
+		postID := req.PostID
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
@@ -128,8 +128,8 @@ func removeReactionToPostHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		postID := req.PostId
-		if !types.IsValidPostId(postID) {
+		postID := req.PostID
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}
@@ -164,8 +164,8 @@ func addAnswerToPostPollHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		postID := vars[ParamPostId]
-		if !types.IsValidPostId(postID) {
+		postID := vars[ParamPostID]
+		if !types.IsValidPostID(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}

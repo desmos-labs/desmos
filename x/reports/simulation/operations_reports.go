@@ -33,7 +33,7 @@ func SimulateMsgReportPost(
 		}
 
 		msg := types.NewMsgReportPost(
-			data.PostId,
+			data.PostID,
 			data.Type,
 			data.Message,
 			data.Creator.Address.String(),

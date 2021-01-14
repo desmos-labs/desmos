@@ -33,7 +33,7 @@ func NewPost(
 
 // Validate implements validator
 func (post Post) Validate() error {
-	if !IsValidPostId(post.PostId) {
+	if !IsValidPostID(post.PostId) {
 		return fmt.Errorf("invalid post id: %s", post.PostId)
 	}
 
@@ -41,7 +41,7 @@ func (post Post) Validate() error {
 		return fmt.Errorf("post id and parent id cannot be the same")
 	}
 
-	if len(strings.TrimSpace(post.ParentId)) != 0 && !IsValidPostId(post.ParentId) {
+	if len(strings.TrimSpace(post.ParentId)) != 0 && !IsValidPostID(post.ParentId) {
 		return fmt.Errorf("invalid parent id: %s", post.ParentId)
 	}
 

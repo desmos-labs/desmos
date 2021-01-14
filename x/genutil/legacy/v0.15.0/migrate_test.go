@@ -114,7 +114,7 @@ func verifyPostsStateMigrated(
 
 	// Make sure the poll answers are migrated properly
 	for postID, originalValue := range original.UsersPollAnswers {
-		found, migratedEntry := v0150posts.FindUserAnswerEntryForPostId(migrated, postID)
+		found, migratedEntry := v0150posts.FindUserAnswerEntryForPostID(migrated, postID)
 		require.True(t, found)
 
 		for index, original := range originalValue {
@@ -126,7 +126,7 @@ func verifyPostsStateMigrated(
 	// Make sure the post reactions are migrated properly
 	require.Len(t, migrated.PostsReactions, len(original.PostReactions))
 	for postID, originalValue := range original.PostReactions {
-		found, migratedEntry := v0150posts.FindPostReactionEntryForPostId(migrated, postID)
+		found, migratedEntry := v0150posts.FindPostReactionEntryForPostID(migrated, postID)
 		require.True(t, found)
 
 		for index, original := range originalValue {

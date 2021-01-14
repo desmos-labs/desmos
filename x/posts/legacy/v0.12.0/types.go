@@ -1,3 +1,4 @@
+//nolint
 package v0120
 
 import (
@@ -24,7 +25,6 @@ type GenesisState struct {
 // ----------------------------------------------------------------------------------------------------------------
 
 // ComputeID returns a sha256 hash of the given data concatenated together
-//nolint: interfacer
 func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) string {
 	hash := sha256.Sum256([]byte(creationDate.String() + creator.String() + subspace))
 	return hex.EncodeToString(hash[:])

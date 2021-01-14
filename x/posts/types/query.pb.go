@@ -1867,7 +1867,7 @@ func (m *QueryPostsParams) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ParentId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2148,7 +2148,7 @@ func (m *QueryPostsRequest) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ParentId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2524,7 +2524,7 @@ func (m *QueryPostRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PostId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2795,7 +2795,7 @@ func (m *QueryPollAnswersRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PostId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2880,7 +2880,7 @@ func (m *QueryPollAnswersResponse) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PostId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {

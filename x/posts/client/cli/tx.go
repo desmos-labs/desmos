@@ -197,9 +197,9 @@ E.g.
 			}
 
 			// Check parent id
-			parentID := viper.GetString(FlagParentId)
-			if parentID != "" && !types.IsValidPostId(parentID) {
-				return sdkerrors.Wrap(types.ErrInvalidPostId, parentID)
+			parentID := viper.GetString(FlagParentID)
+			if parentID != "" && !types.IsValidPostID(parentID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, parentID)
 			}
 
 			// Check for attachments
@@ -238,7 +238,7 @@ E.g.
 	}
 
 	cmd.Flags().Bool(FlagAllowsComments, true, "Possibility to comment the post or not")
-	cmd.Flags().String(FlagParentId, "", "Id of the post to which this one should be an answer to")
+	cmd.Flags().String(FlagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
@@ -291,7 +291,7 @@ E.g.
 			}
 
 			postID := args[0]
-			if !types.IsValidPostId(postID) {
+			if !types.IsValidPostID(postID) {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, postID)
 			}
 
@@ -356,8 +356,8 @@ E.g.
 			}
 
 			postID := args[0]
-			if !types.IsValidPostId(postID) {
-				return sdkerrors.Wrap(types.ErrInvalidPostId, postID)
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
 			}
 
 			msg := types.NewMsgAddPostReaction(postID, args[1], clientCtx.GetFromAddress().String())
@@ -394,8 +394,8 @@ E.g.
 			}
 
 			postID := args[0]
-			if !types.IsValidPostId(postID) {
-				return sdkerrors.Wrap(types.ErrInvalidPostId, postID)
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
 			}
 
 			msg := types.NewMsgRemovePostReaction(postID, clientCtx.FromAddress.String(), args[1])
@@ -425,8 +425,8 @@ func GetCmdAnswerPoll() *cobra.Command {
 			}
 
 			postID := args[0]
-			if !types.IsValidPostId(postID) {
-				return sdkerrors.Wrap(types.ErrInvalidPostId, postID)
+			if !types.IsValidPostID(postID) {
+				return sdkerrors.Wrap(types.ErrInvalidPostID, postID)
 			}
 
 			var answers []string

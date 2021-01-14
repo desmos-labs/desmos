@@ -13,7 +13,7 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// RandomPostIdOrSubspace returns a random PostId
+// RandomPostIdOrSubspace returns a random PostID
 func RandomPostIdOrSubspace() string {
 	bytes := make([]byte, 128)
 	_, err := rand.Read(bytes)

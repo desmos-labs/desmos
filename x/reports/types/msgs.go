@@ -27,8 +27,8 @@ func (msg MsgReportPost) Type() string { return ActionReportPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {
-	if !poststypes.IsValidPostId(msg.PostId) {
-		return sdkerrors.Wrapf(poststypes.ErrInvalidPostId, msg.PostId)
+	if !poststypes.IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrapf(poststypes.ErrInvalidPostID, msg.PostId)
 	}
 
 	if strings.TrimSpace(msg.ReportType) == "" {

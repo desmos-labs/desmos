@@ -38,7 +38,7 @@ func SimulateMsgAddPostReaction(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, nil
 		}
 
-		msg := types.NewMsgAddPostReaction(data.PostId, data.Shortcode, data.User.Address.String())
+		msg := types.NewMsgAddPostReaction(data.PostID, data.Shortcode, data.User.Address.String())
 		err := sendMsgAddPostReaction(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, err
@@ -136,7 +136,7 @@ func SimulateMsgRemovePostReaction(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, nil
 		}
 
-		msg := types.NewMsgRemovePostReaction(data.PostId, data.User.Address.String(), data.Shortcode)
+		msg := types.NewMsgRemovePostReaction(data.PostID, data.User.Address.String(), data.Shortcode)
 		err := sendMsgRemovePostReaction(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.User.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, err
@@ -211,7 +211,7 @@ func randomRemovePostReactionFields(
 	}
 
 	user := GetAccount(addr, accs)
-	data := PostReactionData{Shortcode: reaction.ShortCode, Value: reaction.Value, User: *user, PostId: post.PostId}
+	data := PostReactionData{Shortcode: reaction.ShortCode, Value: reaction.Value, User: *user, PostID: post.PostId}
 	return &data, false
 }
 

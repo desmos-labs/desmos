@@ -27,8 +27,8 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 
 	// Check if the post to report exists
 	postID := msg.PostId
-	if !poststypes.IsValidPostId(postID) {
-		return nil, sdkerrors.Wrap(poststypes.ErrInvalidPostId, postID)
+	if !poststypes.IsValidPostID(postID) {
+		return nil, sdkerrors.Wrap(poststypes.ErrInvalidPostID, postID)
 	}
 
 	if exist := k.CheckPostExistence(ctx, postID); !exist {
@@ -44,7 +44,7 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReported,
-		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyReportOwner, msg.User),
 	))
 

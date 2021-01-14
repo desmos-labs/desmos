@@ -74,7 +74,7 @@ func randomPostReactionsEntries(r *rand.Rand, posts []types.Post, reactionsData 
 			reactions[j] = types.NewPostReaction(data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
 		}
 
-		id := RandomPostIdFromPosts(r, posts)
+		id := RandomPostIDFromPosts(r, posts)
 		entries[i] = types.NewPostReactionsEntry(id, reactions)
 	}
 

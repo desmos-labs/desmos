@@ -14,7 +14,7 @@ const (
 	flagSortBy   = "sort-by"
 	flagSorOrder = "sort-order"
 
-	FlagParentId       = "parent-id"
+	FlagParentID       = "parent-id"
 	FlagAttachment     = "attachment"
 	FlagPollDetails    = "poll-details"
 	FlagPollAnswer     = "poll-answer"

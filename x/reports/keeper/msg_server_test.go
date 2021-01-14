@@ -90,7 +90,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypePostReported,
-					sdk.NewAttribute(types.AttributeKeyPostId, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
 					sdk.NewAttribute(types.AttributeKeyReportOwner, suite.testData.creator),
 				),
 			},
