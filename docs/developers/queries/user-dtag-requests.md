@@ -6,7 +6,7 @@ This query endpoint allows you to retrieve the DTag requests of the user with th
 desmosd query profiles dtag-requests [address]
 
 # Example
-# desmosd query relationships dtag-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmosd query profiles dtag-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
 
 **REST**
