@@ -348,7 +348,7 @@ func TestDTagTransferRequest_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("invalid DTag to trade "),
+			expErr: fmt.Errorf("invalid DTag to trade: "),
 		},
 		{
 			name: "Empty request sender returns error",
@@ -357,7 +357,7 @@ func TestDTagTransferRequest_Validate(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("invalid sender address: "),
+			expErr: fmt.Errorf("invalid DTag transfer request sender address: "),
 		},
 		{
 			name: "Empty request receiver returns error",
