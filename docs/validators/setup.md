@@ -6,27 +6,24 @@ If you want to become a validator for the `mainnet`, you should [research securi
 :::
 
 ## 1. Run a fullnode
-To become a validator, you must first have `desmosd` and `desmoscli` installed and be able to run a fullnode. You can first [setup your fullnode](../fullnode/overview.md) if you haven't yet.
+To become a validator, you must first have `desmosd` installed and be able to run a fullnode. You can
+first [setup your fullnode](../fullnode/overview.md) if you haven't yet.
 
 :::tip Not enough funds? Google Cloud can help you  
-Running a validator node should be done on a separate machine, not your local computer. This is due to the fact that validators need to be constantly running to avoid getting slashed (and thus loosing funds). We highly recommend setting up a local machine that can run 24/7, even a Raspberry can do the job. 
+Running a validator node should be done on a separate machine, not your local computer. This is due to the fact that
+validators need to be constantly running to avoid getting slashed (and thus loosing funds). We highly recommend setting
+up a local machine that can run 24/7, even a Raspberry can do the job.
 
-If you do not have the possibility of using a local machine, even an hosted server can be perfect. If you wish to get started for free, you can use the [300$ Google Cloud bonus](https://cloud.google.com/free/docs/gcp-free-tier). This should be enough to run a validator for 5-6 months.  
-:::  
-
-:::tip Previously gone thought a Primer challenge? Reset your `desmoscli`
-If you've previously gone through a Primer challenge, you need to make sure your `demoscli` is properly setup to communicate with your node. In order to do so, please execute the following command: 
-
-```bash
-rm $HOME/.desmoscli/config/config.toml
-```
+If you do not have the possibility of using a local machine, even an hosted server can be perfect. If you wish to get
+started for free, you can use the [300$ Google Cloud bonus](https://cloud.google.com/free/docs/gcp-free-tier). This
+should be enough to run a validator for 5-6 months.  
 :::
 
 ## 2. Create your validator
 In order to create a validator, you need to have to create a local wallet first. This will be used in order to hold the tokens that you will later delegate to your validator node, allowing him to properly work. In order to create this wallet, please run: 
 
 ```shell
-desmoscli keys add <key_name>
+desmosd keys add <key_name>
 ```  
 
 :::warning Key name  
@@ -52,7 +49,7 @@ We are going to use `udesmos` as the staking token on Mainnet.
 :::
 
 ```bash
-desmoscli tx staking create-validator \
+desmosd tx staking create-validator \
   --amount=1000000udaric \
   --pubkey=$(desmosd tendermint show-validator) \
   --moniker="<Your moniker here>" \
@@ -89,7 +86,7 @@ The <key_name> specifies which validator you are editing. If you choose to not i
 The `--identity` can be used as to verify identity with systems like Keybase or UPort. When using with Keybase `--identity` should be populated with a 16-digit string that is generated with a [keybase.io](https://keybase.io) account. It's a cryptographically secure method of verifying your identity across multiple online networks. The Keybase API allows some block explorers to retrieve your Keybase avatar. This is how you can add a logo to your validator profile.
 
 ```bash
-desmoscli tx staking edit-validator \
+desmosd tx staking edit-validator \
   --moniker="choose a moniker" \
   --website="https://desmos.network" \
   --identity=6A0D65E29A4CBC8E \
@@ -110,11 +107,11 @@ __Note__: The `commission-rate` value must adhere to the following invariants:
 View the validator's information with this command:
 
 ```bash
-desmoscli query staking validator <account_desmos>
+desmosd query staking validator <account_desmos>
 ```
 
 ```bash
-desmoscli tx slashing unjail \
+desmosd tx slashing unjail \
 	--from=<key_name> \
 	--chain-id=<chain_id>
 ```
@@ -123,7 +120,7 @@ desmoscli tx slashing unjail \
 Your validator is active if the following command returns anything:
 
 ```bash
-desmoscli query tendermint-validator-set | grep "$(desmosd tendermint show-validator)"
+desmosd query tendermint-validator-set | grep "$(desmosd tendermint show-validator)"
 ```
 
 You should now see your validator in one of the Desmos explorers. You are looking for the `bech32` encoded `address` in the `~/.desmosd/config/priv_validator.json` file.

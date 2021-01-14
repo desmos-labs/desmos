@@ -1,26 +1,27 @@
 # Create a local testnet
 :::warning Required desmos executables  
-You need to [install `desmoscli` and `desmosd`](../install.md) before going further.  
-:::  
+You need to [install `desmosd`](../install.md) before going further.  
+:::
 
-There are two types of local testnets: 
+There are two types of local testnets:
 
 - [Single node testnet](#creating-a-single-node-testnet), which allows you to have a faster testnet with only one validator running on your machine. 
 
 - [Multi-node testnet](#creating-a-multi-node-testnet), which requires you to have [Docker](https://docker.io) installed to run 4 validator nodes locally on your machine. 
 
 ## Creating a single node testnet
-To create a single node local testnet, run the following commands: 
+To create a single node local testnet, run the following commands:
 
-1. Create a `desmoscli` key. Replace `<your-key-name>` with whatever name you prefer. 
+1. Create a local key. Replace `<your-key-name>` with whatever name you prefer.
    ```bash 
-   desmoscli keys add <your-key-name>
+   desmosd keys add <your-key-name>
    ```
-   
-   You will be required to input a password. Please make sure you use one that you will remember later. You should now see an output like
-   
+
+   You will be required to input a password. Please make sure you use one that you will remember later. You should now
+   see an output like
+
    ```bash
-   $ desmoscli keys add jack --dry-run
+   $ desmosd keys add jack --dry-run
    
    - name: jack
      type: local
@@ -89,7 +90,6 @@ calling the `desmosd testnet` command. This outputs a handful of files in the
 ```bash
 $ tree -L 2 build/
 build/
-├── desmoscli
 ├── desmosd
 ├── gentxs
 │   ├── node0.json
@@ -97,7 +97,7 @@ build/
 │   ├── node2.json
 │   └── node3.json
 ├── node0
-│   ├── desmoscli
+│   ├── desmosd
 │   │   ├── key_seed.json
 │   │   └── keys
 │   └── desmosd
@@ -105,21 +105,21 @@ build/
 │       ├── config
 │       └── data
 ├── node1
-│   ├── desmoscli
+│   ├── desmosd
 │   │   └── key_seed.json
 │   └── desmosd
 │       ├── ${LOG:-desmosd.log}
 │       ├── config
 │       └── data
 ├── node2
-│   ├── desmoscli
+│   ├── desmosd
 │   │   └── key_seed.json
 │   └── desmosd
 │       ├── ${LOG:-desmosd.log}
 │       ├── config
 │       └── data
 └── node3
-    ├── desmoscli
+    ├── desmosd
     │   └── key_seed.json
     └── desmosd
         ├── ${LOG:-desmosd.log}
@@ -138,14 +138,15 @@ docker logs -f desmosdnode0
 ```
 
 #### Keys & Accounts
-To interact with `desmoscli` and start querying state or creating txs, you use the
-`desmoscli` directory of any given node as your `home`, for example:
+
+To interact with `desmosd` and start querying state or creating txs, you use the
+`desmosd` directory of any given node as your `home`, for example:
 
 ```bash
-desmoscli keys list --home ./build/node0/desmoscli
+desmosd keys list --home ./build/node0/desmosd
 ```
 
-Now that accounts exists, you may create new accounts and send those accounts
-funds!
+Now that accounts exists, you may create new accounts and send those accounts funds!
 
-**Note**: Each node's seed is located at `./build/nodeN/desmoscli/key_seed.json` and can be restored to the CLI using the `desmoscli keys add --restore` command
+**Note**: Each node's seed is located at `./build/nodeN/desmosd/key_seed.json` and can be restored to the CLI using
+the `desmosd keys add --restore` command

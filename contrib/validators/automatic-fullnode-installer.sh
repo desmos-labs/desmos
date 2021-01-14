@@ -9,6 +9,7 @@ if [ -z "$MONIKER" ]; then
   echo "Validator moniker not given. Please specify it as the first argument"
   exit
 fi
+SEED=$2
 
 USER=$(id -u -n)
 
@@ -83,13 +84,6 @@ if [ -d "$DESMOSD_FOLDER" ]; then
   sudo rm -r DESMOSD_FOLDER
 fi
 
-# Delete the old $HOME/.desmoscli folder
-DESMOSCLI_FOLDER="$HOME/.desmoscli"
-if [ -d "$DESMOSCLI_FOLDER" ]; then
-  echo "====> Removing existing desmoscli folder"
-  sudo rm -r DESMOSCLI_FOLDER
-fi
-
 # Clone Desmos
 echo "====> Downloading Desmos"
 {
@@ -111,8 +105,13 @@ echo "====> Downloading Desmos"
 # Initialize the chain
 echo "====> Initializing a new chain"
 {
+  MONIKER=$1
+  if [ -z "$SEED" ]; then
+    cosmovisor init "$MONIKER"
+  else
+    cosmovisor init "$MONIKER" --recover "$SEED"
+  fi
   cosmovisor unsafe-reset-all
-  cosmovisor init "$MONIKER"
 } &> /dev/null
 
 # Restore the priv validator key

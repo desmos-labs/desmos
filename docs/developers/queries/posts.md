@@ -3,10 +3,10 @@ This query endpoint allows you to retrieve the details of a single post having i
 
 **CLI**
  ```bash
-desmoscli query posts post [id]
+desmosd query posts post [id]
 
 # Example
-# desmoscli query posts post a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
+# desmosd query posts post a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
 ``` 
 
 **REST**
@@ -22,7 +22,7 @@ This query endpoint allows you to get all the stored posts that match one or mor
 
 **CLI**
 ```bash
-desmoscli query posts [--flags]
+desmosd query posts [--flags]
 ```
 
 Available flags: 
@@ -44,7 +44,7 @@ Available flags:
 
 ```bash
 # Example
-# desmoscli query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
+# desmosd query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
 ```
 
 **REST**

@@ -15,7 +15,7 @@ can [unjail your validator](#problem-4-my-validator-is-jailed).
 Lastly, check your validator again to see if your voting power is back.
 
 ```bash
-desmoscli status
+desmosd status
 ```
 
 You may notice that your voting power is less than it used to be. That's because you got slashed for downtime!
@@ -49,39 +49,43 @@ To solve this, what you can do is getting more tokens delegated to it by followi
 
 1. Get your address: 
    ```bash
-   desmoscli keys show <your_key> --address
+   desmosd keys show <your_key> --address
    ```
    
 2. Require more tokens using the [faucet](https://faucet.desmos.network). 
 
 3. Make sure the tokens have been sent properly: 
    ```bash
-   desmoscli query account $(desmoscli keys show <your_key> --address) --chain-id <chain_id>
+   desmosd query account $(desmosd keys show <your_key> --address) --chain-id <chain_id>
    ```
    
 4. Delegate the tokens to your validator: 
    ```bash
-   desmoscli tx staking delegate \
-     $(desmoscli keys show <your_key> --bech=val --address) \
+   desmosd tx staking delegate \
+     $(desmosd keys show <your_key> --bech=val --address) \
      <amount> \
      --chain-id <chain_id> \
      --from <your_key> --yes
    
    # Example
-   # desmoscli tx staking delegate \
-   #  $(desmoscli keys show validator --bech=val --address) \
+   # desmosd tx staking delegate \
+   #  $(desmosd keys show validator --bech=val --address) \
    #  10000000udaric \
    #  --chain-id morpheus-1001 \
    #  --from validator --yes
    ```
 
 ## Problem #4: My validator is jailed
-If your validator is jailed it probably means that it have been inactive for a log period of time missing a consistent number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some error.
 
-If your service is running properly, you can also try and reset your `desmoscli` configuration by running the following command: 
+If your validator is jailed it probably means that it have been inactive for a long period of time missing a consistent
+number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some
+error.
+
+If your service is running properly, you can also try and reset your `desmosd` configuration by running the following
+command:
 
 ```bash
-rm $HOME/.desmoscli/config/config.toml
+rm $HOME/.desmosd/config/config.toml
 ``` 
 
 After doing so, remember to restart your validator service to apply the changes.
@@ -89,10 +93,10 @@ After doing so, remember to restart your validator service to apply the changes.
 Once you have fixed the problems, you can unjail your validator by executing the following command: 
 
 ```bash
-desmoscli tx slashing unjail --chain-id <chain_id> --from <your_key>
+desmosd tx slashing unjail --chain-id <chain_id> --from <your_key>
 
 # Example
-# desmoscli tx slashing unjail --chain-id morpheus-1001 --from validator
+# desmosd tx slashing unjail --chain-id morpheus-1001 --from validator
 ```
 
 This will perform an unjail transaction that will set your validator as active again from the next block. 
@@ -182,32 +186,7 @@ d45d4e0a6a6c393d58cfa1c5fed6286164fbfceb@35.193.251.165:26656
 
 You can do this with as many peers as you want. Once you have a list of peers, you can use those inside the `persistent_peers` field of your `~/.desmosd/config/config.toml` file.
 
-## Problem #6: The `desmoscli keys list` command does not work
-Starting with v0.38, the Cosmos SDK uses os-native keyring to store all the private keys. Unfortunately, in some cases this does not work well by default. For example, it might return some errors when used in GUI-less machines.
-
-In order to solve this problem, you have two options: 
-
-1. store the private keys inside a file on your machine, **OR**
-2. use a password manager.
-
-We highly suggest you to use a password manager. However, if you want to use a file-based approach you can execute the following commands:
-
-```
-mkdir -p ~/.desmoscli
-desmoscli config keyring-backend file
-```
-
-Once you have executed those commands, you will be required to re-add your key by using your mnemonic phrase. To do so,
-run:
-
-```
-desmoscli keys add <your_key_name> --recover
-```
-
-This will require you to input the mnemonic phrase and then the keyring password. Once done, you should be able to
-execute all the `desmoscli keys`-related commands properly.
-
-## Problem #7: I tried unjailing my validator, but it keeps getting jailed after some time
+## Problem #6: I tried unjailing my validator, but it keeps getting jailed after some time
 
 If you have [tried to unjail](#problem-4-my-validator-is-jailed), but you've seen that your node is jailed again shortly
 after, it most probably means that your validator has been **tombstoned**.

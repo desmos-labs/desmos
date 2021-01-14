@@ -6,10 +6,10 @@ See the [testnet repo](https://github.com/desmos-labs/morpheus) for information 
 
 ## Validators
 :::warning Requires desmos executables  
-To join the public testnet you **must** have [`desmoscli` and `desmosd` installed](../fullnode/setup/overview.md).  
+To join the public testnet you **must** have [`desmosd` installed](../fullnode/setup/overview.md).  
 :::
 
-To become a testnet validators, the mainnet instructions apply: 
+To become a testnet validators, the mainnet instructions apply:
 
 1. [Create a full node](../fullnode/setup/overview.md).
 2. [Become a validator](../validators/setup.md)

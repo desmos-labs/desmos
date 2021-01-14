@@ -34,14 +34,18 @@ make install
 make install DB_BACKEND=rocksdb 
 ```
 
-If the software is built successfully, `desmosd` and `desmoscli` will be located at `/go/bin` of your home directory. If you have setup your environment variables correctly in the previous step, you should be able to access them correctly. Try to check the version of the software.
+If the software is built successfully, `desmosd` will be located at `/go/bin` of your home directory. If you have setup
+your environment variables correctly in the previous step, you should be able to access them correctly. Try to check the
+version of the software.
 
 ```bash
 desmosd version --long
 ```
 
 ## 2. Initialize the Desmos working directory
-Configuration files and chain data will be stored inside the `.desmosd` directory under your home directory by default. It will be created when you initialize the environment.
+
+Configuration files and chain data will be stored inside the `.desmosd` directory under your home directory by default.
+It will be created when you initialize the environment.
 
 ```bash
 # Initialize the working envinorment for Desmos
@@ -50,8 +54,35 @@ desmosd init <your_moniker>
 
 You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmosd` working directory.
 
+### Recovering a previous node
+
+Starting from `v0.15.0`, you are now able to provide a custom seed when initializing your node. This will be
+particularly useful because, in the case that you want to reset your node, you will be able to re-generate the same
+private node key instead of having to create a brand new node.
+
+In order to provide a custom seed to your private key, you can do as follows:
+
+1. Get a new random seed by running
+   ```shell
+   desmosd keys add node --dry-run
+   ```
+   This will create a new key **without** adding it to your keystore, and output the underlying seed.
+
+2. Copy the above provided seed, and then pass it to the `init` command using the `--recover` flag:
+   ```shell
+   desmosd init <your_moniker> --recover <your_seed>
+   ```
+
+:::tip Recovering a node If you already have a seed, you can directly use the `--recover` flag without generating a new
+one. This will recover the private key associated to that seed.
+:::
+
 ## 3. Get the genesis file
-To connect to or start a new network, a genesis file is required. The file contains all the settings telling how the genesis block of the network should look like. To connect to the `morpheus` testnets, you will need the corresponding genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct genesis file by running the following command.
+
+To connect to or start a new network, a genesis file is required. The file contains all the settings telling how the
+genesis block of the network should look like. To connect to the `morpheus` testnets, you will need the corresponding
+genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct
+genesis file by running the following command.
 
 ```bash
 # First, remove the newly created genesis file during the initialization
@@ -108,7 +139,7 @@ The full node will connect to the peers and start syncing. You can check the sta
 
 ```bash
 # Check status of the node
-desmoscli status
+desmosd status
 ```
 
 You should see an output like the following one:
