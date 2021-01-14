@@ -108,12 +108,11 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
 
+build-arm64: go.sum
+	GOOS=linux GOARCH=arm64 $(MAKE) build
+
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
-
-build-armv8: go.sum
-	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmosd ./cmd/desmosd
-	env GOARCH=arm go build -mod=readonly $(BUILD_FLAGS) -o ./build/arm-v8/desmoscli ./cmd/desmoscli
 
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/

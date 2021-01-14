@@ -44,5 +44,5 @@ COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmosd /usr/b
 
 EXPOSE 26656 26657 1317 9090
 
-# Run desmosd by default, omit entrypoint to ease using container with desmoscli
+# Run desmosd by default, omit entrypoint to ease using container with desmosd
 CMD ["desmosd"]
