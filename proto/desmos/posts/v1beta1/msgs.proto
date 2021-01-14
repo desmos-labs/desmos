@@ -38,7 +38,6 @@ message MsgCreatePost {
   option (gogoproto.goproto_getters) = false;
 
   string parent_id = 1 [
-    (gogoproto.customname) = "ParentID",
     (gogoproto.moretags) = "yaml:\"parent_id\"",
     (gogoproto.jsontag) = "parent_id"
   ];
@@ -84,7 +83,6 @@ message MsgEditPost {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
@@ -117,7 +115,6 @@ message MsgAddPostReaction {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
@@ -139,7 +136,6 @@ message MsgRemovePostReaction {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];
@@ -161,7 +157,6 @@ message MsgAnswerPoll {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\"",
     (gogoproto.jsontag) = "post_id"
   ];

@@ -34,13 +34,13 @@ func TestMigrate(t *testing.T) {
 	expGenState := v0150reports.GenesisState{
 		Reports: []v0150reports.Report{
 			{
-				PostID:  "postID",
+				PostId:  "postID",
 				Type:    "test",
 				Message: "test",
 				User:    user.String(),
 			},
 			{
-				PostID:  "postID",
+				PostId:  "postID",
 				Type:    "txt",
 				Message: "txt",
 				User:    user.String(),

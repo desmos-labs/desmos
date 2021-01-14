@@ -114,7 +114,7 @@ func verifyPostsStateMigrated(
 
 	// Make sure the poll answers are migrated properly
 	for postID, originalValue := range original.UsersPollAnswers {
-		found, migratedEntry := migrated.FindUserAnswerEntryForPostID(postID)
+		found, migratedEntry := v0150posts.FindUserAnswerEntryForPostID(migrated, postID)
 		require.True(t, found)
 
 		for index, original := range originalValue {
@@ -124,9 +124,9 @@ func verifyPostsStateMigrated(
 	}
 
 	// Make sure the post reactions are migrated properly
-	require.Len(t, migrated.PostReactions, len(original.PostReactions))
+	require.Len(t, migrated.PostsReactions, len(original.PostReactions))
 	for postID, originalValue := range original.PostReactions {
-		found, migratedEntry := migrated.FindPostReactionEntryForPostID(postID)
+		found, migratedEntry := v0150posts.FindPostReactionEntryForPostID(migrated, postID)
 		require.True(t, found)
 
 		for index, original := range originalValue {
@@ -147,8 +147,8 @@ func verifyPostsStateMigrated(
 }
 
 func verifyMigratedPost(t *testing.T, original v0130posts.Post, migrated v0150posts.Post) {
-	require.Equal(t, original.PostID, migrated.PostID)
-	require.Equal(t, original.ParentID, migrated.ParentID)
+	require.Equal(t, original.PostId, migrated.PostId)
+	require.Equal(t, original.ParentId, migrated.ParentId)
 	require.Equal(t, original.Message, migrated.Message)
 	require.True(t, original.Created.Equal(migrated.Created))
 	require.True(t, original.LastEdited.Equal(migrated.LastEdited))
@@ -310,7 +310,7 @@ func verifyRelationshipsStateMigrated(
 	t *testing.T, original v0130relationships.GenesisState, migrated v0150relationships.GenesisState,
 ) {
 	for user, originalRelationships := range original.UsersRelationships {
-		migratedRelationships := migrated.FindRelationshipsForUser(user)
+		migratedRelationships := v0150relationships.FindRelationshipsForUser(migrated, user)
 
 		require.Len(t, migratedRelationships, len(originalRelationships))
 		for index, originalRelationship := range originalRelationships {
@@ -345,7 +345,7 @@ func verifyReportsStateMigrated(
 	t *testing.T, original v0130reports.GenesisState, migrated v0150reports.GenesisState,
 ) {
 	for postID, originalReports := range original.Reports {
-		migratedReports := migrated.FindReportsForPostWithID(postID)
+		migratedReports := v0150reports.FindReportsForPostWithID(migrated, postID)
 
 		require.Len(t, migratedReports, len(originalReports))
 		for index, originalReport := range originalReports {
@@ -356,7 +356,7 @@ func verifyReportsStateMigrated(
 }
 
 func verifyMigratedReport(t *testing.T, postID string, original v0130reports.Report, migrated v0150reports.Report) {
-	require.Equal(t, postID, migrated.PostID)
+	require.Equal(t, postID, migrated.PostId)
 	require.Equal(t, original.Type, migrated.Type)
 	require.Equal(t, original.Message, migrated.Message)
 	require.Equal(t, original.User.String(), migrated.User)

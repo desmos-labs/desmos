@@ -21,7 +21,7 @@ func NewMsgCreatePost(
 ) *MsgCreatePost {
 	return &MsgCreatePost{
 		Message:        message,
-		ParentID:       parentID,
+		ParentId:       parentID,
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
@@ -44,8 +44,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator")
 	}
 
-	if msg.ParentID != "" && !IsValidPostID(msg.ParentID) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentID)
+	if msg.ParentId != "" && !IsValidPostID(msg.ParentId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentId)
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
@@ -98,7 +98,7 @@ func NewMsgEditPost(
 	id string, message string, attachments Attachments, pollData *PollData, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
-		PostID:      id,
+		PostId:      id,
 		Message:     message,
 		Attachments: attachments,
 		PollData:    pollData,
@@ -114,8 +114,8 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
-	if !IsValidPostID(msg.PostID) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
@@ -161,7 +161,7 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
 func NewMsgAddPostReaction(postID string, value string, user string) *MsgAddPostReaction {
 	return &MsgAddPostReaction{
-		PostID:   postID,
+		PostId:   postID,
 		User:     user,
 		Reaction: value,
 	}
@@ -175,8 +175,8 @@ func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
-	if !IsValidPostID(msg.PostID) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -208,7 +208,7 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgRemovePostReaction is the constructor of MsgRemovePostReaction
 func NewMsgRemovePostReaction(postID string, user string, value string) *MsgRemovePostReaction {
 	return &MsgRemovePostReaction{
-		PostID:   postID,
+		PostId:   postID,
 		User:     user,
 		Reaction: value,
 	}
@@ -222,8 +222,8 @@ func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
-	if !IsValidPostID(msg.PostID) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -255,7 +255,7 @@ func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
 func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) *MsgAnswerPoll {
 	return &MsgAnswerPoll{
-		PostID:      id,
+		PostId:      id,
 		UserAnswers: providedAnswers,
 		Answerer:    answerer,
 	}
@@ -269,8 +269,8 @@ func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
-	if !IsValidPostID(msg.PostID) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
+	if !IsValidPostID(msg.PostId) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Answerer)

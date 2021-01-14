@@ -90,8 +90,8 @@ func verifyPostsStateMigrated(
 }
 
 func verifyMigratedPost(t *testing.T, original v0120posts.Post, migrated v0130posts.Post) {
-	require.Equal(t, original.PostID, migrated.PostID)
-	require.Equal(t, original.ParentID, migrated.ParentID)
+	require.Equal(t, original.PostId, migrated.PostId)
+	require.Equal(t, original.ParentId, migrated.ParentId)
 	require.Equal(t, original.Message, migrated.Message)
 	require.True(t, original.Created.Equal(migrated.Created))
 	require.True(t, original.LastEdited.Equal(migrated.LastEdited))

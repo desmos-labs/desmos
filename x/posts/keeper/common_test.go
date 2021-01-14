@@ -93,7 +93,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		types.NewPollAnswer("2", "No"),
 	}
 	suite.testData.post = types.Post{
-		PostID:       suite.testData.postID,
+		PostId:       suite.testData.postID,
 		Message:      "Post message",
 		Created:      suite.testData.postCreationDate,
 		LastEdited:   suite.testData.postCreationDate.Add(1),

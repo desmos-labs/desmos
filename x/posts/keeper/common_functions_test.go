@@ -18,8 +18,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Message cannot be longer than 500 characters",
 			post: types.Post{
-				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				PostId:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentId:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        strings.Repeat("a", 550),
 				Created:        time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
 				AllowsComments: true,
@@ -33,8 +33,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Optional data cannot contain more than 10 key-value",
 			post: types.Post{
-				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				PostId:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentId:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        "Message",
 				Created:        time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
 				AllowsComments: true,
@@ -60,8 +60,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Optional data values cannot exceed 200 characters",
 			post: types.Post{
-				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				ParentID:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				PostId:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentId:       "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:        "Message",
 				Created:        time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
 				AllowsComments: true,
@@ -81,7 +81,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Valid post",
 			post: types.Post{
-				PostID:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				PostId:         "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				Message:        "Message",
 				Created:        time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
 				AllowsComments: true,

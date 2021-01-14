@@ -27,14 +27,13 @@ const chainUpgradeGuide = "https://docs.cosmos.network/master/migrations/chain-u
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
 var migrationMap = map[string]genutiltypes.MigrationCallback{
-	"v0.13.0":  v0130.Migrate,
-	"stargate": v0150.Migrate,
+	"v0.13.0": v0130.Migrate,
+	"v0.15.0": v0150.Migrate,
 }
 
 const (
-	flagGenesisTime   = "genesis-time"
-	flagChainID       = "chain-id"
-	flagBlockInterval = "block-interval"
+	flagGenesisTime = "genesis-time"
+	flagChainID     = "chain-id"
 )
 
 // GetMigrationCallback returns a MigrationCallback for a given version.
@@ -171,7 +170,6 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 
 	cmd.Flags().String(flagGenesisTime, "", "Override genesis_time with this flag")
 	cmd.Flags().String(flagChainID, "", "Override chain_id with this flag")
-	cmd.Flags().Int(flagBlockInterval, 0, "Block interval of seconds to consider while computing timestamps dates")
 
 	return cmd
 }

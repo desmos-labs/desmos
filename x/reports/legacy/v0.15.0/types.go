@@ -1,22 +1,19 @@
 package v0150
 
-type GenesisState struct {
-	Reports []Report `json:"reports"`
-}
+import (
+	v0150reports "github.com/desmos-labs/desmos/x/reports/types"
+)
 
-func (state *GenesisState) FindReportsForPostWithID(id string) []Report {
+type GenesisState = v0150reports.GenesisState
+
+func FindReportsForPostWithID(state GenesisState, id string) []Report {
 	var reports []Report
 	for _, report := range state.Reports {
-		if report.PostID == id {
+		if report.PostId == id {
 			reports = append(reports, report)
 		}
 	}
 	return reports
 }
 
-type Report struct {
-	PostID  string `json:"post_id"`
-	Type    string `json:"type,omitempty"`
-	Message string `json:"message,omitempty"`
-	User    string `json:"user,omitempty"`
-}
+type Report = v0150reports.Report

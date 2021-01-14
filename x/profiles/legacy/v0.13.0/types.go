@@ -37,8 +37,8 @@ type Pictures struct {
 
 type DTagTransferRequest struct {
 	DTagToTrade string         `json:"dtag_to_trade"`
-	Receiver    sdk.AccAddress `json:"receiver"`
-	Sender      sdk.AccAddress `json:"sender"`
+	Receiver    sdk.AccAddress `json:"current_owner"`
+	Sender      sdk.AccAddress `json:"receiving_user"`
 }
 
 // ----------------------------------------------------------------------------------------------------------------

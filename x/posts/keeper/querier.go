@@ -41,13 +41,13 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 // using the given Context and Keeper.
 func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.PostQueryResponse {
 	// Get the reactions
-	postReactions := keeper.GetPostReactions(ctx, post.PostID)
+	postReactions := keeper.GetPostReactions(ctx, post.PostId)
 	if postReactions == nil {
 		postReactions = []types.PostReaction{}
 	}
 
 	// Get the children
-	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostID)
+	childrenIDs := keeper.GetPostChildrenIDs(ctx, post.PostId)
 	if childrenIDs == nil {
 		childrenIDs = []string{}
 	}
@@ -55,7 +55,7 @@ func getPostResponse(ctx sdk.Context, keeper Keeper, post types.Post) types.Post
 	//Get the poll answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = keeper.GetPollAnswers(ctx, post.PostID)
+		answers = keeper.GetPollAnswers(ctx, post.PostId)
 	}
 
 	// Crete the response object

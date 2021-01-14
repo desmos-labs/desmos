@@ -135,7 +135,7 @@ func NewDTagTransferRequest(dtagToTrade string, sender, receiver string) DTagTra
 func (request DTagTransferRequest) Validate() error {
 	_, err := sdk.AccAddressFromBech32(request.Sender)
 	if err != nil {
-		return fmt.Errorf("invalid sender address: %s", request.Sender)
+		return fmt.Errorf("invalid DTag transfer request sender address: %s", request.Sender)
 	}
 
 	_, err = sdk.AccAddressFromBech32(request.Receiver)
@@ -148,7 +148,7 @@ func (request DTagTransferRequest) Validate() error {
 	}
 
 	if strings.TrimSpace(request.DtagToTrade) == "" {
-		return fmt.Errorf("invalid DTag to trade %s", request.DtagToTrade)
+		return fmt.Errorf("invalid DTag to trade: %s", request.DtagToTrade)
 	}
 
 	return nil

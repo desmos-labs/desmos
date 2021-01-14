@@ -53,8 +53,8 @@ message QueryPostsParams {
   string sort_by = 3;
   string sort_order = 4;
 
-  string parent_id = 5 [ (gogoproto.customname) = "ParentID" ];
-  google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
+  string parent_id = 5;
+  google.protobuf.Timestamp creation_time = 6 [(gogoproto.stdtime) = true];
   string subspace = 7;
   string creator = 8;
   repeated string hashtags = 9;
@@ -67,8 +67,8 @@ message QueryPostsRequest {
   string sort_by = 1;
   string sort_order = 2;
 
-  string parent_id = 3 [ (gogoproto.customname) = "ParentID" ];
-  google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
+  string parent_id = 3;
+  google.protobuf.Timestamp creation_time = 4 [(gogoproto.stdtime) = true];
   string subspace = 5;
   string creator = 6;
   repeated string hashtags = 7;

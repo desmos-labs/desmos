@@ -55,7 +55,7 @@ func RandomReportsData(r *rand.Rand, posts []posts.Post, accs []simtypes.Account
 
 	return ReportsData{
 		Creator: simAccount,
-		PostID:  post.PostID,
+		PostID:  post.PostId,
 		Message: RandomReportMessage(r),
 		Type:    RandomReportTypes(r),
 	}

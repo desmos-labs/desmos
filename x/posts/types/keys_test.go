@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIsValidPostID(t *testing.T) {
+func TestIsValidPostId(t *testing.T) {
 	tests := []struct {
 		postID   string
 		expValid bool
