@@ -24,7 +24,7 @@ using [gRPC](https://grpc.io/), making it easier, faster and more reliable.
 Another big improvements is the introduction
 of [Tendermint State Sync](https://docs.tendermint.com/master/tendermint-core/state-sync.html). This will allow new
 nodes to easily catch up to the current chain state, thanks to automatic data snapshosts that other nodes will
-periodically crete and share.
+periodically create and share.
 
 ## Single application binary
 
