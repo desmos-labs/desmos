@@ -35,7 +35,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 
 	// Save poll answers
 	for _, entry := range data.UsersPollAnswers {
-		if !types.IsValidPostID(entry.PostId) {
+		if !types.IsValidPostId(entry.PostId) {
 			panic(fmt.Errorf("invalid postID: %s", entry.PostId))
 		}
 
@@ -46,7 +46,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 
 	// Save post reactions
 	for _, entry := range data.PostsReactions {
-		if !types.IsValidPostID(entry.PostId) {
+		if !types.IsValidPostId(entry.PostId) {
 			panic(fmt.Errorf("invalid post id: %s", entry.PostId))
 		}
 

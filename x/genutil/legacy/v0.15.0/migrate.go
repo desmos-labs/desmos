@@ -7,6 +7,8 @@ import (
 	v040 "github.com/cosmos/cosmos-sdk/x/genutil/legacy/v040"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
+	v0150fees "github.com/desmos-labs/desmos/x/fees/types"
+
 	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
 
 	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
@@ -60,7 +62,10 @@ func Migrate(appState genutiltypes.AppMap, cliCtx client.Context) genutiltypes.A
 		appState[v0150reports.ModuleName] = v0150Codec.MustMarshalJSON(v0150reports.Migrate(genDocs))
 	}
 
-	// TODO: Add fees module, maybe?
+	// Add fees if non existing
+	if appState[v0150fees.ModuleName] == nil {
+		appState[v0150fees.ModuleName] = v0150Codec.MustMarshalJSON(v0150fees.DefaultGenesisState())
+	}
 
 	return appState
 }

@@ -14,7 +14,7 @@ const (
 	flagSortBy   = "sort-by"
 	flagSorOrder = "sort-order"
 
-	FlagParentID       = "parent-id"
+	FlagParentId       = "parent-id"
 	FlagAttachment     = "attachment"
 	FlagPollDetails    = "poll-details"
 	FlagPollAnswer     = "poll-answer"
@@ -41,7 +41,7 @@ func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 		SortBy:    types.PostSortByCreationDate,
 		SortOrder: types.PostSortOrderAscending,
 
-		ParentID:     "",
+		ParentId:     "",
 		CreationTime: nil,
 		Subspace:     "",
 		Creator:      "",

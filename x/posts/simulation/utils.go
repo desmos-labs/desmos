@@ -70,7 +70,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	// Create a random post
 	post := types.NewPost(
 		"",
-		RandomPostID(r),
+		RandomPostId(r),
 		RandomMessage(r)+RandomHashtag(r),
 		r.Intn(101) <= 50, // 50% chance of allowing comments
 		RandomSubspace(r),
@@ -85,7 +85,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	// Get the post id
 	bytes, _ := post.Marshal()
 	hash := sha256.Sum256(bytes)
-	post.PostID = hex.EncodeToString(hash[:])
+	post.PostId = hex.EncodeToString(hash[:])
 
 	return PostData{
 		Post:           post,
@@ -98,7 +98,7 @@ type PostReactionData struct {
 	Shortcode string
 	Value     string
 	User      simtypes.Account
-	PostID    string
+	PostId    string
 }
 
 // RandomPostReactionData returns a randomly generated post reaction data object
@@ -109,12 +109,12 @@ func RandomPostReactionData(
 		Shortcode: shortCode,
 		Value:     value,
 		User:      accs[r.Intn(len(accs))],
-		PostID:    postID,
+		PostId:    postID,
 	}
 }
 
-// RandomPostID returns a randomly generated postID
-func RandomPostID(r *rand.Rand) string {
+// RandomPostId returns a randomly generated postID
+func RandomPostId(r *rand.Rand) string {
 	randBytes := make([]byte, 4)
 	_, err := r.Read(randBytes)
 	if err != nil {
@@ -124,10 +124,10 @@ func RandomPostID(r *rand.Rand) string {
 	return hex.EncodeToString(hash[:])
 }
 
-// RandomPostIDFromPosts returns a randomly extracted post id from the list of posts given
-func RandomPostIDFromPosts(r *rand.Rand, posts []types.Post) string {
+// RandomPostIdFromPosts returns a randomly extracted post id from the list of posts given
+func RandomPostIdFromPosts(r *rand.Rand, posts []types.Post) string {
 	p, _ := RandomPost(r, posts)
-	return p.PostID
+	return p.PostId
 }
 
 // RandomMessage returns a random post message from the above random lorem phrases

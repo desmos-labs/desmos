@@ -23,9 +23,9 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{keeper}
 }
 
-func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
+func computePostId(ctx sdk.Context, msg *types.MsgCreatePost) string {
 	post := types.Post{
-		ParentID:       msg.ParentID,
+		ParentId:       msg.ParentId,
 		Message:        msg.Message,
 		Created:        ctx.BlockTime(),
 		AllowsComments: msg.AllowsComments,
@@ -48,8 +48,8 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	post := types.NewPost(
-		computePostID(ctx, msg),
-		msg.ParentID,
+		computePostId(ctx, msg),
+		msg.ParentId,
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
@@ -67,9 +67,9 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// Check for double posting
-	if k.DoesPostExist(ctx, post.PostID) {
+	if k.DoesPostExist(ctx, post.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the provided post conflicts with the one having id %s", post.PostID)
+			"the provided post conflicts with the one having id %s", post.PostId)
 	}
 
 	// Check if any of the tags have blocked the post creator
@@ -78,16 +78,16 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// If valid, check the parent post
-	if types.IsValidPostID(post.ParentID) {
-		parentPost, found := k.GetPost(ctx, post.ParentID)
+	if types.IsValidPostId(post.ParentId) {
+		parentPost, found := k.GetPost(ctx, post.ParentId)
 		if !found {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"parent post with id %s not found", post.ParentID)
+				"parent post with id %s not found", post.ParentId)
 		}
 
 		if !parentPost.AllowsComments {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"post with id %s does not allow comments", parentPost.PostID)
+				"post with id %s does not allow comments", parentPost.PostId)
 		}
 	}
 
@@ -97,8 +97,8 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostCreated,
-		sdk.NewAttribute(types.AttributeKeyPostID, post.PostID),
-		sdk.NewAttribute(types.AttributeKeyPostParentID, post.ParentID),
+		sdk.NewAttribute(types.AttributeKeyPostId, post.PostId),
+		sdk.NewAttribute(types.AttributeKeyPostParentId, post.ParentId),
 		sdk.NewAttribute(types.AttributeKeyPostCreationTime, post.Created.Format(time.RFC3339)),
 		sdk.NewAttribute(types.AttributeKeyPostOwner, post.Creator),
 	))
@@ -110,9 +110,9 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the existing post
-	existing, found := k.GetPost(ctx, msg.PostID)
+	existing, found := k.GetPost(ctx, msg.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostId)
 	}
 
 	// Checks if the the msg sender is the same as the current owner
@@ -150,7 +150,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostEdited,
-		sdk.NewAttribute(types.AttributeKeyPostID, existing.PostID),
+		sdk.NewAttribute(types.AttributeKeyPostId, existing.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostEditTime, existing.LastEdited.Format(time.RFC3339)),
 	))
 
@@ -161,9 +161,9 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the post
-	post, found := k.GetPost(ctx, msg.PostID)
+	post, found := k.GetPost(ctx, msg.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostId)
 	}
 
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
@@ -172,14 +172,14 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	}
 
 	postReaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
-	if err := k.SavePostReaction(ctx, post.PostID, postReaction); err != nil {
+	if err := k.SavePostReaction(ctx, post.PostId, postReaction); err != nil {
 		return nil, err
 	}
 
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReactionAdded,
-		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User),
 		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
@@ -192,9 +192,9 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the post
-	post, found := k.GetPost(ctx, msg.PostID)
+	post, found := k.GetPost(ctx, msg.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostId)
 	}
 
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
@@ -204,14 +204,14 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 
 	// Remove the registeredReactions
 	reaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
-	if err := k.DeletePostReaction(ctx, post.PostID, reaction); err != nil {
+	if err := k.DeletePostReaction(ctx, post.PostId, reaction); err != nil {
 		return nil, err
 	}
 
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePostReactionRemoved,
-		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPostReactionOwner, msg.User),
 		sdk.NewAttribute(types.AttributeKeyPostReactionValue, reactionValue),
 		sdk.NewAttribute(types.AttributeKeyReactionShortCode, reactionShortcode),
@@ -254,28 +254,28 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks if the post exists
-	post, found := k.GetPost(ctx, msg.PostID)
+	post, found := k.GetPost(ctx, msg.PostId)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"post with id %s doesn't exist", msg.PostID)
+			"post with id %s doesn't exist", msg.PostId)
 	}
 
 	// Make sure the post has a poll
 	if post.PollData == nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"no poll associated with ID: %s", msg.PostID)
+			"no poll associated with ID: %s", msg.PostId)
 	}
 
 	// Make sure the poll is not closed
 	if post.PollData.EndDate.Before(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate)
+			"the poll associated with ID %s was closed at %s", post.PostId, post.PollData.EndDate)
 	}
 
 	// Check if the poll allows multiple answers
 	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the poll associated with ID %s doesn't allow multiple answers", post.PostID)
+			"the poll associated with ID %s doesn't allow multiple answers", post.PostId)
 	}
 
 	// Check if the user answers are more than the answers provided by the poll
@@ -300,22 +300,22 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		}
 	}
 
-	pollAnswers := k.GetPollAnswersByUser(ctx, post.PostID, msg.Answerer)
+	pollAnswers := k.GetPollAnswersByUser(ctx, post.PostId, msg.Answerer)
 
 	// Check if the poll allows to edit previous answers
 	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"post with ID %s doesn't allow answers' edits", post.PostID)
+			"post with ID %s doesn't allow answers' edits", post.PostId)
 	}
 
 	userPollAnswers := types.NewUserAnswer(msg.UserAnswers, msg.Answerer)
 
-	k.SavePollAnswers(ctx, post.PostID, userPollAnswers)
+	k.SavePollAnswers(ctx, post.PostId, userPollAnswers)
 
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeAnsweredPoll,
-		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+		sdk.NewAttribute(types.AttributeKeyPostId, msg.PostId),
 		sdk.NewAttribute(types.AttributeKeyPollAnswerer, msg.Answerer),
 	))
 

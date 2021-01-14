@@ -13,7 +13,7 @@ import (
 )
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc(fmt.Sprintf("/reports/{%s}", ParamPostID),
+	r.HandleFunc(fmt.Sprintf("/reports/{%s}", ParamPostId),
 		queryPostReportsHandlerFn(cliCtx)).Methods("GET")
 }
 
@@ -21,7 +21,7 @@ func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 func queryPostReportsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		postID := vars[ParamPostID]
+		postID := vars[ParamPostId]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryReports, postID)
 		res, height, err := cliCtx.QueryWithData(route, nil)

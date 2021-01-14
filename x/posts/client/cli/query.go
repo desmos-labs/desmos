@@ -105,13 +105,13 @@ $ %s query posts posts --page=2 --limit=100
 				params.SortOrder = sortOrder
 			}
 
-			// ParentID
-			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
+			// ParentId
+			if parentID := viper.GetString(FlagParentId); len(parentID) > 0 {
 				idParent := parentID
-				if !types.IsValidPostID(idParent) {
+				if !types.IsValidPostId(idParent) {
 					return fmt.Errorf("invalid postID: %s", idParent)
 				}
-				params.ParentID = parentID
+				params.ParentId = parentID
 			}
 
 			// CreationTime
@@ -158,7 +158,7 @@ $ %s query posts posts --page=2 --limit=100
 	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
 	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
 
-	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
+	cmd.Flags().String(FlagParentId, "", "(optional) filter the posts with given parent id")
 	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
 	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
 	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")

@@ -11,8 +11,8 @@ const (
 	EventTypeRegisterReaction    = "reaction_registered"
 
 	// Post attributes
-	AttributeKeyPostID           = "post_id"
-	AttributeKeyPostParentID     = "post_parent_id"
+	AttributeKeyPostId           = "post_id"
+	AttributeKeyPostParentId     = "post_parent_id"
 	AttributeKeyPostOwner        = "post_owner"
 	AttributeKeyPostEditTime     = "post_edit_time"
 	AttributeKeyPostCreationTime = "post_creation_time"

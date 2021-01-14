@@ -55,7 +55,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	postsData.Posts = []types.Post{
 		{
-			PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			Message:      "Post message",
 			Created:      creationDate,
 			LastEdited:   creationDate.Add(1),
@@ -154,7 +154,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 			expectErr: false,
 			expectedOutput: types.QueryPostResponse{
 				Post: types.Post{
-					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      creationDate,
 					LastEdited:   creationDate.Add(1),
@@ -245,7 +245,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				Posts: []types.QueryPostResponse{
 					{
 						Post: types.Post{
-							PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+							PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 							Message:      "Post message",
 							Created:      creationDate,
 							LastEdited:   creationDate.Add(1),
@@ -469,7 +469,7 @@ func (s *IntegrationTestSuite) TestCmdCreatePost() {
 			name: "invalid parent id returns error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", cli.FlagParentID, "parent_id"),
+				fmt.Sprintf("--%s=%s", cli.FlagParentId, "parent_id"),
 			},
 			expErr: true,
 		},

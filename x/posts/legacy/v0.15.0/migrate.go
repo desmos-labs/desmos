@@ -16,7 +16,7 @@ func Migrate(oldGenState v0130posts.GenesisState) GenesisState {
 	return GenesisState{
 		Posts:               ConvertPosts(oldGenState.Posts),
 		UsersPollAnswers:    ConvertUsersPollAnswers(oldGenState.UsersPollAnswers),
-		PostReactions:       ConvertPostReactions(oldGenState.PostReactions),
+		PostsReactions:      ConvertPostReactions(oldGenState.PostReactions),
 		RegisteredReactions: ConvertRegisteredReactions(oldGenState.RegisteredReactions),
 		Params:              Params(oldGenState.Params),
 	}
@@ -28,8 +28,8 @@ func ConvertPosts(oldPosts []v0130posts.Post) []Post {
 	posts := make([]Post, len(oldPosts))
 	for index, post := range oldPosts {
 		posts[index] = Post{
-			PostID:         post.PostID,
-			ParentID:       post.ParentID,
+			PostId:         post.PostId,
+			ParentId:       post.ParentId,
 			Message:        post.Message,
 			Created:        post.Created,
 			LastEdited:     post.LastEdited,
@@ -121,7 +121,7 @@ func creteUserAnswerEntry(postID string, oldUsersAnswers []v0130posts.UserAnswer
 	}
 
 	return UserAnswersEntry{
-		PostID:      postID,
+		PostId:      postID,
 		UserAnswers: userAnswers,
 	}
 }
@@ -152,7 +152,7 @@ func createPostReactionEntry(postID string, oldPostReactions []v0130posts.PostRe
 	}
 
 	return PostReactionsEntry{
-		PostID:    postID,
+		PostId:    postID,
 		Reactions: reactions,
 	}
 }

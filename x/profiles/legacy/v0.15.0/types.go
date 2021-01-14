@@ -1,32 +1,18 @@
 package v0150
 
 import (
-	"time"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	v0130 "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
+	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
+	v0150profiles "github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // GenesisState contains the data of a v0.15.0 genesis state for the profiles module
-type GenesisState struct {
-	Profiles             []Profile             `json:"profiles"`
-	DtagTransferRequests []DTagTransferRequest `json:"dtag_transfer_requests"`
-	Params               Params                `json:"params"`
-}
+type GenesisState = v0150profiles.GenesisState
 
 // ----------------------------------------------------------------------------------------------------------------
 
-type Profile struct {
-	Dtag         string    `json:"dtag,omitempty"`
-	Moniker      string    `json:"moniker,omitempty"`
-	Bio          string    `json:"bio,omitempty"`
-	Pictures     Pictures  `json:"pictures"`
-	Creator      string    `json:"creator,omitempty"`
-	CreationDate time.Time `json:"creation_date"`
-}
+type Profile = v0150profiles.Profile
 
-func newProfile(profile v0130.Profile) Profile {
+func newProfile(profile v0130profiles.Profile) Profile {
 	moniker := ""
 	bio := ""
 	var pictures Pictures
@@ -62,34 +48,14 @@ func newProfile(profile v0130.Profile) Profile {
 	}
 }
 
-type Pictures struct {
-	Profile string `json:"profile,omitempty" `
-	Cover   string `json:"cover,omitempty" `
-}
+type Pictures = v0150profiles.Pictures
 
 // ----------------------------------------------------------------------------------------------------------------
 
-type DTagTransferRequest struct {
-	DtagToTrade string `json:"dtag_to_trade"`
-	Sender      string `json:"sender,omitempty"`
-	Receiver    string `json:"receiver,omitempty"`
-}
+type DTagTransferRequest = v0150profiles.DTagTransferRequest
 
 // ----------------------------------------------------------------------------------------------------------------
 
-type Params struct {
-	MonikerParams MonikerParams `json:"moniker_params"`
-	DtagParams    DTagParams    `json:"dtag_params"`
-	MaxBioLength  sdk.Int       `json:"max_bio_length"`
-}
-
-type MonikerParams struct {
-	MinMonikerLength sdk.Int `json:"min_length"`
-	MaxMonikerLength sdk.Int `json:"max_length"`
-}
-
-type DTagParams struct {
-	RegEx         string  `json:"reg_ex"`
-	MinDtagLength sdk.Int `json:"min_length"`
-	MaxDtagLength sdk.Int `json:"max_length"`
-}
+type Params = v0150profiles.Params
+type MonikerParams = v0150profiles.MonikerParams
+type DTagParams = v0150profiles.DTagParams

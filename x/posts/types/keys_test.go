@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIsValidPostID(t *testing.T) {
+func TestIsValidPostId(t *testing.T) {
 	tests := []struct {
 		postID   string
 		expValid bool
@@ -48,7 +48,7 @@ func TestIsValidPostID(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.postID, func(t *testing.T) {
-			require.Equal(t, test.expValid, types.IsValidPostID(test.postID))
+			require.Equal(t, test.expValid, types.IsValidPostId(test.postID))
 		})
 	}
 }

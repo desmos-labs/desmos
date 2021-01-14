@@ -16,7 +16,7 @@ import (
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc(fmt.Sprintf("/reports/{%s}", ParamPostID),
+	r.HandleFunc(fmt.Sprintf("/reports/{%s}", ParamPostId),
 		reportPostHandler(cliCtx)).Methods("POST")
 }
 
@@ -42,8 +42,8 @@ func reportPostHandler(cliCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		postID := vars[ParamPostID]
-		if !poststypes.IsValidPostID(postID) {
+		postID := vars[ParamPostId]
+		if !poststypes.IsValidPostId(postID) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
 			return
 		}

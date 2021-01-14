@@ -22,7 +22,7 @@ func ConvertReports(oldReportsMap map[string][]v0130reports.Report) []Report {
 	for postID, oldReports := range oldReportsMap {
 		for _, oldReport := range oldReports {
 			report := Report{
-				PostID:  postID,
+				PostId:  postID,
 				Type:    oldReport.Type,
 				Message: oldReport.Message,
 				User:    oldReport.User.String(),

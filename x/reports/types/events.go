@@ -5,6 +5,6 @@ const (
 	EventTypePostReported = "post_reported"
 
 	// Reports attributes
-	AttributeKeyPostID      = "post_id"
+	AttributeKeyPostId      = "post_id"
 	AttributeKeyReportOwner = "report_owner"
 )

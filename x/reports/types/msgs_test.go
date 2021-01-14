@@ -48,7 +48,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(poststypes.ErrInvalidPostID, "123"),
+			error: sdkerrors.Wrap(poststypes.ErrInvalidPostId, "123"),
 		},
 		{
 			name: "invalid report type returns error",

@@ -74,13 +74,13 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			params.SortOrder = v
 		}
 
-		if v := r.URL.Query().Get(ParamParentID); len(v) != 0 {
+		if v := r.URL.Query().Get(ParamParentId); len(v) != 0 {
 			parentID := v
-			if !types.IsValidPostID(parentID) {
+			if !types.IsValidPostId(parentID) {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 				return
 			}
-			params.ParentID = parentID
+			params.ParentId = parentID
 		}
 
 		if v := r.URL.Query().Get(ParamCreationTime); len(v) != 0 {

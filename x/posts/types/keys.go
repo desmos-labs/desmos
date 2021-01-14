@@ -51,8 +51,8 @@ var (
 	PollAnswersStorePrefix   = []byte("poll_answers")
 )
 
-// IsValidPostID tells whether the given value represents a valid post id or not
-func IsValidPostID(value string) bool {
+// IsValidPostId tells whether the given value represents a valid post id or not
+func IsValidPostId(value string) bool {
 	return postIDRegEx.MatchString(value)
 }
 

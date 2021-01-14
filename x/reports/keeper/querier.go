@@ -29,7 +29,7 @@ func queryReports(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
 	id := path[0]
-	if !poststypes.IsValidPostID(id) {
+	if !poststypes.IsValidPostId(id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
 	}
 

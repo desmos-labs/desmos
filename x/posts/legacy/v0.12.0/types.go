@@ -31,8 +31,8 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 }
 
 type Post struct {
-	PostID         string         `json:"id" `
-	ParentID       string         `json:"parent_id"`
+	PostId         string         `json:"id" `
+	ParentId       string         `json:"parent_id"`
 	Message        string         `json:"message"`
 	Created        time.Time      `json:"created"`
 	LastEdited     time.Time      `json:"last_edited"`

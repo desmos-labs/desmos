@@ -498,7 +498,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
+			error: sdkerrors.Wrap(types.ErrInvalidPostId, ""),
 		},
 		{
 			name: "Invalid editor returns error",
@@ -713,7 +713,7 @@ func TestMsgAddPostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgAddPostReaction("", ":like:", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
+			error: sdkerrors.Wrap(types.ErrInvalidPostId, ""),
 		},
 		{
 			name: "Invalid user returns error",
@@ -800,7 +800,7 @@ func TestMsgRemovePostReaction_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id returns error",
 			msg:   types.NewMsgRemovePostReaction("", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", ":+1:"),
-			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
+			error: sdkerrors.Wrap(types.ErrInvalidPostId, ""),
 		},
 		{
 			name: "Invalid user address: ",
@@ -886,7 +886,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 		{
 			name:  "Invalid post id",
 			msg:   types.NewMsgAnswerPoll("", []string{"1", "2"}, msgAnswerPollPost.Answerer),
-			error: sdkerrors.Wrap(types.ErrInvalidPostID, ""),
+			error: sdkerrors.Wrap(types.ErrInvalidPostId, ""),
 		},
 		{
 			name: "Invalid answerer address",
