@@ -3,10 +3,10 @@ This query endpoint allows you to retrieve the DTag requests of the user with th
 
 **CLI**
 ```bash
-desmoscli query profiles dtag-requests [address]
+desmosd query profiles dtag-requests [address]
 
 # Example
-# desmoscli query relationships dtag-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmosd query relationships dtag-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
 
 **REST**

@@ -35,7 +35,7 @@ type Plan struct {
 In order to create a simple upgrade proposal, the command that can be execute is the following: 
 
 ```shell
-desmoscli tx gov submit-proposal software-upgrade "<Upgrade name>" \
+desmosd tx gov submit-proposal software-upgrade "<Upgrade name>" \
   --title "<Proposal title>" \
   --description "<Proposal description>" \
   --deposit <Initial deposit> \

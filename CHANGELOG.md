@@ -1,9 +1,51 @@
+# Desmos v0.15.0 "Helios"
+
+This release updates Desmos to be based on the new Cosmos v0.40 "Stargate" release. Such version brings a lot of
+different changes with it. Following you can find a list of the most important changes, and how they will affect Desmos.
+If you want to have a mor detailed view of what Stargate brings, you can check out
+their [release notes](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.40.0).
+
+## IBC
+
+The major aim of this release is to set up the path to a brighter future thanks to the integration
+of [IBC](https://cosmos.network/ibc), the Inter Blockchain Communication protocol. This will allow any chain to
+independently send transaction towards Desmos, enabling it to be a true hub for social networks among the Cosmos
+ecosystem.
+
+## Protocol buffers
+
+With Stargate, the official encoding has been switched from Amino to the more popular and
+fast [protocol buffers](https://developers.google.com/protocol-buffers). This will allow the chain nodes to handle
+transactions faster improving the overall throughput. It will also allow clients to query the data
+using [gRPC](https://grpc.io/), making it easier, faster and more reliable.
+
+## State sync
+
+Another big improvements is the introduction
+of [Tendermint State Sync](https://docs.tendermint.com/master/tendermint-core/state-sync.html). This will allow new
+nodes to easily catch up to the current chain state, thanks to automatic data snapshosts that other nodes will
+periodically crete and share.
+
+## Single application binary
+
+Starting from this version, you will no longer have the access to `desmoscli`. Instead, everything has been merged
+together inside `desmosd`. This will also make it easier to handle automatic upgrades.
+
+## Introduction of the `--recover` flag inside the `init` command
+
+Once thing that has been highly requested from validators, is the ability to recover the node key in the case something
+goes wrong. Starting from this version, you will be able to provide a custom seed to the `desmosd init` command using
+the `--recover` flag. This enables nodes operator to always recover their keys if needed, starting from the seed node.
+
 # Version 0.14.0
+
 ## Changes
+
 - Implemented blocked users checks (#298)
-- Implemented the possibility to set a minimum messages fee (#230) 
+- Implemented the possibility to set a minimum messages fee (#230)
 
 ## Bug fixes
+
 - Fixed height not working in REST queries (#299)
 
 # Version 0.13.0
@@ -16,7 +58,7 @@
 
 ## Bug fixes
 - Fixed the possibility of requesting a transfer of an empty DTag (#292)
-- Fixed the impossibility  of querying all the relationships on chain (#306)
+- Fixed the impossibility of querying all the relationships on chain (#306)
 
 # Version 0.12.3
 ## Changes

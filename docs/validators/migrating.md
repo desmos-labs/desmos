@@ -48,7 +48,7 @@ Now, transfer the following backed up files from the old node into the new one:
 To restored your validator key, all you have to do is execute the following command:
 
 ```
-desmoscli keys add <your_key_name> --recover
+desmosd keys add <your_key_name> --recover
 ```
 
 Now, insert your mnemonic phrase and then your keyring password. 

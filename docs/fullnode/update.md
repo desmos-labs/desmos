@@ -1,5 +1,6 @@
 # Updating your Desmos fullnode
-These instructions are for fullnodes that have ran on previous versions of and would like to update to the latest testnet.
+These instructions are for fullnodes that are running on previous versions of Desmos and would like to update to the
+latest testnet.
 
 ## 1. Reset the data
 First, remove the outdated files and reset the data.
@@ -27,7 +28,7 @@ cd <installation-path>
 # cd /home/$USER/desmos
 ``` 
 
-Now, update the `desmoscli` and `desmosd` software:
+Now, update the `desmosd` software:
 
 ```bash
 git fetch --all
@@ -36,7 +37,8 @@ make install
 ```
 
 :::tip Select another version  
-The above commands checks out the latest release that has been tagged on our repository. If you wish to checkout a specific version instead, use the following commands: 
+The above commands checks out the latest release that has been tagged on our repository. If you wish to check out a
+specific version instead, use the following commands:
 
 1. List all the tags  
    ```bash

@@ -15,7 +15,7 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 - [Query all the DTag transfer requests](queries/user-dtag-requests.md)
 
 ## Relationships
-- [Query user's relationships](queries/user_relationships.md)
+- [Query user's relationships](queries/user-relationships.md)
 - [Query user's blocked users](queries/user-blocks.md)
 
 ## Reports
