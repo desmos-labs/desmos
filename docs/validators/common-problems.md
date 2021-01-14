@@ -77,7 +77,7 @@ To solve this, what you can do is getting more tokens delegated to it by followi
 
 ## Problem #4: My validator is jailed
 
-If your validator is jailed it probably means that it have been inactive for a log period of time missing a consistent
+If your validator is jailed it probably means that it have been inactive for a long period of time missing a consistent
 number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some
 error.
 
