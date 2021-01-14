@@ -32,9 +32,8 @@ var migrationMap = map[string]genutiltypes.MigrationCallback{
 }
 
 const (
-	flagGenesisTime   = "genesis-time"
-	flagChainID       = "chain-id"
-	flagBlockInterval = "block-interval"
+	flagGenesisTime = "genesis-time"
+	flagChainID     = "chain-id"
 )
 
 // GetMigrationCallback returns a MigrationCallback for a given version.
@@ -171,7 +170,6 @@ $ %s migrate v0.2.0 /path/to/genesis.json --chain-id=morpheus-XXXXX --genesis-ti
 
 	cmd.Flags().String(flagGenesisTime, "", "Override genesis_time with this flag")
 	cmd.Flags().String(flagChainID, "", "Override chain_id with this flag")
-	cmd.Flags().Int(flagBlockInterval, 0, "Block interval of seconds to consider while computing timestamps dates")
 
 	return cmd
 }
