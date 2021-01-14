@@ -108,7 +108,7 @@ func TestMigrate(t *testing.T) {
 			},
 		},
 		UsersPollAnswers: map[string][]v0130posts.UserAnswer{
-			string(postID): {
+			postID: {
 				v0130posts.UserAnswer{
 					Answers: []uint64{1, 2},
 					User:    postCreator,
@@ -116,7 +116,7 @@ func TestMigrate(t *testing.T) {
 			},
 		},
 		PostReactions: map[string][]v0130posts.PostReaction{
-			string(postID): {
+			postID: {
 				v0130posts.PostReaction{
 					Owner:     postCreator,
 					Shortcode: ":fire:",

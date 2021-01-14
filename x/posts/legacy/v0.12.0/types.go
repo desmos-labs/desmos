@@ -31,39 +31,39 @@ func ComputeID(creationDate time.Time, creator sdk.AccAddress, subspace string) 
 }
 
 type Post struct {
-	PostID         string         `json:"id" yaml:"id" `                                          // Unique id
-	ParentID       string         `json:"parent_id" yaml:"parent_id"`                             // Post of which this one is a comment
-	Message        string         `json:"message" yaml:"message"`                                 // Message contained inside the post
-	Created        time.Time      `json:"created" yaml:"created"`                                 // RFC3339 date at which the post has been created
-	LastEdited     time.Time      `json:"last_edited" yaml:"last_edited"`                         // RFC3339 date at which the post has been edited the last time
-	AllowsComments bool           `json:"allows_comments" yaml:"allows_comments"`                 // Tells if users can reference this PostID as the parent
-	Subspace       string         `json:"subspace" yaml:"subspace"`                               // Identifies the application that has posted the message
-	OptionalData   OptionalData   `json:"optional_data,omitempty" yaml:"optional_data,omitempty"` // Arbitrary data that can be used from the developers
-	Creator        sdk.AccAddress `json:"creator" yaml:"creator"`                                 // Creator of the Post
-	Attachments    []Attachment   `json:"attachments,omitempty" yaml:"attachments,omitempty"`     // Contains all the attachments that are shared with the post
-	PollData       *PollData      `json:"poll_data,omitempty" yaml:"poll_data,omitempty"`         // Contains the poll details, if existing
+	PostID         string         `json:"id" `
+	ParentID       string         `json:"parent_id"`
+	Message        string         `json:"message"`
+	Created        time.Time      `json:"created"`
+	LastEdited     time.Time      `json:"last_edited"`
+	AllowsComments bool           `json:"allows_comments"`
+	Subspace       string         `json:"subspace"`
+	OptionalData   OptionalData   `json:"optional_data,omitempty"`
+	Creator        sdk.AccAddress `json:"creator"`
+	Attachments    []Attachment   `json:"attachments,omitempty"`
+	PollData       *PollData      `json:"poll_data,omitempty"`
 }
 
 type OptionalData map[string]string
 
 type PostReaction struct {
-	Owner     sdk.AccAddress `json:"owner" yaml:"owner"`
-	Shortcode string         `json:"shortcode" yaml:"shortcode"`
-	Value     string         `json:"value" yaml:"value"`
+	Owner     sdk.AccAddress `json:"owner"`
+	Shortcode string         `json:"shortcode"`
+	Value     string         `json:"value"`
 }
 
 type Attachment struct {
-	URI      string           `json:"uri" yaml:"uri"`
-	MimeType string           `json:"mime_type" yaml:"mime_type"`
-	Tags     []sdk.AccAddress `json:"tags,omitempty" yaml:"tags,omitempty"`
+	URI      string           `json:"uri"`
+	MimeType string           `json:"mime_type"`
+	Tags     []sdk.AccAddress `json:"tags,omitempty"`
 }
 
 type PollData struct {
-	Question              string       `json:"question" yaml:"question"`
-	ProvidedAnswers       []PollAnswer `json:"provided_answers" yaml:"provided_answers"`
-	EndDate               time.Time    `json:"end_date" yaml:"end_date"`
-	AllowsMultipleAnswers bool         `json:"allows_multiple_answers" yaml:"allows_multiple_answers"`
-	AllowsAnswerEdits     bool         `json:"allows_answer_edits" yaml:"allows_answer_edits"`
+	Question              string       `json:"question"`
+	ProvidedAnswers       []PollAnswer `json:"provided_answers"`
+	EndDate               time.Time    `json:"end_date"`
+	AllowsMultipleAnswers bool         `json:"allows_multiple_answers"`
+	AllowsAnswerEdits     bool         `json:"allows_answer_edits"`
 }
 
 type PollAnswer struct {
@@ -74,10 +74,10 @@ type PollAnswer struct {
 // ----------------------------------------------------------------------------------------------------------------
 
 type RegisteredReaction struct {
-	ShortCode string         `json:"shortcode" yaml:"shortcode"`
-	Value     string         `json:"value" yaml:"value"`
-	Subspace  string         `json:"subspace" yaml:"subspace"`
-	Creator   sdk.AccAddress `json:"creator" yaml:"creator"`
+	ShortCode string         `json:"shortcode"`
+	Value     string         `json:"value"`
+	Subspace  string         `json:"subspace"`
+	Creator   sdk.AccAddress `json:"creator"`
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ type UserAnswer struct {
 // ----------------------------------------------------------------------------------------------------------------
 
 type Params struct {
-	MaxPostMessageLength            sdk.Int `json:"max_post_message_length" yaml:"max_post_message_length"`
-	MaxOptionalDataFieldsNumber     sdk.Int `json:"max_optional_data_fields_number" yaml:"max_optional_data_fields_number"`
-	MaxOptionalDataFieldValueLength sdk.Int `json:"max_optional_data_field_value_length" yaml:"max_optional_data_field_value_length"`
+	MaxPostMessageLength            sdk.Int `json:"max_post_message_length"`
+	MaxOptionalDataFieldsNumber     sdk.Int `json:"max_optional_data_fields_number"`
+	MaxOptionalDataFieldValueLength sdk.Int `json:"max_optional_data_field_value_length"`
 }

@@ -1,8 +1,10 @@
 package v0150
 
 import (
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	v040 "github.com/cosmos/cosmos-sdk/x/genutil/legacy/v040"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
@@ -18,21 +20,20 @@ import (
 )
 
 // Migrate migrates exported state from v0.13.0 to a v0.15.0 genesis state.
-func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap {
+func Migrate(appState genutiltypes.AppMap, cliCtx client.Context) genutiltypes.AppMap {
+	v040.Migrate(appState, cliCtx)
+
 	v0130Codec := codec.NewLegacyAmino()
 	cryptocodec.RegisterCrypto(v0130Codec)
 
-	v0150Codec := codec.NewLegacyAmino()
-	cryptocodec.RegisterCrypto(v0150Codec)
+	v0150Codec := cliCtx.LegacyAmino
 
 	// Migrate posts state
 	if appState[v0120posts.ModuleName] != nil {
 		var genDocs v0130posts.GenesisState
 		v0130Codec.MustUnmarshalJSON(appState[v0120posts.ModuleName], &genDocs)
 
-		appState[v0150posts.ModuleName] = v0150Codec.MustMarshalJSON(
-			v0150posts.Migrate(genDocs),
-		)
+		appState[v0150posts.ModuleName] = v0150Codec.MustMarshalJSON(v0150posts.Migrate(genDocs))
 	}
 
 	// Migrate profiles state
@@ -40,9 +41,7 @@ func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap
 		var genDocs v0130profiles.GenesisState
 		v0130Codec.MustUnmarshalJSON(appState[v0130profiles.ModuleName], &genDocs)
 
-		appState[v0150profiles.ModuleName] = v0150Codec.MustMarshalJSON(
-			v0150profiles.Migrate(genDocs),
-		)
+		appState[v0150profiles.ModuleName] = v0150Codec.MustMarshalJSON(v0150profiles.Migrate(genDocs))
 	}
 
 	// Migrate relationships state
@@ -50,9 +49,7 @@ func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap
 		var genDocs v0130relationships.GenesisState
 		v0130Codec.MustUnmarshalJSON(appState[v0130relationships.ModuleName], &genDocs)
 
-		appState[v0150relationships.ModuleName] = v0150Codec.MustMarshalJSON(
-			v0150relationships.Migrate(genDocs),
-		)
+		appState[v0150relationships.ModuleName] = v0150Codec.MustMarshalJSON(v0150relationships.Migrate(genDocs))
 	}
 
 	// Migrate reports state
@@ -60,10 +57,10 @@ func Migrate(appState genutiltypes.AppMap, _ ...interface{}) genutiltypes.AppMap
 		var genDocs v0130reports.GenesisState
 		v0130Codec.MustUnmarshalJSON(appState[v0130reports.ModuleName], &genDocs)
 
-		appState[v0150reports.ModuleName] = v0150Codec.MustMarshalJSON(
-			v0150reports.Migrate(genDocs),
-		)
+		appState[v0150reports.ModuleName] = v0150Codec.MustMarshalJSON(v0150reports.Migrate(genDocs))
 	}
+
+	// TODO: Add fees module, maybe?
 
 	return appState
 }

@@ -102,7 +102,7 @@ import (
 )
 
 const (
-	appName          = "desmos"
+	appName          = "Desmos"
 	Bech32MainPrefix = "desmos"
 )
 

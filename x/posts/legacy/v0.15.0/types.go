@@ -15,6 +15,24 @@ type GenesisState struct {
 	Params              Params               `json:"params"`
 }
 
+func (state GenesisState) FindUserAnswerEntryForPostID(postID string) (bool, *UserAnswersEntry) {
+	for _, entry := range state.UsersPollAnswers {
+		if entry.PostID == postID {
+			return true, &entry
+		}
+	}
+	return false, nil
+}
+
+func (state GenesisState) FindPostReactionEntryForPostID(postID string) (bool, *PostReactionsEntry) {
+	for _, entry := range state.PostReactions {
+		if entry.PostID == postID {
+			return true, &entry
+		}
+	}
+	return false, nil
+}
+
 // ----------------------------------------------------------------------------------------------------------------
 
 type Post struct {

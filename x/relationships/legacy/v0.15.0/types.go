@@ -1,19 +1,29 @@
 package v0150
 
 type GenesisState struct {
-	Relationships []Relationship `json:"relationships" yaml:"users_relationships"`
-	Blocks        []UserBlock    `json:"blocks" yaml:"users_blocks"`
+	Relationships []Relationship `json:"relationships"`
+	Blocks        []UserBlock    `json:"blocks"`
+}
+
+func (state GenesisState) FindRelationshipsForUser(user string) []Relationship {
+	var relationships []Relationship
+	for _, relationship := range state.Relationships {
+		if relationship.Creator == user {
+			relationships = append(relationships, relationship)
+		}
+	}
+	return relationships
 }
 
 type Relationship struct {
-	Creator   string `json:"creator,omitempty" yaml:"creator"`
-	Recipient string `json:"recipient,omitempty" yaml:"recipient"`
-	Subspace  string `json:"subspace,omitempty" yaml:"subspace"`
+	Creator   string `json:"creator,omitempty"`
+	Recipient string `json:"recipient,omitempty"`
+	Subspace  string `json:"subspace,omitempty"`
 }
 
 type UserBlock struct {
-	Blocker  string `json:"blocker,omitempty" yaml:"blocker"`
-	Blocked  string `json:"blocked,omitempty" yaml:"blocked"`
-	Reason   string `json:"reason,omitempty" yaml:"reason"`
-	Subspace string `json:"subspace,omitempty" yaml:"subspace"`
+	Blocker  string `json:"blocker,omitempty"`
+	Blocked  string `json:"blocked,omitempty"`
+	Reason   string `json:"reason,omitempty"`
+	Subspace string `json:"subspace,omitempty"`
 }
