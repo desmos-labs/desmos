@@ -27,7 +27,7 @@ Once you got the script, you are now ready to use it.
 In order to work, it needs the following parameters: 
 
 1. The `moniker` of the validator you are creating.  
-   This is just a string that will allow you to identify the validator you are running locally. It can be anything you
+   This is just a string that identifies the validator you are running locally. It can be anything you
    want.
 
 2. (Optional) A `seed` from which to generate the node's private key.  
