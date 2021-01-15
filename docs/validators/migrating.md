@@ -11,7 +11,7 @@ In this case, what you need to do is following a three steps procedure:
 In order to properly transfer your validator to another server, you first have to stop the running node. To do this, you can execute the following command: 
 
 ```
-systemctl stop desmosd
+systemctl stop desmos
 ```
 
 Once you have done so, you need to back up the following data:
@@ -20,10 +20,10 @@ Once you have done so, you need to back up the following data:
    You should have written it down on a piece of paper when you first created the node.
    
 2. The validator private key.  
-   This is located inside the `~/.desmosd/config/priv_validator_key.json` file.
+   This is located inside the `~/.desmos/config/priv_validator_key.json` file.
    
 3. The validator consensus state.  
-   This is located inside the `~/.desmosd/data/priv_validator_state.json` file.
+   This is located inside the `~/.desmos/data/priv_validator_state.json` file.
 
 :::tip Do not delete your old node yet   
 We highly suggest you to delete your old node instance once that the new node is running properly. This will allow you to recover any information if you forgot to do so.  
@@ -36,19 +36,19 @@ Once you are ready to get your new node running, the first thing to do is setup 
 Once that is done, stop your new node from running by using 
 
 ```
-systemctl stop desmosd
+systemctl stop desmos
 ```
 
 Now, transfer the following backed up files from the old node into the new one:
 
-- `~/.desmosd/config/priv_validator_key.json`
-- `~/.desmosd/data/priv_validator_state.json` 
+- `~/.desmos/config/priv_validator_key.json`
+- `~/.desmos/data/priv_validator_state.json`
 
 ### Restoring your key
 To restored your validator key, all you have to do is execute the following command:
 
 ```
-desmosd keys add <your_key_name> --recover
+desmos keys add <your_key_name> --recover
 ```
 
 Now, insert your mnemonic phrase and then your keyring password. 
@@ -57,8 +57,8 @@ Now, insert your mnemonic phrase and then your keyring password.
 Once everything is in place, you can start your new node. To do this, run the following commands: 
 
 ```
-desmosd unsafe-reset-all
-sudo systemctl start desmosd
+desmos unsafe-reset-all
+sudo systemctl start desmos
 ```
 
 :::warning Make sure the old node is not running  

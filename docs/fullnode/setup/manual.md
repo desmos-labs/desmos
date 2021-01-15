@@ -34,25 +34,25 @@ make install
 make install DB_BACKEND=rocksdb 
 ```
 
-If the software is built successfully, `desmosd` will be located at `/go/bin` of your home directory. If you have setup
+If the software is built successfully, `desmos` will be located at `/go/bin` of your home directory. If you have setup
 your environment variables correctly in the previous step, you should be able to access them correctly. Try to check the
 version of the software.
 
 ```bash
-desmosd version --long
+desmos version --long
 ```
 
 ## 2. Initialize the Desmos working directory
 
-Configuration files and chain data will be stored inside the `.desmosd` directory under your home directory by default.
+Configuration files and chain data will be stored inside the `.desmos` directory under your home directory by default.
 It will be created when you initialize the environment.
 
 ```bash
 # Initialize the working envinorment for Desmos
-desmosd init <your_moniker>
+desmos init <your_moniker>
 ```
 
-You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmosd` working directory.
+You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmos` working directory.
 
 ### Recovering a previous node
 
@@ -64,13 +64,13 @@ In order to provide a custom seed to your private key, you can do as follows:
 
 1. Get a new random seed by running
    ```shell
-   desmosd keys add node --dry-run
+   desmos keys add node --dry-run
    ```
    This will create a new key **without** adding it to your keystore, and output the underlying seed.
 
 2. Copy the above provided seed, and then pass it to the `init` command using the `--recover` flag:
    ```shell
-   desmosd init <your_moniker> --recover <your_seed>
+   desmos init <your_moniker> --recover <your_seed>
    ```
 
 :::tip Recovering a node If you already have a seed, you can directly use the `--recover` flag without generating a new
@@ -86,19 +86,22 @@ genesis file by running the following command.
 
 ```bash
 # First, remove the newly created genesis file during the initialization
-rm $HOME/.desmosd/config/genesis.json
+rm $HOME/.desmos/config/genesis.json
 
 # Download the existing genesis file for the testnet
 # Assuming you are getting the genesis file for the latest testnet
-curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmosd/config/genesis.json
+curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o $HOME/.desmos/config/genesis.json
 ```
 
 ## 4. Connect to seed nodes
-To properly run your node, you will need to connect it to other full nodes running with the same software and genesis file. This can be done configuring the `seeds` value inside the `config.toml` file localed under the `.desmosd` working directory.
+
+To properly run your node, you will need to connect it to other full nodes running with the same software and genesis
+file. This can be done configuring the `seeds` value inside the `config.toml` file localed under the `.desmos` working
+directory.
 
 ```bash
 # Open the config.toml file using text editor
-nano $HOME/.desmosd/config/config.toml
+nano $HOME/.desmos/config/config.toml
 ```
 
 Locate the `seeds = ""` text at line 164. Update its value to a node address of a seed node. The format of a node address must be `<node_id>@<node_ip_address>:<port>`
@@ -132,14 +135,14 @@ Now you are good to run the full node. To do so, run:
 
 ```bash
 # Run Desmos full node
-desmosd start
+desmos start
 ```
 
 The full node will connect to the peers and start syncing. You can check the status of the node by executing: 
 
 ```bash
 # Check status of the node
-desmosd status
+desmos status
 ```
 
 You should see an output like the following one:
@@ -186,20 +189,21 @@ If you see that the `catching_up` value is `false` under the `sync_info`, it mea
 After your node is fully synced, you can consider running your full node as a [validator node](../../validators/setup.md).
 
 ## (Optional) Configure the service
-To allow your `desmosd` instance to run in the background as a service you need to execute the following command
+
+To allow your `desmos` instance to run in the background as a service you need to execute the following command
 
 ```bash
 tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
 [Unit]
-Description=Desmosd Full Node
+Description=Desmos Full Node
 After=network-online.target
 
 [Service]
 User=ubuntu
-ExecStart=/home/ubuntu/go/bin/desmosd start
+ExecStart=$GOBIN/desmos start
 Restart=always
 RestartSec=3
-LimitNOFILE=4096 # To compensate the "Too many open files" issue.
+LimitNOFILE=4096
 
 [Install]
 WantedBy=multi-user.target
@@ -234,13 +238,13 @@ If everything is running smoothly you should see something like
 
 ```bash
 $ systemctl status desmosd
-● desmosd.service - Desmosd Node
+● desmos.service - Desmos Node
    Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: 
    Active: active (running) since Fri 2020-01-17 10:23:12 CET; 2min 3s ago
- Main PID: 11318 (desmosd)
+ Main PID: 11318 (desmos)
     Tasks: 10 (limit: 4419)
    CGroup: /system.slice/desmosd.service
-           └─11318 /root/go/bin/desmosd start
+           └─11318 /root/go/bin/desmos start
 ```
 
 #### Check the node status
@@ -253,10 +257,10 @@ tail -100f /var/log/syslog
 This should return something like 
 
 ```
-Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.212] Executed block                               module=state height=10183 validTxs=0 invalidTxs=0
-Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.237] Committed state                              module=state height=10183 txs=0 appHash=0D8BEBCAC81A7B8DA1FBBF93FA6E921E7815AE3EBF53B78DB66CD8437DFD70C8
-Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.252] Executed block                               module=state height=10184 validTxs=0 invalidTxs=0
-Jan 17 09:24:55 <your-moniker> desmosd[11318]: I[2020-01-17|10:24:55.261] Committed state                              module=state height=10184 txs=0 appHash=459F68E6C5BF31EA5E58FB959829A587BB09B9F4DCA9C31CB754E5F26125FCD5
+Jan 17 09:24:55 <your-moniker> desmos[11318]: I[2020-01-17|10:24:55.212] Executed block                               module=state height=10183 validTxs=0 invalidTxs=0
+Jan 17 09:24:55 <your-moniker> desmos[11318]: I[2020-01-17|10:24:55.237] Committed state                              module=state height=10183 txs=0 appHash=0D8BEBCAC81A7B8DA1FBBF93FA6E921E7815AE3EBF53B78DB66CD8437DFD70C8
+Jan 17 09:24:55 <your-moniker> desmos[11318]: I[2020-01-17|10:24:55.252] Executed block                               module=state height=10184 validTxs=0 invalidTxs=0
+Jan 17 09:24:55 <your-moniker> desmos[11318]: I[2020-01-17|10:24:55.261] Committed state                              module=state height=10184 txs=0 appHash=459F68E6C5BF31EA5E58FB959829A587BB09B9F4DCA9C31CB754E5F26125FCD5
 ```
 
 #### Stopping the service
@@ -266,13 +270,13 @@ If you wish to stop the service from running, you can do so by running
 systemctl stop desmosd
 ```
 
-To check the successful stop, execute `systemctl status desmosd`. This should return
+To check the successful stop, execute `systemctl status desmos`. This should return
 
 ```bash
 $ systemctl status desmosd
-● desmosd.service - Desmosd Node
+● desmos.service - Desmos Node
    Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: enabled)
    Active: failed (Result: exit-code) since Fri 2020-01-17 10:28:04 CET; 3s ago
-  Process: 11318 ExecStart=/root/go/bin/desmosd start (code=exited, status=143)
+  Process: 11318 ExecStart=/root/go/bin/desmos start (code=exited, status=143)
  Main PID: 11318 (code=exited, status=143)
 ```

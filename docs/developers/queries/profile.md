@@ -3,11 +3,11 @@ This query endpoint allows you to retrieve the details of a single profile havin
 
 **CLI**
  ```bash
-desmosd query profiles profile [address_or_dtag]
+desmos query profiles profile [address_or_dtag]
 
 # Example
-# desmosd query profiles profile desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
-# desmosd query profiles profile leonardo
+# desmos query profiles profile desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
+# desmos query profiles profile leonardo
 ``` 
 
 **REST**

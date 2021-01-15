@@ -40,7 +40,7 @@ import (
 	genutilcli "github.com/desmos-labs/desmos/x/genutil/client/cli"
 )
 
-// NewRootCmd creates a new root command for desmosd. It is called once in the
+// NewRootCmd creates a new root command for desmos. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	// Read in the configuration file for the sdk
@@ -60,7 +60,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithHomeDir(app.DefaultNodeHome)
 
 	rootCmd := &cobra.Command{
-		Use:   "desmosd",
+		Use:   "desmos",
 		Short: "Desmos application",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {

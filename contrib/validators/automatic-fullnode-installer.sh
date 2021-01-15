@@ -33,8 +33,8 @@ if [ -z "$DAEMON_NAME" ]; then
   {
     echo " "
     echo "# Setup Cosmovisor"
-    echo "export DAEMON_NAME=desmosd"
-    echo "export DAEMON_HOME=$HOME/.desmosd"
+    echo "export DAEMON_NAME=desmos"
+    echo "export DAEMON_HOME=$HOME/.desmos"
     echo "export DAEMON_RESTART_AFTER_UPGRADE=on"
   } >> "$HOME/.profile"
   source "$HOME/.profile"
@@ -70,17 +70,17 @@ fi
 echo "===> Setting up Desmos"
 
 # Backup the priv validator key
-VALIDATOR_PRIV_KEY="$HOME/.desmosd/config/priv_validator_key.json"
+VALIDATOR_PRIV_KEY="$HOME/.desmos/config/priv_validator_key.json"
 BACKUP_FILE="$HOME/priv_validator_key.json"
 if [ -f "$VALIDATOR_PRIV_KEY" ]; then
   echo "====> Backing up the private validator key"
   cp "$VALIDATOR_PRIV_KEY" "$BACKUP_FILE"
 fi
 
-# Delete the old $HOME/.desmosd folder
-DESMOSD_FOLDER="$HOME/.desmosd"
+# Delete the old $HOME/.desmos folder
+DESMOSD_FOLDER="$HOME/.desmos"
 if [ -d "$DESMOSD_FOLDER" ]; then
-  echo "====> Removing existing desmosd folder"
+  echo "====> Removing existing desmos folder"
   sudo rm -r DESMOSD_FOLDER
 fi
 
@@ -97,9 +97,9 @@ echo "====> Downloading Desmos"
   git checkout tags/v0.12.2
   make build install
 
-  mkdir -p "$HOME/.desmosd/cosmovisor/genesis/bin"
-  mkdir -p "$HOME/.desmosd/cosmovisor/upgrades"
-  mv build/desmosd "$HOME/.desmosd/cosmovisor/genesis/bin"
+  mkdir -p "$HOME/.desmos/cosmovisor/genesis/bin"
+  mkdir -p "$HOME/.desmos/cosmovisor/upgrades"
+  mv build/desmos "$HOME/.desmos/cosmovisor/genesis/bin"
 } &> /dev/null
 
 # Initialize the chain
@@ -124,13 +124,13 @@ fi
 # Download the genesis file
 echo "====> Downloading the genesis file"
 {
-  curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o "$HOME/.desmosd/config/genesis.json"
+  curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/genesis.json -o "$HOME/.desmos/config/genesis.json"
 } &> /dev/null
 
 # Setup the persistent peers
 echo "====> Setting persistent peers"
 {
-  sed -i -e 's/seeds = ""/seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"/g' "$HOME/.desmosd/config/config.toml"
+  sed -i -e 's/seeds = ""/seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"/g' "$HOME/.desmos/config/config.toml"
 } &> /dev/null
 
 echo "===> Completed Desmos setup"
@@ -152,8 +152,8 @@ ExecStart=$GOBIN/cosmovisor start
 Restart=always
 RestartSec=3
 LimitNOFILE=4096
-Environment="DAEMON_NAME=desmosd"
-Environment="DAEMON_HOME=$HOME/.desmosd"
+Environment="DAEMON_NAME=desmos"
+Environment="DAEMON_HOME=$HOME/.desmos"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=on"
 [Install]
 WantedBy=multi-user.target

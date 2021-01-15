@@ -203,7 +203,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".desmosd")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".desmos")
 }
 
 // NewDesmosApp is a constructor function for DesmosApp

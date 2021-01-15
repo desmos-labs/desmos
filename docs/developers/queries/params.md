@@ -3,7 +3,7 @@ This query endpoint returns all the parameters of the `posts` module.
 
 **CLI**
  ```bash
-desmosd query posts parameters
+desmos query posts parameters
 ```
 
 **REST**
@@ -19,7 +19,7 @@ This query endpoint returns all the parameters of the `profiles` module.
 
 **CLI**
  ```bash
-desmosd query profiles parameters
+desmos query profiles parameters
 ``` 
 
 **REST**

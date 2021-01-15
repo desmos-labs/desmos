@@ -7,19 +7,21 @@ If you wish to run a new validator node instead, please reference the [setup ins
 :::  
 
 ## 1. Stop the currently running node. 
-First of all we need to stop the currently running validator node. To do so you can go inside the console where you have run `desmosd start` and type `Ctrl + C`. This will halt your fullnode gracefully. 
+First of all we need to stop the currently running validator node. To do so you can go inside the console where you have
+run `desmos start` and type `Ctrl + C`. This will halt your fullnode gracefully.
 
-If you have also setup a [background service](../../fullnode/setup/manual.md#optional-configure-the-service), please stop that too by executing the following command: 
+If you have also setup a [background service](../../fullnode/setup/manual.md#optional-configure-the-service), please
+stop that too by executing the following command:
 
 ```bash
-systemctl stop desmosd
+systemctl stop desmos
 ``` 
 
 ## 2. Export the current state
 Once the fullnode has been properly stopped, you can export the current chain state. To do so execute the following command: 
 
 ```bash
-desmosd export --for-zero-height > old-state.json
+desmos export --for-zero-height > old-state.json
 ```
 
 This will allow you to write the current chain state to the `old-state.json` file inside the current directory. 
@@ -42,15 +44,15 @@ After updating the fullnode, it is now time to migrate the old chain state to a 
 First of all, do a backup of your current genesis file: 
 
 ```bash
-cp ~/.desmosd/config/genesis.json ~/.desmosd/config/genesis.json.bak
+cp ~/.desmos/config/genesis.json ~/.desmos/config/genesis.json.bak
 ```
 
 Then, you can migrate the old state and replace it with the new one: 
 ```bash
-desmosd migrate <version> old-state.json \
+desmos migrate <version> old-state.json \
   --chain-id <new-chain-id> \
   --genesis-time <new-genesis-time> \
-  > ~/.desmosd/config/genesis.json
+  > ~/.desmos/config/genesis.json
 ```
 
 Please note that the `version`, `new-chain-id` and the `new-genesis-time` will be communicated to you in advance and will also be available inside the proper folder [on the testnets repo](https://github.com/desmos-labs/morpheus). 
@@ -70,16 +72,16 @@ Resetting the node will have the followings happen.
 To reset the node, you need to execute the following command:
 
 ```bash
-desmosd unsafe-reset-all
+desmos unsafe-reset-all
 ```
 
-Please make sure your validator key located at `~/.desmosd/config/priv_validator_key.json` is intact.
+Please make sure your validator key located at `~/.desmos/config/priv_validator_key.json` is intact.
 
 ## 6. Start the fullnode again
 After you have properly migrated the genesis state, you can start again the fullnode and the validator by running 
 
 ```bash
-desmosd start
+desmos start
 ``` 
 
 :::warning Peers not connecting  

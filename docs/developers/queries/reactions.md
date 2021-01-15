@@ -3,10 +3,10 @@ This query endpoint allows you to retrieve the list of registered reactions.
 
 **CLI**
  ```bash
-desmosd query posts registered-reactions
+desmos query posts registered-reactions
 
 # Example
-# desmosd query posts registered-reactions
+# desmos query posts registered-reactions
 ``` 
 
 **REST**

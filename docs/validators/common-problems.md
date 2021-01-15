@@ -1,12 +1,14 @@
 # Common Problems
 
 ## Problem #1: My validator has `voting_power: 0`
-Your validator has become jailed. Validators get jailed, i.e. get removed from the active validator set, if they do not vote on `500` of the last `10000` blocks, or if they double sign. 
+Your validator has become jailed. Validators get jailed, i.e. get removed from the active validator set, if they do not
+vote on `500` of the last `10000` blocks, or if they double sign.
 
-If you got jailed for downtime, you can get your voting power back to your validator. First, if `desmosd` is not running, start it up again:
+If you got jailed for downtime, you can get your voting power back to your validator. First, if `desmos` is not running,
+start it up again:
 
 ```bash
-desmosd start
+desmos start
 ```
 
 Wait for your full node to catch up to the latest block. Then, you
@@ -15,16 +17,20 @@ can [unjail your validator](#problem-4-my-validator-is-jailed).
 Lastly, check your validator again to see if your voting power is back.
 
 ```bash
-desmosd status
+desmos status
 ```
 
 You may notice that your voting power is less than it used to be. That's because you got slashed for downtime!
 
-## Problem #2: My `desmosd` crashes because of `too many open files`
-The default number of files Linux can open (per-process) is `1024`. `desmosd` is known to open more than `1024` files. This causes the process to crash. A quick fix is to run `ulimit -n 4096` (increase the number of open files allowed) and then restart the process with `desmosd start`. If you are using `systemd` or another process manager to launch `desmosd` this may require some configuration at that level. A sample `systemd` file to fix this issue is below:
+## Problem #2: My `desmos` crashes because of `too many open files`
+
+The default number of files Linux can open (per-process) is `1024`. `desmos` is known to open more than `1024` files.
+This causes the process to crash. A quick fix is to run `ulimit -n 4096` (increase the number of open files allowed) and
+then restart the process with `desmos start`. If you are using `systemd` or another process manager to launch `desmos`
+this may require some configuration at that level. A sample `systemd` file to fix this issue is below:
 
 ```{12}
-# /etc/systemd/system/desmosd.service
+# /etc/systemd/system/desmos.service
 [Unit]
 Description=Desmos Full Node
 After=network.target
@@ -33,7 +39,7 @@ After=network.target
 Type=simple
 User=ubuntu # This is the user that is running the software in the background. Change it to your username if needed.
 WorkingDirectory=/home/ubuntu # This is the home directory of the user that running the software in the background. Change it to your username if needed.
-ExecStart=/home/ubuntu/go/bin/desmosd start # The path should point to the correct location of the software you have installed.
+ExecStart=/home/ubuntu/go/bin/desmos start # The path should point to the correct location of the software you have installed.
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096 # To compensate the "Too many open files" issue.
@@ -49,27 +55,27 @@ To solve this, what you can do is getting more tokens delegated to it by followi
 
 1. Get your address: 
    ```bash
-   desmosd keys show <your_key> --address
+   desmos keys show <your_key> --address
    ```
    
 2. Require more tokens using the [faucet](https://faucet.desmos.network). 
 
 3. Make sure the tokens have been sent properly: 
    ```bash
-   desmosd query account $(desmosd keys show <your_key> --address) --chain-id <chain_id>
+   desmos query account $(desmos keys show <your_key> --address) --chain-id <chain_id>
    ```
    
 4. Delegate the tokens to your validator: 
    ```bash
-   desmosd tx staking delegate \
-     $(desmosd keys show <your_key> --bech=val --address) \
+   desmos tx staking delegate \
+     $(desmos keys show <your_key> --bech=val --address) \
      <amount> \
      --chain-id <chain_id> \
      --from <your_key> --yes
    
    # Example
-   # desmosd tx staking delegate \
-   #  $(desmosd keys show validator --bech=val --address) \
+   # desmos tx staking delegate \
+   #  $(desmos keys show validator --bech=val --address) \
    #  10000000udaric \
    #  --chain-id morpheus-1001 \
    #  --from validator --yes
@@ -81,11 +87,11 @@ If your validator is jailed it probably means that it have been inactive for a l
 number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some
 error.
 
-If your service is running properly, you can also try and reset your `desmosd` configuration by running the following
+If your service is running properly, you can also try and reset your `desmos` configuration by running the following
 command:
 
 ```bash
-rm $HOME/.desmosd/config/config.toml
+rm $HOME/.desmos/config/config.toml
 ``` 
 
 After doing so, remember to restart your validator service to apply the changes.
@@ -93,10 +99,10 @@ After doing so, remember to restart your validator service to apply the changes.
 Once you have fixed the problems, you can unjail your validator by executing the following command: 
 
 ```bash
-desmosd tx slashing unjail --chain-id <chain_id> --from <your_key>
+desmos tx slashing unjail --chain-id <chain_id> --from <your_key>
 
 # Example
-# desmosd tx slashing unjail --chain-id morpheus-1001 --from validator
+# desmos tx slashing unjail --chain-id morpheus-1001 --from validator
 ```
 
 This will perform an unjail transaction that will set your validator as active again from the next block. 
@@ -121,8 +127,8 @@ Seed nodes are a particular type of nodes that provide every validator with a se
 
 In order to use this particular type of nodes, all you have to do is:
 
-1. Open the `~/.desmosd/config/config.toml` file
-2. Find the line starting with 
+1. Open the `~/.desmos/config/config.toml` file
+2. Find the line starting with
    ```
    seeds = ""
    ```
@@ -184,7 +190,8 @@ In the above case, that peer's address would be:
 d45d4e0a6a6c393d58cfa1c5fed6286164fbfceb@35.193.251.165:26656
 ``` 
 
-You can do this with as many peers as you want. Once you have a list of peers, you can use those inside the `persistent_peers` field of your `~/.desmosd/config/config.toml` file.
+You can do this with as many peers as you want. Once you have a list of peers, you can use those inside
+the `persistent_peers` field of your `~/.desmos/config/config.toml` file.
 
 ## Problem #6: I tried unjailing my validator, but it keeps getting jailed after some time
 

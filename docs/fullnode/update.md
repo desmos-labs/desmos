@@ -6,8 +6,8 @@ latest testnet.
 First, remove the outdated files and reset the data.
 
 ```bash
-rm $HOME/.desmosd/config/addrbook.json $HOME/.desmosd/config/genesis.json
-desmosd unsafe-reset-all
+rm $HOME/.desmos/config/addrbook.json $HOME/.desmos/config/genesis.json
+desmos unsafe-reset-all
 ```
 
 Your node is now in a pristine state while keeping the original `priv_validator.json` and `config.toml`. If you had any sentry nodes or full nodes setup before, your node will still try to connect to them, but may fail if they haven't also been upgraded.
@@ -28,7 +28,7 @@ cd <installation-path>
 # cd /home/$USER/desmos
 ``` 
 
-Now, update the `desmosd` software:
+Now, update the `desmos` software:
 
 ```bash
 git fetch --all

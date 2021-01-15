@@ -35,7 +35,7 @@ type Plan struct {
 In order to create a simple upgrade proposal, the command that can be execute is the following: 
 
 ```shell
-desmosd tx gov submit-proposal software-upgrade "<Upgrade name>" \
+desmos tx gov submit-proposal software-upgrade "<Upgrade name>" \
   --title "<Proposal title>" \
   --description "<Proposal description>" \
   --deposit <Initial deposit> \
@@ -65,12 +65,12 @@ As a validator, if a proposal passes you will need to perform the following oper
 First of all, you need to checkout the proper Desmos version. The upgrade proposal will contain the details of what Desmos version should be used during the upgrade process. 
    
 In order to make sure the `upgrade_manager` utility properly handles the upgrade, you need then to build the Desmos binary and put inside the correct folder on your machine. In order to do so run:
-  
+
 ```shell
 cd ~/desmos
 make build
-mkdir -p ~/.desmosd/upgrade_manager/upgrades/<upgrade-name>/bin
-cp build/desmosd ~/.desmosd/upgrade_manager/upgrades/<upgrade-name>/bin
+mkdir -p ~/.desmos/upgrade_manager/upgrades/<upgrade-name>/bin
+cp build/desmos ~/.desmos/upgrade_manager/upgrades/<upgrade-name>/bin
 ``` 
 
 Please note that the `<upgrade-name>` placeholder should be replaced with the name of the upgrade that is put inside the upgrade proposal. 

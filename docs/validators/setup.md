@@ -6,7 +6,7 @@ If you want to become a validator for the `mainnet`, you should [research securi
 :::
 
 ## 1. Run a fullnode
-To become a validator, you must first have `desmosd` installed and be able to run a fullnode. You can
+To become a validator, you must first have `desmos` installed and be able to run a fullnode. You can
 first [setup your fullnode](../fullnode/overview.md) if you haven't yet.
 
 :::tip Not enough funds? Google Cloud can help you  
@@ -23,7 +23,7 @@ should be enough to run a validator for 5-6 months.
 In order to create a validator, you need to have to create a local wallet first. This will be used in order to hold the tokens that you will later delegate to your validator node, allowing him to properly work. In order to create this wallet, please run: 
 
 ```shell
-desmosd keys add <key_name>
+desmos keys add <key_name>
 ```  
 
 :::warning Key name  
@@ -35,7 +35,7 @@ Once that you have created your local wallet, it's time to get some tokens to be
 To run a validator node you need to first get your current validator public key that was created when you ran `desmod init`. Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
 
 ```bash
-desmosd tendermint show-validator
+desmos tendermint show-validator
 ```
 
 To create your validator, just use the following command:
@@ -49,9 +49,9 @@ We are going to use `udesmos` as the staking token on Mainnet.
 :::
 
 ```bash
-desmosd tx staking create-validator \
+desmos tx staking create-validator \
   --amount=1000000udaric \
-  --pubkey=$(desmosd tendermint show-validator) \
+  --pubkey=$(desmos tendermint show-validator) \
   --moniker="<Your moniker here>" \
   --chain-id=<chain_id> \
   --commission-rate="0.10" \
@@ -86,7 +86,7 @@ The <key_name> specifies which validator you are editing. If you choose to not i
 The `--identity` can be used as to verify identity with systems like Keybase or UPort. When using with Keybase `--identity` should be populated with a 16-digit string that is generated with a [keybase.io](https://keybase.io) account. It's a cryptographically secure method of verifying your identity across multiple online networks. The Keybase API allows some block explorers to retrieve your Keybase avatar. This is how you can add a logo to your validator profile.
 
 ```bash
-desmosd tx staking edit-validator \
+desmos tx staking edit-validator \
   --moniker="choose a moniker" \
   --website="https://desmos.network" \
   --identity=6A0D65E29A4CBC8E \
@@ -107,11 +107,11 @@ __Note__: The `commission-rate` value must adhere to the following invariants:
 View the validator's information with this command:
 
 ```bash
-desmosd query staking validator <account_desmos>
+desmos query staking validator <account_desmos>
 ```
 
 ```bash
-desmosd tx slashing unjail \
+desmos tx slashing unjail \
 	--from=<key_name> \
 	--chain-id=<chain_id>
 ```
@@ -120,11 +120,11 @@ desmosd tx slashing unjail \
 Your validator is active if the following command returns anything:
 
 ```bash
-desmosd query tendermint-validator-set | grep "$(desmosd tendermint show-validator)"
+desmos query tendermint-validator-set | grep "$(desmos tendermint show-validator)"
 ```
 
-You should now see your validator in one of the Desmos explorers. You are looking for the `bech32` encoded `address` in the `~/.desmosd/config/priv_validator.json` file.
+You should now see your validator in one of the Desmos explorers. You are looking for the `bech32` encoded `address` in
+the `~/.desmos/config/priv_validator.json` file.
 
-::: warning Note
-To be in the validator set, you need to have more total voting power than the 100th validator.
+::: warning Note To be in the validator set, you need to have more total voting power than the 100th validator.
 :::
