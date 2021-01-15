@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
-BINARY=/desmosd/${BINARY:-desmosd}
+BINARY=/desmos/${BINARY:-desmos}
 ID=${ID:-0}
-LOG=${LOG:-desmosd.log}
+LOG=${LOG:-desmos.log}
 
 if ! [ -f "${BINARY}" ]; then
-	echo "The binary $(basename "${BINARY}") cannot be found. Please add the binary to the shared folder. Please use the BINARY environment variable if the name of the binary is not 'desmosd'"
+	echo "The binary $(basename "${BINARY}") cannot be found. Please add the binary to the shared folder. Please use the BINARY environment variable if the name of the binary is not 'desmos'"
 	exit 1
 fi
 
@@ -16,7 +16,7 @@ if [ -z "${BINARY_CHECK}" ]; then
 	exit 1
 fi
 
-export DESMOSDHOME="/desmosd/node${ID}/desmosd"
+export DESMOSDHOME="/desmos/node${ID}/desmos"
 
 if [ -d "$(dirname "${DESMOSDHOME}"/"${LOG}")" ]; then
   "${BINARY}" --home "${DESMOSDHOME}" "$@" | tee "${DESMOSDHOME}/${LOG}"

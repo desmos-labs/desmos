@@ -39,7 +39,7 @@ A part from disk space, the following requirements should be met.
 
 
 ## 1. Setup your environment
-In order to run a fullnode, you need to build `desmosd` which requires `Go`, `git`, `gcc` and `make` installed.
+In order to run a fullnode, you need to build `desmos` which requires `Go`, `git`, `gcc` and `make` installed.
 
 This process depends on your working environment.
 

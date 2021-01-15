@@ -1,6 +1,6 @@
-all: desmosd-env
+all: desmos-env
 
-desmosd-env:
-	docker build --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) --tag desmoslabs/desmosd-env desmosd-env
+desmos-env:
+	docker build --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) --tag desmoslabs/desmos-env desmos-env
 
-.PHONY: all desmosd-env
+.PHONY: all desmos-env

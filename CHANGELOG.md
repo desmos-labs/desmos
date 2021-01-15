@@ -234,7 +234,7 @@
 In order to migrate the chain state from version `v0.2.0` to `v0.3.0`, please run the following command:
 
 ```bash
-desmosd migrate v0.3.0 <path-to-genesis-file> 
+desmos migrate v0.3.0 <path-to-genesis-file> 
 ```
 
 # Version 0.2.0
@@ -253,7 +253,7 @@ desmosd migrate v0.3.0 <path-to-genesis-file>
 In order to migrate the chain state from version `v0.1.0` or `v0.1.1` to `v0.2.0`, please run the following command:
 
 ```bash
-desmosd migrate v0.2.0 <path-to-genesis-file> 
+desmos migrate v0.2.0 <path-to-genesis-file> 
 ```
 
 # Version 0.1.1

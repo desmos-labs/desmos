@@ -3,10 +3,10 @@ This query endpoint allows you to retrieve the details of a relationship where t
 
 **CLI**
 ```bash
-desmosd query relationships user [address]
+desmos query relationships user [address]
 
 # Example
-# desmosd query relationships user desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmos query relationships user desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
 
 **REST**

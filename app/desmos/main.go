@@ -9,7 +9,7 @@ import (
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"github.com/desmos-labs/desmos/app/desmosd/cmd"
+	"github.com/desmos-labs/desmos/app/desmos/cmd"
 )
 
 func main() {

@@ -3,10 +3,10 @@ This query allows you to retrieve the details of a session having its id.
 
 **CLI**
 ```bash
-desmosd query sessions session [id]
+desmos query sessions session [id]
 
 # Example
-# desmosd query sessions session 66
+# desmos query sessions session 66
 ```
 
 **REST**

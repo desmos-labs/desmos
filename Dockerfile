@@ -2,18 +2,18 @@
 # > docker build -t desmos .
 #
 # Simple usage with a mounted data directory:
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd desmos desmosd init
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd desmos desmosd start
+# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos desmos desmos init
+# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos desmos desmos start
 #
 # If you want to run this container as a daemon, you can do so by executing
-# > docker run -td -p 46657:46657 -p 46656:46656 -v ~/.desmosd:/root/.desmosd --name desmos desmos
+# > docker run -td -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos --name desmos desmos
 #
 # Once you have done so, you can enter the container shell by executing
 # > docker exec -it desmos bash
 #
 # To exit the bash, just execute
 # > exit
-FROM golang:alpine AS build-env
+FROM golang:1.15-alpine AS build-env
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
@@ -40,9 +40,9 @@ WORKDIR /root
 RUN apk add --no-cache bash
 
 # Copy over binaries from the build-env
-COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmosd /usr/bin/desmosd
+COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmos /usr/bin/desmos
 
 EXPOSE 26656 26657 1317 9090
 
-# Run desmosd by default, omit entrypoint to ease using container with desmosd
-CMD ["desmosd"]
+# Run desmos by default, omit entrypoint to ease using container with desmos
+CMD ["desmos"]

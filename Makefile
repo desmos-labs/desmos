@@ -179,8 +179,8 @@ test-sim-nondeterminism:
 
 test-sim-custom-genesis-fast:
 	@echo "Running custom genesis simulation..."
-	@echo "By default, ${HOME}/.desmosd/config/genesis.json will be used."
-	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.desmosd/config/genesis.json \
+	@echo "By default, ${HOME}/.desmos/config/genesis.json will be used."
+	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.desmos/config/genesis.json \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
 
 test-sim-import-export: runsim
@@ -193,8 +193,8 @@ test-sim-after-import: runsim
 
 test-sim-custom-genesis-multi-seed: runsim
 	@echo "Running multi-seed custom genesis simulation..."
-	@echo "By default, ${HOME}/.desmosd/config/genesis.json will be used."
-	@$(BINDIR)/runsim -Genesis=${HOME}/.desmosd/config/genesis.json -SimAppPkg=$(SIMAPP) -ExitOnFail 400 5 TestFullAppSimulation
+	@echo "By default, ${HOME}/.desmos/config/genesis.json will be used."
+	@$(BINDIR)/runsim -Genesis=${HOME}/.desmos/config/genesis.json -SimAppPkg=$(SIMAPP) -ExitOnFail 400 5 TestFullAppSimulation
 
 test-sim-multi-seed-long: runsim
 	@echo "Running long multi-seed application simulation. This may take awhile!"
@@ -357,14 +357,14 @@ build-docker-desmosnode:
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
-	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmosd-env 2>/dev/null),$(info found image desmoslabs/desmosd-env),$(MAKE) -C contrib/images desmosd-env)
-	if ! [ -f build/node0/desmosd/config/genesis.json ]; then docker run --rm \
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
+	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
-		-v $(BUILDDIR):/desmosd:Z \
+		-v $(BUILDDIR):/desmos:Z \
 		-v /etc/group:/etc/group:ro \
 		-v /etc/passwd:/etc/passwd:ro \
 		-v /etc/shadow:/etc/shadow:ro \
-		desmoslabs/desmosd-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet
