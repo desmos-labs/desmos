@@ -267,15 +267,15 @@ Jan 17 09:24:55 <your-moniker> desmos[11318]: I[2020-01-17|10:24:55.261] Committ
 If you wish to stop the service from running, you can do so by running
 
 ```bash
-systemctl stop desmos
+systemctl stop desmosd
 ```
 
 To check the successful stop, execute `systemctl status desmos`. This should return
 
 ```bash
-$ systemctl status desmos
-● desmos.service - Desmosd Node
-   Loaded: loaded (/etc/systemd/system/desmos.service; enabled; vendor preset: enabled)
+$ systemctl status desmosd
+● desmos.service - Desmos Node
+   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: enabled)
    Active: failed (Result: exit-code) since Fri 2020-01-17 10:28:04 CET; 3s ago
   Process: 11318 ExecStart=/root/go/bin/desmos start (code=exited, status=143)
  Main PID: 11318 (code=exited, status=143)
