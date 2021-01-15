@@ -140,7 +140,7 @@ echo ""
 ## Setup the service
 ####################################
 echo "===> Setting up Desmos service"
-FILE=/etc/systemd/system/desmos.service
+FILE=/etc/systemd/system/desmosd.service
 {
   sudo tee $FILE > /dev/null <<EOF
 [Unit]
@@ -164,8 +164,8 @@ echo "====> Starting Desmos service"
 echo ""
 {
   sudo systemctl daemon-reload
-  sudo systemctl enable desmos
-  sudo systemctl restart desmos
+  sudo systemctl enable desmosd
+  sudo systemctl restart desmosd
 } &> /dev/null
 
 tail -100f /var/log/syslog

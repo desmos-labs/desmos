@@ -193,17 +193,17 @@ After your node is fully synced, you can consider running your full node as a [v
 To allow your `desmos` instance to run in the background as a service you need to execute the following command
 
 ```bash
-tee /etc/systemd/system/desmos.service > /dev/null <<EOF  
+tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
 [Unit]
-Description=Desmosd Full Node
+Description=Desmos Full Node
 After=network-online.target
 
 [Service]
 User=ubuntu
-ExecStart=/home/ubuntu/go/bin/desmos start
+ExecStart=$GOBIN/desmos start
 Restart=always
 RestartSec=3
-LimitNOFILE=4096 # To compensate the "Too many open files" issue.
+LimitNOFILE=4096
 
 [Install]
 WantedBy=multi-user.target
@@ -217,13 +217,13 @@ If you are logged as a user which is not `ubuntu`, make sure to edit the `User` 
 Once you have successfully created the service, you need to first enable it. You can do so by running 
 
 ```bash
-systemctl enable desmos
+systemctl enable desmosd
 ```
 
 After this, you can run it by executing
 
 ```bash
-systemctl start desmos
+systemctl start desmosd
 ```
 
 ### Service operations 
@@ -231,19 +231,19 @@ systemctl start desmos
 If you want to see if the service is running properly, you can execute
 
 ```bash
-systemctl status desmos
+systemctl status desmosd
 ``` 
 
 If everything is running smoothly you should see something like 
 
 ```bash
-$ systemctl status desmos
-● desmos.service - Desmosd Node
-   Loaded: loaded (/etc/systemd/system/desmos.service; enabled; vendor preset: 
+$ systemctl status desmosd
+● desmos.service - Desmos Node
+   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: 
    Active: active (running) since Fri 2020-01-17 10:23:12 CET; 2min 3s ago
  Main PID: 11318 (desmos)
     Tasks: 10 (limit: 4419)
-   CGroup: /system.slice/desmos.service
+   CGroup: /system.slice/desmosd.service
            └─11318 /root/go/bin/desmos start
 ```
 
