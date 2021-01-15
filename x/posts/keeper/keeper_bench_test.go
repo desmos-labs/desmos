@@ -13,8 +13,8 @@ import (
 	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
-// RandomPostIDOrSubspace returns a random PostID
-func RandomPostIDOrSubspace() string {
+// RandomPostIdOrSubspace returns a random PostID
+func RandomPostIdOrSubspace() string {
 	bytes := make([]byte, 128)
 	_, err := rand.Read(bytes)
 	if err != nil {
@@ -61,7 +61,7 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 		Limit:        r.Uint64(),
 		SortBy:       sortBy,
 		SortOrder:    sortOrder,
-		ParentID:     "",
+		ParentId:     "",
 		CreationTime: nil,
 		Subspace:     "",
 		Creator:      "",
@@ -93,7 +93,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.GetPost(suite.ctx, randomPost.PostID)
+		suite.keeper.GetPost(suite.ctx, randomPost.PostId)
 	}
 
 }
@@ -141,7 +141,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		err := suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.keeper.SavePostReaction(suite.ctx, post.PostId, reaction)
 		suite.Require().NoError(err)
 	}
 }
@@ -159,12 +159,12 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	reaction := postssim.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		err := suite.keeper.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.keeper.SavePostReaction(suite.ctx, post.PostId, reaction)
 		suite.Require().NoError(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.keeper.GetPostReactions(suite.ctx, post.PostID)
+		suite.keeper.GetPostReactions(suite.ctx, post.PostId)
 	}
 }

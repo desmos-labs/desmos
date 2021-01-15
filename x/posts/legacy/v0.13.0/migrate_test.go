@@ -30,8 +30,8 @@ func TestMigrate(t *testing.T) {
 	v0120GenState := v0120posts.GenesisState{
 		Posts: []v0120posts.Post{
 			{
-				PostID:         parentID,
-				ParentID:       "",
+				PostId:         parentID,
+				ParentId:       "",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -42,8 +42,8 @@ func TestMigrate(t *testing.T) {
 				Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 			},
 			{
-				PostID:         postID,
-				ParentID:       parentID,
+				PostId:         postID,
+				ParentId:       parentID,
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -83,8 +83,8 @@ func TestMigrate(t *testing.T) {
 	expected := v0130posts.GenesisState{
 		Posts: []v0130posts.Post{
 			{
-				PostID:         parentID,
-				ParentID:       "",
+				PostId:         parentID,
+				ParentId:       "",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -95,8 +95,8 @@ func TestMigrate(t *testing.T) {
 				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 			{
-				PostID:         postID,
-				ParentID:       parentID,
+				PostId:         postID,
+				ParentId:       parentID,
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -144,8 +144,8 @@ func TestMigrate(t *testing.T) {
 	// Check for posts
 	require.Len(t, migrated.Posts, len(expected.Posts))
 	for index, post := range migrated.Posts {
-		require.Equal(t, expected.Posts[index].PostID, post.PostID)
-		require.Equal(t, expected.Posts[index].ParentID, post.ParentID)
+		require.Equal(t, expected.Posts[index].PostId, post.PostId)
+		require.Equal(t, expected.Posts[index].ParentId, post.ParentId)
 		require.Equal(t, expected.Posts[index].OptionalData, post.OptionalData)
 	}
 }
@@ -167,8 +167,8 @@ func TestConvertPosts(t *testing.T) {
 
 	var posts = []v0120posts.Post{
 		{
-			PostID:         parentID,
-			ParentID:       "",
+			PostId:         parentID,
+			ParentId:       "",
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -179,8 +179,8 @@ func TestConvertPosts(t *testing.T) {
 			Attachments:    []v0120posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain"}},
 		},
 		{
-			PostID:         postID,
-			ParentID:       parentID,
+			PostId:         postID,
+			ParentId:       parentID,
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -194,8 +194,8 @@ func TestConvertPosts(t *testing.T) {
 
 	var expectedPosts = []v0130posts.Post{
 		{
-			PostID:         parentID,
-			ParentID:       "",
+			PostId:         parentID,
+			ParentId:       "",
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -206,8 +206,8 @@ func TestConvertPosts(t *testing.T) {
 			Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 		},
 		{
-			PostID:         postID,
-			ParentID:       parentID,
+			PostId:         postID,
+			ParentId:       parentID,
 			Message:        "Message",
 			AllowsComments: true,
 			Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",

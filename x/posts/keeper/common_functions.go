@@ -28,7 +28,7 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	postsSorted := make([]types.Post, len(posts))
 	for _, post := range posts {
 		var index types.PostIndex
-		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
+		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostId)), &index)
 		postsSorted[index.Value-1] = post
 	}
 
@@ -54,20 +54,20 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 
 	if int64(len(post.Message)) > maxMsgLen {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with id %s has more than %d characters", post.PostID, maxMsgLen))
+			fmt.Sprintf("post with id %s has more than %d characters", post.PostId, maxMsgLen))
 	}
 
 	if int64(len(post.OptionalData)) > maxOpFieldNum {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("post with id %s contains optional data with more than %d key-value pairs",
-				post.PostID, maxOpFieldNum))
+				post.PostId, maxOpFieldNum))
 	}
 
 	for _, optionalData := range post.OptionalData {
 		if int64(len(strings.TrimSpace(optionalData.Value))) > maxOpFieldValLen {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("post with id %s has optional data with key %s which value exceeds %d characters.",
-					post.PostID, optionalData.Key, maxOpFieldValLen))
+					post.PostId, optionalData.Key, maxOpFieldValLen))
 		}
 	}
 

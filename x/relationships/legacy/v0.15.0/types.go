@@ -1,11 +1,12 @@
 package v0150
 
-type GenesisState struct {
-	Relationships []Relationship `json:"relationships"`
-	Blocks        []UserBlock    `json:"blocks"`
-}
+import (
+	v0150relationships "github.com/desmos-labs/desmos/x/relationships/types"
+)
 
-func (state GenesisState) FindRelationshipsForUser(user string) []Relationship {
+type GenesisState = v0150relationships.GenesisState
+
+func FindRelationshipsForUser(state GenesisState, user string) []Relationship {
 	var relationships []Relationship
 	for _, relationship := range state.Relationships {
 		if relationship.Creator == user {
@@ -15,15 +16,5 @@ func (state GenesisState) FindRelationshipsForUser(user string) []Relationship {
 	return relationships
 }
 
-type Relationship struct {
-	Creator   string `json:"creator,omitempty"`
-	Recipient string `json:"recipient,omitempty"`
-	Subspace  string `json:"subspace,omitempty"`
-}
-
-type UserBlock struct {
-	Blocker  string `json:"blocker,omitempty"`
-	Blocked  string `json:"blocked,omitempty"`
-	Reason   string `json:"reason,omitempty"`
-	Subspace string `json:"subspace,omitempty"`
-}
+type Relationship = v0150relationships.Relationship
+type UserBlock = v0150relationships.UserBlock

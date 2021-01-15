@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "All invariants are not violated",
 			posts: []types.Post{
 				{
-					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post without medias",
 					Created:      suite.testData.post.Created,
 					LastEdited:   time.Time{},
@@ -31,8 +31,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:        "Post without medias",
 					AllowsComments: false,
 					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -74,7 +74,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidPosts Invariants violated",
 			posts: []types.Post{
 				{
-					PostID:       "1234",
+					PostId:       "1234",
 					Message:      "Message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -90,7 +90,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidCommentsDate Invariants violated",
 			posts: []types.Post{
 				{
-					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post without medias",
 					Created:      suite.testData.post.Created,
 					LastEdited:   time.Time{},
@@ -101,8 +101,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Message",
 					Created:      suite.testData.postEndPollDateExpired,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -145,8 +145,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidPollForPollAnswers Invariants violated",
 			posts: []types.Post{
 				{
-					PostID:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostId:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:        "Post without medias",
 					AllowsComments: false,
 					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",

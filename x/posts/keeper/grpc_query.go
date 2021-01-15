@@ -18,13 +18,13 @@ var _ types.QueryServer = Keeper{}
 
 func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPostResponse {
 	// Get the reactions
-	postReactions := k.GetPostReactions(ctx, post.PostID)
+	postReactions := k.GetPostReactions(ctx, post.PostId)
 	if postReactions == nil {
 		postReactions = []types.PostReaction{}
 	}
 
 	// Get the children
-	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostID)
+	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostId)
 	if childrenIDs == nil {
 		childrenIDs = []string{}
 	}
@@ -32,7 +32,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	//Get the poll answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = k.GetPollAnswers(ctx, post.PostID)
+		answers = k.GetPollAnswers(ctx, post.PostId)
 	}
 
 	// Crete the response object
@@ -60,8 +60,8 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostID(req.ParentID) {
-			matchParentID = req.ParentID == post.ParentID
+		if types.IsValidPostID(req.ParentId) {
+			matchParentID = req.ParentId == post.ParentId
 		}
 
 		// match creation time if valid height

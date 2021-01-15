@@ -27,8 +27,8 @@ func TestMigrate(t *testing.T) {
 	v0130genesisState := v0130posts.GenesisState{
 		Posts: []v0130posts.Post{
 			{
-				PostID:         "parent_id",
-				ParentID:       "",
+				PostId:         "parent_id",
+				ParentId:       "",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -39,8 +39,8 @@ func TestMigrate(t *testing.T) {
 				Attachments:    []v0130posts.Attachment{{URI: "https://uri.com", MimeType: "text/plain", Tags: nil}},
 			},
 			{
-				PostID:         "post_id_1",
-				ParentID:       "parent_id",
+				PostId:         "post_id_1",
+				ParentId:       "parent_id",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -91,8 +91,8 @@ func TestMigrate(t *testing.T) {
 	expectedGenState := v0150posts.GenesisState{
 		Posts: []v0150posts.Post{
 			{
-				PostID:         "parent_id",
-				ParentID:       "",
+				PostId:         "parent_id",
+				ParentId:       "",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -114,8 +114,8 @@ func TestMigrate(t *testing.T) {
 				},
 			},
 			{
-				PostID:         "post_id_1",
-				ParentID:       "parent_id",
+				PostId:         "post_id_1",
+				ParentId:       "parent_id",
 				Message:        "Message",
 				AllowsComments: true,
 				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -139,7 +139,7 @@ func TestMigrate(t *testing.T) {
 		},
 		UsersPollAnswers: []v0150posts.UserAnswersEntry{
 			{
-				PostID: "post_id_1",
+				PostId: "post_id_1",
 				UserAnswers: []v0150posts.UserAnswer{
 					{
 						User:    postCreator.String(),
@@ -148,9 +148,9 @@ func TestMigrate(t *testing.T) {
 				},
 			},
 		},
-		PostReactions: []v0150posts.PostReactionsEntry{
+		PostsReactions: []v0150posts.PostReactionsEntry{
 			{
-				PostID: "post_id_1",
+				PostId: "post_id_1",
 				Reactions: []v0150posts.PostReaction{
 					{
 						ShortCode: ":fire:",
@@ -191,18 +191,18 @@ func TestMigrate(t *testing.T) {
 	// Check for users poll answers
 	require.Len(t, expectedGenState.UsersPollAnswers, len(migrated.UsersPollAnswers))
 	for index, userAnswersEntry := range migrated.UsersPollAnswers {
-		require.Equal(t, expectedGenState.UsersPollAnswers[index].PostID, userAnswersEntry.PostID)
+		require.Equal(t, expectedGenState.UsersPollAnswers[index].PostId, userAnswersEntry.PostId)
 		for idx, answers := range userAnswersEntry.UserAnswers {
 			require.Equal(t, expectedGenState.UsersPollAnswers[index].UserAnswers[idx], answers)
 		}
 	}
 
 	// Check for post reactions
-	require.Len(t, expectedGenState.PostReactions, len(migrated.PostReactions))
-	for index, postReactionEntry := range migrated.PostReactions {
-		require.Equal(t, expectedGenState.PostReactions[index].PostID, postReactionEntry.PostID)
+	require.Len(t, expectedGenState.PostsReactions, len(migrated.PostsReactions))
+	for index, postReactionEntry := range migrated.PostsReactions {
+		require.Equal(t, expectedGenState.PostsReactions[index].PostId, postReactionEntry.PostId)
 		for idx, postReaction := range postReactionEntry.Reactions {
-			require.Equal(t, expectedGenState.PostReactions[index].Reactions[idx], postReaction)
+			require.Equal(t, expectedGenState.PostsReactions[index].Reactions[idx], postReaction)
 		}
 	}
 

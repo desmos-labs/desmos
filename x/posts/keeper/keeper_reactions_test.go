@@ -18,8 +18,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "Reaction from same user already present returns error",
 			storedPosts: []types.Post{
 				{
-					PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentID:       suite.testData.post.ParentID,
+					PostId:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentId:       suite.testData.post.ParentId,
 					Message:        suite.testData.post.Message,
 					Created:        suite.testData.post.Created,
 					LastEdited:     suite.testData.post.LastEdited,
@@ -60,8 +60,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "First liker is stored properly",
 			storedPosts: []types.Post{
 				{
-					PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentID:       suite.testData.post.ParentID,
+					PostId:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentId:       suite.testData.post.ParentId,
 					Message:        suite.testData.post.Message,
 					Created:        suite.testData.post.Created,
 					LastEdited:     suite.testData.post.LastEdited,
@@ -90,8 +90,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "Second liker is stored properly",
 			storedPosts: []types.Post{
 				{
-					PostID:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentID:       suite.testData.post.ParentID,
+					PostId:         "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentId:       suite.testData.post.ParentId,
 					Message:        suite.testData.post.Message,
 					Created:        suite.testData.post.Created,
 					LastEdited:     suite.testData.post.LastEdited,

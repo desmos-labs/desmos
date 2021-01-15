@@ -1,3 +1,4 @@
+//nolint
 package v0130
 
 import (
@@ -18,8 +19,8 @@ type GenesisState struct {
 // ----------------------------------------------------------------------------------------------------------------
 
 type Post struct {
-	PostID         string              `json:"id" yaml:"id" `
-	ParentID       string              `json:"parent_id" yaml:"parent_id"`
+	PostId         string              `json:"id" yaml:"id" `
+	ParentId       string              `json:"parent_id" yaml:"parent_id"`
 	Message        string              `json:"message" yaml:"message"`
 	Created        time.Time           `json:"created" yaml:"created"`
 	LastEdited     time.Time           `json:"last_edited" yaml:"last_edited"`

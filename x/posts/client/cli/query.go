@@ -111,7 +111,7 @@ $ %s query posts posts --page=2 --limit=100
 				if !types.IsValidPostID(idParent) {
 					return fmt.Errorf("invalid postID: %s", idParent)
 				}
-				params.ParentID = parentID
+				params.ParentId = parentID
 			}
 
 			// CreationTime

@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name: "double report",
 			storedPosts: []poststypes.Post{
 				{
-					PostID:       suite.testData.postID,
+					PostId:       suite.testData.postID,
 					Message:      "Post",
 					Created:      suite.testData.creationDate,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -72,7 +72,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name: "message handled correctly",
 			storedPosts: []poststypes.Post{
 				{
-					PostID:       suite.testData.postID,
+					PostId:       suite.testData.postID,
 					Message:      "Post",
 					Created:      suite.testData.creationDate,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",

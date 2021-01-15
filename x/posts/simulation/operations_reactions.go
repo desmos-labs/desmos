@@ -102,7 +102,7 @@ func randomAddPostReactionFields(
 	reaction = types.NewRegisteredReaction(data.Creator.Address.String(), data.ShortCode, data.Value, post.Subspace)
 	k.SaveRegisteredReaction(ctx, reaction)
 
-	reactionData := RandomPostReactionData(r, accs, post.PostID, reaction.ShortCode, reaction.Value)
+	reactionData := RandomPostReactionData(r, accs, post.PostId, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
 	// Skip the operation without error as the account is not valid
@@ -111,7 +111,7 @@ func randomAddPostReactionFields(
 	}
 
 	// Skip if the reaction already exists
-	reactions := types.NewPostReactions(k.GetPostReactions(ctx, post.PostID)...)
+	reactions := types.NewPostReactions(k.GetPostReactions(ctx, post.PostId)...)
 	if reactions.ContainsReactionFrom(reactionData.User.Address.String(), reactionData.Value) {
 		return nil, true
 	}
@@ -194,7 +194,7 @@ func randomRemovePostReactionFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	reactions := k.GetPostReactions(ctx, post.PostID)
+	reactions := k.GetPostReactions(ctx, post.PostId)
 
 	// Skip if the post has no reactions
 	if len(reactions) == 0 {
@@ -211,7 +211,7 @@ func randomRemovePostReactionFields(
 	}
 
 	user := GetAccount(addr, accs)
-	data := PostReactionData{Shortcode: reaction.ShortCode, Value: reaction.Value, User: *user, PostID: post.PostID}
+	data := PostReactionData{Shortcode: reaction.ShortCode, Value: reaction.Value, User: *user, PostID: post.PostId}
 	return &data, false
 }
 
