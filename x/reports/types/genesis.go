@@ -34,7 +34,7 @@ func containDuplicates(reports []Report, report Report) bool {
 	var count = 0
 	for _, r := range reports {
 		if r.Equal(report) {
-			count += 1
+			count++
 		}
 	}
 	return count > 1

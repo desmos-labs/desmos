@@ -45,7 +45,7 @@ func containDuplicates(relationships []Relationship, relationship Relationship) 
 	var count = 0
 	for _, r := range relationships {
 		if r.Equal(relationship) {
-			count += 1
+			count++
 		}
 	}
 	return count > 1

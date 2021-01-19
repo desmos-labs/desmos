@@ -54,7 +54,7 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, pollAnswers := range data.UsersPollAnswers {
-		if !containsPostWithId(data.Posts, pollAnswers.PostId) {
+		if !containsPostWithID(data.Posts, pollAnswers.PostId) {
 			return fmt.Errorf("invalid poll answers; post with id %s does not exist", pollAnswers.PostId)
 		}
 
@@ -67,7 +67,7 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, postReaction := range data.PostsReactions {
-		if !containsPostWithId(data.Posts, postReaction.PostId) {
+		if !containsPostWithID(data.Posts, postReaction.PostId) {
 			return fmt.Errorf("invalid reactions; post with id %s does not exist", postReaction.PostId)
 		}
 
@@ -82,8 +82,8 @@ func ValidateGenesis(data *GenesisState) error {
 	return data.Params.Validate()
 }
 
-// containsPostWithId tells whether or not the given posts contain one having the provided id
-func containsPostWithId(posts []Post, id string) bool {
+// containsPostWithID tells whether or not the given posts contain one having the provided id
+func containsPostWithID(posts []Post, id string) bool {
 	for _, p := range posts {
 		if p.PostId == id {
 			return true

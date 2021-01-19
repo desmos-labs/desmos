@@ -60,7 +60,7 @@ func containDuplicates(profiles []Profile, profile Profile) bool {
 	var count = 0
 	for _, p := range profiles {
 		if p.Equal(profile) {
-			count += 1
+			count++
 		}
 	}
 	return count > 1
