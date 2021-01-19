@@ -60,6 +60,7 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
 // ValidateGenesis performs genesis state validation for the posts module.
 func (AppModuleBasic) ValidateGenesis(_ codec.JSONMarshaler, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	if err := json.Unmarshal(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
@@ -153,6 +154,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 // It returns no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, _ codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	err := json.Unmarshal(data, &genesisState)
 	if err != nil {
 		panic(err)

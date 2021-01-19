@@ -3,6 +3,7 @@
 package cli_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -38,7 +39,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 1
 
 	var reportsData types.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &reportsData))
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
+	s.Require().NoError(json.Unmarshal(genesisState[types.ModuleName], &reportsData))
 
 	reportsData.Reports = []types.Report{
 		types.NewReport(
@@ -49,7 +51,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		),
 	}
 
-	reportsDataBz, err := cfg.Codec.MarshalJSON(&reportsData)
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
+	reportsDataBz, err := json.Marshal(&reportsData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = reportsDataBz
 	cfg.GenesisState = genesisState

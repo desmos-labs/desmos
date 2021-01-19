@@ -1,6 +1,7 @@
 package cli_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -37,7 +38,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 2
 
 	var postsData types.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &postsData))
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
+	s.Require().NoError(json.Unmarshal(genesisState[types.ModuleName], &postsData))
 
 	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
 	s.Require().NoError(err)
@@ -106,7 +108,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	postsData.Params = types.DefaultParams()
 
-	postsDataBz, err := cfg.Codec.MarshalJSON(&postsData)
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
+	postsDataBz, err := json.Marshal(&postsData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = postsDataBz
 	cfg.GenesisState = genesisState

@@ -51,12 +51,18 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 // DefaultGenesis returns default genesis state as raw bytes for the relationships module.
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
-	return cdc.MustMarshalJSON(types.DefaultGenesisState())
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
+	bz, err := json.Marshal(types.DefaultGenesisState())
+	if err != nil {
+		panic(err)
+	}
+	return bz
 }
 
 // ValidateGenesis performs genesis state validation for the relationships module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
@@ -148,7 +154,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 // It returns no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
-
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	cdc.MustUnmarshalJSON(data, &genesisState)
 	am.keeper.InitGenesis(ctx, genesisState)
 	return []abci.ValidatorUpdate{}

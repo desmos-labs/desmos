@@ -106,6 +106,17 @@ func TestValidateGenesis(t *testing.T) {
 						date,
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					),
+					types.NewProfile(
+						"custom_dtag2",
+						"",
+						"biography",
+						types.NewPictures(
+							"https://test.com/profile-pic",
+							"https://test.com/cover-pic",
+						),
+						date,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
 				},
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
@@ -117,6 +128,33 @@ func TestValidateGenesis(t *testing.T) {
 				types.DefaultParams(),
 			),
 			shouldError: false,
+		},
+		{
+			name: "Missing profile should error",
+			genesis: types.NewGenesisState(
+				[]types.Profile{
+					types.NewProfile(
+						"custom_dtag1",
+						"",
+						"biography",
+						types.NewPictures(
+							"https://test.com/profile-pic",
+							"https://test.com/cover-pic",
+						),
+						date,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+				},
+				[]types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
+				types.DefaultParams(),
+			),
+			shouldError: true,
 		},
 	}
 

@@ -91,8 +91,10 @@ func NewMonikerParams(minLen, maxLen sdk.Int) MonikerParams {
 
 // DefaultMonikerParams return default moniker params
 func DefaultMonikerParams() MonikerParams {
-	return NewMonikerParams(DefaultMinMonikerLength,
-		DefaultMaxMonikerLength)
+	return NewMonikerParams(
+		DefaultMinMonikerLength,
+		DefaultMaxMonikerLength,
+	)
 }
 
 func ValidateMonikerParams(i interface{}) error {

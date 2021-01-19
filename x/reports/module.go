@@ -52,6 +52,7 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 // DefaultGenesis returns default genesis state as raw bytes for the reports module.
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONMarshaler) json.RawMessage {
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	return cdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
@@ -153,6 +154,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 // InitGenesis performs genesis initialization for the reports module. It returns no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
+	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	err := json.Unmarshal(data, &genesisState)
 	if err != nil {
 		panic(err)
