@@ -97,18 +97,19 @@ func DefaultMonikerParams() MonikerParams {
 
 func ValidateMonikerParams(i interface{}) error {
 	params, isNameSurnParams := i.(MonikerParams)
-
 	if !isNameSurnParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.MinMonikerLength.IsNegative() || params.MinMonikerLength.LT(DefaultMinMonikerLength) {
-		return fmt.Errorf("invalid minimum moniker length param: %s", params.MinMonikerLength)
+	minLength := params.MinMonikerLength
+	if minLength.IsNil() || minLength.LT(DefaultMinMonikerLength) {
+		return fmt.Errorf("invalid minimum moniker length param: %s", minLength)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	if params.MaxMonikerLength.IsNegative() || params.MaxMonikerLength.GT(DefaultMaxMonikerLength) {
-		return fmt.Errorf("invalid max moniker length param: %s", params.MaxMonikerLength)
+	maxLength := params.MaxMonikerLength
+	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxMonikerLength) {
+		return fmt.Errorf("invalid max moniker length param: %s", maxLength)
 	}
 
 	return nil
