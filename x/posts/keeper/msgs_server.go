@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,11 +35,11 @@ func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 		PollData:       msg.PollData,
 	}
 
-	jsonPost, err := json.Marshal(&post)
+	bytes, err := post.Marshal()
 	if err != nil {
 		panic(err)
 	}
-	hash := sha256.Sum256(jsonPost)
+	hash := sha256.Sum256(bytes)
 	return hex.EncodeToString(hash[:])
 }
 

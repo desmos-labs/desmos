@@ -9,20 +9,17 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 message Params {
   MonikerParams moniker_params = 1 [
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "moniker_params",
     (gogoproto.moretags) = "yaml:\"moniker_params\""
   ];
 
   DTagParams dtag_params = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "dtag_params",
     (gogoproto.moretags) = "yaml:\"dtag_params\""
   ];
 
   bytes max_bio_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_bio_length",
     (gogoproto.moretags) = "yaml:\"max_bio_length\""
   ];
 }
@@ -32,15 +29,13 @@ message MonikerParams {
   bytes min_moniker_length = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "min_length",
-    (gogoproto.moretags) = "yaml:\"min_length\""
+    (gogoproto.moretags) = "yaml:\"min_moniker_length\""
   ];
 
   bytes max_moniker_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_length",
-    (gogoproto.moretags) = "yaml:\"max_length\""
+    (gogoproto.moretags) = "yaml:\"max_moniker_length\""
   ];
 }
 
@@ -51,14 +46,12 @@ message DTagParams {
   bytes min_dtag_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "min_length",
-    (gogoproto.moretags) = "yaml:\"min_length\""
+    (gogoproto.moretags) = "yaml:\"min_dtag_length\""
   ];
 
   bytes max_dtag_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_length",
-    (gogoproto.moretags) = "yaml:\"max_length\""
+    (gogoproto.moretags) = "yaml:\"max_dtag_length\""
   ];
 }

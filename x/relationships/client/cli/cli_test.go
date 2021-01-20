@@ -3,7 +3,6 @@
 package cli_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -40,8 +39,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 3
 
 	var relationshipsData types.GenesisState
-	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
-	s.Require().NoError(json.Unmarshal(genesisState[types.ModuleName], &relationshipsData))
+	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &relationshipsData))
 
 	relationshipsData.Blocks = []types.UserBlock{
 		types.NewUserBlock(
@@ -59,7 +57,6 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		),
 	}
 
-	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
 	relationshipsDataBz, err := cfg.Codec.MarshalJSON(&relationshipsData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = relationshipsDataBz

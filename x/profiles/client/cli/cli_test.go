@@ -3,7 +3,6 @@
 package cli_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -40,8 +39,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 2
 
 	var profilesData types.GenesisState
-	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
-	s.Require().NoError(json.Unmarshal(genesisState[types.ModuleName], &profilesData))
+	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
 	profilesData.Profiles = []types.Profile{
 		types.NewProfile(
@@ -62,8 +60,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	profilesData.Params = types.DefaultParams()
 
-	// TODO: Revert this to cdc one this issue is fixed: https://github.com/cosmos/cosmos-sdk/issues/8333
-	profilesDataBz, err := json.Marshal(&profilesData)
+	profilesDataBz, err := cfg.Codec.MarshalJSON(&profilesData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = profilesDataBz
 	cfg.GenesisState = genesisState
