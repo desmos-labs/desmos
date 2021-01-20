@@ -10,21 +10,16 @@ message Params {
   bytes max_post_message_length = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_post_message_length",
     (gogoproto.moretags) = "yaml:\"max_post_message_length\""
   ];
-
   bytes max_optional_data_fields_number = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_optional_data_fields_number",
     (gogoproto.moretags) = "yaml:\"max_optional_data_fields_number\""
   ];
-
   bytes max_optional_data_field_value_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "max_optional_data_field_value_length",
     (gogoproto.moretags) = "yaml:\"max_optional_data_field_value_length\""
   ];
 }

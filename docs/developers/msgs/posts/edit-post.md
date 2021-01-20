@@ -62,15 +62,15 @@ This message allows you to edit the message of a previously published public pos
       "question": "Which dog do you prefer?",
       "provided_answers": [
         {
-          "id": 0,
+          "answer_id": 0,
           "text": "Beagle"
         },
         {
-          "id": 1,
+          "answer_id": 1,
           "text": "Pug"
         },
         {
-          "id": 2,
+          "answer_id": 2,
           "text": "German Sheperd"
         }
       ],

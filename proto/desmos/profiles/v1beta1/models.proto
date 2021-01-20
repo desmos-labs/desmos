@@ -51,10 +51,7 @@ message DTagTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string dtag_to_trade = 1 [
-    (gogoproto.jsontag) = "dtag_to_trade",
-    (gogoproto.moretags) = "yaml:\"dtag_to_trade\""
-  ];
+  string dtag_to_trade = 1 [(gogoproto.moretags) = "yaml:\"dtag_to_trade\""];
 
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 

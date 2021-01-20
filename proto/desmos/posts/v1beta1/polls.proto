@@ -13,7 +13,7 @@ message PollAnswer {
 
   string answer_id = 1 [
     (gogoproto.customname) = "ID",
-    (gogoproto.jsontag) = "id",
+    (gogoproto.jsontag) = "answer_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
 

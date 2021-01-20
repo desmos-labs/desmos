@@ -11,10 +11,7 @@ message Report {
   option (gogoproto.goproto_stringer) = true;
 
   // ID of the post for which the report has been created
-  string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"post_id\""
-  ];
+  string post_id = 1 [(gogoproto.moretags) = "yaml:\"post_id\""];
 
   // Identifies the type of the reports
   string type = 2 [ (gogoproto.moretags) = "yaml:\"type\"" ];
