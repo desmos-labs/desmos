@@ -65,15 +65,15 @@ This message allows you to create a new public post. If you want to know more ab
       "question": "Which dog do you prefer?",
       "provided_answers": [
         {
-          "id": 0,
+          "answer_id": 0,
           "text": "Beagle"
         },
         {
-          "id": 1,
+          "answer_id": 1,
           "text": "Pug"
         },
         {
-          "id": 2,
+          "answer_id": 2,
           "text": "German Sheperd"
         }
       ],
