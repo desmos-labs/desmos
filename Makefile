@@ -111,9 +111,6 @@ build-linux: go.sum
 build-arm64: go.sum
 	GOOS=linux GOARCH=arm64 $(MAKE) build
 
-build-raspberry: go.sum
-	GOARM=7 GOARCH=arm $(MAKE) build
-
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
 
