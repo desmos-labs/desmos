@@ -3,6 +3,7 @@ module github.com/desmos-labs/desmos
 go 1.15
 
 require (
+	github.com/CosmWasm/wasmd v0.14.1
 	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/cosmos/cosmos-sdk v0.40.1
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e

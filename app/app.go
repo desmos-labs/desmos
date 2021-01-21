@@ -27,6 +27,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -119,10 +121,14 @@ var (
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
-			paramsclient.ProposalHandler,
-			distrclient.ProposalHandler,
-			upgradeclient.ProposalHandler,
+			append(
+				wasmclient.ProposalHandlers,
+				paramsclient.ProposalHandler,
+				distrclient.ProposalHandler,
+				upgradeclient.ProposalHandler,
+			)...,
 		),
+		wasm.AppModuleBasic{},
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
@@ -181,6 +187,7 @@ type DesmosApp struct {
 	upgradeKeeper  upgradekeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	evidenceKeeper evidencekeeper.Keeper
+	wasmKeeper     wasm.Keeper
 
 	// Custom modules
 	FeesKeeper          feeskeeper.Keeper
@@ -233,6 +240,8 @@ func NewDesmosApp(
 		// Custom modules
 		magpieTypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
 		relationshipstypes.StoreKey,
+
+		wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
@@ -328,6 +337,33 @@ func NewDesmosApp(
 		app.postsKeeper,
 	)
 
+	var wasmRouter = bApp.Router()
+	wasmDir := filepath.Join(homePath, "wasm")
+
+	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+
+	// The last arguments can contain custom message handlers, and custom query handlers,
+	// if we want to allow any custom callbacks
+	supportedFeatures := "staking"
+	app.wasmKeeper = wasm.NewKeeper(
+		appCodec,
+		keys[wasm.StoreKey],
+		app.GetSubspace(wasm.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.stakingKeeper,
+		app.distrKeeper,
+		wasmRouter,
+		wasmDir,
+		wasmConfig,
+		supportedFeatures,
+		nil,
+		nil,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -351,6 +387,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
@@ -376,7 +413,7 @@ func NewDesmosApp(
 		authtypes.ModuleName, // loads all accounts - should run before any module with a module account
 		distrtypes.ModuleName,
 		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
-		govtypes.ModuleName, evidencetypes.ModuleName,
+		govtypes.ModuleName, evidencetypes.ModuleName, wasm.ModuleName,
 
 		feestypes.ModuleName, magpieTypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
 		reportsTypes.ModuleName, relationshipstypes.ModuleName, // custom modules
@@ -404,6 +441,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
@@ -623,6 +661,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
+	paramsKeeper.Subspace(wasm.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
