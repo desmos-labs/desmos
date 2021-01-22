@@ -4,14 +4,12 @@ This message allows you to edit the message of a previously published public pos
 ## Structure
 ```json
 {
-  "type": "desmos/MsgEditPost",
-  "value": {
-    "post_id": "<ID of the post to be edited>",
-    "message": "<New post message>",
-    "attachments": "<Attachment's array that contains all the attachments associated with the post",
-    "poll_data": "<Poll data contains all useful data of the poll's post>", 
-    "editor": "<Desmos address of the user editing the message>",
-  }
+  "@type": "/desmos.posts.v1beta1.MsgEditPost",
+  "post_id": "<ID of the post to be edited>",
+  "message": "<New post message>",
+  "attachments": "<Attachment's array that contains all the attachments associated with the post",
+  "poll_data": "<Poll data contains all useful data of the poll's post>", 
+  "editor": "<Desmos address of the user editing the message>"
 }
 ```
 
@@ -26,61 +24,59 @@ This message allows you to edit the message of a previously published public pos
 
 ## Example
 ### Without attachments and pollData
+
 ```json
 {
-  "type": "desmos/MsgEditPost",
-  "value": {
-    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
-    "message": "Desmos you rock!",
-    "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-  }
+  "@type": "/desmos.posts.v1beta1.MsgEditPost",
+  "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+  "message": "Desmos you rock!",
+  "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
 }
 ```
 
 ### With attachments and pollData
+
 ```json
 {
-  "type": "desmos/MsgEditPost",
-  "value": {
-    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
-    "message": "Desmos you rock!",
-    "attachments": [
+  "@type": "/desmos.posts.v1beta1.MsgEditPost",
+  "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+  "message": "Desmos you rock!",
+  "attachments": [
+    {
+      "uri": "https://example.com/media1",
+      "mime_type": "text/plain",
+      "tags": [
+        "desmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+        "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru"
+      ]
+    },
+    {
+      "uri": "https://example.com/media2",
+      "mime_type": "application/json"
+    }
+  ],
+  "poll_data": {
+    "question": "Which dog do you prefer?",
+    "provided_answers": [
       {
-        "uri": "https://example.com/media1",
-        "mime_type": "text/plain",
-        "tags": [
-          "desmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-          "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru"
-        ]
+        "answer_id": 0,
+        "text": "Beagle"
       },
       {
-        "uri": "https://example.com/media2",
-        "mime_type": "application/json"
+        "answer_id": 1,
+        "text": "Pug"
+      },
+      {
+        "answer_id": 2,
+        "text": "German Sheperd"
       }
     ],
-    "poll_data": {
-      "question": "Which dog do you prefer?",
-      "provided_answers": [
-        {
-          "answer_id": 0,
-          "text": "Beagle"
-        },
-        {
-          "answer_id": 1,
-          "text": "Pug"
-        },
-        {
-          "answer_id": 2,
-          "text": "German Sheperd"
-        }
-      ],
-      "end_date": "2020-02-10T15:00:00Z",
-      "is_open": true,
-      "allows_multiple_answers": true,
-      "allows_answer_edits": true
-    },
-    "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
-  }
+    "end_date": "2020-02-10T15:00:00Z",
+    "is_open": true,
+    "allows_multiple_answers": true,
+    "allows_answer_edits": true
+  },
+  "editor": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
 }
 ```
 

@@ -4,11 +4,9 @@ This message allows you to request a transfer to your profile for a `DTag` owned
 ## Structure
 ````json
 {
-  "type": "desmos/MsgRequestDTagTransfer",
-  "value": {
-    "receiver": "<Desmos address of the DTag owner>",
-    "sender": "<Desmos address that's making the DTag's request>"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgRefuseDTagTransfer",
+  "receiver": "<Desmos address of the DTag owner>",
+  "sender": "<Desmos address that's making the DTag's request>"
 }
 ````
 
@@ -19,13 +17,12 @@ This message allows you to request a transfer to your profile for a `DTag` owned
 | `sender`| String | Desmos address of the user that request the `DTag` |
 
 ## Example
+
 ````json
 {
-  "type": "desmos/MsgRequestDTagTransfer",
-  "value": {
-    "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7",
-    "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgRefuseDTagTransfer",
+  "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7",
+  "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a"
 }
 ````
 

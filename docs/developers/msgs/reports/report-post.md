@@ -4,14 +4,12 @@ This message allows you to report a post. If you want to know more about the `Re
 ## Structure
 ```json
 {
-  "type": "desmos/MsgReportPost",
-  "value": {
-    "post_id": "<ID of the post to report>",
-    "report": {
-        "type": "<Report's type>",
-        "message": "<Report's message>",
-        "user": "<Desmos address that's creating the post>",
-    }
+  "@type": "/desmos.reports.v1beta1.MsgReportPost",
+  "post_id": "<ID of the post to report>",
+  "report": {
+    "type": "<Report's type>",
+    "message": "<Report's message>",
+    "user": "<Desmos address that's creating the post>"
   }
 }
 ```
@@ -46,14 +44,12 @@ The `type` field will only accept the following values:
 ## Example
 ```json
 {
-  "type": "desmos/MsgReportPost",
-  "value": {
-    "post_id": "301921ac3c8e623d8f35aef1886fea20849e49f08ec8ddfdd9b96feaf0c4fd15",
-    "report": {
-        "type": "scam",
-        "message": "it's a trap",
-        "user": "desmos1jnntz0xrql68mhjjsp82nlj9jrhgzc9t2ydtd5"
-    }
+  "@type": "/desmos.reports.v1beta1.MsgReportPost",
+  "post_id": "301921ac3c8e623d8f35aef1886fea20849e49f08ec8ddfdd9b96feaf0c4fd15",
+  "report": {
+    "type": "scam",
+    "message": "it's a trap",
+    "user": "desmos1jnntz0xrql68mhjjsp82nlj9jrhgzc9t2ydtd5"
   }
 }
 ```

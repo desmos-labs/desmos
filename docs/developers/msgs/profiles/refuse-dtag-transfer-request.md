@@ -4,11 +4,9 @@ This message allows you to refuse a `DTag` transfer request made by a user.
 ## Structure
 ````json
 {
-  "type": "desmos/MsgRefuseDTagTransferRequest",
-  "value": {
-    "sender": "<Desmos address that sent the DTag's request>",
-    "receiver": "<Desmos address of the DTag owner>"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgRefuseDTagTransfer",
+  "sender": "<Desmos address that sent the DTag's request>",
+  "receiver": "<Desmos address of the DTag owner>"
 }
 ````
 
@@ -19,13 +17,12 @@ This message allows you to refuse a `DTag` transfer request made by a user.
 | `receiver`  | String | Desmos address of the user that is the owner of the requested `DTag` |
 
 ## Example
+
 ````json
 {
-  "type": "desmos/MsgRefuseDTagTransferRequest",
-  "value": {
-    "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a",
-    "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgRefuseDTagTransfer",
+  "sender": "desmos1nhgk008jvrxwa9tufr9tcr6zfrhe2uz0v90r2a",
+  "receiver": "desmos1k99c8htyk32srx78efzg7sxm965prtz0j9qrc7"
 }
 ````
 

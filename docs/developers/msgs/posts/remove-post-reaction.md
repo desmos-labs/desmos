@@ -4,12 +4,10 @@ With this message you can remove a reaction from a post you have previously reac
 ## Structure
 ```json
 {
-  "type": "desmos/MsgRemovePostReaction",
-  "value": {
-    "post_id": "<Id of the post to unlike>",
-    "user": "<Desmos address of the user who is removing the reaction>",
-    "value": "<Shortcode of the reaction or Emoji to be removed>"
-  }
+  "@type": "/desmos.posts.v1beta1.MsgRemovePostReaction",
+  "post_id": "<Id of the post to unlike>",
+  "user": "<Desmos address of the user who is removing the reaction>",
+  "value": "<Shortcode of the reaction or Emoji to be removed>"
 }
 ```
 
@@ -21,26 +19,24 @@ With this message you can remove a reaction from a post you have previously reac
 | `value` | String | Shortcode of the reaction or Emoji to add | 
 
 ## Example with emoji
+
 ```json
 {
-  "type": "desmos/MsgRemovePostReaction",
-  "value": {
-    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
-    "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "value": "👍"
-  }
+  "@type": "/desmos.posts.v1beta1.MsgRemovePostReaction",
+  "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+  "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+  "value": "👍"
 }
 ```
 
 ## Example with shortcode
+
 ```json
 {
-  "type": "desmos/MsgRemovePostReaction",
-  "value": {
-    "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
-    "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
-    "value": ":+1:"
-  }
+  "@type": "/desmos.posts.v1beta1.MsgRemovePostReaction",
+  "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
+  "user": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax",
+  "value": ":+1:"
 }
 ```
 
