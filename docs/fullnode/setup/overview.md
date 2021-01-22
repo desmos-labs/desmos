@@ -107,19 +107,23 @@ The software has not been tested on __Windows__. If you are currently running a 
 3. Install a separate __Linux__ system using [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 4. Run a __Linux__ instance on a cloud provider.
 
-Note that is still possible to build and run the software on __Windows__ but it may give you unexpected results and it may require additional setup to be done. If you insist to build and run the software on __Windows__, the best bet would be installing the [Chocolatey](https://chocolatey.org/) package manager.
+Note that is still possible to build and run the software on __Windows__ but it may give you unexpected results and it
+may require additional setup to be done. If you insist to build and run the software on __Windows__, the best bet would
+be installing the [Chocolatey](https://chocolatey.org/) package manager.
 
 :::
 
 ::::
 
 ## 2. Install the software
-Once you have setup your environment correctly, you are now ready to install the Desmos software and start your full node. 
 
-In order to do so, you have two options: 
+Once you have setup your environment correctly, you are now ready to install the Desmos software and start your full
+node.
 
-1. [Automatic installation](automatic.md).  
-   This requires you to run a few commands so that you can easily have a Desmos full node running in a couple of minutes. This is recommended to most users that do not yet have the skills to go through a manual setup. 
-   
-2. [Manual installation](manual.md).  
-   This is recommended to the those who want to understand each step or want to customize their setup accordingly to their needs. It is not recommended to people running a validator for the first time, although everyone should take a look at it once. 
+In order to do so, you have two options:
+
+1. [Manual installation](manual.md).  
+   This is recommended to everyone as it helps understand each step of what is being done.
+
+2. (**DEPRECATED**) [Automatic installation](automatic.md).  
+   This method is deprecated and **should not be used anymore**. 
