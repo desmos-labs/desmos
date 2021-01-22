@@ -29,7 +29,7 @@ func DesmosQuerier(postsKeeper postskeeper.Keeper, reportsKeeper reportsKeeper.K
 		}
 
 		if desmosQuery.Reports != nil {
-			reports := reportsKeeper.GetPostReports(ctx, desmosQuery.Reports.PostId)
+			reports := reportsKeeper.GetPostReports(ctx, desmosQuery.Reports.PostID)
 			reportsResponse := ReportsResponse{Reports: reports}
 			return json.Marshal(reportsResponse)
 		}
@@ -44,7 +44,7 @@ type DesmosQuery struct {
 }
 
 type ReportsQuery struct {
-	PostId string `json:"post_id"`
+	PostID string `json:"post_id"`
 }
 
 type PostsQuery struct{}

@@ -1,7 +1,6 @@
 package app
 
 import (
-	wasm2 "github.com/desmos-labs/desmos/x/wasm"
 	"io"
 	"net/http"
 	"os"
@@ -75,6 +74,7 @@ import (
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	wasm2 "github.com/desmos-labs/desmos/x/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
