@@ -1,6 +1,7 @@
 package app
 
 import (
+	wasm2 "github.com/desmos-labs/desmos/x/wasm"
 	"io"
 	"net/http"
 	"os"
@@ -345,6 +346,15 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
+	desmosQuerier := wasm2.DesmosQuerier(app.postsKeeper, app.ReportsKeeper)
+
+	plugins := wasm.QueryPlugins{
+		Bank:    nil,
+		Custom:  desmosQuerier,
+		Staking: nil,
+		Wasm:    nil,
+	}
+
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
 	supportedFeatures := "staking"
@@ -361,7 +371,7 @@ func NewDesmosApp(
 		wasmConfig,
 		supportedFeatures,
 		nil,
-		nil,
+		&plugins,
 	)
 
 	/****  Module Options ****/
