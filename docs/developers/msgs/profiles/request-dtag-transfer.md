@@ -4,7 +4,7 @@ This message allows you to request a transfer to your profile for a `DTag` owned
 ## Structure
 ````json
 {
-  "@type": "/desmos.profiles.v1beta1.MsgRefuseDTagTransfer",
+  "@type": "/desmos.profiles.v1beta1.MsgRequestDTagTransfer",
   "receiver": "<Desmos address of the DTag owner>",
   "sender": "<Desmos address that's making the DTag's request>"
 }
@@ -32,4 +32,3 @@ The action associated to this message is the following:
 ```
 request_dtag
 ```
-
