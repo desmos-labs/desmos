@@ -4,10 +4,8 @@ This message allows you to delete a previously created profile.
 ## Structure
 ````json
 {
-  "type": "desmos/MsgDeleteProfile",
-  "value": {
-    "creator": "<Address of the profile owner>"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgDeleteProfile",
+  "creator": "<Address of the profile owner>"
 }
 ````
 
@@ -17,12 +15,11 @@ This message allows you to delete a previously created profile.
 | `creator` | String | Desmos address of the user that is deleting the profile |
 
 ## Example
+
 ````json
 {
-  "type": "desmos/MsgDeleteProfile",
-  "value": {
-    "creator": "desmos1qchdngxk8zkl4c4mheqdlpgcegkdrtucmwllpx"
-  }
+  "@type": "/desmos.profiles.v1beta1.MsgDeleteProfile",
+  "creator": "desmos1qchdngxk8zkl4c4mheqdlpgcegkdrtucmwllpx"
 }
 ````
 
