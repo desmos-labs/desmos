@@ -181,7 +181,7 @@ trust_period = "168h0m0s"
 ```
 
 :::tip Make the snapshot download faster  
-If you want to make the snapshot discovery faster, we suggest you setting the following `persistent_peers` insde
+If you want to make the snapshot discovery faster, we suggest you setting the following `persistent_peers` inside
 the `$HOME/.desmos/config/config.toml` file:
 
 ```toml
