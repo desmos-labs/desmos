@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -219,7 +220,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipsTypes.StoreKey], newApp.keys[relationshipsTypes.StoreKey], [][]byte{}},
-		//{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
+		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

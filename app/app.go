@@ -397,7 +397,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
@@ -451,7 +451,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		// Custom modules
