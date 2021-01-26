@@ -17,7 +17,7 @@ You should be able to find the Tendermint app in Ledger Live.
 In this section, we will configure a KMS to use a Ledger device running the Tendermint Validator App. 
 
 ### Config file
-You can find other configuration examples [here](https://github.com/iqlusioninc/tmkms/blob/develop/tmkms.toml.example)
+You can find other configuration examples [here](https://github.com/iqlusioninc/tmkms/blob/main/tmkms.toml.example)
 
 - Create a `~/.tmkms/tmkms.toml` file with the following content (use an adequate `chain_id`)
 

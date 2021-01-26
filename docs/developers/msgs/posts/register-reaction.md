@@ -5,13 +5,11 @@ If you want to know more about the `Reaction` type, you can do so inside the [`R
 ## Structure
 ```json
 {
-  "type": "desmos/MsgRegisterReaction",
-  "value": {
-    "short_code": "<reaction short code>",
-    "value": "<url (identifing gif or image)>",
-    "subspace": "<Reaction subspace>",
-    "creator": "<Desmos address that's registering the reaction>"
-  }
+  "@type": "/desmos.posts.v1beta1.MsgRegisterReaction",
+  "short_code": "<reaction short code>",
+  "value": "<url (identifing gif or image)>",
+  "subspace": "<Reaction subspace>",
+  "creator": "<Desmos address that's registering the reaction>"
 }
 ```
 
@@ -24,15 +22,14 @@ If you want to know more about the `Reaction` type, you can do so inside the [`R
 | `creator` | String | Desmos address of the user that is registering the reaction |
 
 ## Example
+
 ```json
 {
-  "type": "desmos/MsgRegisterReaction",
-  "value": {
-    "short_code": ":earth_hug:",
-    "value": "https://gph.is/2p19Zai",
-    "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-    "creator": "desmos13s7p4jx3rj5pxjzlecxdvua68ex0sg7rug0pt3"
-  }
+  "@type": "/desmos.posts.v1beta1.MsgRegisterReaction",
+  "short_code": ":earth_hug:",
+  "value": "https://gph.is/2p19Zai",
+  "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+  "creator": "desmos13s7p4jx3rj5pxjzlecxdvua68ex0sg7rug0pt3"
 }
 ```
 

@@ -23,7 +23,8 @@ When compiling the KMS, ensure you have enabled the applicable features:
 A KMS can be configured in various ways:
 
 ### Using a YubiHSM
-Detailed information on how to setup a KMS with YubiHSM2 can be found [here](https://github.com/iqlusioninc/tmkms/blob/develop/README.yubihsm.md)
+Detailed information on how to setup a KMS with YubiHSM2 can be
+found [here](https://github.com/iqlusioninc/tmkms/blob/main/README.yubihsm.md)
 
 ### Using a Ledger device running the Tendermint app
 Detailed information on how to setup a KMS with Ledger Tendermint App can be found [here](kms_ledger.md)
