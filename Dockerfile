@@ -17,10 +17,7 @@ FROM golang:1.15-alpine3.12 AS build-env
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
-RUN set -eux; apk add --no-cache ca-certificates build-base;
-
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
-RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
+RUN apk add --no-cache $PACKAGES
 
 RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
 RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk
@@ -32,11 +29,14 @@ WORKDIR /go/src/github.com/desmos-labs/desmos
 # Add source files
 COPY . .
 
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
+RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
+
 # Install Desmos, remove packages
 RUN make build-linux
 
 # Final image
-FROM alpine:edge
+FROM alpine:3.12
 
 # Install ca-certificates
 RUN apk add --update ca-certificates
