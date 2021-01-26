@@ -13,7 +13,7 @@
 #
 # To exit the bash, just execute
 # > exit
-FROM golang:1.15-alpine3.12 AS build-env
+FROM golang:1.15-alpine AS build-env
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
@@ -36,7 +36,7 @@ RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf8849
 RUN make build-linux
 
 # Final image
-FROM alpine:3.12
+FROM alpine:edge
 
 # Install ca-certificates
 RUN apk add --update ca-certificates

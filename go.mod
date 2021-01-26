@@ -25,4 +25,4 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 
-replace github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.14.2-0.20210126101403-e79ae3575e37
+replace github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.14.2-0.20210126152314-3c77376d1885
