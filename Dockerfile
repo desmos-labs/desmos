@@ -13,14 +13,12 @@
 #
 # To exit the bash, just execute
 # > exit
-FROM golang:1.15-alpine3.12 AS build-env
+FROM golang:1.15-alpine AS build-env
 
 # Set up dependencies
-# ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
-# RUN apk add --no-cache $PACKAGES
-RUN set -eux; apk add --no-cache ca-certificates build-base;
+ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
+RUN apk add --no-cache $PACKAGES
 
-RUN apk add git
 RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
 RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk
 RUN apk add glibc-2.28-r0.apk
@@ -31,20 +29,31 @@ WORKDIR /go/src/github.com/desmos-labs/desmos
 # Add source files
 COPY . .
 
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
-RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
+###############################################################################
+# Build go-cosmwasm
+###############################################################################
+FROM rustlang/rust:nightly as build_stage_rust
 
-# force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build
-# we also (temporarily?) build the testnet binaries here
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-coral
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-gaiaflex
+# Install build dependencies
+###############################################################################
+RUN apt-get update
+RUN apt install -y clang gcc g++ zlib1g-dev libmpc-dev libmpfr-dev libgmp-dev
+RUN apt install -y build-essential cmake git
+
+# Install repository
+###############################################################################
+RUN git clone https://github.com/confio/go-cosmwasm sources
+
+# Compile go-cosmwasm
+###############################################################################
+WORKDIR /go/src/github.com
+RUN make build-rust-release
 
 # Install Desmos, remove packages
 RUN make build-linux
 
 # Final image
-FROM alpine:3.12
+FROM alpine:edge
 
 # Install ca-certificates
 RUN apk add --update ca-certificates
