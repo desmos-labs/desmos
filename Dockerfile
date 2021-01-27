@@ -42,7 +42,7 @@ RUN apt install -y build-essential cmake git
 
 # Install repository
 ###############################################################################
-RUN git clone https://github.com/confio/go-cosmwasm sources
+RUN git clone https://github.com/confio/go-cosmwasm /go/src/github.com
 
 # Compile go-cosmwasm
 ###############################################################################
