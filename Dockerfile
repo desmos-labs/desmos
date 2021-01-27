@@ -64,6 +64,7 @@ RUN apk add --no-cache bash
 
 # Copy over binaries from the build-env
 COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmos /usr/bin/desmos
+COPY --from=build_stage_rust /go/src/github.com/api/libgo_cosmwasm.so /usr/lib/libgo_cosmwasm.so
 
 EXPOSE 26656 26657 1317 9090
 
