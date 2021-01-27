@@ -13,12 +13,14 @@
 #
 # To exit the bash, just execute
 # > exit
-FROM golang:1.15-alpine AS build-env
+FROM golang:1.15-alpine3.12 AS build-env
 
 # Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
-RUN apk add --no-cache $PACKAGES
+# ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates wget
+# RUN apk add --no-cache $PACKAGES
+RUN set -eux; apk add --no-cache ca-certificates build-base;
 
+RUN apk add git
 RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
 RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk
 RUN apk add glibc-2.28-r0.apk
@@ -32,11 +34,17 @@ COPY . .
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.13.0/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
 RUN sha256sum /lib/libwasmvm_muslc.a | grep 39dc389cc6b556280cbeaebeda2b62cf884993137b83f90d1398ac47d09d3900
 
+# force it to use static lib (from above) not standard libgo_cosmwasm.so file
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+# we also (temporarily?) build the testnet binaries here
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-coral
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-gaiaflex
+
 # Install Desmos, remove packages
 RUN make build-linux
 
 # Final image
-FROM alpine:edge
+FROM alpine:3.12
 
 # Install ca-certificates
 RUN apk add --update ca-certificates
