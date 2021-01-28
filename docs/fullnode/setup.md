@@ -2,7 +2,7 @@
 Following you will find the instructions on how to manually setup your Desmos full node.
 
 :::warning Requirements  
-Before starting, make sure you read the [setup overview](setup/overview.md) to make sure your hardware meets the needed
+Before starting, make sure you read the [overview](overview.md) to make sure your hardware meets the needed
 requirements.  
 :::
 

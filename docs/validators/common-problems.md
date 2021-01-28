@@ -53,14 +53,15 @@ When creating a validator you have the minimum self delegation amount using the 
 
 To solve this, what you can do is getting more tokens delegated to it by following these steps: 
 
-1. Get your address: 
+1. Get your address:
    ```bash
    desmos keys show <your_key> --address
    ```
-   
-2. Require more tokens using the [faucet](https://faucet.desmos.network). 
 
-3. Make sure the tokens have been sent properly: 
+2. Require more tokens using the [Discord](https://discord.gg/J6VsHDT) bot inside the `#ask-tokens` channel by
+   sending `!send <address>`.
+
+3. Make sure the tokens have been sent properly:
    ```bash
    desmos query account $(desmos keys show <your_key> --address) --chain-id <chain_id>
    ```
