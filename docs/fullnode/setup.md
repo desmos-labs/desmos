@@ -2,14 +2,20 @@
 Following you will find the instructions on how to manually setup your Desmos full node.
 
 :::warning Requirements  
-Before starting, make sure you read the [setup overview](overview.md) to make sure your hardware meets the needed requirements.  
+Before starting, make sure you read the [setup overview](setup/overview.md) to make sure your hardware meets the needed
+requirements.  
 :::
 
 ## 1. Build the software
-:::tip Choose your DB backend  
-Before installing the software, a consideration must be done. 
 
-By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since version `v0.6.0` we've also added the possibility of optionally using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a look at our [RocksDB installation guide](../rocksdb-installation.md) before proceeding further.  
+:::tip Choose your DB backend  
+Before installing the software, a consideration must be done.
+
+By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since
+version `v0.6.0` we've also added the possibility of optionally
+using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be
+faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a
+look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.  
 :::
 
 The following operations will all be done in the terminal environment under your home directory.
@@ -67,11 +73,12 @@ In order to provide a custom seed to your private key, you can do as follows:
 
 2. Copy the above provided seed, and then pass it to the `init` command using the `--recover` flag:
    ```shell
-   desmos init <your_moniker> --recover <your_seed>
+   desmos init <your_moniker> --recover "<your_mnemonic_phrase>"
    ```
 
-:::tip Recovering a node If you already have a seed, you can directly use the `--recover` flag without generating a new
-one. This will recover the private key associated to that seed.
+:::tip Recovering a node   
+If you already have a seed, you can directly use the `--recover` flag without generating a new one. This will recover
+the private key associated to that seed.
 :::
 
 ## 3. Get the genesis file
@@ -87,46 +94,71 @@ download the correct genesis file by running the following command.
 curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/<chain-id>/genesis.json > $HOME/.desmos/config/genesis.json
 ```
 
-## 4. Connect to seed nodes
+## 4. Setup seeds, peers and state sync
 
-To properly run your node, you will need to connect it to other full nodes running with the same software and genesis
-file. This can be done configuring the `seeds` value inside the `config.toml` file localed under the `.desmos` working
-directory.
+The next thing you have to do now is telling your node how to connect with other nodes that are already present on the
+network. In order to do so, we will use the `seeds` and `persistent_peers` values of the `~/.desmos/config/config.toml`
+file.
 
-```bash
-# Open the config.toml file using text editor
-nano $HOME/.desmos/config/config.toml
+Seed nodes are a particular type of nodes present on the network. Your fullnode will connect to them, and they will
+provide it with a list of other fullnodes that are present on the network. Then, your fullnode will automatically
+connect to such nodes. Our team is running three seed nodes, and we advise you to use them by setting the
+following `seeds` value:
+
+```toml
+seeds = "be3db0fe5ee7f764902dbcc75126a2e082cbf00c@seed-1.morpheus.desmos.network:26656,4659ab47eef540e99c3ee4009ecbe3fbf4e3eaff@seed-2.morpheus.desmos.network:26656,1d9cc23eedb2d812d30d99ed12d5c5f21ff40c23@seed-3.morpheus.desmos.network:26656"
 ```
 
-:::tip Where to get seeds  
-Each testnet has their own seed nodes. You can get the ones for the testnet you would like to connect with inside
-our [testnet repo](https://github.com/desmos-labs/morpheus), inside the specific testnet folder.
-:::
+Next, you will need to set some persistent peers of your node. Such nodes are going to be a particular type of peer
+nodes to which your fullnode will always try to connect. You need to set them as the following value so that your node
+can start syncing faster with the rest of the chain:
 
-Once you have a list of seeds to use, locate the `seeds = ""` text and update its value to a list of node addresses. The
-format of a node address must be `<node_id>@<node_ip_address>:<port>` and multiple addresses must be separated by a
-comma (`,`):
+```toml
+persistent_peers = "67dcef828fc2be3c3bcc19c9542d2b228bd7cff9@seed-4.morpheus.desmos.network:26656,fcf8207fb84a7238089bd0cd8db994e0af9016b6@seed-5.morpheus.desmos.network:26656"
+```
 
-```bash
-# Example
-seeds = "cd4612957461881d5f62367c589aaa0fdf933bd8@seed-1.morpheus.desmos.network:26656,fc4714d15629e3b016847c45d5648230a30a50f1@seed-2.morpheus.desmos.network:26656"
-``` 
+### Using state sync
 
-Save the file and exit the text editor.
+Starting from Desmos `v0.15.0`, we've added the support for Tendermint'
+s [state sync](https://docs.tendermint.com/master/tendermint-core/state-sync.html). This feature allows new nodes to
+sync with the chain extremely fast, by downloading snapshots created by other full nodes.
 
-### Using persistent peers instead of seed nodes
+In order to use this feature, you will have to edit a couple of things inside your `~/.desmos/config/config.toml` file,
+under the `statecyn` section:
 
-Sometimes, it might happen that the seed nodes you have inserted do not work. If this happens, your node won't be able
-to connect to the networks and start syncing. If this happens, what you can do is use the `persistent_peers` field
-instead.
+1. Enable state sync by setting `enable = true`
 
-Persistent peers are other nodes to which your fullnode will persist the connection. To use this feature, open
-the `config.toml` file and locate the `persistent_peers` line. The, fill its value with a list of node ids.
+2. Set the RPC addresses from where to get the snapshosts
+   to `seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657`.  
+   These are two of our fullnodes that are set up to create periodic snapshots every 600 blocks.
 
-:::tip Where to get seeds  
-Each testnet has their own persistent peers. You can get the ones for the testnet you would like to connect with inside
-our [testnet repo](https://github.com/desmos-labs/morpheus), inside the specific testnet folder.
-:::
+3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
+   1. Get the current chain height by running:
+      ```bash
+      curl -s http://seed-4.morpheus.desmos.network:26657/commit | jq "{height: .result.signed_header.header.height}"
+      ```
+   2. Once you have the current chain height, get a height that is a little bit lower (200 blocks) than the current one.
+      To do this you can execute:
+      ```bash
+      curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+      
+      # Example
+      # curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+      ```
+
+4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values.
+
+Here is an example of what the `statesync` section of your `~/.desmos/config/config.toml` file should look like in the
+end:
+
+```toml
+enable = true
+
+rpc_servers = rpc_servers = "seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657"
+trust_height = 16962
+trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
+trust_period = "168h0m0s"
+```
 
 ## (Optional) Change your database backend
 
@@ -147,53 +179,7 @@ To become
 db_backend = "rocksdb"
 ```
 
-## 5. Setup state sync
-
-Starting from Desmos `v0.15.0`, we've added the support for Tendermint'
-s [state sync](https://docs.tendermint.com/master/tendermint-core/state-sync.html). This feature allow new nodes to sync
-with the chain extremely fast, by downloading snapshots created by other full nodes.
-
-In order to use this feature, you need to edit your `$HOME/.desmos/config/config.toml` changing a couple of things under
-the `statesync` section.
-
-First of all, enable state sync setting `enable = true`.
-
-Then, set the RPC addresses from where to get the snapshosts to `172.105.247.238:26657,139.162.131.107:26657`. These are
-two of our fullnodes that are set up to create periodic snapshots every 600 blocks.
-
-Thirdly, get a trusted chain height and the associated block hash. You can do so by running:
-
-```bash
-curl -s http://172.105.247.238:26657/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
-```
-
-Once you have those values, use them as the `trust_height` and `trust_hash` values.
-
-Here is an example of what it should look like in the end:
-
-```toml
-enable = true
-
-rpc_servers = "172.105.247.238:26657,139.162.131.107:26657"
-trust_height = 16962
-trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
-trust_period = "168h0m0s"
-```
-
-:::tip Make the snapshot download faster  
-If you want to make the snapshot discovery faster, we suggest you setting the following `persistent_peers` inside
-the `$HOME/.desmos/config/config.toml` file:
-
-```toml
-persistent_peers = "1441bc29cd8ce4b91d64a4bfa8138360d022dee7@139.162.131.107:26656,84cc13d6acf22c32c209f4205d2693f70f458dde@172.105.247.238:26656"
-```
-
-These are the nodes associated with the RPC servers that will be used to download the snapshots. Setting them as
-persistent peers will avoid having to wait until they are added as peers later, resulting in an extremely fast download
-experience.
-:::
-
-## 6. Open the proper ports
+## 5. Open the proper ports
 
 Now that everything is in place to start the node, the last thing to do is to open up the proper ports.
 
@@ -219,7 +205,7 @@ sudo ufw allow from any to any port 26656 proto tcp
 If you also want to run a gRPC server, RPC node or the REST APIs, you also need to remember to open the related ports as
 well.
 
-## 7. Start the Desmos node
+## 6. Start the Desmos node
 
 After setting up the binary and opening up ports, you are now finally ready to start your node:
 
@@ -274,9 +260,10 @@ You should see an output like the following one:
 }
 ```
 
-If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it is `true`, it means your node is still syncing. 
+If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it
+is `true`, it means your node is still syncing.
 
-After your node is fully synced, you can consider running your full node as a [validator node](../../validators/setup.md).
+After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
 
 ## (Optional) Configure the service
 To allow your `desmos` instance to run in the background as a service you need to execute the following command
