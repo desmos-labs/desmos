@@ -124,7 +124,7 @@ s [state sync](https://docs.tendermint.com/master/tendermint-core/state-sync.htm
 sync with the chain extremely fast, by downloading snapshots created by other full nodes.
 
 In order to use this feature, you will have to edit a couple of things inside your `~/.desmos/config/config.toml` file,
-under the `statecyn` section:
+under the `statesync` section:
 
 1. Enable state sync by setting `enable = true`
 

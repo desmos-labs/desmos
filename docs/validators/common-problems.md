@@ -49,9 +49,11 @@ WantedBy=multi-user.target
 ```
 
 ## Problem #3: My validator is inactive/unbonding
-When creating a validator you have the minimum self delegation amount using the `--min-self-delegation` flag. What this means is that if your validator has less than that specific value of tokens seldelegated, it will automatically enter the unbonding state and then be marked as inactive. 
+When creating a validator you have the minimum self delegation amount using the `--min-self-delegation` flag. What this
+means is that if your validator has less than that specific value of tokens self delegated, it will automatically enter
+the unbonding state and then be marked as inactive.
 
-To solve this, what you can do is getting more tokens delegated to it by following these steps: 
+To solve this, what you can do is getting more tokens delegated to it by following these steps:
 
 1. Get your address:
    ```bash
