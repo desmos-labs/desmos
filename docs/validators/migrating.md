@@ -31,9 +31,10 @@ We highly suggest you to delete your old node instance once that the new node is
 
 ## 2. Setup your new node
 ### Setting up the full node
-Once you are ready to get your new node running, the first thing to do is setup your node as a full node. To do this, you can read the guide [here](../fullnode/setup/overview.md). 
+Once you are ready to get your new node running, the first thing to do is setup your node as a full node. To do this,
+you can read the guide [here](../fullnode/setup.md).
 
-Once that is done, stop your new node from running by using 
+Once that is done, stop your new node from running by using
 
 ```
 systemctl stop desmos
