@@ -88,7 +88,7 @@ the `Terminal` application and run the following command:
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-> If you don't know how to open a `Terminal`, you can search it by typing `terminal` in `Spotlight`.
+> If you don't know how to open a `Terminal`, you can search it by typing `terminal` in `Spotlight`(to access spotlight press cmd + spacebar simultaneously).
 
 After __Homebrew__ is installed, run
 
