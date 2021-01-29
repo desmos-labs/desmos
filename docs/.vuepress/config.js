@@ -106,15 +106,7 @@ module.exports = {
                 collapsable: true,
                 children: [
                     ["fullnode/overview", "Overview"],
-                    {
-                        title: "Setup",
-                        collapsable: false,
-                        children: [
-                            ["fullnode/setup/overview", "Overview"],
-                            ["fullnode/setup/manual", "Manual setup"],
-                            ["fullnode/setup/automatic", "Automatic setup [DEPRECATED]"],
-                        ]
-                    },
+                    ["fullnode/setup", "Setup"],
                     ["fullnode/rocksdb-installation", "Using RocksDB"],
                     ["fullnode/update", "Update"],
                 ]

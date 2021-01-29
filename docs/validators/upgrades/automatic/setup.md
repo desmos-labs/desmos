@@ -9,7 +9,7 @@ on-chain upgrade is required, it is handled properly.
 If you haven't already, please setup the `desmos` binary and your validator node. You can do so by following these
 guides:
 
-1. [Setup a full node](../../../fullnode/setup/overview.md)
+1. [Setup a full node](../../../fullnode/setup.md)
 2. [Setup a validator node](../../setup.md)
 
 ## 2. Setup `cosmovisor`
