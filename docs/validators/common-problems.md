@@ -49,18 +49,21 @@ WantedBy=multi-user.target
 ```
 
 ## Problem #3: My validator is inactive/unbonding
-When creating a validator you have the minimum self delegation amount using the `--min-self-delegation` flag. What this means is that if your validator has less than that specific value of tokens seldelegated, it will automatically enter the unbonding state and then be marked as inactive. 
+When creating a validator you have the minimum self delegation amount using the `--min-self-delegation` flag. What this
+means is that if your validator has less than that specific value of tokens self delegated, it will automatically enter
+the unbonding state and then be marked as inactive.
 
-To solve this, what you can do is getting more tokens delegated to it by following these steps: 
+To solve this, what you can do is getting more tokens delegated to it by following these steps:
 
-1. Get your address: 
+1. Get your address:
    ```bash
    desmos keys show <your_key> --address
    ```
-   
-2. Require more tokens using the [faucet](https://faucet.desmos.network). 
 
-3. Make sure the tokens have been sent properly: 
+2. Require more tokens using the [Discord](https://discord.gg/J6VsHDT) bot inside the `#ask-tokens` channel by
+   sending `!send <address>`.
+
+3. Make sure the tokens have been sent properly:
    ```bash
    desmos query account $(desmos keys show <your_key> --address) --chain-id <chain_id>
    ```

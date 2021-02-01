@@ -7,13 +7,6 @@ Validator candidates can bond their own Desmos tokens and have Desmos tokens "de
 
 If validators double sign, are frequently offline or do not participate in governance, their staked Desmos tokens (including the tokens of users that delegated to them) can be slashed. The penalty depends on the severity of the violation.
 
-## Hardware
-There currently exists no appropriate cloud solution for validator key management. This may change in 2020 when cloud SGX becomes more widely available. For this reason, validators must set up a physical operation secured with restricted access. A good starting place, for example, would be co-locating in secure data centers.
-
-Validators should expect to equip their datacenter location with redundant power, connectivity, and storage backups. Expect to have several redundant networking boxes for fiber, firewall and switching and then small servers with redundant hard drive and failover. Hardware can be on the low end of datacenter gear to start out with.
-
-We anticipate that network requirements will be low initially. The current testnet requires minimal resources. Then bandwidth, CPU and memory requirements will rise as the network grows. Large hard drives are recommended for storing years of blockchain history.
-
 ## Seek legal advice
 Seek legal advice if you intend to run a Validator.
 

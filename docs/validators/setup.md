@@ -20,19 +20,37 @@ should be enough to run a validator for 5-6 months.
 :::
 
 ## 2. Create your validator
-In order to create a validator, you need to have to create a local wallet first. This will be used in order to hold the tokens that you will later delegate to your validator node, allowing him to properly work. In order to create this wallet, please run: 
+In order to create a validator, you need to have to create a local wallet first. This will be used in order to hold the
+tokens that you will later delegate to your validator node, allowing him to properly work. In order to create this
+wallet, please run:
 
 ```shell
 desmos keys add <key_name>
 ```  
 
 :::warning Key name  
-Please select a key name that you will easily remember and be able to type fast. This name will be used all over the places inside other commands later.   
+Please select a key name that you will easily remember and be able to type fast. This name will be used all over the
+places inside other commands later.   
 :::
 
-Once that you have created your local wallet, it's time to get some tokens to be used as the initial validator stake so that it can run properly. If you are setting up a validator inside one of our testnets, please refer to our [testnet repo](https://github.com/desmos-labs/morpheus) to know the faucet address. If you are running a validator on our mainnet, you will need to purchase the tokens.
+Once that you have created your local wallet, it's time to get some tokens to be used as the initial validator stake so
+that it can run properly. If you are setting up a validator inside one of our testnets, you can request some testnet
+tokens inside our [Discord](https://discord.gg/yxPRGdq). Once you have joined, go inside the `#ask-tokens` channel and
+run the following command:
 
-To run a validator node you need to first get your current validator public key that was created when you ran `desmod init`. Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
+```
+!send <your_address>
+```
+
+You can get your address by running:
+
+```shell
+desmos keys show <key_name> -a
+```
+
+To run a validator node you need to first get your current validator public key that was created when you
+ran `desmod init`. Your `desmosvalconspub` (Desmos Validator Consensus Pubkey) can be used to create a new validator by
+staking tokens. You can find your validator pubkey by running:
 
 ```bash
 desmos tendermint show-validator
@@ -40,8 +58,7 @@ desmos tendermint show-validator
 
 To create your validator, just use the following command:
 
-::: warning 
-Don't use more staking token than you have! 
+::: warning Don't use more staking token than you have! 
 
 On Morpheus testnet, we are using `udaric` as the staking token and it will be the example below. 
 
