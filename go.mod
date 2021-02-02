@@ -3,9 +3,9 @@ module github.com/desmos-labs/desmos
 go 1.15
 
 require (
-	github.com/CosmWasm/wasmd v0.14.1
+	github.com/CosmWasm/wasmd v0.15.0
 	github.com/btcsuite/btcd v0.21.0-beta
-	github.com/cosmos/cosmos-sdk v0.40.1
+	github.com/cosmos/cosmos-sdk v0.41.0
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.4.3
@@ -25,4 +25,4 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 
-replace github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.14.2-0.20210127114620-75d4e328d1c6
+replace github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.14.2-0.20210201113130-66f6cd3e2f9d
