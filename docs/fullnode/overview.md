@@ -63,7 +63,7 @@ sudo apt update
 sudo apt upgrade 
 
 # Install git, gcc and make
-sudo apt install git build-essential --yes
+sudo apt install git build-essential curl jq --yes
 
 # Install Go with Snap
 sudo snap install go --classic
@@ -93,11 +93,8 @@ the `Terminal` application and run the following command:
 After __Homebrew__ is installed, run
 
 ```bash
-# Install Go using Homebrew
-brew install go
-
-# Install Git using Homebrew
-brew install git
+# Install software using Homebrew
+brew install go git curl jq
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
@@ -126,7 +123,7 @@ be installing the [Chocolatey](https://chocolatey.org/) package manager.
 
 ## 2. Install the software
 
-Once you have setup your environment correctly, you are now ready to install the Desmos software and start your full
+Once you have set up your environment correctly, you are now ready to install the Desmos software and start your full
 node.
 
 In order to do so, you can follow our [setup guide](setup.md).
