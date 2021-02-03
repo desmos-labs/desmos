@@ -62,6 +62,7 @@ import (
 
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	ibcclient "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client"
 	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
@@ -99,7 +100,6 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -402,6 +402,7 @@ func NewDesmosApp(
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
 		AddRoute(ibchost.RouterKey, ibcclient.NewClientUpdateProposalHandler(app.ibcKeeper.ClientKeeper)).
 		// use a custom version of GetEnabledProposals to edit the list of enabled wasm proposals
 		AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, wasmutils.GetEnabledProposals()))
@@ -491,7 +492,8 @@ func NewDesmosApp(
 	app.sm = module.NewSimulationManager(
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
-		// gov.NewAppModule(appCodec, app.govKeeper, app.AccountKeeper, app.BankKeeper),
+		capability.NewAppModule(appCodec, *app.capabilityKeeper),
+		gov.NewAppModule(appCodec, app.govKeeper, app.AccountKeeper, app.BankKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),

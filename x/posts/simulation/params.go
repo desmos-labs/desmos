@@ -18,19 +18,19 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxPostMessageLengthKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"max_post_message_length":"%s"`,
+				return fmt.Sprintf("%q",
 					params.MaxPostMessageLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxOptionalDataFieldsNumberKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"max_optional_data_fields_number":"%s"`,
+				return fmt.Sprintf("%q",
 					params.MaxOptionalDataFieldsNumber)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxOptionalDataFieldValueLengthKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"max_optional_data_field_value_length":"%s"}`, params.MaxOptionalDataFieldValueLength)
+				return fmt.Sprintf("%q", params.MaxOptionalDataFieldValueLength)
 			},
 		),
 	}

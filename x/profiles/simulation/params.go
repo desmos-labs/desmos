@@ -3,6 +3,7 @@ package simulation
 // DONTCOVER
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -18,21 +19,21 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 		simulation.NewSimParamChange(types.ModuleName, string(types.MonikerLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomMonikerParams(r)
-				return fmt.Sprintf(`{"min_moniker_len":"%s","max_moniker_len":"%s"}`,
-					params.MinMonikerLength, params.MaxMonikerLength)
+				jsonBz, _ := json.Marshal(params)
+				return string(jsonBz)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.DtagLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
-				return fmt.Sprintf(`{"min_dtag_len":"%s","max_dtag_len":"%s"}`,
-					params.MinDtagLength, params.MaxDtagLength)
+				jsonBz, _ := json.Marshal(params)
+				return string(jsonBz)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxBioLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomBioParams(r)
-				return fmt.Sprintf(`{"max_bio_len":"%s"}`, params)
+				return fmt.Sprintf("%q", params)
 			},
 		),
 	}
