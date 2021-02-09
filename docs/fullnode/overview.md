@@ -54,8 +54,10 @@ This process depends on your working environment.
 
 :::: tabs
 
-::: tab Linux The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by
-default. Please run the equivalent commands if you are running other Linux distributions.
+::: tab Linux
+
+The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by default.
+Please run the equivalent commands if you are running other Linux distributions.
 
 ```bash
 # Update the system
@@ -77,7 +79,9 @@ source ~/.profile
 
 :::
 
-::: tab MacOS To install the required build tools,
+::: tab MacOS
+
+To install the required build tools,
 simple [install Xcode from the Mac App Store](https://apps.apple.com/hk/app/xcode/id497799835?l=en&mt=12).
 
 To install `Go` on __MacOS__, the best option is to install with [__Homebrew__](https://brew.sh/). To do so, open
@@ -105,8 +109,10 @@ source ~/.profile
 
 :::
 
-::: tab Windows The software has not been tested on __Windows__. If you are currently running a __Windows__ PC, the
-following options should be considered:
+::: tab Windows
+
+The software has not been tested on __Windows__. If you are currently running a __Windows__ PC, the following options
+should be considered:
 
 1. Switch to a __Mac__ 👨‍💻.
 2. Wipe your hard drive and install a __Linux__ system on your PC.
