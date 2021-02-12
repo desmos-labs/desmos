@@ -49,6 +49,7 @@ WantedBy=multi-user.target
 ```
 
 ## Problem #3: My validator is inactive/unbonding
+
 When creating a validator you have the minimum self delegation amount using the `--min-self-delegation` flag. What this
 means is that if your validator has less than that specific value of tokens self delegated, it will automatically enter
 the unbonding state and then be marked as inactive.
@@ -86,20 +87,13 @@ To solve this, what you can do is getting more tokens delegated to it by followi
 
 ## Problem #4: My validator is jailed
 
-If your validator is jailed it probably means that it have been inactive for a long period of time missing a consistent
+If your validator is jailed it probably means that it has been inactive for a long period of time missing a consistent
 number of blocks. We suggest you checking the Desmos daemon status to make sure it hasn't been interrupted by some
 error.
 
-If your service is running properly, you can also try and reset your `desmos` configuration by running the following
+If the service is running properly, it probably means that your node did not have internet access for a prolonged period
+of time. In both cases, if there are no other errors to fix, you can unjail your validator by executing the following
 command:
-
-```bash
-rm $HOME/.desmos/config/config.toml
-``` 
-
-After doing so, remember to restart your validator service to apply the changes.
-
-Once you have fixed the problems, you can unjail your validator by executing the following command: 
 
 ```bash
 desmos tx slashing unjail --chain-id <chain_id> --from <your_key>
@@ -108,25 +102,48 @@ desmos tx slashing unjail --chain-id <chain_id> --from <your_key>
 # desmos tx slashing unjail --chain-id morpheus-1001 --from validator
 ```
 
-This will perform an unjail transaction that will set your validator as active again from the next block. 
+This will perform an unjail transaction that will set your validator as active again from the next block.
 
-If the problem still persists, please make sure you have [enough tokens delegated to your validator](#problem-3-my-validator-is-inactiveunbonding).
+If the problem still persists, please make sure you
+have [enough tokens delegated to your validator](#problem-3-my-validator-is-inactiveunbonding).
+
+:::tip Last solution to fixing your node errors
+
+If your service is running properly, you can also try and reset your `desmos` configuration by running the following
+command:
+
+```bash
+rm $HOME/.desmos/config/config.toml
+``` 
+
+After doing so, remember to restart your validator service to apply the changes:
+
+```bash
+systemctl restart desmosd
+```
+
+:::
 
 ## Problem #5: The persistent peers do not work properly
-Sometimes, it might happen that your node cannot connect to the persistent peers we have provided inside the [testnet repository](https://github.com/desmos-labs/morpheus). This happens because all nodes have a limit of inbound connections that they can accept. Once that limit is exceed, the nodes will not accept any more connections. 
 
-In order to solve this problem, there are two alternative way: 
+Sometimes, it might happen that your node cannot connect to the persistent peers we have provided inside
+the [testnet repository](https://github.com/desmos-labs/morpheus). This happens because all nodes have a limit of
+inbound connections that they can accept. Once that limit is exceed, the nodes will not accept any more connections.
 
-1. use a seed node instead of a persistent peer, **OR** 
+In order to solve this problem, there are two alternative way:
+
+1. use a seed node instead of a persistent peer, **OR**
 2. use different persistent peers.
 
 ### Using a seed node
-Seed nodes are a particular type of nodes that provide every validator with a set of peers to connect with, based on the current network status. What will happen when you use seed nodes is the following: 
 
-1. Your node will connect to a seed node. 
-2. The seed node will provide your node with a list of peers. 
-3. Your node will disconnect from the seed node and connect to the peers. 
-4. Your node will start syncing with the chain. 
+Seed nodes are a particular type of nodes that provide every validator with a set of peers to connect with, based on the
+current network status. What will happen when you use seed nodes is the following:
+
+1. Your node will connect to a seed node.
+2. The seed node will provide your node with a list of peers.
+3. Your node will disconnect from the seed node and connect to the peers.
+4. Your node will start syncing with the chain.
 
 In order to use this particular type of nodes, all you have to do is:
 
