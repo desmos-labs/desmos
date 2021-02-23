@@ -1,4 +1,4 @@
-# Manual full node setup
+# Full node setup
 Following you will find the instructions on how to manually setup your Desmos full node.
 
 :::warning Requirements  
@@ -13,9 +13,9 @@ Before installing the software, a consideration must be done.
 
 By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since
 version `v0.6.0` we've also added the possibility of optionally
-using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is know to be
-faster and could lead to lower syncing times. If you want to try out RocksDB (which we suggest you to do) you can take a
-look at our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.  
+using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is known to
+be faster and could lead to lower syncing times. If you want to try out RocksDB you can take a look at
+our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.  
 :::
 
 The following operations will all be done in the terminal environment under your home directory.
@@ -47,18 +47,9 @@ desmos version --long
 
 ## 2. Initialize the Desmos working directory
 
-Configuration files and chain data will be stored inside the `$HOME/.desmos` directory by default.
+Configuration files and chain data will be stored inside the `$HOME/.desmos` directory by default. In order to create
+this folder and all the necessary data we need to initialize a new full node using the `desmos init` command.
 
-We can create this folder and all the necessary data by initializing a new fullnode. To do this, run:
-
-```bash
-# Initialize the working environment for Desmos
-desmos init <your_moniker>
-```
-
-You can choose any moniker your like. It will be saved in the `config.toml` under the `.desmos` working directory.
-
-### Recovering a previous node
 Starting from `v0.15.0`, you are now able to provide a custom seed when initializing your node. This will be
 particularly useful because, in the case that you want to reset your node, you will be able to re-generate the same
 private node key instead of having to create a new node.
@@ -68,18 +59,37 @@ In order to provide a custom seed to your private key, you can do as follows:
 1. Get a new random seed by running
    ```shell
    desmos keys add node --dry-run
+   
+   # Example
+   # desmos keys add node --dry-run
+   # - name: node
+   #   type: local
+   #   address: desmos126cw9j2wy099lttf2qx0qds6k7t4kdea5ualh9
+   #   pubkey: desmospub1addwnpepqdpfv4lh0vqjvmu43spz4lq0l92qret9hv6007j4r28z05wuthw2jz3frd4
+   #   mnemonic: ""
+   #   threshold: 0
+   #   pubkeys: []
+   # 
+   # 
+   # **Important** write this mnemonic phrase in a safe place.
+   # It is the only way to recover your account if you ever forget your password.
+   # 
+   # sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
    ```
    This will create a new key **without** adding it to your keystore, and output the underlying seed.
 
-2. Copy the above provided seed, and then pass it to the `init` command using the `--recover` flag:
+2. Run the `init` command using the `--recover` flag.
    ```shell
-   desmos init <your_moniker> --recover "<your_mnemonic_phrase>"
+   desmos init <your_moniker> --recover
    ```
+   You can choose any moniker value you like. It will be saved in the `config.toml` under the `.desmos` working
+   directory.
 
-:::tip Recovering a node   
-If you already have a seed, you can directly use the `--recover` flag without generating a new one. This will recover
-the private key associated to that seed.
-:::
+3. Insert the previously output mnemonic phrase:
+   ```
+   > Enter your bip39 mnemonic
+   sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
+   ```
 
 ## 3. Get the genesis file
 
@@ -128,33 +138,33 @@ under the `statesync` section:
 
 1. Enable state sync by setting `enable = true`
 
-2. Set the RPC addresses from where to get the snapshosts
+2. Set the RPC addresses from where to get the snapshots using the `rpc_servers` field
    to `seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657`.  
    These are two of our fullnodes that are set up to create periodic snapshots every 600 blocks.
 
 3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
-   1. Get the current chain height by running:
-      ```bash
-      curl -s http://seed-4.morpheus.desmos.network:26657/commit | jq "{height: .result.signed_header.header.height}"
-      ```
-   2. Once you have the current chain height, get a height that is a little bit lower (200 blocks) than the current one.
-      To do this you can execute:
-      ```bash
-      curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
-      
-      # Example
-      # curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
-      ```
+1. Get the current chain height by running:
+   ```bash
+   curl -s http://seed-4.morpheus.desmos.network:26657/commit | jq "{height: .result.signed_header.header.height}"
+   ```
+2. Once you have the current chain height, get a height that is a little bit lower (200 blocks) than the current one. To
+   do this you can execute:
+   ```bash
+   curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+   
+   # Example
+   # curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+   ```
 
 4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values.
 
 Here is an example of what the `statesync` section of your `~/.desmos/config/config.toml` file should look like in the
-end:
+end (the `trust_height` and `trust_hash` should contain your values instead):
 
 ```toml
 enable = true
 
-rpc_servers = rpc_servers = "seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657"
+rpc_servers = "seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657"
 trust_height = 16962
 trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
 trust_period = "168h0m0s"
@@ -225,47 +235,62 @@ You should see an output like the following one:
 
 ```json
 {
-   "node_info": {
-      "protocol_version": {
-         "p2p": "7",
-         "block": "10",
-         "app": "0"
-      },
-      "id": "8307c16191e249d6d3871ce764262d40d9cf249f",
-      "listen_addr": "tcp://0.0.0.0:26656",
-      "network": "morpheus-1001",
-    "version": "0.32.7",
-    "channels": "4020212223303800",
-    "moniker": "Morpheus",
+  "NodeInfo": {
+    "protocol_version": {
+      "p2p": "8",
+      "block": "11",
+      "app": "0"
+    },
+    "id": "84cc13d6acf22c32c209f4205d2693f70f458dde",
+    "listen_addr": "tcp://0.0.0.0:26656",
+    "network": "morpheus-13001",
+    "version": "",
+    "channels": "40202122233038606100",
+    "moniker": "fullnode",
     "other": {
       "tx_index": "on",
       "rpc_address": "tcp://0.0.0.0:26657"
     }
   },
-  "sync_info": {
-    "latest_block_hash": "AAB066E5B020C325E5AE41CFACFB95DAC83B261D0C4A24439A66A2977A03B7EC",
-    "latest_app_hash": "5B4CE89D3C1EFA1AE8E16710103EEAE1FDF9D13BE44F5847F5376810E8F39DAE",
-    "latest_block_height": "480950",
-    "latest_block_time": "2020-01-13T06:35:29.237599298Z",
+  "SyncInfo": {
+    "latest_block_hash": "9BA7801C0935C4E18B4E2F8C6E8A2FF4C598C8E5F71A94113D2F0595524FD4E3",
+    "latest_app_hash": "375C9F0E4E63B7ACAD497F8DEDF5E2382F469668DE671B2FF92A5D2B8B50C6D2",
+    "latest_block_height": "204393",
+    "latest_block_time": "2021-02-03T08:03:06.448549383Z",
+    "earliest_block_hash": "839FEB9ED0257B71116CE54618C7E3C15189239CB571066DDBE9E0F1C101DCC8",
+    "earliest_app_hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "earliest_block_height": "1",
+    "earliest_block_time": "2021-01-20T07:00:00Z",
     "catching_up": false
   },
-  "validator_info": {
-    "address": "25AD49347EC88C1922F18B317D12EA59DB0EC8D6",
-    "pub_key": {
+  "ValidatorInfo": {
+    "Address": "E457913A98EC0F9251BB40008E6680A8EFF93F99",
+    "PubKey": {
       "type": "tendermint/PubKeyEd25519",
-      "value": "WPZGfRMuyd8X4B4vAx79yfyqH+nmEboaML8YlJKT/uE="
+      "value": "BLT8jjQ+ODKa0ERcrhHfOVFVVrJDq7hxyXx6bLXnCdw="
     },
-    "voting_power": "0"
+    "VotingPower": "0"
   }
 }
 ```
 
 If you see that the `catching_up` value is `false` under the `sync_info`, it means that you are fully synced. If it
-is `true`, it means your node is still syncing.
+is `true`, it means your node is still syncing. You can get the `catching_up` value by simply running:
+
+```shell
+desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
+
+# Example 
+# $ desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
+# {
+#   "catching_up": false
+# }
+```
 
 After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
 
-## (Optional) Configure the service
+## 7. Configure the service
+
 To allow your `desmos` instance to run in the background as a service you need to execute the following command
 
 ```bash
@@ -302,7 +327,7 @@ After this, you can run it by executing
 systemctl start desmosd
 ```
 
-### Service operations 
+### Service operations
 #### Check the service status
 If you want to see if the service is running properly, you can execute
 
@@ -310,7 +335,7 @@ If you want to see if the service is running properly, you can execute
 systemctl status desmosd
 ``` 
 
-If everything is running smoothly you should see something like 
+If everything is running smoothly you should see something like
 
 ```bash
 $ systemctl status desmosd

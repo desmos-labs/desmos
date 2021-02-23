@@ -54,8 +54,10 @@ This process depends on your working environment.
 
 :::: tabs
 
-::: tab Linux The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by
-default. Please run the equivalent commands if you are running other Linux distributions.
+::: tab Linux
+
+The following example is based on **Ubuntu (Debian)** and assumes you are using a terminal environment by default.
+Please run the equivalent commands if you are running other Linux distributions.
 
 ```bash
 # Update the system
@@ -63,7 +65,7 @@ sudo apt update
 sudo apt upgrade 
 
 # Install git, gcc and make
-sudo apt install git build-essential --yes
+sudo apt install git build-essential curl jq --yes
 
 # Install Go with Snap
 sudo snap install go --classic
@@ -77,7 +79,9 @@ source ~/.profile
 
 :::
 
-::: tab MacOS To install the required build tools,
+::: tab MacOS
+
+To install the required build tools,
 simple [install Xcode from the Mac App Store](https://apps.apple.com/hk/app/xcode/id497799835?l=en&mt=12).
 
 To install `Go` on __MacOS__, the best option is to install with [__Homebrew__](https://brew.sh/). To do so, open
@@ -93,11 +97,8 @@ the `Terminal` application and run the following command:
 After __Homebrew__ is installed, run
 
 ```bash
-# Install Go using Homebrew
-brew install go
-
-# Install Git using Homebrew
-brew install git
+# Install software using Homebrew
+brew install go git curl jq
 
 # Export environment variables
 echo 'export GOPATH="$HOME/go"' >> ~/.profile
@@ -108,8 +109,10 @@ source ~/.profile
 
 :::
 
-::: tab Windows The software has not been tested on __Windows__. If you are currently running a __Windows__ PC, the
-following options should be considered:
+::: tab Windows
+
+The software has not been tested on __Windows__. If you are currently running a __Windows__ PC, the following options
+should be considered:
 
 1. Switch to a __Mac__ 👨‍💻.
 2. Wipe your hard drive and install a __Linux__ system on your PC.
@@ -126,7 +129,7 @@ be installing the [Chocolatey](https://chocolatey.org/) package manager.
 
 ## 2. Install the software
 
-Once you have setup your environment correctly, you are now ready to install the Desmos software and start your full
+Once you have set up your environment correctly, you are now ready to install the Desmos software and start your full
 node.
 
 In order to do so, you can follow our [setup guide](setup.md).

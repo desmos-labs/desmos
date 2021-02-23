@@ -2,11 +2,11 @@
 # > docker build -t desmos .
 #
 # Simple usage with a mounted data directory:
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos desmos desmos init
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos desmos desmos start
+# > docker run -it -p 26657:26657 -p 26656:26656 -v ~/.desmos:/root/.desmos desmos desmos init
+# > docker run -it -p 26657:26657 -p 26656:26656 -v ~/.desmos:/root/.desmos desmos desmos start
 #
 # If you want to run this container as a daemon, you can do so by executing
-# > docker run -td -p 46657:46657 -p 46656:46656 -v ~/.desmos:/root/.desmos --name desmos desmos
+# > docker run -td -p 26657:26657 -p 26656:26656 -v ~/.desmos:/root/.desmos --name desmos desmos
 #
 # Once you have done so, you can enter the container shell by executing
 # > docker exec -it desmos bash

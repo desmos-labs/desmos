@@ -1,3 +1,9 @@
+# Unreleased
+
+## Changes
+- Updated Cosmos to v0.41.3 ([#359](https://github.com/desmos-labs/desmos/issues/359))
+- Added Tendermint LD flag ([#360](https://github.com/desmos-labs/desmos/issues/360))
+
 # Version 0.15.1
 
 ## Changes
