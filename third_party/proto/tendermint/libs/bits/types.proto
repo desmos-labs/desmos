@@ -1,1 +1,9 @@
-404: Not Found
+syntax = "proto3";
+package tendermint.libs.bits;
+
+option go_package = "github.com/tendermint/tendermint/proto/tendermint/libs/bits";
+
+message BitArray {
+  int64           bits = 1;
+  repeated uint64 elems = 2;
+}
