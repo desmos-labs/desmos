@@ -1,8 +1,13 @@
 # Unreleased
 
+## Bug fixes
+
+- Added missing gRPC gateways ([#370](https://github.com/desmos-labs/desmos/issues/370))
+
 # Version 0.15.2
 
 ## Changes
+
 - Updated Cosmos to v0.41.3 ([#359](https://github.com/desmos-labs/desmos/issues/359))
 - Added Tendermint LD flag ([#360](https://github.com/desmos-labs/desmos/issues/360))
 - Added ARM-32 support
