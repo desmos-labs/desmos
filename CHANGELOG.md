@@ -1,5 +1,7 @@
 # Unreleased
 
+# Version 0.15.3
+
 ## Bug fixes
 
 - Added missing gRPC gateways ([#370](https://github.com/desmos-labs/desmos/issues/370))
