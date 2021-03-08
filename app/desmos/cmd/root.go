@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	themiscli "github.com/desmos-labs/desmos/x/themis/client/cli"
+
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
 	"github.com/desmos-labs/desmos/app"
@@ -99,6 +101,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
+		themiscli.GetRootCmd(),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }
