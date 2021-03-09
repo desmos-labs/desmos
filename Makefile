@@ -110,11 +110,11 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
 
-build-arm:go.sum
-	GOOS=linux GOARCH=arm GOARM=7 $(MAKE) build
+build-arm32:go.sum
+	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=false $(MAKE) build
 
 build-arm64: go.sum
-	GOOS=linux GOARCH=arm64 $(MAKE) build
+	GOOS=linux GOARCH=arm64 LEDGER_ENABLED=false $(MAKE) build
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
