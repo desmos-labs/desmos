@@ -137,11 +137,18 @@ desmos tx slashing unjail \
 Your validator is active if the following command returns anything:
 
 ```bash
-desmos query tendermint-validator-set | grep "$(desmos tendermint show-validator)"
+desmos query tendermint-validator-set | grep $(desmos status 2>&1 | jq '.ValidatorInfo.PubKey.value')
 ```
 
-You should now see your validator in one of the Desmos explorers. You are looking for the `bech32` encoded `address` in
-the `~/.desmos/config/priv_validator.json` file.
+When you query the node status with `desmos status`, it includes the validator pubkey in base64 encoding. If your node is an active validator, the validator pubkey will be shown when you query the validator set.
 
-::: warning Note To be in the validator set, you need to have more total voting power than the 100th validator.
+You should now see your validator in one of the Desmos explorers. You are looking for the `bech32` encoded `operator address` starts with `desmosvaloper`. It is another representation of your `<key_name>` that you have used to create this validator.
+
+To show the `operator address`, you can run
+
+```bash
+desmos keys show <key_name> -a --bech val
+```
+
+::: warning Note To be in the validator set, you need to have more total voting power than the 200th validator.
 :::
