@@ -42,19 +42,6 @@ func TestSimAppExport(t *testing.T) {
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
 }
 
-// ensure that black listed addresses are properly set in bank keeper
-func TestBlackListedAddrs(t *testing.T) {
-	db := dbm.NewMemDB()
-	app := NewDesmosApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
-		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
-	)
-
-	for acc := range maccPerms {
-		require.Equal(t, !allowedReceivingModAcc[acc], app.BankKeeper.BlockedAddr(app.AccountKeeper.GetModuleAddress(acc)))
-	}
-}
-
 func TestGetMaccPerms(t *testing.T) {
 	dup := GetMaccPerms()
 	require.Equal(t, maccPerms, dup, "duplicated module account permissions differed from actual module account permissions")
