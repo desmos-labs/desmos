@@ -18,6 +18,8 @@ jobs:
   Breakage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: check-breakage
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Check breakage ✅
         run: make proto-check-breaking
