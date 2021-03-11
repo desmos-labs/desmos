@@ -4,7 +4,11 @@
 
 ## Changes
 
-- Updated Cosmos to `v0.42.2` ([\#378](https://github.com/desmos-labs/desmos/issues/378))
+- Updated Cosmos to `v0.42.1` ([\#378](https://github.com/desmos-labs/desmos/issues/378))
+
+## Bug fixes
+
+- Fixed a security vulnerability identified in the `app.go` file.
 
 # Version 0.15.3
 
