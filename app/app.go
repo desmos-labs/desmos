@@ -55,7 +55,7 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
-	transfer "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer"
+	ibctransfer "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer"
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
@@ -145,7 +145,7 @@ var (
 
 		capability.AppModuleBasic{},
 		ibc.AppModuleBasic{},
-		transfer.AppModuleBasic{},
+		ibctransfer.AppModuleBasic{},
 
 		// Custom modules
 		fees.AppModuleBasic{},
@@ -202,9 +202,9 @@ type DesmosApp struct {
 	paramsKeeper   paramskeeper.Keeper
 	evidenceKeeper evidencekeeper.Keeper
 
-	CapabilityKeeper *capabilitykeeper.Keeper
-	IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	TransferKeeper   ibctransferkeeper.Keeper
+	CapabilityKeeper  *capabilitykeeper.Keeper
+	IBCKeeper         *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	IBCTransferKeeper ibctransferkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -334,16 +334,16 @@ func NewDesmosApp(
 	)
 
 	// Create Transfer Keepers
-	app.TransferKeeper = ibctransferkeeper.NewKeeper(
+	app.IBCTransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
 	)
-	transferModule := transfer.NewAppModule(app.TransferKeeper)
+	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -412,7 +412,7 @@ func NewDesmosApp(
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		transferModule,
+		ibctransferModule,
 
 		// Custom modules
 		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
@@ -470,7 +470,7 @@ func NewDesmosApp(
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		transferModule,
+		ibctransferModule,
 
 		// Custom modules
 		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
