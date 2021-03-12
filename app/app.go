@@ -351,6 +351,7 @@ func NewDesmosApp(
 
 	desmosQuerier := desmosWasm.DesmosQuerier(app.postsKeeper, app.ReportsKeeper)
 
+	// The nil params here will be set inside wasm.NewKeeper function
 	plugins := wasm.QueryPlugins{
 		Bank:    nil,
 		Custom:  desmosQuerier,

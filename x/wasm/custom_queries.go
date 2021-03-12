@@ -2,12 +2,10 @@ package wasm
 
 import (
 	"encoding/json"
-
 	cosmwasm "github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 )
@@ -24,7 +22,11 @@ func DesmosQuerier(postsKeeper postskeeper.Keeper, reportsKeeper reportsKeeper.K
 
 		if desmosQuery.Posts != nil {
 			posts := postsKeeper.GetPosts(ctx)
-			postsResponse := PostsResponse{Posts: posts}
+			convertedPosts := make([]Post, len(posts))
+			for index, post := range posts {
+				convertedPosts[index] = convertPost(post)
+			}
+			postsResponse := PostsResponse{Posts: convertedPosts}
 			return json.Marshal(postsResponse)
 		}
 
@@ -39,8 +41,8 @@ func DesmosQuerier(postsKeeper postskeeper.Keeper, reportsKeeper reportsKeeper.K
 }
 
 type DesmosQuery struct {
-	Posts   *PostsQuery
-	Reports *ReportsQuery
+	Posts   *PostsQuery   `json:"posts"`
+	Reports *ReportsQuery `json:"reports"`
 }
 
 type ReportsQuery struct {
@@ -50,7 +52,7 @@ type ReportsQuery struct {
 type PostsQuery struct{}
 
 type PostsResponse struct {
-	Posts []postsTypes.Post `json:"posts"`
+	Posts []Post `json:"posts"`
 }
 
 type ReportsResponse struct {
