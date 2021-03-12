@@ -110,8 +110,11 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
 
+build-arm32:go.sum
+	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=false $(MAKE) build
+
 build-arm64: go.sum
-	GOOS=linux GOARCH=arm64 $(MAKE) build
+	GOOS=linux GOARCH=arm64 LEDGER_ENABLED=false $(MAKE) build
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
@@ -292,9 +295,9 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) check breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.3/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.7/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.40.1/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.41.3/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 

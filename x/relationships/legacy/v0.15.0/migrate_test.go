@@ -68,12 +68,12 @@ func TestMigrate(t *testing.T) {
 	migrated := v0150relationships.Migrate(v013GenState)
 
 	require.Len(t, expGenState.Relationships, len(migrated.Relationships))
-	for index, relationship := range migrated.Relationships {
-		require.Equal(t, expGenState.Relationships[index], relationship)
+	for _, relationship := range migrated.Relationships {
+		require.Contains(t, expGenState.Relationships, relationship)
 	}
 
 	require.Len(t, expGenState.Blocks, len(migrated.Blocks))
-	for index, block := range migrated.Blocks {
-		require.Equal(t, expGenState.Blocks[index], block)
+	for _, block := range migrated.Blocks {
+		require.Contains(t, expGenState.Blocks, block)
 	}
 }
