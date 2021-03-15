@@ -9,12 +9,12 @@ import (
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 )
 
-type WasmQuerier interface {
+type Querier interface {
 	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
 	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
 }
 
-var _ WasmQuerier = ReportsWasmQuerier{}
+var _ Querier = ReportsWasmQuerier{}
 
 type ReportsWasmQuerier struct {
 	reportsKeeper reportsKeeper.Keeper
@@ -41,6 +41,9 @@ func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMess
 	if reportsQuery.Reports != nil {
 		reports := querier.reportsKeeper.GetPostReports(ctx, reportsQuery.Reports.PostID)
 		bz, err = json.Marshal(ReportsResponse{Reports: reports})
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
 	} else {
 		return nil, sdkerrors.ErrInvalidRequest
 	}

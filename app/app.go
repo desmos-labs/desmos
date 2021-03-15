@@ -1,7 +1,6 @@
 package app
 
 import (
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"io"
 	"net/http"
 	"os"
@@ -58,6 +57,7 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	ibctransfer "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer"
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
@@ -391,7 +391,7 @@ func NewDesmosApp(
 	}
 
 	querier := desmosWasm.NewQuerier()
-	queriers := map[string]desmosWasm.WasmQuerier{
+	queriers := map[string]desmosWasm.Querier{
 		desmosWasm.WasmQueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
 		desmosWasm.WasmQueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
 	}

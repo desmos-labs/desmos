@@ -12,22 +12,22 @@ import (
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 )
 
-type WasmQuerier interface {
+type Querier interface {
 	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
 	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
 }
 
 type QueriersMap struct {
-	Queriers map[string]WasmQuerier
+	Queriers map[string]Querier
 }
 
 func NewQuerier() QueriersMap {
 	return QueriersMap{
-		Queriers: make(map[string]WasmQuerier),
+		Queriers: make(map[string]Querier),
 	}
 }
 
-type WasmCustomQuery struct {
+type CustomQuery struct {
 	Route     string          `json:"route"`
 	QueryData json.RawMessage `json:"query_data"`
 }
@@ -38,7 +38,7 @@ const (
 )
 
 func (q QueriersMap) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var customQuery WasmCustomQuery
+	var customQuery CustomQuery
 	err := json.Unmarshal(data, &customQuery)
 	fmt.Println("[!] Wasm query routed to module: ", customQuery.Route)
 
@@ -48,7 +48,7 @@ func (q QueriersMap) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte,
 
 	if querier, ok := q.Queriers[customQuery.Route]; ok {
 		return querier.QueryCustom(ctx, customQuery.QueryData)
-	} else {
-		return nil, sdkerrors.Wrap(wasm.ErrQueryFailed, customQuery.Route)
 	}
+
+	return nil, sdkerrors.Wrap(wasm.ErrQueryFailed, customQuery.Route)
 }

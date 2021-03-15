@@ -9,12 +9,12 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 )
 
-type WasmQuerier interface {
+type Querier interface {
 	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
 	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
 }
 
-var _ WasmQuerier = PostsWasmQuerier{}
+var _ Querier = PostsWasmQuerier{}
 
 type PostsWasmQuerier struct {
 	postsKeeper postskeeper.Keeper
@@ -45,6 +45,9 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 			convertedPosts[index] = convertPost(post)
 		}
 		bz, err = json.Marshal(PostsResponse{Posts: convertedPosts})
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
 	} else {
 		return nil, sdkerrors.ErrInvalidRequest
 	}
