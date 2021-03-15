@@ -71,6 +71,7 @@ import (
 	"github.com/desmos-labs/desmos/x/posts"
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	postsWasm "github.com/desmos-labs/desmos/x/posts/wasm"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
@@ -79,6 +80,7 @@ import (
 	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	reportsWasm "github.com/desmos-labs/desmos/x/reports/wasm"
 	desmosWasm "github.com/desmos-labs/desmos/x/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -336,6 +338,8 @@ func NewDesmosApp(
 		app.postsKeeper,
 	)
 
+	// ------ CosmWasm setup ------
+
 	var wasmRouter = bApp.Router()
 	wasmDir := filepath.Join(homePath, "wasm")
 
@@ -344,19 +348,20 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	desmosQuerier := desmosWasm.DesmosQuerier(app.postsKeeper, app.ReportsKeeper)
+	querier := desmosWasm.NewQuerier()
+	queriers := map[string]desmosWasm.WasmQuerier{
+		desmosWasm.WasmQueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
+		desmosWasm.WasmQueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
+	}
+	querier.Queriers = queriers
 
-	// The nil params here will be set inside wasm.NewKeeper function
-	plugins := wasm.QueryPlugins{
-		Bank:    nil,
-		Custom:  desmosQuerier,
-		Staking: nil,
-		Wasm:    nil,
+	queryPlugins := wasm.QueryPlugins{
+		Custom: querier.QueryCustom,
 	}
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	supportedFeatures := "staking,custom"
+	supportedFeatures := "staking"
 	app.wasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
@@ -370,7 +375,7 @@ func NewDesmosApp(
 		wasmConfig,
 		supportedFeatures,
 		nil,
-		&plugins,
+		&queryPlugins,
 	)
 
 	// register the proposal types

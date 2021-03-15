@@ -50,3 +50,13 @@ func convertPost(post postsTypes.Post) Post {
 		},
 	}
 }
+
+type PostsModuleQuery struct {
+	Posts *PostsQuery `json:"posts"`
+}
+
+type PostsQuery struct{}
+
+type PostsResponse struct {
+	Posts []Post `json:"posts"`
+}
