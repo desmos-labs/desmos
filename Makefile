@@ -295,9 +295,9 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) check breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.7/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.8/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.41.3/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.1/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 
@@ -315,6 +315,9 @@ CONFIO_TYPES        = third_party/proto/confio
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
 	@curl -sSL $(COSMOS_URL)/base/query/v1beta1/pagination.proto > $(COSMOS_TYPES)/base/query/v1beta1/pagination.proto
+
+	@mkdir -p $(COSMOS_TYPES)/auth/v1beta1
+	@curl -sSL $(COSMOS_URL)/auth/v1beta1/auth.proto > $(COSMOS_TYPES)/auth/v1beta1/auth.proto
 
 	@mkdir -p $(GOGO_PROTO_TYPES)
 	@curl -sSL $(GOGO_PROTO_URL)/gogoproto/gogo.proto > $(GOGO_PROTO_TYPES)/gogo.proto

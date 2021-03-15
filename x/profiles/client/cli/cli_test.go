@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
@@ -41,6 +43,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
+	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
+	s.Require().NoError(err)
+
 	profilesData.Profiles = []types.Profile{
 		types.NewProfile(
 			"dtag",
@@ -48,7 +53,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			"bio",
 			types.Pictures{},
 			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			authtypes.NewBaseAccountWithAddress(addr),
 		),
 	}
 	profilesData.DtagTransferRequests = []types.DTagTransferRequest{
@@ -82,6 +87,9 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 	val := s.network.Validators[0]
 
+	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
+	s.Require().NoError(err)
+
 	testCases := []struct {
 		name           string
 		args           []string
@@ -109,7 +117,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 					"bio",
 					types.Pictures{},
 					time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					authtypes.NewBaseAccountWithAddress(addr),
 				),
 			},
 		},

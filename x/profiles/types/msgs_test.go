@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -12,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var addr, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var testProfile = types.NewProfile(
 	"dtag",
 	"moniker",
@@ -21,7 +24,7 @@ var testProfile = types.NewProfile(
 		"https://shorturl.at/cgpyF",
 	),
 	time.Unix(100, 0),
-	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	authtypes.NewBaseAccountWithAddress(addr),
 )
 
 // ___________________________________________________________________________________________________________________
@@ -32,7 +35,7 @@ var msgEditProfile = types.NewMsgSaveProfile(
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
-	testProfile.Creator,
+	testProfile.BaseAccount.Address,
 )
 
 func TestMsgSaveProfile_Route(t *testing.T) {
@@ -65,7 +68,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Invalid empty dtag returns error",
-			msg:   types.NewMsgSaveProfile("", "", "", "", "", testProfile.Creator),
+			msg:   types.NewMsgSaveProfile("", "", "", "", "", testProfile.BaseAccount.Address),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
 		},
 		{
@@ -110,7 +113,7 @@ func TestMsgSaveProfile_GetSigners(t *testing.T) {
 // ___________________________________________________________________________________________________________________
 
 var msgDeleteProfile = types.NewMsgDeleteProfile(
-	testProfile.Creator,
+	testProfile.BaseAccount.Address,
 )
 
 func TestMsgDeleteProfile_Route(t *testing.T) {
@@ -136,7 +139,7 @@ func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgDeleteProfile(testProfile.Creator),
+			msg:   types.NewMsgDeleteProfile(testProfile.BaseAccount.Address),
 			error: nil,
 		},
 	}

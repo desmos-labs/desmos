@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/commons"
@@ -40,14 +42,23 @@ func (pic Pictures) Validate() error {
 // ___________________________________________________________________________________________________________________
 
 // NewProfile builds a new profile having the given dtag, creator and creation date
-func NewProfile(dtag string, moniker, bio string, pictures Pictures, creationDate time.Time, creator string) Profile {
+func NewProfile(
+	dtag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+) Profile {
+	// TODO: We should remove this when the following Cosmos issues is resolved
+	// https://github.com/cosmos/cosmos-sdk/issues/8876
+	baseAcc, ok := account.(*authtypes.BaseAccount)
+	if baseAcc != nil && !ok {
+		panic(fmt.Errorf("invalid account type"))
+	}
+
 	return Profile{
 		Dtag:         dtag,
 		Moniker:      moniker,
 		Bio:          bio,
 		Pictures:     pictures,
-		Creator:      creator,
 		CreationDate: creationDate,
+		BaseAccount:  baseAcc,
 	}
 }
 
@@ -78,11 +89,11 @@ func (profile Profile) Update(p2 Profile) (Profile, error) {
 		p2.CreationDate = profile.CreationDate
 	}
 
-	if p2.Creator == DoNotModify {
-		p2.Creator = profile.Creator
+	if p2.BaseAccount == nil {
+		p2.BaseAccount = profile.BaseAccount
 	}
 
-	newProfile := NewProfile(p2.Dtag, p2.Moniker, p2.Bio, p2.Pictures, p2.CreationDate, p2.Creator)
+	newProfile := NewProfile(p2.Dtag, p2.Moniker, p2.Bio, p2.Pictures, p2.CreationDate, p2.BaseAccount)
 	err := newProfile.Validate()
 	if err != nil {
 		return Profile{}, err
@@ -92,7 +103,7 @@ func (profile Profile) Update(p2 Profile) (Profile, error) {
 }
 
 // Validate check the validity of the Profile
-func (profile Profile) Validate() error {
+func (profile *Profile) Validate() error {
 	if strings.TrimSpace(profile.Dtag) == "" || profile.Dtag == DoNotModify {
 		return fmt.Errorf("invalid profile DTag: %s", profile.Dtag)
 	}
@@ -113,9 +124,14 @@ func (profile Profile) Validate() error {
 		return fmt.Errorf("invalid profile cover: %s", profile.Pictures.Cover)
 	}
 
-	_, err := sdk.AccAddressFromBech32(profile.Creator)
+	_, err := sdk.AccAddressFromBech32(profile.BaseAccount.Address)
 	if err != nil {
-		return fmt.Errorf("invalid creator address: %s", profile.Creator)
+		return fmt.Errorf("invalid address: %s", profile.BaseAccount.Address)
+	}
+
+	err = profile.BaseAccount.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid account: %s", err.Error())
 	}
 
 	return profile.Pictures.Validate()

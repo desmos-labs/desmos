@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
@@ -42,6 +45,12 @@ func TestPictures_Validate(t *testing.T) {
 // ___________________________________________________________________________________________________________________
 
 func TestProfile_Update(t *testing.T) {
+	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	addr2, err := sdk.AccAddressFromBech32("cosmos1pqcac4w0k8z4elysqppgce5vauzu5krew7jegg")
+	require.NoError(t, err)
+
 	tests := []struct {
 		name       string
 		original   types.Profile
@@ -60,7 +69,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			update: types.NewProfile(
 				types.DoNotModify,
@@ -68,7 +77,7 @@ func TestProfile_Update(t *testing.T) {
 				types.DoNotModify,
 				types.NewPictures(types.DoNotModify, types.DoNotModify),
 				time.Time{},
-				types.DoNotModify,
+				nil,
 			),
 			expError: false,
 			expProfile: types.NewProfile(
@@ -80,7 +89,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 		},
 		{
@@ -94,7 +103,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			update: types.NewProfile(
 				"dtag-2",
@@ -105,7 +114,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com/2",
 				),
 				time.Unix(200, 0),
-				"cosmos1pqcac4w0k8z4elysqppgce5vauzu5krew7jegg",
+				authtypes.NewBaseAccountWithAddress(addr2),
 			),
 			expError: false,
 			expProfile: types.NewProfile(
@@ -117,7 +126,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com/2",
 				),
 				time.Unix(200, 0),
-				"cosmos1pqcac4w0k8z4elysqppgce5vauzu5krew7jegg",
+				authtypes.NewBaseAccountWithAddress(addr2),
 			),
 		},
 		{
@@ -131,7 +140,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			update: types.NewProfile(
 				"dtag-2",
@@ -139,7 +148,7 @@ func TestProfile_Update(t *testing.T) {
 				"",
 				types.NewPictures("", ""),
 				time.Time{},
-				"invalid-address",
+				authtypes.NewBaseAccountWithAddress(nil),
 			),
 			expError: true,
 		},
@@ -154,7 +163,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			update: types.NewProfile(
 				types.DoNotModify,
@@ -162,7 +171,7 @@ func TestProfile_Update(t *testing.T) {
 				"",
 				types.NewPictures("", ""),
 				time.Time{},
-				types.DoNotModify,
+				nil,
 			),
 			expError: false,
 			expProfile: types.NewProfile(
@@ -171,7 +180,7 @@ func TestProfile_Update(t *testing.T) {
 				"",
 				types.NewPictures("", ""),
 				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 		},
 	}
@@ -192,6 +201,9 @@ func TestProfile_Update(t *testing.T) {
 }
 
 func TestProfile_Validate(t *testing.T) {
+	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
 	tests := []struct {
 		name    string
 		account types.Profile
@@ -208,9 +220,9 @@ func TestProfile_Validate(t *testing.T) {
 					"https://shorturl.at/cgpyF",
 				),
 				time.Now(),
-				"",
+				authtypes.NewBaseAccountWithAddress(nil),
 			),
-			expErr: fmt.Errorf("invalid creator address: "),
+			expErr: fmt.Errorf("invalid address: "),
 		},
 		{
 			name: "Empty profile DTag returns error",
@@ -223,7 +235,7 @@ func TestProfile_Validate(t *testing.T) {
 					"https://shorturl.at/cgpyF",
 				),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile DTag: "),
 		},
@@ -235,7 +247,7 @@ func TestProfile_Validate(t *testing.T) {
 				"bio",
 				types.NewPictures("pic", "https://example.com"),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
@@ -247,7 +259,7 @@ func TestProfile_Validate(t *testing.T) {
 				"bio",
 				types.NewPictures("https://example.com", "cov"),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile cover uri provided"),
 		},
@@ -259,7 +271,7 @@ func TestProfile_Validate(t *testing.T) {
 				"",
 				types.Pictures{},
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile moniker: %s", types.DoNotModify),
 		},
@@ -271,7 +283,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.DoNotModify,
 				types.Pictures{},
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile bio: %s", types.DoNotModify),
 		},
@@ -283,7 +295,7 @@ func TestProfile_Validate(t *testing.T) {
 				"",
 				types.NewPictures(types.DoNotModify, ""),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile picture: %s", types.DoNotModify),
 		},
@@ -295,7 +307,7 @@ func TestProfile_Validate(t *testing.T) {
 				"",
 				types.NewPictures("", types.DoNotModify),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: fmt.Errorf("invalid profile cover: %s", types.DoNotModify),
 		},
@@ -307,7 +319,7 @@ func TestProfile_Validate(t *testing.T) {
 				"",
 				types.Pictures{},
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: nil,
 		},
@@ -319,7 +331,7 @@ func TestProfile_Validate(t *testing.T) {
 				"bio",
 				types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
 				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				authtypes.NewBaseAccountWithAddress(addr1),
 			),
 			expErr: nil,
 		},

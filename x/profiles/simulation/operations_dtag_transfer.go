@@ -29,7 +29,7 @@ func SimulateMsgRequestDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		sender, request, skip := randomDtagRequestTransferFields(r, ctx, accs, k)
+		sender, request, skip := randomDtagRequestTransferFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -84,7 +84,7 @@ func sendMsgRequestDTagTransfer(
 
 // randomDtagRequestTransferFields returns random dTagRequest data
 func randomDtagRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, types.DTagTransferRequest, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
@@ -94,7 +94,7 @@ func randomDtagRequestTransferFields(
 	receiver, _ := simtypes.RandomAcc(r, accs)
 	sender, _ := simtypes.RandomAcc(r, accs)
 
-	// skip if the two addresses are equals
+	// Skip if the two addresses are equals
 	if receiver.Equals(sender) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
@@ -111,7 +111,7 @@ func randomDtagRequestTransferFields(
 		"",
 		types.NewPictures("", ""),
 		ctx.BlockTime(),
-		receiver.Address.String(),
+		ak.GetAccount(ctx, receiver.Address),
 	))
 
 	// skip if requests already exists
@@ -135,7 +135,7 @@ func SimulateMsgAcceptDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		acc, request, dtag, skip := randomDtagAcceptRequestTransferFields(r, ctx, accs, k)
+		acc, request, dtag, skip := randomDtagAcceptRequestTransferFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -194,7 +194,7 @@ func sendMsgMsgAcceptDTagTransfer(
 
 // randomDtagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
 func randomDtagAcceptRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, types.DTagTransferRequest, string, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
@@ -229,7 +229,7 @@ func randomDtagAcceptRequestTransferFields(
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
-	profile := NewRandomProfile(r, sender.Address)
+	profile := NewRandomProfile(r, ak.GetAccount(ctx, sender.Address))
 	profile.Dtag = "dtag"
 
 	err := k.ValidateProfile(ctx, profile)

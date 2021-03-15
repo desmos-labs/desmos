@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -31,7 +33,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"my-bio",
 				"https://test.com/profile-picture",
 				"https://test.com/cover-pic",
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount.Address,
 			),
 			expStoredProfiles: []types.Profile{
 				types.NewProfile(
@@ -43,14 +45,14 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 						"https://test.com/cover-pic",
 					),
 					suite.testData.profile.CreationDate,
-					suite.testData.profile.Creator,
+					suite.testData.profile.BaseAccount,
 				),
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileSaved,
 					sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
-					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.BaseAccount.Address),
 					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 				),
 			},
@@ -68,7 +70,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 						"https://test.com/old-cover-pic",
 					),
 					suite.testData.profile.CreationDate,
-					suite.testData.profile.Creator,
+					suite.testData.profile.BaseAccount,
 				),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -77,13 +79,13 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"biography",
 				"https://test.com/profile-pic",
 				"https://test.com/cover-pic",
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount.Address,
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileSaved,
 					sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
-					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.BaseAccount.Address),
 					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 				),
 			},
@@ -97,7 +99,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 						"https://test.com/cover-pic",
 					),
 					suite.testData.profile.CreationDate,
-					suite.testData.profile.Creator,
+					suite.testData.profile.BaseAccount,
 				),
 			},
 		},
@@ -111,7 +113,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					"",
 					types.NewPictures("", ""),
 					suite.testData.profile.CreationDate,
-					suite.testData.profile.Creator,
+					suite.testData.profile.BaseAccount,
 				),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -120,7 +122,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"",
 				"invalid-pic",
 				"",
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount.Address,
 			),
 			expEvents: sdk.EmptyEvents(),
 			expErr:    sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid profile picture uri provided"),
@@ -131,7 +133,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					"",
 					types.NewPictures("", ""),
 					suite.testData.profile.CreationDate,
-					suite.testData.profile.Creator,
+					suite.testData.profile.BaseAccount,
 				),
 			},
 		},
@@ -175,7 +177,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		{
 			name:           "Profile doesn't exists",
 			storedProfiles: nil,
-			msg:            types.NewMsgDeleteProfile(suite.testData.profile.Creator),
+			msg:            types.NewMsgDeleteProfile(suite.testData.profile.BaseAccount.Address),
 			expErr: sdkerrors.Wrap(
 				sdkerrors.ErrInvalidRequest,
 				"no profile associated with the following address found: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -187,11 +189,11 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 			},
-			msg: types.NewMsgDeleteProfile(suite.testData.profile.Creator),
+			msg: types.NewMsgDeleteProfile(suite.testData.profile.BaseAccount.Address),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileDeleted,
-					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.BaseAccount.Address),
 				),
 			},
 		},
@@ -221,6 +223,9 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
+	otherAddr, err := sdk.AccAddressFromBech32(suite.testData.otherUser)
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name           string
 		storedProfiles []types.Profile
@@ -263,19 +268,19 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 				{
-					Dtag:    "test-dtag",
-					Creator: suite.testData.otherUser,
+					Dtag:        "test-dtag",
+					BaseAccount: authtypes.NewBaseAccountWithAddress(otherAddr),
 				},
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.profile.Creator, suite.testData.otherUser),
+				types.NewDTagTransferRequest("dtag", suite.testData.profile.BaseAccount.Address, suite.testData.otherUser),
 			},
-			msg:       types.NewMsgRequestDTagTransfer(suite.testData.profile.Creator, suite.testData.otherUser),
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.profile.BaseAccount.Address, suite.testData.otherUser),
 			expEvents: sdk.EmptyEvents(),
 			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
 				"the transfer request from %s to %s has already been made",
-				suite.testData.profile.Creator, suite.testData.otherUser,
+				suite.testData.profile.BaseAccount.Address, suite.testData.otherUser,
 			),
 		},
 		{
@@ -283,13 +288,13 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 			},
-			msg: types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.profile.Creator),
+			msg: types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.profile.BaseAccount.Address),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
 					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.profile.Creator),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.profile.BaseAccount.Address),
 				),
 			},
 		},
@@ -323,6 +328,12 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
+	otherAddr, err := sdk.AccAddressFromBech32(suite.testData.otherUser)
+	suite.Require().NoError(err)
+
+	newAddr, err := sdk.AccAddressFromBech32("cosmos1lkqrqrns0ekttzrs678thh5f4prcgasthqcxph")
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name           string
 		storedDTagReqs []types.DTagTransferRequest
@@ -356,7 +367,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.otherUser,
+					authtypes.NewBaseAccountWithAddress(otherAddr),
 				),
 				types.NewProfile(
 					"newDtag",
@@ -364,7 +375,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					"cosmos1lkqrqrns0ekttzrs678thh5f4prcgasthqcxph",
+					authtypes.NewBaseAccountWithAddress(newAddr),
 				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
@@ -383,7 +394,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.otherUser,
+					authtypes.NewBaseAccountWithAddress(otherAddr),
 				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
@@ -403,7 +414,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.otherUser,
+					authtypes.NewBaseAccountWithAddress(otherAddr),
 				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
@@ -429,7 +440,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.user,
+					suite.testData.profile.BaseAccount,
 				),
 				types.NewProfile(
 					"previous",
@@ -437,7 +448,7 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 					"",
 					types.NewPictures("", ""),
 					suite.ctx.BlockTime(),
-					suite.testData.otherUser,
+					authtypes.NewBaseAccountWithAddress(otherAddr),
 				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{

@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
@@ -61,23 +64,32 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 		name           string
 		storedProfiles []types.Profile
 		address        string
+		shouldErr      bool
 		expDTag        string
 	}{
+		{
+			name:           "invalid address",
+			storedProfiles: nil,
+			address:        "",
+			shouldErr:      true,
+		},
 		{
 			name: "found right dtag",
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 			},
-			address: suite.testData.profile.Creator,
-			expDTag: suite.testData.profile.Dtag,
+			address:   suite.testData.profile.BaseAccount.Address,
+			shouldErr: false,
+			expDTag:   suite.testData.profile.Dtag,
 		},
 		{
 			name: "no dtag found",
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 			},
-			address: "non_existent",
-			expDTag: "",
+			address:   "cosmos1ppkr0c0x6jvx9e4e48mfvhq2wzzsrync8qrt2m",
+			shouldErr: false,
+			expDTag:   "",
 		},
 	}
 
@@ -90,13 +102,22 @@ func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
 				suite.Require().NoError(err)
 			}
 
-			dTag := suite.k.GetDtagFromAddress(suite.ctx, test.address)
-			suite.Require().Equal(test.expDTag, dTag)
+			dTag, err := suite.k.GetDtagFromAddress(suite.ctx, test.address)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expDTag, dTag)
+			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
+	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name           string
 		account        types.Profile
@@ -112,10 +133,10 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 		{
 			name: "Existent account with different creator returns error",
 			account: types.Profile{
-				Dtag:     suite.testData.profile.Dtag,
-				Bio:      suite.testData.profile.Bio,
-				Pictures: suite.testData.profile.Pictures,
-				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Dtag:        suite.testData.profile.Dtag,
+				Bio:         suite.testData.profile.Bio,
+				Pictures:    suite.testData.profile.Pictures,
+				BaseAccount: authtypes.NewBaseAccountWithAddress(addr),
 			},
 			storedProfiles: []types.Profile{suite.testData.profile},
 			expError: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -142,22 +163,30 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 		name           string
 		storedProfiles []types.Profile
 		address        string
+		shouldErr      bool
 		expFound       bool
 		expProfile     *types.Profile
 	}{
 		{
-			name: "Profile founded",
+			name:           "Invalid address",
+			storedProfiles: nil,
+			address:        "",
+			shouldErr:      true,
+		},
+		{
+			name: "Profile found",
 			storedProfiles: []types.Profile{
 				suite.testData.profile,
 			},
-			address:    suite.testData.profile.Creator,
+			address:    suite.testData.profile.BaseAccount.Address,
+			shouldErr:  false,
 			expFound:   true,
 			expProfile: &suite.testData.profile,
 		},
 		{
 			name:           "Profile not found",
 			storedProfiles: []types.Profile{},
-			address:        suite.testData.profile.Creator,
+			address:        suite.testData.profile.BaseAccount.Address,
 			expFound:       false,
 		},
 	}
@@ -172,11 +201,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 				suite.Require().NoError(err)
 			}
 
-			res, found := suite.k.GetProfile(suite.ctx, test.address)
-			suite.Require().Equal(test.expFound, found)
+			res, found, err := suite.k.GetProfile(suite.ctx, test.address)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expFound, found)
 
-			if found {
-				suite.Require().True(res.Equal(test.expProfile))
+				if found {
+					suite.Require().Equal(*test.expProfile, res)
+				}
 			}
 		})
 	}
@@ -186,13 +220,13 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 	err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 	suite.Require().Nil(err)
 
-	_, found := suite.k.GetProfile(suite.ctx, suite.testData.profile.Creator)
+	_, found, _ := suite.k.GetProfile(suite.ctx, suite.testData.profile.BaseAccount.Address)
 	suite.True(found)
 
-	err = suite.k.RemoveProfile(suite.ctx, suite.testData.profile.Creator)
+	err = suite.k.RemoveProfile(suite.ctx, suite.testData.profile.BaseAccount.Address)
 	suite.Require().NoError(err)
 
-	_, found = suite.k.GetProfile(suite.ctx, suite.testData.profile.Creator)
+	_, found, _ = suite.k.GetProfile(suite.ctx, suite.testData.profile.BaseAccount.Address)
 	suite.Require().False(found)
 }
 
@@ -216,10 +250,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			if len(test.accounts) != 0 {
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ProfileStoreKey(test.accounts[0].Creator)
-				store.Set(key, suite.cdc.MustMarshalBinaryBare(&test.accounts[0]))
+			for _, profile := range test.accounts {
+				err := suite.k.StoreProfile(suite.ctx, profile)
+				suite.Require().NoError(err)
 			}
 
 			res := suite.k.GetProfiles(suite.ctx)
@@ -245,7 +278,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("profile moniker cannot exceed 1000 characters"),
 		},
@@ -261,7 +294,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("profile moniker cannot be less than 2 characters"),
 		},
@@ -277,7 +310,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
 		},
@@ -292,7 +325,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]+$"),
 		},
@@ -308,7 +341,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
 		},
@@ -323,7 +356,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
 		},
@@ -338,7 +371,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"htts://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
@@ -354,7 +387,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
+				suite.testData.profile.BaseAccount,
 			),
 			expErr: nil,
 		},

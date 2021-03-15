@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -13,6 +15,9 @@ import (
 func TestValidateGenesis(t *testing.T) {
 	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
 	require.NoError(t, err)
+
+	addr1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	addr2, _ := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
 	tests := []struct {
 		name        string
@@ -34,7 +39,7 @@ func TestValidateGenesis(t *testing.T) {
 						"",
 						types.NewPictures("", ""),
 						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						authtypes.NewBaseAccountWithAddress(addr1),
 					), // An empty tag should return an error
 				},
 				nil,
@@ -52,7 +57,7 @@ func TestValidateGenesis(t *testing.T) {
 						"biography",
 						types.NewPictures("https://test.com/profile-pic", "https://test.com/cover-pic"),
 						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						authtypes.NewBaseAccountWithAddress(addr1),
 					),
 				},
 				nil,
@@ -77,14 +82,14 @@ func TestValidateGenesis(t *testing.T) {
 							"https://test.com/cover-pic",
 						),
 						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						authtypes.NewBaseAccountWithAddress(addr1),
 					),
 				},
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
 						"",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						addr1.String(),
 					),
 				},
 				types.DefaultParams(),
@@ -104,7 +109,7 @@ func TestValidateGenesis(t *testing.T) {
 							"https://test.com/cover-pic",
 						),
 						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						authtypes.NewBaseAccountWithAddress(addr1),
 					),
 					types.NewProfile(
 						"custom_dtag2",
@@ -115,13 +120,13 @@ func TestValidateGenesis(t *testing.T) {
 							"https://test.com/cover-pic",
 						),
 						date,
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						authtypes.NewBaseAccountWithAddress(addr2),
 					),
 				},
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						addr1.String(),
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 				},
@@ -142,13 +147,13 @@ func TestValidateGenesis(t *testing.T) {
 							"https://test.com/cover-pic",
 						),
 						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						authtypes.NewBaseAccountWithAddress(addr1),
 					),
 				},
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						addr1.String(),
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 				},

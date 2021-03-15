@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
@@ -18,11 +20,12 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey sdk.StoreKey
-	cdc      codec.BinaryMarshaler
-
-	relKeeper     relationshipskeeper.Keeper
+	storeKey      sdk.StoreKey
+	cdc           codec.BinaryMarshaler
 	paramSubspace paramstypes.Subspace
+
+	ak authkeeper.AccountKeeper
+	rk relationshipskeeper.Keeper
 }
 
 // NewKeeper creates new instances of the profiles Keeper.
@@ -32,132 +35,72 @@ type Keeper struct {
 // 2. DTag -> Address
 //    This is used to get the address of a user based on a DTag
 func NewKeeper(
-	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace, relKeeper relationshipskeeper.Keeper,
+	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace,
+	rk relationshipskeeper.Keeper, ak authkeeper.AccountKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
-		paramSubspace: paramSpace,
-		relKeeper:     relKeeper,
 		storeKey:      storeKey,
 		cdc:           cdc,
+		paramSubspace: paramSpace,
+		rk:            rk,
+		ak:            ak,
 	}
 }
 
 // IsUserBlocked tells if the given blocker has blocked the given blocked user
 func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
-	return k.relKeeper.HasUserBlocked(ctx, blocker, blocked, "")
-}
-
-// associateDtagWithAddress save the relation of dtag and address on chain
-func (k Keeper) associateDtagWithAddress(ctx sdk.Context, dtag string, address string) {
-	store := ctx.KVStore(k.storeKey)
-	wrapped := WrappedDTagOwner{Address: address}
-	store.Set(types.DtagStoreKey(dtag), k.cdc.MustMarshalBinaryBare(&wrapped))
-}
-
-// GetDTagRelatedAddress returns the address associated to the given dtag or an empty string if it does not exists
-func (k Keeper) GetDTagRelatedAddress(ctx sdk.Context, dtag string) (addr string) {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.DtagStoreKey(dtag))
-	if bz == nil {
-		return ""
-	}
-
-	var owner WrappedDTagOwner
-	k.cdc.MustUnmarshalBinaryBare(bz, &owner)
-	return owner.Address
-}
-
-// GetDtagFromAddress returns the dtag associated with the given address or an empty string if no dtag exists
-func (k Keeper) GetDtagFromAddress(ctx sdk.Context, addr string) (dtag string) {
-	profile, found := k.GetProfile(ctx, addr)
-	if !found {
-		return ""
-	}
-
-	return profile.Dtag
-}
-
-// deleteDtagAddressAssociation delete the given dtag association with an address
-func (k Keeper) deleteDtagAddressAssociation(ctx sdk.Context, dtag string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.DtagStoreKey(dtag))
-}
-
-// replaceDtag delete the oldDtag related to the creator address and associate the new one to it
-func (k Keeper) replaceDtag(ctx sdk.Context, oldDtag, newDtag string, creator string) {
-	k.deleteDtagAddressAssociation(ctx, oldDtag)
-	k.associateDtagWithAddress(ctx, newDtag, creator)
+	return k.rk.HasUserBlocked(ctx, blocker, blocked, "")
 }
 
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same dtag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile types.Profile) error {
-
-	addr := k.GetDTagRelatedAddress(ctx, profile.Dtag)
-	if addr != "" && addr != profile.Creator {
+	addr := k.GetAddressFromDtag(ctx, profile.Dtag)
+	if addr != "" && addr != profile.BaseAccount.Address {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"a profile with dtag %s has already been created", profile.Dtag)
 	}
 
-	oldDtag := k.GetDtagFromAddress(ctx, profile.Creator)
-	k.replaceDtag(ctx, oldDtag, profile.Dtag, profile.Creator)
-
-	store := ctx.KVStore(k.storeKey)
-	key := types.ProfileStoreKey(profile.Creator)
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&profile))
-
+	k.ak.SetAccount(ctx, &profile)
 	return nil
 }
 
 // GetProfile returns the profile corresponding to the given address inside the current context.
-func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile types.Profile, found bool) {
-	store := ctx.KVStore(k.storeKey)
-
-	bz := store.Get(types.ProfileStoreKey(address))
-	if bz != nil {
-		k.cdc.MustUnmarshalBinaryBare(bz, &profile)
-		return profile, true
+func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile types.Profile, found bool, err error) {
+	sdkAcc, err := sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return types.Profile{}, false, err
 	}
 
-	return types.Profile{}, false
+	stored, ok := k.ak.GetAccount(ctx, sdkAcc).(*types.Profile)
+	if !ok {
+		return types.Profile{}, false, nil
+	}
+
+	return *stored, true, nil
 }
 
 // RemoveProfile allows to delete a profile associated with the given address inside the current context.
 // It assumes that the address-related profile exists.
 func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
-	profile, found := k.GetProfile(ctx, address)
+	profile, found, err := k.GetProfile(ctx, address)
+	if err != nil {
+		return err
+	}
+
 	if !found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"no profile associated with the following address found: %s", address)
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.ProfileStoreKey(address))
-	k.deleteDtagAddressAssociation(ctx, profile.Dtag)
+	// Delete the profile data by replacing the stored account
+	k.ak.SetAccount(ctx, profile.BaseAccount)
 	return nil
-}
-
-// GetProfiles returns all the created profiles inside the current context.
-func (k Keeper) GetProfiles(ctx sdk.Context) []types.Profile {
-	var profiles []types.Profile
-
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ProfileStorePrefix)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		var profile types.Profile
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &profile)
-		profiles = append(profiles, profile)
-	}
-
-	return profiles
 }
 
 // ValidateProfile checks if the given profile is valid according to the current profile's module params

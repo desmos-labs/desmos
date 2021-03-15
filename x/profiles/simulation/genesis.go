@@ -5,6 +5,8 @@ package simulation
 import (
 	"fmt"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -53,13 +55,21 @@ func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTr
 }
 
 // randomProfiles returns randomly generated genesis profiles
-func randomProfiles(simState *module.SimulationState) (accounts []types.Profile) {
-	accountsNumber := simState.Rand.Intn(50)
+func randomProfiles(simState *module.SimulationState) []types.Profile {
+	var authstate authtypes.GenesisState
+	simState.Cdc.MustUnmarshalJSON(simState.GenState[authtypes.ModuleName], &authstate)
 
-	accounts = make([]types.Profile, accountsNumber)
-	for i := 0; i < accountsNumber; i++ {
-		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		accounts[i] = NewRandomProfile(simState.Rand, simAccount.Address)
+	genAccounts, err := authtypes.UnpackAccounts(authstate.Accounts)
+	if err != nil {
+		panic(err)
+	}
+	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
+
+	var accounts []types.Profile
+	var accountsNumber = simState.Rand.Intn(len(genAccounts))
+	for len(accounts) < accountsNumber {
+		authAccount := genAccounts[simState.Rand.Intn(len(genAccounts))]
+		accounts = append(accounts, NewRandomProfile(simState.Rand, authAccount))
 	}
 
 	return accounts

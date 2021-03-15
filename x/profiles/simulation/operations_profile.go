@@ -30,7 +30,7 @@ func SimulateMsgSaveProfile(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k)
+		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -91,7 +91,7 @@ func sendMsgSaveProfile(
 
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, types.Profile, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.Profile{}, true
@@ -99,14 +99,19 @@ func randomProfileSaveFields(
 
 	// Get a random account
 	account, _ := simtypes.RandomAcc(r, accs)
+	acc := ak.GetAccount(ctx, account.Address)
 
 	// See if there is already the profile, otherwise create it from scratch
 	var profile types.Profile
-	existing, found := k.GetProfile(ctx, account.Address.String())
+	existing, found, err := k.GetProfile(ctx, account.Address.String())
+	if err != nil {
+		return simtypes.Account{}, types.Profile{}, true
+	}
+
 	if found {
 		profile = existing
 	} else {
-		profile = NewRandomProfile(r, account.Address)
+		profile = NewRandomProfile(r, acc)
 	}
 
 	// 50% chance of changing something
@@ -117,9 +122,8 @@ func randomProfileSaveFields(
 			RandomBio(r),
 			types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 			profile.CreationDate,
-			profile.Creator,
+			acc,
 		))
-
 	}
 
 	return account, profile, false
@@ -197,14 +201,18 @@ func randomProfileDeleteFields(
 		return simtypes.Account{}, true
 	}
 
-	accounts := k.GetProfiles(ctx)
+	var accounts []types.Profile
+	k.IterateProfiles(ctx, func(index int64, profile types.Profile) (stop bool) {
+		accounts = append(accounts, profile)
+		return false
+	})
 
 	if len(accounts) == 0 {
 		return simtypes.Account{}, true
 	}
 	account := RandomProfile(r, accounts)
 
-	addr, _ := sdk.AccAddressFromBech32(account.Creator)
+	addr, _ := sdk.AccAddressFromBech32(account.BaseAccount.Address)
 	acc := GetSimAccount(addr, accs)
 
 	// Skip the operation without error as the profile is not valid

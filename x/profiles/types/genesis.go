@@ -59,7 +59,7 @@ func ValidateGenesis(data *GenesisState) error {
 func containDuplicates(profiles []Profile, profile Profile) bool {
 	var count = 0
 	for _, p := range profiles {
-		if p.Equal(profile) {
+		if p.Address == profile.Address || p.Dtag == profile.Dtag {
 			count++
 		}
 	}
@@ -69,7 +69,7 @@ func containDuplicates(profiles []Profile, profile Profile) bool {
 // profileExists tells whether the given profiles slice contain a profile associated to the given address
 func profileExists(profiles []Profile, address string) bool {
 	for _, profile := range profiles {
-		if profile.Creator == address {
+		if profile.BaseAccount.Address == address {
 			return true
 		}
 	}

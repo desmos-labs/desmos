@@ -17,18 +17,6 @@ import (
 func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
-		case bytes.HasPrefix(kvA.Key, types.ProfileStorePrefix):
-			var profileA, profileB types.Profile
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &profileA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &profileB)
-			return fmt.Sprintf("ProfileA: %s\nProfileB: %s\n", profileA, profileB)
-
-		case bytes.HasPrefix(kvA.Key, types.DtagStorePrefix):
-			var addressA, addressB keeper.WrappedDTagOwner
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &addressA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &addressB)
-			return fmt.Sprintf("AddressA: %s\nAddressB: %s\n", addressA.Address, addressB.Address)
-
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestsPrefix):
 			var requestsA, requestsB keeper.WrappedDTagTransferRequests
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
