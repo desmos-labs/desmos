@@ -1,13 +1,14 @@
 package wasm
 
 import (
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	"strconv"
+
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 )
 
 type Post struct {
-	PostId         string                  `json:"post_id"`
-	ParentId       string                  `json:"parent_id"`
+	PostID         string                  `json:"post_id"`
+	ParentID       string                  `json:"parent_id"`
 	Message        string                  `json:"message"`
 	Created        string                  `json:"created"`
 	LastEdited     string                  `json:"last_edited"`
@@ -30,8 +31,8 @@ type PollData struct {
 // convertPost convert the desmos post to a compatible type for cosmwasm contract
 func convertPost(post postsTypes.Post) Post {
 	return Post{
-		PostId:         post.PostId,
-		ParentId:       post.ParentId,
+		PostID:         post.PostId,
+		ParentID:       post.ParentId,
 		Message:        post.Message,
 		Created:        post.Created.String(),
 		LastEdited:     post.LastEdited.String(),
