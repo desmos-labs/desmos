@@ -392,8 +392,8 @@ func NewDesmosApp(
 
 	querier := desmosWasm.NewQuerier()
 	queriers := map[string]desmosWasm.Querier{
-		desmosWasm.WasmQueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
-		desmosWasm.WasmQueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
+		desmosWasm.QueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
+		desmosWasm.QueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
 	}
 	querier.Queriers = queriers
 

@@ -40,7 +40,7 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 
 	if desmosQuery.Posts != nil {
 		posts := querier.postsKeeper.GetPosts(ctx)
-		convertedPosts := make([]Post, len(posts))
+		convertedPosts := make(Posts, len(posts))
 		for index, post := range posts {
 			convertedPosts[index] = convertPost(post)
 		}

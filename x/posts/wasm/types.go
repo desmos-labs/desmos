@@ -1,6 +1,7 @@
 package wasm
 
 import (
+	"encoding/json"
 	"strconv"
 
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
@@ -57,6 +58,29 @@ type PostsModuleQuery struct {
 
 type PostsQuery struct{}
 
+type Posts []Post
+
+func (p Posts) MarshalJSON() ([]byte, error) {
+	if len(p) == 0 {
+		return []byte("[]"), nil
+	}
+	var posts []Post = p
+	return json.Marshal(posts)
+}
+
+func (p *Posts) UnmarshalJSON(data []byte) error {
+	// make sure we deserialize [] back to null
+	if string(data) == "[]" || string(data) == "null" {
+		return nil
+	}
+	var posts []Post
+	if err := json.Unmarshal(data, &posts); err != nil {
+		return err
+	}
+	*p = posts
+	return nil
+}
+
 type PostsResponse struct {
-	Posts []Post `json:"posts"`
+	Posts Posts `json:"posts"`
 }

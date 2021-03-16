@@ -33,8 +33,8 @@ type CustomQuery struct {
 }
 
 const (
-	WasmQueryRoutePosts   = postsTypes.ModuleName
-	WasmQueryRouteReports = reportsTypes.ModuleName
+	QueryRoutePosts   = postsTypes.ModuleName
+	QueryRouteReports = reportsTypes.ModuleName
 )
 
 func (q QueriersMap) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
