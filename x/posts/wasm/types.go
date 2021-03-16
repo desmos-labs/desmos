@@ -1,10 +1,9 @@
 package wasm
 
 import (
-	"encoding/json"
-	"strconv"
-
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	"strconv"
+	"time"
 )
 
 type Post struct {
@@ -18,7 +17,7 @@ type Post struct {
 	OptionalData   postsTypes.OptionalData `json:"optional_data"`
 	Creator        string                  `json:"creator"`
 	Attachments    postsTypes.Attachments  `json:"attachments"`
-	PollData       PollData                `json:"poll_data"`
+	PollData       *PollData               `json:"poll_data"`
 }
 
 type PollData struct {
@@ -31,25 +30,38 @@ type PollData struct {
 
 // convertPost convert the desmos post to a compatible type for cosmwasm contract
 func convertPost(post postsTypes.Post) Post {
-	return Post{
+	converted := Post{
 		PostID:         post.PostId,
 		ParentID:       post.ParentId,
 		Message:        post.Message,
-		Created:        post.Created.String(),
-		LastEdited:     post.LastEdited.String(),
+		Created:        post.Created.Format(time.RFC3339),
+		LastEdited:     post.LastEdited.Format(time.RFC3339),
 		AllowsComments: strconv.FormatBool(post.AllowsComments),
 		Subspace:       post.Subspace,
-		OptionalData:   post.OptionalData,
+		OptionalData:   nil,
 		Creator:        post.Creator,
-		Attachments:    post.Attachments,
-		PollData: PollData{
+		Attachments:    nil,
+		PollData:       nil,
+	}
+
+	if post.OptionalData != nil {
+		converted.OptionalData = post.OptionalData
+	}
+
+	if post.Attachments != nil {
+		converted.Attachments = post.Attachments
+	}
+
+	if post.PollData != nil {
+		converted.PollData = &PollData{
 			Question:              post.PollData.Question,
 			ProvidedAnswers:       post.PollData.ProvidedAnswers,
-			EndDate:               post.PollData.EndDate.String(),
+			EndDate:               post.PollData.EndDate.Format(time.RFC3339),
 			AllowsMultipleAnswers: strconv.FormatBool(post.PollData.AllowsMultipleAnswers),
 			AllowsAnswerEdits:     strconv.FormatBool(post.PollData.AllowsAnswerEdits),
-		},
+		}
 	}
+	return converted
 }
 
 type PostsModuleQuery struct {
@@ -58,6 +70,7 @@ type PostsModuleQuery struct {
 
 type PostsQuery struct{}
 
+/*
 type Posts []Post
 
 func (p Posts) MarshalJSON() ([]byte, error) {
@@ -80,7 +93,8 @@ func (p *Posts) UnmarshalJSON(data []byte) error {
 	*p = posts
 	return nil
 }
+*/
 
 type PostsResponse struct {
-	Posts Posts `json:"posts"`
+	Posts []Post `json:"posts"`
 }
