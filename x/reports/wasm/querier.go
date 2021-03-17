@@ -40,11 +40,11 @@ func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMess
 
 	if reportsQuery.Reports != nil {
 		reports := querier.reportsKeeper.GetPostReports(ctx, reportsQuery.Reports.PostID)
-		bz, err = json.Marshal(ReportsResponse{Reports: reports})
+		bz, err = json.Marshal(ReportsResponse{Reports: convertReports(reports)})
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	} else {
+	} else { // Possible future queries before this
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 

@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"encoding/json"
+
 	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -39,16 +40,11 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 
 	if desmosQuery.Posts != nil {
 		posts := querier.postsKeeper.GetPosts(ctx)
-		convertedPosts := make([]Post, len(posts))
-		for index, post := range posts {
-			convertedPosts[index] = convertPost(post)
-		}
-		//fmt.Println(PostsResponse{Posts: posts})
-		bz, err = json.Marshal(PostsResponse{Posts: convertedPosts})
+		bz, err = json.Marshal(PostsResponse{Posts: convertPosts(posts)})
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	} else {
+	} else { // Possible future queries before this
 		return nil, sdkerrors.ErrInvalidRequest
 	}
 
