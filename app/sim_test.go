@@ -69,6 +69,9 @@ func interBlockCacheOpt() func(*baseapp.BaseApp) {
 // SetupSimulation wraps simapp.SetupSimulation in order to create any export directory if they do not exist yet
 func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string, log.Logger, bool, error) {
 	config, db, dir, logger, skip, err := simapp.SetupSimulation(dirPrefix, dbName)
+	if err != nil {
+		return simtypes.Config{}, nil, "", nil, false, err
+	}
 
 	paths := []string{config.ExportParamsPath, config.ExportStatePath, config.ExportStatsPath}
 	for _, path := range paths {

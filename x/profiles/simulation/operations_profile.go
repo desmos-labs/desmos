@@ -32,7 +32,7 @@ func SimulateMsgSaveProfile(
 
 		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, nil
 		}
 
 		msg := types.NewMsgSaveProfile(
@@ -45,10 +45,10 @@ func SimulateMsgSaveProfile(
 		)
 		err = sendMsgSaveProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "save profile"), nil, nil
 	}
 }
 
@@ -140,17 +140,17 @@ func SimulateMsgDeleteProfile(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, skip := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
 		err = sendMsgDeleteProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "delete profile"), nil, nil
 	}
 }
 
@@ -193,24 +193,21 @@ func sendMsgDeleteProfile(
 
 // randomProfileDeleteFields returns random profile data
 func randomProfileDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, _ authkeeper.AccountKeeper,
-) (simtypes.Account, bool) {
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+) (account simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, true
 	}
 
-	accounts := k.GetProfiles(ctx)
-	if len(accounts) == 0 {
-		return simtypes.Account{}, true
-	}
-	account := RandomProfile(r, accounts)
+	// Get a random account
+	account, _ = simtypes.RandomAcc(r, accs)
+	acc := ak.GetAccount(ctx, account.Address)
 
-	acc := GetSimAccount(account.GetAddress(), accs)
-
-	// Skip the operation without error as the profile is not valid
-	if acc == nil {
+	// See if the account has a profile, and skip if he does not
+	_, found, err := k.GetProfile(ctx, acc.GetAddress().String())
+	if !found || err != nil {
 		return simtypes.Account{}, true
 	}
 
-	return *acc, false
+	return account, false
 }

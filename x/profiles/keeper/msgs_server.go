@@ -111,11 +111,16 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s has blocked you", msg.Receiver)
 	}
 
-	dtagToTrade, err := k.GetDtagFromAddress(ctx, msg.Receiver)
+	profile, found, err := k.GetProfile(ctx, msg.Receiver)
 	if err != nil {
 		return nil, err
 	}
 
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile yet")
+	}
+
+	dtagToTrade := profile.Dtag
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInvalidRequest,

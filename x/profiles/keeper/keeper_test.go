@@ -61,61 +61,6 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
-	tests := []struct {
-		name           string
-		storedProfiles []*types.Profile
-		address        string
-		shouldErr      bool
-		expDTag        string
-	}{
-		{
-			name:           "invalid address",
-			storedProfiles: nil,
-			address:        "",
-			shouldErr:      true,
-		},
-		{
-			name: "found right dtag",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile,
-			},
-			address:   suite.testData.profile.GetAddress().String(),
-			shouldErr: false,
-			expDTag:   suite.testData.profile.Dtag,
-		},
-		{
-			name: "no dtag found",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile,
-			},
-			address:   "cosmos1ppkr0c0x6jvx9e4e48mfvhq2wzzsrync8qrt2m",
-			shouldErr: false,
-			expDTag:   "",
-		},
-	}
-
-	for _, test := range tests {
-		suite.SetupTest() //reset
-		test := test
-		suite.Run(test.name, func() {
-			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
-			}
-
-			dTag, err := suite.k.GetDtagFromAddress(suite.ctx, test.address)
-
-			if test.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().Equal(test.expDTag, dTag)
-			}
-		})
-	}
-}
-
 func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	suite.Require().NoError(err)
