@@ -5,8 +5,6 @@ package simulation
 import (
 	"fmt"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -18,7 +16,6 @@ import (
 func RandomizedGenState(simsState *module.SimulationState) {
 
 	profileGenesis := types.NewGenesisState(
-		randomProfiles(simsState),
 		randomDTagTransferRequests(simsState),
 		types.NewParams(
 			RandomMonikerParams(simsState.Rand),
@@ -52,25 +49,4 @@ func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTr
 	}
 
 	return dtagTransferRequests
-}
-
-// randomProfiles returns randomly generated genesis profiles
-func randomProfiles(simState *module.SimulationState) []types.Profile {
-	var authstate authtypes.GenesisState
-	simState.Cdc.MustUnmarshalJSON(simState.GenState[authtypes.ModuleName], &authstate)
-
-	genAccounts, err := authtypes.UnpackAccounts(authstate.Accounts)
-	if err != nil {
-		panic(err)
-	}
-	genAccounts = authtypes.SanitizeGenesisAccounts(genAccounts)
-
-	var accounts []types.Profile
-	var accountsNumber = simState.Rand.Intn(len(genAccounts))
-	for len(accounts) < accountsNumber {
-		authAccount := genAccounts[simState.Rand.Intn(len(genAccounts))]
-		accounts = append(accounts, NewRandomProfile(simState.Rand, authAccount))
-	}
-
-	return accounts
 }

@@ -3,9 +3,6 @@ package types
 import (
 	"fmt"
 	"strings"
-	"time"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -37,104 +34,6 @@ func (pic Pictures) Validate() error {
 	}
 
 	return nil
-}
-
-// ___________________________________________________________________________________________________________________
-
-// NewProfile builds a new profile having the given dtag, creator and creation date
-func NewProfile(
-	dtag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
-) Profile {
-	// TODO: We should remove this when the following Cosmos issues is resolved
-	// https://github.com/cosmos/cosmos-sdk/issues/8876
-	baseAcc, ok := account.(*authtypes.BaseAccount)
-	if baseAcc != nil && !ok {
-		panic(fmt.Errorf("invalid account type"))
-	}
-
-	return Profile{
-		Dtag:         dtag,
-		Moniker:      moniker,
-		Bio:          bio,
-		Pictures:     pictures,
-		CreationDate: creationDate,
-		BaseAccount:  baseAcc,
-	}
-}
-
-// Update updates the fields of a given profile. An error is
-// returned if the resulting profile contains invalid values.
-func (profile Profile) Update(p2 Profile) (Profile, error) {
-	if p2.Dtag == DoNotModify {
-		p2.Dtag = profile.Dtag
-	}
-
-	if p2.Moniker == DoNotModify {
-		p2.Moniker = profile.Moniker
-	}
-
-	if p2.Bio == DoNotModify {
-		p2.Bio = profile.Bio
-	}
-
-	if p2.Pictures.Profile == DoNotModify {
-		p2.Pictures.Profile = profile.Pictures.Profile
-	}
-
-	if p2.Pictures.Cover == DoNotModify {
-		p2.Pictures.Cover = profile.Pictures.Cover
-	}
-
-	if p2.CreationDate.IsZero() {
-		p2.CreationDate = profile.CreationDate
-	}
-
-	if p2.BaseAccount == nil {
-		p2.BaseAccount = profile.BaseAccount
-	}
-
-	newProfile := NewProfile(p2.Dtag, p2.Moniker, p2.Bio, p2.Pictures, p2.CreationDate, p2.BaseAccount)
-	err := newProfile.Validate()
-	if err != nil {
-		return Profile{}, err
-	}
-
-	return newProfile, nil
-}
-
-// Validate check the validity of the Profile
-func (profile *Profile) Validate() error {
-	if strings.TrimSpace(profile.Dtag) == "" || profile.Dtag == DoNotModify {
-		return fmt.Errorf("invalid profile DTag: %s", profile.Dtag)
-	}
-
-	if profile.Moniker == DoNotModify {
-		return fmt.Errorf("invalid profile moniker: %s", profile.Moniker)
-	}
-
-	if profile.Bio == DoNotModify {
-		return fmt.Errorf("invalid profile bio: %s", profile.Bio)
-	}
-
-	if profile.Pictures.Profile == DoNotModify {
-		return fmt.Errorf("invalid profile picture: %s", profile.Pictures.Profile)
-	}
-
-	if profile.Pictures.Cover == DoNotModify {
-		return fmt.Errorf("invalid profile cover: %s", profile.Pictures.Cover)
-	}
-
-	_, err := sdk.AccAddressFromBech32(profile.BaseAccount.Address)
-	if err != nil {
-		return fmt.Errorf("invalid address: %s", profile.BaseAccount.Address)
-	}
-
-	err = profile.BaseAccount.Validate()
-	if err != nil {
-		return fmt.Errorf("invalid account: %s", err.Error())
-	}
-
-	return profile.Pictures.Validate()
 }
 
 // ___________________________________________________________________________________________________________________

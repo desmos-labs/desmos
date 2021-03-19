@@ -25,42 +25,42 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	addr4, err := sdk.AccAddressFromBech32("cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae")
 	suite.Require().NoError(err)
 
-	profiles := []types.Profile{
-		types.NewProfile(
+	profiles := []*types.Profile{
+		suite.CheckProfileNoError(types.NewProfile(
 			"first",
 			"",
 			"",
 			types.NewPictures("", ""),
 			date,
 			authtypes.NewBaseAccountWithAddress(addr1),
-		),
-		types.NewProfile(
+		)),
+		suite.CheckProfileNoError(types.NewProfile(
 			"second",
 			"",
 			"",
 			types.NewPictures("", ""),
 			date,
 			authtypes.NewBaseAccountWithAddress(addr2),
-		),
-		types.NewProfile(
+		)),
+		suite.CheckProfileNoError(types.NewProfile(
 			"not",
 			"",
 			"",
 			types.NewPictures("", ""),
 			date,
 			authtypes.NewBaseAccountWithAddress(addr3),
-		),
-		types.NewProfile(
+		)),
+		suite.CheckProfileNoError(types.NewProfile(
 			"third",
 			"",
 			"",
 			types.NewPictures("", ""),
 			date,
 			authtypes.NewBaseAccountWithAddress(addr4),
-		),
+		)),
 	}
 
-	expProfiles := []types.Profile{
+	expProfiles := []*types.Profile{
 		profiles[0],
 		profiles[1],
 		profiles[3],
@@ -71,8 +71,8 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 		suite.Require().NoError(err)
 	}
 
-	var validProfiles []types.Profile
-	suite.k.IterateProfiles(suite.ctx, func(_ int64, profile types.Profile) (stop bool) {
+	var validProfiles []*types.Profile
+	suite.k.IterateProfiles(suite.ctx, func(_ int64, profile *types.Profile) (stop bool) {
 		if profile.Dtag == "not" {
 			return false
 		}

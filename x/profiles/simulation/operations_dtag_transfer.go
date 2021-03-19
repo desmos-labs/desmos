@@ -104,17 +104,23 @@ func randomDtagRequestTransferFields(
 	}
 
 	randomDTag := RandomDTag(r)
-	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
-	_ = k.StoreProfile(ctx, types.NewProfile(
+	profile, err := types.NewProfile(
 		randomDTag,
 		"",
 		"",
 		types.NewPictures("", ""),
 		ctx.BlockTime(),
 		ak.GetAccount(ctx, receiver.Address),
-	))
+	)
+	if err != nil {
+		return simtypes.Account{}, types.DTagTransferRequest{}, true
+	}
+	_ = k.StoreProfile(ctx, profile)
 
-	// skip if requests already exists
+	// Create a request
+	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
+
+	// Skip if requests already exists
 	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiver.Address.String())
 	for _, request := range requests {
 		if request.Sender == req.Sender {

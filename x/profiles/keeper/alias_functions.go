@@ -8,14 +8,14 @@ import (
 )
 
 // IterateProfiles iterates through the profiles set and performs the provided function
-func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile types.Profile) (stop bool)) {
+func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile *types.Profile) (stop bool)) {
 	i := int64(0)
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		profile, ok := account.(*types.Profile)
 
 		stop = false
 		if ok {
-			stop = fn(i, *profile)
+			stop = fn(i, profile)
 			i++
 		}
 
@@ -23,9 +23,9 @@ func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile ty
 	})
 }
 
-func (k Keeper) GetProfiles(ctx sdk.Context) []types.Profile {
-	var profiles []types.Profile
-	k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
+func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
+	var profiles []*types.Profile
+	k.IterateProfiles(ctx, func(_ int64, profile *types.Profile) (stop bool) {
 		profiles = append(profiles, profile)
 		return false
 	})
@@ -49,10 +49,10 @@ func (k Keeper) GetDtagFromAddress(ctx sdk.Context, addr string) (dtag string, e
 // GetAddressFromDtag returns the address associated to the given dtag or an empty string if it does not exists
 func (k Keeper) GetAddressFromDtag(ctx sdk.Context, dtag string) (addr string) {
 	var address = ""
-	k.IterateProfiles(ctx, func(_ int64, profile types.Profile) (stop bool) {
+	k.IterateProfiles(ctx, func(_ int64, profile *types.Profile) (stop bool) {
 		equals := profile.Dtag == dtag
 		if equals {
-			address = profile.BaseAccount.Address
+			address = profile.GetAddress().String()
 		}
 
 		return equals

@@ -37,7 +37,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 			return nil, err
 		}
 
-		profile = types.NewProfile(
+		profile, err = types.NewProfile(
 			msg.Dtag,
 			"",
 			"",
@@ -45,6 +45,9 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 			ctx.BlockTime(),
 			k.ak.GetAccount(ctx, addr),
 		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// If the DTag changes, delete all the previous DTag transfer requests
@@ -53,13 +56,11 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// Update the existing profile with the values provided from the user
-	updated, err := profile.Update(types.NewProfile(
+	updated, err := profile.Update(types.NewProfileUpdate(
 		msg.Dtag,
 		msg.Moniker,
 		msg.Bio,
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
-		time.Time{},
-		nil,
 	))
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -79,7 +80,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeProfileSaved,
 		sdk.NewAttribute(types.AttributeProfileDtag, updated.Dtag),
-		sdk.NewAttribute(types.AttributeProfileCreator, updated.BaseAccount.Address),
+		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
 		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
 	))
 
@@ -222,7 +223,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 			senderAcc = authtypes.NewBaseAccountWithAddress(add)
 		}
 
-		receiverProfile = types.NewProfile(
+		receiverProfile, err = types.NewProfile(
 			dTagToTrade,
 			"",
 			"",
@@ -230,6 +231,9 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 			ctx.BlockTime(),
 			senderAcc,
 		)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		receiverProfile.Dtag = dTagToTrade
 	}

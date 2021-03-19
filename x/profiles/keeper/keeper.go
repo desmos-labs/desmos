@@ -59,30 +59,30 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same dtag from a different creator already exists
-func (k Keeper) StoreProfile(ctx sdk.Context, profile types.Profile) error {
+func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDtag(ctx, profile.Dtag)
-	if addr != "" && addr != profile.BaseAccount.Address {
+	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"a profile with dtag %s has already been created", profile.Dtag)
 	}
 
-	k.ak.SetAccount(ctx, &profile)
+	k.ak.SetAccount(ctx, profile)
 	return nil
 }
 
 // GetProfile returns the profile corresponding to the given address inside the current context.
-func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile types.Profile, found bool, err error) {
+func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile *types.Profile, found bool, err error) {
 	sdkAcc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return types.Profile{}, false, err
+		return nil, false, err
 	}
 
 	stored, ok := k.ak.GetAccount(ctx, sdkAcc).(*types.Profile)
 	if !ok {
-		return types.Profile{}, false, nil
+		return nil, false, nil
 	}
 
-	return *stored, true, nil
+	return stored, true, nil
 }
 
 // RemoveProfile allows to delete a profile associated with the given address inside the current context.
@@ -99,12 +99,12 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	// Delete the profile data by replacing the stored account
-	k.ak.SetAccount(ctx, profile.BaseAccount)
+	k.ak.SetAccount(ctx, profile.GetAccount())
 	return nil
 }
 
 // ValidateProfile checks if the given profile is valid according to the current profile's module params
-func (k Keeper) ValidateProfile(ctx sdk.Context, profile types.Profile) error {
+func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	params := k.GetParams(ctx)
 
 	minMonikerLen := params.MonikerParams.MinMonikerLength.Int64()

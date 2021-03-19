@@ -3,8 +3,10 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
 import "desmos/profiles/v1beta1/params.proto";
 import "desmos/profiles/v1beta1/models.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
@@ -40,7 +42,8 @@ message QueryProfileRequest {
 
 // QueryProfileResponse is the response type for the Query/Profile RPC method.
 message QueryProfileResponse {
-  desmos.profiles.v1beta1.Profile profile = 1 [ (gogoproto.nullable) = false ];
+  google.protobuf.Any profile = 1
+  [(cosmos_proto.accepts_interface) = "AccountI"];
 }
 
 // ___________________________________________________________________________________________________________________

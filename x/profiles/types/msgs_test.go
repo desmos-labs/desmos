@@ -15,7 +15,7 @@ import (
 )
 
 var addr, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testProfile = types.NewProfile(
+var testProfile, _ = types.NewProfile(
 	"dtag",
 	"moniker",
 	"biography",
@@ -35,7 +35,7 @@ var msgEditProfile = types.NewMsgSaveProfile(
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
-	testProfile.BaseAccount.Address,
+	testProfile.GetAddress().String(),
 )
 
 func TestMsgSaveProfile_Route(t *testing.T) {
@@ -68,7 +68,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Invalid empty dtag returns error",
-			msg:   types.NewMsgSaveProfile("", "", "", "", "", testProfile.BaseAccount.Address),
+			msg:   types.NewMsgSaveProfile("", "", "", "", "", testProfile.GetAddress().String()),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
 		},
 		{
@@ -113,7 +113,7 @@ func TestMsgSaveProfile_GetSigners(t *testing.T) {
 // ___________________________________________________________________________________________________________________
 
 var msgDeleteProfile = types.NewMsgDeleteProfile(
-	testProfile.BaseAccount.Address,
+	testProfile.GetAddress().String(),
 )
 
 func TestMsgDeleteProfile_Route(t *testing.T) {
@@ -139,7 +139,7 @@ func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
 		},
 		{
 			name:  "Valid message returns no error",
-			msg:   types.NewMsgDeleteProfile(testProfile.BaseAccount.Address),
+			msg:   types.NewMsgDeleteProfile(testProfile.GetAddress().String()),
 			error: nil,
 		},
 	}

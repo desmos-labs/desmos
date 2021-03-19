@@ -49,7 +49,7 @@ type KeeperTestSuite struct {
 type TestData struct {
 	user      string
 	otherUser string
-	profile   types.Profile
+	profile   *types.Profile
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -104,10 +104,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.Require().NoError(err)
 
+	// Create the base account and set inside the auth keeper.
+	// This is done in order to make sure that when we try to create a profile using the above address, the profile
+	// can be created properly. Not storing the base account would end up in the following error since it's null:
+	// "the given account cannot be serialized using Protobuf"
 	baseAcc := authtypes.NewBaseAccountWithAddress(addr)
 	suite.ak.SetAccount(suite.ctx, baseAcc)
 
-	suite.testData.profile = types.NewProfile(
+	suite.testData.profile, err = types.NewProfile(
 		"dtag",
 		"test-user",
 		"biography",
@@ -118,6 +122,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		time.Time{},
 		baseAcc,
 	)
+	suite.Require().NoError(err)
 }
 
 func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
@@ -127,4 +132,9 @@ func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
 	} else {
 		suite.Require().NoError(actual)
 	}
+}
+
+func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {
+	suite.Require().NoError(err)
+	return profile
 }

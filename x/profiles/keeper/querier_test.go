@@ -14,7 +14,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount types.Profile
+		storedAccount *types.Profile
 		expErr        error
 	}{
 		{

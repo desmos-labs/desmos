@@ -92,9 +92,9 @@ func sendMsgSaveProfile(
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-) (simtypes.Account, types.Profile, bool) {
+) (simtypes.Account, *types.Profile, bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.Profile{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get a random account
@@ -102,10 +102,10 @@ func randomProfileSaveFields(
 	acc := ak.GetAccount(ctx, account.Address)
 
 	// See if there is already the profile, otherwise create it from scratch
-	var profile types.Profile
+	var profile *types.Profile
 	existing, found, err := k.GetProfile(ctx, account.Address.String())
 	if err != nil {
-		return simtypes.Account{}, types.Profile{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	if found {
@@ -116,13 +116,11 @@ func randomProfileSaveFields(
 
 	// 50% chance of changing something
 	if r.Intn(101) <= 50 {
-		profile, _ = profile.Update(types.NewProfile(
+		profile, _ = profile.Update(types.NewProfileUpdate(
 			RandomDTag(r),
 			RandomMoniker(r),
 			RandomBio(r),
 			types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
-			profile.CreationDate,
-			acc,
 		))
 	}
 
@@ -201,19 +199,13 @@ func randomProfileDeleteFields(
 		return simtypes.Account{}, true
 	}
 
-	var accounts []types.Profile
-	k.IterateProfiles(ctx, func(index int64, profile types.Profile) (stop bool) {
-		accounts = append(accounts, profile)
-		return false
-	})
-
+	accounts := k.GetProfiles(ctx)
 	if len(accounts) == 0 {
 		return simtypes.Account{}, true
 	}
 	account := RandomProfile(r, accounts)
 
-	addr, _ := sdk.AccAddressFromBech32(account.BaseAccount.Address)
-	acc := GetSimAccount(addr, accs)
+	acc := GetSimAccount(account.GetAddress(), accs)
 
 	// Skip the operation without error as the profile is not valid
 	if acc == nil {

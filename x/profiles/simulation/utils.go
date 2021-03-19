@@ -48,8 +48,8 @@ var (
 
 // NewRandomProfile return a random ProfileData from random data and the given account
 // nolint:interfacer
-func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) types.Profile {
-	return types.NewProfile(
+func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
+	profile, err := types.NewProfile(
 		RandomDTag(r),
 		RandomMoniker(r),
 		RandomBio(r),
@@ -57,10 +57,14 @@ func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) types.Profile {
 		time.Now(),
 		account,
 	)
+	if err != nil {
+		panic(err)
+	}
+	return profile
 }
 
 // RandomProfile picks and returns a random profile from an array
-func RandomProfile(r *rand.Rand, accounts []types.Profile) types.Profile {
+func RandomProfile(r *rand.Rand, accounts []*types.Profile) *types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }

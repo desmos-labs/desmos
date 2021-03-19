@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -45,7 +47,12 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 			"Profile with sdkAddress %s doesn't exists", dTagOrAddress)
 	}
 
-	return &types.QueryProfileResponse{Profile: account}, nil
+	accountAny, err := codectypes.NewAnyWithValue(account)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryProfileResponse{Profile: accountAny}, nil
 }
 
 // DTagTransfers implements the Query/DTagTransfers gRPC method
