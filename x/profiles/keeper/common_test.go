@@ -125,15 +125,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.Require().NoError(err)
 }
 
-func (suite *KeeperTestSuite) RequireErrorsEqual(expected, actual error) {
-	if expected != nil {
-		suite.Require().Error(actual)
-		suite.Require().Equal(expected.Error(), actual.Error())
-	} else {
-		suite.Require().NoError(actual)
-	}
-}
-
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {
 	suite.Require().NoError(err)
 	return profile

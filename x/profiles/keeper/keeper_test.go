@@ -9,8 +9,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -407,7 +405,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 		name                  string
 		storedTransferReqs    []types.DTagTransferRequest
 		transferReq           types.DTagTransferRequest
-		expErr                error
+		shouldErr             bool
 		expStoredTransferReqs []types.DTagTransferRequest
 	}{
 		{
@@ -416,10 +414,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the transfer request from %s to %s has already been made",
-				suite.testData.user, suite.testData.otherUser,
-			),
+			shouldErr:   true,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -430,7 +425,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
-			expErr:      nil,
+			shouldErr:   false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 				types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
@@ -442,7 +437,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
-			expErr:      nil,
+			shouldErr:   false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
@@ -454,11 +449,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag1", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"the transfer request from %s to %s has already been made",
-				suite.testData.user, suite.testData.otherUser,
-			),
+			shouldErr:   true,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -467,7 +458,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			name:               "Not already present request is saved correctly",
 			storedTransferReqs: nil,
 			transferReq:        types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			expErr:             nil,
+			shouldErr:          false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -483,7 +474,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			}
 
 			err := suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
-			suite.RequireErrorsEqual(test.expErr, err)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 
 			stored := suite.k.GetDTagTransferRequests(suite.ctx)
 			suite.Require().Len(stored, len(test.expStoredTransferReqs))
@@ -614,7 +610,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 		storedReqs      []types.DTagTransferRequest
 		sender          string
 		receiver        string
-		expErr          error
+		shouldErr       bool
 		storedReqsAfter []types.DTagTransferRequest
 	}{
 		{
@@ -622,26 +618,16 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 			storedReqs: nil,
 			sender:     suite.testData.user,
 			receiver:   suite.testData.otherUser,
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"request from %s to %s not found",
-				suite.testData.user,
-				suite.testData.otherUser,
-			),
+			shouldErr:  true,
 		},
 		{
 			name: "Deleting non existent request returns an error and doesn't change the store",
 			storedReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 			},
-			sender:   suite.testData.user,
-			receiver: suite.testData.otherUser,
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"request from %s to %s not found",
-				suite.testData.user,
-				suite.testData.otherUser,
-			),
+			sender:    suite.testData.user,
+			receiver:  suite.testData.otherUser,
+			shouldErr: true,
 			storedReqsAfter: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 			},
@@ -678,7 +664,12 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 			}
 
 			err := suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
-			suite.RequireErrorsEqual(test.expErr, err)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 
 			reqs := suite.k.GetDTagTransferRequests(suite.ctx)
 			suite.Require().Equal(test.storedReqsAfter, reqs)
