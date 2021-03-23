@@ -48,7 +48,21 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/cosmos/cosmos-sdk/x/capability"
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
+	ibctransfer "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer"
+	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
+	ibcclient "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client"
+	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 
 	"github.com/desmos-labs/desmos/x/relationships"
 
@@ -129,6 +143,10 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 
+		capability.AppModuleBasic{},
+		ibc.AppModuleBasic{},
+		ibctransfer.AppModuleBasic{},
+
 		// Custom modules
 		fees.AppModuleBasic{},
 		magpie.AppModuleBasic{},
@@ -145,6 +163,7 @@ var (
 		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
+		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -162,8 +181,9 @@ type DesmosApp struct {
 	invCheckPeriod uint
 
 	// sdk keys to access the substores
-	keys  map[string]*sdk.KVStoreKey
-	tkeys map[string]*sdk.TransientStoreKey
+	keys    map[string]*sdk.KVStoreKey
+	tkeys   map[string]*sdk.TransientStoreKey
+	memKeys map[string]*sdk.MemoryStoreKey
 
 	// Keepers
 	AccountKeeper  authkeeper.AccountKeeper
@@ -176,6 +196,14 @@ type DesmosApp struct {
 	upgradeKeeper  upgradekeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	evidenceKeeper evidencekeeper.Keeper
+
+	CapabilityKeeper  *capabilitykeeper.Keeper
+	IBCKeeper         *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	IBCTransferKeeper ibctransferkeeper.Keeper
+
+	// make scoped keepers public for test purposes
+	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
+	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
 	FeesKeeper          feeskeeper.Keeper
@@ -223,13 +251,15 @@ func NewDesmosApp(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
-		evidencetypes.StoreKey,
+		evidencetypes.StoreKey, ibchost.StoreKey, ibctransfertypes.StoreKey,
+		capabilitytypes.StoreKey,
 
 		// Custom modules
 		magpietypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, reportstypes.StoreKey,
 		relationshipstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Here you initialize your application with the store keys it requires
 	var app = &DesmosApp{
@@ -240,12 +270,18 @@ func NewDesmosApp(
 		invCheckPeriod:    invCheckPeriod,
 		keys:              keys,
 		tkeys:             tkeys,
+		memKeys:           memKeys,
 	}
 
 	app.paramsKeeper = initParamsKeeper(appCodec, legacyAmino, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey])
 
 	// set the BaseApp's parameter store
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramskeeper.ConsensusParamsKeyTable()))
+
+	// add capability keeper and ScopeToModule for ibc module
+	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -275,15 +311,35 @@ func NewDesmosApp(
 		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
 	)
 
+	// Create IBC Keeper
+	app.IBCKeeper = ibckeeper.NewKeeper(
+		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.stakingKeeper, scopedIBCKeeper,
+	)
+
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
+		AddRoute(ibchost.RouterKey, ibcclient.NewClientUpdateProposalHandler(app.IBCKeeper.ClientKeeper))
+
 	app.govKeeper = govkeeper.NewKeeper(
 		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, govRouter,
 	)
+
+	// Create Transfer Keepers
+	app.IBCTransferKeeper = ibctransferkeeper.NewKeeper(
+		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
+		app.AccountKeeper, app.BankKeeper, scopedIBCTransferKeeper,
+	)
+	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
+
+	// Create static IBC router, add transfer route, then set and seal it
+	ibcRouter := porttypes.NewRouter()
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
+	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -350,6 +406,10 @@ func NewDesmosApp(
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
+		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
+		ibc.NewAppModule(app.IBCKeeper),
+		ibctransferModule,
+
 		// Custom modules
 		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
@@ -364,7 +424,7 @@ func NewDesmosApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName,
+		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
@@ -373,6 +433,8 @@ func NewDesmosApp(
 		distrtypes.ModuleName,
 		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
 		govtypes.ModuleName, evidencetypes.ModuleName,
+		capabilitytypes.ModuleName,
+		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
 		feestypes.ModuleName, magpietypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
 		reportstypes.ModuleName, relationshipstypes.ModuleName, // custom modules
@@ -402,6 +464,10 @@ func NewDesmosApp(
 		params.NewAppModule(app.paramsKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
+		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
+		ibc.NewAppModule(app.IBCKeeper),
+		ibctransferModule,
+
 		// Custom modules
 		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
@@ -416,6 +482,7 @@ func NewDesmosApp(
 	// Initialize stores
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
+	app.MountMemoryStores(memKeys)
 
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
@@ -432,7 +499,19 @@ func NewDesmosApp(
 		if err := app.LoadLatestVersion(); err != nil {
 			tmos.Exit(err.Error())
 		}
+
+		// Initialize and seal the capability keeper so all persistent capabilities
+		// are loaded in-memory and prevent any further modules from creating scoped
+		// sub-keepers.
+		// This must be done during creation of baseapp rather than in InitChain so
+		// that in-memory capabilities get regenerated on app restart.
+		// Note that since this reads from the store, we can only perform it when
+		// `loadLatest` is set to true.
+		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
+		app.CapabilityKeeper.InitializeAndSeal(ctx)
 	}
+	app.ScopedIBCKeeper = scopedIBCKeeper
+	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 
 	return app
 }
@@ -529,6 +608,13 @@ func (app *DesmosApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
+// GetMemKey returns the MemStoreKey for the provided mem key.
+//
+// NOTE: This is solely used for testing purposes.
+func (app *DesmosApp) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+	return app.memKeys[storeKey]
+}
+
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
@@ -608,6 +694,9 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
+
+	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
+	paramsKeeper.Subspace(ibchost.ModuleName)
 
 	return paramsKeeper
 }

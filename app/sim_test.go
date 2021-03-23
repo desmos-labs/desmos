@@ -31,6 +31,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
@@ -222,6 +226,9 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
+		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
+		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
+		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
