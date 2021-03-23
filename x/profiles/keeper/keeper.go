@@ -66,9 +66,19 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 			"a profile with dtag %s has already been created", profile.Dtag)
 	}
 
-	// Store the DTag -> Address association
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(profile.Dtag), profile.GetAddress())
+
+	// Remove the previous DTag association (if the profile is being edited)
+	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
+	if err != nil {
+		return err
+	}
+	if found {
+		store.Delete(types.DTagStoreKey(oldProfile.Dtag))
+	}
+
+	// Store the DTag -> Address association
+	store.Set(types.DTagStoreKey(profile.Dtag), profile.GetAddress())
 
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
@@ -94,12 +104,12 @@ func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile *types.Prof
 func (k Keeper) GetAddressFromDtag(ctx sdk.Context, dtag string) (addr string) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get([]byte(dtag))
+	bz := store.Get(types.DTagStoreKey(dtag))
 	if bz == nil {
 		return ""
 	}
 
-	return string(bz)
+	return sdk.AccAddress(bz).String()
 }
 
 // RemoveProfile allows to delete a profile associated with the given address inside the current context.
@@ -114,6 +124,10 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"no profile associated with the following address found: %s", address)
 	}
+
+	// Delete the DTag -> Address association
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.DTagStoreKey(profile.Dtag))
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())

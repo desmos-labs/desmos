@@ -92,17 +92,16 @@ func sendMsgSaveProfile(
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-) (simtypes.Account, *types.Profile, bool) {
+) (account simtypes.Account, profile *types.Profile, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, nil, true
 	}
 
 	// Get a random account
-	account, _ := simtypes.RandomAcc(r, accs)
+	account, _ = simtypes.RandomAcc(r, accs)
 	acc := ak.GetAccount(ctx, account.Address)
 
 	// See if there is already the profile, otherwise create it from scratch
-	var profile *types.Profile
 	existing, found, err := k.GetProfile(ctx, account.Address.String())
 	if err != nil {
 		return simtypes.Account{}, nil, true
@@ -112,6 +111,12 @@ func randomProfileSaveFields(
 		profile = existing
 	} else {
 		profile = NewRandomProfile(r, acc)
+	}
+
+	// Skip if another profile with the same DTag exists
+	address := k.GetAddressFromDtag(ctx, profile.Dtag)
+	if address != acc.GetAddress().String() {
+		return simtypes.Account{}, nil, true
 	}
 
 	// 50% chance of changing something

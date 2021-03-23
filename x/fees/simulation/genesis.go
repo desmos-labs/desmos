@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"math/rand"
 
-	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	magpietypes "github.com/desmos-labs/desmos/x/magpie/types"
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/x/reports/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -25,24 +25,24 @@ const (
 )
 
 var msgsTypes = []string{
-	magpieTypes.ActionCreationSession,
-	postsTypes.ActionCreatePost,
-	postsTypes.ActionEditPost,
-	postsTypes.ActionAnswerPoll,
-	postsTypes.ActionAddPostReaction,
-	postsTypes.ActionRemovePostReaction,
-	postsTypes.ActionRegisterReaction,
-	profilesTypes.ActionSaveProfile,
-	profilesTypes.ActionDeleteProfile,
-	profilesTypes.ActionRequestDtag,
-	profilesTypes.ActionAcceptDtagTransfer,
-	profilesTypes.ActionRefuseDTagTransferRequest,
-	profilesTypes.ActionCancelDTagTransferRequest,
-	relationshipsTypes.ActionCreateRelationship,
-	relationshipsTypes.ActionDeleteRelationship,
-	relationshipsTypes.ActionBlockUser,
-	relationshipsTypes.ActionUnblockUser,
-	reportsTypes.ActionReportPost,
+	magpietypes.ActionCreationSession,
+	poststypes.ActionCreatePost,
+	poststypes.ActionEditPost,
+	poststypes.ActionAnswerPoll,
+	poststypes.ActionAddPostReaction,
+	poststypes.ActionRemovePostReaction,
+	poststypes.ActionRegisterReaction,
+	profilestypes.ActionSaveProfile,
+	profilestypes.ActionDeleteProfile,
+	profilestypes.ActionRequestDtag,
+	profilestypes.ActionAcceptDtagTransfer,
+	profilestypes.ActionRefuseDTagTransferRequest,
+	profilestypes.ActionCancelDTagTransferRequest,
+	relationshipstypes.ActionCreateRelationship,
+	relationshipstypes.ActionDeleteRelationship,
+	relationshipstypes.ActionBlockUser,
+	relationshipstypes.ActionUnblockUser,
+	reportstypes.ActionReportPost,
 }
 
 // RandomizedGenState generates a random GenesisState for the fees module

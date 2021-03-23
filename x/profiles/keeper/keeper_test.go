@@ -68,29 +68,47 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 	accountAny, err := codectypes.NewAnyWithValue(authtypes.NewBaseAccountWithAddress(addr))
 	suite.Require().NoError(err)
 
+	updatedProfile, err := types.NewProfile(
+		"updated-dtag",
+		"updated-moniker",
+		suite.testData.profile.Bio,
+		suite.testData.profile.Pictures,
+		suite.testData.profile.CreationDate,
+		suite.testData.profile.GetAccount(),
+	)
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name           string
 		account        *types.Profile
 		storedProfiles []*types.Profile
-		expError       error
+		shouldErr      bool
 	}{
 		{
-			name:           "Non existent Profile saved correctly",
-			account:        suite.testData.profile,
-			storedProfiles: nil,
-			expError:       nil,
+			name:      "Non existent profile is saved correctly",
+			account:   suite.testData.profile,
+			shouldErr: false,
+		},
+		{
+			name: "Edited profile is saved correctly",
+			storedProfiles: []*types.Profile{
+				suite.testData.profile,
+			},
+			account:   updatedProfile,
+			shouldErr: false,
 		},
 		{
 			name: "Existent account with different creator returns error",
+			storedProfiles: []*types.Profile{
+				suite.testData.profile,
+			},
 			account: &types.Profile{
 				Dtag:     suite.testData.profile.Dtag,
 				Bio:      suite.testData.profile.Bio,
 				Pictures: suite.testData.profile.Pictures,
 				Account:  accountAny,
 			},
-			storedProfiles: []*types.Profile{suite.testData.profile},
-			expError: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"a profile with dtag dtag has already been created"),
+			shouldErr: true,
 		},
 	}
 
@@ -98,12 +116,29 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
+				err = suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.StoreProfile(suite.ctx, test.account)
-			suite.RequireErrorsEqual(test.expError, err)
+			err = suite.k.StoreProfile(suite.ctx, test.account)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				// Verify the DTag -> Address association
+				store := suite.ctx.KVStore(suite.storeKey)
+				suite.Require().Equal(test.account.GetAddress().Bytes(), store.Get(types.DTagStoreKey(test.account.Dtag)),
+					"DTag -> Address association not correct")
+
+				for _, stored := range test.storedProfiles {
+					// Make sure that if the DTag has been edited, the old association has been removed
+					if stored.GetAddress().Equals(test.account.GetAddress()) && stored.Dtag != test.account.Dtag {
+						suite.Require().Nil(store.Get(types.DTagStoreKey(stored.Dtag)),
+							"Old DTag -> Address association still exists")
+					}
+				}
+			}
 		})
 	}
 }
@@ -166,6 +201,43 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
+	tests := []struct {
+		name    string
+		profile *types.Profile
+		dTag    string
+		expAddr string
+	}{
+		{
+			name:    "valid profile returns correct address",
+			profile: suite.testData.profile,
+			dTag:    suite.testData.profile.Dtag,
+			expAddr: suite.testData.profile.GetAddress().String(),
+		},
+		{
+			name:    "non existing profile returns empty address",
+			profile: nil,
+			dTag:    "test",
+			expAddr: "",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			if test.profile != nil {
+				err := suite.k.StoreProfile(suite.ctx, test.profile)
+				suite.Require().NoError(err)
+			}
+
+			addr := suite.k.GetAddressFromDtag(suite.ctx, test.dTag)
+			suite.Require().Equal(test.expAddr, addr)
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 	err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 	suite.Require().Nil(err)
@@ -178,37 +250,9 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 
 	_, found, _ = suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
 	suite.Require().False(found)
-}
 
-func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
-	tests := []struct {
-		name     string
-		accounts []*types.Profile
-	}{
-		{
-			name:     "Non empty Profiles list returned",
-			accounts: []*types.Profile{suite.testData.profile},
-		},
-		{
-			name:     "Profile not found",
-			accounts: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-
-			for _, profile := range test.accounts {
-				err := suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
-			}
-
-			res := suite.k.GetProfiles(suite.ctx)
-			suite.Require().Equal(test.accounts, res)
-		})
-	}
+	addr := suite.k.GetAddressFromDtag(suite.ctx, suite.testData.profile.Dtag)
+	suite.Require().Equal("", addr)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {

@@ -85,3 +85,34 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 		suite.Contains(expProfiles, profile)
 	}
 }
+
+func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
+	tests := []struct {
+		name     string
+		accounts []*types.Profile
+	}{
+		{
+			name:     "Non empty Profiles list returned",
+			accounts: []*types.Profile{suite.testData.profile},
+		},
+		{
+			name:     "Profile not found",
+			accounts: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			for _, profile := range test.accounts {
+				err := suite.k.StoreProfile(suite.ctx, profile)
+				suite.Require().NoError(err)
+			}
+
+			res := suite.k.GetProfiles(suite.ctx)
+			suite.Require().Equal(test.accounts, res)
+		})
+	}
+}

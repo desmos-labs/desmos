@@ -3,7 +3,7 @@ package ante_test
 import (
 	"time"
 
-	feesTypes "github.com/desmos-labs/desmos/x/fees/types"
+	feestypes "github.com/desmos-labs/desmos/x/fees/types"
 	"github.com/desmos-labs/desmos/x/posts/types"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -17,7 +17,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 	tests := []struct {
 		name     string
 		givenFee sdk.Coins
-		params   feesTypes.Params
+		params   feestypes.Params
 		msgs     []sdk.Msg
 		privs    []cryptotypes.PrivKey
 		accNums  []uint64
@@ -28,8 +28,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 		{
 			name:     "Signer has not specified the fees",
 			givenFee: sdk.NewCoins(),
-			params: feesTypes.NewParams([]feesTypes.MinFee{
-				feesTypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			params: feestypes.NewParams([]feestypes.MinFee{
+				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				types.NewMsgCreatePost(
@@ -61,8 +61,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 		{
 			name:     "Signer has not specified enough fees",
 			givenFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 9999)),
-			params: feesTypes.NewParams([]feesTypes.MinFee{
-				feesTypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			params: feestypes.NewParams([]feestypes.MinFee{
+				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				types.NewMsgCreatePost(
@@ -94,8 +94,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 		{
 			name:     "Signer has specified enough fees",
 			givenFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
-			params: feesTypes.NewParams([]feesTypes.MinFee{
-				feesTypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			params: feestypes.NewParams([]feestypes.MinFee{
+				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				types.NewMsgCreatePost(

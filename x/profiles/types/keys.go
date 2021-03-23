@@ -23,8 +23,14 @@ const (
 )
 
 var (
+	DTagPrefix                 = []byte("dtag")
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 )
+
+// DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
+func DTagStoreKey(dtag string) []byte {
+	return append(DTagPrefix, dtag...)
+}
 
 // DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
 func DtagTransferRequestStoreKey(address string) []byte {
