@@ -1,4 +1,5 @@
 # Unreleased
+- Enabled IBC transfer module ([\#382](https://github.com/desmos-labs/desmos/issues/382))
 
 # Version 0.15.5
 
