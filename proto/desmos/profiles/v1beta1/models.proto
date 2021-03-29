@@ -11,8 +11,8 @@ message Pictures {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string profile = 1 [(gogoproto.moretags) = "yaml:\"profile\""];
-  string cover = 2 [(gogoproto.moretags) = "yaml:\"cover\""];
+  string profile = 1 [ (gogoproto.moretags) = "yaml:\"profile\"" ];
+  string cover = 2 [ (gogoproto.moretags) = "yaml:\"cover\"" ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -51,7 +51,7 @@ message DTagTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string dtag_to_trade = 1 [(gogoproto.moretags) = "yaml:\"dtag_to_trade\""];
+  string dtag_to_trade = 1 [ (gogoproto.moretags) = "yaml:\"dtag_to_trade\"" ];
 
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 

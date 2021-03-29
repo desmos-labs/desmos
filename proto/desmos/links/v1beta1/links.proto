@@ -1,0 +1,15 @@
+syntax = "proto3";
+package desmos.links.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/links/types";
+
+// Link contains all the link data from IBC requests
+message Link {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string source = 1;
+  string destination = 2;
+}

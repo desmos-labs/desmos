@@ -1,0 +1,12 @@
+syntax = "proto3";
+package desmos.links.v1beta1;
+
+import "desmos/links/v1beta1/links.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/links/types";
+
+// GenesisState defines the links module's genesis state.
+message GenesisState {
+  string port_id = 1;
+  repeated desmos.links.v1beta1.Link links = 2;
+}

@@ -338,6 +338,8 @@ func NewDesmosApp(
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
+	// this line is used by starport scaffolding # ibc/app/router
+ibcRouter.AddRoute(linkstypes.ModuleName, linksModule)
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
