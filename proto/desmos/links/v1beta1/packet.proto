@@ -1,0 +1,29 @@
+syntax = "proto3";
+package desmos.links.v1beta1;
+
+option go_package = "github.com/desmos-labs/desmos/x/links/types";
+
+// Declare types of packet data
+message LinksPacketData {
+  // Switch one of packet type
+  oneof packet {
+    NoData no_data = 1;
+    IBCLinkPacketData ibc_link_packet = 2;
+  }
+}
+
+// No data
+message NoData {}
+
+// IBCLinkPacketData defines a struct for the packet payload
+message IBCLinkPacketData {
+  string source_chain_prefix = 1;
+  string source_address = 2;
+  string source_pubkey = 3;
+  string destination_address = 4;
+  string source_signature = 5;
+  string destination_signature = 6;
+}
+
+// IBCLinkPacketAck defines a struct for the packet acknowledgment
+message IBCLinkPacketAck { string source_address = 1; }
