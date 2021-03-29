@@ -47,10 +47,9 @@ func convertPost(post postsTypes.Post) Post {
 		LastEdited:     post.LastEdited.Format(time.RFC3339),
 		AllowsComments: post.AllowsComments,
 		Subspace:       post.Subspace,
-		OptionalData:   nil,
+		OptionalData:   postsTypes.OptionalData{},
 		Creator:        post.Creator,
-		Attachments:    nil,
-		PollData:       nil,
+		Attachments:    postsTypes.Attachments{},
 	}
 
 	if post.OptionalData != nil {
