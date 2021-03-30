@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"context"
+
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
@@ -15,3 +17,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 }
 
 var _ types.MsgServer = msgServer{}
+
+func (k msgServer) CreateLink(ctx context.Context, msg *types.MsgCreateLink) (*types.MsgCreateLinkResponse, error) {
+	return &types.MsgCreateLinkResponse{}, nil
+}
