@@ -1,6 +1,8 @@
 package types
 
 import (
+	fmt "fmt"
+
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 )
 
@@ -11,7 +13,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		PortId: PortID,
-		Links:  []*Links{},
+		Links:  []*Link{},
 	}
 }
 
@@ -26,10 +28,10 @@ func (gs GenesisState) Validate() error {
 	linksSourceMap := make(map[string]bool)
 
 	for _, elem := range gs.Links {
-		if _, ok := linksSourceMap[elem.source]; ok {
+		if _, ok := linksSourceMap[elem.Source]; ok {
 			return fmt.Errorf("duplicated source for links")
 		}
-		linksSourceMap[elem.source] = true
+		linksSourceMap[elem.Source] = true
 	}
 
 	return nil

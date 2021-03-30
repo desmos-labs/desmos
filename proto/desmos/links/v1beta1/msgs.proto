@@ -1,0 +1,26 @@
+syntax = "proto3";
+package desmos.links.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/links/types";
+
+// Msg defines the links Msg service.
+service Msg {
+  // CreateLink defines the method to create a post
+  rpc CreateLink(MsgCreateLink) returns (MsgCreateLinkResponse);
+}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgCreateLink represents the message to be used to create a link.
+message MsgCreateLink {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string source_address = 1;
+  string destination_address = 2;
+}
+
+// MsgCreateLinkResponse defines the Msg/CreatePost response type.
+message MsgCreateLinkResponse {}

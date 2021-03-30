@@ -23,7 +23,6 @@ func (am AppModule) OnChanOpenInit(
 	counterparty channeltypes.Counterparty,
 	version string,
 ) error {
-    
 
 	// Require portID is the portID module is bound to
 	boundPort := am.keeper.GetPort(ctx)
@@ -55,7 +54,6 @@ func (am AppModule) OnChanOpenTry(
 	version,
 	counterpartyVersion string,
 ) error {
-	
 
 	// Require portID is the portID module is bound to
 	boundPort := am.keeper.GetPort(ctx)
@@ -131,26 +129,26 @@ func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-    var modulePacketData types.LinksPacketData
-    if err := modulePacketData.Unmarshal(modulePacket.GetData()); err != nil {
-        return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
-    }
+	var modulePacketData types.LinksPacketData
+	if err := modulePacketData.Unmarshal(modulePacket.GetData()); err != nil {
+		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
+	}
 
-    var ack channeltypes.Acknowledgement
+	var ack channeltypes.Acknowledgement
 
-    // Dispatch packet
-    switch packet := modulePacketData.Packet.(type) {
-        // this line is used by starport scaffolding # ibc/packet/module/recv
-        default:
-            errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
-            return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
-    }
+	// Dispatch packet
+	switch packet := modulePacketData.Packet.(type) {
+	// this line is used by starport scaffolding # ibc/packet/module/recv
+	default:
+		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
+		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+	}
 
-    // Encode acknowledgement
-    ackBytes, err := ack.Marshal()
-    if err != nil {
-        return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
-    }
+	// Encode acknowledgement
+	ackBytes, err := ack.Marshal()
+	if err != nil {
+		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
+	}
 
 	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
 	return &sdk.Result{
@@ -166,8 +164,8 @@ func (am AppModule) OnAcknowledgementPacket(
 ) (*sdk.Result, error) {
 	var ack channeltypes.Acknowledgement
 	if err := ack.Unmarshal(acknowledgement); err != nil {
-        return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
-    }
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
+	}
 	var modulePacketData types.LinksPacketData
 	if err := modulePacketData.Unmarshal(modulePacket.GetData()); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
@@ -177,19 +175,19 @@ func (am AppModule) OnAcknowledgementPacket(
 
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
-        // this line is used by starport scaffolding # ibc/packet/module/ack
-        default:
-            errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
-            return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
-    }
+	// this line is used by starport scaffolding # ibc/packet/module/ack
+	default:
+		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+	}
 
-    ctx.EventManager().EmitEvent(
-        sdk.NewEvent(
-            eventType,
-            sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-            sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
-        ),
-    )
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			eventType,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
+		),
+	)
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
@@ -224,12 +222,12 @@ func (am AppModule) OnTimeoutPacket(
 	}
 
 	// Dispatch packet
-    switch packet := modulePacketData.Packet.(type) {
-        // this line is used by starport scaffolding # ibc/packet/module/timeout
-        default:
-            errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
-            return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
-    }
+	switch packet := modulePacketData.Packet.(type) {
+	// this line is used by starport scaffolding # ibc/packet/module/timeout
+	default:
+		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+	}
 
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
