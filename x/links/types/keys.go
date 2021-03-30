@@ -12,6 +12,9 @@ const (
 
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
+	QueryLink    = "link"
+
+	ActionCreateLink = "create_link"
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_capability"
