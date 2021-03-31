@@ -7,20 +7,28 @@ option go_package = "github.com/desmos-labs/desmos/x/links/types";
 
 // Msg defines the links Msg service.
 service Msg {
-  // CreateLink defines the method to create a post
-  rpc CreateLink(MsgCreateLink) returns (MsgCreateLinkResponse);
+  // IBCLink defines the method to create a post
+  rpc IBCLink(MsgIBCLink) returns (MsgIBCLinkResponse);
 }
 
 // ___________________________________________________________________________________________________________________
 
-// MsgCreateLink represents the message to be used to create a link.
-message MsgCreateLink {
+// MsgIBCLink represents the message to be used to create a link.
+message MsgIBCLink {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string source_address = 1;
-  string destination_address = 2;
+  string sender = 1;
+  string port = 2;
+  string channel_id = 3;
+  uint64 timeout_timestamp = 4;
+  string source_chain_prefix = 5;
+  string source_address = 6;
+  string source_pubkey = 7;
+  string destination_address = 8;
+  string source_signature = 9;
+  string destination_signature = 10;
 }
 
-// MsgCreateLinkResponse defines the Msg/CreatePost response type.
-message MsgCreateLinkResponse {}
+// MsgIBCLinkResponse defines the Msg/CreatePost response type.
+message MsgIBCLinkResponse {}

@@ -1,29 +1,20 @@
 package types
 
 const (
-	// ModuleName defines the module name
 	ModuleName = "links"
+	StoreKey   = ModuleName
+	RouterKey  = ModuleName
 
-	// StoreKey defines the primary module store key
-	StoreKey = ModuleName
+	ActionIBCLink = "ibc_link"
 
-	// RouterKey is the message route for slashing
-	RouterKey = ModuleName
-
-	// QuerierRoute defines the module's query routing key
+	// Queries
 	QuerierRoute = ModuleName
 	QueryLink    = "link"
 
-	ActionCreateLink = "create_link"
-
-	// MemStoreKey defines the in-memory store key
+	// IBC keys
 	MemStoreKey = "mem_capability"
-
-	// Version defines the current version the IBC module supports
-	Version = "links-1"
-
-	// PortID is the default port id that module binds to
-	PortID = "links"
+	Version     = "links-1"
+	PortID      = "links"
 )
 
 var (

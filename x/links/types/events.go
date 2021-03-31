@@ -1,12 +1,10 @@
 package types
 
-// IBC events
 const (
-	EventTypeTimeout = "timeout"
-
-	EventTypeCreateLinkPacket = "create_link_packet"
-
+	// IBC events
+	EventTypeTimeout       = "timeout"
 	AttributeKeyAckSuccess = "success"
 	AttributeKeyAck        = "acknowledgement"
 	AttributeKeyAckError   = "error"
+	EventTypeIBCLinkPacket = "link_packet"
 )

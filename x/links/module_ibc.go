@@ -139,7 +139,7 @@ func (am AppModule) OnRecvPacket(
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	case *types.LinksPacketData_IbcLinkPacket:
-		packetAck, err := am.keeper.OnRecvIbcEditPacket(ctx, modulePacket, *packet.CreateLinkPacket)
+		packetAck, err := am.keeper.OnRecvIBCLinkPacket(ctx, modulePacket, *packet.IbcLinkPacket)
 		if err != nil {
 			ack = channeltypes.NewErrorAcknowledgement(err.Error())
 		} else {
@@ -152,7 +152,7 @@ func (am AppModule) OnRecvPacket(
 		}
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
-				types.EventTypeCreateLinkPacket,
+				types.EventTypeIBCLinkPacket,
 				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 			),
@@ -194,11 +194,15 @@ func (am AppModule) OnAcknowledgementPacket(
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	case *types.LinksPacketData_IbcLinkPacket:
-		err := am.keeper.OnAcknowledgementCreateLinkPacket(ctx, modulePacket, *packet.CreateLinkPacket, ack)
+		err := am.keeper.OnAcknowledgementIBCLinkPacket(ctx, modulePacket, *packet.IbcLinkPacket, ack)
 		if err != nil {
 			return nil, err
 		}
-		eventType = types.EventTypeCreateLinkPacket
+		eventType = types.EventTypeIBCLinkPacket
+	default:
+		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -243,7 +247,7 @@ func (am AppModule) OnTimeoutPacket(
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	case *types.LinksPacketData_IbcLinkPacket:
-		err := am.keeper.OnTimeoutCreateLinkPacket(ctx, modulePacket, *packet.CrateLinkPacket)
+		err := am.keeper.OnTimeoutIBCLinkPacket(ctx, modulePacket, *packet.IbcLinkPacket)
 		if err != nil {
 			return nil, err
 		}

@@ -28,24 +28,32 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgCreateLink represents the message to be used to create a link.
-type MsgCreateLink struct {
-	SourceAddress      string `protobuf:"bytes,1,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
-	DestinationAddress string `protobuf:"bytes,2,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty"`
+// MsgIBCLink represents the message to be used to create a link.
+type MsgIBCLink struct {
+	Sender               string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	Port                 string `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	ChannelId            string `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	TimeoutTimestamp     uint64 `protobuf:"varint,4,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty"`
+	SourceChainPrefix    string `protobuf:"bytes,5,opt,name=source_chain_prefix,json=sourceChainPrefix,proto3" json:"source_chain_prefix,omitempty"`
+	SourceAddress        string `protobuf:"bytes,6,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
+	SourcePubkey         string `protobuf:"bytes,7,opt,name=source_pubkey,json=sourcePubkey,proto3" json:"source_pubkey,omitempty"`
+	DestinationAddress   string `protobuf:"bytes,8,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty"`
+	SourceSignature      string `protobuf:"bytes,9,opt,name=source_signature,json=sourceSignature,proto3" json:"source_signature,omitempty"`
+	DestinationSignature string `protobuf:"bytes,10,opt,name=destination_signature,json=destinationSignature,proto3" json:"destination_signature,omitempty"`
 }
 
-func (m *MsgCreateLink) Reset()         { *m = MsgCreateLink{} }
-func (m *MsgCreateLink) String() string { return proto.CompactTextString(m) }
-func (*MsgCreateLink) ProtoMessage()    {}
-func (*MsgCreateLink) Descriptor() ([]byte, []int) {
+func (m *MsgIBCLink) Reset()         { *m = MsgIBCLink{} }
+func (m *MsgIBCLink) String() string { return proto.CompactTextString(m) }
+func (*MsgIBCLink) ProtoMessage()    {}
+func (*MsgIBCLink) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{0}
 }
-func (m *MsgCreateLink) XXX_Unmarshal(b []byte) error {
+func (m *MsgIBCLink) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreateLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIBCLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreateLink.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIBCLink.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,34 +63,34 @@ func (m *MsgCreateLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (m *MsgCreateLink) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreateLink.Merge(m, src)
+func (m *MsgIBCLink) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIBCLink.Merge(m, src)
 }
-func (m *MsgCreateLink) XXX_Size() int {
+func (m *MsgIBCLink) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreateLink) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreateLink.DiscardUnknown(m)
+func (m *MsgIBCLink) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIBCLink.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreateLink proto.InternalMessageInfo
+var xxx_messageInfo_MsgIBCLink proto.InternalMessageInfo
 
-// MsgCreateLinkResponse defines the Msg/CreatePost response type.
-type MsgCreateLinkResponse struct {
+// MsgIBCLinkResponse defines the Msg/CreatePost response type.
+type MsgIBCLinkResponse struct {
 }
 
-func (m *MsgCreateLinkResponse) Reset()         { *m = MsgCreateLinkResponse{} }
-func (m *MsgCreateLinkResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCreateLinkResponse) ProtoMessage()    {}
-func (*MsgCreateLinkResponse) Descriptor() ([]byte, []int) {
+func (m *MsgIBCLinkResponse) Reset()         { *m = MsgIBCLinkResponse{} }
+func (m *MsgIBCLinkResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIBCLinkResponse) ProtoMessage()    {}
+func (*MsgIBCLinkResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{1}
 }
-func (m *MsgCreateLinkResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgIBCLinkResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreateLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIBCLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreateLinkResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIBCLinkResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -92,44 +100,54 @@ func (m *MsgCreateLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgCreateLinkResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreateLinkResponse.Merge(m, src)
+func (m *MsgIBCLinkResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIBCLinkResponse.Merge(m, src)
 }
-func (m *MsgCreateLinkResponse) XXX_Size() int {
+func (m *MsgIBCLinkResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreateLinkResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreateLinkResponse.DiscardUnknown(m)
+func (m *MsgIBCLinkResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIBCLinkResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreateLinkResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgIBCLinkResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgCreateLink)(nil), "desmos.links.v1beta1.MsgCreateLink")
-	proto.RegisterType((*MsgCreateLinkResponse)(nil), "desmos.links.v1beta1.MsgCreateLinkResponse")
+	proto.RegisterType((*MsgIBCLink)(nil), "desmos.links.v1beta1.MsgIBCLink")
+	proto.RegisterType((*MsgIBCLinkResponse)(nil), "desmos.links.v1beta1.MsgIBCLinkResponse")
 }
 
 func init() { proto.RegisterFile("desmos/links/v1beta1/msgs.proto", fileDescriptor_0aac42b2e94dabba) }
 
 var fileDescriptor_0aac42b2e94dabba = []byte{
-	// 269 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x4f, 0x49, 0x2d, 0xce,
-	0xcd, 0x2f, 0xd6, 0xcf, 0xc9, 0xcc, 0xcb, 0x2e, 0xd6, 0x2f, 0x33, 0x4c, 0x4a, 0x2d, 0x49, 0x34,
-	0xd4, 0xcf, 0x2d, 0x4e, 0x2f, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x81, 0x28, 0xd0,
-	0x03, 0x2b, 0xd0, 0x83, 0x2a, 0x90, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0x2b, 0xd0, 0x07, 0xb1,
-	0x20, 0x6a, 0x95, 0x0a, 0xb9, 0x78, 0x7d, 0x8b, 0xd3, 0x9d, 0x8b, 0x52, 0x13, 0x4b, 0x52, 0x7d,
-	0x32, 0xf3, 0xb2, 0x85, 0x54, 0xb9, 0xf8, 0x8a, 0xf3, 0x4b, 0x8b, 0x92, 0x53, 0xe3, 0x13, 0x53,
-	0x52, 0x8a, 0x52, 0x8b, 0x8b, 0x25, 0x18, 0x15, 0x18, 0x35, 0x38, 0x83, 0x78, 0x21, 0xa2, 0x8e,
-	0x10, 0x41, 0x21, 0x7d, 0x2e, 0xe1, 0x94, 0xd4, 0xe2, 0x92, 0xcc, 0xbc, 0xc4, 0x92, 0xcc, 0xfc,
-	0x3c, 0xb8, 0x5a, 0x26, 0xb0, 0x5a, 0x21, 0x24, 0x29, 0xa8, 0x06, 0x2b, 0x8e, 0x8e, 0x05, 0xf2,
-	0x0c, 0x2f, 0x16, 0xc8, 0x33, 0x28, 0x89, 0x73, 0x89, 0xa2, 0x58, 0x19, 0x94, 0x5a, 0x5c, 0x90,
-	0x9f, 0x57, 0x9c, 0x6a, 0x94, 0xca, 0xc5, 0xec, 0x5b, 0x9c, 0x2e, 0x14, 0xc7, 0xc5, 0x85, 0xe4,
-	0x1e, 0x65, 0x3d, 0x6c, 0xbe, 0xd1, 0x43, 0x31, 0x41, 0x4a, 0x9b, 0x08, 0x45, 0x30, 0x6b, 0x9c,
-	0x5c, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x09, 0x8f,
-	0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21, 0x4a, 0x3b, 0x3d, 0xb3, 0x24,
-	0xa3, 0x34, 0x49, 0x2f, 0x39, 0x3f, 0x57, 0x1f, 0x62, 0xa0, 0x6e, 0x4e, 0x62, 0x52, 0x31, 0x94,
-	0xad, 0x5f, 0x01, 0x0d, 0xf2, 0x92, 0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0x70, 0x00, 0x1a, 0x03,
-	0x02, 0x00, 0x00, 0xff, 0xff, 0x02, 0xae, 0xe3, 0x25, 0x8f, 0x01, 0x00, 0x00,
+	// 424 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xbf, 0x6f, 0xd3, 0x40,
+	0x14, 0xc7, 0x6d, 0x12, 0xd2, 0xe6, 0x89, 0x1f, 0xed, 0xd5, 0xa0, 0x53, 0x25, 0x9c, 0xa8, 0x08,
+	0x29, 0xa8, 0xc2, 0x56, 0xe9, 0xc6, 0x46, 0x2b, 0x86, 0x4a, 0x54, 0xaa, 0x02, 0x2c, 0x08, 0xc9,
+	0x3a, 0xdb, 0x87, 0x73, 0x4a, 0x7c, 0x67, 0xf9, 0x9d, 0x51, 0xfb, 0x1f, 0x30, 0xb2, 0xb3, 0xf4,
+	0xcf, 0x61, 0xcc, 0xc8, 0x88, 0x92, 0x85, 0x3f, 0x03, 0xe5, 0xee, 0x9c, 0x64, 0x40, 0xea, 0xe4,
+	0xe7, 0xcf, 0xf7, 0x73, 0xdf, 0xe5, 0x3d, 0x18, 0xe4, 0x1c, 0x4b, 0x85, 0xf1, 0x4c, 0xc8, 0x29,
+	0xc6, 0xdf, 0x4e, 0x52, 0xae, 0xd9, 0x49, 0x5c, 0x62, 0x81, 0x51, 0x55, 0x2b, 0xad, 0x48, 0x60,
+	0x85, 0xc8, 0x08, 0x91, 0x13, 0x0e, 0x83, 0x42, 0x15, 0xca, 0x08, 0xf1, 0x6a, 0xb2, 0xee, 0xd1,
+	0xcf, 0x0e, 0xc0, 0x25, 0x16, 0x17, 0x67, 0xe7, 0xef, 0x85, 0x9c, 0x92, 0xa7, 0xd0, 0x43, 0x2e,
+	0x73, 0x5e, 0x53, 0x7f, 0xe8, 0x8f, 0xfa, 0x63, 0xf7, 0x47, 0x08, 0x74, 0x2b, 0x55, 0x6b, 0x7a,
+	0xcf, 0x50, 0x33, 0x93, 0x67, 0x00, 0xd9, 0x84, 0x49, 0xc9, 0x67, 0x89, 0xc8, 0x69, 0xc7, 0x24,
+	0x7d, 0x47, 0x2e, 0x72, 0x72, 0x0c, 0xfb, 0x5a, 0x94, 0x5c, 0x35, 0x3a, 0x59, 0x7d, 0x51, 0xb3,
+	0xb2, 0xa2, 0xdd, 0xa1, 0x3f, 0xea, 0x8e, 0xf7, 0x5c, 0xf0, 0xb1, 0xe5, 0x24, 0x82, 0x03, 0x54,
+	0x4d, 0x9d, 0xf1, 0x24, 0x9b, 0x30, 0x21, 0x93, 0xaa, 0xe6, 0x5f, 0xc5, 0x35, 0xbd, 0x6f, 0x4a,
+	0xf7, 0x6d, 0x74, 0xbe, 0x4a, 0xae, 0x4c, 0x40, 0x5e, 0xc0, 0x23, 0xe7, 0xb3, 0x3c, 0xaf, 0x39,
+	0x22, 0xed, 0x19, 0xf5, 0xa1, 0xa5, 0x6f, 0x2d, 0x24, 0xcf, 0xc1, 0x81, 0xa4, 0x6a, 0xd2, 0x29,
+	0xbf, 0xa1, 0x3b, 0xc6, 0x7a, 0x60, 0xe1, 0x95, 0x61, 0x24, 0x86, 0x83, 0x9c, 0xa3, 0x16, 0x92,
+	0x69, 0xa1, 0xe4, 0xba, 0x70, 0xd7, 0xa8, 0x64, 0x2b, 0x6a, 0x5b, 0x5f, 0xc2, 0x9e, 0x6b, 0x45,
+	0x51, 0x48, 0xa6, 0x9b, 0x9a, 0xd3, 0xbe, 0xb1, 0x1f, 0x5b, 0xfe, 0xa1, 0xc5, 0xe4, 0x14, 0x9e,
+	0x6c, 0x77, 0x6f, 0x7c, 0x30, 0x7e, 0xb0, 0x15, 0xae, 0x1f, 0xbd, 0xd9, 0xfd, 0x7e, 0x3b, 0xf0,
+	0xfe, 0xde, 0x0e, 0xbc, 0xa3, 0x00, 0xc8, 0x66, 0x39, 0x63, 0x8e, 0x95, 0x92, 0xc8, 0x5f, 0x7f,
+	0x81, 0xce, 0x25, 0x16, 0xe4, 0x13, 0xec, 0xb4, 0x6b, 0x1b, 0x46, 0xff, 0x5b, 0x79, 0xb4, 0x79,
+	0x7b, 0x38, 0xba, 0xcb, 0x68, 0xdb, 0xcf, 0xde, 0xfd, 0x5a, 0x84, 0xfe, 0x7c, 0x11, 0xfa, 0x7f,
+	0x16, 0xa1, 0xff, 0x63, 0x19, 0x7a, 0xf3, 0x65, 0xe8, 0xfd, 0x5e, 0x86, 0xde, 0xe7, 0xe3, 0x42,
+	0xe8, 0x49, 0x93, 0x46, 0x99, 0x2a, 0x63, 0xdb, 0xf6, 0x6a, 0xc6, 0x52, 0x74, 0x73, 0x7c, 0xed,
+	0x2e, 0x52, 0xdf, 0x54, 0x1c, 0xd3, 0x9e, 0xb9, 0xaf, 0xd3, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff,
+	0xac, 0x14, 0x8f, 0xaf, 0xae, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -144,8 +162,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// CreateLink defines the method to create a post
-	CreateLink(ctx context.Context, in *MsgCreateLink, opts ...grpc.CallOption) (*MsgCreateLinkResponse, error)
+	// IBCLink defines the method to create a post
+	IBCLink(ctx context.Context, in *MsgIBCLink, opts ...grpc.CallOption) (*MsgIBCLinkResponse, error)
 }
 
 type msgClient struct {
@@ -156,9 +174,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) CreateLink(ctx context.Context, in *MsgCreateLink, opts ...grpc.CallOption) (*MsgCreateLinkResponse, error) {
-	out := new(MsgCreateLinkResponse)
-	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/CreateLink", in, out, opts...)
+func (c *msgClient) IBCLink(ctx context.Context, in *MsgIBCLink, opts ...grpc.CallOption) (*MsgIBCLinkResponse, error) {
+	out := new(MsgIBCLinkResponse)
+	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/IBCLink", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,36 +185,36 @@ func (c *msgClient) CreateLink(ctx context.Context, in *MsgCreateLink, opts ...g
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// CreateLink defines the method to create a post
-	CreateLink(context.Context, *MsgCreateLink) (*MsgCreateLinkResponse, error)
+	// IBCLink defines the method to create a post
+	IBCLink(context.Context, *MsgIBCLink) (*MsgIBCLinkResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) CreateLink(ctx context.Context, req *MsgCreateLink) (*MsgCreateLinkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateLink not implemented")
+func (*UnimplementedMsgServer) IBCLink(ctx context.Context, req *MsgIBCLink) (*MsgIBCLinkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IBCLink not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_CreateLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCreateLink)
+func _Msg_IBCLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIBCLink)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).CreateLink(ctx, in)
+		return srv.(MsgServer).IBCLink(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.links.v1beta1.Msg/CreateLink",
+		FullMethod: "/desmos.links.v1beta1.Msg/IBCLink",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CreateLink(ctx, req.(*MsgCreateLink))
+		return srv.(MsgServer).IBCLink(ctx, req.(*MsgIBCLink))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -206,15 +224,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateLink",
-			Handler:    _Msg_CreateLink_Handler,
+			MethodName: "IBCLink",
+			Handler:    _Msg_IBCLink_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/links/v1beta1/msgs.proto",
 }
 
-func (m *MsgCreateLink) Marshal() (dAtA []byte, err error) {
+func (m *MsgIBCLink) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -224,34 +242,88 @@ func (m *MsgCreateLink) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreateLink) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIBCLink) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreateLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIBCLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if len(m.DestinationSignature) > 0 {
+		i -= len(m.DestinationSignature)
+		copy(dAtA[i:], m.DestinationSignature)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.DestinationSignature)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.SourceSignature) > 0 {
+		i -= len(m.SourceSignature)
+		copy(dAtA[i:], m.SourceSignature)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceSignature)))
+		i--
+		dAtA[i] = 0x4a
+	}
 	if len(m.DestinationAddress) > 0 {
 		i -= len(m.DestinationAddress)
 		copy(dAtA[i:], m.DestinationAddress)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.DestinationAddress)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x42
+	}
+	if len(m.SourcePubkey) > 0 {
+		i -= len(m.SourcePubkey)
+		copy(dAtA[i:], m.SourcePubkey)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourcePubkey)))
+		i--
+		dAtA[i] = 0x3a
 	}
 	if len(m.SourceAddress) > 0 {
 		i -= len(m.SourceAddress)
 		copy(dAtA[i:], m.SourceAddress)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceAddress)))
 		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.SourceChainPrefix) > 0 {
+		i -= len(m.SourceChainPrefix)
+		copy(dAtA[i:], m.SourceChainPrefix)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceChainPrefix)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.TimeoutTimestamp != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.TimeoutTimestamp))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.ChannelId) > 0 {
+		i -= len(m.ChannelId)
+		copy(dAtA[i:], m.ChannelId)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.ChannelId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Port) > 0 {
+		i -= len(m.Port)
+		copy(dAtA[i:], m.Port)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Port)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Sender)))
+		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCreateLinkResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgIBCLinkResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -261,12 +333,12 @@ func (m *MsgCreateLinkResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreateLinkResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIBCLinkResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreateLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIBCLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -285,13 +357,36 @@ func encodeVarintMsgs(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgCreateLink) Size() (n int) {
+func (m *MsgIBCLink) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Port)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.ChannelId)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	if m.TimeoutTimestamp != 0 {
+		n += 1 + sovMsgs(uint64(m.TimeoutTimestamp))
+	}
+	l = len(m.SourceChainPrefix)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
 	l = len(m.SourceAddress)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.SourcePubkey)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -299,10 +394,18 @@ func (m *MsgCreateLink) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
+	l = len(m.SourceSignature)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.DestinationSignature)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
 	return n
 }
 
-func (m *MsgCreateLinkResponse) Size() (n int) {
+func (m *MsgIBCLinkResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -317,7 +420,7 @@ func sovMsgs(x uint64) (n int) {
 func sozMsgs(x uint64) (n int) {
 	return sovMsgs(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgCreateLink) Unmarshal(dAtA []byte) error {
+func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -340,13 +443,160 @@ func (m *MsgCreateLink) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateLink: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIBCLink: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateLink: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIBCLink: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Port = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChannelId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutTimestamp", wireType)
+			}
+			m.TimeoutTimestamp = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TimeoutTimestamp |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SourceChainPrefix", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SourceChainPrefix = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourceAddress", wireType)
 			}
@@ -378,7 +628,39 @@ func (m *MsgCreateLink) Unmarshal(dAtA []byte) error {
 			}
 			m.SourceAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SourcePubkey", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SourcePubkey = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DestinationAddress", wireType)
 			}
@@ -410,6 +692,70 @@ func (m *MsgCreateLink) Unmarshal(dAtA []byte) error {
 			}
 			m.DestinationAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SourceSignature", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SourceSignature = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DestinationSignature", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DestinationSignature = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])
@@ -431,7 +777,7 @@ func (m *MsgCreateLink) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCreateLinkResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgIBCLinkResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -454,10 +800,10 @@ func (m *MsgCreateLinkResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateLinkResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIBCLinkResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateLinkResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIBCLinkResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
