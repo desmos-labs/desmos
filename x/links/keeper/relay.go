@@ -11,10 +11,10 @@ import (
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
-// TransmitIBCLinkPacket transmits the packet over IBC with the specified source port and source channel
-func (k Keeper) TransmitIBCLinkPacket(
+// TransmitIBCAccountConnectionPacket transmits the packet over IBC with the specified source port and source channel
+func (k Keeper) TransmitIBCAccountConnectionPacket(
 	ctx sdk.Context,
-	packetData types.IBCLinkPacketData,
+	packetData types.IBCAccountConnectionPacketData,
 	sourcePort,
 	sourceChannel string,
 	timeoutHeight clienttypes.Height,
@@ -66,8 +66,8 @@ func (k Keeper) TransmitIBCLinkPacket(
 	return nil
 }
 
-// OnRecvIBCLinkPacket processes packet reception
-func (k Keeper) OnRecvIBCLinkPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCLinkPacketData) (packetAck types.IBCLinkPacketData, err error) {
+// OnRecvIBCAccountConnectionPacket processes packet reception
+func (k Keeper) OnRecvIBCAccountConnectionPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCAccountConnectionPacketData) (packetAck types.IBCAccountConnectionPacketData, err error) {
 	// validate packet data upon receiving
 	if err := data.ValidateBasic(); err != nil {
 		return packetAck, err
@@ -78,9 +78,9 @@ func (k Keeper) OnRecvIBCLinkPacket(ctx sdk.Context, packet channeltypes.Packet,
 	return packetAck, nil
 }
 
-// OnAcknowledgementIBCLinkPacket responds to the the success or failure of a packet
+// OnAcknowledgementIBCAccountConnectionPacket responds to the the success or failure of a packet
 // acknowledgement written on the receiving chain.
-func (k Keeper) OnAcknowledgementIBCLinkPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCLinkPacketData, ack channeltypes.Acknowledgement) error {
+func (k Keeper) OnAcknowledgementIBCAccountConnectionPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCAccountConnectionPacketData, ack channeltypes.Acknowledgement) error {
 	switch dispatchedAck := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Error:
 
@@ -90,7 +90,7 @@ func (k Keeper) OnAcknowledgementIBCLinkPacket(ctx sdk.Context, packet channelty
 		return nil
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
-		var packetAck types.IBCLinkPacketData
+		var packetAck types.IBCAccountConnectionPacketData
 		err := packetAck.Unmarshal(dispatchedAck.Result)
 		if err != nil {
 			// The counter-party module doesn't implement the correct acknowledgment format
@@ -106,8 +106,8 @@ func (k Keeper) OnAcknowledgementIBCLinkPacket(ctx sdk.Context, packet channelty
 	}
 }
 
-// OnTimeoutIBCLinkPacket responds to the case where a packet has not been transmitted because of a timeout
-func (k Keeper) OnTimeoutIBCLinkPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCLinkPacketData) error {
+// OnTimeoutIBCAccountConnectionPacket responds to the case where a packet has not been transmitted because of a timeout
+func (k Keeper) OnTimeoutIBCAccountConnectionPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCAccountConnectionPacketData) error {
 
 	// TODO: packet timeout logic
 

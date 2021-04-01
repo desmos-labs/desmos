@@ -28,32 +28,31 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgIBCLink represents the message to be used to create a link.
-type MsgIBCLink struct {
-	Sender               string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	Port                 string `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
-	ChannelId            string `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	TimeoutTimestamp     uint64 `protobuf:"varint,4,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty"`
-	SourceChainPrefix    string `protobuf:"bytes,5,opt,name=source_chain_prefix,json=sourceChainPrefix,proto3" json:"source_chain_prefix,omitempty"`
-	SourceAddress        string `protobuf:"bytes,6,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
-	SourcePubkey         string `protobuf:"bytes,7,opt,name=source_pubkey,json=sourcePubkey,proto3" json:"source_pubkey,omitempty"`
-	DestinationAddress   string `protobuf:"bytes,8,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty"`
-	SourceSignature      string `protobuf:"bytes,9,opt,name=source_signature,json=sourceSignature,proto3" json:"source_signature,omitempty"`
-	DestinationSignature string `protobuf:"bytes,10,opt,name=destination_signature,json=destinationSignature,proto3" json:"destination_signature,omitempty"`
+// MsgIBCAccountConnection represents the message to be used to create a link.
+type MsgIBCAccountConnection struct {
+	Port                 string `protobuf:"bytes,1,opt,name=port,proto3" json:"port,omitempty"`
+	ChannelId            string `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	TimeoutTimestamp     uint64 `protobuf:"varint,3,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty"`
+	SourceChainPrefix    string `protobuf:"bytes,4,opt,name=source_chain_prefix,json=sourceChainPrefix,proto3" json:"source_chain_prefix,omitempty"`
+	SourceAddress        string `protobuf:"bytes,5,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
+	SourcePubkey         string `protobuf:"bytes,6,opt,name=source_pubkey,json=sourcePubkey,proto3" json:"source_pubkey,omitempty"`
+	DestinationAddress   string `protobuf:"bytes,7,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty"`
+	SourceSignature      string `protobuf:"bytes,8,opt,name=source_signature,json=sourceSignature,proto3" json:"source_signature,omitempty"`
+	DestinationSignature string `protobuf:"bytes,9,opt,name=destination_signature,json=destinationSignature,proto3" json:"destination_signature,omitempty"`
 }
 
-func (m *MsgIBCLink) Reset()         { *m = MsgIBCLink{} }
-func (m *MsgIBCLink) String() string { return proto.CompactTextString(m) }
-func (*MsgIBCLink) ProtoMessage()    {}
-func (*MsgIBCLink) Descriptor() ([]byte, []int) {
+func (m *MsgIBCAccountConnection) Reset()         { *m = MsgIBCAccountConnection{} }
+func (m *MsgIBCAccountConnection) String() string { return proto.CompactTextString(m) }
+func (*MsgIBCAccountConnection) ProtoMessage()    {}
+func (*MsgIBCAccountConnection) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{0}
 }
-func (m *MsgIBCLink) XXX_Unmarshal(b []byte) error {
+func (m *MsgIBCAccountConnection) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgIBCLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIBCAccountConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgIBCLink.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIBCAccountConnection.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -63,34 +62,34 @@ func (m *MsgIBCLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *MsgIBCLink) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgIBCLink.Merge(m, src)
+func (m *MsgIBCAccountConnection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIBCAccountConnection.Merge(m, src)
 }
-func (m *MsgIBCLink) XXX_Size() int {
+func (m *MsgIBCAccountConnection) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgIBCLink) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgIBCLink.DiscardUnknown(m)
+func (m *MsgIBCAccountConnection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIBCAccountConnection.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgIBCLink proto.InternalMessageInfo
+var xxx_messageInfo_MsgIBCAccountConnection proto.InternalMessageInfo
 
-// MsgIBCLinkResponse defines the Msg/CreatePost response type.
-type MsgIBCLinkResponse struct {
+// MsgIBCAccountConnectionResponse defines the Msg/CreatePost response type.
+type MsgIBCAccountConnectionResponse struct {
 }
 
-func (m *MsgIBCLinkResponse) Reset()         { *m = MsgIBCLinkResponse{} }
-func (m *MsgIBCLinkResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgIBCLinkResponse) ProtoMessage()    {}
-func (*MsgIBCLinkResponse) Descriptor() ([]byte, []int) {
+func (m *MsgIBCAccountConnectionResponse) Reset()         { *m = MsgIBCAccountConnectionResponse{} }
+func (m *MsgIBCAccountConnectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIBCAccountConnectionResponse) ProtoMessage()    {}
+func (*MsgIBCAccountConnectionResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{1}
 }
-func (m *MsgIBCLinkResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgIBCAccountConnectionResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgIBCLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIBCAccountConnectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgIBCLinkResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIBCAccountConnectionResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -100,54 +99,54 @@ func (m *MsgIBCLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *MsgIBCLinkResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgIBCLinkResponse.Merge(m, src)
+func (m *MsgIBCAccountConnectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIBCAccountConnectionResponse.Merge(m, src)
 }
-func (m *MsgIBCLinkResponse) XXX_Size() int {
+func (m *MsgIBCAccountConnectionResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgIBCLinkResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgIBCLinkResponse.DiscardUnknown(m)
+func (m *MsgIBCAccountConnectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIBCAccountConnectionResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgIBCLinkResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgIBCAccountConnectionResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgIBCLink)(nil), "desmos.links.v1beta1.MsgIBCLink")
-	proto.RegisterType((*MsgIBCLinkResponse)(nil), "desmos.links.v1beta1.MsgIBCLinkResponse")
+	proto.RegisterType((*MsgIBCAccountConnection)(nil), "desmos.links.v1beta1.MsgIBCAccountConnection")
+	proto.RegisterType((*MsgIBCAccountConnectionResponse)(nil), "desmos.links.v1beta1.MsgIBCAccountConnectionResponse")
 }
 
 func init() { proto.RegisterFile("desmos/links/v1beta1/msgs.proto", fileDescriptor_0aac42b2e94dabba) }
 
 var fileDescriptor_0aac42b2e94dabba = []byte{
-	// 424 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xbf, 0x6f, 0xd3, 0x40,
-	0x14, 0xc7, 0x6d, 0x12, 0xd2, 0xe6, 0x89, 0x1f, 0xed, 0xd5, 0xa0, 0x53, 0x25, 0x9c, 0xa8, 0x08,
-	0x29, 0xa8, 0xc2, 0x56, 0xe9, 0xc6, 0x46, 0x2b, 0x86, 0x4a, 0x54, 0xaa, 0x02, 0x2c, 0x08, 0xc9,
-	0x3a, 0xdb, 0x87, 0x73, 0x4a, 0x7c, 0x67, 0xf9, 0x9d, 0x51, 0xfb, 0x1f, 0x30, 0xb2, 0xb3, 0xf4,
-	0xcf, 0x61, 0xcc, 0xc8, 0x88, 0x92, 0x85, 0x3f, 0x03, 0xe5, 0xee, 0x9c, 0x64, 0x40, 0xea, 0xe4,
-	0xe7, 0xcf, 0xf7, 0x73, 0xdf, 0xe5, 0x3d, 0x18, 0xe4, 0x1c, 0x4b, 0x85, 0xf1, 0x4c, 0xc8, 0x29,
-	0xc6, 0xdf, 0x4e, 0x52, 0xae, 0xd9, 0x49, 0x5c, 0x62, 0x81, 0x51, 0x55, 0x2b, 0xad, 0x48, 0x60,
-	0x85, 0xc8, 0x08, 0x91, 0x13, 0x0e, 0x83, 0x42, 0x15, 0xca, 0x08, 0xf1, 0x6a, 0xb2, 0xee, 0xd1,
-	0xcf, 0x0e, 0xc0, 0x25, 0x16, 0x17, 0x67, 0xe7, 0xef, 0x85, 0x9c, 0x92, 0xa7, 0xd0, 0x43, 0x2e,
-	0x73, 0x5e, 0x53, 0x7f, 0xe8, 0x8f, 0xfa, 0x63, 0xf7, 0x47, 0x08, 0x74, 0x2b, 0x55, 0x6b, 0x7a,
-	0xcf, 0x50, 0x33, 0x93, 0x67, 0x00, 0xd9, 0x84, 0x49, 0xc9, 0x67, 0x89, 0xc8, 0x69, 0xc7, 0x24,
-	0x7d, 0x47, 0x2e, 0x72, 0x72, 0x0c, 0xfb, 0x5a, 0x94, 0x5c, 0x35, 0x3a, 0x59, 0x7d, 0x51, 0xb3,
-	0xb2, 0xa2, 0xdd, 0xa1, 0x3f, 0xea, 0x8e, 0xf7, 0x5c, 0xf0, 0xb1, 0xe5, 0x24, 0x82, 0x03, 0x54,
-	0x4d, 0x9d, 0xf1, 0x24, 0x9b, 0x30, 0x21, 0x93, 0xaa, 0xe6, 0x5f, 0xc5, 0x35, 0xbd, 0x6f, 0x4a,
-	0xf7, 0x6d, 0x74, 0xbe, 0x4a, 0xae, 0x4c, 0x40, 0x5e, 0xc0, 0x23, 0xe7, 0xb3, 0x3c, 0xaf, 0x39,
-	0x22, 0xed, 0x19, 0xf5, 0xa1, 0xa5, 0x6f, 0x2d, 0x24, 0xcf, 0xc1, 0x81, 0xa4, 0x6a, 0xd2, 0x29,
-	0xbf, 0xa1, 0x3b, 0xc6, 0x7a, 0x60, 0xe1, 0x95, 0x61, 0x24, 0x86, 0x83, 0x9c, 0xa3, 0x16, 0x92,
-	0x69, 0xa1, 0xe4, 0xba, 0x70, 0xd7, 0xa8, 0x64, 0x2b, 0x6a, 0x5b, 0x5f, 0xc2, 0x9e, 0x6b, 0x45,
-	0x51, 0x48, 0xa6, 0x9b, 0x9a, 0xd3, 0xbe, 0xb1, 0x1f, 0x5b, 0xfe, 0xa1, 0xc5, 0xe4, 0x14, 0x9e,
-	0x6c, 0x77, 0x6f, 0x7c, 0x30, 0x7e, 0xb0, 0x15, 0xae, 0x1f, 0xbd, 0xd9, 0xfd, 0x7e, 0x3b, 0xf0,
-	0xfe, 0xde, 0x0e, 0xbc, 0xa3, 0x00, 0xc8, 0x66, 0x39, 0x63, 0x8e, 0x95, 0x92, 0xc8, 0x5f, 0x7f,
-	0x81, 0xce, 0x25, 0x16, 0xe4, 0x13, 0xec, 0xb4, 0x6b, 0x1b, 0x46, 0xff, 0x5b, 0x79, 0xb4, 0x79,
-	0x7b, 0x38, 0xba, 0xcb, 0x68, 0xdb, 0xcf, 0xde, 0xfd, 0x5a, 0x84, 0xfe, 0x7c, 0x11, 0xfa, 0x7f,
-	0x16, 0xa1, 0xff, 0x63, 0x19, 0x7a, 0xf3, 0x65, 0xe8, 0xfd, 0x5e, 0x86, 0xde, 0xe7, 0xe3, 0x42,
-	0xe8, 0x49, 0x93, 0x46, 0x99, 0x2a, 0x63, 0xdb, 0xf6, 0x6a, 0xc6, 0x52, 0x74, 0x73, 0x7c, 0xed,
-	0x2e, 0x52, 0xdf, 0x54, 0x1c, 0xd3, 0x9e, 0xb9, 0xaf, 0xd3, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff,
-	0xac, 0x14, 0x8f, 0xaf, 0xae, 0x02, 0x00, 0x00,
+	// 426 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x3f, 0x6f, 0xd3, 0x40,
+	0x18, 0xc6, 0x6d, 0x12, 0x4a, 0x73, 0xe2, 0x4f, 0x7b, 0x35, 0xc2, 0xaa, 0x84, 0x5d, 0x8a, 0x90,
+	0x8a, 0xaa, 0xda, 0x2a, 0x15, 0x0b, 0x5b, 0x1b, 0x31, 0x64, 0x88, 0x14, 0x05, 0x26, 0x16, 0xeb,
+	0x6c, 0x1f, 0xce, 0x29, 0xf1, 0x9d, 0xe5, 0xf7, 0x8c, 0x12, 0x89, 0x8d, 0x85, 0x31, 0x1f, 0x21,
+	0x1f, 0x87, 0x31, 0x23, 0x23, 0x4a, 0x16, 0x3e, 0x06, 0xf2, 0xdd, 0x39, 0x64, 0x48, 0x86, 0x4e,
+	0x7e, 0xf5, 0x7b, 0x7e, 0x7e, 0x64, 0xeb, 0x7d, 0x91, 0x9f, 0x52, 0xc8, 0x05, 0x84, 0x13, 0xc6,
+	0xc7, 0x10, 0x7e, 0xbb, 0x8e, 0xa9, 0x24, 0xd7, 0x61, 0x0e, 0x19, 0x04, 0x45, 0x29, 0xa4, 0xc0,
+	0x8e, 0x16, 0x02, 0x25, 0x04, 0x46, 0x38, 0x75, 0x32, 0x91, 0x09, 0x25, 0x84, 0xf5, 0xa4, 0xdd,
+	0xf3, 0x79, 0x0b, 0xbd, 0xe8, 0x43, 0xd6, 0xbb, 0xeb, 0xde, 0x26, 0x89, 0xa8, 0xb8, 0xec, 0x0a,
+	0xce, 0x69, 0x22, 0x99, 0xe0, 0x18, 0xa3, 0x76, 0x21, 0x4a, 0xe9, 0xda, 0x67, 0xf6, 0x45, 0x67,
+	0xa8, 0x66, 0xfc, 0x12, 0xa1, 0x64, 0x44, 0x38, 0xa7, 0x93, 0x88, 0xa5, 0xee, 0x03, 0x95, 0x74,
+	0x0c, 0xe9, 0xa5, 0xf8, 0x12, 0x1d, 0x4b, 0x96, 0x53, 0x51, 0xc9, 0xa8, 0x7e, 0x82, 0x24, 0x79,
+	0xe1, 0xb6, 0xce, 0xec, 0x8b, 0xf6, 0xf0, 0xc8, 0x04, 0x9f, 0x1b, 0x8e, 0x03, 0x74, 0x02, 0xa2,
+	0x2a, 0x13, 0x1a, 0x25, 0x23, 0xc2, 0x78, 0x54, 0x94, 0xf4, 0x2b, 0x9b, 0xba, 0x6d, 0x55, 0x7a,
+	0xac, 0xa3, 0x6e, 0x9d, 0x0c, 0x54, 0x80, 0xdf, 0xa0, 0xa7, 0xc6, 0x27, 0x69, 0x5a, 0x52, 0x00,
+	0xf7, 0xa1, 0x52, 0x9f, 0x68, 0x7a, 0xab, 0x21, 0x7e, 0x8d, 0x0c, 0x88, 0x8a, 0x2a, 0x1e, 0xd3,
+	0x99, 0x7b, 0xa0, 0xac, 0xc7, 0x1a, 0x0e, 0x14, 0xc3, 0x21, 0x3a, 0x49, 0x29, 0x48, 0xc6, 0x49,
+	0xfd, 0xab, 0x9b, 0xc2, 0x47, 0x4a, 0xc5, 0x5b, 0x51, 0xd3, 0xfa, 0x16, 0x1d, 0x99, 0x56, 0x60,
+	0x19, 0x27, 0xb2, 0x2a, 0xa9, 0x7b, 0xa8, 0xec, 0x67, 0x9a, 0x7f, 0x6a, 0x30, 0xbe, 0x41, 0xcf,
+	0xb7, 0xbb, 0xff, 0xfb, 0x1d, 0xe5, 0x3b, 0x5b, 0xe1, 0xe6, 0xa5, 0x0f, 0x87, 0x3f, 0x17, 0xbe,
+	0xf5, 0x77, 0xe1, 0x5b, 0xe7, 0xaf, 0x90, 0xbf, 0x67, 0x23, 0x43, 0x0a, 0x85, 0xe0, 0x40, 0xdf,
+	0xfd, 0xb0, 0x51, 0xab, 0x0f, 0x19, 0xfe, 0x8e, 0x9c, 0x9d, 0x9b, 0xbb, 0x0a, 0x76, 0x9d, 0x40,
+	0xb0, 0xa7, 0xf6, 0xf4, 0xfd, 0xbd, 0xf4, 0xe6, 0x2b, 0xee, 0x3e, 0xfe, 0x5a, 0x79, 0xf6, 0x72,
+	0xe5, 0xd9, 0x7f, 0x56, 0x9e, 0x3d, 0x5f, 0x7b, 0xd6, 0x72, 0xed, 0x59, 0xbf, 0xd7, 0x9e, 0xf5,
+	0xe5, 0x32, 0x63, 0x72, 0x54, 0xc5, 0x41, 0x22, 0xf2, 0x50, 0x57, 0x5f, 0x4d, 0x48, 0x0c, 0x66,
+	0x0e, 0xa7, 0xe6, 0x76, 0xe5, 0xac, 0xa0, 0x10, 0x1f, 0xa8, 0x4b, 0xbc, 0xf9, 0x17, 0x00, 0x00,
+	0xff, 0xff, 0xbf, 0xa7, 0xb0, 0xf3, 0xd8, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -162,8 +161,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// IBCLink defines the method to create a post
-	IBCLink(ctx context.Context, in *MsgIBCLink, opts ...grpc.CallOption) (*MsgIBCLinkResponse, error)
+	// IBCAccountConnection defines the method to create a post
+	IBCAccountConnection(ctx context.Context, in *MsgIBCAccountConnection, opts ...grpc.CallOption) (*MsgIBCAccountConnectionResponse, error)
 }
 
 type msgClient struct {
@@ -174,9 +173,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) IBCLink(ctx context.Context, in *MsgIBCLink, opts ...grpc.CallOption) (*MsgIBCLinkResponse, error) {
-	out := new(MsgIBCLinkResponse)
-	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/IBCLink", in, out, opts...)
+func (c *msgClient) IBCAccountConnection(ctx context.Context, in *MsgIBCAccountConnection, opts ...grpc.CallOption) (*MsgIBCAccountConnectionResponse, error) {
+	out := new(MsgIBCAccountConnectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/IBCAccountConnection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,36 +184,36 @@ func (c *msgClient) IBCLink(ctx context.Context, in *MsgIBCLink, opts ...grpc.Ca
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// IBCLink defines the method to create a post
-	IBCLink(context.Context, *MsgIBCLink) (*MsgIBCLinkResponse, error)
+	// IBCAccountConnection defines the method to create a post
+	IBCAccountConnection(context.Context, *MsgIBCAccountConnection) (*MsgIBCAccountConnectionResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) IBCLink(ctx context.Context, req *MsgIBCLink) (*MsgIBCLinkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IBCLink not implemented")
+func (*UnimplementedMsgServer) IBCAccountConnection(ctx context.Context, req *MsgIBCAccountConnection) (*MsgIBCAccountConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IBCAccountConnection not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_IBCLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgIBCLink)
+func _Msg_IBCAccountConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIBCAccountConnection)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).IBCLink(ctx, in)
+		return srv.(MsgServer).IBCAccountConnection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.links.v1beta1.Msg/IBCLink",
+		FullMethod: "/desmos.links.v1beta1.Msg/IBCAccountConnection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).IBCLink(ctx, req.(*MsgIBCLink))
+		return srv.(MsgServer).IBCAccountConnection(ctx, req.(*MsgIBCAccountConnection))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -224,15 +223,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "IBCLink",
-			Handler:    _Msg_IBCLink_Handler,
+			MethodName: "IBCAccountConnection",
+			Handler:    _Msg_IBCAccountConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/links/v1beta1/msgs.proto",
 }
 
-func (m *MsgIBCLink) Marshal() (dAtA []byte, err error) {
+func (m *MsgIBCAccountConnection) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -242,12 +241,12 @@ func (m *MsgIBCLink) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgIBCLink) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIBCAccountConnection) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgIBCLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIBCAccountConnection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -257,73 +256,66 @@ func (m *MsgIBCLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.DestinationSignature)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.DestinationSignature)))
 		i--
-		dAtA[i] = 0x52
+		dAtA[i] = 0x4a
 	}
 	if len(m.SourceSignature) > 0 {
 		i -= len(m.SourceSignature)
 		copy(dAtA[i:], m.SourceSignature)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceSignature)))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x42
 	}
 	if len(m.DestinationAddress) > 0 {
 		i -= len(m.DestinationAddress)
 		copy(dAtA[i:], m.DestinationAddress)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.DestinationAddress)))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x3a
 	}
 	if len(m.SourcePubkey) > 0 {
 		i -= len(m.SourcePubkey)
 		copy(dAtA[i:], m.SourcePubkey)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourcePubkey)))
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x32
 	}
 	if len(m.SourceAddress) > 0 {
 		i -= len(m.SourceAddress)
 		copy(dAtA[i:], m.SourceAddress)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceAddress)))
 		i--
-		dAtA[i] = 0x32
+		dAtA[i] = 0x2a
 	}
 	if len(m.SourceChainPrefix) > 0 {
 		i -= len(m.SourceChainPrefix)
 		copy(dAtA[i:], m.SourceChainPrefix)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SourceChainPrefix)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x22
 	}
 	if m.TimeoutTimestamp != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.TimeoutTimestamp))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x18
 	}
 	if len(m.ChannelId) > 0 {
 		i -= len(m.ChannelId)
 		copy(dAtA[i:], m.ChannelId)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.ChannelId)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.Port) > 0 {
 		i -= len(m.Port)
 		copy(dAtA[i:], m.Port)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Port)))
 		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sender) > 0 {
-		i -= len(m.Sender)
-		copy(dAtA[i:], m.Sender)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Sender)))
-		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgIBCLinkResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgIBCAccountConnectionResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -333,12 +325,12 @@ func (m *MsgIBCLinkResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgIBCLinkResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIBCAccountConnectionResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgIBCLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIBCAccountConnectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -357,16 +349,12 @@ func encodeVarintMsgs(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgIBCLink) Size() (n int) {
+func (m *MsgIBCAccountConnection) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Sender)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
-	}
 	l = len(m.Port)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
@@ -405,7 +393,7 @@ func (m *MsgIBCLink) Size() (n int) {
 	return n
 }
 
-func (m *MsgIBCLinkResponse) Size() (n int) {
+func (m *MsgIBCAccountConnectionResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -420,7 +408,7 @@ func sovMsgs(x uint64) (n int) {
 func sozMsgs(x uint64) (n int) {
 	return sovMsgs(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
+func (m *MsgIBCAccountConnection) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -443,45 +431,13 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgIBCLink: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIBCAccountConnection: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgIBCLink: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIBCAccountConnection: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sender = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
 			}
@@ -513,7 +469,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.Port = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
 			}
@@ -545,7 +501,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.ChannelId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutTimestamp", wireType)
 			}
@@ -564,7 +520,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 5:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourceChainPrefix", wireType)
 			}
@@ -596,7 +552,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.SourceChainPrefix = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourceAddress", wireType)
 			}
@@ -628,7 +584,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.SourceAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 7:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourcePubkey", wireType)
 			}
@@ -660,7 +616,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.SourcePubkey = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 8:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DestinationAddress", wireType)
 			}
@@ -692,7 +648,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.DestinationAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 9:
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourceSignature", wireType)
 			}
@@ -724,7 +680,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 			}
 			m.SourceSignature = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 10:
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DestinationSignature", wireType)
 			}
@@ -777,7 +733,7 @@ func (m *MsgIBCLink) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgIBCLinkResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgIBCAccountConnectionResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -800,10 +756,10 @@ func (m *MsgIBCLinkResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgIBCLinkResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIBCAccountConnectionResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgIBCLinkResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIBCAccountConnectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

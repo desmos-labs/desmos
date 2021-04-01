@@ -20,11 +20,11 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-func (k msgServer) IBCLink(goCtx context.Context, msg *types.MsgIBCLink) (*types.MsgIBCLinkResponse, error) {
+func (k msgServer) IBCAccountConnection(goCtx context.Context, msg *types.MsgIBCAccountConnection) (*types.MsgIBCAccountConnectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Construct the packet
-	var packet types.IBCLinkPacketData
+	var packet types.IBCAccountConnectionPacketData
 
 	packet.SourceChainPrefix = msg.SourceChainPrefix
 	packet.SourceAddress = msg.SourceAddress
@@ -34,7 +34,7 @@ func (k msgServer) IBCLink(goCtx context.Context, msg *types.MsgIBCLink) (*types
 	packet.DestinationSignature = msg.DestinationSignature
 
 	// Transmit the packet
-	err := k.TransmitIBCLinkPacket(
+	err := k.TransmitIBCAccountConnectionPacket(
 		ctx,
 		packet,
 		msg.Port,
@@ -46,5 +46,5 @@ func (k msgServer) IBCLink(goCtx context.Context, msg *types.MsgIBCLink) (*types
 		return nil, err
 	}
 
-	return &types.MsgIBCLinkResponse{}, nil
+	return &types.MsgIBCAccountConnectionResponse{}, nil
 }

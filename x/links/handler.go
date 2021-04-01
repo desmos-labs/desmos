@@ -15,8 +15,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgIBCLink:
-			// TODO: handle MsgIBCLink tx
+		case *types.MsgIBCAccountConnection:
+			// TODO: handle MsgIBCAccountConnection tx
 			return nil, nil
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)

@@ -5,7 +5,7 @@ const (
 	StoreKey   = ModuleName
 	RouterKey  = ModuleName
 
-	ActionIBCLink = "ibc_link"
+	ActionIBCAccountConnection = "ibc_account_connection"
 
 	// Queries
 	QuerierRoute = ModuleName
@@ -20,6 +20,8 @@ const (
 var (
 	// PortKey defines the key to store the port ID in store
 	PortKey = KeyPrefix("links-port-")
+
+	LinksStorePrefix = []byte("link")
 )
 
 func KeyPrefix(p string) []byte {

@@ -1,7 +1,7 @@
 package types
 
 // ValidateBasic is used for validating the packet
-func (p IBCLinkPacketData) ValidateBasic() error {
+func (p IBCAccountConnectionPacketData) ValidateBasic() error {
 
 	// TODO: Validate the packet data
 
@@ -9,10 +9,10 @@ func (p IBCLinkPacketData) ValidateBasic() error {
 }
 
 // GetBytes is a helper for serialising
-func (p IBCLinkPacketData) GetBytes() ([]byte, error) {
+func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
 	var modulePacket LinksPacketData
 
-	modulePacket.Packet = &LinksPacketData_IbcLinkPacket{&p}
+	modulePacket.Packet = &LinksPacketData_IbcAccountConnectionPacket{&p}
 
 	return modulePacket.Marshal()
 }

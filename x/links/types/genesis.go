@@ -9,12 +9,17 @@ import (
 // DefaultIndex is the default capability global index
 const DefaultIndex uint64 = 1
 
-// DefaultGenesis returns the default Capability genesis state
-func DefaultGenesis() *GenesisState {
+// NewGenesisState creates a new genesis state
+func NewGenesisState(portId string, links []Link) *GenesisState {
 	return &GenesisState{
-		PortId: PortID,
-		Links:  []*Link{},
+		PortId: portId,
+		Links:  links,
 	}
+}
+
+// DefaultGenesis returns the default Capability genesis state
+func DefaultGenesisState() *GenesisState {
+	return NewGenesisState(PortID, nil)
 }
 
 // Validate performs basic genesis state validation returning an error upon any

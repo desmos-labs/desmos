@@ -8,12 +8,12 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(MsgIBCLink{}, "desmos/MsgIBCLink", nil)
+	cdc.RegisterConcrete(MsgIBCAccountConnection{}, "desmos/MsgIBCAccountConnection", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgIBCLink{},
+		&MsgIBCAccountConnection{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

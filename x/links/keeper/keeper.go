@@ -11,16 +11,15 @@ import (
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
-type (
-	Keeper struct {
-		cdc           codec.Marshaler
-		storeKey      sdk.StoreKey
-		memKey        sdk.StoreKey
-		channelKeeper types.ChannelKeeper
-		portKeeper    types.PortKeeper
-		scopedKeeper  capabilitykeeper.ScopedKeeper
-	}
-)
+type Keeper struct {
+	cdc      codec.Marshaler
+	storeKey sdk.StoreKey
+	memKey   sdk.StoreKey
+
+	channelKeeper types.ChannelKeeper
+	portKeeper    types.PortKeeper
+	scopedKeeper  capabilitykeeper.ScopedKeeper
+}
 
 func NewKeeper(
 	cdc codec.Marshaler,
@@ -29,8 +28,8 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper capabilitykeeper.ScopedKeeper,
-) *Keeper {
-	return &Keeper{
+) Keeper {
+	return Keeper{
 		cdc:           cdc,
 		storeKey:      storeKey,
 		memKey:        memKey,
@@ -38,6 +37,21 @@ func NewKeeper(
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
 	}
+}
+
+func (k Keeper) GetLinks(ctx sdk.Context) []types.Link {
+	var links []types.Link
+
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.LinksStorePrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var link types.Link
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &link)
+		links = append(links, link)
+	}
+	return links
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

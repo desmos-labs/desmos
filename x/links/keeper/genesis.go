@@ -24,9 +24,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 
 // ExportGenesis returns the capability module's exported genesis.
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	genesis := types.DefaultGenesis()
-
-	genesis.PortId = k.GetPort(ctx)
+	genesis := types.NewGenesisState(
+		k.GetPort(ctx),
+		k.GetLinks(ctx),
+	)
 
 	return genesis
 }

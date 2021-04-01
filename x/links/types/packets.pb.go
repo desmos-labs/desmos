@@ -28,7 +28,7 @@ type LinksPacketData struct {
 	//
 	// Types that are valid to be assigned to Packet:
 	//	*LinksPacketData_NoData
-	//	*LinksPacketData_IbcLinkPacket
+	//	*LinksPacketData_IbcAccountConnectionPacket
 	Packet isLinksPacketData_Packet `protobuf_oneof:"packet"`
 }
 
@@ -74,12 +74,12 @@ type isLinksPacketData_Packet interface {
 type LinksPacketData_NoData struct {
 	NoData *NoData `protobuf:"bytes,1,opt,name=no_data,json=noData,proto3,oneof" json:"no_data,omitempty"`
 }
-type LinksPacketData_IbcLinkPacket struct {
-	IbcLinkPacket *IBCLinkPacketData `protobuf:"bytes,2,opt,name=ibc_link_packet,json=ibcLinkPacket,proto3,oneof" json:"ibc_link_packet,omitempty"`
+type LinksPacketData_IbcAccountConnectionPacket struct {
+	IbcAccountConnectionPacket *IBCAccountConnectionPacketData `protobuf:"bytes,2,opt,name=ibc_account_connection_packet,json=ibcAccountConnectionPacket,proto3,oneof" json:"ibc_account_connection_packet,omitempty"`
 }
 
-func (*LinksPacketData_NoData) isLinksPacketData_Packet()        {}
-func (*LinksPacketData_IbcLinkPacket) isLinksPacketData_Packet() {}
+func (*LinksPacketData_NoData) isLinksPacketData_Packet()                     {}
+func (*LinksPacketData_IbcAccountConnectionPacket) isLinksPacketData_Packet() {}
 
 func (m *LinksPacketData) GetPacket() isLinksPacketData_Packet {
 	if m != nil {
@@ -95,9 +95,9 @@ func (m *LinksPacketData) GetNoData() *NoData {
 	return nil
 }
 
-func (m *LinksPacketData) GetIbcLinkPacket() *IBCLinkPacketData {
-	if x, ok := m.GetPacket().(*LinksPacketData_IbcLinkPacket); ok {
-		return x.IbcLinkPacket
+func (m *LinksPacketData) GetIbcAccountConnectionPacket() *IBCAccountConnectionPacketData {
+	if x, ok := m.GetPacket().(*LinksPacketData_IbcAccountConnectionPacket); ok {
+		return x.IbcAccountConnectionPacket
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func (m *LinksPacketData) GetIbcLinkPacket() *IBCLinkPacketData {
 func (*LinksPacketData) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
 		(*LinksPacketData_NoData)(nil),
-		(*LinksPacketData_IbcLinkPacket)(nil),
+		(*LinksPacketData_IbcAccountConnectionPacket)(nil),
 	}
 }
 
@@ -147,8 +147,8 @@ func (m *NoData) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_NoData proto.InternalMessageInfo
 
-// IBCLinkPacketData defines a struct for the packet payload
-type IBCLinkPacketData struct {
+// IBCAccountConnectionPacketData defines a struct for the packet payload
+type IBCAccountConnectionPacketData struct {
 	SourceChainPrefix    string `protobuf:"bytes,1,opt,name=source_chain_prefix,json=sourceChainPrefix,proto3" json:"source_chain_prefix,omitempty"`
 	SourceAddress        string `protobuf:"bytes,2,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
 	SourcePubkey         string `protobuf:"bytes,3,opt,name=source_pubkey,json=sourcePubkey,proto3" json:"source_pubkey,omitempty"`
@@ -157,18 +157,18 @@ type IBCLinkPacketData struct {
 	DestinationSignature string `protobuf:"bytes,6,opt,name=destination_signature,json=destinationSignature,proto3" json:"destination_signature,omitempty"`
 }
 
-func (m *IBCLinkPacketData) Reset()         { *m = IBCLinkPacketData{} }
-func (m *IBCLinkPacketData) String() string { return proto.CompactTextString(m) }
-func (*IBCLinkPacketData) ProtoMessage()    {}
-func (*IBCLinkPacketData) Descriptor() ([]byte, []int) {
+func (m *IBCAccountConnectionPacketData) Reset()         { *m = IBCAccountConnectionPacketData{} }
+func (m *IBCAccountConnectionPacketData) String() string { return proto.CompactTextString(m) }
+func (*IBCAccountConnectionPacketData) ProtoMessage()    {}
+func (*IBCAccountConnectionPacketData) Descriptor() ([]byte, []int) {
 	return fileDescriptor_70e1574985ba68b0, []int{2}
 }
-func (m *IBCLinkPacketData) XXX_Unmarshal(b []byte) error {
+func (m *IBCAccountConnectionPacketData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *IBCLinkPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *IBCAccountConnectionPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_IBCLinkPacketData.Marshal(b, m, deterministic)
+		return xxx_messageInfo_IBCAccountConnectionPacketData.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -178,77 +178,77 @@ func (m *IBCLinkPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *IBCLinkPacketData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IBCLinkPacketData.Merge(m, src)
+func (m *IBCAccountConnectionPacketData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IBCAccountConnectionPacketData.Merge(m, src)
 }
-func (m *IBCLinkPacketData) XXX_Size() int {
+func (m *IBCAccountConnectionPacketData) XXX_Size() int {
 	return m.Size()
 }
-func (m *IBCLinkPacketData) XXX_DiscardUnknown() {
-	xxx_messageInfo_IBCLinkPacketData.DiscardUnknown(m)
+func (m *IBCAccountConnectionPacketData) XXX_DiscardUnknown() {
+	xxx_messageInfo_IBCAccountConnectionPacketData.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_IBCLinkPacketData proto.InternalMessageInfo
+var xxx_messageInfo_IBCAccountConnectionPacketData proto.InternalMessageInfo
 
-func (m *IBCLinkPacketData) GetSourceChainPrefix() string {
+func (m *IBCAccountConnectionPacketData) GetSourceChainPrefix() string {
 	if m != nil {
 		return m.SourceChainPrefix
 	}
 	return ""
 }
 
-func (m *IBCLinkPacketData) GetSourceAddress() string {
+func (m *IBCAccountConnectionPacketData) GetSourceAddress() string {
 	if m != nil {
 		return m.SourceAddress
 	}
 	return ""
 }
 
-func (m *IBCLinkPacketData) GetSourcePubkey() string {
+func (m *IBCAccountConnectionPacketData) GetSourcePubkey() string {
 	if m != nil {
 		return m.SourcePubkey
 	}
 	return ""
 }
 
-func (m *IBCLinkPacketData) GetDestinationAddress() string {
+func (m *IBCAccountConnectionPacketData) GetDestinationAddress() string {
 	if m != nil {
 		return m.DestinationAddress
 	}
 	return ""
 }
 
-func (m *IBCLinkPacketData) GetSourceSignature() string {
+func (m *IBCAccountConnectionPacketData) GetSourceSignature() string {
 	if m != nil {
 		return m.SourceSignature
 	}
 	return ""
 }
 
-func (m *IBCLinkPacketData) GetDestinationSignature() string {
+func (m *IBCAccountConnectionPacketData) GetDestinationSignature() string {
 	if m != nil {
 		return m.DestinationSignature
 	}
 	return ""
 }
 
-// IBCLinkPacketAck defines a struct for the packet acknowledgment
-type IBCLinkPacketAck struct {
+// IBCAccountConnectionPacketAck defines a struct for the packet acknowledgment
+type IBCAccountConnectionPacketAck struct {
 	SourceAddress string `protobuf:"bytes,1,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
 }
 
-func (m *IBCLinkPacketAck) Reset()         { *m = IBCLinkPacketAck{} }
-func (m *IBCLinkPacketAck) String() string { return proto.CompactTextString(m) }
-func (*IBCLinkPacketAck) ProtoMessage()    {}
-func (*IBCLinkPacketAck) Descriptor() ([]byte, []int) {
+func (m *IBCAccountConnectionPacketAck) Reset()         { *m = IBCAccountConnectionPacketAck{} }
+func (m *IBCAccountConnectionPacketAck) String() string { return proto.CompactTextString(m) }
+func (*IBCAccountConnectionPacketAck) ProtoMessage()    {}
+func (*IBCAccountConnectionPacketAck) Descriptor() ([]byte, []int) {
 	return fileDescriptor_70e1574985ba68b0, []int{3}
 }
-func (m *IBCLinkPacketAck) XXX_Unmarshal(b []byte) error {
+func (m *IBCAccountConnectionPacketAck) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *IBCLinkPacketAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *IBCAccountConnectionPacketAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_IBCLinkPacketAck.Marshal(b, m, deterministic)
+		return xxx_messageInfo_IBCAccountConnectionPacketAck.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -258,19 +258,19 @@ func (m *IBCLinkPacketAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *IBCLinkPacketAck) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IBCLinkPacketAck.Merge(m, src)
+func (m *IBCAccountConnectionPacketAck) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IBCAccountConnectionPacketAck.Merge(m, src)
 }
-func (m *IBCLinkPacketAck) XXX_Size() int {
+func (m *IBCAccountConnectionPacketAck) XXX_Size() int {
 	return m.Size()
 }
-func (m *IBCLinkPacketAck) XXX_DiscardUnknown() {
-	xxx_messageInfo_IBCLinkPacketAck.DiscardUnknown(m)
+func (m *IBCAccountConnectionPacketAck) XXX_DiscardUnknown() {
+	xxx_messageInfo_IBCAccountConnectionPacketAck.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_IBCLinkPacketAck proto.InternalMessageInfo
+var xxx_messageInfo_IBCAccountConnectionPacketAck proto.InternalMessageInfo
 
-func (m *IBCLinkPacketAck) GetSourceAddress() string {
+func (m *IBCAccountConnectionPacketAck) GetSourceAddress() string {
 	if m != nil {
 		return m.SourceAddress
 	}
@@ -280,8 +280,8 @@ func (m *IBCLinkPacketAck) GetSourceAddress() string {
 func init() {
 	proto.RegisterType((*LinksPacketData)(nil), "desmos.links.v1beta1.LinksPacketData")
 	proto.RegisterType((*NoData)(nil), "desmos.links.v1beta1.NoData")
-	proto.RegisterType((*IBCLinkPacketData)(nil), "desmos.links.v1beta1.IBCLinkPacketData")
-	proto.RegisterType((*IBCLinkPacketAck)(nil), "desmos.links.v1beta1.IBCLinkPacketAck")
+	proto.RegisterType((*IBCAccountConnectionPacketData)(nil), "desmos.links.v1beta1.IBCAccountConnectionPacketData")
+	proto.RegisterType((*IBCAccountConnectionPacketAck)(nil), "desmos.links.v1beta1.IBCAccountConnectionPacketAck")
 }
 
 func init() {
@@ -289,32 +289,33 @@ func init() {
 }
 
 var fileDescriptor_70e1574985ba68b0 = []byte{
-	// 393 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0x4f, 0x4f, 0xe2, 0x40,
-	0x18, 0x87, 0x5b, 0x76, 0xb7, 0x0b, 0xb3, 0xcb, 0x02, 0x03, 0x9b, 0xf4, 0xb0, 0x69, 0x36, 0x35,
-	0x46, 0x8d, 0xb1, 0x0d, 0x72, 0x30, 0x1e, 0x01, 0x4d, 0x30, 0x31, 0x06, 0xeb, 0xcd, 0x4b, 0x33,
-	0x6d, 0x47, 0x98, 0x14, 0x3a, 0x4d, 0x67, 0x6a, 0xe0, 0x5b, 0xf8, 0x11, 0xbc, 0xf9, 0x55, 0x3c,
-	0x72, 0xf4, 0x68, 0xe0, 0x8b, 0x98, 0xce, 0x94, 0x3f, 0xc6, 0xde, 0x26, 0xcf, 0xfb, 0xbc, 0xbf,
-	0xb7, 0x6f, 0x67, 0x80, 0x19, 0x60, 0x36, 0xa5, 0xcc, 0x9e, 0x90, 0x28, 0x64, 0xf6, 0x63, 0xdb,
-	0xc3, 0x1c, 0xb5, 0xed, 0x18, 0xf9, 0x21, 0xe6, 0xcc, 0x8a, 0x13, 0xca, 0x29, 0x6c, 0x49, 0xc7,
-	0x12, 0x8e, 0x95, 0x3b, 0xe6, 0x8b, 0x0a, 0x6a, 0xd7, 0x19, 0x19, 0x0a, 0xf9, 0x02, 0x71, 0x04,
-	0xcf, 0xc0, 0xcf, 0x88, 0xba, 0x01, 0xe2, 0x48, 0x57, 0xff, 0xab, 0x87, 0xbf, 0x4e, 0xff, 0x59,
-	0x45, 0xbd, 0xd6, 0x0d, 0xcd, 0xf4, 0x81, 0xe2, 0x68, 0x91, 0x38, 0xc1, 0x5b, 0x50, 0x23, 0x9e,
-	0xef, 0x66, 0x96, 0x2b, 0x87, 0xeb, 0x25, 0x11, 0x70, 0x50, 0x1c, 0x70, 0xd5, 0xeb, 0x67, 0xb3,
-	0xb7, 0xa3, 0x07, 0x8a, 0x53, 0x25, 0x9e, 0xbf, 0x85, 0xbd, 0x32, 0xd0, 0x64, 0x92, 0x59, 0x06,
-	0x9a, 0x1c, 0x68, 0x3e, 0x97, 0x40, 0xe3, 0x4b, 0x2b, 0xb4, 0x40, 0x93, 0xd1, 0x34, 0xf1, 0xb1,
-	0xeb, 0x8f, 0x11, 0x89, 0xdc, 0x38, 0xc1, 0x0f, 0x64, 0x26, 0x36, 0xa8, 0x38, 0x0d, 0x59, 0xea,
-	0x67, 0x95, 0xa1, 0x28, 0xc0, 0x7d, 0xf0, 0x27, 0xf7, 0x51, 0x10, 0x24, 0x98, 0x31, 0xf1, 0xad,
-	0x15, 0xa7, 0x2a, 0x69, 0x57, 0x42, 0xb8, 0x07, 0x72, 0xe0, 0xc6, 0xa9, 0x17, 0xe2, 0xb9, 0xfe,
-	0x4d, 0x58, 0xbf, 0x25, 0x1c, 0x0a, 0x06, 0x6d, 0xd0, 0x0c, 0x30, 0xe3, 0x24, 0x42, 0x9c, 0xd0,
-	0x68, 0x13, 0xf8, 0x5d, 0xa8, 0x70, 0xa7, 0xb4, 0x4e, 0x3d, 0x02, 0xf5, 0x3c, 0x95, 0x91, 0x51,
-	0x84, 0x78, 0x9a, 0x60, 0xfd, 0x87, 0xb0, 0x6b, 0x92, 0xdf, 0xad, 0x31, 0xec, 0x80, 0xbf, 0xbb,
-	0xd9, 0x5b, 0x5f, 0x13, 0x7e, 0x6b, 0xa7, 0xb8, 0x69, 0x32, 0xcf, 0x41, 0xfd, 0xd3, 0x1f, 0xea,
-	0xfa, 0x61, 0xc1, 0xc2, 0x6a, 0xc1, 0xc2, 0xbd, 0xcb, 0xd7, 0xa5, 0xa1, 0x2e, 0x96, 0x86, 0xfa,
-	0xbe, 0x34, 0xd4, 0xa7, 0x95, 0xa1, 0x2c, 0x56, 0x86, 0xf2, 0xb6, 0x32, 0x94, 0xfb, 0xe3, 0x11,
-	0xe1, 0xe3, 0xd4, 0xb3, 0x7c, 0x3a, 0xb5, 0xe5, 0x7d, 0x9e, 0x4c, 0x90, 0xc7, 0xf2, 0xb3, 0x3d,
-	0xcb, 0x9f, 0x1f, 0x9f, 0xc7, 0x98, 0x79, 0x9a, 0x78, 0x75, 0x9d, 0x8f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x3c, 0x50, 0xe1, 0x0b, 0x9b, 0x02, 0x00, 0x00,
+	// 407 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xdf, 0x6a, 0xdb, 0x30,
+	0x14, 0xc6, 0xed, 0x6c, 0xf3, 0x12, 0xed, 0x4f, 0x36, 0x25, 0x03, 0x33, 0x16, 0x33, 0x3c, 0x06,
+	0x1b, 0x63, 0x36, 0x59, 0x06, 0xbd, 0x4e, 0xd2, 0x96, 0x14, 0x4a, 0x09, 0xee, 0x5d, 0x6f, 0x8c,
+	0x2c, 0xab, 0x89, 0x70, 0x22, 0x19, 0x4b, 0x2e, 0xc9, 0x5b, 0xf4, 0x45, 0xfa, 0x1e, 0xbd, 0x6b,
+	0x2e, 0x7b, 0x59, 0x92, 0x17, 0x29, 0x91, 0x9c, 0x3f, 0x17, 0x4e, 0xef, 0xc4, 0xf7, 0xfd, 0xce,
+	0xa7, 0x73, 0x0e, 0x07, 0xb8, 0x31, 0x11, 0x53, 0x2e, 0xfc, 0x09, 0x65, 0x89, 0xf0, 0x6f, 0xda,
+	0x11, 0x91, 0xa8, 0xed, 0xa7, 0x08, 0x27, 0x44, 0x0a, 0x2f, 0xcd, 0xb8, 0xe4, 0xb0, 0xa9, 0x19,
+	0x4f, 0x31, 0x5e, 0xc1, 0xb8, 0x0f, 0x26, 0xa8, 0x9f, 0xaf, 0x95, 0xa1, 0x82, 0x8f, 0x91, 0x44,
+	0xf0, 0x08, 0xbc, 0x65, 0x3c, 0x8c, 0x91, 0x44, 0xb6, 0xf9, 0xdd, 0xfc, 0xf5, 0xee, 0xdf, 0x37,
+	0xaf, 0xac, 0xd6, 0xbb, 0xe0, 0x6b, 0x7c, 0x60, 0x04, 0x16, 0x53, 0x2f, 0x38, 0x07, 0x2d, 0x1a,
+	0xe1, 0x10, 0x61, 0xcc, 0x73, 0x26, 0x43, 0xcc, 0x19, 0x23, 0x58, 0x52, 0xce, 0x42, 0xdd, 0x8a,
+	0x5d, 0x51, 0x71, 0xff, 0xcb, 0xe3, 0xce, 0x7a, 0xfd, 0xae, 0xae, 0xec, 0x6f, 0x0b, 0x77, 0x5d,
+	0x0d, 0x8c, 0xe0, 0x2b, 0x8d, 0xf0, 0x01, 0xa2, 0x57, 0x05, 0x96, 0xfe, 0xc3, 0xad, 0x02, 0x4b,
+	0x37, 0xe6, 0xde, 0x55, 0x80, 0xf3, 0x72, 0x28, 0xf4, 0x40, 0x43, 0xf0, 0x3c, 0xc3, 0x24, 0xc4,
+	0x63, 0x44, 0x59, 0x98, 0x66, 0xe4, 0x9a, 0xce, 0xd4, 0xd8, 0xb5, 0xe0, 0xb3, 0xb6, 0xfa, 0x6b,
+	0x67, 0xa8, 0x0c, 0xf8, 0x13, 0x7c, 0x2c, 0x78, 0x14, 0xc7, 0x19, 0x11, 0x42, 0x8d, 0x54, 0x0b,
+	0x3e, 0x68, 0xb5, 0xab, 0x45, 0xf8, 0x03, 0x14, 0x42, 0x98, 0xe6, 0x51, 0x42, 0xe6, 0xf6, 0x2b,
+	0x45, 0xbd, 0xd7, 0xe2, 0x50, 0x69, 0xd0, 0x07, 0x8d, 0x98, 0x08, 0x49, 0x19, 0x52, 0x2b, 0xda,
+	0x04, 0xbe, 0x56, 0x28, 0xdc, 0xb3, 0x36, 0xa9, 0xbf, 0xc1, 0xa7, 0x22, 0x55, 0xd0, 0x11, 0x43,
+	0x32, 0xcf, 0x88, 0xfd, 0x46, 0xd1, 0x75, 0xad, 0x5f, 0x6e, 0x64, 0xd8, 0x01, 0x5f, 0xf6, 0xb3,
+	0x77, 0xbc, 0xa5, 0xf8, 0xe6, 0x9e, 0xb9, 0x2d, 0x72, 0x4f, 0x41, 0xeb, 0xf0, 0xba, 0xba, 0x38,
+	0x29, 0x99, 0xde, 0x2c, 0x99, 0xbe, 0x77, 0x72, 0xbf, 0x74, 0xcc, 0xc5, 0xd2, 0x31, 0x9f, 0x96,
+	0x8e, 0x79, 0xbb, 0x72, 0x8c, 0xc5, 0xca, 0x31, 0x1e, 0x57, 0x8e, 0x71, 0xf5, 0x67, 0x44, 0xe5,
+	0x38, 0x8f, 0x3c, 0xcc, 0xa7, 0xbe, 0xbe, 0x81, 0xbf, 0x13, 0x14, 0x89, 0xe2, 0xed, 0xcf, 0x8a,
+	0x03, 0x96, 0xf3, 0x94, 0x88, 0xc8, 0x52, 0x77, 0xdb, 0x79, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x17,
+	0x14, 0x4d, 0x90, 0xdd, 0x02, 0x00, 0x00,
 }
 
 func (m *LinksPacketData) Marshal() (dAtA []byte, err error) {
@@ -370,16 +371,16 @@ func (m *LinksPacketData_NoData) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	}
 	return len(dAtA) - i, nil
 }
-func (m *LinksPacketData_IbcLinkPacket) MarshalTo(dAtA []byte) (int, error) {
+func (m *LinksPacketData_IbcAccountConnectionPacket) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *LinksPacketData_IbcLinkPacket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *LinksPacketData_IbcAccountConnectionPacket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
-	if m.IbcLinkPacket != nil {
+	if m.IbcAccountConnectionPacket != nil {
 		{
-			size, err := m.IbcLinkPacket.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.IbcAccountConnectionPacket.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -414,7 +415,7 @@ func (m *NoData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *IBCLinkPacketData) Marshal() (dAtA []byte, err error) {
+func (m *IBCAccountConnectionPacketData) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -424,12 +425,12 @@ func (m *IBCLinkPacketData) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *IBCLinkPacketData) MarshalTo(dAtA []byte) (int, error) {
+func (m *IBCAccountConnectionPacketData) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *IBCLinkPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *IBCAccountConnectionPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -479,7 +480,7 @@ func (m *IBCLinkPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *IBCLinkPacketAck) Marshal() (dAtA []byte, err error) {
+func (m *IBCAccountConnectionPacketAck) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -489,12 +490,12 @@ func (m *IBCLinkPacketAck) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *IBCLinkPacketAck) MarshalTo(dAtA []byte) (int, error) {
+func (m *IBCAccountConnectionPacketAck) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *IBCLinkPacketAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *IBCAccountConnectionPacketAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -544,14 +545,14 @@ func (m *LinksPacketData_NoData) Size() (n int) {
 	}
 	return n
 }
-func (m *LinksPacketData_IbcLinkPacket) Size() (n int) {
+func (m *LinksPacketData_IbcAccountConnectionPacket) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.IbcLinkPacket != nil {
-		l = m.IbcLinkPacket.Size()
+	if m.IbcAccountConnectionPacket != nil {
+		l = m.IbcAccountConnectionPacket.Size()
 		n += 1 + l + sovPackets(uint64(l))
 	}
 	return n
@@ -565,7 +566,7 @@ func (m *NoData) Size() (n int) {
 	return n
 }
 
-func (m *IBCLinkPacketData) Size() (n int) {
+func (m *IBCAccountConnectionPacketData) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -598,7 +599,7 @@ func (m *IBCLinkPacketData) Size() (n int) {
 	return n
 }
 
-func (m *IBCLinkPacketAck) Size() (n int) {
+func (m *IBCAccountConnectionPacketAck) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -683,7 +684,7 @@ func (m *LinksPacketData) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcLinkPacket", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field IbcAccountConnectionPacket", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -710,11 +711,11 @@ func (m *LinksPacketData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &IBCLinkPacketData{}
+			v := &IBCAccountConnectionPacketData{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Packet = &LinksPacketData_IbcLinkPacket{v}
+			m.Packet = &LinksPacketData_IbcAccountConnectionPacket{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -787,7 +788,7 @@ func (m *NoData) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *IBCLinkPacketData) Unmarshal(dAtA []byte) error {
+func (m *IBCAccountConnectionPacketData) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -810,10 +811,10 @@ func (m *IBCLinkPacketData) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: IBCLinkPacketData: wiretype end group for non-group")
+			return fmt.Errorf("proto: IBCAccountConnectionPacketData: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: IBCLinkPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: IBCAccountConnectionPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1029,7 +1030,7 @@ func (m *IBCLinkPacketData) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *IBCLinkPacketAck) Unmarshal(dAtA []byte) error {
+func (m *IBCAccountConnectionPacketAck) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1052,10 +1053,10 @@ func (m *IBCLinkPacketAck) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: IBCLinkPacketAck: wiretype end group for non-group")
+			return fmt.Errorf("proto: IBCAccountConnectionPacketAck: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: IBCLinkPacketAck: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: IBCAccountConnectionPacketAck: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
