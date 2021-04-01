@@ -69,7 +69,7 @@ func (k Keeper) TransmitIBCAccountConnectionPacket(
 // OnRecvIBCAccountConnectionPacket processes packet reception
 func (k Keeper) OnRecvIBCAccountConnectionPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCAccountConnectionPacketData) (packetAck types.IBCAccountConnectionPacketData, err error) {
 	// validate packet data upon receiving
-	if err := data.ValidateBasic(); err != nil {
+	if err := data.Validate(); err != nil {
 		return packetAck, err
 	}
 

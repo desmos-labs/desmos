@@ -10,6 +10,6 @@ message Link {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string source = 1;
-  string destination = 2;
+  string source_address = 1;
+  string destination_address = 2;
 }

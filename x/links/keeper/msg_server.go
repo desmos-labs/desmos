@@ -24,14 +24,14 @@ func (k msgServer) IBCAccountConnection(goCtx context.Context, msg *types.MsgIBC
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Construct the packet
-	var packet types.IBCAccountConnectionPacketData
-
-	packet.SourceChainPrefix = msg.SourceChainPrefix
-	packet.SourceAddress = msg.SourceAddress
-	packet.SourcePubkey = msg.SourcePubkey
-	packet.DestinationAddress = msg.DestinationAddress
-	packet.SourceSignature = msg.SourceSignature
-	packet.DestinationSignature = msg.DestinationSignature
+	packet := types.NewIBCAccountConnectionPacketData(
+		msg.SourceChainPrefix,
+		msg.SourceAddress,
+		msg.SourcePubkey,
+		msg.DestinationAddress,
+		msg.SourceSignature,
+		msg.DestinationSignature,
+	)
 
 	// Transmit the packet
 	err := k.TransmitIBCAccountConnectionPacket(

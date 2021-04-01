@@ -39,7 +39,17 @@ func NewKeeper(
 	}
 }
 
-func (k Keeper) GetLinks(ctx sdk.Context) []types.Link {
+// StoreLink sotres the given link inside the current context.
+// It assumes that the given link has already been validated.
+func (k Keeper) StoreLink(ctx sdk.Context, link types.Link) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.LinkStoreKey(link.SourceAddress)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
+	return nil
+}
+
+// GetAllLinks returns the list of all the links that have been stored inside the given context
+func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 	var links []types.Link
 
 	store := ctx.KVStore(k.storeKey)

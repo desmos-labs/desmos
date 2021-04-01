@@ -33,10 +33,10 @@ func (gs GenesisState) Validate() error {
 	linksSourceMap := make(map[string]bool)
 
 	for _, elem := range gs.Links {
-		if _, ok := linksSourceMap[elem.Source]; ok {
+		if _, ok := linksSourceMap[elem.SourceAddress]; ok {
 			return fmt.Errorf("duplicated source for links")
 		}
-		linksSourceMap[elem.Source] = true
+		linksSourceMap[elem.SourceAddress] = true
 	}
 
 	return nil

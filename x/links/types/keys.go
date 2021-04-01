@@ -19,11 +19,11 @@ const (
 
 var (
 	// PortKey defines the key to store the port ID in store
-	PortKey = KeyPrefix("links-port-")
+	PortKey = []byte("links-port-")
 
 	LinksStorePrefix = []byte("link")
 )
 
-func KeyPrefix(p string) []byte {
-	return []byte(p)
+func LinkStoreKey(address string) []byte {
+	return append(LinksStorePrefix, []byte(address)...)
 }
