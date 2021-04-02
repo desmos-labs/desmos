@@ -1,7 +1,6 @@
 package magpie
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -16,14 +15,17 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/x/magpie/client/cli"
-	"github.com/desmos-labs/desmos/x/magpie/client/rest"
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/simulation"
 	"github.com/desmos-labs/desmos/x/magpie/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
+	"github.com/desmos-labs/desmos/x/magpie/client/cli"
+	"github.com/desmos-labs/desmos/x/magpie/client/rest"
+
+	"context"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
