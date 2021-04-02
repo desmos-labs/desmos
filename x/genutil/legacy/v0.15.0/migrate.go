@@ -7,18 +7,18 @@ import (
 	v040 "github.com/cosmos/cosmos-sdk/x/genutil/legacy/v040"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	v0150fees "github.com/desmos-labs/desmos/x/fees/types"
+	v0150fees "github.com/desmos-labs/desmos/x/staging/fees/types"
 
-	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
+	v0120posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.12.0"
 
-	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
-	v0150posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.15.0"
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 	v0150profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.15.0"
-	v0130relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.13.0"
-	v0150relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.15.0"
-	v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
-	v0150reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.15.0"
+	v0130posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.13.0"
+	v0150posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.15.0"
+	v0130relationships "github.com/desmos-labs/desmos/x/staging/relationships/legacy/v0.13.0"
+	v0150relationships "github.com/desmos-labs/desmos/x/staging/relationships/legacy/v0.15.0"
+	v0130reports "github.com/desmos-labs/desmos/x/staging/reports/legacy/v0.13.0"
+	v0150reports "github.com/desmos-labs/desmos/x/staging/reports/legacy/v0.15.0"
 )
 
 // Migrate migrates exported state from v0.13.0 to a v0.15.0 genesis state.

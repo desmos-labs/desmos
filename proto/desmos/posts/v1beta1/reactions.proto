@@ -16,11 +16,11 @@ message RegisteredReaction {
     (gogoproto.jsontag) = "short_code"
   ];
 
-  string value = 2 [(gogoproto.moretags) = "yaml:\"value\""];
+  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 
-  string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
-  string creator = 4 [(gogoproto.moretags) = "yaml:\"creator\""];
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // RegisteredReactions wraps a list of registered reactions
@@ -41,9 +41,9 @@ message PostReaction {
     (gogoproto.jsontag) = "short_code"
   ];
 
-  string value = 2 [(gogoproto.moretags) = "yaml:\"value\""];
+  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 
-  string owner = 3 [(gogoproto.moretags) = "yaml:\"owner\""];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
 // PostReactions wraps a list of post reactions

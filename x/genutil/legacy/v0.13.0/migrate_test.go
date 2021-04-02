@@ -12,8 +12,8 @@ import (
 	tm "github.com/tendermint/tendermint/types"
 
 	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
-	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
-	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
+	v0120posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.12.0"
+	v0130posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.13.0"
 )
 
 func TestMigrate0130(t *testing.T) {

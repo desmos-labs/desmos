@@ -16,11 +16,11 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	magpieTypes "github.com/desmos-labs/desmos/x/staging/magpie/types"
+	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	relationshipsTypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

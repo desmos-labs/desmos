@@ -6,7 +6,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 

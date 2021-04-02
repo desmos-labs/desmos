@@ -18,7 +18,7 @@ message PollAnswer {
   ];
 
   string text = 2
-  [(gogoproto.jsontag) = "text", (gogoproto.moretags) = "yaml:\"text\""];
+      [ (gogoproto.jsontag) = "text", (gogoproto.moretags) = "yaml:\"text\"" ];
 }
 
 // ___________________________________________________________________________________________________________________
