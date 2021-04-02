@@ -64,18 +64,13 @@ import (
 	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 
-	"github.com/desmos-labs/desmos/x/relationships"
-
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/x/fees"
 	feeskeeper "github.com/desmos-labs/desmos/x/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/x/fees/types"
-	"github.com/desmos-labs/desmos/x/magpie"
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
-	"github.com/desmos-labs/desmos/x/posts"
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
@@ -83,7 +78,6 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
-	"github.com/desmos-labs/desmos/x/reports"
 	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
 
@@ -148,12 +142,12 @@ var (
 		ibctransfer.AppModuleBasic{},
 
 		// Custom modules
-		fees.AppModuleBasic{},
-		magpie.AppModuleBasic{},
-		posts.AppModuleBasic{},
+		//fees.AppModuleBasic{},
+		//magpie.AppModuleBasic{},
+		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		reports.AppModuleBasic{},
-		relationships.AppModuleBasic{},
+		//reports.AppModuleBasic{},
+		//relationships.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -410,12 +404,12 @@ func NewDesmosApp(
 		ibctransferModule,
 
 		// Custom modules
-		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
-		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		//magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
+		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -468,12 +462,12 @@ func NewDesmosApp(
 		ibctransferModule,
 
 		// Custom modules
-		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
-		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		//magpie.NewAppModule(app.appCodec, app.magpieKeeper, app.AccountKeeper, app.BankKeeper),
+		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
