@@ -1,6 +1,7 @@
 package magpie
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -15,6 +16,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
+	"github.com/desmos-labs/desmos/x/magpie/client/cli"
+	"github.com/desmos-labs/desmos/x/magpie/client/rest"
 	"github.com/desmos-labs/desmos/x/magpie/keeper"
 	"github.com/desmos-labs/desmos/x/magpie/simulation"
 	"github.com/desmos-labs/desmos/x/magpie/types"
@@ -65,24 +68,22 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, config client.TxE
 
 // RegisterRESTRoutes registers the REST routes for the magpie module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	//rest.RegisterRoutes(clientCtx, rtr)
+	rest.RegisterRoutes(clientCtx, rtr)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the magpie module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	//types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the root tx command for the magpie module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	//return cli.NewTxCmd()
-	return nil
+	return cli.NewTxCmd()
 }
 
 // GetQueryCmd returns no root query command for the magpie module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	// return cli.GetQueryCmd()
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the magpie module.

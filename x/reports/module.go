@@ -1,6 +1,7 @@
 package reports
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -20,6 +21,8 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	posts "github.com/desmos-labs/desmos/x/posts/keeper"
+	"github.com/desmos-labs/desmos/x/reports/client/cli"
+	"github.com/desmos-labs/desmos/x/reports/client/rest"
 	"github.com/desmos-labs/desmos/x/reports/keeper"
 	"github.com/desmos-labs/desmos/x/reports/simulation"
 	"github.com/desmos-labs/desmos/x/reports/types"
@@ -63,24 +66,22 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 
 // RegisterRESTRoutes registers the REST routes for the reports module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	//rest.RegisterRoutes(clientCtx, rtr)
+	rest.RegisterRoutes(clientCtx, rtr)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the reports module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	//types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetQueryCmd returns the root query command for the reports module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	//return cli.NewTxCmd()
-	return nil
+	return cli.NewTxCmd()
 }
 
 // GetTxCmd returns the root tx command for the reports module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	//return cli.GetQueryCmd()
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the reports module.

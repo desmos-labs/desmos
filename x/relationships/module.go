@@ -1,6 +1,7 @@
 package relationships
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -19,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/desmos-labs/desmos/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/x/relationships/client/rest"
 	"github.com/desmos-labs/desmos/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/x/relationships/simulation"
 	"github.com/desmos-labs/desmos/x/relationships/types"
@@ -62,24 +65,22 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 
 // RegisterRESTRoutes registers the REST routes for the relationships module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	//rest.RegisterRoutes(clientCtx, rtr)
+	rest.RegisterRoutes(clientCtx, rtr)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the relationships module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	//types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetQueryCmd returns the root query command for the relationships module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	//return cli.NewTxCmd()
-	return nil
+	return cli.NewTxCmd()
 }
 
 // GetTxCmd returns the root tx command for the relationships module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	//return cli.GetQueryCmd()
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the relationships module.
