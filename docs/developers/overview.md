@@ -15,8 +15,6 @@ Before digging into the available transactions, let's clarify the meaning of som
 
 * A **profile** contains a series of (personal) data associated to an account that a user can create on the chain.
 
-* A **session** is the current method that we use in order to associate an external chain account to a Desmos account. This methodology will be completely removed and replace with [IBC](https://docs.cosmos.network/master/ibc/overview.html) once it is stable and ready for production.  
-
 ## Performing transactions 
 If you want to know more about performing transactions to change the current chain state, please go to the [*"Performing transactions"* page](perform-transactions.md). 
 

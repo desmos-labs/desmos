@@ -7,9 +7,6 @@ Aside from [performing transactions](perform-transactions.md) you can also query
 - [Query the post's poll answers](queries/poll-answers.md)
 - [Query registered reactions](queries/reactions.md)
 
-## Sessions
-- [Query a session](queries/session.md)
-
 ## Profiles
 - [Query the stored profiles](queries/profile.md)
 - [Query all the DTag transfer requests](queries/user-dtag-requests.md)

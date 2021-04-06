@@ -17,7 +17,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	magpieTypes "github.com/desmos-labs/desmos/x/staging/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	relationshipsTypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
@@ -218,7 +217,6 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
 		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
-		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
 		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},

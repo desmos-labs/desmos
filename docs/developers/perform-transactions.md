@@ -5,9 +5,6 @@ As seeing inside the [FAQs](developer-faq.md#what-is-a-transaction), transaction
 ## Available messages
 Here is the list of currently available [messages](developer-faq.md#what-is-a-message) that you can use while creating transactions for the Desmos chain. 
 
-### Sessions
-* [`MsgCreateSession`](msgs/magpie/create-session.md): allows you to create a new session binding an existing account on another chain to a Desmos account. 
-
 ### Posts
 * [`MsgCreatePost`](msgs/posts/create-post.md): allows you to create a new post or a comment for an existing post. 
 * [`MsgEditPost`](msgs/posts/edit-post.md): allows you to edit a previously created post message.

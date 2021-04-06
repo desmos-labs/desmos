@@ -8,7 +8,6 @@ import (
 	"math/rand"
 
 	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	magpieTypes "github.com/desmos-labs/desmos/x/staging/magpie/types"
 	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	relationshipsTypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
@@ -25,7 +24,6 @@ const (
 )
 
 var msgsTypes = []string{
-	magpieTypes.ActionCreationSession,
 	postsTypes.ActionCreatePost,
 	postsTypes.ActionEditPost,
 	postsTypes.ActionAnswerPoll,
