@@ -1,5 +1,5 @@
 # `MsgReportPost`
-This message allows you to report a post. If you want to know more about the `Report` type, you can do so inside the [`Report` type documentation page](../../../types/reports/report.md).
+This message allows you to report a post. If you want to know more about the `Report` type, you can do so inside the [`Report` type documentation page](../../../../types/reports/report.md).
 
 ## Structure
 ```json

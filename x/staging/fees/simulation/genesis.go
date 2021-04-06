@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	relationshipsTypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -30,17 +30,17 @@ var msgsTypes = []string{
 	postsTypes.ActionAddPostReaction,
 	postsTypes.ActionRemovePostReaction,
 	postsTypes.ActionRegisterReaction,
-	profilesTypes.ActionSaveProfile,
-	profilesTypes.ActionDeleteProfile,
-	profilesTypes.ActionRequestDtag,
-	profilesTypes.ActionAcceptDtagTransfer,
-	profilesTypes.ActionRefuseDTagTransferRequest,
-	profilesTypes.ActionCancelDTagTransferRequest,
-	relationshipsTypes.ActionCreateRelationship,
-	relationshipsTypes.ActionDeleteRelationship,
-	relationshipsTypes.ActionBlockUser,
-	relationshipsTypes.ActionUnblockUser,
-	reportsTypes.ActionReportPost,
+	profilestypes.ActionSaveProfile,
+	profilestypes.ActionDeleteProfile,
+	profilestypes.ActionRequestDtag,
+	profilestypes.ActionAcceptDtagTransfer,
+	profilestypes.ActionRefuseDTagTransferRequest,
+	profilestypes.ActionCancelDTagTransferRequest,
+	relationshipstypes.ActionCreateRelationship,
+	relationshipstypes.ActionDeleteRelationship,
+	relationshipstypes.ActionBlockUser,
+	relationshipstypes.ActionUnblockUser,
+	reportstypes.ActionReportPost,
 }
 
 // RandomizedGenState generates a random GenesisState for the fees module

@@ -4,7 +4,7 @@ package desmos.profiles.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/profiles/types";
 
 // Pictures contains the data of a user profile's related pictures
 message Pictures {
