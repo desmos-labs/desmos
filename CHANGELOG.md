@@ -1,4 +1,9 @@
 # Unreleased
+- Enabled IBC transfer module ([\#382](https://github.com/desmos-labs/desmos/issues/382))
+
+# Version 0.15.5
+
+- Updated Cosmos to `v0.42.3` ([\#387](https://github.com/desmos-labs/desmos/issues/387))
 
 # Version 0.15.4
 
