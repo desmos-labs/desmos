@@ -83,18 +83,21 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(ctx sdk.Context, packet channel
 	destSignature, _ := hex.DecodeString(data.DestinationSignature)
 	link := types.NewLink(data.SourceAddress, string(destinationAddress))
 
+	linkBytes, _ := link.Marshal()
 	sourcePubkey := &secp256k1.PubKey{Key: sourcePubkeyBytes}
-	destinationPubkey, err := k.GetPubKey(ctx, destinationAddress)
+	destinationAccAddress, _ := sdk.AccAddressFromBech32(string(destinationAddress))
+
+	destinationPubkey, err := k.GetPubKey(ctx, destinationAccAddress)
 	if err != nil {
 		return packetAck, err
 	}
 
-	if !types.Verify(sourceSignature, destSignature, destinationPubkey) {
-		return packetAck, fmt.Errorf("verify failed")
+	if !types.VerifySignature(sourceSignature, destSignature, destinationPubkey) {
+		return packetAck, fmt.Errorf("verify destination failed")
 	}
 
-	if !types.Verify(sourceSignature, destSignature, sourcePubkey) {
-		return packetAck, fmt.Errorf("verify failed")
+	if !types.VerifySignature(linkBytes, sourceSignature, sourcePubkey) {
+		return packetAck, fmt.Errorf("verify source Signature failed")
 	}
 
 	k.StoreLink(ctx, link)
