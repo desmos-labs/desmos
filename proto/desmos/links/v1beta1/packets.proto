@@ -19,7 +19,7 @@ message NoData {}
 message IBCAccountConnectionPacketData {
   string source_chain_prefix = 1;
   string source_address = 2;
-  string source_pubkey = 3;
+  string source_pub_key = 3;
   string destination_address = 4;
   string source_signature = 5;
   string destination_signature = 6;

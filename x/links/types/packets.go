@@ -4,71 +4,73 @@ import (
 	"encoding/hex"
 	fmt "fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func NewIBCAccountConnectionPacketData(
 	sourceChainPrefix string,
 	sourceAddress string,
-	sourcePubkey string,
+	sourcePubKey string,
 	destinationAddress string,
 	sourceSignature string,
 	destinationSignature string,
 ) IBCAccountConnectionPacketData {
 	return IBCAccountConnectionPacketData{
-		SourceChainPrefix:    sourceChainPrefix,
-		SourceAddress:        sourceAddress,
-		SourcePubkey:         hex.EncodeToString([]byte(sourcePubkey)),
-		DestinationAddress:   hex.EncodeToString([]byte(destinationAddress)),
-		SourceSignature:      hex.EncodeToString([]byte(sourceSignature)),
-		DestinationSignature: hex.EncodeToString([]byte(destinationSignature)),
+		SourceChainPrefix:    sourceChainPrefix,                              // Bech32 prefix of the source chain
+		SourceAddress:        sourceAddress,                                  // Bech32-encoded address
+		SourcePubKey:         sourcePubKey,                                   // Hex-encoded public key related to the address
+		DestinationAddress:   hex.EncodeToString([]byte(destinationAddress)), // hex of destination address
+		SourceSignature:      sourceSignature,                                // Hex-encoded signature by source key
+		DestinationSignature: destinationSignature,                           // Hex-encoded signature by destination key
 	}
 }
 
 // Validate is used for validating the packet
 func (p IBCAccountConnectionPacketData) Validate() error {
 
-	destinationPubkey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, p.DestinationAddress)
+	if p.SourceChainPrefix == "" {
+		return fmt.Errorf("invalid chain prefix")
+	}
+
+	_, err := sdk.AccAddressFromBech32(p.SourceAddress)
 	if err != nil {
-		return err
+		return fmt.Errorf("source pubkey decode failed")
 	}
 
-	destinationSignature, err := hex.DecodeString(p.DestinationSignature)
+	_, err = sdk.AccAddressFromBech32(p.SourceAddress)
 	if err != nil {
-		return err
+		return fmt.Errorf("source pubkey decode failed")
 	}
 
-	sourceSignature, err := hex.DecodeString(p.SourceSignature)
+	_, err = hex.DecodeString(p.SourcePubKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("source pubkey decode failed")
 	}
 
-	if !destinationPubkey.VerifySignature(sourceSignature, destinationSignature) {
-		return fmt.Errorf("verify failed with destination pubkey: %s", p.DestinationAddress)
-	}
-
-	sourcePubkeyBytes, err := hex.DecodeString(p.SourcePubkey)
+	_, err = hex.DecodeString(p.DestinationAddress)
 	if err != nil {
-		return err
+		return fmt.Errorf("destination address decode failed")
 	}
 
-	sourcePubkey, err := legacy.PubKeyFromBytes(sourcePubkeyBytes)
+	_, err = hex.DecodeString(p.SourceSignature)
 	if err != nil {
-		return err
+		return fmt.Errorf("source signature decode failed")
 	}
 
-	link := NewLink(p.SourceAddress, p.DestinationAddress)
-	linkBytes, err := link.Marshal()
+	_, err = hex.DecodeString(p.DestinationSignature)
 	if err != nil {
-		return err
-	}
-
-	if !sourcePubkey.VerifySignature(linkBytes, destinationSignature) {
-		return fmt.Errorf("verify failed with destination pubkey: %s", destinationSignature)
+		return fmt.Errorf("destination signature decode failed")
 	}
 
 	return nil
+}
+
+func Verify(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
+	if !pubKey.VerifySignature(msg, sig) {
+		return false
+	}
+	return true
 }
 
 // GetBytes is a helper for serialising

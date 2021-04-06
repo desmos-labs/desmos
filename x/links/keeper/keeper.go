@@ -6,7 +6,9 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	"github.com/desmos-labs/desmos/x/links/types"
 )
@@ -19,6 +21,7 @@ type Keeper struct {
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
 	scopedKeeper  capabilitykeeper.ScopedKeeper
+	accountKeeper authkeeper.AccountKeeper
 }
 
 func NewKeeper(
@@ -28,6 +31,7 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper capabilitykeeper.ScopedKeeper,
+	accountKeeper authkeeper.AccountKeeper,
 ) Keeper {
 	return Keeper{
 		cdc:           cdc,
@@ -36,6 +40,7 @@ func NewKeeper(
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
+		accountKeeper: accountKeeper,
 	}
 }
 
@@ -62,6 +67,10 @@ func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 		links = append(links, link)
 	}
 	return links
+}
+
+func (k Keeper) GetPubKey(ctx sdk.Context, acc sdk.AccAddress) (cryptotypes.PubKey, error) {
+	return k.accountKeeper.GetPubKey(ctx, acc)
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

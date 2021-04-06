@@ -27,7 +27,7 @@ func (k msgServer) IBCAccountConnection(goCtx context.Context, msg *types.MsgIBC
 	packet := types.NewIBCAccountConnectionPacketData(
 		msg.SourceChainPrefix,
 		msg.SourceAddress,
-		msg.SourcePubkey,
+		msg.SourcePubKey,
 		msg.DestinationAddress,
 		msg.SourceSignature,
 		msg.DestinationSignature,

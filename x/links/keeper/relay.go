@@ -1,8 +1,11 @@
 package keeper
 
 import (
+	"encoding/hex"
 	"errors"
+	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
@@ -68,12 +71,33 @@ func (k Keeper) TransmitIBCAccountConnectionPacket(
 
 // OnRecvIBCAccountConnectionPacket processes packet reception
 func (k Keeper) OnRecvIBCAccountConnectionPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IBCAccountConnectionPacketData) (packetAck types.IBCAccountConnectionPacketData, err error) {
+
 	// validate packet data upon receiving
 	if err := data.Validate(); err != nil {
 		return packetAck, err
 	}
 
-	// TODO: packet reception logic
+	sourcePubkeyBytes, _ := hex.DecodeString(data.SourcePubKey)
+	destinationAddress, _ := hex.DecodeString(data.DestinationAddress)
+	sourceSignature, _ := hex.DecodeString(data.SourceSignature)
+	destSignature, _ := hex.DecodeString(data.DestinationSignature)
+	link := types.NewLink(data.SourceAddress, string(destinationAddress))
+
+	sourcePubkey := &secp256k1.PubKey{Key: sourcePubkeyBytes}
+	destinationPubkey, err := k.GetPubKey(ctx, destinationAddress)
+	if err != nil {
+		return packetAck, err
+	}
+
+	if !types.Verify(sourceSignature, destSignature, destinationPubkey) {
+		return packetAck, fmt.Errorf("verify failed")
+	}
+
+	if !types.Verify(sourceSignature, destSignature, sourcePubkey) {
+		return packetAck, fmt.Errorf("verify failed")
+	}
+
+	k.StoreLink(ctx, link)
 
 	return packetAck, nil
 }

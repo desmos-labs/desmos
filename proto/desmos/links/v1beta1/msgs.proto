@@ -24,7 +24,7 @@ message MsgIBCAccountConnection {
   uint64 timeout_timestamp = 3;
   string source_chain_prefix = 4;
   string source_address = 5;
-  string source_pubkey = 6;
+  string source_pub_key = 6;
   string destination_address = 7;
   string source_signature = 8;
   string destination_signature = 9;
