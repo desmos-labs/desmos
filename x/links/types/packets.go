@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	fmt "fmt"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -33,24 +34,30 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 		return fmt.Errorf("invalid chain prefix")
 	}
 
-	_, err := sdk.AccAddressFromBech32(p.SourceAddress)
+	sourceAddressBytes, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
+	if err != nil {
+		return fmt.Errorf("source address parse failed")
+	}
+	sourceAccAddress := sdk.AccAddress(sourceAddressBytes)
+
+	sourcePubKeyBytes, err := hex.DecodeString(p.SourcePubKey)
 	if err != nil {
 		return fmt.Errorf("source pubkey decode failed")
 	}
 
-	_, err = sdk.AccAddressFromBech32(p.SourceAddress)
-	if err != nil {
-		return fmt.Errorf("source pubkey decode failed")
+	sourcePubKey := &secp256k1.PubKey{Key: sourcePubKeyBytes}
+	if !sourceAccAddress.Equals(sdk.AccAddress(sourcePubKey.Address().Bytes())) {
+		return fmt.Errorf("source pubkey mismatch with source address")
 	}
 
-	_, err = hex.DecodeString(p.SourcePubKey)
-	if err != nil {
-		return fmt.Errorf("source pubkey decode failed")
-	}
-
-	_, err = hex.DecodeString(p.DestinationAddress)
+	destinationAddress, err := hex.DecodeString(p.DestinationAddress)
 	if err != nil {
 		return fmt.Errorf("destination address decode failed")
+	}
+
+	_, err = sdk.AccAddressFromBech32(string(destinationAddress))
+	if err != nil {
+		return fmt.Errorf("destination address parse failed")
 	}
 
 	_, err = hex.DecodeString(p.SourceSignature)
@@ -66,7 +73,7 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 	return nil
 }
 
-func Verify(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
+func VerifySignature(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
 	if !pubKey.VerifySignature(msg, sig) {
 		return false
 	}
