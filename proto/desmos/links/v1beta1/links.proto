@@ -10,6 +10,8 @@ message Link {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string source_address = 1;
-  string destination_address = 2;
+  string source_address = 1
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string destination_address = 2
+      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
 }

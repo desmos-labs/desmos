@@ -11,6 +11,7 @@ func NewMsgIBCAccountConnection(
 	port string,
 	channelId string,
 	timeoutTimestamp uint64,
+	sourceChainPrefix string,
 	sourceAddress string,
 	sourcePubKey string,
 	destinationAddress string,
@@ -21,6 +22,7 @@ func NewMsgIBCAccountConnection(
 		Port:                 port,
 		ChannelId:            channelId,
 		TimeoutTimestamp:     timeoutTimestamp,
+		SourceChainPrefix:    sourceChainPrefix,
 		SourceAddress:        sourceAddress,
 		SourcePubKey:         sourcePubKey,
 		DestinationAddress:   destinationAddress,
@@ -46,14 +48,13 @@ func (msg *MsgIBCAccountConnection) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg *MsgIBCAccountConnection) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg *MsgIBCAccountConnection) GetSigners() []sdk.AccAddress {
-	addr, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
-	return []sdk.AccAddress{addr}
+	sender, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	return []sdk.AccAddress{sender}
 }
 
 // MarshalJSON implements the json.Mashaler interface.

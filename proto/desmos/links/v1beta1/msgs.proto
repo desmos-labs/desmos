@@ -19,15 +19,22 @@ message MsgIBCAccountConnection {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string port = 1;
-  string channel_id = 2;
-  uint64 timeout_timestamp = 3;
-  string source_chain_prefix = 4;
-  string source_address = 5;
-  string source_pub_key = 6;
-  string destination_address = 7;
-  string source_signature = 8;
-  string destination_signature = 9;
+  string port = 1 [ (gogoproto.moretags) = "yaml:\"port\"" ];
+  string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
+  uint64 timeout_timestamp = 3
+      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
+  string source_chain_prefix = 4
+      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
+  string source_address = 5
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string source_pub_key = 6
+      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
+  string destination_address = 7
+      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
+  string source_signature = 8
+      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
+  string destination_signature = 9
+      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
 // MsgIBCAccountConnectionResponse defines the Msg/CreatePost response type.
