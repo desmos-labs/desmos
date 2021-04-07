@@ -31,43 +31,43 @@ func NewIBCAccountConnectionPacketData(
 func (p IBCAccountConnectionPacketData) Validate() error {
 
 	if p.SourceChainPrefix == "" {
-		return fmt.Errorf("invalid chain prefix")
+		return fmt.Errorf("chain prefix cannot be empty")
 	}
 
 	sourceAddressBytes, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
 	if err != nil {
-		return fmt.Errorf("source address parse failed")
+		return fmt.Errorf("failed to source address")
 	}
 	sourceAccAddress := sdk.AccAddress(sourceAddressBytes)
 
 	sourcePubKeyBytes, err := hex.DecodeString(p.SourcePubKey)
 	if err != nil {
-		return fmt.Errorf("source pubkey decode failed")
+		return fmt.Errorf("failed to source pubkey")
 	}
 
 	sourcePubKey := &secp256k1.PubKey{Key: sourcePubKeyBytes}
 	if !sourceAccAddress.Equals(sdk.AccAddress(sourcePubKey.Address().Bytes())) {
-		return fmt.Errorf("source pubkey mismatch with source address")
+		return fmt.Errorf("source pubkey and source address are mismatched")
 	}
 
 	destinationAddress, err := hex.DecodeString(p.DestinationAddress)
 	if err != nil {
-		return fmt.Errorf("destination address decode failed")
+		return fmt.Errorf("failed to destination address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(string(destinationAddress))
 	if err != nil {
-		return fmt.Errorf("destination address parse failed")
+		return fmt.Errorf("failed to parse destination address")
 	}
 
 	_, err = hex.DecodeString(p.SourceSignature)
 	if err != nil {
-		return fmt.Errorf("source signature decode failed")
+		return fmt.Errorf("failed to parse decode source signature")
 	}
 
 	_, err = hex.DecodeString(p.DestinationSignature)
 	if err != nil {
-		return fmt.Errorf("destination signature decode failed")
+		return fmt.Errorf("failed to decode destination signature")
 	}
 
 	return nil
