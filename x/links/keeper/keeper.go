@@ -69,7 +69,7 @@ func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 	return links
 }
 
-func (k Keeper) GetPubKey(ctx sdk.Context, acc sdk.AccAddress) (cryptotypes.PubKey, error) {
+func (k Keeper) GetLinkPubKey(ctx sdk.Context, acc sdk.AccAddress) (cryptotypes.PubKey, error) {
 	return k.accountKeeper.GetPubKey(ctx, acc)
 }
 

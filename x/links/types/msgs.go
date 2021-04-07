@@ -52,11 +52,8 @@ func (msg *MsgIBCAccountConnection) GetSignBytes() []byte {
 
 // GetSigners defines whose signature is required
 func (msg *MsgIBCAccountConnection) GetSigners() []sdk.AccAddress {
-	sender, err := sdk.AccAddressFromBech32(msg.SourceAddress)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{sender}
+	addr, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.

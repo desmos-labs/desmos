@@ -22,9 +22,8 @@ func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(PortID, nil)
 }
 
-// Validate performs basic genesis state validation returning an error upon any
-// failure.
-func (gs GenesisState) Validate() error {
+// ValidateGenesis validates the given genesis state and returns an error if something is invalid
+func ValidateGenesis(gs *GenesisState) error {
 	if err := host.PortIdentifierValidator(gs.PortId); err != nil {
 		return err
 	}

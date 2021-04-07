@@ -87,7 +87,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(ctx sdk.Context, packet channel
 	sourcePubkey := &secp256k1.PubKey{Key: sourcePubkeyBytes}
 	destinationAccAddress, _ := sdk.AccAddressFromBech32(string(destinationAddress))
 
-	destinationPubkey, err := k.GetPubKey(ctx, destinationAccAddress)
+	destinationPubkey, err := k.GetLinkPubKey(ctx, destinationAccAddress)
 	if err != nil {
 		return packetAck, err
 	}
