@@ -53,6 +53,18 @@ func (k Keeper) StoreLink(ctx sdk.Context, link types.Link) error {
 	return nil
 }
 
+// GetLink returns the link corresponding to the given address inside the current context.
+func (k Keeper) GetLink(ctx sdk.Context, address string) (link types.Link, found bool) {
+	store := ctx.KVStore((k.storeKey))
+
+	bz := store.Get(types.LinkStoreKey(address))
+	if bz != nil {
+		k.cdc.MustUnmarshalBinaryBare(bz, &link)
+		return link, true
+	}
+	return types.Link{}, false
+}
+
 // GetAllLinks returns the list of all the links that have been stored inside the given context
 func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 	var links []types.Link

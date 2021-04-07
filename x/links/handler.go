@@ -16,8 +16,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgIBCAccountConnection:
-			res, err := msgServer.IBCAccountConnection(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreateIBCAccountConnection:
+			res, err := msgServer.CreateIBCAccountConnection(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)

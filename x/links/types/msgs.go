@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-func NewMsgIBCAccountConnection(
+func NewMsgCreateIBCAccountConnection(
 	port string,
 	channelId string,
 	timeoutTimestamp uint64,
@@ -17,8 +17,8 @@ func NewMsgIBCAccountConnection(
 	destinationAddress string,
 	sourceSignature string,
 	destinationSignature string,
-) *MsgIBCAccountConnection {
-	return &MsgIBCAccountConnection{
+) *MsgCreateIBCAccountConnection {
+	return &MsgCreateIBCAccountConnection{
 		Port:                 port,
 		ChannelId:            channelId,
 		TimeoutTimestamp:     timeoutTimestamp,
@@ -32,13 +32,13 @@ func NewMsgIBCAccountConnection(
 }
 
 // Route should return the name of the module
-func (msg MsgIBCAccountConnection) Route() string { return RouterKey }
+func (msg MsgCreateIBCAccountConnection) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgIBCAccountConnection) Type() string { return ActionIBCAccountConnection }
+func (msg MsgCreateIBCAccountConnection) Type() string { return ActionIBCAccountConnection }
 
 // ValidateBasic runs stateless checks on the message
-func (msg *MsgIBCAccountConnection) ValidateBasic() error {
+func (msg *MsgCreateIBCAccountConnection) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.SourceAddress)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address (%s)", err)
@@ -47,19 +47,19 @@ func (msg *MsgIBCAccountConnection) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg *MsgIBCAccountConnection) GetSignBytes() []byte {
+func (msg *MsgCreateIBCAccountConnection) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg *MsgIBCAccountConnection) GetSigners() []sdk.AccAddress {
+func (msg *MsgCreateIBCAccountConnection) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
 	return []sdk.AccAddress{sender}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgIBCAccountConnection) MarshalJSON() ([]byte, error) {
-	type temp MsgIBCAccountConnection
+func (msg MsgCreateIBCAccountConnection) MarshalJSON() ([]byte, error) {
+	type temp MsgCreateIBCAccountConnection
 	return json.Marshal(temp(msg))
 }

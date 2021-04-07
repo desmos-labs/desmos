@@ -20,7 +20,9 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-func (k msgServer) IBCAccountConnection(goCtx context.Context, msg *types.MsgIBCAccountConnection) (*types.MsgIBCAccountConnectionResponse, error) {
+func (k msgServer) CreateIBCAccountConnection(
+	goCtx context.Context, msg *types.MsgCreateIBCAccountConnection,
+) (*types.MsgCreateIBCAccountConnectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Construct the packet
@@ -46,5 +48,5 @@ func (k msgServer) IBCAccountConnection(goCtx context.Context, msg *types.MsgIBC
 		return nil, err
 	}
 
-	return &types.MsgIBCAccountConnectionResponse{}, nil
+	return &types.MsgCreateIBCAccountConnectionResponse{}, nil
 }

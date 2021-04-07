@@ -7,15 +7,16 @@ option go_package = "github.com/desmos-labs/desmos/x/links/types";
 
 // Msg defines the links Msg service.
 service Msg {
-  // IBCAccountConnection defines the method to create a post
-  rpc IBCAccountConnection(MsgIBCAccountConnection)
-      returns (MsgIBCAccountConnectionResponse);
+  // CreateIBCAccountConnection defines the method to create a post
+  rpc CreateIBCAccountConnection(MsgCreateIBCAccountConnection)
+      returns (MsgCreateIBCAccountConnectionResponse);
 }
 
 // ___________________________________________________________________________________________________________________
 
-// MsgIBCAccountConnection represents the message to be used to create a link.
-message MsgIBCAccountConnection {
+// MsgCreateIBCAccountConnection represents the message to be used to create a
+// link.
+message MsgCreateIBCAccountConnection {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -37,5 +38,6 @@ message MsgIBCAccountConnection {
       [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
-// MsgIBCAccountConnectionResponse defines the Msg/CreatePost response type.
-message MsgIBCAccountConnectionResponse {}
+// MsgCreateIBCAccountConnectionResponse defines the Msg/CreatePost response
+// type.
+message MsgCreateIBCAccountConnectionResponse {}

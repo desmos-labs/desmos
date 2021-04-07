@@ -11,7 +11,8 @@ option go_package = "github.com/desmos-labs/desmos/x/links/types";
 service Query {
   // Post queries a specific post
   rpc Link(QueryLinkRequest) returns (QueryLinkResponse) {
-    option (google.api.http).get = "/desmos/links/v1beta1/links/{source}";
+    option (google.api.http).get =
+        "/desmos/links/v1beta1/links/{source_address}";
   }
 }
 
@@ -22,8 +23,10 @@ message QueryLinkRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string source = 1;
+  string source_address = 1;
 }
 
 // QueryLinkResponse is the response type for the Query/Link RPC method
-message QueryLinkResponse { desmos.links.v1beta1.Link link = 1; }
+message QueryLinkResponse {
+  desmos.links.v1beta1.Link link = 1 [ (gogoproto.nullable) = false ];
+}

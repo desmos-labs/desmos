@@ -28,8 +28,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgIBCAccountConnection represents the message to be used to create a link.
-type MsgIBCAccountConnection struct {
+// MsgCreateIBCAccountConnection represents the message to be used to create a
+// link.
+type MsgCreateIBCAccountConnection struct {
 	Port                 string `protobuf:"bytes,1,opt,name=port,proto3" json:"port,omitempty" yaml:"port"`
 	ChannelId            string `protobuf:"bytes,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty" yaml:"channel_id"`
 	TimeoutTimestamp     uint64 `protobuf:"varint,3,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty" yaml:"timeout_timestamp"`
@@ -41,18 +42,18 @@ type MsgIBCAccountConnection struct {
 	DestinationSignature string `protobuf:"bytes,9,opt,name=destination_signature,json=destinationSignature,proto3" json:"destination_signature,omitempty" yaml:"destination_signature"`
 }
 
-func (m *MsgIBCAccountConnection) Reset()         { *m = MsgIBCAccountConnection{} }
-func (m *MsgIBCAccountConnection) String() string { return proto.CompactTextString(m) }
-func (*MsgIBCAccountConnection) ProtoMessage()    {}
-func (*MsgIBCAccountConnection) Descriptor() ([]byte, []int) {
+func (m *MsgCreateIBCAccountConnection) Reset()         { *m = MsgCreateIBCAccountConnection{} }
+func (m *MsgCreateIBCAccountConnection) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateIBCAccountConnection) ProtoMessage()    {}
+func (*MsgCreateIBCAccountConnection) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{0}
 }
-func (m *MsgIBCAccountConnection) XXX_Unmarshal(b []byte) error {
+func (m *MsgCreateIBCAccountConnection) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgIBCAccountConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCreateIBCAccountConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgIBCAccountConnection.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCreateIBCAccountConnection.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -62,34 +63,35 @@ func (m *MsgIBCAccountConnection) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *MsgIBCAccountConnection) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgIBCAccountConnection.Merge(m, src)
+func (m *MsgCreateIBCAccountConnection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateIBCAccountConnection.Merge(m, src)
 }
-func (m *MsgIBCAccountConnection) XXX_Size() int {
+func (m *MsgCreateIBCAccountConnection) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgIBCAccountConnection) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgIBCAccountConnection.DiscardUnknown(m)
+func (m *MsgCreateIBCAccountConnection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateIBCAccountConnection.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgIBCAccountConnection proto.InternalMessageInfo
+var xxx_messageInfo_MsgCreateIBCAccountConnection proto.InternalMessageInfo
 
-// MsgIBCAccountConnectionResponse defines the Msg/CreatePost response type.
-type MsgIBCAccountConnectionResponse struct {
+// MsgCreateIBCAccountConnectionResponse defines the Msg/CreatePost response
+// type.
+type MsgCreateIBCAccountConnectionResponse struct {
 }
 
-func (m *MsgIBCAccountConnectionResponse) Reset()         { *m = MsgIBCAccountConnectionResponse{} }
-func (m *MsgIBCAccountConnectionResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgIBCAccountConnectionResponse) ProtoMessage()    {}
-func (*MsgIBCAccountConnectionResponse) Descriptor() ([]byte, []int) {
+func (m *MsgCreateIBCAccountConnectionResponse) Reset()         { *m = MsgCreateIBCAccountConnectionResponse{} }
+func (m *MsgCreateIBCAccountConnectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateIBCAccountConnectionResponse) ProtoMessage()    {}
+func (*MsgCreateIBCAccountConnectionResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0aac42b2e94dabba, []int{1}
 }
-func (m *MsgIBCAccountConnectionResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgCreateIBCAccountConnectionResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgIBCAccountConnectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCreateIBCAccountConnectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgIBCAccountConnectionResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCreateIBCAccountConnectionResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -99,60 +101,60 @@ func (m *MsgIBCAccountConnectionResponse) XXX_Marshal(b []byte, deterministic bo
 		return b[:n], nil
 	}
 }
-func (m *MsgIBCAccountConnectionResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgIBCAccountConnectionResponse.Merge(m, src)
+func (m *MsgCreateIBCAccountConnectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateIBCAccountConnectionResponse.Merge(m, src)
 }
-func (m *MsgIBCAccountConnectionResponse) XXX_Size() int {
+func (m *MsgCreateIBCAccountConnectionResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgIBCAccountConnectionResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgIBCAccountConnectionResponse.DiscardUnknown(m)
+func (m *MsgCreateIBCAccountConnectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateIBCAccountConnectionResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgIBCAccountConnectionResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgCreateIBCAccountConnectionResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgIBCAccountConnection)(nil), "desmos.links.v1beta1.MsgIBCAccountConnection")
-	proto.RegisterType((*MsgIBCAccountConnectionResponse)(nil), "desmos.links.v1beta1.MsgIBCAccountConnectionResponse")
+	proto.RegisterType((*MsgCreateIBCAccountConnection)(nil), "desmos.links.v1beta1.MsgCreateIBCAccountConnection")
+	proto.RegisterType((*MsgCreateIBCAccountConnectionResponse)(nil), "desmos.links.v1beta1.MsgCreateIBCAccountConnectionResponse")
 }
 
 func init() { proto.RegisterFile("desmos/links/v1beta1/msgs.proto", fileDescriptor_0aac42b2e94dabba) }
 
 var fileDescriptor_0aac42b2e94dabba = []byte{
-	// 517 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0x3d, 0x6f, 0xd3, 0x40,
-	0x18, 0xc7, 0x63, 0xfa, 0x42, 0x73, 0xbc, 0xb4, 0xb9, 0x26, 0xaa, 0x09, 0x95, 0x2f, 0x1c, 0x4b,
-	0x25, 0x54, 0x5b, 0xe5, 0x65, 0xe9, 0x02, 0x4d, 0x04, 0x52, 0x84, 0x0a, 0x95, 0x81, 0x85, 0xc5,
-	0xf2, 0xcb, 0xe1, 0x58, 0x8d, 0xef, 0x2c, 0xdf, 0x19, 0x35, 0x12, 0x1b, 0x0b, 0x03, 0x03, 0x1f,
-	0xa1, 0x1f, 0x87, 0xb1, 0x23, 0x93, 0x85, 0x92, 0x85, 0xd9, 0x9f, 0x00, 0xf9, 0xce, 0x49, 0x53,
-	0x9a, 0x0c, 0x4c, 0xbe, 0xfb, 0x3f, 0x3f, 0xff, 0xee, 0xb1, 0xfc, 0x1c, 0x40, 0x01, 0xe1, 0x31,
-	0xe3, 0xd6, 0x30, 0xa2, 0xa7, 0xdc, 0xfa, 0x7c, 0xe0, 0x11, 0xe1, 0x1e, 0x58, 0x31, 0x0f, 0xb9,
-	0x99, 0xa4, 0x4c, 0x30, 0xd8, 0x54, 0x80, 0x29, 0x01, 0xb3, 0x02, 0xda, 0xcd, 0x90, 0x85, 0x4c,
-	0x02, 0x56, 0xb9, 0x52, 0x2c, 0xfe, 0xbe, 0x06, 0x76, 0x8e, 0x79, 0xd8, 0xef, 0xf6, 0x8e, 0x7c,
-	0x9f, 0x65, 0x54, 0xf4, 0x18, 0xa5, 0xc4, 0x17, 0x11, 0xa3, 0xf0, 0x21, 0x58, 0x4d, 0x58, 0x2a,
-	0x74, 0xad, 0xa3, 0xed, 0xd5, 0xbb, 0x9b, 0x45, 0x8e, 0x6e, 0x8d, 0xdc, 0x78, 0x78, 0x88, 0xcb,
-	0x14, 0xdb, 0xb2, 0x08, 0x9f, 0x02, 0xe0, 0x0f, 0x5c, 0x4a, 0xc9, 0xd0, 0x89, 0x02, 0xfd, 0x86,
-	0x44, 0x5b, 0x45, 0x8e, 0x1a, 0x0a, 0xbd, 0xac, 0x61, 0xbb, 0x5e, 0x6d, 0xfa, 0x01, 0xec, 0x83,
-	0x86, 0x88, 0x62, 0xc2, 0x32, 0xe1, 0x94, 0x4f, 0x2e, 0xdc, 0x38, 0xd1, 0x57, 0x3a, 0xda, 0xde,
-	0x6a, 0x77, 0xb7, 0xc8, 0x91, 0xae, 0x5e, 0xbe, 0x86, 0x60, 0x7b, 0xab, 0xca, 0xde, 0x4f, 0x23,
-	0xf8, 0x06, 0x6c, 0x73, 0x96, 0xa5, 0x3e, 0x71, 0xfc, 0x81, 0x1b, 0x51, 0x27, 0x49, 0xc9, 0xa7,
-	0xe8, 0x4c, 0x5f, 0x95, 0x9d, 0x18, 0x45, 0x8e, 0xda, 0x4a, 0xb6, 0x00, 0xc2, 0x76, 0x43, 0xa5,
-	0xbd, 0x32, 0x3c, 0x91, 0x19, 0x7c, 0x01, 0xee, 0x56, 0xa8, 0x1b, 0x04, 0x29, 0xe1, 0x5c, 0x5f,
-	0x93, 0xaa, 0x7b, 0x45, 0x8e, 0x5a, 0x57, 0x54, 0x55, 0x1d, 0xdb, 0x77, 0x54, 0x70, 0xa4, 0xf6,
-	0xf0, 0xf9, 0xcc, 0x90, 0x64, 0x9e, 0x73, 0x4a, 0x46, 0xfa, 0xfa, 0x12, 0x43, 0x55, 0xc7, 0xf6,
-	0x6d, 0x15, 0x9c, 0x64, 0xde, 0x6b, 0x32, 0x82, 0x6f, 0xc1, 0x76, 0x40, 0xb8, 0x88, 0xa8, 0x5b,
-	0xfe, 0x87, 0x59, 0x1f, 0x37, 0xff, 0xfd, 0xa4, 0x05, 0x10, 0xb6, 0xe1, 0x5c, 0x3a, 0xed, 0xe8,
-	0x15, 0xd8, 0xaa, 0x4e, 0xe4, 0x51, 0x48, 0x5d, 0x91, 0xa5, 0x44, 0xdf, 0x90, 0xb6, 0xfb, 0x45,
-	0x8e, 0x76, 0xae, 0xf4, 0x34, 0x23, 0xb0, 0xbd, 0xa9, 0xa2, 0x77, 0xd3, 0x04, 0x7e, 0x00, 0xad,
-	0xf9, 0x33, 0x2f, 0x65, 0x75, 0x29, 0xeb, 0x14, 0x39, 0xda, 0xbd, 0xde, 0xda, 0x9c, 0xb1, 0x39,
-	0x97, 0xcf, 0xb4, 0x87, 0x1b, 0xdf, 0xce, 0x51, 0xed, 0xcf, 0x39, 0xaa, 0xe1, 0x07, 0x00, 0x2d,
-	0x99, 0x46, 0x9b, 0xf0, 0x84, 0x51, 0x4e, 0x1e, 0x7f, 0xd5, 0xc0, 0xca, 0x31, 0x0f, 0xe1, 0x17,
-	0xd0, 0x5c, 0x38, 0xb5, 0xfb, 0xe6, 0xa2, 0xf1, 0x37, 0x97, 0x68, 0xdb, 0xcf, 0xfe, 0x0b, 0x9f,
-	0x76, 0xd1, 0x7d, 0xf9, 0x73, 0x6c, 0x68, 0x17, 0x63, 0x43, 0xfb, 0x3d, 0x36, 0xb4, 0x1f, 0x13,
-	0xa3, 0x76, 0x31, 0x31, 0x6a, 0xbf, 0x26, 0x46, 0xed, 0xe3, 0xa3, 0x30, 0x12, 0x83, 0xcc, 0x33,
-	0x7d, 0x16, 0x5b, 0x4a, 0xbd, 0x3f, 0x74, 0x3d, 0x5e, 0xad, 0xad, 0xb3, 0xea, 0xde, 0x8a, 0x51,
-	0x42, 0xb8, 0xb7, 0x2e, 0x6f, 0xe1, 0x93, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xad, 0x8c, 0xe6,
-	0xf8, 0xd4, 0x03, 0x00, 0x00,
+	// 524 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
+	0x18, 0x87, 0x1b, 0xd6, 0x8d, 0xd5, 0xfc, 0xd9, 0xea, 0xb5, 0x22, 0x94, 0x91, 0x54, 0x46, 0x88,
+	0x49, 0x88, 0x44, 0x63, 0x9c, 0xc6, 0x01, 0xd6, 0x0a, 0xa4, 0x0a, 0x0d, 0xa6, 0x00, 0x17, 0x2e,
+	0x95, 0x93, 0x98, 0x34, 0x5a, 0x63, 0x47, 0xb1, 0x83, 0xd6, 0x6f, 0xc0, 0x09, 0x21, 0x0e, 0x9c,
+	0xf7, 0x71, 0x38, 0xee, 0xc8, 0x29, 0x42, 0xed, 0x85, 0x73, 0x3e, 0x01, 0x8a, 0x9d, 0x76, 0x1d,
+	0x2b, 0x3d, 0x70, 0xaa, 0xfd, 0xbc, 0x8f, 0x7f, 0xef, 0x5b, 0xc5, 0x06, 0xa6, 0x4f, 0x78, 0xc4,
+	0xb8, 0x3d, 0x0c, 0xe9, 0x31, 0xb7, 0x3f, 0xed, 0xba, 0x44, 0xe0, 0x5d, 0x3b, 0xe2, 0x01, 0xb7,
+	0xe2, 0x84, 0x09, 0x06, 0x1b, 0x4a, 0xb0, 0xa4, 0x60, 0x95, 0x42, 0xab, 0x11, 0xb0, 0x80, 0x49,
+	0xc1, 0x2e, 0x56, 0xca, 0x45, 0xdf, 0x56, 0xc1, 0xdd, 0x43, 0x1e, 0x74, 0x13, 0x82, 0x05, 0xe9,
+	0x75, 0xba, 0x07, 0x9e, 0xc7, 0x52, 0x2a, 0xba, 0x8c, 0x52, 0xe2, 0x89, 0x90, 0x51, 0x78, 0x0f,
+	0x54, 0x63, 0x96, 0x08, 0x5d, 0x6b, 0x6b, 0x3b, 0xb5, 0xce, 0x46, 0x9e, 0x99, 0xd7, 0x46, 0x38,
+	0x1a, 0xee, 0xa3, 0x82, 0x22, 0x47, 0x16, 0xe1, 0x13, 0x00, 0xbc, 0x01, 0xa6, 0x94, 0x0c, 0xfb,
+	0xa1, 0xaf, 0x5f, 0x91, 0x6a, 0x33, 0xcf, 0xcc, 0xba, 0x52, 0xcf, 0x6b, 0xc8, 0xa9, 0x95, 0x9b,
+	0x9e, 0x0f, 0x7b, 0xa0, 0x2e, 0xc2, 0x88, 0xb0, 0x54, 0xf4, 0x8b, 0x5f, 0x2e, 0x70, 0x14, 0xeb,
+	0x2b, 0x6d, 0x6d, 0xa7, 0xda, 0xd9, 0xce, 0x33, 0x53, 0x57, 0x87, 0x2f, 0x29, 0xc8, 0xd9, 0x2c,
+	0xd9, 0xbb, 0x29, 0x82, 0xaf, 0xc1, 0x16, 0x67, 0x69, 0xe2, 0x91, 0xbe, 0x37, 0xc0, 0x21, 0xed,
+	0xc7, 0x09, 0xf9, 0x18, 0x9e, 0xe8, 0x55, 0x39, 0x89, 0x91, 0x67, 0x66, 0x4b, 0x85, 0x2d, 0x90,
+	0x90, 0x53, 0x57, 0xb4, 0x5b, 0xc0, 0x23, 0xc9, 0xe0, 0x73, 0x70, 0xb3, 0x54, 0xb1, 0xef, 0x27,
+	0x84, 0x73, 0x7d, 0x55, 0x46, 0xdd, 0xce, 0x33, 0xb3, 0x79, 0x21, 0xaa, 0xac, 0x23, 0xe7, 0x86,
+	0x02, 0x07, 0x6a, 0x0f, 0x9f, 0xcd, 0x12, 0xe2, 0xd4, 0xed, 0x1f, 0x93, 0x91, 0xbe, 0xf6, 0x8f,
+	0x84, 0xb2, 0x8e, 0x9c, 0xeb, 0x0a, 0x1c, 0xa5, 0xee, 0x2b, 0x32, 0x82, 0x6f, 0xc0, 0x96, 0x4f,
+	0xb8, 0x08, 0x29, 0x2e, 0xbe, 0xc3, 0x6c, 0x8e, 0xab, 0x7f, 0xff, 0xa5, 0x05, 0x12, 0x72, 0xe0,
+	0x1c, 0x9d, 0x4e, 0xf4, 0x12, 0x6c, 0x96, 0x1d, 0x79, 0x18, 0x50, 0x2c, 0xd2, 0x84, 0xe8, 0xeb,
+	0x32, 0xed, 0x4e, 0x9e, 0x99, 0xb7, 0x2e, 0xcc, 0x34, 0x33, 0x90, 0xb3, 0xa1, 0xd0, 0xdb, 0x29,
+	0x81, 0xef, 0x41, 0x73, 0xbe, 0xe7, 0x79, 0x58, 0x4d, 0x86, 0xb5, 0xf3, 0xcc, 0xdc, 0xbe, 0x3c,
+	0xda, 0x5c, 0x62, 0x63, 0x8e, 0xcf, 0x62, 0xf7, 0xd7, 0x3f, 0x9f, 0x9a, 0x95, 0xdf, 0xa7, 0x66,
+	0x05, 0x3d, 0x00, 0xf7, 0x97, 0xde, 0x49, 0x87, 0xf0, 0x98, 0x51, 0x4e, 0x1e, 0x7f, 0xd7, 0xc0,
+	0xca, 0x21, 0x0f, 0xe0, 0x17, 0x0d, 0xb4, 0x96, 0x5c, 0xe1, 0x3d, 0x6b, 0xd1, 0x8b, 0xb0, 0x96,
+	0xf6, 0x68, 0x3d, 0xfd, 0x8f, 0x43, 0xd3, 0xc1, 0x3a, 0x2f, 0x7e, 0x8c, 0x0d, 0xed, 0x6c, 0x6c,
+	0x68, 0xbf, 0xc6, 0x86, 0xf6, 0x75, 0x62, 0x54, 0xce, 0x26, 0x46, 0xe5, 0xe7, 0xc4, 0xa8, 0x7c,
+	0x78, 0x18, 0x84, 0x62, 0x90, 0xba, 0x96, 0xc7, 0x22, 0x5b, 0x35, 0x78, 0x34, 0xc4, 0x2e, 0x2f,
+	0xd7, 0xf6, 0x49, 0xf9, 0xac, 0xc5, 0x28, 0x26, 0xdc, 0x5d, 0x93, 0x8f, 0x74, 0xef, 0x4f, 0x00,
+	0x00, 0x00, 0xff, 0xff, 0x24, 0xfd, 0x6d, 0x9f, 0xf3, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -167,8 +169,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// IBCAccountConnection defines the method to create a post
-	IBCAccountConnection(ctx context.Context, in *MsgIBCAccountConnection, opts ...grpc.CallOption) (*MsgIBCAccountConnectionResponse, error)
+	// CreateIBCAccountConnection defines the method to create a post
+	CreateIBCAccountConnection(ctx context.Context, in *MsgCreateIBCAccountConnection, opts ...grpc.CallOption) (*MsgCreateIBCAccountConnectionResponse, error)
 }
 
 type msgClient struct {
@@ -179,9 +181,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) IBCAccountConnection(ctx context.Context, in *MsgIBCAccountConnection, opts ...grpc.CallOption) (*MsgIBCAccountConnectionResponse, error) {
-	out := new(MsgIBCAccountConnectionResponse)
-	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/IBCAccountConnection", in, out, opts...)
+func (c *msgClient) CreateIBCAccountConnection(ctx context.Context, in *MsgCreateIBCAccountConnection, opts ...grpc.CallOption) (*MsgCreateIBCAccountConnectionResponse, error) {
+	out := new(MsgCreateIBCAccountConnectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.links.v1beta1.Msg/CreateIBCAccountConnection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -190,36 +192,36 @@ func (c *msgClient) IBCAccountConnection(ctx context.Context, in *MsgIBCAccountC
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// IBCAccountConnection defines the method to create a post
-	IBCAccountConnection(context.Context, *MsgIBCAccountConnection) (*MsgIBCAccountConnectionResponse, error)
+	// CreateIBCAccountConnection defines the method to create a post
+	CreateIBCAccountConnection(context.Context, *MsgCreateIBCAccountConnection) (*MsgCreateIBCAccountConnectionResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) IBCAccountConnection(ctx context.Context, req *MsgIBCAccountConnection) (*MsgIBCAccountConnectionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IBCAccountConnection not implemented")
+func (*UnimplementedMsgServer) CreateIBCAccountConnection(ctx context.Context, req *MsgCreateIBCAccountConnection) (*MsgCreateIBCAccountConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateIBCAccountConnection not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_IBCAccountConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgIBCAccountConnection)
+func _Msg_CreateIBCAccountConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateIBCAccountConnection)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).IBCAccountConnection(ctx, in)
+		return srv.(MsgServer).CreateIBCAccountConnection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.links.v1beta1.Msg/IBCAccountConnection",
+		FullMethod: "/desmos.links.v1beta1.Msg/CreateIBCAccountConnection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).IBCAccountConnection(ctx, req.(*MsgIBCAccountConnection))
+		return srv.(MsgServer).CreateIBCAccountConnection(ctx, req.(*MsgCreateIBCAccountConnection))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -229,15 +231,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "IBCAccountConnection",
-			Handler:    _Msg_IBCAccountConnection_Handler,
+			MethodName: "CreateIBCAccountConnection",
+			Handler:    _Msg_CreateIBCAccountConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/links/v1beta1/msgs.proto",
 }
 
-func (m *MsgIBCAccountConnection) Marshal() (dAtA []byte, err error) {
+func (m *MsgCreateIBCAccountConnection) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -247,12 +249,12 @@ func (m *MsgIBCAccountConnection) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgIBCAccountConnection) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCreateIBCAccountConnection) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgIBCAccountConnection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCreateIBCAccountConnection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -321,7 +323,7 @@ func (m *MsgIBCAccountConnection) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgIBCAccountConnectionResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgCreateIBCAccountConnectionResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -331,12 +333,12 @@ func (m *MsgIBCAccountConnectionResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgIBCAccountConnectionResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCreateIBCAccountConnectionResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgIBCAccountConnectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCreateIBCAccountConnectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -355,7 +357,7 @@ func encodeVarintMsgs(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgIBCAccountConnection) Size() (n int) {
+func (m *MsgCreateIBCAccountConnection) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -399,7 +401,7 @@ func (m *MsgIBCAccountConnection) Size() (n int) {
 	return n
 }
 
-func (m *MsgIBCAccountConnectionResponse) Size() (n int) {
+func (m *MsgCreateIBCAccountConnectionResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -414,7 +416,7 @@ func sovMsgs(x uint64) (n int) {
 func sozMsgs(x uint64) (n int) {
 	return sovMsgs(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgIBCAccountConnection) Unmarshal(dAtA []byte) error {
+func (m *MsgCreateIBCAccountConnection) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -437,10 +439,10 @@ func (m *MsgIBCAccountConnection) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgIBCAccountConnection: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCreateIBCAccountConnection: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgIBCAccountConnection: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCreateIBCAccountConnection: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -739,7 +741,7 @@ func (m *MsgIBCAccountConnection) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgIBCAccountConnectionResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgCreateIBCAccountConnectionResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -762,10 +764,10 @@ func (m *MsgIBCAccountConnectionResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgIBCAccountConnectionResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCreateIBCAccountConnectionResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgIBCAccountConnectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCreateIBCAccountConnectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
