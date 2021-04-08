@@ -20,7 +20,7 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 
 		switch path[0] {
 		case types.QueryLink:
-			queryLink(ctx, path[1:], req, keeper, legacyQuerierCdc)
+			res, err = queryLink(ctx, path[1:], req, keeper, legacyQuerierCdc)
 		default:
 			err = sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
 		}
@@ -34,13 +34,10 @@ func queryLink(
 ) ([]byte, error) {
 	addr := path[0]
 	if strings.TrimSpace(addr) == "" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "address cannot be empty or blank")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Address cannot be empty or blank")
 	}
-	sdkAddress, err := sdk.AccAddressFromBech32(addr)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, addr)
-	}
-	link, found := keeper.GetLink(ctx, sdkAddress.String())
+
+	link, found := keeper.GetLink(ctx, addr)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"Link with address %s doesn't exists", addr)
