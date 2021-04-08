@@ -73,13 +73,6 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 	return nil
 }
 
-func VerifySignature(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
-	if !pubKey.VerifySignature(msg, sig) {
-		return false
-	}
-	return true
-}
-
 // GetBytes is a helper for serialising
 func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
 	var modulePacket LinksPacketData
@@ -143,4 +136,13 @@ func (p IBCAccountLinkPacketData) GetBytes() ([]byte, error) {
 	modulePacket.Packet = &LinksPacketData_IbcAccountLinkPacket{&p}
 
 	return modulePacket.Marshal()
+}
+
+// ___________________________________________________________________________________________________________________
+
+func VerifySignature(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
+	if !pubKey.VerifySignature(msg, sig) {
+		return false
+	}
+	return true
 }
