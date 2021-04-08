@@ -63,3 +63,51 @@ func (msg MsgCreateIBCAccountConnection) MarshalJSON() ([]byte, error) {
 	type temp MsgCreateIBCAccountConnection
 	return json.Marshal(temp(msg))
 }
+
+// ___________________________________________________________________________________________________________________
+
+func NewMsgCreateIBCAccountLink(
+	port string,
+	channelId string,
+	timeoutTimestamp uint64,
+	sourceChainPrefix string,
+	sourceAddress string,
+	sourcePubKey string,
+	signature string,
+) *MsgCreateIBCAccountLink {
+	return &MsgCreateIBCAccountLink{
+		Port:              port,
+		ChannelId:         channelId,
+		TimeoutTimestamp:  timeoutTimestamp,
+		SourceChainPrefix: sourceChainPrefix,
+		SourceAddress:     sourceAddress,
+		SourcePubKey:      sourcePubKey,
+		Signature:         signature,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgCreateIBCAccountLink) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgCreateIBCAccountLink) Type() string { return ActionIBCAccountLink }
+
+// ValidateBasic runs stateless checks on the message
+func (msg *MsgCreateIBCAccountLink) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.SourceAddress)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address (%s)", err)
+	}
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg *MsgCreateIBCAccountLink) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg *MsgCreateIBCAccountLink) GetSigners() []sdk.AccAddress {
+	sender, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	return []sdk.AccAddress{sender}
+}

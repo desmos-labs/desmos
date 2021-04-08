@@ -50,3 +50,34 @@ func (k msgServer) CreateIBCAccountConnection(
 
 	return &types.MsgCreateIBCAccountConnectionResponse{}, nil
 }
+
+// ___________________________________________________________________________________________________________________
+
+func (k msgServer) CreateIBCAccountLink(
+	goCtx context.Context, msg *types.MsgCreateIBCAccountLink,
+) (*types.MsgCreateIBCAccountLinkResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Construct the packet
+	packet := types.NewIBCAccountLinkPacketData(
+		msg.SourceChainPrefix,
+		msg.SourceAddress,
+		msg.SourcePubKey,
+		msg.Signature,
+	)
+
+	// Transmit the packet
+	err := k.TransmitIBCAccountLinkPacket(
+		ctx,
+		packet,
+		msg.Port,
+		msg.ChannelId,
+		clienttypes.ZeroHeight(),
+		msg.TimeoutTimestamp,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgCreateIBCAccountLinkResponse{}, nil
+}

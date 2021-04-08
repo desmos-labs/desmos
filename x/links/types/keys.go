@@ -6,6 +6,7 @@ const (
 	RouterKey  = ModuleName
 
 	ActionIBCAccountConnection = "ibc_account_connection"
+	ActionIBCAccountLink       = "ibc_account_link"
 
 	// Queries
 	QuerierRoute = ModuleName

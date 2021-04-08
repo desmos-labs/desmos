@@ -9,6 +9,7 @@ message LinksPacketData {
   oneof packet {
     NoData no_data = 1;
     IBCAccountConnectionPacketData ibc_account_connection_packet = 2;
+    IBCAccountLinkPacketData ibc_account_link_packet = 3;
   }
 }
 
@@ -27,3 +28,16 @@ message IBCAccountConnectionPacketData {
 
 // IBCAccountConnectionPacketAck defines a struct for the packet acknowledgment
 message IBCAccountConnectionPacketAck { string source_address = 1; }
+
+// ___________________________________________________________________________________________________________________
+
+// IBCAccountLinkPacketData defines a struct for the packet payload
+message IBCAccountLinkPacketData {
+  string source_chain_prefix = 1;
+  string source_address = 2;
+  string source_pub_key = 3;
+  string signature = 4;
+}
+
+// IBCAccountLinkPacketAck defines a struct for the packet acknowledgment
+message IBCAccountLinkPacketAck { string source_address = 1; }

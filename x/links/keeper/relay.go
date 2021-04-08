@@ -140,3 +140,60 @@ func (k Keeper) OnTimeoutIBCAccountConnectionPacket(ctx sdk.Context, packet chan
 
 	return nil
 }
+
+// ___________________________________________________________________________________________________________________
+
+// TransmitIBCAccountLinkPacket transmits the packet over IBC with the specified source port and source channel
+func (k Keeper) TransmitIBCAccountLinkPacket(
+	ctx sdk.Context,
+	packetData types.IBCAccountLinkPacketData,
+	sourcePort,
+	sourceChannel string,
+	timeoutHeight clienttypes.Height,
+	timeoutTimestamp uint64,
+) error {
+
+	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+	if !found {
+		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	}
+
+	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
+	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
+
+	// get the next sequence
+	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
+	if !found {
+		return sdkerrors.Wrapf(
+			channeltypes.ErrSequenceSendNotFound,
+			"source port: %s, source channel: %s", sourcePort, sourceChannel,
+		)
+	}
+
+	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
+	if !ok {
+		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+	}
+
+	packetBytes, err := packetData.GetBytes()
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, "cannot marshal the packet: "+err.Error())
+	}
+
+	packet := channeltypes.NewPacket(
+		packetBytes,
+		sequence,
+		sourcePort,
+		sourceChannel,
+		destinationPort,
+		destinationChannel,
+		timeoutHeight,
+		timeoutTimestamp,
+	)
+
+	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
+		return err
+	}
+
+	return nil
+}

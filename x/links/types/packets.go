@@ -88,3 +88,59 @@ func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
 
 	return modulePacket.Marshal()
 }
+
+// ___________________________________________________________________________________________________________________
+
+func NewIBCAccountLinkPacketData(
+	sourceChainPrefix string,
+	sourceAddress string,
+	sourcePubKey string,
+	signature string,
+) IBCAccountLinkPacketData {
+	return IBCAccountLinkPacketData{
+		SourceChainPrefix: sourceChainPrefix, // Bech32 prefix of the source chain
+		SourceAddress:     sourceAddress,     // Bech32-encoded address
+		SourcePubKey:      sourcePubKey,      // Hex-encoded public key related to the address
+		Signature:         signature,         // Hex-encoded signature by source key
+	}
+}
+
+// Validate is used for validating the packet
+func (p IBCAccountLinkPacketData) Validate() error {
+
+	if p.SourceChainPrefix == "" {
+		return fmt.Errorf("chain prefix cannot be empty")
+	}
+
+	sourceAddressBytes, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
+	if err != nil {
+		return fmt.Errorf("failed to source address")
+	}
+	sourceAccAddress := sdk.AccAddress(sourceAddressBytes)
+
+	sourcePubKeyBytes, err := hex.DecodeString(p.SourcePubKey)
+	if err != nil {
+		return fmt.Errorf("failed to source pubkey")
+	}
+
+	sourcePubKey := &secp256k1.PubKey{Key: sourcePubKeyBytes}
+	if !sourceAccAddress.Equals(sdk.AccAddress(sourcePubKey.Address().Bytes())) {
+		return fmt.Errorf("source pubkey and source address are mismatched")
+	}
+
+	_, err = hex.DecodeString(p.Signature)
+	if err != nil {
+		return fmt.Errorf("failed to parse decode source signature")
+	}
+
+	return nil
+}
+
+// GetBytes is a helper for serialising
+func (p IBCAccountLinkPacketData) GetBytes() ([]byte, error) {
+	var modulePacket LinksPacketData
+
+	modulePacket.Packet = &LinksPacketData_IbcAccountLinkPacket{&p}
+
+	return modulePacket.Marshal()
+}

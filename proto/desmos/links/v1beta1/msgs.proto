@@ -7,15 +7,20 @@ option go_package = "github.com/desmos-labs/desmos/x/links/types";
 
 // Msg defines the links Msg service.
 service Msg {
-  // CreateIBCAccountConnection defines the method to create a post
+  // CreateIBCAccountConnection defines the method to create a link by two
+  // different private keys
   rpc CreateIBCAccountConnection(MsgCreateIBCAccountConnection)
       returns (MsgCreateIBCAccountConnectionResponse);
+
+  // CreateIBCAccountLink defines the method to create a link by one private key
+  rpc CreateIBCAccountLink(MsgCreateIBCAccountLink)
+      returns (MsgCreateIBCAccountLinkResponse);
 }
 
 // ___________________________________________________________________________________________________________________
 
 // MsgCreateIBCAccountConnection represents the message to be used to create a
-// link.
+// link by two different private keys.
 message MsgCreateIBCAccountConnection {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -38,6 +43,31 @@ message MsgCreateIBCAccountConnection {
       [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
-// MsgCreateIBCAccountConnectionResponse defines the Msg/CreatePost response
-// type.
+// MsgCreateIBCAccountConnectionResponse defines the
+// Msg/CreateIBCAccountConnection response type.
 message MsgCreateIBCAccountConnectionResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgCreateIBCAccountLink represents the message to be used to create a
+// link by one private key.
+message MsgCreateIBCAccountLink {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string port = 1 [ (gogoproto.moretags) = "yaml:\"port\"" ];
+  string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
+  uint64 timeout_timestamp = 3
+      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
+  string source_chain_prefix = 4
+      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
+  string source_address = 5
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string source_pub_key = 6
+      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
+  string signature = 7 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+}
+
+// MsgCreateIBCAccountLinkResponse defines the
+// Msg/CreateIBCAccountLink response type.
+message MsgCreateIBCAccountLinkResponse {}
