@@ -33,6 +33,7 @@ type KeeperTestSuite struct {
 	k                keeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
+	accountKeeper    authkeeper.AccountKeeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 	scopedIBCKeeper  capabilitykeeper.ScopedKeeper
@@ -46,7 +47,6 @@ type TestData struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	// TO DO: ibc setting
 
 	// define store keys
 	linkKey := sdk.NewKVStoreKey("links")
@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(ibchostKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
 	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
-	ms.MountStoreWithDB(capabilityKey, sdk.StoreTypeIAVL, nil)
+	ms.MountStoreWithDB(capabilityKey, sdk.StoreTypeIAVL, memDB)
 
 	for _, memKey := range memKeys {
 		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
@@ -81,20 +81,18 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, capabilityKey, memKeys[capabilitytypes.MemStoreKey])
-	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	suite.scopedIBCKeeper = suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	suite.IBCKeeper = ibckeeper.NewKeeper(
 		suite.cdc,
 		ibchostKey,
 		suite.paramsKeeper.Subspace(ibchost.ModuleName),
 		suite.stakingKeeper,
-		scopedIBCKeeper,
+		suite.scopedIBCKeeper,
 	)
 
-	maccPerms := map[string][]string{
-		authtypes.FeeCollectorName: nil,
-	}
+	maccPerms := map[string][]string{}
 
-	accountKeeper := authkeeper.NewAccountKeeper(
+	suite.accountKeeper = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		accountKey,
 		suite.paramsKeeper.Subspace(authtypes.ModuleName),
@@ -107,8 +105,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.storeKey,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
-		scopedIBCKeeper,
-		accountKeeper,
+		suite.scopedIBCKeeper,
+		suite.accountKeeper,
 	)
 
 	// setup Data

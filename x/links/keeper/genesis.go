@@ -8,12 +8,7 @@ import (
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
-
 	k.SetPort(ctx, genState.PortId)
-
-	for _, link := range genState.Links {
-		k.StoreLink(ctx, link)
-	}
 
 	// Only try to bind to port if it is not already bound, since we may already own
 	// port capability from capability InitGenesis
@@ -24,6 +19,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 		if err != nil {
 			panic("could not claim port capability: " + err.Error())
 		}
+	}
+
+	for _, link := range genState.Links {
+		k.StoreLink(ctx, link)
 	}
 }
 
