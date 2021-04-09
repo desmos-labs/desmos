@@ -9,5 +9,6 @@ option go_package = "github.com/desmos-labs/desmos/x/links/types";
 // GenesisState defines the links module's genesis state.
 message GenesisState {
   string port_id = 1 [ (gogoproto.moretags) = "yaml:\"port_id\"" ];
-  repeated desmos.links.v1beta1.Link links = 2 [ (gogoproto.nullable) = false ];
+  repeated desmos.links.v1beta1.Link links = 2
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"links\"" ];
 }

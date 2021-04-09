@@ -352,7 +352,7 @@ func NewDesmosApp(
 		scopedLinksKeeper,
 		app.AccountKeeper,
 	)
-	linksModule := links.NewAppModule(app.LinksKeeper)
+	linksModule := links.NewAppModule(appCodec, app.LinksKeeper, app.AccountKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
