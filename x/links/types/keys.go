@@ -22,7 +22,7 @@ var (
 	// PortKey defines the key to store the port ID in store
 	PortKey = []byte("links-port-")
 
-	LinksStorePrefix = []byte("link")
+	LinksStorePrefix = []byte("links")
 )
 
 func LinkStoreKey(address string) []byte {

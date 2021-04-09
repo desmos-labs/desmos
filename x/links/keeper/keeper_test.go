@@ -82,11 +82,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllLinks() {
 		links []types.Link
 	}{
 		{
-			name:  "Non empty Profiles list returned",
+			name:  "Non empty Links list returned",
 			links: []types.Link{suite.testData.link},
 		},
 		{
-			name:  "Profile not found",
+			name:  "Link not found",
 			links: nil,
 		},
 	}

@@ -1,8 +1,10 @@
 package links
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 
 	// this line is used by starport scaffolding # 1
 
@@ -17,10 +19,12 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	"github.com/desmos-labs/desmos/x/links/client/cli"
 	"github.com/desmos-labs/desmos/x/links/client/rest"
 	"github.com/desmos-labs/desmos/x/links/keeper"
+	"github.com/desmos-labs/desmos/x/links/simulation"
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
@@ -30,10 +34,6 @@ var (
 	_ module.AppModuleBasic = AppModuleBasic{}
 	_ porttypes.IBCModule   = AppModule{}
 )
-
-// ----------------------------------------------------------------------------
-// AppModuleBasic
-// ----------------------------------------------------------------------------
 
 // AppModuleBasic implements the AppModuleBasic interface for the capability module.
 type AppModuleBasic struct {
@@ -49,6 +49,7 @@ func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
+// RegisterLegacyAminoCodec registers the links module's types for the given codec.
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	types.RegisterLegacyAminoCodec(cdc)
 }
@@ -79,7 +80,7 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	// this line is used by starport scaffolding # 2
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the capability module's root tx command.
@@ -92,9 +93,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd(types.StoreKey)
 }
 
-// ----------------------------------------------------------------------------
-// AppModule
-// ----------------------------------------------------------------------------
+//____________________________________________________________________________
 
 // AppModule implements the AppModule interface for the capability module.
 type AppModule struct {
@@ -102,10 +101,9 @@ type AppModule struct {
 	keeper keeper.Keeper
 }
 
-func NewAppModule(cdc codec.Marshaler, keeper keeper.Keeper) AppModule {
+func NewAppModule(keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: NewAppModuleBasic(cdc),
-		keeper:         keeper,
+		keeper: keeper,
 	}
 }
 
@@ -161,4 +159,34 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // returns no validator updates.
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
+}
+
+//____________________________________________________________________________
+
+// AppModuleSimulation defines the module simulation functions used by the relationships module.
+type AppModuleSimulation struct{}
+
+// GenerateGenesisState creates a randomized GenState of the links module.
+func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+	simulation.RandomizedGenState(simState)
+}
+
+// ProposalContents doesn't return any content functions for governance proposals.
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
+	return nil
+}
+
+// RandomizedParams creates randomized links param changes for the simulator.
+func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+	return nil
+}
+
+// RegisterStoreDecoder registers a decoder for links module's types
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+	sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
+}
+
+// WeightedOperations returns the all the links module operations with their respective weights.
+func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
+	return nil
 }

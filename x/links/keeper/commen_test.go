@@ -105,7 +105,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		memKeys[capabilitytypes.MemStoreKey],
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedIBCKeeper,

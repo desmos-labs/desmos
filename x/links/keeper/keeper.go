@@ -1,10 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,7 +12,6 @@ import (
 type Keeper struct {
 	cdc      codec.Marshaler
 	storeKey sdk.StoreKey
-	memKey   sdk.StoreKey
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -26,8 +21,7 @@ type Keeper struct {
 
 func NewKeeper(
 	cdc codec.Marshaler,
-	storeKey,
-	memKey sdk.StoreKey,
+	storeKey sdk.StoreKey,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper capabilitykeeper.ScopedKeeper,
@@ -36,7 +30,6 @@ func NewKeeper(
 	return Keeper{
 		cdc:           cdc,
 		storeKey:      storeKey,
-		memKey:        memKey,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
@@ -81,10 +74,7 @@ func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 	return links
 }
 
+// GetLinkPubkey returns the pubkey corresponding to the given account
 func (k Keeper) GetLinkPubKey(ctx sdk.Context, acc sdk.AccAddress) (cryptotypes.PubKey, error) {
 	return k.accountKeeper.GetPubKey(ctx, acc)
-}
-
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }

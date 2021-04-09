@@ -72,6 +72,9 @@ import (
 	"github.com/desmos-labs/desmos/x/fees"
 	feeskeeper "github.com/desmos-labs/desmos/x/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/x/fees/types"
+	"github.com/desmos-labs/desmos/x/links"
+	linkskeeper "github.com/desmos-labs/desmos/x/links/keeper"
+	linkstypes "github.com/desmos-labs/desmos/x/links/types"
 	"github.com/desmos-labs/desmos/x/magpie"
 	magpieKeeper "github.com/desmos-labs/desmos/x/magpie/keeper"
 	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
@@ -154,6 +157,7 @@ var (
 		profiles.AppModuleBasic{},
 		reports.AppModuleBasic{},
 		relationships.AppModuleBasic{},
+		links.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -204,6 +208,7 @@ type DesmosApp struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedLinksKeeper       capabilitykeeper.ScopedKeeper
 
 	// Custom modules
 	FeesKeeper          feeskeeper.Keeper
@@ -212,6 +217,7 @@ type DesmosApp struct {
 	ProfileKeeper       profileskeeper.Keeper
 	ReportsKeeper       reportsKeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
+	LinksKeeper         linkskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -256,7 +262,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		magpieTypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
-		relationshipstypes.StoreKey,
+		relationshipstypes.StoreKey, linkstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -282,6 +288,7 @@ func NewDesmosApp(
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	scopedLinksKeeper := app.CapabilityKeeper.ScopeToModule(linkstypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -336,10 +343,21 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	// Create Link Keeper
+	app.LinksKeeper = linkskeeper.NewKeeper(
+		app.appCodec,
+		keys[linkstypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedLinksKeeper,
+		app.AccountKeeper,
+	)
+	linksModule := links.NewAppModule(app.LinksKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	// ibcRouter.AddRoute(linkstypes.ModuleName, linksModule)
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
+	ibcRouter.AddRoute(linkstypes.ModuleName, linksModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -417,6 +435,7 @@ func NewDesmosApp(
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+		linksModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -437,7 +456,7 @@ func NewDesmosApp(
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
 		feestypes.ModuleName, magpieTypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
-		reportsTypes.ModuleName, relationshipstypes.ModuleName, // custom modules
+		reportsTypes.ModuleName, relationshipstypes.ModuleName, linkstypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -475,6 +494,7 @@ func NewDesmosApp(
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+		linksModule,
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -510,6 +530,7 @@ func NewDesmosApp(
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 		app.CapabilityKeeper.InitializeAndSeal(ctx)
 	}
+	app.ScopedLinksKeeper = scopedLinksKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 
