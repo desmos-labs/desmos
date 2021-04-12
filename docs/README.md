@@ -13,8 +13,8 @@ Being thought for developers or sysadmins, you will find that most of the terms 
 However, in order for newcomers to get on board easily, we will also provide you with useful links that 
 redirects you to the proper documentation on third party websites.
 
-To get started, use the navigation bar to move thought pages. 
+To get started, use the navigation bar to move thought pages.
 
-:::tip WELCOME 
+:::tip WELCOME  
 Welcome to a whole new world of social networks.  
 ::: 
