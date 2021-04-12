@@ -124,7 +124,7 @@ Now, copy the updated genesis file and the new genesis transaction file inside t
 ```shell
 cd morpheus
 cp ~/.desmos/config/genesis.json morpheus-apollo-1/ 
-cp /path/to/gentx.json moprheus-apollo-1/
+cp /path/to/gentx.json morpheus-apollo-1/gentxs/
 ```
 
 Next, add, commit and push the new files to your fork repository:
