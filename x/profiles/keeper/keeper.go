@@ -184,7 +184,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 	store := ctx.KVStore(k.storeKey)
 	key := types.DtagTransferRequestStoreKey(request.Receiver)
 
-	var requests WrappedDTagTransferRequests
+	var requests types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
 	for _, req := range requests.Requests {
 		if req.Sender == request.Sender && req.Receiver == request.Receiver {
@@ -194,7 +194,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 		}
 	}
 
-	requests = NewWrappedDTagTransferRequests(append(requests.Requests, request))
+	requests = types.NewDTagTransferRequests(append(requests.Requests, request))
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&requests))
 	return nil
 }
@@ -204,7 +204,7 @@ func (k Keeper) GetUserIncomingDTagTransferRequests(ctx sdk.Context, user string
 	store := ctx.KVStore(k.storeKey)
 	key := types.DtagTransferRequestStoreKey(user)
 
-	var requests WrappedDTagTransferRequests
+	var requests types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
 	return requests.Requests
 }
@@ -215,7 +215,7 @@ func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagT
 	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
 
 	for ; iterator.Valid(); iterator.Next() {
-		var userRequests WrappedDTagTransferRequests
+		var userRequests types.DTagTransferRequests
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
 		requests = append(requests, userRequests.Requests...)
 	}
@@ -234,7 +234,7 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 	store := ctx.KVStore(k.storeKey)
 	key := types.DtagTransferRequestStoreKey(recipient)
 
-	var wrapped WrappedDTagTransferRequests
+	var wrapped types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)
 
 	for index, request := range wrapped.Requests {
@@ -243,7 +243,7 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 			if len(requests) == 0 {
 				store.Delete(key)
 			} else {
-				store.Set(key, k.cdc.MustMarshalBinaryBare(&WrappedDTagTransferRequests{Requests: requests}))
+				store.Set(key, k.cdc.MustMarshalBinaryBare(&types.DTagTransferRequests{Requests: requests}))
 			}
 			return nil
 		}

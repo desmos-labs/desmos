@@ -11,8 +11,6 @@ import (
 
 	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -517,7 +515,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
 					types.DtagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),
@@ -558,7 +556,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
 					types.DtagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),
@@ -591,7 +589,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
 					types.DtagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),

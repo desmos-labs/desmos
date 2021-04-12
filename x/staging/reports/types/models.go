@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 // NewReport returns a Report

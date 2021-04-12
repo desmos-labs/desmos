@@ -7,17 +7,16 @@ import (
 	"fmt"
 	"math/rand"
 
-	magpietypes "github.com/desmos-labs/desmos/x/magpie/types"
-	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/x/reports/types"
+	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/x/fees/types"
+	"github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 
 const (
@@ -25,7 +24,6 @@ const (
 )
 
 var msgsTypes = []string{
-	magpietypes.ActionCreationSession,
 	poststypes.ActionCreatePost,
 	poststypes.ActionEditPost,
 	poststypes.ActionAnswerPoll,

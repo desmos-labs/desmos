@@ -7,7 +7,7 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 

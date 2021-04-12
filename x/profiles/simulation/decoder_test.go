@@ -8,10 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/desmos-labs/desmos/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -21,7 +20,7 @@ func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	dec := simulation.NewDecodeStore(cdc)
 
-	requests := keeper.NewWrappedDTagTransferRequests([]types.DTagTransferRequest{
+	requests := types.NewDTagTransferRequests([]types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
 			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",

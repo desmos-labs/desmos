@@ -54,4 +54,11 @@ message DTagTransferRequest {
   string receiver = 3 [(gogoproto.moretags) = "yaml:\"receiver\""];
 }
 
-// ___________________________________________________________________________________________________________________
+// DTagTransferRequests contains a list of DTagTransferRequest
+message DTagTransferRequests {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated DTagTransferRequest requests = 1
+  [(gogoproto.nullable) = false];
+}

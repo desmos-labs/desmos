@@ -8,7 +8,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"

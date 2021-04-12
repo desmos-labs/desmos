@@ -68,3 +68,8 @@ func (request DTagTransferRequest) Validate() error {
 
 	return nil
 }
+
+// NewDTagTransferRequests returns a DTagTransferRequests instance wrapping the given requests
+func NewDTagTransferRequests(requests []DTagTransferRequest) DTagTransferRequests {
+	return DTagTransferRequests{Requests: requests}
+}

@@ -6,8 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
@@ -25,7 +23,7 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", addressA, addressB)
 
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestsPrefix):
-			var requestsA, requestsB keeper.WrappedDTagTransferRequests
+			var requestsA, requestsB types.DTagTransferRequests
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
 			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)
