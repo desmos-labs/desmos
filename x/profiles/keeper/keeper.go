@@ -8,7 +8,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 

@@ -3,7 +3,7 @@ package desmos.reports.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/reports/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/reports/types";
 
 // Msg defines the reports Msg service.
 service Msg {

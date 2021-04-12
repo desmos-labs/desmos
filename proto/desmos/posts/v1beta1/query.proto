@@ -10,7 +10,7 @@ import "desmos/posts/v1beta1/reactions.proto";
 import "desmos/posts/v1beta1/polls.proto";
 import "desmos/posts/v1beta1/params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // Query defines the gRPC querier service.
 service Query {
@@ -54,7 +54,7 @@ message QueryPostsParams {
   string sort_order = 4;
 
   string parent_id = 5;
-  google.protobuf.Timestamp creation_time = 6 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
   string subspace = 7;
   string creator = 8;
   repeated string hashtags = 9;
@@ -68,7 +68,7 @@ message QueryPostsRequest {
   string sort_order = 2;
 
   string parent_id = 3;
-  google.protobuf.Timestamp creation_time = 4 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
   string subspace = 5;
   string creator = 6;
   repeated string hashtags = 7;
