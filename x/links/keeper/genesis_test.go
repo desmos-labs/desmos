@@ -34,13 +34,14 @@ func (suite *KeeperTestSuite) TestExportGenesis() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
 			suite.k.SetPort(suite.ctx, types.PortID)
 			for _, link := range test.state.Links {
 				suite.k.StoreLink(suite.ctx, link)
 			}
 
 			genesis := suite.k.ExportGenesis(suite.ctx)
-			suite.Require().Equal(test.expGenesis, genesis)
+			suite.Require().Equal(test.expGenesis, *genesis)
 		})
 	}
 }
