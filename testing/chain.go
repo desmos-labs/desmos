@@ -19,7 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -36,6 +35,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/ibc/testing/mock"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	simapp "github.com/desmos-labs/desmos/app"
 	linkstypes "github.com/desmos-labs/desmos/x/links/types"
 )
 
@@ -52,8 +52,7 @@ const (
 	ConnectionIDPrefix = "conn"
 	ChannelIDPrefix    = "chan"
 
-	TransferPort = linkstypes.ModuleName
-	MockPort     = mock.ModuleName
+	LinksPort = linkstypes.ModuleName
 
 	// used for testing UpdateClientProposal
 	Title       = "title"
@@ -83,7 +82,7 @@ var (
 type TestChain struct {
 	t *testing.T
 
-	App           *simapp.SimApp
+	App           *simapp.DesmosApp
 	ChainID       string
 	LastHeader    *ibctmtypes.Header // header for last block height committed
 	CurrentHeader tmproto.Header     // header for current block height
@@ -156,10 +155,6 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		ClientIDs:     make([]string, 0),
 		Connections:   make([]*TestConnection, 0),
 	}
-
-	cap := chain.App.IBCKeeper.PortKeeper.BindPort(chain.GetContext(), MockPort)
-	err = chain.App.ScopedIBCMockKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(MockPort))
-	require.NoError(t, err)
 
 	chain.NextBlock()
 
@@ -723,13 +718,9 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 		require.NoError(chain.t, err)
 
 		switch portID {
-		case MockPort:
-			// claim capability using the mock capability keeper
-			err = chain.App.ScopedIBCMockKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
-			require.NoError(chain.t, err)
-		case TransferPort:
+		case LinksPort:
 			// claim capability using the transfer capability keeper
-			err = chain.App.ScopedTransferKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
+			err = chain.App.ScopedLinksKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)
 		default:
 			panic(fmt.Sprintf("unsupported ibc testing package port ID %s", portID))
@@ -759,7 +750,7 @@ func (chain *TestChain) CreateChannelCapability(portID, channelID string) {
 	if !ok {
 		cap, err := chain.App.ScopedIBCKeeper.NewCapability(chain.GetContext(), capName)
 		require.NoError(chain.t, err)
-		err = chain.App.ScopedTransferKeeper.ClaimCapability(chain.GetContext(), cap, capName)
+		err = chain.App.ScopedLinksKeeper.ClaimCapability(chain.GetContext(), cap, capName)
 		require.NoError(chain.t, err)
 	}
 
