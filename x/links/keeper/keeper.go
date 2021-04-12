@@ -10,7 +10,7 @@ import (
 )
 
 type Keeper struct {
-	cdc      codec.Marshaler
+	cdc      codec.BinaryMarshaler
 	storeKey sdk.StoreKey
 
 	channelKeeper types.ChannelKeeper
@@ -20,7 +20,7 @@ type Keeper struct {
 }
 
 func NewKeeper(
-	cdc codec.Marshaler,
+	cdc codec.BinaryMarshaler,
 	storeKey sdk.StoreKey,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,

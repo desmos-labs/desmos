@@ -5,17 +5,17 @@ import "github.com/desmos-labs/desmos/x/links/types"
 func (suite *KeeperTestSuite) TestExportGenesis() {
 	tests := []struct {
 		name       string
-		state      *types.GenesisState
+		state      types.GenesisState
 		expGenesis types.GenesisState
 	}{
 		{
 			name:       "empty data is exported correctly",
-			state:      types.NewGenesisState(types.PortID, nil),
+			state:      *types.NewGenesisState(types.PortID, nil),
 			expGenesis: *types.NewGenesisState(types.PortID, nil),
 		},
 		{
 			name: "data is exported correctly",
-			state: types.NewGenesisState(
+			state: *types.NewGenesisState(
 				types.PortID,
 				[]types.Link{
 					suite.testData.link,
@@ -48,13 +48,13 @@ func (suite *KeeperTestSuite) TestExportGenesis() {
 func (suite *KeeperTestSuite) TestInitGenesis() {
 	tests := []struct {
 		name     string
-		genesis  *types.GenesisState
+		genesis  types.GenesisState
 		expPanic bool
 		expState types.GenesisState
 	}{
 		{
 			name:     "empty genesis is initialized properly",
-			genesis:  types.NewGenesisState(types.PortID, nil),
+			genesis:  *types.NewGenesisState(types.PortID, nil),
 			expPanic: false,
 			expState: types.GenesisState{
 				PortId: types.PortID,
@@ -63,7 +63,7 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 		},
 		{
 			name: "proper genesis is initialized properly",
-			genesis: types.NewGenesisState(
+			genesis: *types.NewGenesisState(
 				types.PortID, []types.Link{
 					suite.testData.link,
 				}),
@@ -81,9 +81,9 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 			suite.SetupTest()
 
 			if test.expPanic {
-				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *test.genesis) })
+				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, test.genesis) })
 			} else {
-				suite.k.InitGenesis(suite.ctx, *test.genesis)
+				suite.k.InitGenesis(suite.ctx, test.genesis)
 				suite.Require().Equal(types.PortID, suite.k.GetPort(suite.ctx))
 				links := suite.k.GetAllLinks(suite.ctx)
 				suite.Require().Equal(test.expState.Links, links)

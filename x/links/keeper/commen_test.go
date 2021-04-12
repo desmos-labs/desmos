@@ -13,6 +13,7 @@ import (
 	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/links/keeper"
@@ -26,7 +27,7 @@ import (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc              codec.Marshaler
+	cdc              codec.BinaryMarshaler
 	legacyAminoCdc   *codec.LegacyAmino
 	ctx              sdk.Context
 	storeKey         sdk.StoreKey
@@ -49,14 +50,14 @@ type TestData struct {
 func (suite *KeeperTestSuite) SetupTest() {
 
 	// define store keys
-	linkKey := sdk.NewKVStoreKey("links")
+	linkKey := sdk.NewKVStoreKey(types.StoreKey)
 	suite.storeKey = linkKey
-	accountKey := sdk.NewKVStoreKey("acc")
-	ibchostKey := sdk.NewKVStoreKey("ibc")
-	capabilityKey := sdk.NewKVStoreKey("capability")
-	memKeys := sdk.NewMemoryStoreKeys("mem_capability")
-	paramsKey := sdk.NewKVStoreKey("params")
-	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	accountKey := sdk.NewKVStoreKey(authtypes.StoreKey)
+	ibchostKey := sdk.NewKVStoreKey(ibchost.StoreKey)
+	capabilityKey := sdk.NewKVStoreKey(capabilitytypes.StoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	paramsKey := sdk.NewKVStoreKey(paramstypes.StoreKey)
+	paramsTKey := sdk.NewTransientStoreKey(paramstypes.TStoreKey)
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
