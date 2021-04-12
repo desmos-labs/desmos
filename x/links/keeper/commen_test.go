@@ -37,7 +37,6 @@ type KeeperTestSuite struct {
 	accountKeeper    authkeeper.AccountKeeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
-	scopedIBCKeeper  capabilitykeeper.ScopedKeeper
 	testData         TestData
 }
 
@@ -82,13 +81,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, capabilityKey, memKeys[capabilitytypes.MemStoreKey])
-	suite.scopedIBCKeeper = suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	suite.IBCKeeper = ibckeeper.NewKeeper(
 		suite.cdc,
 		ibchostKey,
 		suite.paramsKeeper.Subspace(ibchost.ModuleName),
 		suite.stakingKeeper,
-		suite.scopedIBCKeeper,
+		scopedIBCKeeper,
 	)
 
 	maccPerms := map[string][]string{}
@@ -101,12 +100,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 		maccPerms,
 	)
 
+	scopedLinksKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
-		suite.scopedIBCKeeper,
+		scopedLinksKeeper,
 		suite.accountKeeper,
 	)
 

@@ -63,7 +63,7 @@ func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
 	var links []types.Link
 
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.LinksStorePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.LinkStorePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

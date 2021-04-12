@@ -13,18 +13,17 @@ const (
 	QueryLink    = "link"
 
 	// IBC keys
-	MemStoreKey = "mem_capability"
-	Version     = "links-1"
-	PortID      = "links"
+	Version = "links-1"
+	PortID  = "links"
 )
 
 var (
 	// PortKey defines the key to store the port ID in store
 	PortKey = []byte("links-port-")
 
-	LinksStorePrefix = []byte("links")
+	LinkStorePrefix = []byte("link-")
 )
 
 func LinkStoreKey(address string) []byte {
-	return append(LinksStorePrefix, []byte(address)...)
+	return append(LinkStorePrefix, []byte(address)...)
 }

@@ -19,7 +19,7 @@ type LinksUnmarshaler interface {
 func NewDecodeStore(cdc codec.BinaryMarshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
-		case bytes.HasPrefix(kvA.Key, types.LinksStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.LinkStorePrefix):
 			var link types.Link
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &link)
 			return fmt.Sprintf("Link: %s\n", link)
