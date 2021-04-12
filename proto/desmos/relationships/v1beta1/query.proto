@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "desmos/relationships/v1beta1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/relationships/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/relationships/types";
 
 // Query defines the gRPC querier service.
 service Query {

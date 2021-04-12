@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "desmos/posts/v1beta1/polls.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // PostIndex represents a post index
 message PostIndex { uint64 value = 1; }
@@ -16,14 +16,14 @@ message Post {
   option (gogoproto.goproto_stringer) = true;
 
   string post_id = 1
-  [(gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\""];
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   string parent_id = 2 [
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml:\"parent_id\""
   ];
 
-  string message = 3 [(gogoproto.moretags) = "yaml:\"message\""];
+  string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   google.protobuf.Timestamp created = 4 [
     (gogoproto.nullable) = false,
@@ -42,7 +42,7 @@ message Post {
     (gogoproto.jsontag) = "allows_comments"
   ];
 
-  string subspace = 7 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
   repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 8 [
     (gogoproto.castrepeated) = "OptionalData",
@@ -51,7 +51,7 @@ message Post {
     (gogoproto.moretags) = "yaml:\"optional_data,omitempty\""
   ];
 
-  string creator = 9 [(gogoproto.moretags) = "yaml:\"creator\""];
+  string creator = 9 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 
   repeated Attachment attachments = 10 [
     (gogoproto.castrepeated) = "Attachments",
@@ -60,7 +60,7 @@ message Post {
   ];
 
   desmos.posts.v1beta1.PollData poll_data = 11
-  [(gogoproto.moretags) = "yaml:\"poll_data,omitempty\""];
+      [ (gogoproto.moretags) = "yaml:\"poll_data,omitempty\"" ];
 }
 
 // CommentIDs wraps the list of comments of a post
@@ -87,7 +87,7 @@ message Attachment {
     (gogoproto.moretags) = "yaml:\"mime_type\""
   ];
 
-  repeated string tags = 3 [(gogoproto.moretags) = "yaml:\"tags,omitempty\""];
+  repeated string tags = 3 [ (gogoproto.moretags) = "yaml:\"tags,omitempty\"" ];
 }
 
 // ___________________________________________________________________________________________________________________

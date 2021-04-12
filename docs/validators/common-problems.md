@@ -232,4 +232,4 @@ had before.
 Previous delegators will still be able to unbond from a tombstoned validator.
 
 More information about the slashing penalties and tombstoning can be
-found [here](https://docs.cosmos.network/master/modules/slashing/07_tombstone.html).
+found [here](https://docs.cosmos.network/v0.42/modules/slashing/07_tombstone.html).

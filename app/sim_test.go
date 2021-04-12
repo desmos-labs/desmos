@@ -16,11 +16,10 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	magpieTypes "github.com/desmos-labs/desmos/x/magpie/types"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	profilesTypes "github.com/desmos-labs/desmos/x/profiles/types"
-	relationshipsTypes "github.com/desmos-labs/desmos/x/relationships/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -218,11 +217,10 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
 		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
-		{app.keys[magpieTypes.StoreKey], newApp.keys[magpieTypes.StoreKey], [][]byte{}},
 		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
-		{app.keys[profilesTypes.StoreKey], newApp.keys[profilesTypes.StoreKey], [][]byte{}},
+		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
-		{app.keys[relationshipsTypes.StoreKey], newApp.keys[relationshipsTypes.StoreKey], [][]byte{}},
+		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
 
 		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
