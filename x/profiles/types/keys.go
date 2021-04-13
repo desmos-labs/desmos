@@ -29,7 +29,7 @@ var (
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
 func DTagStoreKey(dtag string) []byte {
-	return append(DTagPrefix, dtag...)
+	return append(DTagPrefix, []byte(dtag)...)
 }
 
 // DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store

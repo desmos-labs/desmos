@@ -99,23 +99,35 @@ func randomDtagRequestTransferFields(
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
+	// Skip if the receiver is blocked
 	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	randomDTag := RandomDTag(r)
-	profile, err := types.NewProfile(
+
+	// Get the current auth account of the receiver.
+	// If the receiver already has a profile, we need to first extract the auth account from it. This is done in order
+	// to avoid later storing a Profile that contains a Profile inside itself (which would cause later bugs in the
+	// export/import process)
+	account := ak.GetAccount(ctx, receiver.Address)
+	if customProfile, ok := account.(*types.Profile); ok {
+		account = customProfile.GetAccount()
+	}
+
+	// Create the receiver profile
+	receiverProfile, err := types.NewProfile(
 		randomDTag,
 		"",
 		"",
 		types.NewPictures("", ""),
 		ctx.BlockTime(),
-		ak.GetAccount(ctx, receiver.Address),
+		account,
 	)
 	if err != nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
-	_ = k.StoreProfile(ctx, profile)
+	_ = k.StoreProfile(ctx, receiverProfile)
 
 	// Create a request
 	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())

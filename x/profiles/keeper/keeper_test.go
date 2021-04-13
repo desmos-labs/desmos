@@ -139,6 +139,49 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestKeeper_StoreProfile_Update() {
+	// Store the initial profile
+	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, suite.testData.profile))
+
+	// Verify the store keys
+	store := suite.ctx.KVStore(suite.storeKey)
+	suite.Require().Equal(
+		suite.testData.profile.GetAddress().String(),
+		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.Dtag))).String(),
+	)
+
+	oldAccounts := suite.ak.GetAllAccounts(suite.ctx)
+	suite.Require().Len(oldAccounts, 1)
+
+	// Update the profile
+	updatedProfile, err := types.NewProfile(
+		suite.testData.profile.Dtag+"-update",
+		"",
+		"",
+		types.NewPictures("", ""),
+		suite.testData.profile.CreationDate,
+		suite.ak.GetAccount(suite.ctx, suite.testData.profile.GetAddress()),
+	)
+	suite.Require().NoError(err)
+	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, updatedProfile))
+
+	// Verify the store keys
+	suite.Require().Nil(
+		store.Get(types.DTagStoreKey(suite.testData.profile.Dtag)),
+	)
+	suite.Require().Equal(
+		suite.testData.profile.GetAddress().String(),
+		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.Dtag+"-update"))).String(),
+	)
+
+	newAccounts := suite.ak.GetAllAccounts(suite.ctx)
+	suite.Require().Len(newAccounts, 1)
+
+	for _, account := range newAccounts {
+		suite.Require().NotContains(oldAccounts, account)
+	}
+}
+
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 	tests := []struct {
 		name           string

@@ -68,12 +68,12 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
 	store := ctx.KVStore(k.storeKey)
 
-	// Remove the previous DTag association (if the profile is being edited)
+	// Remove the previous DTag association (if the DTag has changed)
 	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
 	if err != nil {
 		return err
 	}
-	if found {
+	if found && oldProfile.Dtag != profile.Dtag {
 		store.Delete(types.DTagStoreKey(oldProfile.Dtag))
 	}
 
@@ -213,6 +213,7 @@ func (k Keeper) GetUserIncomingDTagTransferRequests(ctx sdk.Context, user string
 func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
+	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var userRequests types.DTagTransferRequests
