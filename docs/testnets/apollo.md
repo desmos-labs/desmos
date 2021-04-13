@@ -22,9 +22,8 @@ If you wish to know how please read [here](../testnets/join-public.md).
 
 :::warning Rewards  
 This testnet is **not** meant to reward the validators that will take part to it directly. This means that we will
-**not** give any DSM to people that will run a validator node. However, we will use this testnet a playground to observe
-how different validators behave and reward them via a delegation inside our mainnet if they decide to run a node there
-as well.  
+**not** give any DSM to people that will run a validator node. Instead, we will use this testnet as a playground to
+observe how different validators behave.  
 :::
 
 ## Join "Apollo"
