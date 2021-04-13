@@ -53,6 +53,7 @@ const (
 	ChannelIDPrefix    = "chan"
 
 	LinksPort = linkstypes.ModuleName
+	MockPort  = "mock"
 
 	// used for testing UpdateClientProposal
 	Title       = "title"
@@ -93,8 +94,8 @@ type TestChain struct {
 	Vals    *tmtypes.ValidatorSet
 	Signers []tmtypes.PrivValidator
 
-	senderPrivKey cryptotypes.PrivKey
-	SenderAccount authtypes.AccountI
+	PrivKey cryptotypes.PrivKey
+	Account authtypes.AccountI
 
 	// IBC specific helpers
 	ClientIDs   []string          // ClientID's used on this chain
@@ -150,8 +151,8 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		Codec:         app.AppCodec(),
 		Vals:          valSet,
 		Signers:       signers,
-		senderPrivKey: senderPrivKey,
-		SenderAccount: acc,
+		PrivKey:       senderPrivKey,
+		Account:       acc,
 		ClientIDs:     make([]string, 0),
 		Connections:   make([]*TestConnection, 0),
 	}
@@ -281,9 +282,9 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 		chain.GetContext().BlockHeader(),
 		msgs,
 		chain.ChainID,
-		[]uint64{chain.SenderAccount.GetAccountNumber()},
-		[]uint64{chain.SenderAccount.GetSequence()},
-		true, true, chain.senderPrivKey,
+		[]uint64{chain.Account.GetAccountNumber()},
+		[]uint64{chain.Account.GetSequence()},
+		true, true, chain.PrivKey,
 	)
 	if err != nil {
 		return nil, err
@@ -293,7 +294,7 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 	chain.NextBlock()
 
 	// increment sequence for successful transaction execution
-	chain.SenderAccount.SetSequence(chain.SenderAccount.GetSequence() + 1)
+	chain.Account.SetSequence(chain.Account.GetSequence() + 1)
 
 	return r, nil
 }
@@ -446,16 +447,12 @@ func (chain *TestChain) ConstructMsgCreateClient(counterparty *TestChain, client
 			height, commitmenttypes.GetSDKSpecs(), UpgradePath, false, false,
 		)
 		consensusState = counterparty.LastHeader.ConsensusState()
-	case exported.Solomachine:
-		solo := NewSolomachine(chain.t, chain.Codec, clientID, "", 1)
-		clientState = solo.ClientState()
-		consensusState = solo.ConsensusState()
 	default:
 		chain.t.Fatalf("unsupported client state type %s", clientType)
 	}
 
 	msg, err := clienttypes.NewMsgCreateClient(
-		clientState, consensusState, chain.SenderAccount.GetAddress(),
+		clientState, consensusState, chain.Account.GetAddress(),
 	)
 	require.NoError(chain.t, err)
 	return msg
@@ -478,7 +475,7 @@ func (chain *TestChain) UpdateTMClient(counterparty *TestChain, clientID string)
 
 	msg, err := clienttypes.NewMsgUpdateClient(
 		clientID, header,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	require.NoError(chain.t, err)
 
@@ -639,7 +636,7 @@ func (chain *TestChain) ConnectionOpenInit(
 		connection.ClientID,
 		connection.CounterpartyClientID,
 		counterparty.GetPrefix(), DefaultOpenInitVersion, DefaultDelayPeriod,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -662,7 +659,7 @@ func (chain *TestChain) ConnectionOpenTry(
 		counterpartyClient, counterparty.GetPrefix(), []*connectiontypes.Version{ConnectionVersion}, DefaultDelayPeriod,
 		proofInit, proofClient, proofConsensus,
 		proofHeight, consensusHeight,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -684,7 +681,7 @@ func (chain *TestChain) ConnectionOpenAck(
 		proofTry, proofClient, proofConsensus,
 		proofHeight, consensusHeight,
 		ConnectionVersion,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -700,7 +697,7 @@ func (chain *TestChain) ConnectionOpenConfirm(
 	msg := connectiontypes.NewMsgConnectionOpenConfirm(
 		connection.ID,
 		proof, height,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -730,15 +727,6 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 	chain.App.Commit()
 
 	chain.NextBlock()
-}
-
-// GetPortCapability returns the port capability for the given portID. The capability must
-// exist, otherwise testing will fail.
-func (chain *TestChain) GetPortCapability(portID string) *capabilitytypes.Capability {
-	cap, ok := chain.App.ScopedIBCKeeper.GetCapability(chain.GetContext(), host.PortPath(portID))
-	require.True(chain.t, ok)
-
-	return cap
 }
 
 // CreateChannelCapability binds and claims a capability for the given portID and channelID
@@ -778,7 +766,7 @@ func (chain *TestChain) ChanOpenInit(
 		ch.PortID,
 		ch.Version, order, []string{connectionID},
 		counterparty.PortID,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -797,7 +785,7 @@ func (chain *TestChain) ChanOpenTry(
 		ch.Version, order, []string{connectionID},
 		counterpartyCh.PortID, counterpartyCh.ID, counterpartyCh.Version,
 		proof, height,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -813,7 +801,7 @@ func (chain *TestChain) ChanOpenAck(
 		ch.PortID, ch.ID,
 		counterpartyCh.ID, counterpartyCh.Version, // testing doesn't use flexible selection
 		proof, height,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -828,68 +816,7 @@ func (chain *TestChain) ChanOpenConfirm(
 	msg := channeltypes.NewMsgChannelOpenConfirm(
 		ch.PortID, ch.ID,
 		proof, height,
-		chain.SenderAccount.GetAddress(),
+		chain.Account.GetAddress(),
 	)
 	return chain.sendMsgs(msg)
-}
-
-// ChanCloseInit will construct and execute a MsgChannelCloseInit.
-//
-// NOTE: does not work with links module
-func (chain *TestChain) ChanCloseInit(
-	counterparty *TestChain,
-	channel TestChannel,
-) error {
-	msg := channeltypes.NewMsgChannelCloseInit(
-		channel.PortID, channel.ID,
-		chain.SenderAccount.GetAddress(),
-	)
-	return chain.sendMsgs(msg)
-}
-
-// GetIBCAccountConnectionPacketData returns a ibc-links marshalled packet to be used for
-// callback testing.
-func (chain *TestChain) GetIBCAccountConnectionPacketData(counterparty *TestChain) []byte {
-	// TODO get IBCAccountConnection packet data
-
-	return nil
-}
-
-// SendPacket simulates sending a packet through the channel keeper. No message needs to be
-// passed since this call is made from a module.
-func (chain *TestChain) SendPacket(
-	packet exported.PacketI,
-) error {
-	channelCap := chain.GetChannelCapability(packet.GetSourcePort(), packet.GetSourceChannel())
-
-	// no need to send message, acting as a module
-	err := chain.App.IBCKeeper.ChannelKeeper.SendPacket(chain.GetContext(), channelCap, packet)
-	if err != nil {
-		return err
-	}
-
-	// commit changes
-	chain.App.Commit()
-	chain.NextBlock()
-
-	return nil
-}
-
-// WriteAcknowledgement simulates writing an acknowledgement to the chain.
-func (chain *TestChain) WriteAcknowledgement(
-	packet exported.PacketI,
-) error {
-	channelCap := chain.GetChannelCapability(packet.GetDestPort(), packet.GetDestChannel())
-
-	// no need to send message, acting as a handler
-	err := chain.App.IBCKeeper.ChannelKeeper.WriteAcknowledgement(chain.GetContext(), channelCap, packet, TestHash)
-	if err != nil {
-		return err
-	}
-
-	// commit changes
-	chain.App.Commit()
-	chain.NextBlock()
-
-	return nil
 }
