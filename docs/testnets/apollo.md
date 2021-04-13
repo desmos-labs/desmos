@@ -3,7 +3,7 @@
 ## Overview
 
 In order to make sure that validators know what to do when the mainnet will start, we decided to run a copycat chain
-called _"Apollo"_. This will be used to test the final Desmos codebase as well as to test the coordination between
+called _"Apollo"_. We will use it to test the final Desmos codebase as well as to test the coordination between
 different validators and future updates. This testnet will start the same way as the mainnet, using a decentralized
 procedure made of three different parts:
 
