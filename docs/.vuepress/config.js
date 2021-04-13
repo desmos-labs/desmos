@@ -146,8 +146,9 @@ module.exports = {
                     ["testnets/overview", "Overview"],
                     ["testnets/create-local", "Create a local testnet"],
                     ["testnets/join-public", "Join the public testnet"],
+                    ["testnets/apollo", "Morpheus \"Apollo\""],
                 ],
-            },
+            }
         ],
     }
 };
