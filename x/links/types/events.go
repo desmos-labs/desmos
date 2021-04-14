@@ -7,4 +7,5 @@ const (
 	AttributeKeyAck                     = "acknowledgement"
 	AttributeKeyAckError                = "error"
 	EventTypeIBCAccountConnectionPacket = "ibc_account_connection_packet"
+	EventTypeIBCAccountLinkPacket       = "ibc_account_link_packet"
 )

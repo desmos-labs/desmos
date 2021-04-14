@@ -157,6 +157,25 @@ func (am AppModule) OnRecvPacket(
 				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 			),
 		)
+	case *types.LinksPacketData_IbcAccountLinkPacket:
+		packetAck, err := am.keeper.OnRecvIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket)
+		if err != nil {
+			ack = channeltypes.NewErrorAcknowledgement(err.Error())
+		} else {
+			// Encode packet acknowledgment
+			packetAckBytes, err := packetAck.Marshal()
+			if err != nil {
+				return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+			}
+			ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeIBCAccountLinkPacket,
+				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
+			),
+		)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
 		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -199,6 +218,12 @@ func (am AppModule) OnAcknowledgementPacket(
 			return nil, err
 		}
 		eventType = types.EventTypeIBCAccountConnectionPacket
+	case *types.LinksPacketData_IbcAccountLinkPacket:
+		err := am.keeper.OnAcknowledgementIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket, ack)
+		if err != nil {
+			return nil, err
+		}
+		eventType = types.EventTypeIBCAccountLinkPacket
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -248,6 +273,11 @@ func (am AppModule) OnTimeoutPacket(
 	switch packet := modulePacketData.Packet.(type) {
 	case *types.LinksPacketData_IbcAccountConnectionPacket:
 		err := am.keeper.OnTimeoutIBCAccountConnectionPacket(ctx, modulePacket, *packet.IbcAccountConnectionPacket)
+		if err != nil {
+			return nil, err
+		}
+	case *types.LinksPacketData_IbcAccountLinkPacket:
+		err := am.keeper.OnTimeoutIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket)
 		if err != nil {
 			return nil, err
 		}

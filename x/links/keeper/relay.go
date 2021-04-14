@@ -118,22 +118,17 @@ func (k Keeper) OnAcknowledgementIBCAccountConnectionPacket(ctx sdk.Context,
 ) error {
 	switch dispatchedAck := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Error:
-
-		// TODO: failed acknowledgement logic
-		_ = dispatchedAck.Error
-
-		return nil
+		return errors.New(dispatchedAck.Error)
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
-		var packetAck types.IBCAccountConnectionPacketData
+		var packetAck types.IBCAccountConnectionPacketAck
 		err := packetAck.Unmarshal(dispatchedAck.Result)
 		if err != nil {
 			// The counter-party module doesn't implement the correct acknowledgment format
 			return errors.New("cannot unmarshal acknowledgment")
 		}
-
-		// TODO: successful acknowledgement logic
-
+		// the acknowledgement succeeded on the receiving chain so nothing
+		// needs to be executed and no error needs to be returned
 		return nil
 	default:
 		// The counter-party module doesn't implement the correct acknowledgment format
@@ -250,22 +245,18 @@ func (k Keeper) OnAcknowledgementIBCAccountLinkPacket(
 ) error {
 	switch dispatchedAck := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Error:
-
-		// TODO: failed acknowledgement logic
-		_ = dispatchedAck.Error
-
-		return nil
+		return errors.New(dispatchedAck.Error)
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
-		var packetAck types.IBCAccountLinkPacketData
+		var packetAck types.IBCAccountLinkPacketAck
 		err := packetAck.Unmarshal(dispatchedAck.Result)
 		if err != nil {
 			// The counter-party module doesn't implement the correct acknowledgment format
 			return errors.New("cannot unmarshal acknowledgment")
 		}
 
-		// TODO: successful acknowledgement logic
-
+		// the acknowledgement succeeded on the receiving chain so nothing
+		// needs to be executed and no error needs to be returned
 		return nil
 	default:
 		// The counter-party module doesn't implement the correct acknowledgment format
@@ -274,13 +265,11 @@ func (k Keeper) OnAcknowledgementIBCAccountLinkPacket(
 }
 
 // OnTimeoutIBCAccountLinkPacket responds to the case where a packet has not been transmitted because of a timeout
+// No error needs to be returned
 func (k Keeper) OnTimeoutIBCAccountLinkPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	data types.IBCAccountLinkPacketData,
 ) error {
-
-	// TODO: packet timeout logic
-
 	return nil
 }

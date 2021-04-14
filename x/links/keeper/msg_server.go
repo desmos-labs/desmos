@@ -72,7 +72,7 @@ func (k msgServer) CreateIBCAccountLink(
 		packet,
 		msg.Port,
 		msg.ChannelId,
-		clienttypes.ZeroHeight(),
+		clienttypes.NewHeight(0, 100),
 		msg.TimeoutTimestamp,
 	)
 	if err != nil {
