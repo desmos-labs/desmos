@@ -12,10 +12,13 @@ jobs:
   Markdown-Link-Check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - name: Checkout 🛎️
+        uses: actions/checkout@master
+
+      - name: Checking docs 🔍
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
-          use-quit-mode: "yes"
+          use-quiet-mode: "yes"
           folder-path: "docs"
 
   Build-and-Deploy:
