@@ -14,13 +14,13 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// Profiles implements the Query/Profiles gRPC method
+// Profile implements the Query/Profile gRPC method
 func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest) (*types.QueryProfileResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	dTagOrAddress := request.User
 	if strings.TrimSpace(dTagOrAddress) == "" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or sdkAddress cannot be empty or blank")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank")
 	}
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
@@ -43,8 +43,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"Profile with sdkAddress %s doesn't exists", dTagOrAddress)
+		return &types.QueryProfileResponse{Profile: nil}, nil
 	}
 
 	accountAny, err := codectypes.NewAnyWithValue(account)
