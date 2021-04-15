@@ -11,7 +11,6 @@ func NewMsgCreateIBCAccountConnection(
 	port string,
 	channelId string,
 	timeoutTimestamp uint64,
-	sourceChainPrefix string,
 	sourceAddress string,
 	sourcePubKey string,
 	destinationAddress string,
@@ -22,7 +21,6 @@ func NewMsgCreateIBCAccountConnection(
 		Port:                 port,
 		ChannelId:            channelId,
 		TimeoutTimestamp:     timeoutTimestamp,
-		SourceChainPrefix:    sourceChainPrefix,
 		SourceAddress:        sourceAddress,
 		SourcePubKey:         sourcePubKey,
 		DestinationAddress:   destinationAddress,
@@ -70,19 +68,17 @@ func NewMsgCreateIBCAccountLink(
 	port string,
 	channelId string,
 	timeoutTimestamp uint64,
-	sourceChainPrefix string,
 	sourceAddress string,
 	sourcePubKey string,
 	signature string,
 ) *MsgCreateIBCAccountLink {
 	return &MsgCreateIBCAccountLink{
-		Port:              port,
-		ChannelId:         channelId,
-		TimeoutTimestamp:  timeoutTimestamp,
-		SourceChainPrefix: sourceChainPrefix,
-		SourceAddress:     sourceAddress,
-		SourcePubKey:      sourcePubKey,
-		Signature:         signature,
+		Port:             port,
+		ChannelId:        channelId,
+		TimeoutTimestamp: timeoutTimestamp,
+		SourceAddress:    sourceAddress,
+		SourcePubKey:     sourcePubKey,
+		Signature:        signature,
 	}
 }
 

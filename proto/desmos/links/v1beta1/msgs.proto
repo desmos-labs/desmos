@@ -29,17 +29,15 @@ message MsgCreateIBCAccountConnection {
   string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
   uint64 timeout_timestamp = 3
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
-  string source_chain_prefix = 4
-      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
-  string source_address = 5
+  string source_address = 4
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-  string source_pub_key = 6
+  string source_pub_key = 5
       [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
-  string destination_address = 7
+  string destination_address = 6
       [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
-  string source_signature = 8
+  string source_signature = 7
       [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
-  string destination_signature = 9
+  string destination_signature = 8
       [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
@@ -59,13 +57,11 @@ message MsgCreateIBCAccountLink {
   string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
   uint64 timeout_timestamp = 3
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
-  string source_chain_prefix = 4
-      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
-  string source_address = 5
+  string source_address = 4
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-  string source_pub_key = 6
+  string source_pub_key = 5
       [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
-  string signature = 7 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+  string signature = 6 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 }
 
 // MsgCreateIBCAccountLinkResponse defines the

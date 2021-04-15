@@ -24,10 +24,11 @@ func (k msgServer) CreateIBCAccountConnection(
 	goCtx context.Context, msg *types.MsgCreateIBCAccountConnection,
 ) (*types.MsgCreateIBCAccountConnectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	prefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
 
 	// Construct the packet
 	packet := types.NewIBCAccountConnectionPacketData(
-		msg.SourceChainPrefix,
+		prefix,
 		msg.SourceAddress,
 		msg.SourcePubKey,
 		msg.DestinationAddress,
@@ -57,10 +58,11 @@ func (k msgServer) CreateIBCAccountLink(
 	goCtx context.Context, msg *types.MsgCreateIBCAccountLink,
 ) (*types.MsgCreateIBCAccountLinkResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	prefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
 
 	// Construct the packet
 	packet := types.NewIBCAccountLinkPacketData(
-		msg.SourceChainPrefix,
+		prefix,
 		msg.SourceAddress,
 		msg.SourcePubKey,
 		msg.Signature,

@@ -244,7 +244,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			// send coin from chainA to chainB
 			msg := types.NewMsgCreateIBCAccountConnection(
 				channelA.PortID, channelA.ID, 0,
-				"cosmos", srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
+				srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
 			)
 			err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
 			suite.Require().NoError(err) // message committed
@@ -523,7 +523,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			// send coin from chainA to chainB
 			msg := types.NewMsgCreateIBCAccountLink(
 				channelA.PortID, channelA.ID, 0,
-				"cosmos", srcAddr, srcPubKeyHex, sigHex,
+				srcAddr, srcPubKeyHex, sigHex,
 			)
 			err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
 			suite.Require().NoError(err) // message committed
