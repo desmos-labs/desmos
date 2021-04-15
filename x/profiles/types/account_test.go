@@ -31,7 +31,7 @@ func TestProfile_Update(t *testing.T) {
 		expProfile *types.Profile
 	}{
 		{
-			name: "DoNotModify and empty fields do not update original values",
+			name: "DoNotModify do not update original values",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
 				"moniker",
@@ -45,18 +45,21 @@ func TestProfile_Update(t *testing.T) {
 			)),
 			update: types.NewProfileUpdate(
 				types.DoNotModify,
+				"",
 				types.DoNotModify,
-				types.DoNotModify,
-				types.NewPictures(types.DoNotModify, types.DoNotModify),
+				types.NewPictures(
+					types.DoNotModify,
+					"",
+				),
 			),
 			expError: false,
 			expProfile: assertNoProfileError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"",
 				"bio",
 				types.NewPictures(
 					"https://example.com",
-					"https://example.com",
+					"",
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),

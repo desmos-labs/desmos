@@ -346,9 +346,12 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// Profile queries the profile of a specific user given their DTag or address
+	// Profile queries the profile of a specific user given their DTag or address.
+	// If the queried user does not have a profile, the returned response will
+	// contain a null profile.
 	Profile(ctx context.Context, in *QueryProfileRequest, opts ...grpc.CallOption) (*QueryProfileResponse, error)
-	// DTagTransfers queries all the DTag transfers requests that have been made towards the user with the given address
+	// DTagTransfers queries all the DTag transfers requests that have been made
+	// towards the user with the given address
 	DTagTransfers(ctx context.Context, in *QueryDTagTransfersRequest, opts ...grpc.CallOption) (*QueryDTagTransfersResponse, error)
 	// Params queries the profiles module params
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
@@ -391,9 +394,12 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// Profile queries the profile of a specific user given their DTag or address
+	// Profile queries the profile of a specific user given their DTag or address.
+	// If the queried user does not have a profile, the returned response will
+	// contain a null profile.
 	Profile(context.Context, *QueryProfileRequest) (*QueryProfileResponse, error)
-	// DTagTransfers queries all the DTag transfers requests that have been made towards the user with the given address
+	// DTagTransfers queries all the DTag transfers requests that have been made
+	// towards the user with the given address
 	DTagTransfers(context.Context, *QueryDTagTransfersRequest) (*QueryDTagTransfersResponse, error)
 	// Params queries the profiles module params
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)

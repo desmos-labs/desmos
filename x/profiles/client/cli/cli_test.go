@@ -126,8 +126,12 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 			name: "non existing profile",
 			args: []string{
 				s.network.Validators[1].Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: true,
+			expectErr: false,
+			expectedOutput: types.QueryProfileResponse{
+				Profile: nil,
+			},
 		},
 		{
 			name: "existing profile is returned properly",

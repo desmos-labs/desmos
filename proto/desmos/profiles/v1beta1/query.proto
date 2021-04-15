@@ -12,13 +12,17 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Profile queries the profile of a specific user given their DTag or address
+  // Profile queries the profile of a specific user given their DTag or address.
+  // If the queried user does not have a profile, the returned response will
+  // contain a null profile.
   rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/profiles/{user}";
   }
 
-  // DTagTransfers queries all the DTag transfers requests that have been made towards the user with the given address
-  rpc DTagTransfers(QueryDTagTransfersRequest) returns (QueryDTagTransfersResponse) {
+  // DTagTransfers queries all the DTag transfers requests that have been made
+  // towards the user with the given address
+  rpc DTagTransfers(QueryDTagTransfersRequest)
+      returns (QueryDTagTransfersResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
   }
 
