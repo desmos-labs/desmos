@@ -4,22 +4,30 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 	// this line is used by starport scaffolding # 1
 )
 
-const (
-	MethodGet = "GET"
-)
-
 // RegisterRoutes registers links-related REST handlers to a router
-func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
-	// this line is used by starport scaffolding # 2
+func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
+	registerTxRoutes(cliCtx, r)
+	registerQueryRoutes(cliCtx, r)
 }
 
-func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
-	// this line is used by starport scaffolding # 3
+type CreateIBCAccountLinkReq struct {
+	BaseReq      rest.BaseReq `json:"base_req"`
+	Port         string       `json:"port"`
+	ChannelId    string       `json:"channel_id"`
+	SourcePubKey string       `json:"source_pub_key"`
+	Signature    string       `json:"signature"`
 }
 
-func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
-	// this line is used by starport scaffolding # 4
+type CreateIBCAccountConnectionReq struct {
+	BaseReq              rest.BaseReq `json:"base_req"`
+	Port                 string       `json:"port"`
+	ChannelId            string       `json:"channel_id"`
+	SourcePubKey         string       `json:"source_pub_key"`
+	SourceSignature      string       `json:"source_signature"`
+	DestinationAddress   string       `json:"destination_address"`
+	DestinationSignature string       `json:"destination_signature"`
 }
