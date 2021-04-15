@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -23,18 +25,29 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	profile, found := k.GetProfile(ctx, msg.Creator)
+	profile, found, err := k.GetProfile(ctx, msg.Creator)
+	if err != nil {
+		return nil, err
+	}
 
 	// Create a new profile if not found
 	if !found {
-		profile = types.NewProfile(
+		addr, err := sdk.AccAddressFromBech32(msg.Creator)
+		if err != nil {
+			return nil, err
+		}
+
+		profile, err = types.NewProfile(
 			msg.Dtag,
 			"",
 			"",
 			types.NewPictures("", ""),
 			ctx.BlockTime(),
-			msg.Creator,
+			k.ak.GetAccount(ctx, addr),
 		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// If the DTag changes, delete all the previous DTag transfer requests
@@ -43,13 +56,11 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// Update the existing profile with the values provided from the user
-	updated, err := profile.Update(types.NewProfile(
+	updated, err := profile.Update(types.NewProfileUpdate(
 		msg.Dtag,
 		msg.Moniker,
 		msg.Bio,
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
-		time.Time{},
-		types.DoNotModify,
 	))
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -69,7 +80,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeProfileSaved,
 		sdk.NewAttribute(types.AttributeProfileDtag, updated.Dtag),
-		sdk.NewAttribute(types.AttributeProfileCreator, updated.Creator),
+		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
 		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
 	))
 
@@ -100,7 +111,16 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s has blocked you", msg.Receiver)
 	}
 
-	dtagToTrade := k.GetDtagFromAddress(ctx, msg.Receiver)
+	profile, found, err := k.GetProfile(ctx, msg.Receiver)
+	if err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile yet")
+	}
+
+	dtagToTrade := profile.Dtag
 	if len(dtagToTrade) == 0 {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInvalidRequest,
@@ -110,7 +130,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	}
 
 	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.Sender, msg.Receiver)
-	err := k.SaveDTagTransferRequest(ctx, transferRequest)
+	err = k.SaveDTagTransferRequest(ctx, transferRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +183,11 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	}
 
 	// Get the current owner profile
-	currentOwnerProfile, exist := k.GetProfile(ctx, msg.Receiver)
+	currentOwnerProfile, exist, err := k.GetProfile(ctx, msg.Receiver)
+	if err != nil {
+		return nil, err
+	}
+
 	if !exist {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "profile of %s doesn't exist", msg.Receiver)
 	}
@@ -176,7 +200,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 
 	// Change the DTag and validate the profile
 	currentOwnerProfile.Dtag = msg.NewDtag
-	err := k.ValidateProfile(ctx, currentOwnerProfile)
+	err = k.ValidateProfile(ctx, currentOwnerProfile)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -188,16 +212,33 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	}
 
 	// Check for an existent profile of the receiving user
-	receiverProfile, exist := k.GetProfile(ctx, msg.Sender)
+	receiverProfile, exist, err := k.GetProfile(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
 	if !exist {
-		receiverProfile = types.NewProfile(
+		add, err := sdk.AccAddressFromBech32(msg.Sender)
+		if err != nil {
+			return nil, err
+		}
+
+		senderAcc := k.ak.GetAccount(ctx, add)
+		if senderAcc == nil {
+			senderAcc = authtypes.NewBaseAccountWithAddress(add)
+		}
+
+		receiverProfile, err = types.NewProfile(
 			dTagToTrade,
 			"",
 			"",
 			types.NewPictures("", ""),
 			ctx.BlockTime(),
-			msg.Sender,
+			senderAcc,
 		)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		receiverProfile.Dtag = dTagToTrade
 	}

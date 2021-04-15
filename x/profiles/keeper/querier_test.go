@@ -14,7 +14,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 	tests := []struct {
 		name          string
 		path          []string
-		storedAccount types.Profile
+		storedAccount *types.Profile
 		expErr        error
 	}{
 		{
@@ -129,21 +129,21 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 		path           []string
 		storedRequests []types.DTagTransferRequest
 		expResult      []types.DTagTransferRequest
-		expErr         error
+		shouldErr      bool
 	}{
 		{
 			name:           "Invalid address returns error",
 			path:           []string{types.QueryIncomingDTagRequests, "invalid"},
 			storedRequests: nil,
 			expResult:      nil,
-			expErr:         sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid bech32 address: invalid"),
+			shouldErr:      true,
 		},
 		{
 			name:           "Empty DTag requests returns correctly",
 			path:           []string{types.QueryIncomingDTagRequests, suite.testData.user},
 			storedRequests: nil,
 			expResult:      nil,
-			expErr:         nil,
+			shouldErr:      false,
 		},
 		{
 			name: "Stored dTag requests returns correctly",
@@ -154,7 +154,7 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 			expResult: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
-			expErr: nil,
+			shouldErr: false,
 		},
 	}
 
@@ -168,9 +168,12 @@ func (suite *KeeperTestSuite) Test_queryDTagRequests() {
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
-			suite.RequireErrorsEqual(test.expErr, err)
 
-			if test.expErr == nil {
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
 				var requests []types.DTagTransferRequest
 				err = suite.legacyAminoCdc.UnmarshalJSON(result, &requests)
 				suite.Require().NoError(err)

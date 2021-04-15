@@ -21,7 +21,7 @@ import (
 
 	desmos "github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/staging/fees/ante"
-	feesTypes "github.com/desmos-labs/desmos/x/staging/fees/types"
+	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 
 // TestAccount represents an account used in the ante handler tests
@@ -51,7 +51,7 @@ func createTestApp(isCheckTx bool) (*desmos.DesmosApp, sdk.Context) {
 
 	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
 	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
-	app.FeesKeeper.SetParams(ctx, feesTypes.DefaultParams())
+	app.FeesKeeper.SetParams(ctx, feestypes.DefaultParams())
 
 	return app, ctx
 }

@@ -3,19 +3,24 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
 import "desmos/profiles/v1beta1/params.proto";
 import "desmos/profiles/v1beta1/models.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Profile queries the profile of a specific user
+  // Profile queries the profile of a specific user given their DTag or address.
+  // If the queried user does not have a profile, the returned response will
+  // contain a null profile.
   rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/profiles/{user}";
   }
 
-  // DTagTransfers queries all the DTag transfers requests
+  // DTagTransfers queries all the DTag transfers requests that have been made
+  // towards the user with the given address
   rpc DTagTransfers(QueryDTagTransfersRequest)
       returns (QueryDTagTransfersResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
@@ -40,7 +45,8 @@ message QueryProfileRequest {
 
 // QueryProfileResponse is the response type for the Query/Profile RPC method.
 message QueryProfileResponse {
-  desmos.profiles.v1beta1.Profile profile = 1 [ (gogoproto.nullable) = false ];
+  google.protobuf.Any profile = 1
+  [(cosmos_proto.accepts_interface) = "AccountI"];
 }
 
 // ___________________________________________________________________________________________________________________
