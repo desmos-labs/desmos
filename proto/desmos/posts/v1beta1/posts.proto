@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "desmos/posts/v1beta1/polls.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // PostIndex represents a post index
 message PostIndex { uint64 value = 1; }

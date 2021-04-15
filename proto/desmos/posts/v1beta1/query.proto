@@ -10,7 +10,7 @@ import "desmos/posts/v1beta1/reactions.proto";
 import "desmos/posts/v1beta1/polls.proto";
 import "desmos/posts/v1beta1/params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // Query defines the gRPC querier service.
 service Query {

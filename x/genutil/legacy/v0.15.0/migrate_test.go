@@ -14,14 +14,14 @@ import (
 
 	"github.com/desmos-labs/desmos/app"
 	v0150 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.15.0"
-	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
-	v0150posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.15.0"
 	v0130profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.13.0"
 	v0150profiles "github.com/desmos-labs/desmos/x/profiles/legacy/v0.15.0"
-	v0130relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.13.0"
-	v0150relationships "github.com/desmos-labs/desmos/x/relationships/legacy/v0.15.0"
-	v0130reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.13.0"
-	v0150reports "github.com/desmos-labs/desmos/x/reports/legacy/v0.15.0"
+	v0130posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.13.0"
+	v0150posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.15.0"
+	v0130relationships "github.com/desmos-labs/desmos/x/staging/relationships/legacy/v0.13.0"
+	v0150relationships "github.com/desmos-labs/desmos/x/staging/relationships/legacy/v0.15.0"
+	v0130reports "github.com/desmos-labs/desmos/x/staging/reports/legacy/v0.13.0"
+	v0150reports "github.com/desmos-labs/desmos/x/staging/reports/legacy/v0.15.0"
 )
 
 func TestMigrate0150(t *testing.T) {

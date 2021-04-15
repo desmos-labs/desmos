@@ -6,8 +6,8 @@ import (
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	v0120posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.12.0"
-	v0130posts "github.com/desmos-labs/desmos/x/posts/legacy/v0.13.0"
+	v0120posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.12.0"
+	v0130posts "github.com/desmos-labs/desmos/x/staging/posts/legacy/v0.13.0"
 )
 
 // Migrate migrates exported state from v0.12.0 to a v0.13.0 genesis state.

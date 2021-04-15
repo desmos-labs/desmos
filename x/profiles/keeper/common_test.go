@@ -6,7 +6,7 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/x/relationships/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
 
 	"github.com/desmos-labs/desmos/app"
 
