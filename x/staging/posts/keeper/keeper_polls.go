@@ -32,10 +32,11 @@ func (k Keeper) GetPollAnswers(ctx sdk.Context, postID string) []types.UserAnswe
 	return types.MustUnmarshalUserAnswers(k.cdc, store.Get(types.PollAnswersStoreKey(postID)))
 }
 
-// GetUserPollAnswersEntries allows to returns the list of answers that have been stored inside the given context
+// GetUserAnswersEntries allows to returns the list of answers that have been stored inside the given context
 func (k Keeper) GetUserAnswersEntries(ctx sdk.Context) []types.UserAnswersEntry {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
+	defer iterator.Close()
 
 	var usersAnswersData []types.UserAnswersEntry
 	for ; iterator.Valid(); iterator.Next() {

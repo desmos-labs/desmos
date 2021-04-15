@@ -23,19 +23,13 @@ const (
 )
 
 var (
-	ProfileStorePrefix         = []byte("profile")
-	DtagStorePrefix            = []byte("dtag")
+	DTagPrefix                 = []byte("dtag")
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 )
 
-// ProfileStoreKey turns an address to a key used to store a profile into the profiles store
-func ProfileStoreKey(address string) []byte {
-	return append(ProfileStorePrefix, address...)
-}
-
-// DtagStoreKey turns a dtag to a key used to store a dtag -> address couple
-func DtagStoreKey(dtag string) []byte {
-	return append(DtagStorePrefix, []byte(dtag)...)
+// DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
+func DTagStoreKey(dtag string) []byte {
+	return append(DTagPrefix, []byte(dtag)...)
 }
 
 // DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store

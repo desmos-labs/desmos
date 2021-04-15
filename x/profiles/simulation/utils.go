@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,19 +48,23 @@ var (
 
 // NewRandomProfile return a random ProfileData from random data and the given account
 // nolint:interfacer
-func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
-	return types.NewProfile(
+func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
+	profile, err := types.NewProfile(
 		RandomDTag(r),
 		RandomMoniker(r),
 		RandomBio(r),
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
-		account.String(),
+		account,
 	)
+	if err != nil {
+		panic(err)
+	}
+	return profile
 }
 
 // RandomProfile picks and returns a random profile from an array
-func RandomProfile(r *rand.Rand, accounts []types.Profile) types.Profile {
+func RandomProfile(r *rand.Rand, accounts []*types.Profile) *types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }

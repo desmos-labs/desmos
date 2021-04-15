@@ -18,9 +18,9 @@ import (
 
 	linkstypes "github.com/desmos-labs/desmos/x/links/types"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
+	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -73,6 +73,9 @@ func interBlockCacheOpt() func(*baseapp.BaseApp) {
 // SetupSimulation wraps simapp.SetupSimulation in order to create any export directory if they do not exist yet
 func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string, log.Logger, bool, error) {
 	config, db, dir, logger, skip, err := simapp.SetupSimulation(dirPrefix, dbName)
+	if err != nil {
+		return simtypes.Config{}, nil, "", nil, false, err
+	}
 
 	paths := []string{config.ExportParamsPath, config.ExportStatePath, config.ExportStatsPath}
 	for _, path := range paths {
@@ -218,12 +221,11 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
 		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
-		{app.keys[postsTypes.StoreKey], newApp.keys[postsTypes.StoreKey], [][]byte{}},
+		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
-		{app.keys[reportsTypes.StoreKey], newApp.keys[reportsTypes.StoreKey], [][]byte{}},
+		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
 		{app.keys[linkstypes.StoreKey], newApp.keys[linkstypes.StoreKey], [][]byte{}},
-
 		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},

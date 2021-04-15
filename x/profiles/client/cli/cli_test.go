@@ -1,11 +1,13 @@
-// +build norace
-
 package cli_test
 
 import (
 	"fmt"
 	"testing"
 	"time"
+
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
@@ -38,19 +40,35 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
+	// Store a profile account inside the auth genesis data
+	var authData authtypes.GenesisState
+	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[authtypes.ModuleName], &authData))
+
+	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
+	s.Require().NoError(err)
+
+	account, err := types.NewProfile(
+		"dtag",
+		"moniker",
+		"bio",
+		types.Pictures{},
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr),
+	)
+	s.Require().NoError(err)
+
+	accountAny, err := codectypes.NewAnyWithValue(account)
+	s.Require().NoError(err)
+
+	authData.Accounts = append(authData.Accounts, accountAny)
+	authDataBz, err := cfg.Codec.MarshalJSON(&authData)
+	s.Require().NoError(err)
+	genesisState[authtypes.ModuleName] = authDataBz
+
+	// Store the profiles genesis state
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
-	profilesData.Profiles = []types.Profile{
-		types.NewProfile(
-			"dtag",
-			"moniker",
-			"bio",
-			types.Pictures{},
-			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-		),
-	}
 	profilesData.DtagTransferRequests = []types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
@@ -82,6 +100,22 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 	val := s.network.Validators[0]
 
+	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
+	s.Require().NoError(err)
+
+	profile, err := types.NewProfile(
+		"dtag",
+		"moniker",
+		"bio",
+		types.Pictures{},
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr),
+	)
+	s.Require().NoError(err)
+
+	profileAny, err := codectypes.NewAnyWithValue(profile)
+	s.Require().NoError(err)
+
 	testCases := []struct {
 		name           string
 		args           []string
@@ -92,8 +126,12 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 			name: "non existing profile",
 			args: []string{
 				s.network.Validators[1].Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: true,
+			expectErr: false,
+			expectedOutput: types.QueryProfileResponse{
+				Profile: nil,
+			},
 		},
 		{
 			name: "existing profile is returned properly",
@@ -103,14 +141,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 			},
 			expectErr: false,
 			expectedOutput: types.QueryProfileResponse{
-				Profile: types.NewProfile(
-					"dtag",
-					"moniker",
-					"bio",
-					types.Pictures{},
-					time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				),
+				Profile: profileAny,
 			},
 		},
 	}

@@ -39,10 +39,10 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(monikerLen MonikerParams, dtagLen DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(monikerParams MonikerParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
 	return Params{
-		MonikerParams: monikerLen,
-		DtagParams:    dtagLen,
+		MonikerParams: monikerParams,
+		DtagParams:    dTagParams,
 		MaxBioLength:  maxBioLen,
 	}
 }

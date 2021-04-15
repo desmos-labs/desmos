@@ -8,7 +8,7 @@ import (
 	"math/rand"
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
@@ -24,12 +24,12 @@ const (
 )
 
 var msgsTypes = []string{
-	postsTypes.ActionCreatePost,
-	postsTypes.ActionEditPost,
-	postsTypes.ActionAnswerPoll,
-	postsTypes.ActionAddPostReaction,
-	postsTypes.ActionRemovePostReaction,
-	postsTypes.ActionRegisterReaction,
+	poststypes.ActionCreatePost,
+	poststypes.ActionEditPost,
+	poststypes.ActionAnswerPoll,
+	poststypes.ActionAddPostReaction,
+	poststypes.ActionRemovePostReaction,
+	poststypes.ActionRegisterReaction,
 	profilestypes.ActionSaveProfile,
 	profilestypes.ActionDeleteProfile,
 	profilestypes.ActionRequestDtag,

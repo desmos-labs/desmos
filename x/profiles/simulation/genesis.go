@@ -16,7 +16,6 @@ import (
 func RandomizedGenState(simsState *module.SimulationState) {
 
 	profileGenesis := types.NewGenesisState(
-		randomProfiles(simsState),
 		randomDTagTransferRequests(simsState),
 		types.NewParams(
 			RandomMonikerParams(simsState.Rand),
@@ -50,17 +49,4 @@ func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTr
 	}
 
 	return dtagTransferRequests
-}
-
-// randomProfiles returns randomly generated genesis profiles
-func randomProfiles(simState *module.SimulationState) (accounts []types.Profile) {
-	accountsNumber := simState.Rand.Intn(50)
-
-	accounts = make([]types.Profile, accountsNumber)
-	for i := 0; i < accountsNumber; i++ {
-		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		accounts[i] = NewRandomProfile(simState.Rand, simAccount.Address)
-	}
-
-	return accounts
 }

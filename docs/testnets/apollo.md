@@ -53,7 +53,7 @@ desmos init <Your moniker>
 :::tip Generate a deterministic node  
 We suggest you using the `--recover` flag while running the `desmos init` command. This will ask you for a seed phrase
 that will be used to generate the node private key. Doing so will allow you to recover your node private key if
-something goes wrong, instead of having to backup the `priv_key.json` file by hand.  
+something goes wrong, instead of having to backup the `priv_validator_key.json` file by hand.  
 :::
 
 #### Download the genesis file
@@ -68,8 +68,8 @@ curl https://raw.githubusercontent.com/desmos-labs/morpheus/master/morpheus-apol
 
 ### 2. Creating a genesis transaction
 
-Genesis transactions are used to create the validators nodes that will need to be present in order to start the chain.
-This is done by using the `desmos gentx` command that allows you to specify the details of your node.
+Genesis transactions are used to create the validator set that will need to be present at genesis block in order to start the chain.
+This is done by using the `desmos gentx` command that allows you to specify the details of your node. Including a genesis transaction in the genesis file is the same as broadcasting a `desmos tx staking create-validator` transaction on a live chain.
 
 In order to use this command, however, you need to first have an account inside the genesis file itself. To create such
 account you can use the `desmos add-genesis-account` command:

@@ -1,40 +1,46 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
+	address, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name        string
-		profile     types.Profile
+		profile     *types.Profile
 		expResponse string
 		expBool     bool
 	}{
 		{
 			name: "Invariants not violated",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
 				"",
 				"",
 				types.NewPictures("", ""),
 				suite.testData.profile.CreationDate,
-				suite.testData.user,
-			),
+				authtypes.NewBaseAccountWithAddress(address),
+			)),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
-			name: "ValidProfile invariant violated",
-			profile: types.NewProfile(
+			name: "ValidProfileInvariant violated",
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"",
 				"",
 				"",
 				types.NewPictures("", ""),
 				suite.testData.profile.CreationDate,
-				suite.testData.user,
-			),
+				authtypes.NewBaseAccountWithAddress(address),
+			)),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[DTag]: , [Creator]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\n\n",
 			expBool:     true,
 		},
