@@ -15,6 +15,16 @@ All validators that would like to take part into this testnet from its beginning
 Please note that you can follow this procedure only after you
 have [created a full node](../fullnode/setup.md#full-node-setup).
 
+:::warning Required Desmos version  
+Please note that in order to be able to properly run all the below mentioned Desmos commands, you need to have Desmos `master` version installed on your machine. 
+To do this, if you already have an older Desmos version installed, you can run the following commands: 
+```shell
+cd /path/to/Desmos
+git checkout master && git pull
+make install
+```
+:::
+
 :::tip You can join later  
 If you do not have time to join our testnet from its beginning you can always join later.  
 If you wish to know how please read [here](../testnets/join-public.md).
