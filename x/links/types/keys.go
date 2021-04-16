@@ -19,9 +19,9 @@ const (
 
 var (
 	// PortKey defines the key to store the port ID in store
-	PortKey = []byte("links-port-")
+	PortKey = []byte("port")
 
-	LinkStorePrefix = []byte("link-")
+	LinkStorePrefix = []byte("link")
 )
 
 func LinkStoreKey(address string) []byte {

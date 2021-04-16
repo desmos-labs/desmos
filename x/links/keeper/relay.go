@@ -142,10 +142,7 @@ func (k Keeper) OnTimeoutIBCAccountConnectionPacket(
 	packet channeltypes.Packet,
 	data types.IBCAccountConnectionPacketData,
 ) error {
-
-	// TODO: packet timeout logic
-
-	return nil
+	return errors.New("packet is timedout")
 }
 
 // ___________________________________________________________________________________________________________________
@@ -271,5 +268,5 @@ func (k Keeper) OnTimeoutIBCAccountLinkPacket(
 	packet channeltypes.Packet,
 	data types.IBCAccountLinkPacketData,
 ) error {
-	return nil
+	return errors.New("packet is timedout")
 }
