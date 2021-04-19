@@ -52,6 +52,13 @@ testnet. To do so, you have to:
 1. initialize your node;
 2. download the genesis file.
 
+#### Create or import your wallet
+To do the steps below you will need to generate an address with the following command:  
+`desmos keys add <key_name>`
+
+or if you prefer to recover it from a given mnemonic do:
+`desmos keys add <key_name> --recover`
+
 #### Initialize your node
 
 In order to initialize your node appropriately, you can use the `desmos init` command:
