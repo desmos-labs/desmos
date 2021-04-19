@@ -141,7 +141,7 @@ func TestValidateMaxOptionalDataFieldValueLengthParam(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateMaxOptionalDataFieldValueLengthParam(test.maxOpDataFieldLen)
+			err := types.ValidateMaxOptionalDataFieldLengthParam(test.maxOpDataFieldLen)
 			require.Equal(t, test.expErr, err)
 		})
 	}
