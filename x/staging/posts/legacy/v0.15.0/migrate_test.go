@@ -90,11 +90,11 @@ func TestMigrate(t *testing.T) {
 	expectedGenState := v0150posts.GenesisState{
 		Posts: []v0150posts.Post{
 			{
-				PostId:         "parent_id",
-				ParentId:       "",
-				Message:        "Message",
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				PostId:          "parent_id",
+				ParentId:        "",
+				Message:         "Message",
+				DisableComments: true,
+				Subspace:        "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData: []v0150posts.OptionalDataEntry{
 					{
 						Key:   "optional",
@@ -113,11 +113,11 @@ func TestMigrate(t *testing.T) {
 				},
 			},
 			{
-				PostId:         "post_id_1",
-				ParentId:       "parent_id",
-				Message:        "Message",
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				PostId:          "post_id_1",
+				ParentId:        "parent_id",
+				Message:         "Message",
+				DisableComments: true,
+				Subspace:        "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				OptionalData: []v0150posts.OptionalDataEntry{
 					{
 						Key:   "optional",

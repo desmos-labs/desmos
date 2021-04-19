@@ -28,17 +28,17 @@ func ConvertPosts(oldPosts []v0130posts.Post) []Post {
 	posts := make([]Post, len(oldPosts))
 	for index, post := range oldPosts {
 		posts[index] = Post{
-			PostId:         post.PostId,
-			ParentId:       post.ParentId,
-			Message:        post.Message,
-			Created:        post.Created,
-			LastEdited:     post.LastEdited,
-			AllowsComments: post.AllowsComments,
-			Subspace:       post.Subspace,
-			OptionalData:   convertOptionalData(post.OptionalData),
-			Creator:        post.Creator.String(),
-			Attachments:    convertAttachments(post.Attachments),
-			PollData:       convertPollData(post.PollData),
+			PostId:          post.PostId,
+			ParentId:        post.ParentId,
+			Message:         post.Message,
+			Created:         post.Created,
+			LastEdited:      post.LastEdited,
+			DisableComments: post.AllowsComments,
+			Subspace:        post.Subspace,
+			OptionalData:    convertOptionalData(post.OptionalData),
+			Creator:         post.Creator.String(),
+			Attachments:     convertAttachments(post.Attachments),
+			PollData:        convertPollData(post.PollData),
 		}
 	}
 	return posts

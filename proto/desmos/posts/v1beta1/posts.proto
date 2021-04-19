@@ -37,9 +37,9 @@ message Post {
     (gogoproto.moretags) = "yaml:\"created\""
   ];
 
-  bool allows_comments = 6 [
-    (gogoproto.moretags) = "yaml:\"allows_comments\"",
-    (gogoproto.jsontag) = "allows_comments"
+  bool disable_comments = 6 [
+    (gogoproto.moretags) = "yaml:\"disable_comments\"",
+    (gogoproto.jsontag) = "disable_comments"
   ];
 
   string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
