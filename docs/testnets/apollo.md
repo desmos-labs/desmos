@@ -12,8 +12,6 @@ procedure made of three different parts:
 3. Chain start.
 
 All validators that would like to take part into this testnet from its beginning should participate in this procedure.
-Please note that you can follow this procedure only after you
-have [created a full node](../fullnode/setup.md#full-node-setup).
 
 :::warning Required Desmos version  
 Please note that in order to be able to properly run all the below mentioned Desmos commands, you need to have Desmos `master` version installed on your machine. 
