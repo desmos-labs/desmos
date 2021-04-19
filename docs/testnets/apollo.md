@@ -42,6 +42,22 @@ If you are a validator that would like to take part in the genesis of the "Apoll
 2. Create a genesis transaction.
 3. Submit that genesis transaction to our GitHub repository.
 
+To perform all these steps you need to have a local wallet stored on your machine. In order to get it, you can generate
+one with the following command:
+
+```shell
+desmos keys add <key_name>
+```
+
+If you instead already have a mnemonic phrase and would like to use that, you can run
+
+```shell
+desmos keys add <key_name> --recover
+```
+
+Both of those commands will create a local wallet and store it inside your machine in the secure hardware. Once you have
+run either one of those you are ready to proceed further.
+
 ### 1. Download the current genesis file
 
 In order to perform a genesis transaction, you first have to download the current genesis file for the "Apollo"
