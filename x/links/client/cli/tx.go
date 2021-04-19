@@ -56,35 +56,34 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 			// get destination key info from path
 			keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
 			dstKeyBase, err := keyring.New(dstChain, keyringBackend, dstKeyBasePath, clientCtx.Input)
+			if err != nil {
+				return err
+			}
 			dstKey, err := dstKeyBase.Key(dstKeyName)
 			if err != nil {
 				return err
 			}
 
+			// Get bech32 encoded address on destination chain
 			dstAddr, err := bech32.ConvertAndEncode(dstChain, dstKey.GetAddress().Bytes())
 			if err != nil {
 				return err
 			}
 
 			link := types.NewLink(srcAddr, dstAddr)
-			linkBz, err := link.Marshal()
-			if err != nil {
-				return err
-			}
+			linkBz, _ := link.Marshal()
 
+			// Create signature by src key
 			srcSig, srcPubKey, err := srcKeybase.Sign(srcKeyName, linkBz)
 			if err != nil {
 				return err
 			}
 
-			srcPubKeyHex := hex.EncodeToString(srcPubKey.Bytes())
-			srcSigHex := hex.EncodeToString(srcSig)
-
+			// Create signature by dst key
 			dstSig, _, err := dstKeyBase.Sign(dstKeyName, linkBz)
 			if err != nil {
 				return err
 			}
-			dstSigHex := hex.EncodeToString(dstSig)
 
 			// Get the relative timeout timestamp
 			timeoutTimestamp, err := cmd.Flags().GetUint64(FlagPacketTimeoutTimestamp)
@@ -104,24 +103,30 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 				srcChannel,
 				timeoutTimestamp,
 				srcAddr,
-				srcPubKeyHex,
+				hex.EncodeToString(srcPubKey.Bytes()),
 				dstAddr,
-				srcSigHex,
-				dstSigHex,
+				hex.EncodeToString(srcSig),
+				hex.EncodeToString(dstSig),
 			)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
+	cmd.Flags().Uint64(
+		FlagPacketTimeoutTimestamp,
+		DefaultRelativePacketTimeoutTimestamp,
+		"Packet timeout timestamp in nanoseconds. Default is 10 minutes. The timeout is disabled when set to 0.",
+	)
 	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
 // GetCmdCreateIBCAccountLink return the command to create an account link on other chain
 func GetCmdCreateIBCAccountLink() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-ibc-link [src-port] [src-channel] [destination-address]",
+		Use:   "create-ibc-link [src-port] [src-channel] [destination-chain]",
 		Short: "Create a new ibc account link",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -132,7 +137,12 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 			}
 			srcPort := args[0]
 			srcChannel := args[1]
-			dstAddr := args[2]
+			dstChain := args[2]
+
+			dstAddr, err := bech32.ConvertAndEncode(dstChain, clientCtx.GetFromAddress().Bytes())
+			if err != nil {
+				return err
+			}
 
 			// get source chain key info
 			keyName := clientCtx.GetFromName()
@@ -145,9 +155,9 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 				return nil
 			}
 			sig, srcPubKey, err := keybase.Sign(keyName, linkBz)
-
-			srcPubKeyHex := hex.EncodeToString(srcPubKey.Bytes())
-			sigHex := hex.EncodeToString(sig)
+			if err != nil {
+				return err
+			}
 
 			// Get the relative timeout timestamp
 			timeoutTimestamp, err := cmd.Flags().GetUint64(FlagPacketTimeoutTimestamp)
@@ -167,14 +177,15 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 				srcChannel,
 				timeoutTimestamp,
 				srcAddr,
-				srcPubKeyHex,
-				sigHex,
+				hex.EncodeToString(srcPubKey.Bytes()),
+				hex.EncodeToString(sig),
 			)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
+	cmd.Flags().Uint64(FlagPacketTimeoutTimestamp, DefaultRelativePacketTimeoutTimestamp, "Packet timeout timestamp in nanoseconds. Default is 10 minutes. The timeout is disabled when set to 0.")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
