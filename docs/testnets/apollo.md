@@ -12,8 +12,16 @@ procedure made of three different parts:
 3. Chain start.
 
 All validators that would like to take part into this testnet from its beginning should participate in this procedure.
-Please note that you can follow this procedure only after you
-have [created a full node](../fullnode/setup.md#full-node-setup).
+
+:::warning Required Desmos version  
+Please note that in order to be able to properly run all the below mentioned Desmos commands, you need to have Desmos `master` version installed on your machine. 
+To do this, if you already have an older Desmos version installed, you can run the following commands: 
+```shell
+cd /path/to/Desmos
+git checkout master && git pull
+make install
+```
+:::
 
 :::tip You can join later  
 If you do not have time to join our testnet from its beginning you can always join later.  
@@ -33,6 +41,22 @@ If you are a validator that would like to take part in the genesis of the "Apoll
 1. Download the current genesis file.
 2. Create a genesis transaction.
 3. Submit that genesis transaction to our GitHub repository.
+
+To perform all these steps you need to have a local wallet stored on your machine. In order to get it, you can generate
+one with the following command:
+
+```shell
+desmos keys add <key_name>
+```
+
+If you instead already have a mnemonic phrase and would like to use that, you can run
+
+```shell
+desmos keys add <key_name> --recover
+```
+
+Both of those commands will create a local wallet and store it inside your machine in the secure hardware. Once you have
+run either one of those you are ready to proceed further.
 
 ### 1. Download the current genesis file
 
