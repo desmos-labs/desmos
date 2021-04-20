@@ -704,7 +704,7 @@ func (chain *TestChain) ConnectionOpenConfirm(
 
 // CreatePortCapability binds and claims a capability for the given portID if it does not
 // already exist. This function will fail testing on any resulting error.
-// NOTE: only creation of a capbility for a transfer or mock port is supported
+// NOTE: only creation of a capbility for a links is supported
 // Other applications must bind to the port in InitGenesis or modify this code.
 func (chain *TestChain) CreatePortCapability(portID string) {
 	// check if the portId is already binded, if not bind it
@@ -716,7 +716,7 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 
 		switch portID {
 		case LinksPort:
-			// claim capability using the transfer capability keeper
+			// claim capability using the links capability keeper
 			err = chain.App.ScopedLinksKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)
 		default:

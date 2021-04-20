@@ -14,6 +14,7 @@ func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(cliCtx, r)
 }
 
+// CreateIBCAccountLinkReq defines the properties of the request's body of creating ibc link with same key
 type CreateIBCAccountLinkReq struct {
 	BaseReq      rest.BaseReq `json:"base_req"`
 	Port         string       `json:"port"`
@@ -22,6 +23,7 @@ type CreateIBCAccountLinkReq struct {
 	Signature    string       `json:"signature"`
 }
 
+// CreateIBCAccountConnectionReq defines the properties of the request's body of creating ibc link with different keys
 type CreateIBCAccountConnectionReq struct {
 	BaseReq              rest.BaseReq `json:"base_req"`
 	Port                 string       `json:"port"`

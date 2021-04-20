@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
@@ -118,83 +115,3 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 		})
 	}
 }
-
-// ___________________________________________________________________________________________________________________
-
-func (s *IntegrationTestSuite) TestCmdCreateIBCAccountLink() {
-	val := s.network.Validators[0]
-	tests := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "valid data returns no error",
-			args: []string{
-				"links",
-				"channel-0",
-				"desmos",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-
-		s.Run(test.name, func() {
-
-			cmd := cli.GetCmdCreateIBCAccountLink()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, test.args)
-
-			if test.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), test.respType), out.String())
-			}
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-// func (s *IntegrationTestSuite) TestCmdCreateIBCAccountConnection() {
-// 	val := s.network.Validators[0]
-
-// 	tests := []struct {
-// 		name     string
-// 		args     []string
-// 		expErr   bool
-// 		respType proto.Message
-// 	}{
-// 		{
-// 			name:     "valid data returns no error",
-// 			args:     []string{"links", "channel-0", "desmos", "", "kilem"},
-// 			expErr:   false,
-// 			respType: &sdk.TxResponse{},
-// 		},
-// 	}
-
-// 	for _, test := range tests {
-// 		test := test
-
-// 		s.Run(test.name, func() {
-// 			cmd := cli.GetCmdCreateIBCAccountConnection()
-// 			clientCtx := val.ClientCtx
-// 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, test.args)
-
-// 			if test.expErr {
-// 				s.Require().Error(err)
-// 			} else {
-// 				s.Require().NoError(err)
-// 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), test.respType), out.String())
-// 			}
-// 		})
-// 	}
-// }
