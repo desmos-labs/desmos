@@ -7,7 +7,7 @@ This message allows you to create a new public post. If you want to know more ab
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "<ID of the post for which this post should be a comment of>",
   "message": "<Post message>",
-  "allows_comments": false,
+  "disable_comments": false,
   "subspace": "<Subspace of a post>",
   "optional_data": [],
   "creator": "<Desmos address that's creating the post>",
@@ -21,7 +21,7 @@ This message allows you to create a new public post. If you want to know more ab
 | :-------: | :----: | :-------- |
 | `parent_id` | String | ID of the parent post for which this post should be a comment of (Set to `0` if you do not want to have a parent) |
 | `message` | String | Message of the post |
-| `allows_comments` | Boolean | Tells whenever the post will allow other posts to reference to it as parent or not | 
+| `disable_comments` | Boolean | Tells whenever the post will allow other posts to reference to it as parent or not | 
 | `susbspace` | String | Required string that identifies the posting app |
 | `optional_data` | Array | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
@@ -36,7 +36,7 @@ This message allows you to create a new public post. If you want to know more ab
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "",
   "message": "Desmos is great!",
-  "allows_comments": true,
+  "disable_comments": true,
   "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
   "optional_data": [
     {
@@ -89,7 +89,7 @@ This message allows you to create a new public post. If you want to know more ab
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "",
   "message": "Desmos is great!",
-  "allows_comments": true,
+  "disable_comments": true,
   "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
   "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
 }

@@ -152,7 +152,7 @@ func verifyMigratedPost(t *testing.T, original v0130posts.Post, migrated v0150po
 	require.Equal(t, original.Message, migrated.Message)
 	require.True(t, original.Created.Equal(migrated.Created))
 	require.True(t, original.LastEdited.Equal(migrated.LastEdited))
-	require.Equal(t, original.AllowsComments, migrated.AllowsComments)
+	require.Equal(t, original.AllowsComments, migrated.DisableComments)
 	require.Equal(t, original.Subspace, migrated.Subspace)
 	require.Equal(t, original.Creator.String(), migrated.Creator)
 
