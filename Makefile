@@ -379,3 +379,9 @@ localnet-stop:
 .PHONY: all build-linux install \
 	go-mod-cache clean build \
 	test test-all test-cover test-unit test-race
+
+get-relayer:
+	git clone git@github.com:cosmos/relayer.git $(BUILDDIR)/relayer
+
+build-relayer:
+	bash ./scripts/build-relayer.sh
