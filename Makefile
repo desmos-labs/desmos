@@ -380,8 +380,18 @@ localnet-stop:
 	go-mod-cache clean build \
 	test test-all test-cover test-unit test-race
 
-get-relayer:
-	git clone git@github.com:cosmos/relayer.git $(BUILDDIR)/relayer
+###############################################################################
+###                                IBC Env                                  ###
+###############################################################################
 
-build-relayer:
-	bash ./scripts/build-relayer.sh
+get-relayer:
+	git clone git@github.com:cosmos/relayer.git .thirdparty/relayer
+
+install-relayer:
+	bash ./scripts/install-relayer.sh
+
+build-relayer: 
+	cd .thirdparty/relayer && $(MAKE) build
+
+setup-ibctest:
+	bash ./scripts/ibctest-setup.sh

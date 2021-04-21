@@ -23,6 +23,7 @@ tools-stamp
 proto-tools-stamp
 buf-stamp
 **/node_modules/
+.thirdparty
 
 # Data - ideally these don't exist
 baseapp/data/*

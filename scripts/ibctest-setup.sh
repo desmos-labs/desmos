@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WORKDIR="build/ibc"
+WORKDIR=$1
 GENFILE="scripts/ibctestchain-gen.sh"
 
 # Ensure desmos is installed
@@ -11,7 +11,7 @@ fi
 
 # Ensure relayer is installed
 if ! [ -x "$(which rly)" ]; then
-  echo "Error: relayer is not installed." >&2
+  echo "Error: relayer is not installed. Try running 'make install-relayer'" >&2
   exit 1
 fi
 
