@@ -1,0 +1,8 @@
+{
+    "chain-id": "ibc1",
+    "rpc-addr": "http://127.0.0.1:26667",
+    "account-prefix": "desmos",
+    "gas-adjustment": 1.5,
+    "gas-prices": "0.001desmos",
+    "trusting-period": "10m"
+  }

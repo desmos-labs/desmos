@@ -395,3 +395,21 @@ build-relayer:
 
 setup-ibctest:
 	bash ./scripts/ibctest-setup.sh
+
+setup-testchains:
+	@nohup desmos start --home build/ibc/ibc0 \
+    --address tcp://0.0.0.0:26658 \
+    --grpc.address 0.0.0.0:9090 \
+    --p2p.laddr tcp://0.0.0.0:26656 \
+    --rpc.laddr tcp://127.0.0.1:26657 \
+    > /dev/null 2>&1 &
+
+	@nohup desmos start --home build/ibc/ibc1 \
+		--address tcp://0.0.0.0:26668 \
+		--grpc.address 0.0.0.0:9091 \
+		--p2p.laddr tcp://0.0.0.0:26666 \
+		--rpc.laddr tcp://127.0.0.1:26667 \
+		> /dev/null 2>&1 &
+
+setup-relayer:
+	cd testconfig && bash setup.sh

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WORKDIR=$1
+WORKDIR="build/ibc"
 GENFILE="scripts/ibctestchain-gen.sh"
 
 # Ensure desmos is installed
@@ -23,4 +23,4 @@ fi
 bash $GENFILE 0 1 $WORKDIR --y
 
 # generate ibc1 chain config
-bash $GENFILE 1 2 $WORKDIR --y
+bash $GENFILE 1 1 $WORKDIR --y
