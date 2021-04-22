@@ -13,9 +13,9 @@ import (
 // ----------------------
 
 // NewMsgSaveProfile returns a new MsgSaveProfile instance
-func NewMsgSaveProfile(dtag string, moniker, bio, profilePic, coverPic string, creator string) *MsgSaveProfile {
+func NewMsgSaveProfile(dTag string, moniker, bio, profilePic, coverPic string, creator string) *MsgSaveProfile {
 	return &MsgSaveProfile{
-		Dtag:           dtag,
+		Dtag:           dTag,
 		Moniker:        moniker,
 		Bio:            bio,
 		ProfilePicture: profilePic,

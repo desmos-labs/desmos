@@ -38,9 +38,9 @@ func (pic Pictures) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-func NewDTagTransferRequest(dtagToTrade string, sender, receiver string) DTagTransferRequest {
+func NewDTagTransferRequest(dTagToTrade string, sender, receiver string) DTagTransferRequest {
 	return DTagTransferRequest{
-		DtagToTrade: dtagToTrade,
+		DtagToTrade: dTagToTrade,
 		Receiver:    receiver,
 		Sender:      sender,
 	}

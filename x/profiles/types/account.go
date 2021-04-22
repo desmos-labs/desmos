@@ -18,9 +18,9 @@ var (
 	_ authtypes.AccountI = (*Profile)(nil)
 )
 
-// NewProfile builds a new profile having the given dtag, creator and creation date
+// NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
-	dtag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+	dTag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -34,7 +34,7 @@ func NewProfile(
 	}
 
 	return &Profile{
-		Dtag:         dtag,
+		Dtag:         dTag,
 		Moniker:      moniker,
 		Bio:          bio,
 		Pictures:     pictures,
@@ -200,9 +200,9 @@ type ProfileUpdate struct {
 }
 
 // NewProfileUpdate builds a new ProfileUpdate instance containing the given data
-func NewProfileUpdate(dtag, moniker, bio string, pictures Pictures) *ProfileUpdate {
+func NewProfileUpdate(dTag, moniker, bio string, pictures Pictures) *ProfileUpdate {
 	return &ProfileUpdate{
-		Dtag:     dtag,
+		Dtag:     dTag,
 		Moniker:  moniker,
 		Bio:      bio,
 		Pictures: pictures,

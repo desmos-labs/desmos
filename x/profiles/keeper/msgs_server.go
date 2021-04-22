@@ -120,8 +120,8 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile yet")
 	}
 
-	dtagToTrade := profile.Dtag
-	if len(dtagToTrade) == 0 {
+	dTagToTrade := profile.Dtag
+	if len(dTagToTrade) == 0 {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInvalidRequest,
 			"the user with address %s doesn't have a profile yet so their DTag cannot be transferred",
@@ -129,7 +129,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		)
 	}
 
-	transferRequest := types.NewDTagTransferRequest(dtagToTrade, msg.Sender, msg.Receiver)
+	transferRequest := types.NewDTagTransferRequest(dTagToTrade, msg.Sender, msg.Receiver)
 	err = k.SaveDTagTransferRequest(ctx, transferRequest)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferRequest,
-		sdk.NewAttribute(types.AttributeDTagToTrade, dtagToTrade),
+		sdk.NewAttribute(types.AttributeDTagToTrade, dTagToTrade),
 		sdk.NewAttribute(types.AttributeRequestSender, transferRequest.Sender),
 		sdk.NewAttribute(types.AttributeRequestReceiver, transferRequest.Receiver),
 	))

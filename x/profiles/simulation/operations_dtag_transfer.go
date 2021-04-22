@@ -153,13 +153,13 @@ func SimulateMsgAcceptDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		acc, request, dtag, skip := randomDtagAcceptRequestTransferFields(r, ctx, accs, k, ak)
+		acc, request, dTag, skip := randomDtagAcceptRequestTransferFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
 		msg := types.NewMsgAcceptDTagTransfer(
-			dtag,
+			dTag,
 			request.Sender,
 			request.Receiver,
 		)

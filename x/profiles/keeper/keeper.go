@@ -58,7 +58,7 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
-// It returns an error if a profile with the same dtag from a different creator already exists
+// It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDtag(ctx, profile.Dtag)
 	if addr != "" && addr != profile.GetAddress().String() {
@@ -100,11 +100,11 @@ func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile *types.Prof
 	return stored, true, nil
 }
 
-// GetAddressFromDtag returns the address associated to the given dtag or an empty string if it does not exists
-func (k Keeper) GetAddressFromDtag(ctx sdk.Context, dtag string) (addr string) {
+// GetAddressFromDtag returns the address associated to the given DTag or an empty string if it does not exists
+func (k Keeper) GetAddressFromDtag(ctx sdk.Context, dTag string) (addr string) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.DTagStoreKey(dtag))
+	bz := store.Get(types.DTagStoreKey(dTag))
 	if bz == nil {
 		return ""
 	}
@@ -154,17 +154,17 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	dTagRegEx := regexp.MustCompile(params.DtagParams.RegEx)
 	minDtagLen := params.DtagParams.MinDtagLength.Int64()
 	maxDtagLen := params.DtagParams.MaxDtagLength.Int64()
-	dtagLen := int64(len(profile.Dtag))
+	dTagLen := int64(len(profile.Dtag))
 
 	if !dTagRegEx.MatchString(profile.Dtag) {
 		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
 	}
 
-	if dtagLen < minDtagLen {
+	if dTagLen < minDtagLen {
 		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
 	}
 
-	if dtagLen > maxDtagLen {
+	if dTagLen > maxDtagLen {
 		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDtagLen)
 	}
 

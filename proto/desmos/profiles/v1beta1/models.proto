@@ -44,7 +44,7 @@ message Profile {
 
 // ___________________________________________________________________________________________________________________
 
-// DTagTransferRequest represent a dtag transfer request between two users
+// DTagTransferRequest represent a DTag transfer request between two users
 message DTagTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;

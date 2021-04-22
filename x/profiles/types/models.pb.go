@@ -125,7 +125,7 @@ func (m *Profile) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Profile proto.InternalMessageInfo
 
-// DTagTransferRequest represent a dtag transfer request between two users
+// DTagTransferRequest represent a DTag transfer request between two users
 type DTagTransferRequest struct {
 	DtagToTrade string `protobuf:"bytes,1,opt,name=dtag_to_trade,json=dtagToTrade,proto3" json:"dtag_to_trade,omitempty" yaml:"dtag_to_trade"`
 	Sender      string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
