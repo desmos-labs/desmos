@@ -28,7 +28,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)),
-					types.DefaultDtagParams(),
+					types.DefaultDTagParams(),
 					types.DefaultMaxBioLength,
 				),
 			),

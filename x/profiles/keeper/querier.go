@@ -32,7 +32,7 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 	}
 }
 
-// queryProfile handles the request to get a profile having a dtag or an address
+// queryProfile handles the request to get a profile having a DTag or an address
 func queryProfile(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
@@ -43,7 +43,7 @@ func queryProfile(
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := keeper.GetAddressFromDtag(ctx, dTagOrAddress)
+		addr := keeper.GetAddressFromDTag(ctx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)

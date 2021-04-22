@@ -35,18 +35,18 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 // randomDTagTransferRequests returns randomly generated genesis dTag transfer requests
 func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTransferRequest {
-	dtagTransferRequestsNumber := simState.Rand.Intn(20)
+	dTagTransferRequestsNumber := simState.Rand.Intn(20)
 
-	dtagTransferRequests := make([]types.DTagTransferRequest, dtagTransferRequestsNumber)
-	for i := 0; i < dtagTransferRequestsNumber; i++ {
+	dTagTransferRequests := make([]types.DTagTransferRequest, dTagTransferRequestsNumber)
+	for i := 0; i < dTagTransferRequestsNumber; i++ {
 		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		simAccount2, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		dtagTransferRequests[i] = types.NewDTagTransferRequest(
+		dTagTransferRequests[i] = types.NewDTagTransferRequest(
 			RandomDTag(simState.Rand),
 			simAccount.Address.String(),
 			simAccount2.Address.String(),
 		)
 	}
 
-	return dtagTransferRequests
+	return dTagTransferRequests
 }

@@ -36,7 +36,7 @@ func SimulateMsgSaveProfile(
 		}
 
 		msg := types.NewMsgSaveProfile(
-			data.Dtag,
+			data.DTag,
 			data.Moniker,
 			data.Bio,
 			data.Pictures.Profile,
@@ -114,7 +114,7 @@ func randomProfileSaveFields(
 	}
 
 	// Skip if another profile with the same DTag exists
-	address := k.GetAddressFromDtag(ctx, profile.Dtag)
+	address := k.GetAddressFromDTag(ctx, profile.DTag)
 	if address != acc.GetAddress().String() {
 		return simtypes.Account{}, nil, true
 	}

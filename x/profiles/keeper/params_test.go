@@ -8,7 +8,7 @@ import (
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	nsParams := types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(1000))
-	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
+	monikerParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
 
 	params := types.NewParams(nsParams, monikerParams, sdk.NewInt(1000))
 	suite.k.SetParams(suite.ctx, params)
@@ -19,7 +19,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	nsParams := types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(1000))
-	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
+	monikerParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
 	params := types.NewParams(nsParams, monikerParams, sdk.NewInt(1000))
 
 	tests := []struct {

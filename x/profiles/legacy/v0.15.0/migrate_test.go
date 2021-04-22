@@ -60,10 +60,10 @@ func TestMigrate(t *testing.T) {
 				MinMonikerLen: sdk.NewIntFromUint64(2),
 				MaxMonikerLen: sdk.NewIntFromUint64(50),
 			},
-			DtagParams: v0130profiles.DtagParams{
+			DTagParams: v0130profiles.DTagParams{
 				RegEx:      "reg_ex",
-				MinDtagLen: sdk.NewIntFromUint64(3),
-				MaxDtagLen: sdk.NewIntFromUint64(15),
+				MinDTagLen: sdk.NewIntFromUint64(3),
+				MaxDTagLen: sdk.NewIntFromUint64(15),
 			},
 			MaxBioLen: sdk.NewIntFromUint64(200),
 		},
@@ -72,7 +72,7 @@ func TestMigrate(t *testing.T) {
 	expectedGenState := v0150profiles.GenesisState{
 		Profiles: []v0150profiles.Profile{
 			{
-				Dtag:    "dtag",
+				DTag:    "dtag",
 				Moniker: moniker,
 				Bio:     bio,
 				Pictures: v0150profiles.Pictures{
@@ -83,7 +83,7 @@ func TestMigrate(t *testing.T) {
 				CreationDate: profileCreationTime,
 			},
 			{
-				Dtag:    "dtag",
+				DTag:    "dtag",
 				Moniker: "",
 				Bio:     "",
 				Pictures: v0150profiles.Pictures{
@@ -94,9 +94,9 @@ func TestMigrate(t *testing.T) {
 				CreationDate: profileCreationTime,
 			},
 		},
-		DtagTransferRequests: []v0150profiles.DTagTransferRequest{
+		DTagTransferRequests: []v0150profiles.DTagTransferRequest{
 			{
-				DtagToTrade: "dtagToTrade",
+				DTagToTrade: "dtagToTrade",
 				Receiver:    dTagReceiver.String(),
 				Sender:      profileCreator.String(),
 			},
@@ -106,10 +106,10 @@ func TestMigrate(t *testing.T) {
 				MinMonikerLength: sdk.NewIntFromUint64(2),
 				MaxMonikerLength: sdk.NewIntFromUint64(50),
 			},
-			DtagParams: v0150profiles.DTagParams{
+			DTagParams: v0150profiles.DTagParams{
 				RegEx:         "reg_ex",
-				MinDtagLength: sdk.NewIntFromUint64(3),
-				MaxDtagLength: sdk.NewIntFromUint64(15),
+				MinDTagLength: sdk.NewIntFromUint64(3),
+				MaxDTagLength: sdk.NewIntFromUint64(15),
 			},
 			MaxBioLength: sdk.NewIntFromUint64(200),
 		},
@@ -120,7 +120,7 @@ func TestMigrate(t *testing.T) {
 	// Check for profiles
 	require.Len(t, migrated.Profiles, len(expectedGenState.Profiles))
 	for index, profile := range migrated.Profiles {
-		require.Equal(t, expectedGenState.Profiles[index].Dtag, profile.Dtag)
+		require.Equal(t, expectedGenState.Profiles[index].DTag, profile.DTag)
 		require.Equal(t, expectedGenState.Profiles[index].Moniker, profile.Moniker)
 		require.Equal(t, expectedGenState.Profiles[index].Bio, profile.Bio)
 		require.Equal(t, expectedGenState.Profiles[index].Pictures.Profile, profile.Pictures.Profile)
@@ -129,9 +129,9 @@ func TestMigrate(t *testing.T) {
 
 	// Check fo
 	//r dTag transfers requests
-	require.Len(t, migrated.DtagTransferRequests, len(expectedGenState.DtagTransferRequests))
-	for index, request := range migrated.DtagTransferRequests {
-		require.Equal(t, expectedGenState.DtagTransferRequests[index], request)
+	require.Len(t, migrated.DTagTransferRequests, len(expectedGenState.DTagTransferRequests))
+	for index, request := range migrated.DTagTransferRequests {
+		require.Equal(t, expectedGenState.DTagTransferRequests[index], request)
 	}
 
 	// Check for params

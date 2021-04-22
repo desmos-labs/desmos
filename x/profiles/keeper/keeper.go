@@ -58,12 +58,12 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
-// It returns an error if a profile with the same dtag from a different creator already exists
+// It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
-	addr := k.GetAddressFromDtag(ctx, profile.Dtag)
+	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"a profile with dtag %s has already been created", profile.Dtag)
+			"a profile with dtag %s has already been created", profile.DTag)
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -73,12 +73,12 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	if err != nil {
 		return err
 	}
-	if found && oldProfile.Dtag != profile.Dtag {
-		store.Delete(types.DTagStoreKey(oldProfile.Dtag))
+	if found && oldProfile.DTag != profile.DTag {
+		store.Delete(types.DTagStoreKey(oldProfile.DTag))
 	}
 
 	// Store the DTag -> Address association
-	store.Set(types.DTagStoreKey(profile.Dtag), profile.GetAddress())
+	store.Set(types.DTagStoreKey(profile.DTag), profile.GetAddress())
 
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
@@ -100,11 +100,11 @@ func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile *types.Prof
 	return stored, true, nil
 }
 
-// GetAddressFromDtag returns the address associated to the given dtag or an empty string if it does not exists
-func (k Keeper) GetAddressFromDtag(ctx sdk.Context, dtag string) (addr string) {
+// GetAddressFromDTag returns the address associated to the given DTag or an empty string if it does not exists
+func (k Keeper) GetAddressFromDTag(ctx sdk.Context, dTag string) (addr string) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.DTagStoreKey(dtag))
+	bz := store.Get(types.DTagStoreKey(dTag))
 	if bz == nil {
 		return ""
 	}
@@ -127,7 +127,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 
 	// Delete the DTag -> Address association
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.DTagStoreKey(profile.Dtag))
+	store.Delete(types.DTagStoreKey(profile.DTag))
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
@@ -151,21 +151,21 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 		}
 	}
 
-	dTagRegEx := regexp.MustCompile(params.DtagParams.RegEx)
-	minDtagLen := params.DtagParams.MinDtagLength.Int64()
-	maxDtagLen := params.DtagParams.MaxDtagLength.Int64()
-	dtagLen := int64(len(profile.Dtag))
+	dTagRegEx := regexp.MustCompile(params.DTagParams.RegEx)
+	minDTagLen := params.DTagParams.MinDTagLength.Int64()
+	maxDTagLen := params.DTagParams.MaxDTagLength.Int64()
+	dTagLen := int64(len(profile.DTag))
 
-	if !dTagRegEx.MatchString(profile.Dtag) {
+	if !dTagRegEx.MatchString(profile.DTag) {
 		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
 	}
 
-	if dtagLen < minDtagLen {
-		return fmt.Errorf("profile dtag cannot be less than %d characters", minDtagLen)
+	if dTagLen < minDTagLen {
+		return fmt.Errorf("profile dtag cannot be less than %d characters", minDTagLen)
 	}
 
-	if dtagLen > maxDtagLen {
-		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDtagLen)
+	if dTagLen > maxDTagLen {
+		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDTagLen)
 	}
 
 	maxBioLen := params.MaxBioLength.Int64()
@@ -182,7 +182,7 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 // It returns an error if the same request already exists.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTransferRequest) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DtagTransferRequestStoreKey(request.Receiver)
+	key := types.DTagTransferRequestStoreKey(request.Receiver)
 
 	var requests types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
@@ -202,7 +202,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 // GetUserIncomingDTagTransferRequests returns all the request made to the given user inside the current context.
 func (k Keeper) GetUserIncomingDTagTransferRequests(ctx sdk.Context, user string) []types.DTagTransferRequest {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DtagTransferRequestStoreKey(user)
+	key := types.DTagTransferRequestStoreKey(user)
 
 	var requests types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
@@ -227,13 +227,13 @@ func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagT
 // DeleteAllDTagTransferRequests delete all the requests made to the given user
 func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user string) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.DtagTransferRequestStoreKey(user))
+	store.Delete(types.DTagTransferRequestStoreKey(user))
 }
 
 // DeleteDTagTransferRequest deletes the transfer requests made from the sender towards the recipient
 func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient string) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DtagTransferRequestStoreKey(recipient)
+	key := types.DTagTransferRequestStoreKey(recipient)
 
 	var wrapped types.DTagTransferRequests
 	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)

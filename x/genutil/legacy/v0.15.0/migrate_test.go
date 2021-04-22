@@ -242,9 +242,9 @@ func verifyProfilesStateMigrated(
 		verifyMigratedProfile(t, originalProfile, migratedProfile)
 	}
 
-	require.Len(t, migrated.DtagTransferRequests, len(original.DTagTransferRequests))
+	require.Len(t, migrated.DTagTransferRequests, len(original.DTagTransferRequests))
 	for index, originalRequest := range original.DTagTransferRequests {
-		migrated := migrated.DtagTransferRequests[index]
+		migrated := migrated.DTagTransferRequests[index]
 		verifyMigratedDTagTransferRequest(t, originalRequest, migrated)
 	}
 
@@ -252,7 +252,7 @@ func verifyProfilesStateMigrated(
 }
 
 func verifyMigratedProfile(t *testing.T, original v0130profiles.Profile, migrated v0150profiles.Profile) {
-	require.Equal(t, original.DTag, migrated.Dtag)
+	require.Equal(t, original.DTag, migrated.DTag)
 
 	if original.Moniker == nil {
 		require.Empty(t, migrated.Moniker)
@@ -288,7 +288,7 @@ func verifyMigratedProfile(t *testing.T, original v0130profiles.Profile, migrate
 }
 
 func verifyMigratedDTagTransferRequest(t *testing.T, original v0130profiles.DTagTransferRequest, migrated v0150profiles.DTagTransferRequest) {
-	require.Equal(t, original.DTagToTrade, migrated.DtagToTrade)
+	require.Equal(t, original.DTagToTrade, migrated.DTagToTrade)
 	require.Equal(t, original.Receiver.String(), migrated.Receiver)
 	require.Equal(t, original.Sender.String(), migrated.Sender)
 }
@@ -297,9 +297,9 @@ func verifyMigratedProfilesParams(t *testing.T, original v0130profiles.Params, m
 	require.Equal(t, original.MonikerParams.MinMonikerLen, migrated.MonikerParams.MinMonikerLength)
 	require.Equal(t, original.MonikerParams.MaxMonikerLen, migrated.MonikerParams.MaxMonikerLength)
 
-	require.Equal(t, original.DtagParams.RegEx, migrated.DtagParams.RegEx)
-	require.Equal(t, original.DtagParams.MinDtagLen, migrated.DtagParams.MinDtagLength)
-	require.Equal(t, original.DtagParams.MaxDtagLen, migrated.DtagParams.MaxDtagLength)
+	require.Equal(t, original.DTagParams.RegEx, migrated.DTagParams.RegEx)
+	require.Equal(t, original.DTagParams.MinDTagLen, migrated.DTagParams.MinDTagLength)
+	require.Equal(t, original.DTagParams.MaxDTagLen, migrated.DTagParams.MaxDTagLength)
 
 	require.Equal(t, original.MaxBioLen, migrated.MaxBioLength)
 }

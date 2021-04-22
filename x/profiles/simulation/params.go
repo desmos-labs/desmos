@@ -22,11 +22,11 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 					params.MinMonikerLength, params.MaxMonikerLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.DtagLenParamsKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.DTagLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
 				return fmt.Sprintf(`{"min_dtag_len":"%s","max_dtag_len":"%s"}`,
-					params.MinDtagLength, params.MaxDtagLength)
+					params.MinDTagLength, params.MaxDTagLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxBioLenParamsKey),

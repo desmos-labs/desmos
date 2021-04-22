@@ -27,7 +27,7 @@ var (
 // Parameters store keys
 var (
 	MonikerLenParamsKey = []byte("MonikerParams")
-	DtagLenParamsKey    = []byte("DtagParams")
+	DTagLenParamsKey    = []byte("DTagParams")
 	MaxBioLenParamsKey  = []byte("MaxBioLen")
 )
 
@@ -42,7 +42,7 @@ func ParamKeyTable() paramstypes.KeyTable {
 func NewParams(monikerParams MonikerParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
 	return Params{
 		MonikerParams: monikerParams,
-		DtagParams:    dTagParams,
+		DTagParams:    dTagParams,
 		MaxBioLength:  maxBioLen,
 	}
 }
@@ -51,7 +51,7 @@ func NewParams(monikerParams MonikerParams, dTagParams DTagParams, maxBioLen sdk
 func DefaultParams() Params {
 	return Params{
 		MonikerParams: DefaultMonikerParams(),
-		DtagParams:    DefaultDtagParams(),
+		DTagParams:    DefaultDTagParams(),
 		MaxBioLength:  DefaultMaxBioLength,
 	}
 }
@@ -61,7 +61,7 @@ func DefaultParams() Params {
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
 		paramstypes.NewParamSetPair(MonikerLenParamsKey, &params.MonikerParams, ValidateMonikerParams),
-		paramstypes.NewParamSetPair(DtagLenParamsKey, &params.DtagParams, ValidateDtagParams),
+		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
 		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
 	}
 }
@@ -72,7 +72,7 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	if err := ValidateDtagParams(params.DtagParams); err != nil {
+	if err := ValidateDTagParams(params.DTagParams); err != nil {
 		return err
 	}
 
@@ -119,25 +119,25 @@ func ValidateMonikerParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewDtagParams creates a new DtagParams obj
-func NewDtagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
+// NewDTagParams creates a new DTagParams obj
+func NewDTagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
 	return DTagParams{
 		RegEx:         regEx,
-		MinDtagLength: minLen,
-		MaxDtagLength: maxLen,
+		MinDTagLength: minLen,
+		MaxDTagLength: maxLen,
 	}
 }
 
-// DefaultDtagParams return default paramsModule
-func DefaultDtagParams() DTagParams {
-	return NewDtagParams(
+// DefaultDTagParams return default paramsModule
+func DefaultDTagParams() DTagParams {
+	return NewDTagParams(
 		DefaultRegEx,
 		DefaultMinDTagLength,
 		DefaultMaxDTagLength,
 	)
 }
 
-func ValidateDtagParams(i interface{}) error {
+func ValidateDTagParams(i interface{}) error {
 	params, isMonikerParams := i.(DTagParams)
 	if !isMonikerParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
@@ -147,12 +147,12 @@ func ValidateDtagParams(i interface{}) error {
 		return fmt.Errorf("empty dTag regEx param")
 	}
 
-	if params.MinDtagLength.IsNegative() || params.MinDtagLength.LT(DefaultMinDTagLength) {
-		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinDtagLength)
+	if params.MinDTagLength.IsNegative() || params.MinDTagLength.LT(DefaultMinDTagLength) {
+		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinDTagLength)
 	}
 
-	if params.MaxDtagLength.IsNegative() {
-		return fmt.Errorf("invalid max dTag length param: %s", params.MaxDtagLength)
+	if params.MaxDTagLength.IsNegative() {
+		return fmt.Errorf("invalid max dTag length param: %s", params.MaxDTagLength)
 	}
 
 	return nil

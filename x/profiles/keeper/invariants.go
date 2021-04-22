@@ -30,14 +30,14 @@ func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles stri
 	for _, invalidProfile := range invalidProfiles {
 		outputProfiles += fmt.Sprintf(
 			"[DTag]: %s, [Creator]: %s\n",
-			invalidProfile.Dtag,
+			invalidProfile.DTag,
 			invalidProfile.GetAddress().String(),
 		)
 	}
 	return outputProfiles
 }
 
-// ValidProfileInvariant checks that all registered profiles have a non-empty dtag and a non-empty creator
+// ValidProfileInvariant checks that all registered profiles have a non-empty DTag and a non-empty creator
 func ValidProfileInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles []*types.Profile

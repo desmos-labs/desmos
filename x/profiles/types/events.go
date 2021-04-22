@@ -8,12 +8,10 @@ const (
 	EventTypeDTagTransferRefuse  = "dtag_transfer_refuse"
 	EventTypeDTagTransferCancel  = "dtag_transfer_cancel"
 
-	// Profile attributes
-	AttributeProfileDtag         = "profile_dtag"
+	AttributeProfileDTag         = "profile_dtag"
 	AttributeProfileCreator      = "profile_creator"
 	AttributeProfileCreationTime = "profile_creation_time"
 
-	// DTag trade attributes
 	AttributeRequestReceiver = "request_receiver"
 	AttributeRequestSender   = "request_sender"
 	AttributeDTagToTrade     = "dtag_to_trade"

@@ -37,7 +37,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: addr,
 		},
 		{
-			Key:   types.DtagTransferRequestStoreKey("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+			Key:   types.DTagTransferRequestStoreKey("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			Value: cdc.MustMarshalBinaryBare(&requests),
 		},
 	}}

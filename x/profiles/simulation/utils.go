@@ -69,13 +69,13 @@ func RandomProfile(r *rand.Rand, accounts []*types.Profile) *types.Profile {
 	return accounts[idx]
 }
 
-// RandomDTagTransferRequest picks and returns a random dtag transfer request from an array of requests
+// RandomDTagTransferRequest picks and returns a random DTag transfer request from an array of requests
 func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
 	idx := r.Intn(len(requests))
 	return requests[idx]
 }
 
-// RandomDTag return a random dtag
+// RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
 	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 3, 30))
@@ -126,7 +126,7 @@ func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 func RandomDTagParams(r *rand.Rand) types.DTagParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
-	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+	return types.NewDTagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param

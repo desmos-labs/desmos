@@ -27,7 +27,10 @@ message Profile {
 
   google.protobuf.Any account = 1
   [(cosmos_proto.accepts_interface) = "AccountI"];
-  string dtag = 2 [(gogoproto.moretags) = "yaml:\"dtag\""];
+  string dtag = 2 [
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
   string moniker = 3 [(gogoproto.moretags) = "yaml:\"moniker\""];
   string bio = 4 [(gogoproto.moretags) = "yaml:\"bio\""];
   Pictures pictures = 5 [
@@ -44,12 +47,15 @@ message Profile {
 
 // ___________________________________________________________________________________________________________________
 
-// DTagTransferRequest represent a dtag transfer request between two users
+// DTagTransferRequest represent a DTag transfer request between two users
 message DTagTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string dtag_to_trade = 1 [(gogoproto.moretags) = "yaml:\"dtag_to_trade\""];
+  string dtag_to_trade = 1 [
+    (gogoproto.moretags) = "yaml:\"dtag_to_trade\"",
+    (gogoproto.customname) = "DTagToTrade"
+  ];
   string sender = 2 [(gogoproto.moretags) = "yaml:\"sender\""];
   string receiver = 3 [(gogoproto.moretags) = "yaml:\"receiver\""];
 }

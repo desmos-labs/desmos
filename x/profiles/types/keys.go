@@ -9,8 +9,8 @@ const (
 
 	ActionSaveProfile               = "save_profile"
 	ActionDeleteProfile             = "delete_profile"
-	ActionRequestDtag               = "request_dtag"
-	ActionAcceptDtagTransfer        = "accept_dtag_request"
+	ActionRequestDTag               = "request_dtag"
+	ActionAcceptDTagTransfer        = "accept_dtag_request"
 	ActionRefuseDTagTransferRequest = "refuse_dtag_request"
 	ActionCancelDTagTransferRequest = "cancel_dtag_request"
 
@@ -28,11 +28,11 @@ var (
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
-func DTagStoreKey(dtag string) []byte {
-	return append(DTagPrefix, []byte(dtag)...)
+func DTagStoreKey(dTag string) []byte {
+	return append(DTagPrefix, []byte(dTag)...)
 }
 
-// DtagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
-func DtagTransferRequestStoreKey(address string) []byte {
+// DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
+func DTagTransferRequestStoreKey(address string) []byte {
 	return append(DTagTransferRequestsPrefix, address...)
 }

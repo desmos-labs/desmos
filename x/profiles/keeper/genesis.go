@@ -33,7 +33,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	})
 
 	// Store the transfer requests
-	for _, request := range data.DtagTransferRequests {
+	for _, request := range data.DTagTransferRequest {
 		err := k.SaveDTagTransferRequest(ctx, request)
 		if err != nil {
 			panic(err)
