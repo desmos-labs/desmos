@@ -120,7 +120,7 @@ func GetCmdQueryParams() *cobra.Command {
 // GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
 func GetCmdQueryUserRelationships() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "user [address]",
+		Use:   "relationships [address]",
 		Short: "Retrieve all the user's relationships",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

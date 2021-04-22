@@ -39,14 +39,20 @@ In order to allow developers to specify any arbitrary data they want inside a po
 Please note that this field should be used only when strictly necessary as it might cause an unexpected chain state dimensions increment. Also, each value must be no longer than 200 characters, or an error will be thrown.
 
 ### `Creator`
-The `Creator` field is used to specify the Bech32 address of the creator of the post. In order for a creator address to be valid, it must begin with the `desmos` Bech32 human-readable part. 
+The `Creator` field is used to specify the Bech32 address of the creator of the post. In order for a creator address to be valid, it must begin with the `desmos` Bech32 human-readable part.
 
 ### `Attachments`
-Starting from version `v0.3.0`, we've introduced the `Attachments` (previously called `Medias`) field. This contains a (possibly empty) array of attachment files that can be associated to a post. 
 
-In order to know how an attachment object must be created, please refer to the [`Attachment` type documentation](./attachment.md)
+Starting from version `v0.3.0`, we've introduced the `Attachments` (previously called `Medias`) field. This contains a (
+possibly empty) array of attachment files that can be associated to a post.
+
+In order to know how an attachment object must be created, please refer to
+the [`Attachment` type documentation](attachment.md)
 
 ### `PollData`
-Along with the [`Attachments`](#attachments) field, with `v0.3.0` we've introduced the `PollData` field as well. This field allows to specify an optional poll that should be associated with the post itself. 
 
-In order to better understand how the value of this field should be created, please refer to the [`PollData` type documentation](./post-poll-data.md) 
+Along with the [`Attachments`](#attachments) field, with `v0.3.0` we've introduced the `PollData` field as well. This
+field allows to specify an optional poll that should be associated with the post itself.
+
+In order to better understand how the value of this field should be created, please refer to
+the [`PollData` type documentation](post-poll-data.md) 

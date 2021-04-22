@@ -4,7 +4,7 @@ This message allows you to block a specific user associated with a given address
 ## Structure
 ```json
 {
-  "@type": "/desmos.relationships.v1beta1.MsgBlockUser",
+  "@type": "/desmos.profiles.v1beta1.MsgBlockUser",
   "blocker": "<Desmos address that's blocking someone>",
   "blocked": "<Desmos address that's been blocked>",
   "reason": "<Reason of the block>",
@@ -24,7 +24,7 @@ This message allows you to block a specific user associated with a given address
 
 ````json
 {
-  "@type": "/desmos.relationships.v1beta1.MsgBlockUser",
+  "@type": "/desmos.profiles.v1beta1.MsgBlockUser",
   "blocker": "desmos1j83hlf5yn5839wgpege3z669r8j3lh2ggmtf5u",
   "blocked": "desmos15ux5mc98jlhsg30dzwwv06ftjs82uy4g3t99ru",
   "reason": "reason",

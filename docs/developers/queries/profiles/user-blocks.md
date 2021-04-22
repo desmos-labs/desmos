@@ -3,10 +3,10 @@ This query endpoint allows you to retrieve the user blocked by the user with the
 
 **CLI**
 ```bash
-desmos query relationships blocklist [address]
+desmos query profiles blocklist [address]
 
 # Example
-# desmos query relationships blocklist desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmos query profiles blocklist desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
 
 **REST**

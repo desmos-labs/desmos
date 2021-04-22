@@ -1,6 +1,7 @@
 # `MsgRegisterReaction`
 This message allows you to register a new reaction.  
-If you want to know more about the `Reaction` type, you can do so inside the [`Reaction` type documentation page](../../../../types/posts/reaction.md)
+If you want to know more about the `Reaction` type, you can do so inside
+the [`Reaction` type documentation page](../../../types/staging/posts/reaction.md)
 
 ## Structure
 ```json
