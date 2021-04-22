@@ -8,12 +8,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
-
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
 
 	"github.com/desmos-labs/desmos/app"
 
@@ -41,7 +37,6 @@ type KeeperTestSuite struct {
 	storeKey       sdk.StoreKey
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
-	rk             relationshipskeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	testData       TestData
 }
@@ -54,7 +49,7 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, relationshipstypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
@@ -76,7 +71,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey])
 	suite.paramsKeeper = paramskeeper.NewKeeper(
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
@@ -92,8 +86,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		suite.paramsKeeper.Subspace(types.DefaultParamspace),
-		suite.rk,
+		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 	)
 

@@ -63,11 +63,11 @@ func (suite *KeeperTestSuite) Test_queryReports() {
 			suite.SetupTest()
 
 			for _, rep := range test.storedReports {
-				err := suite.keeper.SaveReport(suite.ctx, rep)
+				err := suite.k.SaveReport(suite.ctx, rep)
 				suite.Require().NoError(err)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expErr {

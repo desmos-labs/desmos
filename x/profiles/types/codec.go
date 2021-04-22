@@ -16,6 +16,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCancelDTagTransfer{}, "desmos/MsgCancelDTagTransfer", nil)
 	cdc.RegisterConcrete(MsgAcceptDTagTransfer{}, "desmos/MsgAcceptDTagTransfer", nil)
 	cdc.RegisterConcrete(MsgRefuseDTagTransfer{}, "desmos/MsgRefuseDTagTransfer", nil)
+	cdc.RegisterConcrete(MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
+	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
+	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
+	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -31,6 +35,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgCancelDTagTransfer{},
 		&MsgAcceptDTagTransfer{},
 		&MsgRefuseDTagTransfer{},
+		&MsgCreateRelationship{},
+		&MsgDeleteRelationship{},
+		&MsgBlockUser{},
+		&MsgUnblockUser{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

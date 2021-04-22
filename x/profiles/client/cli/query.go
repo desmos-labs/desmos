@@ -22,8 +22,10 @@ func GetQueryCmd() *cobra.Command {
 	}
 	profileQueryCmd.AddCommand(
 		GetCmdQueryProfile(),
-		GetCmdQueryParams(),
 		GetCmdQueryDTagRequests(),
+		GetCmdQueryUserRelationships(),
+		GetCmdQueryUserBlocks(),
+		GetCmdQueryParams(),
 	)
 	return profileQueryCmd
 }
@@ -102,6 +104,65 @@ func GetCmdQueryParams() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			res, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
+func GetCmdQueryUserRelationships() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "user [address]",
+		Short: "Retrieve all the user's relationships",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.UserRelationships(
+				context.Background(),
+				&types.QueryUserRelationshipsRequest{User: args[0]},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user
+func GetCmdQueryUserBlocks() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "blocklist [address]",
+		Short: "Retrieve the list of all the blocked users of the given address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.UserBlocks(
+				context.Background(),
+				&types.QueryUserBlocksRequest{User: args[0]})
 			if err != nil {
 				return err
 			}

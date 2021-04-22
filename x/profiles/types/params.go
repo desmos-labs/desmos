@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	// default paramspace for paramsModule keeper
-	DefaultParamspace = ModuleName
+	// DefaultParamsSpace represents the default paramspace for the Params keeper
+	DefaultParamsSpace = ModuleName
 )
 
 // Default profile paramsModule

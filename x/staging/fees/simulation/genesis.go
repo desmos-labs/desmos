@@ -9,7 +9,6 @@ import (
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,10 +35,10 @@ var msgsTypes = []string{
 	profilestypes.ActionAcceptDTagTransfer,
 	profilestypes.ActionRefuseDTagTransferRequest,
 	profilestypes.ActionCancelDTagTransferRequest,
-	relationshipstypes.ActionCreateRelationship,
-	relationshipstypes.ActionDeleteRelationship,
-	relationshipstypes.ActionBlockUser,
-	relationshipstypes.ActionUnblockUser,
+	profilestypes.ActionCreateRelationship,
+	profilestypes.ActionDeleteRelationship,
+	profilestypes.ActionBlockUser,
+	profilestypes.ActionUnblockUser,
 	reportstypes.ActionReportPost,
 }
 

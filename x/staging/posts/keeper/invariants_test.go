@@ -173,30 +173,30 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
 			for _, post := range test.posts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, reaction := range test.registeredReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, entry := range test.postReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
 			for _, entry := range test.answers {
 				for _, answer := range entry.UserAnswers {
-					suite.keeper.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
 				}
 			}
 
-			_, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)
 			suite.Require().Equal(test.expStop, stop)
 		})
 	}

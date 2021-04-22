@@ -77,8 +77,6 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
 	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
@@ -148,7 +146,6 @@ var (
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		//reports.AppModuleBasic{},
-		//relationships.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -203,11 +200,10 @@ type DesmosApp struct {
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper          feeskeeper.Keeper
-	postsKeeper         postskeeper.Keeper
-	ProfileKeeper       profileskeeper.Keeper
-	ReportsKeeper       reportsKeeper.Keeper
-	RelationshipsKeeper relationshipskeeper.Keeper
+	FeesKeeper    feeskeeper.Keeper
+	postsKeeper   postskeeper.Keeper
+	ProfileKeeper profileskeeper.Keeper
+	ReportsKeeper reportsKeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -252,7 +248,6 @@ func NewDesmosApp(
 
 		// Custom modules
 		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
-		relationshipstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -353,22 +348,17 @@ func NewDesmosApp(
 		appCodec,
 		app.GetSubspace(feestypes.ModuleName),
 	)
-	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
-		appCodec,
-		keys[relationshipstypes.StoreKey],
+	app.ProfileKeeper = profileskeeper.NewKeeper(
+		app.appCodec,
+		keys[profilestypes.StoreKey],
+		app.GetSubspace(profilestypes.ModuleName),
+		app.AccountKeeper,
 	)
 	app.postsKeeper = postskeeper.NewKeeper(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
-		app.RelationshipsKeeper,
-	)
-	app.ProfileKeeper = profileskeeper.NewKeeper(
-		app.appCodec,
-		keys[profilestypes.StoreKey],
-		app.GetSubspace(profilestypes.ModuleName),
-		app.RelationshipsKeeper,
-		app.AccountKeeper,
+		app.ProfileKeeper,
 	)
 	app.ReportsKeeper = reportsKeeper.NewKeeper(
 		app.appCodec,
@@ -433,7 +423,7 @@ func NewDesmosApp(
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
 		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
-		reportsTypes.ModuleName, relationshipstypes.ModuleName, // custom modules
+		reportsTypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -470,7 +460,6 @@ func NewDesmosApp(
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

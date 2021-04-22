@@ -120,30 +120,30 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.keeper.SetParams(suite.ctx, test.data.params)
+			suite.k.SetParams(suite.ctx, test.data.params)
 
 			for _, reaction := range test.data.registeredReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, post := range test.data.posts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, entry := range test.data.userAnswerEntries {
 				for _, answer := range entry.UserAnswers {
-					suite.keeper.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
 				}
 			}
 
 			for _, entry := range test.data.postReactionsEntries {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			exported := suite.keeper.ExportGenesis(suite.ctx)
+			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(test.expected, exported)
 		})
 	}
@@ -377,15 +377,15 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			suite.SetupTest()
 
 			if test.expError {
-				suite.Require().Panics(func() { suite.keeper.InitGenesis(suite.ctx, *test.genesis) })
+				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *test.genesis) })
 			} else {
-				suite.keeper.InitGenesis(suite.ctx, *test.genesis)
+				suite.k.InitGenesis(suite.ctx, *test.genesis)
 
-				suite.Require().Equal(test.expState.posts, suite.keeper.GetPosts(suite.ctx))
-				suite.Require().Equal(test.expState.registeredReactions, suite.keeper.GetRegisteredReactions(suite.ctx))
-				suite.Require().Equal(test.expState.postReactionsEntries, suite.keeper.GetPostReactionsEntries(suite.ctx))
-				suite.Require().Equal(test.expState.userAnswerEntries, suite.keeper.GetUserAnswersEntries(suite.ctx))
-				suite.Require().Equal(test.expState.params, suite.keeper.GetParams(suite.ctx))
+				suite.Require().Equal(test.expState.posts, suite.k.GetPosts(suite.ctx))
+				suite.Require().Equal(test.expState.registeredReactions, suite.k.GetRegisteredReactions(suite.ctx))
+				suite.Require().Equal(test.expState.postReactionsEntries, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expState.userAnswerEntries, suite.k.GetUserAnswersEntries(suite.ctx))
+				suite.Require().Equal(test.expState.params, suite.k.GetParams(suite.ctx))
 			}
 		})
 	}

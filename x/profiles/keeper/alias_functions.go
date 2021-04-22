@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// IterateProfiles iterates through the profiles set and performs the provided function
+// IterateProfiles iterates through the Profiles set and performs the provided function
 func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile *types.Profile) (stop bool)) {
 	i := int64(0)
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
@@ -30,4 +30,33 @@ func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
 		return false
 	})
 	return profiles
+}
+
+// IterateRelationships iterates through the relationships and perform the provided function
+func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relationship types.Relationship) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		relationships := types.MustUnmarshalRelationships(k.cdc, iterator.Value())
+
+		var stop = false
+		for _, relationship := range relationships {
+			stop = fn(i, relationship)
+
+			if stop {
+				break
+			}
+
+			i++
+		}
+
+		if stop {
+			break
+		}
+	}
 }

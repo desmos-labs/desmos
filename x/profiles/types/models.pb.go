@@ -231,11 +231,237 @@ func (m *DTagTransferRequests) GetRequests() []DTagTransferRequest {
 	return nil
 }
 
+// Relationship is the struct of a relationship.
+// It represent the concept of "follow" of traditional social networks.
+type Relationship struct {
+	Creator   string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+	Recipient string `protobuf:"bytes,2,opt,name=recipient,proto3" json:"recipient,omitempty" yaml:"recipient"`
+	Subspace  string `protobuf:"bytes,3,opt,name=subspace,proto3" json:"subspace,omitempty" yaml:"subspace"`
+}
+
+func (m *Relationship) Reset()         { *m = Relationship{} }
+func (m *Relationship) String() string { return proto.CompactTextString(m) }
+func (*Relationship) ProtoMessage()    {}
+func (*Relationship) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dcbf89d5cd53a9ca, []int{4}
+}
+func (m *Relationship) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Relationship) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Relationship.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Relationship) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Relationship.Merge(m, src)
+}
+func (m *Relationship) XXX_Size() int {
+	return m.Size()
+}
+func (m *Relationship) XXX_DiscardUnknown() {
+	xxx_messageInfo_Relationship.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Relationship proto.InternalMessageInfo
+
+func (m *Relationship) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *Relationship) GetRecipient() string {
+	if m != nil {
+		return m.Recipient
+	}
+	return ""
+}
+
+func (m *Relationship) GetSubspace() string {
+	if m != nil {
+		return m.Subspace
+	}
+	return ""
+}
+
+// Relationships wraps a list of Relationship objects
+type Relationships struct {
+	Relationships []Relationship `protobuf:"bytes,1,rep,name=relationships,proto3" json:"relationships"`
+}
+
+func (m *Relationships) Reset()         { *m = Relationships{} }
+func (m *Relationships) String() string { return proto.CompactTextString(m) }
+func (*Relationships) ProtoMessage()    {}
+func (*Relationships) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dcbf89d5cd53a9ca, []int{5}
+}
+func (m *Relationships) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Relationships) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Relationships.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Relationships) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Relationships.Merge(m, src)
+}
+func (m *Relationships) XXX_Size() int {
+	return m.Size()
+}
+func (m *Relationships) XXX_DiscardUnknown() {
+	xxx_messageInfo_Relationships.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Relationships proto.InternalMessageInfo
+
+func (m *Relationships) GetRelationships() []Relationship {
+	if m != nil {
+		return m.Relationships
+	}
+	return nil
+}
+
+// UserBlock represents the fact that the Blocker has blocked the given Blocked
+// user.
+type UserBlock struct {
+	Blocker  string `protobuf:"bytes,1,opt,name=blocker,proto3" json:"blocker,omitempty" yaml:"blocker"`
+	Blocked  string `protobuf:"bytes,2,opt,name=blocked,proto3" json:"blocked,omitempty" yaml:"blocked"`
+	Reason   string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty" yaml:"reason"`
+	Subspace string `protobuf:"bytes,4,opt,name=subspace,proto3" json:"subspace,omitempty" yaml:"subspace"`
+}
+
+func (m *UserBlock) Reset()         { *m = UserBlock{} }
+func (m *UserBlock) String() string { return proto.CompactTextString(m) }
+func (*UserBlock) ProtoMessage()    {}
+func (*UserBlock) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dcbf89d5cd53a9ca, []int{6}
+}
+func (m *UserBlock) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UserBlock) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UserBlock.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UserBlock) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserBlock.Merge(m, src)
+}
+func (m *UserBlock) XXX_Size() int {
+	return m.Size()
+}
+func (m *UserBlock) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserBlock.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserBlock proto.InternalMessageInfo
+
+func (m *UserBlock) GetBlocker() string {
+	if m != nil {
+		return m.Blocker
+	}
+	return ""
+}
+
+func (m *UserBlock) GetBlocked() string {
+	if m != nil {
+		return m.Blocked
+	}
+	return ""
+}
+
+func (m *UserBlock) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+func (m *UserBlock) GetSubspace() string {
+	if m != nil {
+		return m.Subspace
+	}
+	return ""
+}
+
+// UserBlocks wraps a list of UserBlock objects
+type UserBlocks struct {
+	Blocks []UserBlock `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
+}
+
+func (m *UserBlocks) Reset()         { *m = UserBlocks{} }
+func (m *UserBlocks) String() string { return proto.CompactTextString(m) }
+func (*UserBlocks) ProtoMessage()    {}
+func (*UserBlocks) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dcbf89d5cd53a9ca, []int{7}
+}
+func (m *UserBlocks) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UserBlocks) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UserBlocks.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UserBlocks) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserBlocks.Merge(m, src)
+}
+func (m *UserBlocks) XXX_Size() int {
+	return m.Size()
+}
+func (m *UserBlocks) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserBlocks.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserBlocks proto.InternalMessageInfo
+
+func (m *UserBlocks) GetBlocks() []UserBlock {
+	if m != nil {
+		return m.Blocks
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Pictures)(nil), "desmos.profiles.v1beta1.Pictures")
 	proto.RegisterType((*Profile)(nil), "desmos.profiles.v1beta1.Profile")
 	proto.RegisterType((*DTagTransferRequest)(nil), "desmos.profiles.v1beta1.DTagTransferRequest")
 	proto.RegisterType((*DTagTransferRequests)(nil), "desmos.profiles.v1beta1.DTagTransferRequests")
+	proto.RegisterType((*Relationship)(nil), "desmos.profiles.v1beta1.Relationship")
+	proto.RegisterType((*Relationships)(nil), "desmos.profiles.v1beta1.Relationships")
+	proto.RegisterType((*UserBlock)(nil), "desmos.profiles.v1beta1.UserBlock")
+	proto.RegisterType((*UserBlocks)(nil), "desmos.profiles.v1beta1.UserBlocks")
 }
 
 func init() {
@@ -243,45 +469,56 @@ func init() {
 }
 
 var fileDescriptor_dcbf89d5cd53a9ca = []byte{
-	// 607 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x94, 0x41, 0x6f, 0xd3, 0x30,
-	0x14, 0xc7, 0x1b, 0xda, 0x6d, 0xc5, 0xdd, 0x06, 0x78, 0x95, 0x16, 0x76, 0xa8, 0x87, 0x85, 0x60,
-	0x88, 0x2d, 0xd1, 0xc6, 0x6d, 0xe2, 0xb2, 0x6a, 0x07, 0x10, 0x12, 0x9a, 0xac, 0x8a, 0x03, 0x97,
-	0xca, 0x49, 0xbc, 0x10, 0x68, 0xe2, 0x10, 0xbb, 0x13, 0xfd, 0x06, 0x1c, 0x77, 0x9c, 0x38, 0xf5,
-	0x43, 0xf0, 0x21, 0x26, 0x4e, 0x3b, 0x72, 0x0a, 0xa8, 0xbd, 0x20, 0x8e, 0xf9, 0x04, 0xc8, 0xb1,
-	0xd3, 0x6e, 0x63, 0xbb, 0xc5, 0xef, 0xff, 0x7b, 0xef, 0xf9, 0xfd, 0x9f, 0x15, 0xf0, 0x38, 0x60,
-	0x22, 0xe6, 0xc2, 0x4d, 0x33, 0x7e, 0x1c, 0x0d, 0x98, 0x70, 0x4f, 0x76, 0x3d, 0x26, 0xe9, 0xae,
-	0x1b, 0xf3, 0x80, 0x0d, 0x84, 0x93, 0x66, 0x5c, 0x72, 0xb8, 0xae, 0x29, 0xa7, 0xa2, 0x1c, 0x43,
-	0x6d, 0xb4, 0x43, 0x1e, 0xf2, 0x92, 0x71, 0xd5, 0x97, 0xc6, 0x37, 0x1e, 0x86, 0x9c, 0x87, 0x03,
-	0xe6, 0x96, 0x27, 0x6f, 0x78, 0xec, 0xd2, 0x64, 0x64, 0x24, 0x74, 0x5d, 0x92, 0x51, 0xcc, 0x84,
-	0xa4, 0x71, 0x5a, 0xe5, 0xfa, 0x5c, 0xb5, 0xea, 0xeb, 0xa2, 0xfa, 0xa0, 0x25, 0xfc, 0x11, 0x34,
-	0x8f, 0x22, 0x5f, 0x0e, 0x33, 0x26, 0xe0, 0x36, 0x58, 0x32, 0x97, 0xb1, 0xad, 0x4d, 0x6b, 0xeb,
-	0x6e, 0x17, 0x16, 0x39, 0x5a, 0x1d, 0xd1, 0x78, 0xb0, 0x8f, 0x8d, 0x80, 0x49, 0x85, 0xc0, 0x27,
-	0x60, 0xc1, 0xe7, 0x27, 0x2c, 0xb3, 0xef, 0x94, 0xec, 0xfd, 0x22, 0x47, 0xcb, 0x9a, 0x2d, 0xc3,
-	0x98, 0x68, 0x79, 0xbf, 0x79, 0x36, 0x46, 0xd6, 0x9f, 0x31, 0xb2, 0xf0, 0xb7, 0x3a, 0x58, 0x3a,
-	0x32, 0xd9, 0x2f, 0xc1, 0x12, 0xf5, 0x7d, 0x3e, 0x4c, 0x64, 0xd9, 0xab, 0xb5, 0xd7, 0x76, 0xf4,
-	0x14, 0x4e, 0x35, 0x85, 0x73, 0x90, 0x8c, 0xba, 0xcb, 0x3f, 0xbe, 0xef, 0x34, 0x0f, 0x34, 0xf8,
-	0x9a, 0x54, 0x29, 0xf0, 0x39, 0x68, 0x04, 0x92, 0x86, 0xa6, 0xf5, 0xfa, 0x24, 0x47, 0x8d, 0xc3,
-	0x1e, 0x0d, 0x8b, 0x1c, 0xb5, 0xf4, 0x15, 0x94, 0x8a, 0x49, 0x09, 0xa9, 0xb1, 0x62, 0x9e, 0x44,
-	0x9f, 0x58, 0x66, 0xd7, 0xaf, 0x8f, 0x65, 0x04, 0x4c, 0x2a, 0x04, 0x6e, 0x82, 0xba, 0x17, 0x71,
-	0xbb, 0x51, 0x92, 0xab, 0x45, 0x8e, 0x80, 0x26, 0xbd, 0x88, 0x63, 0xa2, 0x24, 0xf8, 0x0e, 0x34,
-	0x53, 0x63, 0x99, 0xbd, 0x50, 0xde, 0xfd, 0x91, 0x73, 0xcb, 0x2e, 0x9d, 0xca, 0xdb, 0xee, 0xfa,
-	0x79, 0x8e, 0x6a, 0x45, 0x8e, 0xee, 0x19, 0x3b, 0x4d, 0x1c, 0x93, 0x59, 0x2d, 0x98, 0x81, 0x15,
-	0x3f, 0x63, 0x54, 0x46, 0x3c, 0xe9, 0x07, 0x54, 0x32, 0x7b, 0xb1, 0x2c, 0xbe, 0xf1, 0x9f, 0x31,
-	0xbd, 0x6a, 0xbd, 0xdd, 0x5d, 0x55, 0xf5, 0x6f, 0x8e, 0xae, 0x26, 0x16, 0x39, 0x6a, 0x9b, 0x4d,
-	0x5c, 0x0e, 0xe3, 0xd3, 0x5f, 0xc8, 0x22, 0xcb, 0x55, 0xec, 0x90, 0x4a, 0xb6, 0xdf, 0xfc, 0x3a,
-	0x46, 0xb5, 0xb3, 0x31, 0xaa, 0xe1, 0x73, 0x0b, 0xac, 0x29, 0x0f, 0x7b, 0x19, 0x4d, 0xc4, 0x31,
-	0xcb, 0x08, 0xfb, 0x3c, 0x64, 0x42, 0xc2, 0x37, 0x60, 0x45, 0xb9, 0xd8, 0x97, 0xbc, 0x2f, 0x33,
-	0x1a, 0x54, 0x4f, 0xe3, 0xe9, 0x24, 0x47, 0xad, 0x92, 0xe7, 0x3d, 0x15, 0x9e, 0xf7, 0xbc, 0x42,
-	0x63, 0xd2, 0x52, 0x67, 0x03, 0xc1, 0x67, 0x60, 0x51, 0xb0, 0x24, 0x98, 0x3d, 0x9a, 0x07, 0x45,
-	0x8e, 0x56, 0x74, 0x9a, 0x8e, 0x63, 0x62, 0x00, 0xe8, 0x82, 0x66, 0xc6, 0x7c, 0x16, 0x9d, 0xcc,
-	0xd6, 0xb6, 0x36, 0xb7, 0xaf, 0x52, 0x30, 0x99, 0x41, 0x97, 0xde, 0x59, 0x0a, 0xda, 0x37, 0x4c,
-	0x22, 0xe0, 0x5b, 0x55, 0x52, 0x7f, 0xdb, 0xd6, 0x66, 0x7d, 0xab, 0xb5, 0xb7, 0x7d, 0xeb, 0xe2,
-	0x6e, 0x28, 0xd0, 0x6d, 0x28, 0xb7, 0xc9, 0xac, 0xc6, 0xbc, 0x63, 0xf7, 0xd5, 0xf9, 0xa4, 0x63,
-	0x5d, 0x4c, 0x3a, 0xd6, 0xef, 0x49, 0xc7, 0x3a, 0x9d, 0x76, 0x6a, 0x17, 0xd3, 0x4e, 0xed, 0xe7,
-	0xb4, 0x53, 0x7b, 0xef, 0x84, 0x91, 0xfc, 0x30, 0xf4, 0x1c, 0x9f, 0xc7, 0xae, 0xee, 0xb5, 0x33,
-	0xa0, 0x9e, 0x30, 0xdf, 0xee, 0x97, 0xf9, 0x4f, 0x42, 0x8e, 0x52, 0x26, 0xbc, 0xc5, 0x72, 0xcb,
-	0x2f, 0xfe, 0x05, 0x00, 0x00, 0xff, 0xff, 0x46, 0x56, 0xf8, 0xa4, 0x44, 0x04, 0x00, 0x00,
+	// 775 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x95, 0x3f, 0x4f, 0x23, 0x47,
+	0x14, 0xc0, 0xbd, 0xb1, 0x31, 0x66, 0x6c, 0x13, 0xb2, 0x58, 0xc2, 0xa1, 0xf0, 0x90, 0x51, 0xfe,
+	0x10, 0x05, 0x76, 0x05, 0xe9, 0x50, 0x8a, 0x60, 0x51, 0x24, 0x8a, 0x84, 0xc8, 0xc8, 0x49, 0x91,
+	0xc6, 0xda, 0x3f, 0x83, 0xd9, 0x60, 0xef, 0x6c, 0x66, 0xc6, 0x28, 0xfe, 0x06, 0x29, 0x29, 0x51,
+	0x2a, 0xf7, 0xd7, 0xde, 0x87, 0x40, 0x27, 0x9d, 0x44, 0x79, 0xd5, 0xde, 0xc9, 0x34, 0xa7, 0x2b,
+	0xf7, 0x13, 0x9c, 0x66, 0x67, 0x76, 0xbd, 0xc6, 0xb8, 0xb8, 0x6e, 0xf6, 0xbd, 0xdf, 0x7b, 0x33,
+	0xef, 0x37, 0x03, 0x06, 0x5f, 0xfb, 0x84, 0x8f, 0x28, 0xb7, 0x23, 0x46, 0x2f, 0x83, 0x21, 0xe1,
+	0xf6, 0xcd, 0x91, 0x4b, 0x84, 0x73, 0x64, 0x8f, 0xa8, 0x4f, 0x86, 0xdc, 0x8a, 0x18, 0x15, 0xd4,
+	0xdc, 0x51, 0x94, 0x95, 0x51, 0x96, 0xa6, 0x76, 0x5b, 0x03, 0x3a, 0xa0, 0x29, 0x63, 0xcb, 0x95,
+	0xc2, 0x77, 0xbf, 0x1c, 0x50, 0x3a, 0x18, 0x12, 0x3b, 0xfd, 0x72, 0xc7, 0x97, 0xb6, 0x13, 0x4e,
+	0x74, 0x0a, 0x3e, 0x4d, 0x89, 0x60, 0x44, 0xb8, 0x70, 0x46, 0x51, 0x56, 0xeb, 0x51, 0xb9, 0x55,
+	0x5f, 0x35, 0x55, 0x1f, 0x2a, 0x85, 0xfe, 0x06, 0xb5, 0x8b, 0xc0, 0x13, 0x63, 0x46, 0xb8, 0x79,
+	0x00, 0xd6, 0xf5, 0x61, 0xda, 0xc6, 0x9e, 0xb1, 0xbf, 0xd1, 0x35, 0x93, 0x18, 0x6e, 0x4e, 0x9c,
+	0xd1, 0xf0, 0x04, 0xe9, 0x04, 0xc2, 0x19, 0x62, 0x7e, 0x0b, 0xd6, 0x3c, 0x7a, 0x43, 0x58, 0xfb,
+	0xb3, 0x94, 0xdd, 0x4a, 0x62, 0xd8, 0x50, 0x6c, 0x1a, 0x46, 0x58, 0xa5, 0x4f, 0x6a, 0x77, 0x53,
+	0x68, 0xbc, 0x9f, 0x42, 0x03, 0xfd, 0x5f, 0x06, 0xeb, 0x17, 0xba, 0xfa, 0x27, 0xb0, 0xee, 0x78,
+	0x1e, 0x1d, 0x87, 0x22, 0xdd, 0xab, 0x7e, 0xdc, 0xb2, 0xd4, 0x14, 0x56, 0x36, 0x85, 0x75, 0x1a,
+	0x4e, 0xba, 0x8d, 0x57, 0x2f, 0x0f, 0x6b, 0xa7, 0x0a, 0xfc, 0x15, 0x67, 0x25, 0xe6, 0x0f, 0xa0,
+	0xe2, 0x0b, 0x67, 0xa0, 0xb7, 0xde, 0x99, 0xc5, 0xb0, 0x72, 0xd6, 0x73, 0x06, 0x49, 0x0c, 0xeb,
+	0xea, 0x08, 0x32, 0x8b, 0x70, 0x0a, 0xc9, 0xb1, 0x46, 0x34, 0x0c, 0xae, 0x09, 0x6b, 0x97, 0x9f,
+	0x8e, 0xa5, 0x13, 0x08, 0x67, 0x88, 0xb9, 0x07, 0xca, 0x6e, 0x40, 0xdb, 0x95, 0x94, 0xdc, 0x4c,
+	0x62, 0x08, 0x14, 0xe9, 0x06, 0x14, 0x61, 0x99, 0x32, 0xff, 0x04, 0xb5, 0x48, 0x2b, 0x6b, 0xaf,
+	0xa5, 0x67, 0xff, 0xca, 0x5a, 0x71, 0x97, 0x56, 0xe6, 0xb6, 0xbb, 0x73, 0x1f, 0xc3, 0x52, 0x12,
+	0xc3, 0xcf, 0xb5, 0x4e, 0x1d, 0x47, 0x38, 0xef, 0x65, 0x32, 0xd0, 0xf4, 0x18, 0x71, 0x44, 0x40,
+	0xc3, 0xbe, 0xef, 0x08, 0xd2, 0xae, 0xa6, 0xcd, 0x77, 0x97, 0xc4, 0xf4, 0xb2, 0xeb, 0xed, 0x1e,
+	0xc9, 0xae, 0x1f, 0x62, 0xb8, 0x58, 0x98, 0xc4, 0xb0, 0xa5, 0x6f, 0xa2, 0x18, 0x46, 0xb7, 0x6f,
+	0xa1, 0x81, 0x1b, 0x59, 0xec, 0xcc, 0x11, 0xe4, 0xa4, 0xf6, 0xdf, 0x14, 0x96, 0xee, 0xa6, 0xb0,
+	0x84, 0xee, 0x0d, 0xb0, 0x2d, 0x1d, 0xf6, 0x98, 0x13, 0xf2, 0x4b, 0xc2, 0x30, 0xf9, 0x67, 0x4c,
+	0xb8, 0x30, 0x7f, 0x03, 0x4d, 0x69, 0xb1, 0x2f, 0x68, 0x5f, 0x30, 0xc7, 0xcf, 0x9e, 0xc6, 0x77,
+	0xb3, 0x18, 0xd6, 0x53, 0x9e, 0xf6, 0x64, 0x78, 0xbe, 0xe7, 0x02, 0x8d, 0x70, 0x5d, 0x7e, 0x6b,
+	0xc8, 0xfc, 0x1e, 0x54, 0x39, 0x09, 0xfd, 0xfc, 0xd1, 0x7c, 0x91, 0xc4, 0xb0, 0xa9, 0xca, 0x54,
+	0x1c, 0x61, 0x0d, 0x98, 0x36, 0xa8, 0x31, 0xe2, 0x91, 0xe0, 0x26, 0xbf, 0xb6, 0xed, 0xb9, 0xbe,
+	0x2c, 0x83, 0x70, 0x0e, 0x15, 0xde, 0x59, 0x04, 0x5a, 0xcf, 0x4c, 0xc2, 0xcd, 0x73, 0xd9, 0x52,
+	0xad, 0xdb, 0xc6, 0x5e, 0x79, 0xbf, 0x7e, 0x7c, 0xb0, 0xf2, 0xe2, 0x9e, 0x69, 0xd0, 0xad, 0x48,
+	0xdb, 0x38, 0xef, 0x51, 0xd8, 0xf1, 0x85, 0x01, 0x1a, 0x98, 0x0c, 0x53, 0xaf, 0xfc, 0x2a, 0x88,
+	0xe4, 0x9b, 0x4b, 0x3d, 0x53, 0xb6, 0xfc, 0xa7, 0xa4, 0x13, 0x08, 0x67, 0x88, 0x79, 0x0c, 0x36,
+	0x18, 0xf1, 0x82, 0x28, 0x20, 0xa1, 0xd0, 0x66, 0x5a, 0x49, 0x0c, 0xb7, 0xf2, 0x61, 0x55, 0x0a,
+	0xe1, 0x39, 0x26, 0xfd, 0xf0, 0xb1, 0xcb, 0x23, 0xc7, 0x23, 0xcb, 0x7e, 0xb2, 0x0c, 0xc2, 0x39,
+	0x54, 0x38, 0xad, 0x0b, 0x9a, 0xc5, 0xc3, 0x72, 0xf3, 0x77, 0xd0, 0x64, 0xc5, 0x80, 0xb6, 0xf3,
+	0xcd, 0x4a, 0x3b, 0xc5, 0x72, 0xad, 0x65, 0xb1, 0x03, 0x7a, 0x6d, 0x80, 0x8d, 0x3f, 0x38, 0x61,
+	0xdd, 0x21, 0xf5, 0xae, 0xa5, 0x0e, 0x57, 0x2e, 0xc8, 0x33, 0x3a, 0x74, 0x02, 0xe1, 0x0c, 0x99,
+	0xd3, 0xbe, 0x96, 0xb1, 0x44, 0xfb, 0x39, 0xed, 0xcb, 0x37, 0xc5, 0x88, 0xc3, 0x69, 0xa8, 0x35,
+	0x14, 0xde, 0x94, 0x8a, 0x23, 0xac, 0x81, 0x05, 0x67, 0x95, 0x4f, 0x73, 0x76, 0x0e, 0x40, 0x3e,
+	0x0e, 0x37, 0x7f, 0x06, 0xd5, 0x74, 0xfb, 0xcc, 0x14, 0x5a, 0x69, 0x2a, 0x2f, 0xd2, 0x9a, 0x74,
+	0x5d, 0xf7, 0x97, 0xfb, 0x59, 0xc7, 0x78, 0x98, 0x75, 0x8c, 0x77, 0xb3, 0x8e, 0x71, 0xfb, 0xd8,
+	0x29, 0x3d, 0x3c, 0x76, 0x4a, 0x6f, 0x1e, 0x3b, 0xa5, 0xbf, 0xac, 0x41, 0x20, 0xae, 0xc6, 0xae,
+	0xe5, 0xd1, 0x91, 0xad, 0xba, 0x1e, 0x0e, 0x1d, 0x97, 0xeb, 0xb5, 0xfd, 0xef, 0xfc, 0x67, 0x45,
+	0x4c, 0x22, 0xc2, 0xdd, 0x6a, 0xfa, 0x7f, 0xe1, 0xc7, 0x8f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xcf,
+	0x07, 0xb1, 0x99, 0x76, 0x06, 0x00, 0x00,
 }
 
 func (this *Pictures) Equal(that interface{}) bool {
@@ -367,6 +604,69 @@ func (this *DTagTransferRequests) Equal(that interface{}) bool {
 		if !this.Requests[i].Equal(&that1.Requests[i]) {
 			return false
 		}
+	}
+	return true
+}
+func (this *Relationship) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Relationship)
+	if !ok {
+		that2, ok := that.(Relationship)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Creator != that1.Creator {
+		return false
+	}
+	if this.Recipient != that1.Recipient {
+		return false
+	}
+	if this.Subspace != that1.Subspace {
+		return false
+	}
+	return true
+}
+func (this *UserBlock) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*UserBlock)
+	if !ok {
+		that2, ok := that.(UserBlock)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Blocker != that1.Blocker {
+		return false
+	}
+	if this.Blocked != that1.Blocked {
+		return false
+	}
+	if this.Reason != that1.Reason {
+		return false
+	}
+	if this.Subspace != that1.Subspace {
+		return false
 	}
 	return true
 }
@@ -562,6 +862,175 @@ func (m *DTagTransferRequests) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *Relationship) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Relationship) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Relationship) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Subspace) > 0 {
+		i -= len(m.Subspace)
+		copy(dAtA[i:], m.Subspace)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Subspace)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Recipient) > 0 {
+		i -= len(m.Recipient)
+		copy(dAtA[i:], m.Recipient)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Recipient)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Relationships) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Relationships) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Relationships) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Relationships) > 0 {
+		for iNdEx := len(m.Relationships) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Relationships[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintModels(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UserBlock) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UserBlock) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UserBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Subspace) > 0 {
+		i -= len(m.Subspace)
+		copy(dAtA[i:], m.Subspace)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Subspace)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Reason) > 0 {
+		i -= len(m.Reason)
+		copy(dAtA[i:], m.Reason)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Reason)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Blocked) > 0 {
+		i -= len(m.Blocked)
+		copy(dAtA[i:], m.Blocked)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Blocked)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Blocker) > 0 {
+		i -= len(m.Blocker)
+		copy(dAtA[i:], m.Blocker)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.Blocker)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UserBlocks) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UserBlocks) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UserBlocks) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Blocks) > 0 {
+		for iNdEx := len(m.Blocks) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Blocks[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintModels(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintModels(dAtA []byte, offset int, v uint64) int {
 	offset -= sovModels(v)
 	base := offset
@@ -648,6 +1117,82 @@ func (m *DTagTransferRequests) Size() (n int) {
 	_ = l
 	if len(m.Requests) > 0 {
 		for _, e := range m.Requests {
+			l = e.Size()
+			n += 1 + l + sovModels(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *Relationship) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	l = len(m.Recipient)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	l = len(m.Subspace)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	return n
+}
+
+func (m *Relationships) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Relationships) > 0 {
+		for _, e := range m.Relationships {
+			l = e.Size()
+			n += 1 + l + sovModels(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *UserBlock) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Blocker)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	l = len(m.Blocked)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	l = len(m.Reason)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	l = len(m.Subspace)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	return n
+}
+
+func (m *UserBlocks) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Blocks) > 0 {
+		for _, e := range m.Blocks {
 			l = e.Size()
 			n += 1 + l + sovModels(uint64(l))
 		}
@@ -1229,6 +1774,498 @@ func (m *DTagTransferRequests) Unmarshal(dAtA []byte) error {
 			}
 			m.Requests = append(m.Requests, DTagTransferRequest{})
 			if err := m.Requests[len(m.Requests)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Relationship) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Relationship: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Relationship: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Recipient", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Recipient = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subspace = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Relationships) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Relationships: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Relationships: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Relationships", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Relationships = append(m.Relationships, Relationship{})
+			if err := m.Relationships[len(m.Relationships)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UserBlock) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UserBlock: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UserBlock: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Blocker", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Blocker = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Blocked", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Blocked = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subspace = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UserBlocks) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UserBlocks: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UserBlocks: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Blocks", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Blocks = append(m.Blocks, UserBlock{})
+			if err := m.Blocks[len(m.Blocks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
