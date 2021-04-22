@@ -13,10 +13,17 @@ const (
 	ActionAcceptDTagTransfer        = "accept_dtag_request"
 	ActionRefuseDTagTransferRequest = "refuse_dtag_request"
 	ActionCancelDTagTransferRequest = "cancel_dtag_request"
+	ActionCreateRelationship        = "create_relationship"
+	ActionDeleteRelationship        = "delete_relationship"
+	ActionBlockUser                 = "block_user"
+	ActionUnblockUser               = "unblock_user"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"
 	QueryIncomingDTagRequests = "incoming-dtag-requests"
+	QueryUserRelationships    = "user_relationships"
+	QueryRelationships        = "relationships"
+	QueryUserBlocks           = "user_blocks"
 	QueryParams               = "params"
 
 	DoNotModify = "[do-not-modify]"
@@ -25,6 +32,8 @@ const (
 var (
 	DTagPrefix                 = []byte("dtag")
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
+	RelationshipsStorePrefix   = []byte("relationships")
+	UsersBlocksStorePrefix     = []byte("users_blocks")
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -35,4 +44,14 @@ func DTagStoreKey(dTag string) []byte {
 // DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
 func DTagTransferRequestStoreKey(address string) []byte {
 	return append(DTagTransferRequestsPrefix, address...)
+}
+
+// RelationshipsStoreKey turns a user address to a key used to store a Address -> []Address couple
+func RelationshipsStoreKey(user string) []byte {
+	return append(RelationshipsStorePrefix, []byte(user)...)
+}
+
+// UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
+func UsersBlocksStoreKey(user string) []byte {
+	return append(UsersBlocksStorePrefix, []byte(user)...)
 }

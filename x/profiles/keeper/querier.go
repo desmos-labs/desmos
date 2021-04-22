@@ -26,8 +26,14 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 		case types.QueryParams:
 			return queryProfileParams(ctx, req, keeper, legacyQuerierCdc)
 
+		case types.QueryUserRelationships:
+			return queryUserRelationships(ctx, path[1:], req, keeper, legacyQuerierCdc)
+
+		case types.QueryUserBlocks:
+			return queryUserBlocks(ctx, path[1:], req, keeper, legacyQuerierCdc)
+
 		default:
-			return nil, fmt.Errorf("unknown profiles query endpoint")
+			return nil, fmt.Errorf("unknown Profiles query endpoint")
 		}
 	}
 }
@@ -92,13 +98,41 @@ func queryIncomingDTagRequests(
 	return bz, nil
 }
 
-// queryProfileParams handles the request of listing all the profiles params
+// queryProfileParams handles the request of listing all the Profiles params
 func queryProfileParams(
 	ctx sdk.Context, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
 	profileParams := keeper.GetParams(ctx)
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &profileParams)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+// queryUserRelationships handles the request of listing all the users' stored relationships
+func queryUserRelationships(
+	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
+) ([]byte, error) {
+	relationships := keeper.GetUserRelationships(ctx, path[0])
+
+	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &relationships)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
+}
+
+// queryUserBlocks handles the request of listing all the users' blocked users
+func queryUserBlocks(
+	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
+) ([]byte, error) {
+	userBlocks := keeper.GetUserBlocks(ctx, path[0])
+
+	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &userBlocks)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

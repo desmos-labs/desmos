@@ -115,11 +115,11 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			}
 
 			for _, report := range test.storedReports {
-				err := suite.keeper.SaveReport(suite.ctx, report)
+				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}
 
-			server := keeper.NewMsgServerImpl(suite.keeper)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.ReportPost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
@@ -128,7 +128,7 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 				suite.Require().NoError(err)
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
-				reports := suite.keeper.GetAllReports(suite.ctx)
+				reports := suite.k.GetAllReports(suite.ctx)
 				suite.Require().Equal(test.expReports, reports)
 			}
 		})

@@ -24,7 +24,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 	}
 }
 
-// formatOutputProfiles prepare invalid profiles to be displayed correctly
+// formatOutputProfiles prepare invalid Profiles to be displayed correctly
 func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles string) {
 	outputProfiles = "Invalid profiles:\n"
 	for _, invalidProfile := range invalidProfiles {
@@ -37,7 +37,7 @@ func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles stri
 	return outputProfiles
 }
 
-// ValidProfileInvariant checks that all registered profiles have a non-empty DTag and a non-empty creator
+// ValidProfileInvariant checks that all registered Profiles have a non-empty DTag and a non-empty creator
 func ValidProfileInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles []*types.Profile

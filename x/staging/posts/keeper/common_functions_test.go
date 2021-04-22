@@ -96,8 +96,8 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
-			err := suite.keeper.ValidatePost(suite.ctx, test.post)
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			err := suite.k.ValidatePost(suite.ctx, test.post)
 
 			if test.expError != nil {
 				suite.Require().Error(err)

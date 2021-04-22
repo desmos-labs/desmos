@@ -43,3 +43,25 @@ type AcceptDTagTransferReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	NewDTag string       `json:"new_dtag"`
 }
+
+// CommonRelationshipReq defines the properties of a create relationship operation request's body
+type CommonRelationshipReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Receiver string       `json:"receiver"`
+	Subspace string       `json:"subspace"`
+}
+
+// UserBlockReq defines the properties of a block user operation request's body
+type UserBlockReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Blocked  string       `json:"blocked"`
+	Reason   string       `json:"reason,omitempty"`
+	Subspace string       `json:"subspace"`
+}
+
+// UserUnblockReq defines the properties of an unblock user operation request's body
+type UserUnblockReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Blocked  string       `json:"blocked"`
+	Subspace string       `json:"subspace"`
+}

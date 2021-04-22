@@ -40,6 +40,22 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CancelDTagTransfer(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgCreateRelationship:
+			res, err := msgServer.CreateRelationship(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteRelationship:
+			res, err := msgServer.DeleteRelationship(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgBlockUser:
+			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUnblockUser:
+			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 				"unrecognized %s message type: %v", types.ModuleName, msg.Type())

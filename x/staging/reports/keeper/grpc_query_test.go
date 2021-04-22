@@ -41,12 +41,12 @@ func (suite *KeeperTestSuite) TestQueryPostReports() {
 			suite.SetupTest()
 
 			for _, report := range test.storedReports {
-				err := suite.keeper.SaveReport(suite.ctx, report)
+				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}
 
 			ctx := sdk.WrapSDKContext(suite.ctx)
-			response, err := suite.keeper.PostReports(ctx, test.request)
+			response, err := suite.k.PostReports(ctx, test.request)
 
 			if test.expError {
 				suite.Require().Error(err)
