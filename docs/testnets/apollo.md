@@ -1,5 +1,12 @@
 # Desmos "Apollo" testnet
 
+## Requirements
+
+In order to follow the below steps, make sure that you meet
+the [hardware requirements](../fullnode/overview.md#Requirements) and you
+have [setup your environment](../fullnode/overview.md#1-setup-your-environment) accordingly. Finally, before starting,
+make sure you have [installed Desmos](../fullnode/setup.md#1-build-the-software).
+
 ## Overview
 
 In order to make sure that validators know what to do when the mainnet will start, we decided to run a copycat chain
