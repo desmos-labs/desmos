@@ -14,7 +14,8 @@ message Params {
 
   DTagParams dtag_params = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"dtag_params\""
+    (gogoproto.moretags) = "yaml:\"dtag_params\"",
+    (gogoproto.customname) = "DTagParams"
   ];
 
   bytes max_bio_length = 3 [
@@ -46,12 +47,14 @@ message DTagParams {
   bytes min_dtag_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_dtag_length\""
+    (gogoproto.moretags) = "yaml:\"min_dtag_length\"",
+    (gogoproto.customname) = "MinDTagLength"
   ];
 
   bytes max_dtag_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_dtag_length\""
+    (gogoproto.moretags) = "yaml:\"max_dtag_length\"",
+    (gogoproto.customname) = "MaxDTagLength"
   ];
 }

@@ -13,7 +13,7 @@ const (
 func Migrate(oldGenState v0130profiles.GenesisState) GenesisState {
 	return GenesisState{
 		Profiles:             ConvertProfiles(oldGenState.Profiles),
-		DtagTransferRequests: ConvertDtagTransferRequest(oldGenState.DTagTransferRequests),
+		DTagTransferRequests: ConvertDTagTransferRequest(oldGenState.DTagTransferRequests),
 		Params:               ConvertParams(oldGenState.Params),
 	}
 }
@@ -32,12 +32,12 @@ func ConvertProfiles(oldProfiles []v0130profiles.Profile) []Profile {
 
 // ------------------------------------------------------------------------------------------------------------------
 
-func ConvertDtagTransferRequest(oldDTagTransferRequests []v0130profiles.DTagTransferRequest) []DTagTransferRequest {
+func ConvertDTagTransferRequest(oldDTagTransferRequests []v0130profiles.DTagTransferRequest) []DTagTransferRequest {
 	dTagTransferRequests := make([]DTagTransferRequest, len(oldDTagTransferRequests))
 
 	for index, dTagTransferRequest := range oldDTagTransferRequests {
 		dTagTransferRequests[index] = DTagTransferRequest{
-			DtagToTrade: dTagTransferRequest.DTagToTrade,
+			DTagToTrade: dTagTransferRequest.DTagToTrade,
 			Sender:      dTagTransferRequest.Sender.String(),
 			Receiver:    dTagTransferRequest.Receiver.String(),
 		}
@@ -54,10 +54,10 @@ func ConvertParams(old v0130profiles.Params) Params {
 			MinMonikerLength: old.MonikerParams.MinMonikerLen,
 			MaxMonikerLength: old.MonikerParams.MaxMonikerLen,
 		},
-		DtagParams: DTagParams{
-			RegEx:         old.DtagParams.RegEx,
-			MinDtagLength: old.DtagParams.MinDtagLen,
-			MaxDtagLength: old.DtagParams.MaxDtagLen,
+		DTagParams: DTagParams{
+			RegEx:         old.DTagParams.RegEx,
+			MinDTagLength: old.DTagParams.MinDTagLen,
+			MaxDTagLength: old.DTagParams.MaxDTagLen,
 		},
 		MaxBioLength: old.MaxBioLen,
 	}

@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				},
 				Params: types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			},
@@ -52,7 +52,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				},
 				types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			),
@@ -142,7 +142,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			),
@@ -161,7 +161,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				params: types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			},

@@ -30,7 +30,7 @@ func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles stri
 	for _, invalidProfile := range invalidProfiles {
 		outputProfiles += fmt.Sprintf(
 			"[DTag]: %s, [Creator]: %s\n",
-			invalidProfile.Dtag,
+			invalidProfile.DTag,
 			invalidProfile.GetAddress().String(),
 		)
 	}

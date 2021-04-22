@@ -25,7 +25,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := k.GetAddressFromDtag(sdkCtx, dTagOrAddress)
+		addr := k.GetAddressFromDTag(sdkCtx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)

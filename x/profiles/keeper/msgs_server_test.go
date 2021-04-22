@@ -53,7 +53,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDtag, "custom_dtag"),
+					sdk.NewAttribute(types.AttributeProfileDTag, "custom_dtag"),
 					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.GetAddress().String()),
 					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 				),
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDtag, "other_dtag"),
+					sdk.NewAttribute(types.AttributeProfileDTag, "other_dtag"),
 					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.GetAddress().String()),
 					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
 				),
@@ -269,7 +269,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 			storedProfiles: []*types.Profile{
 				suite.testData.profile,
 				{
-					Dtag:    "test-dtag",
+					DTag:    "test-dtag",
 					Account: otherAccAny,
 				},
 			},

@@ -38,7 +38,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		}
 
 		profile, err = types.NewProfile(
-			msg.Dtag,
+			msg.DTag,
 			"",
 			"",
 			types.NewPictures("", ""),
@@ -51,13 +51,13 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// If the DTag changes, delete all the previous DTag transfer requests
-	if profile.Dtag != msg.Dtag {
+	if profile.DTag != msg.DTag {
 		k.DeleteAllDTagTransferRequests(ctx, msg.Creator)
 	}
 
 	// Update the existing profile with the values provided from the user
 	updated, err := profile.Update(types.NewProfileUpdate(
-		msg.Dtag,
+		msg.DTag,
 		msg.Moniker,
 		msg.Bio,
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
@@ -79,7 +79,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeProfileSaved,
-		sdk.NewAttribute(types.AttributeProfileDtag, updated.Dtag),
+		sdk.NewAttribute(types.AttributeProfileDTag, updated.DTag),
 		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
 		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
 	))
@@ -120,7 +120,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile yet")
 	}
 
-	dTagToTrade := profile.Dtag
+	dTagToTrade := profile.DTag
 	if len(dTagToTrade) == 0 {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInvalidRequest,
@@ -172,7 +172,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	var dTagWanted string
 	for _, req := range requests {
 		if req.Sender == msg.Sender {
-			dTagWanted = req.DtagToTrade
+			dTagWanted = req.DTagToTrade
 			found = true
 			break
 		}
@@ -193,13 +193,13 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	}
 
 	// Get the DTag to trade and make sure its correct
-	dTagToTrade := currentOwnerProfile.Dtag
+	dTagToTrade := currentOwnerProfile.DTag
 	if dTagWanted != dTagToTrade {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
 	}
 
 	// Change the DTag and validate the profile
-	currentOwnerProfile.Dtag = msg.NewDtag
+	currentOwnerProfile.DTag = msg.NewDTag
 	err = k.ValidateProfile(ctx, currentOwnerProfile)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -240,7 +240,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 			return nil, err
 		}
 	} else {
-		receiverProfile.Dtag = dTagToTrade
+		receiverProfile.DTag = dTagToTrade
 	}
 
 	// Validate the receiver profile
@@ -261,7 +261,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferAccept,
 		sdk.NewAttribute(types.AttributeDTagToTrade, dTagToTrade),
-		sdk.NewAttribute(types.AttributeNewDTag, msg.NewDtag),
+		sdk.NewAttribute(types.AttributeNewDTag, msg.NewDTag),
 		sdk.NewAttribute(types.AttributeRequestSender, msg.Sender),
 		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
 	))

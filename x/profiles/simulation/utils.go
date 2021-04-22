@@ -126,7 +126,7 @@ func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
 func RandomDTagParams(r *rand.Rand) types.DTagParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
-	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+	return types.NewDTagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param

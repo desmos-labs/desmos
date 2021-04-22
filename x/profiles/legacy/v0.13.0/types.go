@@ -45,7 +45,7 @@ type DTagTransferRequest struct {
 
 type Params struct {
 	MonikerParams MonikerParams `json:"moniker_params"`
-	DtagParams    DtagParams    `json:"dtag_params"`
+	DTagParams    DTagParams    `json:"dtag_params"`
 	MaxBioLen     sdk.Int       `json:"max_bio_length"`
 }
 
@@ -54,8 +54,8 @@ type MonikerParams struct {
 	MaxMonikerLen sdk.Int `json:"max_length"`
 }
 
-type DtagParams struct {
+type DTagParams struct {
 	RegEx      string  `json:"reg_ex"`
-	MinDtagLen sdk.Int `json:"min_length"`
-	MaxDtagLen sdk.Int `json:"max_length"`
+	MinDTagLen sdk.Int `json:"min_length"`
+	MaxDTagLen sdk.Int `json:"max_length"`
 }

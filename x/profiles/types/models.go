@@ -40,7 +40,7 @@ func (pic Pictures) Validate() error {
 
 func NewDTagTransferRequest(dTagToTrade string, sender, receiver string) DTagTransferRequest {
 	return DTagTransferRequest{
-		DtagToTrade: dTagToTrade,
+		DTagToTrade: dTagToTrade,
 		Receiver:    receiver,
 		Sender:      sender,
 	}
@@ -62,8 +62,8 @@ func (request DTagTransferRequest) Validate() error {
 		return fmt.Errorf("the sender and receiver must be different")
 	}
 
-	if strings.TrimSpace(request.DtagToTrade) == "" {
-		return fmt.Errorf("invalid DTag to trade: %s", request.DtagToTrade)
+	if strings.TrimSpace(request.DTagToTrade) == "" {
+		return fmt.Errorf("invalid DTag to trade: %s", request.DTagToTrade)
 	}
 
 	return nil

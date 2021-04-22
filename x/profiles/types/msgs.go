@@ -15,7 +15,7 @@ import (
 // NewMsgSaveProfile returns a new MsgSaveProfile instance
 func NewMsgSaveProfile(dTag string, moniker, bio, profilePic, coverPic string, creator string) *MsgSaveProfile {
 	return &MsgSaveProfile{
-		Dtag:           dTag,
+		DTag:           dTag,
 		Moniker:        moniker,
 		Bio:            bio,
 		ProfilePicture: profilePic,
@@ -37,7 +37,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
 	}
 
-	if strings.TrimSpace(msg.Dtag) == "" {
+	if strings.TrimSpace(msg.DTag) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank")
 	}
 
@@ -93,7 +93,7 @@ func (msg MsgDeleteProfile) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-// NewMsgRequestDTagTransfer is a constructor function for MsgRequestDtagTransfer
+// NewMsgRequestDTagTransfer is a constructor function for MsgRequestDTagTransfer
 func NewMsgRequestDTagTransfer(sender, receiver string) *MsgRequestDTagTransfer {
 	return &MsgRequestDTagTransfer{
 		Receiver: receiver,
@@ -105,7 +105,7 @@ func NewMsgRequestDTagTransfer(sender, receiver string) *MsgRequestDTagTransfer 
 func (msg MsgRequestDTagTransfer) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRequestDTagTransfer) Type() string { return ActionRequestDtag }
+func (msg MsgRequestDTagTransfer) Type() string { return ActionRequestDTag }
 
 func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
@@ -186,7 +186,7 @@ func (msg MsgCancelDTagTransfer) GetSigners() []sdk.AccAddress {
 // NewMsgAcceptDTagTransfer is a constructor for MsgAcceptDTagTransfer
 func NewMsgAcceptDTagTransfer(newDTag string, sender, receiver string) *MsgAcceptDTagTransfer {
 	return &MsgAcceptDTagTransfer{
-		NewDtag:  newDTag,
+		NewDTag:  newDTag,
 		Sender:   sender,
 		Receiver: receiver,
 	}
@@ -196,10 +196,10 @@ func NewMsgAcceptDTagTransfer(newDTag string, sender, receiver string) *MsgAccep
 func (msg MsgAcceptDTagTransfer) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAcceptDTagTransfer) Type() string { return ActionAcceptDtagTransfer }
+func (msg MsgAcceptDTagTransfer) Type() string { return ActionAcceptDTagTransfer }
 
 func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
-	if strings.TrimSpace(msg.NewDtag) == "" {
+	if strings.TrimSpace(msg.NewDTag) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty")
 	}
 

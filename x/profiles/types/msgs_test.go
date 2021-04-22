@@ -57,7 +57,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 		{
 			name: "Empty owner returns error",
 			msg: types.NewMsgSaveProfile(
-				testProfile.Dtag,
+				testProfile.DTag,
 				testProfile.Moniker,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,

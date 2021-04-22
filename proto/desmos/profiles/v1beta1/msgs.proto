@@ -39,11 +39,14 @@ message MsgSaveProfile {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string dtag = 1 [ (gogoproto.moretags) = "yaml:\"dtag\"" ];
+  string dtag = 1 [
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
 
-  string moniker = 2 [ (gogoproto.moretags) = "yaml:\"moniker\"" ];
+  string moniker = 2 [(gogoproto.moretags) = "yaml:\"moniker\""];
 
-  string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
+  string bio = 3 [(gogoproto.moretags) = "yaml:\"bio\""];
 
   string profile_picture = 4 [
     (gogoproto.jsontag) = "profile_picture",
@@ -116,7 +119,8 @@ message MsgAcceptDTagTransfer {
 
   string new_dtag = 1 [
     (gogoproto.jsontag) = "new_dtag",
-    (gogoproto.moretags) = "yaml:\"new_dtag\""
+    (gogoproto.moretags) = "yaml:\"new_dtag\"",
+    (gogoproto.customname) = "NewDTag"
   ];
 
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];

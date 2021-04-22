@@ -6,8 +6,8 @@ func NewGenesisState(
 	params Params,
 ) *GenesisState {
 	return &GenesisState{
-		Params:               params,
-		DtagTransferRequests: request,
+		Params:              params,
+		DTagTransferRequest: request,
 	}
 }
 
@@ -23,7 +23,7 @@ func ValidateGenesis(data *GenesisState) error {
 		return err
 	}
 
-	for _, req := range data.DtagTransferRequests {
+	for _, req := range data.DTagTransferRequest {
 		err := req.Validate()
 		if err != nil {
 			return err

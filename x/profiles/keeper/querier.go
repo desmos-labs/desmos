@@ -43,7 +43,7 @@ func queryProfile(
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := keeper.GetAddressFromDtag(ctx, dTagOrAddress)
+		addr := keeper.GetAddressFromDTag(ctx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)

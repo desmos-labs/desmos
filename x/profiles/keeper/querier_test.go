@@ -93,11 +93,11 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 			name:                "Returning profile parameters correctly",
 			path:                []string{types.QueryParams},
 			nsParamsStored:      types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(30)),
-			monikerParamsStored: types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
+			monikerParamsStored: types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
 			bioParamStored:      sdk.NewInt(30),
 			expResult: types.NewParams(
 				types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(30)),
-				types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
+				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
 				sdk.NewInt(30),
 			),
 		},

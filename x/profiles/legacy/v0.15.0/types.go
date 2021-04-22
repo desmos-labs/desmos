@@ -10,14 +10,14 @@ import (
 // GenesisState contains the data of a v0.15.0 genesis state for the profiles module
 type GenesisState struct {
 	Profiles             []Profile             `protobuf:"bytes,1,rep,name=profiles,proto3" json:"profiles" yaml:"profiles"`
-	DtagTransferRequests []DTagTransferRequest `protobuf:"bytes,2,rep,name=dtag_transfer_requests,json=dtagTransferRequests,proto3" json:"dtag_transfer_requests" yaml:"dtag_transfer_requests"`
+	DTagTransferRequests []DTagTransferRequest `protobuf:"bytes,2,rep,name=dtag_transfer_requests,json=dtagTransferRequests,proto3" json:"dtag_transfer_requests" yaml:"dtag_transfer_requests"`
 	Params               Params                `protobuf:"bytes,3,opt,name=params,proto3" json:"params" yaml:"params"`
 }
 
 // ----------------------------------------------------------------------------------------------------------------
 
 type Profile struct {
-	Dtag         string    `protobuf:"bytes,1,opt,name=dtag,proto3" json:"dtag,omitempty" yaml:"dtag"`
+	DTag         string    `protobuf:"bytes,1,opt,name=dtag,proto3" json:"dtag,omitempty" yaml:"dtag"`
 	Moniker      string    `protobuf:"bytes,2,opt,name=moniker,proto3" json:"moniker,omitempty" yaml:"moniker"`
 	Bio          string    `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty" yaml:"bio"`
 	Pictures     Pictures  `protobuf:"bytes,4,opt,name=pictures,proto3" json:"pictures" yaml:"pictures"`
@@ -52,7 +52,7 @@ func newProfile(profile v0130profiles.Profile) Profile {
 	}
 
 	return Profile{
-		Dtag:         profile.DTag,
+		DTag:         profile.DTag,
 		Moniker:      moniker,
 		Bio:          bio,
 		Pictures:     pictures,

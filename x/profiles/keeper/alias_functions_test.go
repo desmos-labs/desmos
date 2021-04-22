@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 
 	var validProfiles []*types.Profile
 	suite.k.IterateProfiles(suite.ctx, func(_ int64, profile *types.Profile) (stop bool) {
-		if profile.Dtag == "not" {
+		if profile.DTag == "not" {
 			return false
 		}
 		validProfiles = append(validProfiles, profile)

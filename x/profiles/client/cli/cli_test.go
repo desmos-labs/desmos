@@ -69,7 +69,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
-	profilesData.DtagTransferRequests = []types.DTagTransferRequest{
+	profilesData.DTagTransferRequest = []types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
 			"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
