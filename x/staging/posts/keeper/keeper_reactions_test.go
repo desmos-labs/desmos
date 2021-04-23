@@ -141,23 +141,23 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			suite.SetupTest()
 
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			err := suite.keeper.SavePostReaction(suite.ctx, test.postID, test.reaction)
+			err := suite.k.SavePostReaction(suite.ctx, test.postID, test.reaction)
 
 			if test.expError {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expectedStored, suite.keeper.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expectedStored, suite.k.GetPostReactionsEntries(suite.ctx))
 			}
 		})
 	}
@@ -252,18 +252,18 @@ func (suite *KeeperTestSuite) TestKeeper_DeletePostReaction() {
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			err := suite.keeper.DeletePostReaction(suite.ctx, test.data.postID, test.data.reaction)
+			err := suite.k.DeletePostReaction(suite.ctx, test.data.postID, test.data.reaction)
 
 			if test.expError {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expReactions, suite.keeper.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expReactions, suite.k.GetPostReactionsEntries(suite.ctx))
 			}
 		})
 	}
@@ -299,13 +299,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, l := range test.reactions {
-				suite.keeper.SavePost(suite.ctx, test.storedPost)
-				suite.keeper.SaveRegisteredReaction(suite.ctx, test.registeredReaction)
-				err := suite.keeper.SavePostReaction(suite.ctx, test.postID, l)
+				suite.k.SavePost(suite.ctx, test.storedPost)
+				suite.k.SaveRegisteredReaction(suite.ctx, test.registeredReaction)
+				err := suite.k.SavePostReaction(suite.ctx, test.postID, l)
 				suite.Require().NoError(err)
 			}
 
-			stored := suite.keeper.GetPostReactions(suite.ctx, test.postID)
+			stored := suite.k.GetPostReactions(suite.ctx, test.postID)
 
 			suite.Len(stored, len(test.reactions))
 			for _, l := range test.reactions {
@@ -365,7 +365,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactionsEntries() {
 				store.Set(types.PostReactionsStoreKey(entry.PostId), suite.cdc.MustMarshalBinaryBare(&wrapped))
 			}
 
-			likesData := suite.keeper.GetPostReactionsEntries(suite.ctx)
+			likesData := suite.k.GetPostReactionsEntries(suite.ctx)
 			suite.Require().Equal(test.entries, likesData)
 		})
 	}
@@ -430,12 +430,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRegisteredReaction() {
 			suite.SetupTest()
 
 			for _, reaction := range test.storedReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			suite.keeper.SaveRegisteredReaction(suite.ctx, test.toSave)
+			suite.k.SaveRegisteredReaction(suite.ctx, test.toSave)
 
-			suite.Require().Equal(test.expStored, suite.keeper.GetRegisteredReactions(suite.ctx))
+			suite.Require().Equal(test.expStored, suite.k.GetRegisteredReactions(suite.ctx))
 		})
 	}
 }
@@ -503,10 +503,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetRegisteredReaction() {
 			suite.SetupTest()
 
 			for _, reaction := range test.storedReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			actual, exists := suite.keeper.GetRegisteredReaction(suite.ctx, test.data.shortCode, test.data.subspace)
+			actual, exists := suite.k.GetRegisteredReaction(suite.ctx, test.data.shortCode, test.data.subspace)
 
 			if test.expExist {
 				suite.Require().True(exists)
@@ -568,10 +568,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetRegisteredReactions() {
 			suite.SetupTest()
 
 			for _, reaction := range test.storedReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			stored := suite.keeper.GetRegisteredReactions(suite.ctx)
+			stored := suite.k.GetRegisteredReactions(suite.ctx)
 			suite.Require().Equal(test.expected, stored)
 		})
 	}

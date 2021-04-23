@@ -12,6 +12,8 @@ import (
 
 	"github.com/desmos-labs/desmos/app"
 
+	"github.com/tendermint/tendermint/crypto/ed25519"
+
 	"github.com/desmos-labs/desmos/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -31,14 +33,57 @@ func TestDecodeStore(t *testing.T) {
 	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
 
+	firstAddr := ed25519.GenPrivKey().PubKey().Address().String()
+	secondAddr := ed25519.GenPrivKey().PubKey().Address().String()
+
+	relationships := []types.Relationship{
+		types.NewRelationship(
+			firstAddr,
+			secondAddr,
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewRelationship(
+			secondAddr,
+			firstAddr,
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+	}
+	relBz, err := cdc.MarshalBinaryBare(&types.Relationships{Relationships: relationships})
+	require.NoError(t, err)
+
+	usersBlocks := []types.UserBlock{
+		types.NewUserBlock(
+			firstAddr,
+			secondAddr,
+			"reason",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewUserBlock(
+			secondAddr,
+			firstAddr,
+			"reason",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+	}
+	blocksBz, err := cdc.MarshalBinaryBare(&types.UserBlocks{Blocks: usersBlocks})
+	require.NoError(t, err)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.DTagStoreKey("AAkvohxhflhXsuyMg"),
 			Value: addr,
 		},
 		{
-			Key:   types.DtagTransferRequestStoreKey("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+			Key:   types.DTagTransferRequestStoreKey("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			Value: cdc.MustMarshalBinaryBare(&requests),
+		},
+		{
+			Key:   types.RelationshipsStoreKey(firstAddr),
+			Value: relBz,
+		},
+		{
+			Key:   types.UsersBlocksStoreKey(firstAddr),
+			Value: blocksBz,
 		},
 	}}
 
@@ -48,6 +93,8 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests.Requests, requests.Requests)},
+		{"Relationships", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationships, relationships)},
+		{"UsersBlocks", fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},
 	}
 

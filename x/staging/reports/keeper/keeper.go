@@ -14,7 +14,7 @@ type Keeper struct {
 	storeKey sdk.StoreKey          // Unexposed key to access store from sdk.Context
 	cdc      codec.BinaryMarshaler // The wire codec for binary encoding/decoding.
 
-	postKeeper postskeeper.Keeper // Post's keeper to perform checks on the postIDs
+	postKeeper postskeeper.Keeper // Post's k to perform checks on the postIDs
 }
 
 // NewKeeper creates new instances of the reports Keeper

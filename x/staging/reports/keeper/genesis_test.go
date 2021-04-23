@@ -44,10 +44,10 @@ func (suite *KeeperTestSuite) TestExportGenesis() {
 			suite.SetupTest()
 
 			for _, report := range test.state.reports {
-				suite.keeper.SaveReport(suite.ctx, report)
+				suite.k.SaveReport(suite.ctx, report)
 			}
 
-			genesis := suite.keeper.ExportGenesis(suite.ctx)
+			genesis := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(test.expGenesis, genesis)
 		})
 	}
@@ -102,11 +102,11 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 			suite.SetupTest()
 
 			if test.expPanic {
-				suite.Require().Panics(func() { suite.keeper.InitGenesis(suite.ctx, *test.genesis) })
+				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *test.genesis) })
 			} else {
-				suite.keeper.InitGenesis(suite.ctx, *test.genesis)
+				suite.k.InitGenesis(suite.ctx, *test.genesis)
 
-				reports := suite.keeper.GetAllReports(suite.ctx)
+				reports := suite.k.GetAllReports(suite.ctx)
 				suite.Require().Equal(test.expState.reports, reports)
 			}
 		})

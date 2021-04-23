@@ -13,35 +13,69 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 	usecases := []struct {
 		name  string
 		state struct {
-			DTagRequests []types.DTagTransferRequest
-			Params       types.Params
+			DTagRequests  []types.DTagTransferRequest
+			Relationships []types.Relationship
+			Blocks        []types.UserBlock
+			Params        types.Params
 		}
 		expGenesis *types.GenesisState
 	}{
 		{
 			name: "empty state",
 			state: struct {
-				DTagRequests []types.DTagTransferRequest
-				Params       types.Params
+				DTagRequests  []types.DTagTransferRequest
+				Relationships []types.Relationship
+				Blocks        []types.UserBlock
+				Params        types.Params
 			}{
-				DTagRequests: nil,
-				Params:       types.DefaultParams(),
+				DTagRequests:  nil,
+				Params:        types.DefaultParams(),
+				Relationships: nil,
+				Blocks:        nil,
 			},
-			expGenesis: types.NewGenesisState(nil, types.DefaultParams()),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
 		},
 		{
 			name: "non-empty state",
 			state: struct {
-				DTagRequests []types.DTagTransferRequest
-				Params       types.Params
+				DTagRequests  []types.DTagTransferRequest
+				Relationships []types.Relationship
+				Blocks        []types.UserBlock
+				Params        types.Params
 			}{
 				DTagRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
 				},
+				Relationships: []types.Relationship{
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Blocks: []types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
 				Params: types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			},
@@ -50,9 +84,35 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
 				},
+				[]types.Relationship{
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				[]types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
 				types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			),
@@ -66,6 +126,12 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 
 			for _, req := range uc.state.DTagRequests {
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, req))
+			}
+			for _, rel := range uc.state.Relationships {
+				suite.Require().NoError(suite.k.SaveRelationship(suite.ctx, rel))
+			}
+			for _, block := range uc.state.Blocks {
+				suite.Require().NoError(suite.k.SaveUserBlock(suite.ctx, block))
 			}
 			suite.k.SetParams(suite.ctx, uc.state.Params)
 
@@ -109,24 +175,57 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		name         string
 		authAccounts []authtypes.AccountI
 		genesis      *types.GenesisState
+		expErr       bool
 		expState     struct {
-			profiles             []*types.Profile
-			dTagTransferRequests []types.DTagTransferRequest
-			params               types.Params
+			Profiles             []*types.Profile
+			DTagTransferRequests []types.DTagTransferRequest
+			Relationships        []types.Relationship
+			Blocks               []types.UserBlock
+			Params               types.Params
 		}
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, types.DefaultParams()),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
 			expState: struct {
-				profiles             []*types.Profile
-				dTagTransferRequests []types.DTagTransferRequest
-				params               types.Params
+				Profiles             []*types.Profile
+				DTagTransferRequests []types.DTagTransferRequest
+				Relationships        []types.Relationship
+				Blocks               []types.UserBlock
+				Params               types.Params
 			}{
-				profiles:             nil,
-				dTagTransferRequests: nil,
-				params:               types.DefaultParams(),
+				Profiles:             nil,
+				DTagTransferRequests: nil,
+				Relationships:        nil,
+				Blocks:               nil,
+				Params:               types.DefaultParams(),
 			},
+		},
+		{
+			name: "double Relationships panics",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{
+					types.NewRelationship("creator", "recipient", "subspace"),
+					types.NewRelationship("creator", "recipient", "subspace"),
+				},
+				[]types.UserBlock{},
+				types.DefaultParams(),
+			),
+			expErr: true,
+		},
+		{
+			name: "double user block panics",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{},
+				[]types.UserBlock{
+					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				},
+				types.DefaultParams(),
+			),
+			expErr: true,
 		},
 		{
 			name: "non-empty genesis",
@@ -140,28 +239,82 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
 				},
+				[]types.Relationship{
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				[]types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
 				types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			),
 			expState: struct {
-				profiles             []*types.Profile
-				dTagTransferRequests []types.DTagTransferRequest
-				params               types.Params
+				Profiles             []*types.Profile
+				DTagTransferRequests []types.DTagTransferRequest
+				Relationships        []types.Relationship
+				Blocks               []types.UserBlock
+				Params               types.Params
 			}{
-				profiles: []*types.Profile{
+				Profiles: []*types.Profile{
 					profile1,
 					profile2,
 				},
-				dTagTransferRequests: []types.DTagTransferRequest{
+				DTagTransferRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
 				},
-				params: types.NewParams(
+				Relationships: []types.Relationship{
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Blocks: []types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Params: types.NewParams(
 					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDtagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
 			},
@@ -176,11 +329,16 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			for _, acc := range uc.authAccounts {
 				suite.ak.SetAccount(suite.ctx, acc)
 			}
-			suite.k.InitGenesis(suite.ctx, *uc.genesis)
 
-			suite.Require().Equal(uc.expState.profiles, suite.k.GetProfiles(suite.ctx))
-			suite.Require().Equal(uc.expState.dTagTransferRequests, suite.k.GetDTagTransferRequests(suite.ctx))
-			suite.Require().Equal(uc.expState.params, suite.k.GetParams(suite.ctx))
+			if uc.expErr {
+				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *uc.genesis) })
+			} else {
+				suite.Require().NotPanics(func() { suite.k.InitGenesis(suite.ctx, *uc.genesis) })
+
+				suite.Require().Equal(uc.expState.Profiles, suite.k.GetProfiles(suite.ctx))
+				suite.Require().Equal(uc.expState.DTagTransferRequests, suite.k.GetDTagTransferRequests(suite.ctx))
+				suite.Require().Equal(uc.expState.Params, suite.k.GetParams(suite.ctx))
+			}
 		})
 	}
 }

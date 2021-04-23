@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckPostExistence() {
 				suite.postsKeeper.SavePost(suite.ctx, *test.existentPost)
 			}
 
-			actualBool := suite.keeper.CheckPostExistence(suite.ctx, suite.testData.postID)
+			actualBool := suite.k.CheckPostExistence(suite.ctx, suite.testData.postID)
 			suite.Require().Equal(test.expBool, actualBool)
 		})
 	}
@@ -92,18 +92,18 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 			suite.SetupTest()
 
 			for _, report := range test.storedReports {
-				err := suite.keeper.SaveReport(suite.ctx, report)
+				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.keeper.SaveReport(suite.ctx, test.report)
+			err := suite.k.SaveReport(suite.ctx, test.report)
 
 			if test.expErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				stored := suite.keeper.GetAllReports(suite.ctx)
+				stored := suite.k.GetAllReports(suite.ctx)
 				suite.Require().Equal(test.expReports, stored)
 			}
 		})
@@ -157,11 +157,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			suite.SetupTest()
 
 			for _, report := range test.stored {
-				err := suite.keeper.SaveReport(suite.ctx, report)
+				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}
 
-			stored := suite.keeper.GetPostReports(suite.ctx, test.postID)
+			stored := suite.k.GetPostReports(suite.ctx, test.postID)
 			suite.Require().Equal(test.expected, stored)
 		})
 	}
@@ -195,11 +195,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 			suite.SetupTest()
 
 			for _, report := range test.reports {
-				err := suite.keeper.SaveReport(suite.ctx, report)
+				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}
 
-			stored := suite.keeper.GetAllReports(suite.ctx)
+			stored := suite.k.GetAllReports(suite.ctx)
 			suite.Require().Equal(test.reports, stored)
 		})
 	}

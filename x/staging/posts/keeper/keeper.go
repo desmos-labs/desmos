@@ -4,8 +4,6 @@ import (
 	"sort"
 	"strings"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
-
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -20,15 +18,15 @@ type Keeper struct {
 	storeKey sdk.StoreKey
 	cdc      codec.BinaryMarshaler
 
-	paramSubspace paramstypes.Subspace       // Reference to the ParamsStore to get and set posts specific params
-	rk            relationshipskeeper.Keeper // Relationships keeper to keep track of blocked users
+	paramSubspace paramstypes.Subspace // Reference to the ParamsStore to get and set posts specific params
+	rk            RelationshipsKeeper  // Relationships k to keep track of blocked users
 
 }
 
 // NewKeeper creates new instances of the posts Keeper
 func NewKeeper(
 	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace, rk relationshipskeeper.Keeper,
+	paramSpace paramstypes.Subspace, rk RelationshipsKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
