@@ -12,7 +12,7 @@ service Msg {
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 
   // AddSubspaceAdmin defines the method to add a new admin to the subspace
-  rpc AddSubspaceAdmin(MsgAddSubspaceAdmin) returns (MsgAddSubspaceAdminResponse);
+  rpc AddSubspaceAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
 
   // AllowUserPosts defines the method to let user posts inside a specific subspace
   rpc AllowUserPosts(MsgAllowUserPosts) returns (MsgAllowUserPostsResponse);
@@ -29,6 +29,7 @@ message MsgCreateSubspace {
   option (gogoproto.goproto_getters) = false;
 
   string name = 1 [(gogoproto.moretags) = "yaml:\"name\""];
+  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -37,7 +38,7 @@ message MsgCreateSubspaceResponse {}
 // ___________________________________________________________________________________________________________________
 
 // MsgAddSubspaceAdmin represents the message used to add an admin to a specific subspace
-message MsgAddSubspaceAdmin {
+message MsgAddAdmin {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -46,11 +47,12 @@ message MsgAddSubspaceAdmin {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string address = 2 [(gogoproto.moretags) = "yaml:\"address\""];
+  string new_admin = 2 [(gogoproto.moretags) = "yaml:\"new_admin\""];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgAddSubspaceAdminResponse defines the Msg/AddSubspaceAdmin response type
-message MsgAddSubspaceAdminResponse {}
+// MsgAddAdminResponse defines the Msg/AddAdmin response type
+message MsgAddAdminResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -59,7 +61,8 @@ message MsgAllowUserPosts {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
 // MsgAllowUserPostsResponse defines the Msg/MsgAllowUserPosts response type
@@ -72,7 +75,8 @@ message MsgBlockUserPosts {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
 // MsgBlockUserPostsResponse defines the Msg/MsgBlockUserPosts response type
