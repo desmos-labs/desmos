@@ -26,6 +26,7 @@ func NewTxCmd() *cobra.Command {
 
 	linksTxCmd.AddCommand(
 		GetCmdCreateIBCAccountLink(),
+		GetCmdCreateIBCAccountConnection(),
 	)
 
 	return linksTxCmd
@@ -34,7 +35,7 @@ func NewTxCmd() *cobra.Command {
 // GetCmdCreateIBCAccountConnection returns the command to create an account link on other chain with different private keys
 func GetCmdCreateIBCAccountConnection() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-ibc-connection [src-port] [src-channel] [destination-chain] [destination-chain-path] [destination-key-name]",
+		Use:   "create-ibc-connection [src-port] [src-channel] [dst-chain-prefix] [dst-keybase-path] [destination-key-name]",
 		Short: "Create a new account link with different keys",
 		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -126,7 +127,7 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 // GetCmdCreateIBCAccountLink return the command to create an account link on other chain
 func GetCmdCreateIBCAccountLink() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-ibc-link [src-port] [src-channel] [destination-chain]",
+		Use:   "create-ibc-link [src-port] [src-channel] [dst-chain-prefix]",
 		Short: "Create a new ibc account link",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {

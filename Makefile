@@ -381,7 +381,7 @@ localnet-stop:
 	test test-all test-cover test-unit test-race
 
 ###############################################################################
-###                                IBC Env                                  ###
+###                                IBC Helpler                              ###
 ###############################################################################
 
 get-relayer:
@@ -393,23 +393,25 @@ install-relayer:
 build-relayer: 
 	cd .thirdparty/relayer && $(MAKE) build
 
-setup-ibctest:
-	bash ./scripts/ibctest-setup.sh
+initialize-ibctestchains:
+	bash ./scripts/initialize-ibctestchains.sh $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
 
-setup-testchains:
-	@nohup desmos start --home build/ibc/ibc0 \
+# Run two testchains, using killall desmos for stoping them
+run-testchains:
+	@nohup desmos start --home $(BUILDDIR)/ibc/ibc0 \
     --address tcp://0.0.0.0:26658 \
     --grpc.address 0.0.0.0:9090 \
     --p2p.laddr tcp://0.0.0.0:26656 \
     --rpc.laddr tcp://127.0.0.1:26657 \
     > /dev/null 2>&1 &
 
-	@nohup desmos start --home build/ibc/ibc1 \
+	@nohup desmos start --home $(BUILDDIR)/ibc/ibc1 \
 		--address tcp://0.0.0.0:26668 \
 		--grpc.address 0.0.0.0:9091 \
 		--p2p.laddr tcp://0.0.0.0:26666 \
 		--rpc.laddr tcp://127.0.0.1:26667 \
 		> /dev/null 2>&1 &
 
+# After setup, using rly start links for listening link packets
 setup-relayer:
-	cd testconfig && bash setup.sh
+	cd scripts && bash setup-relayer.sh $(BUILDDIR)/ibc

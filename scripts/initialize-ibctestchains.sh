@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-WORKDIR="build/ibc"
-GENFILE="scripts/ibctestchain-gen.sh"
+HOMEDIR=$1
+GENFILE=$2
 
 # Ensure desmos is installed
 if ! [ -x "$(which desmos)" ]; then
@@ -15,12 +15,12 @@ if ! [ -x "$(which rly)" ]; then
   exit 1
 fi
 
-if [ -d $WORKDIR ]; then
-    rm -r $WORKDIR
+if [ -d $HOMEDIR ]; then
+    rm -r $HOMEDIR
 fi
 
 # generate ibc0 chain config
-bash $GENFILE 0 1 $WORKDIR --y
+bash $GENFILE 0 1 $HOMEDIR --y
 
 # generate ibc1 chain config
-bash $GENFILE 1 1 $WORKDIR --y
+bash $GENFILE 1 1 $HOMEDIR --y

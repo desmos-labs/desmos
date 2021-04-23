@@ -4,5 +4,5 @@
     "account-prefix": "desmos",
     "gas-adjustment": 1.5,
     "gas-prices": "0.001desmos",
-    "trusting-period": "10m"
+    "trusting-period": "336h"
   }

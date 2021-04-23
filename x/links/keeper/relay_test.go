@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			data := types.NewIBCAccountConnectionPacketData(
 				"cosmos", srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
 			)
-			bz, _ := data.GetBytes()
+			bz := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
 			_, err = suite.chainB.App.LinksKeeper.OnRecvIBCAccountConnectionPacket(
@@ -327,7 +327,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 				srcSigHex,
 				dstSigHex,
 			)
-			bz, _ := data.GetBytes()
+			bz := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			err := suite.chainA.App.LinksKeeper.OnAcknowledgementIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data, ack)
 			if test.success {
@@ -531,7 +531,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			data := types.NewIBCAccountLinkPacketData(
 				"cosmos", srcAddr, srcPubKeyHex, sigHex,
 			)
-			bz, _ := data.GetBytes()
+			bz := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
 			_, err = suite.chainB.App.LinksKeeper.OnRecvIBCAccountLinkPacket(
@@ -601,7 +601,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 				pubKeyHex,
 				sigHex,
 			)
-			bz, _ := data.GetBytes()
+			bz := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			err := suite.chainA.App.LinksKeeper.OnAcknowledgementIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data, ack)
 			if test.success {
