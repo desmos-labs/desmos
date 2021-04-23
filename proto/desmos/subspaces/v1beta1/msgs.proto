@@ -1,0 +1,4 @@
+syntax = "proto3";
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
