@@ -1,0 +1,24 @@
+/*
+syntax = "proto3";
+
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Subspaces queries all the stored subspaces
+  rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/subspaces";
+  }
+
+  // Subspace queries a specific subspace
+  rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace}";
+  }
+}
+
+ */

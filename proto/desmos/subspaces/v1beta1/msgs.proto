@@ -2,3 +2,78 @@ syntax = "proto3";
 package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+
+// Msg defines subspaces Msg service.
+service Msg {
+
+  // CreateSubspace defines the method to create a subspace
+  rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
+
+  // AddSubspaceAdmin defines the method to add a new admin to the subspace
+  rpc AddSubspaceAdmin(MsgAddSubspaceAdmin) returns (MsgAddSubspaceAdminResponse);
+
+  // AllowUserPosts defines the method to let user posts inside a specific subspace
+  rpc AllowUserPosts(MsgAllowUserPosts) returns (MsgAllowUserPostsResponse);
+
+  // BlockUserPosts defines the method to block user posts inside a specific subspace
+  rpc BlockUserPosts(MsgBlockUserPosts) returns (MsgBlockUserPostsResponse);
+}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgCreateSubspace represents the message used to create a subspace
+message MsgCreateSubspace {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string name = 1 [(gogoproto.moretags) = "yaml:\"name\""];
+}
+
+// MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
+message MsgCreateSubspaceResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgAddSubspaceAdmin represents the message used to add an admin to a specific subspace
+message MsgAddSubspaceAdmin {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  string address = 2 [(gogoproto.moretags) = "yaml:\"address\""];
+}
+
+// MsgAddSubspaceAdminResponse defines the Msg/AddSubspaceAdmin response type
+message MsgAddSubspaceAdminResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgAllowUserPosts represents the message used to allow a user to post inside a specific subspace
+message MsgAllowUserPosts {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
+}
+
+// MsgAllowUserPostsResponse defines the Msg/MsgAllowUserPosts response type
+message MsgAllowUserPostsResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgBlockUserPosts represents the message used to block a user to post inside a specific subspace
+message MsgBlockUserPosts {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
+}
+
+// MsgBlockUserPostsResponse defines the Msg/MsgBlockUserPosts response type
+message MsgBlockUserPostsResponse{}
