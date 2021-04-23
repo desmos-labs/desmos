@@ -58,19 +58,33 @@ func randomRelationships(simState *module.SimulationState) []types.Relationship 
 	relationshipsNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
 
 	relationships := make([]types.Relationship, relationshipsNumber)
-	for index := 0; index < relationshipsNumber; index++ {
+	for index := 0; index < relationshipsNumber; {
 		sender, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		receiver, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		if !sender.Equals(receiver) {
-			relationships[index] = types.NewRelationship(
+			newRelationship := types.NewRelationship(
 				sender.Address.String(),
 				receiver.Address.String(),
 				RandomSubspace(simState.Rand),
 			)
+			if !containsRelationship(relationships, newRelationship) {
+				relationships[index] = newRelationship
+				index++
+			}
 		}
 	}
 
 	return relationships
+}
+
+// containsRelationship returns true iff the given slice contains the given relationship
+func containsRelationship(slice []types.Relationship, relationship types.Relationship) bool {
+	for _, rel := range slice {
+		if rel.Equal(relationship) {
+			return true
+		}
+	}
+	return false
 }
 
 // randomUsersBlocks
