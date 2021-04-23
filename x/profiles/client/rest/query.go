@@ -18,6 +18,12 @@ func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/profiles/{address}/incoming-dtag-requests",
 		queryIncomingDTagRequests(cliCtx)).Methods("GET")
 
+	r.HandleFunc(fmt.Sprintf("/profiles/{%s}", ParamsAddress),
+		queryUserRelationships(cliCtx)).Methods("GET")
+
+	r.HandleFunc(fmt.Sprintf("/profiles/{%s}", ParamsAddress),
+		queryUserBlocks(cliCtx)).Methods("GET")
+
 	r.HandleFunc("/profiles/parameters",
 		queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
 }
@@ -72,6 +78,52 @@ func queryProfileHandlerFn(cliCtx client.Context) http.HandlerFunc {
 func queryProfilesParamsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
+		res, height, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query the list of relationships of which a user is part of
+func queryUserRelationships(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		address := vars[ParamsAddress]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryRelationships, address)
+		res, height, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query the blocks of a user
+func queryUserBlocks(cliCtx client.Context) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		address := vars[ParamsAddress]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryUserBlocks, address)
 		res, height, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

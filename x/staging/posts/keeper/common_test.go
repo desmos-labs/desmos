@@ -4,11 +4,15 @@ import (
 	"testing"
 	"time"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
+	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	"github.com/desmos-labs/desmos/app"
-	relationshipskeeper "github.com/desmos-labs/desmos/x/staging/relationships/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -16,6 +20,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
@@ -31,10 +37,9 @@ type KeeperTestSuite struct {
 	cdc            codec.BinaryMarshaler
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	keeper         keeper.Keeper
+	k              keeper.Keeper
 	storeKey       sdk.StoreKey
-	pk             paramskeeper.Keeper
-	rk             relationshipskeeper.Keeper
+	rk             profileskeeper.Keeper
 	testData       TestData
 }
 
@@ -50,21 +55,22 @@ type TestData struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	// define store keys
-	postKey := sdk.NewKVStoreKey(types.StoreKey)
-	suite.storeKey = postKey
+	// Define the store keys
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey)
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
-	paramsKey := sdk.NewKVStoreKey("params")
-	paramsTKey := sdk.NewTransientStoreKey("transient_params")
-	relationshipsKey := sdk.NewKVStoreKey("relationships")
+	suite.storeKey = keys[types.StoreKey]
 
-	// create an in-memory db
+	// Create an in-memory db
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(postKey, sdk.StoreTypeIAVL, memDB)
-	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
-	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
-	ms.MountStoreWithDB(relationshipsKey, sdk.StoreTypeIAVL, memDB)
+	for _, key := range keys {
+		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+	}
+	for _, tKey := range tKeys {
+		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+	}
+
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -77,9 +83,35 @@ func (suite *KeeperTestSuite) SetupTest() {
 		log.NewNopLogger(),
 	)
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
-	suite.pk = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, relationshipsKey)
-	suite.keeper = keeper.NewKeeper(suite.cdc, postKey, suite.pk.Subspace(types.DefaultParamSpace), suite.rk)
+
+	pk := paramskeeper.NewKeeper(
+		suite.cdc,
+		suite.legacyAminoCdc,
+		keys[paramstypes.StoreKey],
+		tKeys[paramstypes.TStoreKey],
+	)
+
+	ak := authkeeper.NewAccountKeeper(
+		suite.cdc,
+		keys[authtypes.StoreKey],
+		pk.Subspace(authtypes.ModuleName),
+		authtypes.ProtoBaseAccount,
+		app.GetMaccPerms(),
+	)
+
+	suite.rk = profileskeeper.NewKeeper(
+		suite.cdc,
+		suite.storeKey,
+		pk.Subspace(profilestypes.DefaultParamsSpace),
+		ak,
+	)
+
+	suite.k = keeper.NewKeeper(
+		suite.cdc,
+		keys[types.StoreKey],
+		pk.Subspace(types.DefaultParamSpace),
+		suite.rk,
+	)
 
 	// Setup data
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"

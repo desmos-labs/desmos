@@ -38,9 +38,9 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			suite.keeper.SaveReport(suite.ctx, test.report)
+			suite.k.SaveReport(suite.ctx, test.report)
 
-			_, stop := keeper.AllInvariants(suite.keeper)(suite.ctx)
+			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)
 			suite.Require().Equal(test.shouldStop, stop)
 		})
 	}

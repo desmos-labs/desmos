@@ -42,7 +42,7 @@ func (suite *KeeperTestSuite) Test_Profile() {
 			storedProfiles: []*types.Profile{
 				suite.testData.profile,
 			},
-			req:       types.NewQueryProfileRequest(suite.testData.profile.Dtag),
+			req:       types.NewQueryProfileRequest(suite.testData.profile.DTag),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
 				Profile: suite.codeToAny(suite.testData.profile),

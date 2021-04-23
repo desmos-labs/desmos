@@ -25,7 +25,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := k.GetAddressFromDtag(sdkCtx, dTagOrAddress)
+		addr := k.GetAddressFromDTag(sdkCtx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)
@@ -65,6 +65,20 @@ func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTrans
 
 	requests := k.GetUserIncomingDTagTransferRequests(sdkCtx, user.String())
 	return &types.QueryDTagTransfersResponse{Requests: requests}, nil
+}
+
+// UserRelationships implements the Query/UserRelationships gRPC method
+func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserRelationshipsRequest) (*types.QueryUserRelationshipsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	relationships := k.GetUserRelationships(sdkCtx, request.User)
+	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships}, nil
+}
+
+// UserBlocks implements the Query/UserBlocks gRPC method
+func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	blocks := k.GetUserBlocks(sdkCtx, request.User)
+	return &types.QueryUserBlocksResponse{Blocks: blocks}, nil
 }
 
 // Params implements the Query/Params gRPC method

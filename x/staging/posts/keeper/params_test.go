@@ -38,10 +38,10 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			suite.SetupTest()
 
 			if test.expError {
-				suite.Require().Panics(func() { suite.keeper.SetParams(suite.ctx, test.params) })
+				suite.Require().Panics(func() { suite.k.SetParams(suite.ctx, test.params) })
 			} else {
-				suite.keeper.SetParams(suite.ctx, test.params)
-				suite.Require().Equal(test.expParams, suite.keeper.GetParams(suite.ctx))
+				suite.k.SetParams(suite.ctx, test.params)
+				suite.Require().Equal(test.expParams, suite.k.GetParams(suite.ctx))
 			}
 		})
 	}
@@ -49,9 +49,9 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	params := types.DefaultParams()
-	suite.keeper.SetParams(suite.ctx, params)
+	suite.k.SetParams(suite.ctx, params)
 
-	actualParams := suite.keeper.GetParams(suite.ctx)
+	actualParams := suite.k.GetParams(suite.ctx)
 
 	suite.Require().Equal(params, actualParams)
 
@@ -76,11 +76,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 		test := test
 		suite.Run(test.name, func() {
 			if test.params != nil {
-				suite.keeper.SetParams(suite.ctx, *test.params)
+				suite.k.SetParams(suite.ctx, *test.params)
 			}
 
 			if test.expParams != nil {
-				suite.Require().Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
+				suite.Require().Equal(*test.expParams, suite.k.GetParams(suite.ctx))
 			}
 		})
 	}

@@ -48,11 +48,11 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollAnswers() {
 			suite.SetupTest()
 
 			for _, answer := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.postID, answer)
+				suite.k.SavePollAnswers(suite.ctx, test.postID, answer)
 			}
 
-			suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.answer)
-			suite.Require().Equal(test.expectedAnswers, suite.keeper.GetPollAnswers(suite.ctx, test.postID))
+			suite.k.SavePollAnswers(suite.ctx, test.postID, test.answer)
+			suite.Require().Equal(test.expectedAnswers, suite.k.GetPollAnswers(suite.ctx, test.postID))
 		})
 	}
 }
@@ -81,10 +81,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPollAnswers() {
 		test := test
 		suite.Run(test.name, func() {
 			if test.storedAnswers != nil {
-				suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers[0])
+				suite.k.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers[0])
 			}
 
-			actual := suite.keeper.GetPollAnswers(suite.ctx, test.postID)
+			actual := suite.k.GetPollAnswers(suite.ctx, test.postID)
 			suite.Require().Equal(test.storedAnswers, actual)
 		})
 	}
@@ -115,9 +115,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetPollAnswersByUser() {
 	}
 
 	for _, test := range tests {
-		suite.keeper.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers)
+		suite.k.SavePollAnswers(suite.ctx, test.postID, test.storedAnswers)
 
-		actual := suite.keeper.GetPollAnswersByUser(suite.ctx, test.postID, test.user)
+		actual := suite.k.GetPollAnswersByUser(suite.ctx, test.postID, test.user)
 		suite.Require().Equal(test.expAnswers, actual)
 	}
 }

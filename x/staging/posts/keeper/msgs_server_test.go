@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/staging/relationships/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 	tests := []struct {
 		name             string
 		storedPosts      []types.Post
-		storedUserBlocks []relationshipstypes.UserBlock
+		storedUserBlocks []profilestypes.UserBlock
 		msg              *types.MsgCreatePost
 		expError         bool
 		expPosts         []types.Post
@@ -164,8 +164,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 		},
 		{
 			name: "Post tag blocked the post creator",
-			storedUserBlocks: []relationshipstypes.UserBlock{
-				relationshipstypes.NewUserBlock(
+			storedUserBlocks: []profilestypes.UserBlock{
+				profilestypes.NewUserBlock(
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					suite.testData.post.Creator,
 					"test",
@@ -196,10 +196,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, block := range test.storedUserBlocks {
@@ -207,7 +207,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.Require().NoError(err)
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.CreatePost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
@@ -215,7 +215,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Len(suite.ctx.EventManager().Events(), 1)
-				suite.Require().Equal(test.expPosts, suite.keeper.GetPosts(suite.ctx))
+				suite.Require().Equal(test.expPosts, suite.k.GetPosts(suite.ctx))
 			}
 		})
 	}
@@ -226,7 +226,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 	testData := []struct {
 		name             string
 		storedPosts      []types.Post
-		storedUserBlocks []relationshipstypes.UserBlock
+		storedUserBlocks []profilestypes.UserBlock
 		timeDifference   time.Duration
 		msg              *types.MsgEditPost
 		expError         bool
@@ -274,8 +274,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "Blocked creator from tags",
-			storedUserBlocks: []relationshipstypes.UserBlock{
-				relationshipstypes.NewUserBlock(
+			storedUserBlocks: []profilestypes.UserBlock{
+				profilestypes.NewUserBlock(
 					"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
 					suite.testData.post.Creator,
 					"test",
@@ -419,11 +419,11 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.keeper.SetParams(suite.ctx, types.DefaultParams())
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.timeDifference))
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, block := range test.storedUserBlocks {
@@ -431,7 +431,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 				suite.Require().NoError(err)
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.EditPost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
@@ -439,7 +439,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Len(suite.ctx.EventManager().Events(), 1)
-				suite.Require().Equal(test.expPosts, suite.keeper.GetPosts(suite.ctx))
+				suite.Require().Equal(test.expPosts, suite.k.GetPosts(suite.ctx))
 			}
 		})
 	}
@@ -552,14 +552,14 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			suite.SetupTest()
 
 			for _, reaction := range test.registeredReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.AddPostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
@@ -567,7 +567,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Len(suite.ctx.EventManager().Events(), 1)
-				suite.Require().Equal(test.expPostReactionEntries, suite.keeper.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expPostReactionEntries, suite.k.GetPostReactionsEntries(suite.ctx))
 			}
 		})
 	}
@@ -739,21 +739,21 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			suite.SetupTest()
 
 			for _, reaction := range test.registeredReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, entry := range test.existingReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.RemovePostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
@@ -761,7 +761,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-				suite.Require().Equal(test.expReactions, suite.keeper.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expReactions, suite.k.GetPostReactionsEntries(suite.ctx))
 			}
 		})
 	}
@@ -980,16 +980,16 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.blockTimeDifference))
 			for _, post := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
 
 			for _, entry := range test.storedAnswers {
 				for _, answer := range entry.UserAnswers {
-					suite.keeper.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
 				}
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.AnswerPoll(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
@@ -1075,10 +1075,10 @@ func (suite *KeeperTestSuite) TestMsgServer_RegisterReaction() {
 			suite.SetupTest()
 
 			for _, reaction := range test.existingReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			handler := keeper.NewMsgServerImpl(suite.keeper)
+			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.RegisterReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
@@ -1086,7 +1086,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RegisterReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-				suite.Require().Equal(test.expReactions, suite.keeper.GetRegisteredReactions(suite.ctx))
+				suite.Require().Equal(test.expReactions, suite.k.GetRegisteredReactions(suite.ctx))
 			}
 		})
 	}

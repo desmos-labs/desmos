@@ -369,25 +369,25 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			suite.SetupTest()
 
 			for _, reaction := range test.registeredReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, reaction)
+				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
 			}
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.keeper.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expError {
@@ -610,14 +610,14 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			suite.SetupTest()
 
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			request := abci.RequestQuery{Data: suite.legacyAminoCdc.MustMarshalJSON(&test.params)}
 
 			result, err := querier(suite.ctx, []string{types.QueryPosts}, request)
@@ -700,14 +700,14 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.keeper.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expError {
@@ -769,10 +769,10 @@ func (suite *KeeperTestSuite) Test_queryRegisteredReactions() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, r := range test.storedReactions {
-				suite.keeper.SaveRegisteredReaction(suite.ctx, r)
+				suite.k.SaveRegisteredReaction(suite.ctx, r)
 			}
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 
 			if test.expError {
@@ -813,9 +813,9 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			suite.keeper.SetParams(suite.ctx, test.storedParams)
+			suite.k.SetParams(suite.ctx, test.storedParams)
 
-			querier := keeper.NewQuerier(suite.keeper, suite.legacyAminoCdc)
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
 			suite.Require().Nil(err)
 

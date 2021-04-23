@@ -174,7 +174,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			}
 
 			// Save the post
-			suite.keeper.SavePost(suite.ctx, test.newPost)
+			suite.k.SavePost(suite.ctx, test.newPost)
 
 			// Check the stored post
 			var expected types.Post
@@ -256,7 +256,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				store.Set(types.PostStoreKey(test.expected.PostId), suite.cdc.MustMarshalBinaryBare(&test.expected))
 			}
 
-			expected, found := suite.keeper.GetPost(suite.ctx, test.ID)
+			expected, found := suite.k.GetPost(suite.ctx, test.ID)
 			suite.Require().Equal(test.postExists, found)
 			if test.postExists {
 				suite.True(expected.Equal(test.expected))
@@ -329,10 +329,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, p := range test.storedPosts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.keeper.GetPostChildrenIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.k.GetPostChildrenIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
@@ -378,10 +378,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, p := range test.posts {
-				suite.keeper.SavePost(suite.ctx, p)
+				suite.k.SavePost(suite.ctx, p)
 			}
 
-			posts := suite.keeper.GetPosts(suite.ctx)
+			posts := suite.k.GetPosts(suite.ctx)
 			for index, post := range test.posts {
 				suite.True(post.Equal(posts[index]))
 			}
@@ -492,9 +492,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
 		test := test
 		suite.Run(test.name, func() {
 			for _, post := range posts {
-				suite.keeper.SavePost(suite.ctx, post)
+				suite.k.SavePost(suite.ctx, post)
 			}
-			result := suite.keeper.GetPostsFiltered(suite.ctx, test.filter)
+			result := suite.k.GetPostsFiltered(suite.ctx, test.filter)
 
 			suite.Len(result, len(test.expected))
 			for index, post := range result {

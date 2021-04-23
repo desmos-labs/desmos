@@ -18,9 +18,9 @@ var (
 	_ authtypes.AccountI = (*Profile)(nil)
 )
 
-// NewProfile builds a new profile having the given dtag, creator and creation date
+// NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
-	dtag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+	dTag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -34,7 +34,7 @@ func NewProfile(
 	}
 
 	return &Profile{
-		Dtag:         dtag,
+		DTag:         dTag,
 		Moniker:      moniker,
 		Bio:          bio,
 		Pictures:     pictures,
@@ -99,8 +99,8 @@ func (p *Profile) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 
 // Validate check the validity of the Profile
 func (p *Profile) Validate() error {
-	if strings.TrimSpace(p.Dtag) == "" || p.Dtag == DoNotModify {
-		return fmt.Errorf("invalid profile DTag: %s", p.Dtag)
+	if strings.TrimSpace(p.DTag) == "" || p.DTag == DoNotModify {
+		return fmt.Errorf("invalid profile DTag: %s", p.DTag)
 	}
 
 	if p.Moniker == DoNotModify {
@@ -154,7 +154,7 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 		PubKey:        p.GetPubKey().String(),
 		AccountNumber: p.GetAccountNumber(),
 		Sequence:      p.GetSequence(),
-		DTag:          p.Dtag,
+		DTag:          p.DTag,
 		Moniker:       p.Moniker,
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
@@ -180,7 +180,7 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 		PubKey:        pubKey,
 		AccountNumber: p.GetAccountNumber(),
 		Sequence:      p.GetSequence(),
-		DTag:          p.Dtag,
+		DTag:          p.DTag,
 		Moniker:       p.Moniker,
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
@@ -193,16 +193,16 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 // ProfileUpdate contains all the data that can be updated about a profile.
 // When performing an update, if a field should not be edited then it must be set to types.DoNotModify
 type ProfileUpdate struct {
-	Dtag     string
+	DTag     string
 	Moniker  string
 	Bio      string
 	Pictures Pictures
 }
 
 // NewProfileUpdate builds a new ProfileUpdate instance containing the given data
-func NewProfileUpdate(dtag, moniker, bio string, pictures Pictures) *ProfileUpdate {
+func NewProfileUpdate(dTag, moniker, bio string, pictures Pictures) *ProfileUpdate {
 	return &ProfileUpdate{
-		Dtag:     dtag,
+		DTag:     dTag,
 		Moniker:  moniker,
 		Bio:      bio,
 		Pictures: pictures,
@@ -212,8 +212,8 @@ func NewProfileUpdate(dtag, moniker, bio string, pictures Pictures) *ProfileUpda
 // Update updates the fields of a given profile. An error is
 // returned if the resulting profile contains invalid values.
 func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
-	if update.Dtag == DoNotModify {
-		update.Dtag = p.Dtag
+	if update.DTag == DoNotModify {
+		update.DTag = p.DTag
 	}
 
 	if update.Moniker == DoNotModify {
@@ -232,7 +232,7 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.Pictures.Cover = p.Pictures.Cover
 	}
 
-	newProfile, err := NewProfile(update.Dtag, update.Moniker, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
+	newProfile, err := NewProfile(update.DTag, update.Moniker, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
 	if err != nil {
 		return nil, err
 	}

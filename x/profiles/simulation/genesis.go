@@ -17,6 +17,8 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 	profileGenesis := types.NewGenesisState(
 		randomDTagTransferRequests(simsState),
+		randomRelationships(simsState),
+		randomUsersBlocks(simsState),
 		types.NewParams(
 			RandomMonikerParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
@@ -35,18 +37,59 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 // randomDTagTransferRequests returns randomly generated genesis dTag transfer requests
 func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTransferRequest {
-	dtagTransferRequestsNumber := simState.Rand.Intn(20)
+	dTagTransferRequestsNumber := simState.Rand.Intn(20)
 
-	dtagTransferRequests := make([]types.DTagTransferRequest, dtagTransferRequestsNumber)
-	for i := 0; i < dtagTransferRequestsNumber; i++ {
+	dTagTransferRequests := make([]types.DTagTransferRequest, dTagTransferRequestsNumber)
+	for i := 0; i < dTagTransferRequestsNumber; i++ {
 		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
 		simAccount2, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		dtagTransferRequests[i] = types.NewDTagTransferRequest(
+		dTagTransferRequests[i] = types.NewDTagTransferRequest(
 			RandomDTag(simState.Rand),
 			simAccount.Address.String(),
 			simAccount2.Address.String(),
 		)
 	}
 
-	return dtagTransferRequests
+	return dTagTransferRequests
+}
+
+// randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
+func randomRelationships(simState *module.SimulationState) []types.Relationship {
+	relationshipsNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
+
+	relationships := make([]types.Relationship, relationshipsNumber)
+	for index := 0; index < relationshipsNumber; index++ {
+		sender, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		receiver, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		if !sender.Equals(receiver) {
+			relationships[index] = types.NewRelationship(
+				sender.Address.String(),
+				receiver.Address.String(),
+				RandomSubspace(simState.Rand),
+			)
+		}
+	}
+
+	return relationships
+}
+
+// randomUsersBlocks
+func randomUsersBlocks(simState *module.SimulationState) []types.UserBlock {
+	usersBlocksNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
+
+	usersBlocks := make([]types.UserBlock, usersBlocksNumber)
+	for index := 0; index < usersBlocksNumber; index++ {
+		blocker, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		blocked, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
+		if !blocker.Equals(blocked) {
+			usersBlocks[index] = types.NewUserBlock(
+				blocker.Address.String(),
+				blocked.Address.String(),
+				"reason",
+				RandomSubspace(simState.Rand),
+			)
+		}
+	}
+
+	return usersBlocks
 }

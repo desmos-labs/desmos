@@ -9,16 +9,18 @@ const (
 
 	ActionReportPost = "report_post"
 
-	// Queries
 	QuerierRoute = ModuleName
 	QueryReports = "reports"
+
+	// DefaultParamsSpace represents the default paramspace for the Params keeper
+	DefaultParamsSpace = ModuleName
 )
 
 var (
 	ReportsStorePrefix = []byte("reports")
 )
 
-// ReportsStoreKey turn an id to a key used to store a reports inside the reports store
+// ReportStoreKey turns an id into a key used to store a report inside the reports store
 func ReportStoreKey(id string) []byte {
 	return append(ReportsStorePrefix, []byte(id)...)
 }

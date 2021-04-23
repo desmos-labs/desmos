@@ -28,6 +28,20 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
 			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)
 
+		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
+			var relationshipsA, relationshipsB types.Relationships
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipsA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipsB)
+			return fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n",
+				relationshipsA.Relationships, relationshipsB.Relationships)
+
+		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
+			var userBlocksA, userBlocksB types.UserBlocks
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlocksA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
+			return fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n",
+				userBlocksA.Blocks, userBlocksB.Blocks)
+
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}
