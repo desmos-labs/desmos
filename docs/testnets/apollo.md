@@ -20,21 +20,6 @@ procedure made of three different parts:
 
 All validators that would like to take part into this testnet from its beginning should participate in this procedure.
 
-:::warning Required Desmos version  
-Please note that in order to be able to properly run all the below mentioned Desmos commands, you need to have Desmos `master` version installed on your machine. 
-To do this, if you already have an older Desmos version installed, you can run the following commands: 
-```shell
-cd /path/to/Desmos
-git checkout master && git pull
-make install
-```
-:::
-
-:::tip You can join later  
-If you do not have time to join our testnet from its beginning you can always join later.  
-If you wish to know how please read [here](../testnets/join-public.md).
-:::
-
 :::warning Rewards  
 This testnet is **not** meant to reward the validators that will take part to it directly. This means that we will
 **not** give any DSM to people that will run a validator node. Instead, we will use this testnet as a playground to
@@ -42,6 +27,12 @@ observe how different validators behave.
 :::
 
 ## Join "Apollo"
+
+:::danger Submission process now closed  
+The submission process has ended on April 23rd at 23:59 UTC. If you did not submit your PR by that time, you will
+**not** be included inside the genesis. However, you will still be able to join later. If you wish to know how please
+read [here](../testnets/join-public.md).  
+:::
 
 If you are a validator that would like to take part in the genesis of the "Apollo" testnet, all you have to do is:
 
