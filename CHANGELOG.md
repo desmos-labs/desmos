@@ -1,5 +1,12 @@
-# Unreleased
-- Enabled IBC transfer module ([\#382](https://github.com/desmos-labs/desmos/issues/382))
+# Version 0.16.0
+
+## Changes
+
+- Updated Cosmos to `v0.42.4`
+- Disabled all the modules, except the `x/profiles` module
+- Changed how data are stored inside the `x/profiles`
+  modules ([\#261](https://github.com/desmos-labs/desmos/issues/261))
+- Enabled the `x/ibc` transfer module ([\#382](https://github.com/desmos-labs/desmos/issues/382))
 
 # Version 0.15.5
 
