@@ -2,6 +2,7 @@ package links
 
 import (
 	"fmt"
+	"math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,6 +10,7 @@ import (
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	"github.com/desmos-labs/desmos/x/links/keeper"
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
@@ -23,15 +25,8 @@ func (am AppModule) OnChanOpenInit(
 	counterparty channeltypes.Counterparty,
 	version string,
 ) error {
-
-	// Require portID is the portID module is bound to
-	boundPort := am.keeper.GetPort(ctx)
-	if boundPort != portID {
-		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
-	}
-
-	if version != types.Version {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.Version)
+	if err := ValidateLinksChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
+		return err
 	}
 
 	// Claim channel capability passed back by IBC module
@@ -55,14 +50,8 @@ func (am AppModule) OnChanOpenTry(
 	counterpartyVersion string,
 ) error {
 
-	// Require portID is the portID module is bound to
-	boundPort := am.keeper.GetPort(ctx)
-	if boundPort != portID {
-		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
-	}
-
-	if version != types.Version {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got: %s, expected %s", version, types.Version)
+	if err := ValidateLinksChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
+		return err
 	}
 
 	if counterpartyVersion != types.Version {
@@ -289,4 +278,40 @@ func (am AppModule) OnTimeoutPacket(
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
 	}, nil
+}
+
+// ValidateLinksChannelParams does validation of a newly created links channel. A links
+// channel must be UNORDERED, use the correct port (by default 'links'), and use the current
+// supported version. Only 2^32 channels are allowed to be created.
+func ValidateLinksChannelParams(
+	ctx sdk.Context,
+	keeper keeper.Keeper,
+	order channeltypes.Order,
+	portID string,
+	channelID string,
+	version string,
+) error {
+	// NOTE: for escrow address security only 2^32 channels are allowed to be created
+	// Issue: https://github.com/cosmos/cosmos-sdk/issues/7737
+	channelSequence, err := channeltypes.ParseChannelSequence(channelID)
+	if err != nil {
+		return err
+	}
+	if channelSequence > uint64(math.MaxUint32) {
+		return sdkerrors.Wrapf(types.ErrMaxLinksChannels, "channel sequence %d is greater than max allowed links channels %d", channelSequence, uint64(math.MaxUint32))
+	}
+	if order != channeltypes.UNORDERED {
+		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
+	}
+
+	// Require portID is the portID links module is bound to
+	boundPort := keeper.GetPort(ctx)
+	if boundPort != portID {
+		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
+	}
+
+	if version != types.Version {
+		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.Version)
+	}
+	return nil
 }
