@@ -103,6 +103,8 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 
 	k.StoreLink(ctx, link)
 
+	packetAck.SourceAddress = link.SourceAddress
+
 	return packetAck, nil
 }
 
@@ -176,7 +178,7 @@ func (k Keeper) TransmitIBCAccountLinkPacket(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetBytes := packetData.GetBytes()
+	packetBytes, _ := packetData.GetBytes()
 	packet := channeltypes.NewPacket(
 		packetBytes,
 		sequence,
@@ -221,6 +223,8 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	}
 
 	k.StoreLink(ctx, link)
+
+	packetAck.SourceAddress = link.SourceAddress
 
 	return packetAck, nil
 }

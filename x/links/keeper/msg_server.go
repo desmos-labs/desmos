@@ -37,15 +37,14 @@ func (k msgServer) CreateIBCAccountConnection(
 	)
 
 	// Transmit the packet
-	err := k.TransmitIBCAccountConnectionPacket(
+	if err := k.TransmitIBCAccountConnectionPacket(
 		ctx,
 		packet,
 		msg.Port,
 		msg.ChannelId,
 		clienttypes.NewHeight(0, 100),
 		msg.TimeoutTimestamp,
-	)
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 
@@ -69,15 +68,14 @@ func (k msgServer) CreateIBCAccountLink(
 	)
 
 	// Transmit the packet
-	err := k.TransmitIBCAccountLinkPacket(
+	if err := k.TransmitIBCAccountLinkPacket(
 		ctx,
 		packet,
 		msg.Port,
 		msg.ChannelId,
 		clienttypes.NewHeight(0, 100),
 		msg.TimeoutTimestamp,
-	)
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 
