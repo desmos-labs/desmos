@@ -34,6 +34,11 @@ The submission process has ended on April 23rd at 23:59 UTC. If you did not subm
 read [here](../testnets/join-public.md).  
 :::
 
+:::warning Get ready for launch  
+The final `genesis.json` file has been created, and validators now need to get ready for launch.  
+To know more, please refer to [this blog post](https://medium.com/desmosnetwork/get-ready-for-morpheus-apollo-launch-d847686c8fd0).  
+:::
+
 If you are a validator that would like to take part in the genesis of the "Apollo" testnet, all you have to do is:
 
 1. Download the current genesis file.
