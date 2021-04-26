@@ -46,7 +46,7 @@ func (k Keeper) TransmitIBCAccountConnectionPacket(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetBytes := packetData.GetBytes()
+	packetBytes, _ := packetData.GetBytes()
 
 	packet := channeltypes.NewPacket(
 		packetBytes,
@@ -71,7 +71,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	data types.IBCAccountConnectionPacketData,
-) (packetAck types.IBCAccountConnectionPacketData, err error) {
+) (packetAck types.IBCAccountConnectionPacketAck, err error) {
 
 	// validate packet data upon receiving
 	if err := data.Validate(); err != nil {
@@ -202,7 +202,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	data types.IBCAccountLinkPacketData,
-) (packetAck types.IBCAccountLinkPacketData, err error) {
+) (packetAck types.IBCAccountLinkPacketAck, err error) {
 
 	// validate packet data upon receiving
 	if err := data.Validate(); err != nil {

@@ -11,50 +11,50 @@ import (
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
-// func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
+func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 
-// 	suite.Run("packet transformation test", func() {
-// 		suite.SetupIBCTest()
+	suite.Run("packet transformation test", func() {
+		suite.SetupIBCTest()
 
-// 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-// 		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
-// 		srcAddress := suite.chainA.Account.GetAddress().String()
-// 		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-// 		dstAddress := suite.chainB.Account.GetAddress().String()
-// 		link := types.NewLink(srcAddress, dstAddress)
-// 		linkBz, _ := link.Marshal()
-// 		srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
-// 		srcSigHex := hex.EncodeToString(srcSig)
-// 		dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
-// 		dstSigHex := hex.EncodeToString(dstSig)
+		srcAddress := suite.chainA.Account.GetAddress().String()
+		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+		dstAddress := suite.chainB.Account.GetAddress().String()
+		link := types.NewLink(srcAddress, dstAddress)
+		linkBz, _ := link.Marshal()
+		srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+		srcSigHex := hex.EncodeToString(srcSig)
+		dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+		dstSigHex := hex.EncodeToString(dstSig)
 
-// 		// send link from chainA to chainB
-// 		packetData := types.NewIBCAccountConnectionPacketData(
-// 			"cosmos",
-// 			srcAddress,
-// 			srcPubKeyHex,
-// 			dstAddress,
-// 			srcSigHex,
-// 			dstSigHex,
-// 		)
+		// send link from chainA to chainB
+		packetData := types.NewIBCAccountConnectionPacketData(
+			"cosmos",
+			srcAddress,
+			srcPubKeyHex,
+			dstAddress,
+			srcSigHex,
+			dstSigHex,
+		)
 
-// 		msg := types.NewMsgCreateIBCAccountConnection(channelA.PortID, channelA.ID, 0, srcAddress, srcPubKeyHex, dstAddress, srcSigHex, dstSigHex)
-// 		err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
-// 		suite.Require().NoError(err) // message committed
+		msg := types.NewMsgCreateIBCAccountConnection(channelA.PortID, channelA.ID, 0, srcAddress, srcPubKeyHex, dstAddress, srcSigHex, dstSigHex)
+		err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
+		suite.Require().NoError(err) // message committed
 
-// 		bz, err := packetData.GetBytes()
-// 		suite.Require().NoError(err)
+		bz, _ := packetData.GetBytes()
+		suite.Require().NoError(err)
 
-// 		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-// 		packetKey := host.PacketCommitmentKey(packet.GetSourcePort(), packet.GetSourceChannel(), packet.GetSequence())
-// 		proof, proofHeight := suite.chainA.QueryProof(packetKey)
+		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+		packetKey := host.PacketCommitmentKey(packet.GetSourcePort(), packet.GetSourceChannel(), packet.GetSequence())
+		proof, proofHeight := suite.chainA.QueryProof(packetKey)
 
-// 		recvMsg := channeltypes.NewMsgRecvPacket(packet, proof, proofHeight, suite.chainB.Account.GetAddress())
-// 		err = suite.coordinator.SendMsg(suite.chainB, suite.chainA, channelA.ClientID, recvMsg)
-// 		suite.Require().NoError(err) // message committed
-// 	})
-// }
+		recvMsg := channeltypes.NewMsgRecvPacket(packet, proof, proofHeight, suite.chainB.Account.GetAddress())
+		err = suite.coordinator.SendMsg(suite.chainB, suite.chainA, channelA.ClientID, recvMsg)
+		suite.Require().NoError(err) // message committed
+	})
+}
 
 func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 	var (
@@ -298,7 +298,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			data := types.NewIBCAccountConnectionPacketData(
 				"cosmos", srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
 			)
-			bz := data.GetBytes()
+			bz, _ := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
 			_, err = suite.chainB.App.LinksKeeper.OnRecvIBCAccountConnectionPacket(
@@ -373,7 +373,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 				srcSigHex,
 				dstSigHex,
 			)
-			bz := data.GetBytes()
+			bz, _ := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			err := suite.chainA.App.LinksKeeper.OnAcknowledgementIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data, ack)
 			if test.success {

@@ -74,8 +74,12 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 }
 
 // GetBytes is a helper for serialising
-func (p IBCAccountConnectionPacketData) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
+func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
+	var modulePacket LinksPacketData
+
+	modulePacket.Packet = &LinksPacketData_IbcAccountConnectionPacket{&p}
+
+	return modulePacket.Marshal()
 }
 
 // ___________________________________________________________________________________________________________________
