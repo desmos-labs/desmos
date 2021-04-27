@@ -9,14 +9,9 @@ if ! [ -x "$(which desmos)" ]; then
   exit 1
 fi
 
-# Ensure relayer is installed
-if ! [ -x "$(which rly)" ]; then
-  echo "Error: relayer is not installed. Try running 'make install-relayer'" >&2
-  exit 1
-fi
 
 if [ -d $HOMEDIR ]; then
-    rm -r $HOMEDIR
+    rm -r $HOMEDIR/*
 fi
 
 # generate ibc0 chain config

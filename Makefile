@@ -384,8 +384,14 @@ localnet-stop:
 ###                                IBC Helpler                              ###
 ###############################################################################
 
+ibctestnet-start: build-linux ibctestnet-stop
+	$(MAKE) initialize-ibctestchains
+	docker-compose -f docker-compose-ibctest.yml up -d
+
+ibctestnet-stop:
+	docker-compose -f docker-compose-ibctest.yml down
 get-relayer:
-	git clone git@github.com:cosmos/relayer.git .thirdparty/relayer
+	@if ! [ -d .thirdparty/relayer ]; then git clone git@github.com:cosmos/relayer.git .thirdparty/relayer; fi
 
 install-relayer:
 	bash ./scripts/install-relayer.sh
@@ -415,3 +421,7 @@ run-testchains:
 # After setup, using rly start links for listening link packets
 setup-relayer:
 	cd scripts && bash setup-relayer.sh $(BUILDDIR)/ibc
+
+start-testnet:
+	@make initialize-ibctestchains
+	@docker run -it --rm -p 26666:26666 -p 26656:26656 -v $(BUILDDIR)/ibc:/root/build/ibc ibctestdesmos

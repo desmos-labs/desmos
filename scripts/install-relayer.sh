@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR="build/relayer"
+DIR=".thirdparty/relayer"
 [ ! -d "$DIR" ] && echo "Repositry for relayer does not exist at $DIR. Try running 'make get-relayer'..." && exit 1
 
 cd $DIR
