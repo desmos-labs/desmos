@@ -75,11 +75,7 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 
 // GetBytes is a helper for serialising
 func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
-	var modulePacket LinksPacketData
-
-	modulePacket.Packet = &LinksPacketData_IbcAccountConnectionPacket{&p}
-
-	return modulePacket.Marshal()
+	return sdk.SortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 // ___________________________________________________________________________________________________________________
@@ -131,11 +127,7 @@ func (p IBCAccountLinkPacketData) Validate() error {
 
 // GetBytes is a helper for serialising
 func (p IBCAccountLinkPacketData) GetBytes() ([]byte, error) {
-	var modulePacket LinksPacketData
-
-	modulePacket.Packet = &LinksPacketData_IbcAccountLinkPacket{&p}
-
-	return modulePacket.Marshal()
+	return sdk.SortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 // ___________________________________________________________________________________________________________________
