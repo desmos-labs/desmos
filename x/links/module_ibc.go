@@ -119,7 +119,7 @@ func (am AppModule) OnRecvPacket(
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
 	var modulePacketData types.LinksPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(modulePacket.GetData(), modulePacketData.Packet); err != nil {
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
 
@@ -133,7 +133,7 @@ func (am AppModule) OnRecvPacket(
 			ack = channeltypes.NewErrorAcknowledgement(err.Error())
 		} else {
 			// Encode packet acknowledgment
-			packetAckBytes, err := sdk.SortJSON(types.ModuleCdc.MustMarshalJSON(&packetAck))
+			packetAckBytes, err := packetAck.Marshal()
 			if err != nil {
 				return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 			}
@@ -152,7 +152,7 @@ func (am AppModule) OnRecvPacket(
 			ack = channeltypes.NewErrorAcknowledgement(err.Error())
 		} else {
 			// Encode packet acknowledgment
-			packetAckBytes, err := sdk.SortJSON(types.ModuleCdc.MustMarshalJSON(&packetAck))
+			packetAckBytes, err := packetAck.Marshal()
 			if err != nil {
 				return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 			}
@@ -171,7 +171,7 @@ func (am AppModule) OnRecvPacket(
 	}
 
 	// Encode acknowledgement
-	ackBytes, err := sdk.SortJSON(types.ModuleCdc.MustMarshalJSON(&ack))
+	ackBytes, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&ack))
 	if err != nil {
 		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
 	}
@@ -189,11 +189,11 @@ func (am AppModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 ) (*sdk.Result, error) {
 	var ack channeltypes.Acknowledgement
-	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
+	if err := types.ProtoCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 	var modulePacketData types.LinksPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
 
@@ -254,7 +254,7 @@ func (am AppModule) OnTimeoutPacket(
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, error) {
 	var modulePacketData types.LinksPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
 
