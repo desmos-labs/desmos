@@ -1,0 +1,14 @@
+syntax = "proto3";
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+
+// Admins represent the admin slice that control a specific subspace
+message Admins {
+  repeated string admins = 1 [
+    (gogoproto.moretags) = "yaml:\"admins,omitempty\""
+  ];
+}

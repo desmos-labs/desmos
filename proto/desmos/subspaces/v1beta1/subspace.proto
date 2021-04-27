@@ -11,18 +11,18 @@ message Subspace {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\""];
+  string id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
 
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"subspace_name\""];
+  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\""];
 
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\""];
-
-  google.protobuf.Timestamp creation_time = 4 [
+  google.protobuf.Timestamp creation_time = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.jsontag) = "creation_time",
     (gogoproto.moretags) = "yaml:\"creation_time\""
   ];
-
 }
 

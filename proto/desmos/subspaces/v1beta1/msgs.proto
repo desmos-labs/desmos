@@ -28,7 +28,10 @@ message MsgCreateSubspace {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string name = 1 [(gogoproto.moretags) = "yaml:\"name\""];
+  string id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
   string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
@@ -62,6 +65,10 @@ message MsgAllowUserPosts {
   option (gogoproto.goproto_getters) = false;
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string subspace_id = 2 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
@@ -76,6 +83,10 @@ message MsgBlockUserPosts {
   option (gogoproto.goproto_getters) = false;
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string subspace_id = 2 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
