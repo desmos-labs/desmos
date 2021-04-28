@@ -28,7 +28,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 
 	// Check if the subspace already exists inside the store
 	if store.Has(key) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace already exists")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.Id)
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
@@ -42,7 +42,7 @@ func (k Keeper) DoesSubspaceExists(ctx sdk.Context, subspaceId string) bool {
 }
 
 // GetSubspace returns the subspace associated with the given ID.
-// If no subspace is associated with the given ID the function will return an error.
+// If there is no subspace associated with the given ID the function will return an error.
 func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.Subspace, found bool) {
 	store := ctx.KVStore(k.storeKey)
 	if !store.Has(types.SubspaceStoreKey(subspaceId)) {
@@ -53,7 +53,7 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.
 	return subspace, true
 }
 
-// AddAdminToSubspace insert the given admin inside the admins list if its not present.
+// AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace with subspaceId if its not present.
 // Returns an error if the admin is already present.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, newAdmin string) error {
 	store := ctx.KVStore(k.storeKey)
