@@ -3,7 +3,6 @@ version: '3'
 services:
   ibc0:
     container_name: ibc0
-    build: ./Dockerfile
     image: "desmos"
     ports:
       - "26656-26657:26656-26657"
@@ -21,7 +20,6 @@ services:
 
   ibc1:
     container_name: ibc1
-    build: ./Dockerfile
     image: "desmos"
     ports:
       - "26666-26667:26656-26657"
@@ -39,7 +37,6 @@ services:
 
   relayer:
     container_name: relayer
-    build: ./Dockerfile.relayer
     image: relayer
     volumes:
       - ./build/ibc/relayer:/root/.ibcsetup

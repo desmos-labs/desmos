@@ -8,5 +8,5 @@ RUN npm install -g @confio/relayer
 # Install bash
 RUN apk add --no-cache bash
 
-COPY ./scripts/relayer-config ./.ibc-setup
-COPY ./scripts/setup-tsrelayer.sh .
+COPY ./relayer-config ./.ibc-setup
+COPY ./setup-tsrelayer.sh .

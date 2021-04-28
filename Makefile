@@ -385,44 +385,13 @@ localnet-stop:
 ###############################################################################
 
 ibctestnet-start: build-linux ibctestnet-stop
+	$(if $(shell docker inspect -f '{{ .Id }}' desmos 2>/dev/null),$(info found image desmos),$(DOCKER) build . --tag desmos)
+	$(if $(shell docker inspect -f '{{ .Id }}' relayer 2>/dev/null),$(info found image relayer),$(MAKE) -C contrib/images relayer)
 	$(MAKE) initialize-ibctestchains $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
 	docker-compose -f docker-compose-ibctest.yml up -d
 
 ibctestnet-stop:
 	docker-compose -f docker-compose-ibctest.yml down
 
-get-relayer:
-	@if ! [ -d .thirdparty/relayer ]; then git clone git@github.com:cosmos/relayer.git .thirdparty/relayer; fi
-
-install-relayer:
-	bash ./scripts/install-relayer.sh
-
-build-relayer: 
-	cd .thirdparty/relayer && $(MAKE) build
-
 initialize-ibctestchains:
 	bash ./scripts/initialize-ibctestchains.sh $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
-
-# Run two testchains, using killall desmos for stoping them
-run-testchains:
-	@nohup desmos start --home $(BUILDDIR)/ibc/ibc0 \
-    --address tcp://0.0.0.0:26658 \
-    --grpc.address 0.0.0.0:9090 \
-    --p2p.laddr tcp://0.0.0.0:26656 \
-    --rpc.laddr tcp://127.0.0.1:26657 \
-    > /dev/null 2>&1 &
-
-	@nohup desmos start --home $(BUILDDIR)/ibc/ibc1 \
-		--address tcp://0.0.0.0:26668 \
-		--grpc.address 0.0.0.0:9091 \
-		--p2p.laddr tcp://0.0.0.0:26666 \
-		--rpc.laddr tcp://127.0.0.1:26667 \
-		> /dev/null 2>&1 &
-
-# After setup, using rly start links for listening link packets
-setup-relayer:
-	cd scripts && bash setup-relayer.sh $(BUILDDIR)/ibc
-
-start-testnet:
-	@make initialize-ibctestchains
-	@docker run -it --rm -p 26666:26666 -p 26656:26656 -v $(BUILDDIR)/ibc:/root/build/ibc ibctestdesmos
