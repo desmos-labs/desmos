@@ -3,6 +3,7 @@ version: '3'
 services:
   ibc0:
     container_name: ibc0
+    build: ./Dockerfile
     image: "desmos"
     ports:
       - "26656-26657:26656-26657"
@@ -13,16 +14,14 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc0:/root/.desmos
-    command: desmos start \
-      --grpc.address 0.0.0.0:9090 \
-      --p2p.laddr tcp://0.0.0.0:26656 \
-      --rpc.laddr tcp://0.0.0.0:26657
+    command: desmos start --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.2
 
   ibc1:
     container_name: ibc1
+    build: ./Dockerfile
     image: "desmos"
     ports:
       - "26666-26667:26656-26657"
@@ -33,13 +32,21 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc1:/root/.desmos
-    command: desmos start \
-      --grpc.address 0.0.0.0:9090 \
-      --p2p.laddr tcp://0.0.0.0:26656 \
-      --rpc.laddr tcp://0.0.0.0:26657 
+    command: desmos start --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.3
+
+  relayer:
+    container_name: relayer
+    build: ./Dockerfile.relayer
+    image: relayer
+    volumes:
+      - ./build/ibc/relayer:/root/.ibcsetup
+    command: bash setup-tsrelayer.sh
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.4
 
 networks:
   localnet:
@@ -48,3 +55,5 @@ networks:
       driver: default
       config:
         - subnet: 192.168.10.0/16
+
+        

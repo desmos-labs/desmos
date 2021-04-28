@@ -385,11 +385,12 @@ localnet-stop:
 ###############################################################################
 
 ibctestnet-start: build-linux ibctestnet-stop
-	$(MAKE) initialize-ibctestchains
+	$(MAKE) initialize-ibctestchains $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
 	docker-compose -f docker-compose-ibctest.yml up -d
 
 ibctestnet-stop:
 	docker-compose -f docker-compose-ibctest.yml down
+
 get-relayer:
 	@if ! [ -d .thirdparty/relayer ]; then git clone git@github.com:cosmos/relayer.git .thirdparty/relayer; fi
 

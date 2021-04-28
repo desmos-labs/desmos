@@ -1,0 +1,19 @@
+version: 1
+
+chains:
+  ibc0:
+    chain_id: ibc0
+    prefix: desmos
+    gas_price: 0.001desmos
+    hd_path: m/44'/852'/0'/0/0'
+    ics20_port: 'links'
+    rpc:
+      - http://192.168.10.2:26657
+  ibc1:
+    chain_id: ibc1
+    prefix: desmos
+    gas_price: 0.001desmos
+    hd_path: m/44'/852'/0'/0/0'
+    ics20_port: 'links'
+    rpc:
+      - http://192.168.10.3:26657

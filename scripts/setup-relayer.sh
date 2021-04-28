@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 CHAINSHOMEDIR=$1
 
 rly config init

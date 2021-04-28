@@ -11,6 +11,7 @@ for (( i = 0; i < $accountNum; i++ ))
 do
     desmos keys add "test$id-$i" --home "$HOMEDIR/ibc$id" --keyring-backend "test"
     desmos add-genesis-account "test$id-$i" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id" --keyring-backend "test"
+    desmos add-genesis-account "desmos1punhxfyxvnwup70mc6cz9cmuxu74ars7x6hgjm" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id"
 done
 
 desmos gentx "test$id-0" "500000000stake" --chain-id "ibc$id" --home "$HOMEDIR/ibc$id" --keyring-backend "test"
