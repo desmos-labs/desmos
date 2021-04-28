@@ -1,5 +1,6 @@
 package types
 
+/*
 // NewGenesisState creates a new genesis state
 func NewGenesisState() *GenesisState {
 	return &GenesisState{}
@@ -15,3 +16,4 @@ func ValidateGenesis(data *GenesisState) error {
 
 	return nil
 }
+*/

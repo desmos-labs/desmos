@@ -7,6 +7,7 @@ const (
 
 	ActionCreateSubspace = "create_subspace"
 	ActionAddAdmin       = "add_admin"
+	ActionRemoveAdmin    = "remove_admin"
 	ActionAllowUserPosts = "allow_user_posts"
 	ActionBlockUserPosts = "block_user_posts"
 

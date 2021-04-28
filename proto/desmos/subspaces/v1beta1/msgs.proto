@@ -14,6 +14,9 @@ service Msg {
   // AddSubspaceAdmin defines the method to add a new admin to the subspace
   rpc AddSubspaceAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
 
+  // RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
+  rpc RemoveSubspaceAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
+
   // AllowUserPosts defines the method to let user posts inside a specific subspace
   rpc AllowUserPosts(MsgAllowUserPosts) returns (MsgAllowUserPostsResponse);
 
@@ -51,11 +54,30 @@ message MsgAddAdmin {
   ];
 
   string new_admin = 2 [(gogoproto.moretags) = "yaml:\"new_admin\""];
-  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgAddAdminResponse defines the Msg/AddAdmin response type
 message MsgAddAdminResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgRemoveSubspaceAdmin represents the message used to remove an admin from a specific subspace
+message MsgRemoveAdmin {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
+  string creator = 3 [(gogoproto.moretags) = "yaml:\"creator\""];
+}
+
+// MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type
+message MsgRemoveAdminResponse{}
 
 // ___________________________________________________________________________________________________________________
 

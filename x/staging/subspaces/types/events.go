@@ -8,9 +8,10 @@ const (
 	EventTypeBlockUserPosts = "blocked_user_posts"
 
 	// Subspaces attributes
-	AttributeKeySubspaceId       = "subspace_id"
-	AttributeKeySubspaceCreator  = "subspace_creator"
-	AttributeKeySubspaceNewAdmin = "new_admin"
-	AttributeKeyAllowedUser      = "allowed_user"
-	AttributeKeyBlockUser        = "blocked_user"
+	AttributeKeySubspaceId           = "subspace_id"
+	AttributeKeySubspaceCreator      = "subspace_creator"
+	AttributeKeySubspaceNewAdmin     = "new_admin"
+	AttributeKeySubspaceRemovedAdmin = "removed_admin"
+	AttributeKeyAllowedUser          = "allowed_user"
+	AttributeKeyBlockUser            = "blocked_user"
 )

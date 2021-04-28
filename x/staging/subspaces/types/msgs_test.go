@@ -122,13 +122,13 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
 		},
 		{
-			name: "invalid subspace admin address returns error",
+			name: "invalid subspace creator address returns error",
 			msg: types.NewMsgAddAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address"),
 		},
 		{
 			name: "invalid subspace new admin address returns error",
@@ -170,7 +170,7 @@ func TestMsgAddAdmin_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","new_admin":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","new_admin":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -180,7 +180,103 @@ func TestMsgAddAdmin_GetSigners(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
+}
+
+func TestMsgRemoveAdmin_Route(t *testing.T) {
+	msg := types.NewMsgRemoveAdmin(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	require.Equal(t, "subspaces", msg.Route())
+}
+
+func TestMsgRemoveAdmin_Type(t *testing.T) {
+	msg := types.NewMsgRemoveAdmin(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	require.Equal(t, "remove_admin", msg.Type())
+}
+
+func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   *types.MsgRemoveAdmin
+		error error
+	}{
+		{
+			name: "invalid subspace returns error",
+			msg: types.NewMsgRemoveAdmin(
+				"",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+		},
+		{
+			name: "invalid subspace creator address returns error",
+			msg: types.NewMsgRemoveAdmin(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address"),
+		},
+		{
+			name: "invalid subspace admin address returns error",
+			msg: types.NewMsgRemoveAdmin(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+		},
+		{
+			name: "valid message returns no error",
+			msg: types.NewMsgRemoveAdmin(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			error: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgRemoveAdmin_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgRemoveAdmin(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	expected := `{"admin":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+func TestMsgRemoveAdmin_GetSigners(t *testing.T) {
+	msg := types.NewMsgRemoveAdmin(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 

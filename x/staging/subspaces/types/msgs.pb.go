@@ -108,7 +108,7 @@ var xxx_messageInfo_MsgCreateSubspaceResponse proto.InternalMessageInfo
 type MsgAddAdmin struct {
 	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	NewAdmin   string `protobuf:"bytes,2,opt,name=new_admin,json=newAdmin,proto3" json:"new_admin,omitempty" yaml:"new_admin"`
-	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
+	Creator    string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
 
 func (m *MsgAddAdmin) Reset()         { *m = MsgAddAdmin{} }
@@ -144,7 +144,7 @@ func (m *MsgAddAdmin) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAddAdmin proto.InternalMessageInfo
 
-// MsgAddAdminResponse defines the Msg/AddAdminToSubspace response type
+// MsgAddAdminResponse defines the Msg/AddAdmin response type
 type MsgAddAdminResponse struct {
 }
 
@@ -181,6 +181,83 @@ func (m *MsgAddAdminResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAddAdminResponse proto.InternalMessageInfo
 
+// MsgRemoveSubspaceAdmin represents the message used to remove an admin from a specific subspace
+type MsgRemoveAdmin struct {
+	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
+	Admin      string `protobuf:"bytes,2,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
+	Creator    string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+}
+
+func (m *MsgRemoveAdmin) Reset()         { *m = MsgRemoveAdmin{} }
+func (m *MsgRemoveAdmin) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveAdmin) ProtoMessage()    {}
+func (*MsgRemoveAdmin) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba19b97e9f94db77, []int{4}
+}
+func (m *MsgRemoveAdmin) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveAdmin) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveAdmin.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveAdmin) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveAdmin.Merge(m, src)
+}
+func (m *MsgRemoveAdmin) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveAdmin) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveAdmin.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveAdmin proto.InternalMessageInfo
+
+// MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type
+type MsgRemoveAdminResponse struct {
+}
+
+func (m *MsgRemoveAdminResponse) Reset()         { *m = MsgRemoveAdminResponse{} }
+func (m *MsgRemoveAdminResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRemoveAdminResponse) ProtoMessage()    {}
+func (*MsgRemoveAdminResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba19b97e9f94db77, []int{5}
+}
+func (m *MsgRemoveAdminResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRemoveAdminResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRemoveAdminResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRemoveAdminResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRemoveAdminResponse.Merge(m, src)
+}
+func (m *MsgRemoveAdminResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRemoveAdminResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRemoveAdminResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRemoveAdminResponse proto.InternalMessageInfo
+
 // MsgAllowUserPosts represents the message used to allow a user to post inside a specific subspace
 type MsgAllowUserPosts struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
@@ -192,7 +269,7 @@ func (m *MsgAllowUserPosts) Reset()         { *m = MsgAllowUserPosts{} }
 func (m *MsgAllowUserPosts) String() string { return proto.CompactTextString(m) }
 func (*MsgAllowUserPosts) ProtoMessage()    {}
 func (*MsgAllowUserPosts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{4}
+	return fileDescriptor_ba19b97e9f94db77, []int{6}
 }
 func (m *MsgAllowUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -229,7 +306,7 @@ func (m *MsgAllowUserPostsResponse) Reset()         { *m = MsgAllowUserPostsResp
 func (m *MsgAllowUserPostsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAllowUserPostsResponse) ProtoMessage()    {}
 func (*MsgAllowUserPostsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{5}
+	return fileDescriptor_ba19b97e9f94db77, []int{7}
 }
 func (m *MsgAllowUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -269,7 +346,7 @@ func (m *MsgBlockUserPosts) Reset()         { *m = MsgBlockUserPosts{} }
 func (m *MsgBlockUserPosts) String() string { return proto.CompactTextString(m) }
 func (*MsgBlockUserPosts) ProtoMessage()    {}
 func (*MsgBlockUserPosts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{6}
+	return fileDescriptor_ba19b97e9f94db77, []int{8}
 }
 func (m *MsgBlockUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -306,7 +383,7 @@ func (m *MsgBlockUserPostsResponse) Reset()         { *m = MsgBlockUserPostsResp
 func (m *MsgBlockUserPostsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgBlockUserPostsResponse) ProtoMessage()    {}
 func (*MsgBlockUserPostsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{7}
+	return fileDescriptor_ba19b97e9f94db77, []int{9}
 }
 func (m *MsgBlockUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -340,6 +417,8 @@ func init() {
 	proto.RegisterType((*MsgCreateSubspaceResponse)(nil), "desmos.subspaces.v1beta1.MsgCreateSubspaceResponse")
 	proto.RegisterType((*MsgAddAdmin)(nil), "desmos.subspaces.v1beta1.MsgAddAdmin")
 	proto.RegisterType((*MsgAddAdminResponse)(nil), "desmos.subspaces.v1beta1.MsgAddAdminResponse")
+	proto.RegisterType((*MsgRemoveAdmin)(nil), "desmos.subspaces.v1beta1.MsgRemoveAdmin")
+	proto.RegisterType((*MsgRemoveAdminResponse)(nil), "desmos.subspaces.v1beta1.MsgRemoveAdminResponse")
 	proto.RegisterType((*MsgAllowUserPosts)(nil), "desmos.subspaces.v1beta1.MsgAllowUserPosts")
 	proto.RegisterType((*MsgAllowUserPostsResponse)(nil), "desmos.subspaces.v1beta1.MsgAllowUserPostsResponse")
 	proto.RegisterType((*MsgBlockUserPosts)(nil), "desmos.subspaces.v1beta1.MsgBlockUserPosts")
@@ -351,39 +430,42 @@ func init() {
 }
 
 var fileDescriptor_ba19b97e9f94db77 = []byte{
-	// 504 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x94, 0xcf, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x93, 0xd6, 0x1f, 0xbb, 0x53, 0xa9, 0x75, 0x5c, 0xa1, 0x56, 0x48, 0x64, 0x96, 0x15,
-	0x41, 0x37, 0xa1, 0x2e, 0x22, 0xec, 0xad, 0x15, 0x04, 0x0f, 0x05, 0x8d, 0x78, 0xf1, 0xb2, 0x24,
-	0x9d, 0x61, 0x36, 0x98, 0x64, 0x4a, 0x5e, 0x6a, 0xdd, 0xab, 0x27, 0x8f, 0xfe, 0x09, 0xfb, 0x37,
-	0x78, 0xf4, 0x2f, 0x10, 0xbc, 0xec, 0xd1, 0x53, 0x90, 0xf6, 0x22, 0x1e, 0xf3, 0x17, 0x48, 0x32,
-	0x49, 0x49, 0xb2, 0x6b, 0x6b, 0xbd, 0x79, 0x9b, 0xcc, 0xfb, 0xbc, 0xf7, 0xbe, 0xdf, 0xcc, 0x9b,
-	0x41, 0xbb, 0x94, 0x81, 0x2f, 0xc0, 0x84, 0xa9, 0x03, 0x13, 0x7b, 0xcc, 0xc0, 0x7c, 0xd7, 0x77,
-	0x58, 0x64, 0xf7, 0x4d, 0x1f, 0x38, 0x18, 0x93, 0x50, 0x44, 0x02, 0x77, 0x25, 0x64, 0x2c, 0x21,
-	0x23, 0x87, 0x7a, 0x3b, 0x5c, 0x70, 0x91, 0x41, 0x66, 0xba, 0x92, 0x3c, 0xf9, 0xa0, 0xa2, 0x1b,
-	0x23, 0xe0, 0x4f, 0x43, 0x66, 0x47, 0xec, 0x55, 0x9e, 0x84, 0x1f, 0xa3, 0x86, 0x4b, 0xbb, 0xea,
-	0x5d, 0xf5, 0xfe, 0xf6, 0x70, 0xef, 0x57, 0xac, 0xb7, 0x8a, 0x72, 0x47, 0x2e, 0x4d, 0x62, 0x1d,
-	0x9f, 0xd8, 0xbe, 0x77, 0x48, 0x4a, 0x9b, 0xc4, 0x6a, 0xb8, 0x14, 0x3f, 0x44, 0x57, 0xc7, 0x69,
-	0x21, 0x11, 0x76, 0x1b, 0x59, 0x2e, 0x4e, 0x62, 0xbd, 0x2d, 0xe1, 0x3c, 0x40, 0xac, 0x02, 0x39,
-	0xdc, 0xfa, 0x78, 0xaa, 0x2b, 0x3f, 0x4f, 0x75, 0x85, 0xdc, 0x41, 0xb7, 0xcf, 0x69, 0xb0, 0x18,
-	0x4c, 0x44, 0x00, 0x8c, 0x7c, 0x51, 0x51, 0x6b, 0x04, 0x7c, 0x40, 0xe9, 0x80, 0xfa, 0x6e, 0x80,
-	0x9f, 0xa1, 0xb2, 0x9a, 0xcd, 0x44, 0xa2, 0xe2, 0xeb, 0x39, 0xc5, 0x7d, 0xb4, 0x1d, 0xb0, 0xd9,
-	0x91, 0x9d, 0x16, 0xcd, 0xe5, 0xee, 0x24, 0xb1, 0xde, 0x91, 0x69, 0xcb, 0x10, 0xb1, 0xb6, 0x02,
-	0x36, 0x93, 0xad, 0xef, 0xa1, 0xcb, 0x12, 0x6f, 0x66, 0x78, 0x27, 0x89, 0xf5, 0x6b, 0x12, 0xcf,
-	0x51, 0x19, 0x2e, 0x39, 0xbb, 0x85, 0x6e, 0x96, 0xb4, 0x2f, 0x3d, 0x7d, 0x96, 0x7f, 0x7d, 0xe0,
-	0x79, 0x62, 0xf6, 0x1a, 0x58, 0xf8, 0x42, 0x40, 0x04, 0x78, 0x17, 0x5d, 0x9a, 0x02, 0x0b, 0x73,
-	0x4b, 0xd7, 0x93, 0x58, 0x6f, 0xc9, 0xea, 0xe9, 0x2e, 0xb1, 0xb2, 0x60, 0xdd, 0x7e, 0xe3, 0x5f,
-	0xed, 0x6f, 0xee, 0x45, 0x9e, 0x52, 0x55, 0x73, 0xdd, 0xd1, 0xd0, 0x13, 0xe3, 0xb7, 0xff, 0x99,
-	0xa3, 0xaa, 0xe6, 0xc2, 0xd1, 0xa3, 0x6f, 0x4d, 0xd4, 0x1c, 0x01, 0xc7, 0x21, 0x6a, 0xd7, 0x6e,
-	0xc7, 0x03, 0xe3, 0x4f, 0x97, 0xcc, 0x38, 0x37, 0xc6, 0xbd, 0x83, 0x0d, 0xe0, 0xa2, 0x37, 0x3e,
-	0x46, 0x9d, 0x01, 0xa5, 0xc5, 0xb6, 0x1c, 0xbe, 0xbd, 0x95, 0x85, 0x8a, 0x11, 0xeb, 0xed, 0xff,
-	0x15, 0xb6, 0xec, 0x14, 0xa2, 0x76, 0x6d, 0x0a, 0x57, 0xbb, 0xab, 0xc2, 0x6b, 0xdc, 0x5d, 0x3c,
-	0x2b, 0x69, 0xcf, 0xda, 0x9c, 0xac, 0xee, 0x59, 0x85, 0xd7, 0xf4, 0xbc, 0xf8, 0x34, 0x87, 0x2f,
-	0xbf, 0xce, 0x35, 0xf5, 0x6c, 0xae, 0xa9, 0x3f, 0xe6, 0x9a, 0xfa, 0x69, 0xa1, 0x29, 0x67, 0x0b,
-	0x4d, 0xf9, 0xbe, 0xd0, 0x94, 0x37, 0x4f, 0xb8, 0x1b, 0x1d, 0x4f, 0x1d, 0x63, 0x2c, 0x7c, 0x53,
-	0x16, 0xde, 0xf7, 0x6c, 0x07, 0xf2, 0xb5, 0xf9, 0xde, 0x84, 0xc8, 0xe6, 0x6e, 0xc0, 0x4b, 0xef,
-	0x6e, 0x74, 0x32, 0x61, 0xe0, 0x5c, 0xc9, 0x5e, 0xd0, 0x83, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff,
-	0xe1, 0x62, 0x42, 0x05, 0x98, 0x05, 0x00, 0x00,
+	// 549 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0x31, 0x6f, 0xd3, 0x40,
+	0x14, 0xc7, 0xe3, 0xa4, 0x40, 0x7b, 0x41, 0x21, 0x5c, 0x0b, 0x0a, 0x41, 0xb2, 0x91, 0xab, 0xa2,
+	0x4a, 0x50, 0x9b, 0x50, 0x21, 0xa4, 0x6e, 0x09, 0x12, 0x12, 0x43, 0x24, 0x30, 0x62, 0x61, 0xa9,
+	0x9c, 0xdc, 0xe9, 0x6a, 0x61, 0xfb, 0x82, 0x9f, 0xd3, 0xd0, 0x95, 0x89, 0x91, 0x8f, 0xd0, 0xcf,
+	0xc0, 0xc4, 0x84, 0x18, 0x19, 0x3b, 0x32, 0x59, 0x28, 0x59, 0x10, 0xa3, 0x3f, 0x01, 0x72, 0xce,
+	0xb6, 0x6c, 0xa7, 0xb8, 0x0d, 0xb0, 0x74, 0x73, 0xee, 0xfd, 0xdf, 0xfb, 0xbf, 0x9f, 0xf5, 0xbf,
+	0x18, 0x6d, 0x12, 0x0a, 0x0e, 0x07, 0x1d, 0xc6, 0x03, 0x18, 0x99, 0x43, 0x0a, 0xfa, 0x61, 0x67,
+	0x40, 0x7d, 0xb3, 0xa3, 0x3b, 0xc0, 0x40, 0x1b, 0x79, 0xdc, 0xe7, 0xb8, 0x25, 0x44, 0x5a, 0x2a,
+	0xd2, 0x62, 0x51, 0x7b, 0x83, 0x71, 0xc6, 0xe7, 0x22, 0x3d, 0x7a, 0x12, 0x7a, 0xf5, 0xbd, 0x84,
+	0xae, 0xf7, 0x81, 0x3d, 0xf1, 0xa8, 0xe9, 0xd3, 0x97, 0x71, 0x13, 0x7e, 0x84, 0xaa, 0x16, 0x69,
+	0x49, 0x77, 0xa4, 0xed, 0xb5, 0xde, 0xd6, 0xaf, 0x40, 0xa9, 0x27, 0xe3, 0xf6, 0x2d, 0x12, 0x06,
+	0x0a, 0x3e, 0x32, 0x1d, 0x7b, 0x4f, 0xcd, 0x1c, 0xaa, 0x46, 0xd5, 0x22, 0xf8, 0x3e, 0xba, 0x32,
+	0x8c, 0x06, 0x71, 0xaf, 0x55, 0x9d, 0xf7, 0xe2, 0x30, 0x50, 0x1a, 0x42, 0x1c, 0x17, 0x54, 0x23,
+	0x91, 0xec, 0xad, 0x7e, 0x38, 0x56, 0x2a, 0x3f, 0x8f, 0x95, 0x8a, 0x7a, 0x1b, 0xdd, 0x5a, 0xd8,
+	0xc1, 0xa0, 0x30, 0xe2, 0x2e, 0x50, 0xf5, 0xab, 0x84, 0xea, 0x7d, 0x60, 0x5d, 0x42, 0xba, 0xc4,
+	0xb1, 0x5c, 0xfc, 0x14, 0x65, 0xb7, 0x59, 0x6e, 0x49, 0x94, 0xfc, 0x7a, 0x46, 0x70, 0x07, 0xad,
+	0xb9, 0x74, 0xb2, 0x6f, 0x46, 0x43, 0xe3, 0x75, 0x37, 0xc2, 0x40, 0x69, 0x8a, 0xb6, 0xb4, 0xa4,
+	0x1a, 0xab, 0x2e, 0x9d, 0x08, 0xeb, 0x0c, 0x5f, 0x6d, 0x19, 0xbe, 0x1b, 0x68, 0x3d, 0x43, 0x90,
+	0x92, 0x7d, 0x96, 0x50, 0xa3, 0x0f, 0xcc, 0xa0, 0x0e, 0x3f, 0xa4, 0xff, 0x17, 0xee, 0x2e, 0xba,
+	0x94, 0x05, 0x6b, 0x86, 0x81, 0x72, 0x55, 0xb4, 0xc4, 0x50, 0xa2, 0xfc, 0xd7, 0x44, 0x2d, 0x74,
+	0x33, 0xbf, 0x79, 0x0a, 0xf5, 0x49, 0x04, 0xaa, 0x6b, 0xdb, 0x7c, 0xf2, 0x0a, 0xa8, 0xf7, 0x9c,
+	0x83, 0x0f, 0x78, 0x13, 0xad, 0x8c, 0x81, 0x7a, 0x31, 0xd0, 0xb5, 0x30, 0x50, 0xea, 0xc2, 0x24,
+	0x3a, 0x55, 0x8d, 0x79, 0xb1, 0x08, 0x5f, 0xfd, 0x67, 0xf8, 0x5a, 0x29, 0xfc, 0x42, 0x00, 0xf3,
+	0x3b, 0x17, 0x89, 0x7a, 0x36, 0x1f, 0xbe, 0xb9, 0x60, 0x44, 0xf9, 0x9d, 0x13, 0xa2, 0x87, 0x5f,
+	0x56, 0x50, 0xad, 0x0f, 0x0c, 0x7b, 0xa8, 0x51, 0xb8, 0xf8, 0xf7, 0xb4, 0x3f, 0xfd, 0x7f, 0x68,
+	0x0b, 0x37, 0xb4, 0xbd, 0xbb, 0x84, 0x38, 0xf1, 0xc6, 0x07, 0xa8, 0xd9, 0x25, 0x24, 0x39, 0x16,
+	0xa9, 0xdf, 0x2a, 0x1d, 0x94, 0xdc, 0x9b, 0xf6, 0xce, 0xb9, 0x64, 0xa9, 0xd3, 0x5b, 0xb4, 0x2e,
+	0x02, 0x9a, 0x37, 0xdb, 0x2e, 0x9d, 0x92, 0x89, 0x74, 0xfb, 0xc1, 0x79, 0x95, 0xa9, 0xa5, 0x87,
+	0x1a, 0x85, 0xe0, 0x97, 0xbf, 0xd0, 0xbc, 0xf8, 0x8c, 0x17, 0x7a, 0x7a, 0x3c, 0x23, 0xcf, 0x42,
+	0x34, 0xcb, 0x3d, 0xf3, 0xe2, 0x33, 0x3c, 0x4f, 0x0f, 0x50, 0xef, 0xc5, 0xb7, 0xa9, 0x2c, 0x9d,
+	0x4c, 0x65, 0xe9, 0xc7, 0x54, 0x96, 0x3e, 0xce, 0xe4, 0xca, 0xc9, 0x4c, 0xae, 0x7c, 0x9f, 0xc9,
+	0x95, 0xd7, 0x8f, 0x99, 0xe5, 0x1f, 0x8c, 0x07, 0xda, 0x90, 0x3b, 0xba, 0x18, 0xbc, 0x63, 0x9b,
+	0x03, 0x88, 0x9f, 0xf5, 0x77, 0x3a, 0xf8, 0x26, 0xb3, 0x5c, 0x96, 0xf9, 0x8a, 0xf9, 0x47, 0x23,
+	0x0a, 0x83, 0xcb, 0xf3, 0xef, 0xd1, 0xee, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb5, 0xb8, 0x2b,
+	0x3c, 0xe6, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -402,6 +484,8 @@ type MsgClient interface {
 	CreateSubspace(ctx context.Context, in *MsgCreateSubspace, opts ...grpc.CallOption) (*MsgCreateSubspaceResponse, error)
 	// AddSubspaceAdmin defines the method to add a new admin to the subspace
 	AddSubspaceAdmin(ctx context.Context, in *MsgAddAdmin, opts ...grpc.CallOption) (*MsgAddAdminResponse, error)
+	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
+	RemoveSubspaceAdmin(ctx context.Context, in *MsgRemoveAdmin, opts ...grpc.CallOption) (*MsgRemoveAdminResponse, error)
 	// AllowUserPosts defines the method to let user posts inside a specific subspace
 	AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, opts ...grpc.CallOption) (*MsgAllowUserPostsResponse, error)
 	// BlockUserPosts defines the method to block user posts inside a specific subspace
@@ -434,6 +518,15 @@ func (c *msgClient) AddSubspaceAdmin(ctx context.Context, in *MsgAddAdmin, opts 
 	return out, nil
 }
 
+func (c *msgClient) RemoveSubspaceAdmin(ctx context.Context, in *MsgRemoveAdmin, opts ...grpc.CallOption) (*MsgRemoveAdminResponse, error) {
+	out := new(MsgRemoveAdminResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/RemoveSubspaceAdmin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, opts ...grpc.CallOption) (*MsgAllowUserPostsResponse, error) {
 	out := new(MsgAllowUserPostsResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/AllowUserPosts", in, out, opts...)
@@ -458,6 +551,8 @@ type MsgServer interface {
 	CreateSubspace(context.Context, *MsgCreateSubspace) (*MsgCreateSubspaceResponse, error)
 	// AddSubspaceAdmin defines the method to add a new admin to the subspace
 	AddSubspaceAdmin(context.Context, *MsgAddAdmin) (*MsgAddAdminResponse, error)
+	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
+	RemoveSubspaceAdmin(context.Context, *MsgRemoveAdmin) (*MsgRemoveAdminResponse, error)
 	// AllowUserPosts defines the method to let user posts inside a specific subspace
 	AllowUserPosts(context.Context, *MsgAllowUserPosts) (*MsgAllowUserPostsResponse, error)
 	// BlockUserPosts defines the method to block user posts inside a specific subspace
@@ -473,6 +568,9 @@ func (*UnimplementedMsgServer) CreateSubspace(ctx context.Context, req *MsgCreat
 }
 func (*UnimplementedMsgServer) AddSubspaceAdmin(ctx context.Context, req *MsgAddAdmin) (*MsgAddAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddSubspaceAdmin not implemented")
+}
+func (*UnimplementedMsgServer) RemoveSubspaceAdmin(ctx context.Context, req *MsgRemoveAdmin) (*MsgRemoveAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubspaceAdmin not implemented")
 }
 func (*UnimplementedMsgServer) AllowUserPosts(ctx context.Context, req *MsgAllowUserPosts) (*MsgAllowUserPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllowUserPosts not implemented")
@@ -517,6 +615,24 @@ func _Msg_AddSubspaceAdmin_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).AddSubspaceAdmin(ctx, req.(*MsgAddAdmin))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RemoveSubspaceAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRemoveAdmin)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RemoveSubspaceAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/RemoveSubspaceAdmin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RemoveSubspaceAdmin(ctx, req.(*MsgRemoveAdmin))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -568,6 +684,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddSubspaceAdmin",
 			Handler:    _Msg_AddSubspaceAdmin_Handler,
+		},
+		{
+			MethodName: "RemoveSubspaceAdmin",
+			Handler:    _Msg_RemoveSubspaceAdmin_Handler,
 		},
 		{
 			MethodName: "AllowUserPosts",
@@ -662,10 +782,10 @@ func (m *MsgAddAdmin) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Admin) > 0 {
-		i -= len(m.Admin)
-		copy(dAtA[i:], m.Admin)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Admin)))
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -702,6 +822,73 @@ func (m *MsgAddAdminResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgAddAdminResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveAdmin) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveAdmin) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveAdmin) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Admin) > 0 {
+		i -= len(m.Admin)
+		copy(dAtA[i:], m.Admin)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Admin)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.SubspaceId) > 0 {
+		i -= len(m.SubspaceId)
+		copy(dAtA[i:], m.SubspaceId)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRemoveAdminResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRemoveAdminResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRemoveAdminResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -894,7 +1081,7 @@ func (m *MsgAddAdmin) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	l = len(m.Admin)
+	l = len(m.Creator)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -902,6 +1089,36 @@ func (m *MsgAddAdmin) Size() (n int) {
 }
 
 func (m *MsgAddAdminResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRemoveAdmin) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SubspaceId)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Admin)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRemoveAdminResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1235,7 +1452,7 @@ func (m *MsgAddAdmin) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Admin", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1263,7 +1480,7 @@ func (m *MsgAddAdmin) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Admin = string(dAtA[iNdEx:postIndex])
+			m.Creator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1313,6 +1530,202 @@ func (m *MsgAddAdminResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgAddAdminResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveAdmin) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveAdmin: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveAdmin: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubspaceId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Admin", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Admin = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRemoveAdminResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRemoveAdminResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRemoveAdminResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

@@ -54,11 +54,11 @@ func (msg MsgCreateSubspace) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgAddAdmin is a constructor function for MsgAddAdmin
-func NewMsgAddAdmin(id, newAdmin, admin string) *MsgAddAdmin {
+func NewMsgAddAdmin(id, newAdmin, creator string) *MsgAddAdmin {
 	return &MsgAddAdmin{
 		SubspaceId: id,
 		NewAdmin:   newAdmin,
-		Admin:      admin,
+		Creator:    creator,
 	}
 }
 
@@ -70,9 +70,9 @@ func (msg MsgAddAdmin) Type() string { return ActionAddAdmin }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddAdmin) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Admin)
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.NewAdmin)
@@ -94,7 +94,7 @@ func (msg MsgAddAdmin) GetSignBytes() []byte {
 
 // GetSigners defines the required signature
 func (msg MsgAddAdmin) GetSigners() []sdk.AccAddress {
-	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	return []sdk.AccAddress{addr}
 }
 
@@ -102,6 +102,58 @@ func (msg MsgAddAdmin) GetSigners() []sdk.AccAddress {
 // This is done due to the fact that Amino does not respect omitempty clauses
 func (msg MsgAddAdmin) MarshalJSON() ([]byte, error) {
 	type temp MsgAddAdmin
+	return json.Marshal(temp(msg))
+}
+
+// NewMsgRemoveAdmin is a constructor function for MsgRemoveAdmin
+func NewMsgRemoveAdmin(id, admin, creator string) *MsgRemoveAdmin {
+	return &MsgRemoveAdmin{
+		SubspaceId: id,
+		Admin:      admin,
+		Creator:    creator,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgRemoveAdmin) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgRemoveAdmin) Type() string { return ActionRemoveAdmin }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgRemoveAdmin) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
+	}
+
+	if !commons.IsValidSubspace(msg.SubspaceId) {
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgRemoveAdmin) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines the required signature
+func (msg MsgRemoveAdmin) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
+	return []sdk.AccAddress{addr}
+}
+
+// MarshalJSON implements the json.Mashaler interface.
+// This is done due to the fact that Amino does not respect omitempty clauses
+func (msg MsgRemoveAdmin) MarshalJSON() ([]byte, error) {
+	type temp MsgRemoveAdmin
 	return json.Marshal(temp(msg))
 }
 

@@ -53,7 +53,7 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.
 	return subspace, true
 }
 
-// AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace with subspaceId if its not present.
+// AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace if its not present.
 // Returns an error if the admin is already present.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, newAdmin string) error {
 	store := ctx.KVStore(k.storeKey)
@@ -63,13 +63,33 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, newAdmin string)
 	for _, admin := range wrapped.Admins {
 		if admin == newAdmin {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the user is already an admin of subspace: %s", subspaceId)
+				"the user is already an admin of the subspace: %s", subspaceId)
 		}
 	}
 
 	wrapped.Admins = append(wrapped.Admins, newAdmin)
 	store.Set(key, types.MustMarshalAdmins(k.cdc, wrapped))
 	return nil
+}
+
+// IsAdmin returns true if the given address is an admin inside the given subspace id, false otherwise.
+func (k Keeper) IsAdmin(ctx sdk.Context, address, subspaceId string) bool {
+	store := ctx.KVStore(k.storeKey)
+	key := types.AdminsStoreKey(subspaceId)
+
+	wrapped := types.MustUnmarshalAdmins(k.cdc, store.Get(key))
+	for _, admin := range wrapped.Admins {
+		if admin == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (k Keeper) AllowUserPosts(ctx sdk.Context, user, subspaceId string) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.AllowedToPostUsersKey()
 }
 
 // GetAllSubspaceAdmins returns a list of all the subspace admins
@@ -80,6 +100,8 @@ func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceId string) types.A
 	return types.MustUnmarshalAdmins(k.cdc, store.Get(key))
 }
 
+// RemoveAdminFromSubspace remove the given admin from the given subspace.
+// It returns error when the admin is not present inside the subspace.
 func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.AdminsStoreKey(subspaceId)
