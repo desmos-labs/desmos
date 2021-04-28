@@ -581,7 +581,7 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 
 			_, err = cbs.OnTimeoutPacket(suite.chainB.GetContext(), packet)
 			if tc.expPass {
-				suite.Require().Equal("packet is timedout", err.Error())
+				suite.Require().NoError(err)
 			} else {
 				suite.Require().Error(err)
 			}
