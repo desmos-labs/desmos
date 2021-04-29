@@ -55,20 +55,18 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.
 
 // AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace if its not present.
 // Returns an error if the admin is already present.
-func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, newAdmin string) error {
+func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, user string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.AdminsStoreKey(subspaceId)
 
-	wrapped := types.MustUnmarshalAdmins(k.cdc, store.Get(key))
-	for _, admin := range wrapped.Admins {
-		if admin == newAdmin {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the user is already an admin of the subspace: %s", subspaceId)
-		}
+	admins := types.MustUnmarshalUsers(k.cdc, store.Get(key))
+	if admins.IsPresent(user) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user is already an admin of the subspace: %s", subspaceId)
 	}
 
-	wrapped.Admins = append(wrapped.Admins, newAdmin)
-	store.Set(key, types.MustMarshalAdmins(k.cdc, wrapped))
+	admins.Users = append(admins.Users, user)
+	store.Set(key, types.MustMarshalUsers(k.cdc, admins))
 	return nil
 }
 
@@ -77,27 +75,16 @@ func (k Keeper) IsAdmin(ctx sdk.Context, address, subspaceId string) bool {
 	store := ctx.KVStore(k.storeKey)
 	key := types.AdminsStoreKey(subspaceId)
 
-	wrapped := types.MustUnmarshalAdmins(k.cdc, store.Get(key))
-	for _, admin := range wrapped.Admins {
-		if admin == address {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (k Keeper) AllowUserPosts(ctx sdk.Context, user, subspaceId string) {
-	store := ctx.KVStore(k.storeKey)
-	key := types.AllowedToPostUsersKey()
+	admins := types.MustUnmarshalUsers(k.cdc, store.Get(key))
+	return admins.IsPresent(address)
 }
 
 // GetAllSubspaceAdmins returns a list of all the subspace admins
-func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceId string) types.Admins {
+func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceId string) types.Users {
 	store := ctx.KVStore(k.storeKey)
 	key := types.AdminsStoreKey(subspaceId)
 
-	return types.MustUnmarshalAdmins(k.cdc, store.Get(key))
+	return types.MustUnmarshalUsers(k.cdc, store.Get(key))
 }
 
 // RemoveAdminFromSubspace remove the given admin from the given subspace.
@@ -106,8 +93,8 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin strin
 	store := ctx.KVStore(k.storeKey)
 	key := types.AdminsStoreKey(subspaceId)
 
-	wrapped := types.MustUnmarshalAdmins(k.cdc, store.Get(key))
-	admins, found := types.RemoveAdmin(wrapped.Admins, admin)
+	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
+	admins, found := types.RemoveUser(wrapped.Users, admin)
 
 	// The admin doesn't exist, return error
 	if !found {
@@ -120,7 +107,48 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin strin
 	if len(admins) == 0 {
 		store.Delete(key)
 	} else {
-		store.Set(key, types.MustMarshalAdmins(k.cdc, types.Admins{Admins: admins}))
+		store.Set(key, types.MustMarshalUsers(k.cdc, types.Users{Users: admins}))
+	}
+
+	return nil
+}
+
+// AllowUserPosts give a user the possibility to post inside the given subspace.
+// It returns error when the user can already post inside the subspace.
+func (k Keeper) AllowUserPosts(ctx sdk.Context, newUser, subspaceId string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.AllowedToPostUsersKey(subspaceId)
+
+	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
+	if wrapped.IsPresent(newUser) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user is already allowed to post inside the subspace: %s", subspaceId)
+	}
+
+	wrapped.Users = append(wrapped.Users, newUser)
+	store.Set(key, types.MustMarshalUsers(k.cdc, wrapped))
+	return nil
+}
+
+func (k Keeper) BlockUserPosts(ctx sdk.Context, userToBlock, subspaceId string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.AllowedToPostUsersKey(subspaceId)
+
+	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
+	users, found := types.RemoveUser(wrapped.Users, userToBlock)
+
+	// The user doesn't exist, return error
+	if !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user %s already can't post inside the subspace: %s", userToBlock, subspaceId)
+	}
+
+	// Delete the key if no admins left inside the list.
+	// This cleans up the store avoid export/import tests to fail due to a different keys number
+	if len(users) == 0 {
+		store.Delete(key)
+	} else {
+		store.Set(key, types.MustMarshalUsers(k.cdc, types.Users{Users: users}))
 	}
 
 	return nil

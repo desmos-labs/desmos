@@ -221,7 +221,7 @@ func (m *MsgRemoveAdmin) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveAdmin proto.InternalMessageInfo
 
-// MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type
+// MsgRemoveAdminResponse defines the Msg/RemoveUser response type
 type MsgRemoveAdminResponse struct {
 }
 
