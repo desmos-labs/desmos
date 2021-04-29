@@ -1,3 +1,9 @@
+# Version 0.16.2
+
+## Bug fixes
+
+- Removed duplicated `vesting` CLI commmands
+
 # Version 0.16.1
 
 ## Bug fixes
