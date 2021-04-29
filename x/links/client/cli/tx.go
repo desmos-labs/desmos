@@ -81,7 +81,7 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 			}
 
 			// Create signature by dst key
-			dstSig, _, err := dstKeyBase.Sign(dstKeyName, linkBz)
+			dstSig, _, err := dstKeyBase.Sign(dstKeyName, srcSig)
 			if err != nil {
 				return err
 			}

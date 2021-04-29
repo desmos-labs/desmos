@@ -36,13 +36,13 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 
 	sourceAddressBytes, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
 	if err != nil {
-		return fmt.Errorf("failed to source address")
+		return fmt.Errorf("failed decode to source address")
 	}
 	sourceAccAddress := sdk.AccAddress(sourceAddressBytes)
 
 	sourcePubKeyBytes, err := hex.DecodeString(p.SourcePubKey)
 	if err != nil {
-		return fmt.Errorf("failed to source pubkey")
+		return fmt.Errorf("failed to decode source pubkey")
 	}
 
 	sourcePubKey := &secp256k1.PubKey{Key: sourcePubKeyBytes}
@@ -52,7 +52,7 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 
 	destinationAddress, err := hex.DecodeString(p.DestinationAddress)
 	if err != nil {
-		return fmt.Errorf("failed to destination address")
+		return fmt.Errorf("failed to decode destination address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(string(destinationAddress))
