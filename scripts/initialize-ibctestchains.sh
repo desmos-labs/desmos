@@ -2,7 +2,7 @@
 
 HOMEDIR=$1
 GENFILE=$2
-ACCOUNTNUM=100
+ACCOUNTNUM=10
 
 # Ensure desmos is installed
 if ! [ -x "$(which desmos)" ]; then

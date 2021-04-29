@@ -395,3 +395,9 @@ ibctestnet-stop:
 
 initialize-ibctestchains:
 	bash ./scripts/initialize-ibctestchains.sh $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
+
+ibctestnet-init:
+	bash ./scripts/init-ibctestnet.sh $(BUILDDIR)/ibc 10 http://localhost:26657 http://localhost:26667
+
+ibclink-test:
+	bash ./scripts/test-ibclink.sh $(BUILDDIR)/ibc 10 http://localhost:26657
