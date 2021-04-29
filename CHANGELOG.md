@@ -1,4 +1,4 @@
-# Version 0.16.2
+# Version 0.16.1
 
 ## Changes
 
@@ -7,14 +7,9 @@
 
 ## Bug fixes
 
-- Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([#407](https://github.com/desmos-labs/desmos/issues/407)) 
-
-# Version 0.16.1
-
-## Bug fixes
-
 - Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403))
 - Removed duplicated `vesting` CLI commmands
+- Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([#407](https://github.com/desmos-labs/desmos/issues/407))
 
 # Version 0.16.0
 
