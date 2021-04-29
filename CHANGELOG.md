@@ -1,14 +1,9 @@
-# Version 0.16.2
-
-## Bug fixes
-
-- Removed duplicated `vesting` CLI commmands
-
 # Version 0.16.1
 
 ## Bug fixes
 
 - Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403))
+- Removed duplicated `vesting` CLI commmands
 
 # Version 0.16.0
 
