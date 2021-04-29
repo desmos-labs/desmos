@@ -104,10 +104,34 @@ func (k msgServer) RemoveSubspaceAdmin(goCtx context.Context, msg *types.MsgRemo
 	return &types.MsgRemoveAdminResponse{}, nil
 }
 
-func (k msgServer) AllowUserPosts(ctx context.Context, posts *types.MsgAllowUserPosts) (*types.MsgAllowUserPostsResponse, error) {
-	panic("implement me")
+func (k msgServer) AllowUserPosts(goCtx context.Context, msg *types.MsgAllowUserPosts) (*types.MsgAllowUserPostsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.DoesSubspaceExists(ctx, msg.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the subspace with id %s doesn't exist", msg.SubspaceId,
+		)
+	}
+
+	if !k.IsAdmin(ctx, msg.Admin, msg.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user: %s is not an admin and can't perform this operation on the subspace: %s",
+			msg.Admin, msg.SubspaceId)
+	}
+
+	if err := k.EnableUserPosts(ctx, msg.User, msg.SubspaceId); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeAllowUserPosts,
+		sdk.NewAttribute(types.AttributeKeyAllowedUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
+	))
+
+	return &types.MsgAllowUserPostsResponse{}, nil
 }
 
-func (k msgServer) BlockUserPosts(ctx context.Context, posts *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
+func (k msgServer) BlockUserPosts(ctx context.Context, msg *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
 	panic("implement me")
 }

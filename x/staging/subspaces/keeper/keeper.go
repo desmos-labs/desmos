@@ -53,20 +53,54 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.
 	return subspace, true
 }
 
+// addUserToList insert the given user inside a users list of a specific susbspace identified by the given subspaceId;
+// this list is stored under the given storeKey.
+// It returns error when the user is already present in that list.
+func (k Keeper) addUserToList(ctx sdk.Context, storeKey []byte, subspaceId, user, error string) error {
+	store := ctx.KVStore(k.storeKey)
+
+	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(storeKey))
+	if wrapped.IsPresent(user) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceId)
+	}
+
+	wrapped.Users = append(wrapped.Users, user)
+	store.Set(storeKey, types.MustMarshalUsers(k.cdc, wrapped))
+	return nil
+}
+
+// removeUserFromList remove the given user from a users list of a specific subspace identified by the given subspaceId;
+// this list is stored under the given storeKey.
+// It returns error when the user is not present in that list.
+func (k Keeper) removeUserFromList(ctx sdk.Context, storeKey []byte, subspaceId, user, error string) error {
+	store := ctx.KVStore(k.storeKey)
+
+	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(storeKey))
+	users, found := types.RemoveUser(wrapped.Users, user)
+
+	// The user isn't present inside the list, return error
+	if !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceId)
+	}
+
+	// Delete the key if no users left inside the list.
+	// This cleans up the store avoid export/import tests to fail due to a different keys number
+	if len(users) == 0 {
+		store.Delete(storeKey)
+	} else {
+		store.Set(storeKey, types.MustMarshalUsers(k.cdc, types.Users{Users: users}))
+	}
+
+	return nil
+}
+
 // AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace if its not present.
 // Returns an error if the admin is already present.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, user string) error {
-	store := ctx.KVStore(k.storeKey)
-	key := types.AdminsStoreKey(subspaceId)
-
-	admins := types.MustUnmarshalUsers(k.cdc, store.Get(key))
-	if admins.IsPresent(user) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the user is already an admin of the subspace: %s", subspaceId)
+	if err := k.addUserToList(ctx, types.AdminsStoreKey(subspaceId), subspaceId, user,
+		"the user: %s is already an admin of the subspace: %s"); err != nil {
+		return err
 	}
-
-	admins.Users = append(admins.Users, user)
-	store.Set(key, types.MustMarshalUsers(k.cdc, admins))
 	return nil
 }
 
@@ -90,66 +124,30 @@ func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceId string) types.U
 // RemoveAdminFromSubspace remove the given admin from the given subspace.
 // It returns error when the admin is not present inside the subspace.
 func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin string) error {
-	store := ctx.KVStore(k.storeKey)
-	key := types.AdminsStoreKey(subspaceId)
-
-	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
-	admins, found := types.RemoveUser(wrapped.Users, admin)
-
-	// The admin doesn't exist, return error
-	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "this address %s is not an admin of the subspace %s",
-			admin, subspaceId)
+	// If the admin doesn't exist, return error
+	if err := k.removeUserFromList(ctx, types.AdminsStoreKey(subspaceId), subspaceId, admin,
+		"this address: %s is not an admin of the subspace %s"); err != nil {
+		return err
 	}
-
-	// Delete the key if no admins left inside the list.
-	// This cleans up the store avoid export/import tests to fail due to a different keys number
-	if len(admins) == 0 {
-		store.Delete(key)
-	} else {
-		store.Set(key, types.MustMarshalUsers(k.cdc, types.Users{Users: admins}))
-	}
-
 	return nil
 }
 
-// AllowUserPosts give a user the possibility to post inside the given subspace.
+// EnableUserPosts give a user the possibility to post inside the given subspace.
 // It returns error when the user can already post inside the subspace.
-func (k Keeper) AllowUserPosts(ctx sdk.Context, newUser, subspaceId string) error {
-	store := ctx.KVStore(k.storeKey)
-	key := types.AllowedToPostUsersKey(subspaceId)
-
-	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
-	if wrapped.IsPresent(newUser) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the user is already allowed to post inside the subspace: %s", subspaceId)
+func (k Keeper) EnableUserPosts(ctx sdk.Context, user, subspaceId string) error {
+	if err := k.addUserToList(ctx, types.AllowedToPostUsersKey(subspaceId), subspaceId, user,
+		"the user: %s is already allowed to post inside the subspace: %s"); err != nil {
+		return err
 	}
-
-	wrapped.Users = append(wrapped.Users, newUser)
-	store.Set(key, types.MustMarshalUsers(k.cdc, wrapped))
 	return nil
 }
 
-func (k Keeper) BlockUserPosts(ctx sdk.Context, userToBlock, subspaceId string) error {
-	store := ctx.KVStore(k.storeKey)
-	key := types.AllowedToPostUsersKey(subspaceId)
-
-	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(key))
-	users, found := types.RemoveUser(wrapped.Users, userToBlock)
-
-	// The user doesn't exist, return error
-	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the user %s already can't post inside the subspace: %s", userToBlock, subspaceId)
+// DisableUserPosts block the given user to post anything inside the given subspace.
+// It returns error if the user already can't post inside the subspace.
+func (k Keeper) DisableUserPosts(ctx sdk.Context, userToBlock, subspaceId string) error {
+	if err := k.removeUserFromList(ctx, types.AllowedToPostUsersKey(subspaceId), subspaceId, userToBlock,
+		"the user: %s already can't post inside the subspace: %s"); err != nil {
+		return err
 	}
-
-	// Delete the key if no admins left inside the list.
-	// This cleans up the store avoid export/import tests to fail due to a different keys number
-	if len(users) == 0 {
-		store.Delete(key)
-	} else {
-		store.Set(key, types.MustMarshalUsers(k.cdc, types.Users{Users: users}))
-	}
-
 	return nil
 }
