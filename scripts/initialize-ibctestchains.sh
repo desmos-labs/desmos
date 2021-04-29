@@ -2,6 +2,7 @@
 
 HOMEDIR=$1
 GENFILE=$2
+ACCOUNTNUM=100
 
 # Ensure desmos is installed
 if ! [ -x "$(which desmos)" ]; then
@@ -14,8 +15,12 @@ if [ -d $HOMEDIR ]; then
     rm -r $HOMEDIR/*
 fi
 
+echo "Generate ibc0 testnet config"
+
 # generate ibc0 chain config
-bash $GENFILE 0 1 $HOMEDIR --y
+bash $GENFILE 0 $ACCOUNTNUM $HOMEDIR --y &> ibc0-account.out
+
+echo "Generate ibc1 testnet config"
 
 # generate ibc1 chain config
-bash $GENFILE 1 1 $HOMEDIR --y
+bash $GENFILE 1 $ACCOUNTNUM $HOMEDIR --y &> ibc1-account.out
