@@ -1,8 +1,15 @@
 # Version 0.16.1
 
-## Bug fixes
+## Changes
+- Added the ability to query all accounts ([cosmos#8522](https://github.com/cosmos/cosmos-sdk/pull/8522))
+- Refactored relationships related CLI commands to make them less implicits ([#408](https://github.com/desmos-labs/desmos/issues/408))
+- Reintroduced deleted relationships CLI commands' tests ([#409](https://github.com/desmos-labs/desmos/issues/409))
 
-- Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403))
+## Bug fixes
+- Removed duplicated `vesting` CLI commands
+- Fixed the `--recover` flag of the `init` command not working ([cosmos#9201](https://github.com/cosmos/cosmos-sdk/pull/9201))
+- Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403)
+- Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([#407](https://github.com/desmos-labs/desmos/issues/407))
 
 # Version 0.16.0
 
