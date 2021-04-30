@@ -238,7 +238,7 @@ func GetCmdRefuseDTagTransfer() *cobra.Command {
 // GetCmdCreateRelationship returns the command allowing to create a relationship
 func GetCmdCreateRelationship() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [receiver] [subspace]",
+		Use:   "create-relationship [receiver] [subspace]",
 		Short: "Create a relationship with the given receiver address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -264,7 +264,7 @@ func GetCmdCreateRelationship() *cobra.Command {
 // GetCmdDeleteRelationship returns the command allowing to delete a relationships
 func GetCmdDeleteRelationship() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete [receiver] [subspace]",
+		Use:   "delete-relationship [receiver] [subspace]",
 		Short: "Delete the relationship with the given user",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
