@@ -8,7 +8,7 @@
 ## Bug fixes
 - Removed duplicated `vesting` CLI commands
 - Fixed the `--recover` flag of the `init` command not working ([cosmos#9201](https://github.com/cosmos/cosmos-sdk/pull/9201))
-- Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403)
+- Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403))
 - Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([#407](https://github.com/desmos-labs/desmos/issues/407))
 
 # Version 0.16.0
