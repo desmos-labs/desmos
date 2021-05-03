@@ -2,13 +2,58 @@
 
 IBCDIR=$1
 ACCOUNTNUM=$2
-NODE=$3
+SRCNODE=$3
+DSTNODE=$4
 
+# Check channel is open on ibc0
+channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+while [ "$channel" = "" ]
+do
+    sleep 10
+    channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+done
+echo "Src links channel available now"
+
+# Check channel is open on ibc1
+channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+while [ "$channel" = "" ]
+do
+    sleep 10
+    channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+done
+echo "Dst links channel available now"
+
+# Wait for relayer start relay packets
+sleep 10
+
+echo "Test start"
+echo "Start sending tx"
+# Create link via ibc
 for (( i = 0; i < $ACCOUNTNUM; i++ ))
 do
     if [ `expr $i % 2` == 0 ]; then
-        desmos tx links create-ibc-connection links channel-1 desmos $IBCDIR/ibc1 test1-$i --home $IBCDIR/ibc0 --keyring-backend test --from test0-$i --chain-id ibc0 --node $NODE --yes &> ibclink-test.out
+        desmos tx links create-ibc-connection links channel-1 desmos $IBCDIR/ibc1 test1-$i --home $IBCDIR/ibc0 \
+        --keyring-backend test --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> ibclink-test.out
     else
-        desmos tx links create-ibc-link links channel-1 desmos --home $IBCDIR/ibc0 --keyring-backend test --from test0-$i --chain-id ibc0 --node $NODE --yes &> ibclink-test.out
+        desmos tx links create-ibc-link links channel-1 desmos --home $IBCDIR/ibc0 --keyring-backend test \
+        --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> ibclink-test.out
     fi
 done
+
+# Wait for nodes deal with ibc tx
+echo "Wait for nodes deal with tx"
+sleep 60
+
+# Check database if including results 
+echo "Start checking links"
+for (( i = 0; i < $ACCOUNTNUM; i++ ))
+do
+    result=$(desmos query links link  $(desmos keys show test0-$i --home $IBCDIR/ibc0 --keyring-backend test  --address) \
+    --home $IBCDIR/ibc1 --chain-id ibc1 --node $DSTNODE)
+    if [ "$result" = "" ]; then
+        echo "Failed to get  test0-$i link"
+        exit 1
+    fi
+done
+
+echo "Test successfully"

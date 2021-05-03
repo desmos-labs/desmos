@@ -389,15 +389,17 @@ ibctestnet-start: build-linux ibctestnet-stop
 	$(if $(shell docker inspect -f '{{ .Id }}' relayer 2>/dev/null),$(info found image relayer),$(MAKE) -C contrib/images relayer)
 	$(MAKE) initialize-ibctestchains $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
 	docker-compose -f docker-compose-ibctest.yml up -d
+	sleep 5
+	$(MAKE) ibctestnet-init
 
 ibctestnet-stop:
 	docker-compose -f docker-compose-ibctest.yml down
 
 initialize-ibctestchains:
-	bash ./scripts/initialize-ibctestchains.sh $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh
+	bash ./scripts/initialize-ibctestchains.sh $(BUILDDIR)/ibc $(CURDIR)/scripts/ibctestchain-gen.sh 100
 
 ibctestnet-init:
-	bash ./scripts/init-ibctestnet.sh $(BUILDDIR)/ibc 10 http://localhost:26657 http://localhost:26667
+	bash ./scripts/init-ibctestnet.sh $(BUILDDIR)/ibc 100 http://localhost:26657 http://localhost:26667
 
 ibclink-test:
-	bash ./scripts/test-ibclink.sh $(BUILDDIR)/ibc 10 http://localhost:26657
+	bash ./scripts/test-ibclink.sh $(BUILDDIR)/ibc 100 http://localhost:26657 http://localhost:26667
