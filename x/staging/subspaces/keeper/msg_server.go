@@ -38,8 +38,8 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	return &types.MsgCreateSubspaceResponse{}, nil
 }
 
-// checkSubspaceExistanceAndCreatorValidity check if the subspace with the given id exists and if the creator is valid.
-func (k msgServer) checkSubspaceExistanceAndCreatorValidity(ctx sdk.Context, subspaceId, creator string) error {
+// checkSubspaceExistenceAndCreatorValidity check if the subspace with the given id exists and if the creator is valid.
+func (k msgServer) checkSubspaceExistenceAndCreatorValidity(ctx sdk.Context, subspaceId, creator string) error {
 	// Check if the subspace exists
 	subspace, exist := k.GetSubspace(ctx, subspaceId)
 
@@ -63,7 +63,7 @@ func (k msgServer) checkSubspaceExistanceAndCreatorValidity(ctx sdk.Context, sub
 func (k msgServer) AddSubspaceAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*types.MsgAddAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.checkSubspaceExistanceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
+	err := k.checkSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (k msgServer) AddSubspaceAdmin(goCtx context.Context, msg *types.MsgAddAdmi
 func (k msgServer) RemoveSubspaceAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin) (*types.MsgRemoveAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.checkSubspaceExistanceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
+	err := k.checkSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
@@ -104,19 +104,27 @@ func (k msgServer) RemoveSubspaceAdmin(goCtx context.Context, msg *types.MsgRemo
 	return &types.MsgRemoveAdminResponse{}, nil
 }
 
-func (k msgServer) AllowUserPosts(goCtx context.Context, msg *types.MsgAllowUserPosts) (*types.MsgAllowUserPostsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if !k.DoesSubspaceExists(ctx, msg.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the subspace with id %s doesn't exist", msg.SubspaceId,
+func (k msgServer) checkSubspaceAndAdmin(ctx sdk.Context, admin, subspaceId string) error {
+	if !k.DoesSubspaceExists(ctx, subspaceId) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the subspace with id %s doesn't exist", subspaceId,
 		)
 	}
 
-	if !k.IsAdmin(ctx, msg.Admin, msg.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+	if !k.IsAdmin(ctx, admin, subspaceId) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user: %s is not an admin and can't perform this operation on the subspace: %s",
-			msg.Admin, msg.SubspaceId)
+			admin, subspaceId)
+	}
+
+	return nil
+}
+
+func (k msgServer) AllowUserPosts(goCtx context.Context, msg *types.MsgAllowUserPosts) (*types.MsgAllowUserPostsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := k.checkSubspaceAndAdmin(ctx, msg.Admin, msg.SubspaceId); err != nil {
+		return nil, err
 	}
 
 	if err := k.EnableUserPosts(ctx, msg.User, msg.SubspaceId); err != nil {
@@ -132,6 +140,22 @@ func (k msgServer) AllowUserPosts(goCtx context.Context, msg *types.MsgAllowUser
 	return &types.MsgAllowUserPostsResponse{}, nil
 }
 
-func (k msgServer) BlockUserPosts(ctx context.Context, msg *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
-	panic("implement me")
+func (k msgServer) BlockUserPosts(goCtx context.Context, msg *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := k.checkSubspaceAndAdmin(ctx, msg.Admin, msg.SubspaceId); err != nil {
+		return nil, err
+	}
+
+	if err := k.DisableUserPosts(ctx, msg.User, msg.SubspaceId); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeBlockUserPosts,
+		sdk.NewAttribute(types.AttributeKeyBlockedUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
+	))
+
+	return &types.MsgBlockUserPostsResponse{}, nil
 }

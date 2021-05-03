@@ -13,5 +13,5 @@ const (
 	AttributeKeySubspaceNewAdmin     = "new_admin"
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"
 	AttributeKeyAllowedUser          = "allowed_user"
-	AttributeKeyBlockUser            = "blocked_user"
+	AttributeKeyBlockedUser          = "blocked_user"
 )

@@ -31,6 +31,11 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.Id)
 	}
 
+	// this error should never happen, adding the creator to the admins list to better handle admins/creator checks
+	if err := k.AddAdminToSubspace(ctx, subspace.Id, subspace.Creator); err != nil {
+		return err
+	}
+
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
