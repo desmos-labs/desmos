@@ -13,10 +13,7 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc0:/root:Z
-      - /etc/group:/etc/group:ro
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/shadow:/etc/shadow:ro
-    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
+    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657
     networks:
       localnet:
         ipv4_address: 192.168.10.2
@@ -33,10 +30,7 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc1:/root:Z
-      - /etc/group:/etc/group:ro
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/shadow:/etc/shadow:ro
-    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
+    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657
     networks:
       localnet:
         ipv4_address: 192.168.10.3

@@ -35,7 +35,6 @@ FROM alpine:edge
 # Install ca-certificates
 RUN apk add --update ca-certificates
 WORKDIR /root
-VOLUME [ /root ]
 
 # Install bash
 RUN apk add --no-cache bash
@@ -44,11 +43,6 @@ RUN apk add --no-cache bash
 COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmos /usr/bin/desmos
 
 EXPOSE 26656 26657 1317 9090
-
-ARG UID=1000
-ARG GID=1000
-
-USER ${UID}:${GID}
 
 # Run desmos by default, omit entrypoint to ease using container with desmos
 CMD ["desmos"]
