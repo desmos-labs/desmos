@@ -36,13 +36,15 @@ func (k msgServer) CreateIBCAccountConnection(
 		msg.DestinationSignature,
 	)
 
+	height := uint64(ctx.BlockHeight())
+
 	// Transmit the packet
 	if err := k.TransmitIBCAccountConnectionPacket(
 		ctx,
 		packet,
 		msg.Port,
 		msg.ChannelId,
-		clienttypes.ZeroHeight(),
+		clienttypes.NewHeight(height, height+100),
 		msg.TimeoutTimestamp,
 	); err != nil {
 		return nil, err
@@ -67,13 +69,15 @@ func (k msgServer) CreateIBCAccountLink(
 		msg.Signature,
 	)
 
+	height := uint64(ctx.BlockHeight())
+
 	// Transmit the packet
 	if err := k.TransmitIBCAccountLinkPacket(
 		ctx,
 		packet,
 		msg.Port,
 		msg.ChannelId,
-		clienttypes.ZeroHeight(),
+		clienttypes.NewHeight(height, height+100),
 		msg.TimeoutTimestamp,
 	); err != nil {
 		return nil, err

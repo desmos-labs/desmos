@@ -19,6 +19,8 @@ func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
+		height := uint64(suite.chainA.GetContext().BlockHeight())
+
 		srcAddress := suite.chainA.Account.GetAddress().String()
 		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 		dstAddress := suite.chainB.Account.GetAddress().String()
@@ -46,7 +48,7 @@ func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 		bz, _ := packetData.GetBytes()
 		suite.Require().NoError(err)
 
-		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(height, height+100), 0)
 		packetKey := host.PacketCommitmentKey(packet.GetSourcePort(), packet.GetSourceChannel(), packet.GetSequence())
 		proof, proofHeight := suite.chainA.QueryProof(packetKey)
 
@@ -395,6 +397,8 @@ func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
+		height := uint64(suite.chainA.GetContext().BlockHeight())
+
 		srcAddr := suite.chainA.Account.GetAddress().String()
 		pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 		dstAddress := srcAddr
@@ -417,9 +421,11 @@ func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 		bz, err := packetData.GetBytes()
 		suite.Require().NoError(err)
 
-		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(height, height+100), 0)
 		packetKey := host.PacketCommitmentKey(packet.GetSourcePort(), packet.GetSourceChannel(), packet.GetSequence())
 		proof, proofHeight := suite.chainA.QueryProof(packetKey)
+		suite.T().Log(proofHeight)
+		suite.T().Log(height)
 
 		recvMsg := channeltypes.NewMsgRecvPacket(packet, proof, proofHeight, suite.chainB.Account.GetAddress())
 		err = suite.coordinator.SendMsg(suite.chainB, suite.chainA, channelA.ClientID, recvMsg)

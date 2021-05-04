@@ -10,4 +10,4 @@ ibc-setup connect
 ibc-setup channel --src=ibc0 --dest=ibc1 --src-port=transfer --dest-port=transfer --version=ics20-1
 ibc-setup channel --src=ibc0 --dest=ibc1 --src-port=links --dest-port=links --version=links-1
 
-ibc-relayer start --log-level=debug --poll 10
+ibc-relayer start --log-level=debug --poll 5

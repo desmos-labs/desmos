@@ -5,7 +5,7 @@ ACCOUNTNUM=$2
 SRCNODE=$3
 DSTNODE=$4
 
-echo "Wait for channel open"
+echo "Waiting for channel open"
 # Check channel is open on ibc0
 channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
 while [ "$channel" = "" ]
@@ -28,7 +28,7 @@ echo "Dst links channel available now"
 sleep 10
 
 echo "Test start"
-echo "Start sending transactions"
+echo "Starting sending transactions"
 # Create link via ibc
 for (( i = 0; i < $ACCOUNTNUM; i++ ))
 do
@@ -42,11 +42,11 @@ do
 done
 
 # Wait for nodes deal with ibc transactions
-echo "Wait for nodes deal with transactions"
+echo "Waiting for chains deal with transactions"
 sleep 60
 
 # Check database if including results 
-echo "Start checking links"
+echo "Starting checking links"
 for (( i = 0; i < $ACCOUNTNUM; i++ ))
 do
     result=$(desmos query links link  $(desmos keys show test0-$i --home $IBCDIR/ibc0 --keyring-backend test  --address) \
