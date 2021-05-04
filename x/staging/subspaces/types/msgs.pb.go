@@ -221,7 +221,7 @@ func (m *MsgRemoveAdmin) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveAdmin proto.InternalMessageInfo
 
-// MsgRemoveAdminResponse defines the Msg/RemoveUser response type
+// MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type
 type MsgRemoveAdminResponse struct {
 }
 
@@ -529,7 +529,7 @@ func (c *msgClient) RemoveSubspaceAdmin(ctx context.Context, in *MsgRemoveAdmin,
 
 func (c *msgClient) AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, opts ...grpc.CallOption) (*MsgAllowUserPostsResponse, error) {
 	out := new(MsgAllowUserPostsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/EnableUserPosts", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/AllowUserPosts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -538,7 +538,7 @@ func (c *msgClient) AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, o
 
 func (c *msgClient) BlockUserPosts(ctx context.Context, in *MsgBlockUserPosts, opts ...grpc.CallOption) (*MsgBlockUserPostsResponse, error) {
 	out := new(MsgBlockUserPostsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/DisableUserPosts", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/BlockUserPosts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -573,10 +573,10 @@ func (*UnimplementedMsgServer) RemoveSubspaceAdmin(ctx context.Context, req *Msg
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubspaceAdmin not implemented")
 }
 func (*UnimplementedMsgServer) AllowUserPosts(ctx context.Context, req *MsgAllowUserPosts) (*MsgAllowUserPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EnableUserPosts not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method AllowUserPosts not implemented")
 }
 func (*UnimplementedMsgServer) BlockUserPosts(ctx context.Context, req *MsgBlockUserPosts) (*MsgBlockUserPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DisableUserPosts not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method BlockUserPosts not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -647,7 +647,7 @@ func _Msg_AllowUserPosts_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/EnableUserPosts",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/AllowUserPosts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).AllowUserPosts(ctx, req.(*MsgAllowUserPosts))
@@ -665,7 +665,7 @@ func _Msg_BlockUserPosts_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/DisableUserPosts",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/BlockUserPosts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).BlockUserPosts(ctx, req.(*MsgBlockUserPosts))
@@ -690,11 +690,11 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_RemoveSubspaceAdmin_Handler,
 		},
 		{
-			MethodName: "EnableUserPosts",
+			MethodName: "AllowUserPosts",
 			Handler:    _Msg_AllowUserPosts_Handler,
 		},
 		{
-			MethodName: "DisableUserPosts",
+			MethodName: "BlockUserPosts",
 			Handler:    _Msg_BlockUserPosts_Handler,
 		},
 	},
