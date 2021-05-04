@@ -5,6 +5,7 @@ ACCOUNTNUM=$2
 SRCNODE=$3
 DSTNODE=$4
 
+echo "Wait for channel open"
 # Check channel is open on ibc0
 channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
 while [ "$channel" = "" ]
@@ -27,21 +28,21 @@ echo "Dst links channel available now"
 sleep 10
 
 echo "Test start"
-echo "Start sending tx"
+echo "Start sending transactions"
 # Create link via ibc
 for (( i = 0; i < $ACCOUNTNUM; i++ ))
 do
     if [ `expr $i % 2` == 0 ]; then
         desmos tx links create-ibc-connection links channel-1 desmos $IBCDIR/ibc1 test1-$i --home $IBCDIR/ibc0 \
-        --keyring-backend test --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> ibclink-test.out
+        --keyring-backend test --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> /dev/null
     else
         desmos tx links create-ibc-link links channel-1 desmos --home $IBCDIR/ibc0 --keyring-backend test \
-        --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> ibclink-test.out
+        --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> /dev/null
     fi
 done
 
-# Wait for nodes deal with ibc tx
-echo "Wait for nodes deal with tx"
+# Wait for nodes deal with ibc transactions
+echo "Wait for nodes deal with transactions"
 sleep 60
 
 # Check database if including results 

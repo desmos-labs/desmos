@@ -12,8 +12,9 @@ services:
       - ID=0
       - LOG=${LOG:-desmos.log}
     volumes:
-      - ./build/ibc/ibc0:/root/.desmos
-    command: desmos start --rpc.laddr tcp://0.0.0.0:26657 
+      - ./build/ibc/ibc0:/root:Z
+    user: "1000:1000"
+    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.2
@@ -29,8 +30,9 @@ services:
       - ID=1
       - LOG=${LOG:-desmos.log}
     volumes:
-      - ./build/ibc/ibc1:/root/.desmos
-    command: desmos start --rpc.laddr tcp://0.0.0.0:26657 
+      - ./build/ibc/ibc1:/root:Z
+    user: "1000:1000"
+    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.3
@@ -38,8 +40,6 @@ services:
   relayer:
     container_name: relayer
     image: relayer
-    volumes:
-      - ./build/ibc/relayer:/root/.ibcsetup
     command: bash setup-tsrelayer.sh
     networks:
       localnet:
