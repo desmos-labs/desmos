@@ -348,6 +348,7 @@ jobs:
       - name: Start testnet ⛓
         run: |
          make install clean build-linux ibctestnet-start
+        if: env.GIT_DIFF
       
       - name: Test IBC links module ✅
         run: |

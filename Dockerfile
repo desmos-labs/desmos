@@ -35,6 +35,7 @@ FROM alpine:edge
 # Install ca-certificates
 RUN apk add --update ca-certificates
 WORKDIR /root
+VOLUME [ /root ]
 
 # Install bash
 RUN apk add --no-cache bash
