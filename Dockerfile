@@ -44,5 +44,10 @@ COPY --from=build-env /go/src/github.com/desmos-labs/desmos/build/desmos /usr/bi
 
 EXPOSE 26656 26657 1317 9090
 
+ARG UID=1000
+ARG GID=1000
+
+USER ${UID}:${GID}
+
 # Run desmos by default, omit entrypoint to ease using container with desmos
 CMD ["desmos"]
