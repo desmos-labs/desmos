@@ -12,9 +12,9 @@ services:
       - ID=0
       - LOG=${LOG:-desmos.log}
     volumes:
-      - ./build/ibc/ibc0:/root:Z
+      - ./build/ibc/ibc0:/desmos:Z
     user: "1000:1000"
-    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
+    command: desmos start --home /desmos --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.2
@@ -30,9 +30,9 @@ services:
       - ID=1
       - LOG=${LOG:-desmos.log}
     volumes:
-      - ./build/ibc/ibc1:/root:Z
+      - ./build/ibc/ibc1:/desmos:Z
     user: "1000:1000"
-    command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
+    command: desmos start --home /desmos --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
         ipv4_address: 192.168.10.3
