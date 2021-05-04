@@ -344,10 +344,10 @@ jobs:
             **/**.go
             go.mod
             go.sum
-            
+
       - name: Start testnet ⛓
         run: |
-         make clean build-linux ibctestnet-start
+         make install clean build-linux ibctestnet-start
       
       - name: Test IBC links module
         run: |
