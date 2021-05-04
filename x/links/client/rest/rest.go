@@ -18,7 +18,7 @@ func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 type CreateIBCAccountLinkReq struct {
 	BaseReq      rest.BaseReq `json:"base_req"`
 	Port         string       `json:"port"`
-	ChannelId    string       `json:"channel_id"`
+	ChannelID    string       `json:"channel_id"`
 	SourcePubKey string       `json:"source_pub_key"`
 	Signature    string       `json:"signature"`
 }
@@ -27,7 +27,7 @@ type CreateIBCAccountLinkReq struct {
 type CreateIBCAccountConnectionReq struct {
 	BaseReq              rest.BaseReq `json:"base_req"`
 	Port                 string       `json:"port"`
-	ChannelId            string       `json:"channel_id"`
+	ChannelID            string       `json:"channel_id"`
 	SourcePubKey         string       `json:"source_pub_key"`
 	SourceSignature      string       `json:"source_signature"`
 	DestinationAddress   string       `json:"destination_address"`

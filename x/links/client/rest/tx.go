@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -14,9 +13,9 @@ import (
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc(fmt.Sprintf("/links/ibclink"),
+	r.HandleFunc("/links/ibclink",
 		createIBCAccountLinkHandler(cliCtx)).Methods("Post")
-	r.HandleFunc(fmt.Sprintf("/links/ibconnection"),
+	r.HandleFunc("/links/ibconnection",
 		createIBCAccountConnectionHandler(cliCtx)).Methods("Post")
 }
 
@@ -44,7 +43,7 @@ func createIBCAccountLinkHandler(cliCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgCreateIBCAccountLink(
 			req.Port,
-			req.ChannelId,
+			req.ChannelID,
 			0,
 			addr.String(),
 			pubKey,
@@ -83,7 +82,7 @@ func createIBCAccountConnectionHandler(cliCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgCreateIBCAccountConnection(
 			req.Port,
-			req.ChannelId,
+			req.ChannelID,
 			0,
 			addr.String(),
 			pubKey,

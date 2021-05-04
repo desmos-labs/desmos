@@ -9,7 +9,7 @@ import (
 
 func NewMsgCreateIBCAccountConnection(
 	port string,
-	channelId string,
+	channelID string,
 	timeoutTimestamp uint64,
 	sourceAddress string,
 	sourcePubKey string,
@@ -19,7 +19,7 @@ func NewMsgCreateIBCAccountConnection(
 ) *MsgCreateIBCAccountConnection {
 	return &MsgCreateIBCAccountConnection{
 		Port:                 port,
-		ChannelId:            channelId,
+		ChannelId:            channelID,
 		TimeoutTimestamp:     timeoutTimestamp,
 		SourceAddress:        sourceAddress,
 		SourcePubKey:         sourcePubKey,
@@ -66,7 +66,7 @@ func (msg MsgCreateIBCAccountConnection) MarshalJSON() ([]byte, error) {
 
 func NewMsgCreateIBCAccountLink(
 	port string,
-	channelId string,
+	channelID string,
 	timeoutTimestamp uint64,
 	sourceAddress string,
 	sourcePubKey string,
@@ -74,7 +74,7 @@ func NewMsgCreateIBCAccountLink(
 ) *MsgCreateIBCAccountLink {
 	return &MsgCreateIBCAccountLink{
 		Port:             port,
-		ChannelId:        channelId,
+		ChannelId:        channelID,
 		TimeoutTimestamp: timeoutTimestamp,
 		SourceAddress:    sourceAddress,
 		SourcePubKey:     sourcePubKey,

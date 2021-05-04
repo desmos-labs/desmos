@@ -10,9 +10,9 @@ import (
 const DefaultIndex uint64 = 1
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(portId string, links []Link) *GenesisState {
+func NewGenesisState(portID string, links []Link) *GenesisState {
 	return &GenesisState{
-		PortId: portId,
+		PortId: portID,
 		Links:  links,
 	}
 }

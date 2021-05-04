@@ -137,8 +137,5 @@ func (p IBCAccountLinkPacketData) GetBytes() ([]byte, error) {
 // ___________________________________________________________________________________________________________________
 
 func VerifySignature(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
-	if !pubKey.VerifySignature(msg, sig) {
-		return false
-	}
-	return true
+	return pubKey.VerifySignature(msg, sig)
 }
