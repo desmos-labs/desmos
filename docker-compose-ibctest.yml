@@ -13,6 +13,9 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc0:/root:Z
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
     command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
@@ -30,6 +33,9 @@ services:
       - LOG=${LOG:-desmos.log}
     volumes:
       - ./build/ibc/ibc1:/root:Z
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
     command: desmos start --home /root --rpc.laddr tcp://0.0.0.0:26657 
     networks:
       localnet:
