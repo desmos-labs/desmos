@@ -1,10 +1,13 @@
 package types
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 )
 
 func NewMsgCreateIBCAccountConnection(
@@ -37,9 +40,36 @@ func (msg MsgCreateIBCAccountConnection) Type() string { return ActionIBCAccount
 
 // ValidateBasic runs stateless checks on the message
 func (msg *MsgCreateIBCAccountConnection) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.SourceAddress)
+	if err := host.PortIdentifierValidator(msg.Port); err != nil {
+		return sdkerrors.Wrap(err, "invalid source port ID")
+	}
+	if err := host.ChannelIdentifierValidator(msg.ChannelId); err != nil {
+		return sdkerrors.Wrap(err, "invalid source channel ID")
+	}
+	srcAccAddr, err := sdk.AccAddressFromBech32(msg.SourceAddress)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address (%s)", err)
+	}
+	srcPubKeyBz, err := hex.DecodeString(msg.SourcePubKey)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid source pubkey")
+	}
+	srcSig, err := hex.DecodeString(msg.SourceSignature)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid source signature")
+	}
+	_, err = hex.DecodeString(msg.DestinationSignature)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid destination signature")
+	}
+	srcPubKey := &secp256k1.PubKey{Key: srcPubKeyBz}
+	if !srcAccAddr.Equals(sdk.AccAddress(srcPubKey.Address().Bytes())) {
+		return sdkerrors.Wrap(err, "source pubkey and source address are mismatched")
+	}
+	link := NewLink(msg.SourceAddress, msg.DestinationAddress)
+	linkBz, _ := link.Marshal()
+	if !VerifySignature(linkBz, srcSig, srcPubKey) {
+		return sdkerrors.Wrap(err, "failed to verify source signature")
 	}
 	return nil
 }
@@ -90,9 +120,27 @@ func (msg MsgCreateIBCAccountLink) Type() string { return ActionIBCAccountLink }
 
 // ValidateBasic runs stateless checks on the message
 func (msg *MsgCreateIBCAccountLink) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.SourceAddress)
+	if err := host.PortIdentifierValidator(msg.Port); err != nil {
+		return sdkerrors.Wrap(err, "invalid source port ID")
+	}
+	if err := host.ChannelIdentifierValidator(msg.ChannelId); err != nil {
+		return sdkerrors.Wrap(err, "invalid source channel ID")
+	}
+	accAddr, err := sdk.AccAddressFromBech32(msg.SourceAddress)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address (%s)", err)
+	}
+	PubKeyBz, err := hex.DecodeString(msg.SourcePubKey)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid pubkey")
+	}
+	_, err = hex.DecodeString(msg.Signature)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid signature")
+	}
+	srcPubKey := &secp256k1.PubKey{Key: PubKeyBz}
+	if !accAddr.Equals(sdk.AccAddress(srcPubKey.Address().Bytes())) {
+		return sdkerrors.Wrap(err, "pubkey and address are mismatched")
 	}
 	return nil
 }

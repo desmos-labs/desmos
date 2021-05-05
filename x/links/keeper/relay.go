@@ -81,26 +81,26 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, err
 	}
 
-	sourcePubkeyBytes, _ := hex.DecodeString(data.SourcePubKey)
-	destinationAddress, _ := hex.DecodeString(data.DestinationAddress)
-	sourceSignature, _ := hex.DecodeString(data.SourceSignature)
-	destSignature, _ := hex.DecodeString(data.DestinationSignature)
-	link := types.NewLink(data.SourceAddress, string(destinationAddress))
+	srcPubkeyBz, _ := hex.DecodeString(data.SourcePubKey)
+	destAddr, _ := hex.DecodeString(data.DestinationAddress)
+	srcSig, _ := hex.DecodeString(data.SourceSignature)
+	destSig, _ := hex.DecodeString(data.DestinationSignature)
+	link := types.NewLink(data.SourceAddress, string(destAddr))
 
-	linkBytes, _ := link.Marshal()
-	sourcePubkey := &secp256k1.PubKey{Key: sourcePubkeyBytes}
-	destinationAccAddress, _ := sdk.AccAddressFromBech32(string(destinationAddress))
+	linkBz, _ := link.Marshal()
+	srcPubkey := &secp256k1.PubKey{Key: srcPubkeyBz}
+	destAccAddr, _ := sdk.AccAddressFromBech32(string(destAddr))
 
-	destinationPubkey, err := k.GetLinkPubKey(ctx, destinationAccAddress)
+	destPubkey, err := k.GetLinkPubKey(ctx, destAccAddr)
 	if err != nil {
 		return packetAck, err
 	}
 
-	if !types.VerifySignature(sourceSignature, destSignature, destinationPubkey) {
+	if !types.VerifySignature(srcSig, destSig, destPubkey) {
 		return packetAck, fmt.Errorf("verify destination failed")
 	}
 
-	if !types.VerifySignature(linkBytes, sourceSignature, sourcePubkey) {
+	if !types.VerifySignature(linkBz, srcSig, srcPubkey) {
 		return packetAck, fmt.Errorf("verify source Signature failed")
 	}
 
@@ -159,13 +159,13 @@ func (k Keeper) TransmitIBCAccountLinkPacket(
 	timeoutTimestamp uint64,
 ) error {
 
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+	srcChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
 	if !found {
 		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
 	}
 
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
+	destPort := srcChannelEnd.GetCounterparty().GetPortID()
+	destChannel := srcChannelEnd.GetCounterparty().GetChannelID()
 
 	// get the next sequence
 	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
@@ -181,14 +181,14 @@ func (k Keeper) TransmitIBCAccountLinkPacket(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetBytes, _ := packetData.GetBytes()
+	packetBz, _ := packetData.GetBytes()
 	packet := channeltypes.NewPacket(
-		packetBytes,
+		packetBz,
 		sequence,
 		sourcePort,
 		sourceChannel,
-		destinationPort,
-		destinationChannel,
+		destPort,
+		destChannel,
 		timeoutHeight,
 		timeoutTimestamp,
 	)
@@ -212,16 +212,16 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 		return packetAck, err
 	}
 
-	sourcePubkeyBytes, _ := hex.DecodeString(data.SourcePubKey)
-	signature, _ := hex.DecodeString(data.Signature)
-	sourcePubkey := &secp256k1.PubKey{Key: sourcePubkeyBytes}
+	srcPubkeyBz, _ := hex.DecodeString(data.SourcePubKey)
+	sig, _ := hex.DecodeString(data.Signature)
+	srcPubKey := &secp256k1.PubKey{Key: srcPubkeyBz}
 
-	destinationAccAddress := sdk.AccAddress(sourcePubkey.Address().Bytes())
+	destAccAddr := sdk.AccAddress(srcPubKey.Address().Bytes())
 
-	link := types.NewLink(data.SourceAddress, destinationAccAddress.String())
-	linkBytes, _ := link.Marshal()
+	link := types.NewLink(data.SourceAddress, destAccAddr.String())
+	linkBz, _ := link.Marshal()
 
-	if !types.VerifySignature(linkBytes, signature, sourcePubkey) {
+	if !types.VerifySignature(linkBz, sig, srcPubKey) {
 		return packetAck, fmt.Errorf("failed to verify signature")
 	}
 
