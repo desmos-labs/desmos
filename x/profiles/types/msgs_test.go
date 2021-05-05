@@ -99,7 +99,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","profile_picture":"https://shorturl.at/adnX3","nickname":"nickname"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","nickname":"nickname","profile_picture":"https://shorturl.at/adnX3"}}`
 	require.Equal(t, expected, string(actual))
 }
 
