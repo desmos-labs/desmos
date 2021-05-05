@@ -5,6 +5,10 @@ import (
 	"testing"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
+	"github.com/desmos-labs/desmos/app"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
@@ -17,6 +21,40 @@ func assertNoProfileError(profile *types.Profile, err error) *types.Profile {
 		panic(err)
 	}
 	return profile
+}
+
+func TestProfile_Serialization(t *testing.T) {
+	cdc := app.MakeTestEncodingConfig().Marshaler
+
+	// Crete a BaseAccount
+	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	require.NoError(t, err)
+
+	protoAccount := authtypes.NewBaseAccountWithAddress(addr)
+
+	// Create a profile
+	accountAny, err := codectypes.NewAnyWithValue(protoAccount)
+	require.NoError(t, err)
+
+	profile := &types.Profile{
+		Account: accountAny,
+	}
+
+	// Update the sequence
+	err = profile.SetSequence(profile.GetSequence() + 1)
+	require.NoError(t, err)
+
+	// Serialize
+	bz, err := cdc.MarshalInterface(profile)
+	require.NoError(t, err)
+
+	// Deserialize
+	var serialized authtypes.AccountI
+	err = cdc.UnmarshalInterface(bz, &serialized)
+	require.NoError(t, err)
+
+	// Check the sequence
+	require.Equal(t, profile.GetSequence(), serialized.GetSequence(), "sequences do not match")
 }
 
 func TestProfile_Update(t *testing.T) {
