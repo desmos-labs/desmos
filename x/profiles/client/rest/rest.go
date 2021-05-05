@@ -22,7 +22,7 @@ func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 type SaveProfileReq struct {
 	BaseReq  rest.BaseReq   `json:"base_req"`
 	DTag     string         `json:"dtag"`
-	Moniker  string         `json:"moniker,omitempty"`
+	Username string         `json:"username,omitempty"`
 	Bio      string         `json:"bio,omitempty"`
 	Pictures types.Pictures `json:"pictures,omitempty"`
 }

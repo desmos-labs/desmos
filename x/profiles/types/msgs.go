@@ -15,10 +15,10 @@ import (
 // ----------------------
 
 // NewMsgSaveProfile returns a new MsgSaveProfile instance
-func NewMsgSaveProfile(dTag string, moniker, bio, profilePic, coverPic string, creator string) *MsgSaveProfile {
+func NewMsgSaveProfile(dTag string, username, bio, profilePic, coverPic string, creator string) *MsgSaveProfile {
 	return &MsgSaveProfile{
 		DTag:           dTag,
-		Moniker:        moniker,
+		Username:       username,
 		Bio:            bio,
 		ProfilePicture: profilePic,
 		CoverPicture:   coverPic,

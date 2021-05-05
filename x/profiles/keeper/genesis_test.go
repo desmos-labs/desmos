@@ -74,7 +74,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				},
 				Params: types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewUsernameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				},
 				types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewUsernameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
@@ -153,7 +153,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 
 	profile1, err := types.NewProfile(
 		"dtag-1",
-		"moniker-1",
+		"username-1",
 		"bio-1",
 		types.NewPictures("profile-1", "cover-1"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -163,7 +163,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 
 	profile2, err := types.NewProfile(
 		"dtag-2",
-		"moniker-2",
+		"username-2",
 		"bio-2",
 		types.NewPictures("profile-2", "cover-2"),
 		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -266,7 +266,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					),
 				},
 				types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewUsernameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
@@ -313,7 +313,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					),
 				},
 				Params: types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(100), sdk.NewInt(200)),
+					types.NewUsernameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),

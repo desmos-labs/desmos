@@ -20,7 +20,7 @@ var (
 
 // NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
-	dTag string, moniker, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+	dTag string, username, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -35,7 +35,7 @@ func NewProfile(
 
 	return &Profile{
 		DTag:         dTag,
-		Moniker:      moniker,
+		Username:     username,
 		Bio:          bio,
 		Pictures:     pictures,
 		CreationDate: creationDate,
@@ -103,8 +103,8 @@ func (p *Profile) Validate() error {
 		return fmt.Errorf("invalid profile DTag: %s", p.DTag)
 	}
 
-	if p.Moniker == DoNotModify {
-		return fmt.Errorf("invalid profile moniker: %s", p.Moniker)
+	if p.Username == DoNotModify {
+		return fmt.Errorf("invalid profile username: %s", p.Username)
 	}
 
 	if p.Bio == DoNotModify {
@@ -134,7 +134,7 @@ type profilePretty struct {
 	AccountNumber uint64         `json:"account_number" yaml:"account_number"`
 	Sequence      uint64         `json:"sequence" yaml:"sequence"`
 	DTag          string         `json:"dtag" yaml:"dtag"`
-	Moniker       string         `json:"moniker" yaml:"moniker"`
+	Username      string         `json:"username" yaml:"username"`
 	Bio           string         `json:"bio" yaml:"bio"`
 	Pictures      Pictures       `json:"pictures" yaml:"pictures"`
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
@@ -155,7 +155,7 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 		AccountNumber: p.GetAccountNumber(),
 		Sequence:      p.GetSequence(),
 		DTag:          p.DTag,
-		Moniker:       p.Moniker,
+		Username:      p.Username,
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
@@ -181,7 +181,7 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 		AccountNumber: p.GetAccountNumber(),
 		Sequence:      p.GetSequence(),
 		DTag:          p.DTag,
-		Moniker:       p.Moniker,
+		Username:      p.Username,
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
@@ -194,16 +194,16 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 // When performing an update, if a field should not be edited then it must be set to types.DoNotModify
 type ProfileUpdate struct {
 	DTag     string
-	Moniker  string
+	Username string
 	Bio      string
 	Pictures Pictures
 }
 
 // NewProfileUpdate builds a new ProfileUpdate instance containing the given data
-func NewProfileUpdate(dTag, moniker, bio string, pictures Pictures) *ProfileUpdate {
+func NewProfileUpdate(dTag, username, bio string, pictures Pictures) *ProfileUpdate {
 	return &ProfileUpdate{
 		DTag:     dTag,
-		Moniker:  moniker,
+		Username: username,
 		Bio:      bio,
 		Pictures: pictures,
 	}
@@ -216,8 +216,8 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.DTag = p.DTag
 	}
 
-	if update.Moniker == DoNotModify {
-		update.Moniker = p.Moniker
+	if update.Username == DoNotModify {
+		update.Username = p.Username
 	}
 
 	if update.Bio == DoNotModify {
@@ -232,7 +232,7 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.Pictures.Cover = p.Pictures.Cover
 	}
 
-	newProfile, err := NewProfile(update.DTag, update.Moniker, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
+	newProfile, err := NewProfile(update.DTag, update.Username, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
 	if err != nil {
 		return nil, err
 	}

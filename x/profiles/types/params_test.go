@@ -11,11 +11,11 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	nameSurnameParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	monikerParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
+	nameSurnameParams := types.NewUsernameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	usernameParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	bioParams := sdk.NewInt(1000)
 
-	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
+	params := types.NewParams(nameSurnameParams, usernameParams, bioParams)
 
 	require.Equal(t, params, types.DefaultParams())
 }
@@ -32,23 +32,23 @@ func TestValidateParams(t *testing.T) {
 		expErr error
 	}{
 		{
-			name:   "Invalid min moniker param returns error",
-			params: types.NewParams(types.NewMonikerParams(invalidNameMin, validNameMax), types.DefaultDTagParams(), types.DefaultMaxBioLength),
-			expErr: fmt.Errorf("invalid minimum moniker length param: 1"),
+			name:   "Invalid min username param returns error",
+			params: types.NewParams(types.NewUsernameParams(invalidNameMin, validNameMax), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			expErr: fmt.Errorf("invalid minimum username length param: 1"),
 		},
 		{
 			name:   "Invalid max dTag param return error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.NewDTagParams("regEx", validDTagMin, invalidDTagMax), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultUsernameParams(), types.NewDTagParams("regEx", validDTagMin, invalidDTagMax), types.DefaultMaxBioLength),
 			expErr: fmt.Errorf("invalid max dTag length param: -30"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
+			params: types.NewParams(types.DefaultUsernameParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
 			expErr: fmt.Errorf("invalid max bio length param: -1000"),
 		},
 		{
 			name:   "Valid params return no error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultUsernameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
 			expErr: nil,
 		},
 	}
@@ -61,10 +61,10 @@ func TestValidateParams(t *testing.T) {
 	}
 }
 
-func TestDefaultMonikerParams(t *testing.T) {
-	monikerParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	defaultMonikerParams := types.DefaultMonikerParams()
-	require.Equal(t, defaultMonikerParams, monikerParams)
+func TestDefaultUsernameParams(t *testing.T) {
+	usernameParams := types.NewUsernameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	defaultusernameParams := types.DefaultUsernameParams()
+	require.Equal(t, defaultusernameParams, usernameParams)
 }
 
 func TestDefaultDTagParams(t *testing.T) {
@@ -73,11 +73,11 @@ func TestDefaultDTagParams(t *testing.T) {
 	require.Equal(t, defaultDTagParams, dTagParams)
 }
 
-func TestValidateMonikerParams(t *testing.T) {
-	invalidMonikerMin := sdk.NewInt(1)
-	invalidMonikerMax := sdk.NewInt(-10)
-	validMonikerMin := sdk.NewInt(2)
-	validMonikerMax := sdk.NewInt(1000)
+func TestValidateUsernameParams(t *testing.T) {
+	invalidUsernameMin := sdk.NewInt(1)
+	invalidUsernameMax := sdk.NewInt(-10)
+	validUsernameMin := sdk.NewInt(2)
+	validUsernameMax := sdk.NewInt(1000)
 
 	tests := []struct {
 		name   string
@@ -86,17 +86,17 @@ func TestValidateMonikerParams(t *testing.T) {
 	}{
 		{
 			name:   "Invalid min param returns error",
-			params: types.NewMonikerParams(invalidMonikerMin, validMonikerMax),
-			expErr: fmt.Errorf("invalid minimum moniker length param: 1"),
+			params: types.NewUsernameParams(invalidUsernameMin, validUsernameMax),
+			expErr: fmt.Errorf("invalid minimum username length param: 1"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewMonikerParams(validMonikerMin, invalidMonikerMax),
-			expErr: fmt.Errorf("invalid max moniker length param: -10"),
+			params: types.NewUsernameParams(validUsernameMin, invalidUsernameMax),
+			expErr: fmt.Errorf("invalid max username length param: -10"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: types.NewMonikerParams(validMonikerMin, validMonikerMax),
+			params: types.NewUsernameParams(validUsernameMin, validUsernameMax),
 			expErr: nil,
 		},
 	}
@@ -104,7 +104,7 @@ func TestValidateMonikerParams(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, types.ValidateMonikerParams(test.params))
+			require.Equal(t, test.expErr, types.ValidateUsernameParams(test.params))
 		})
 	}
 }

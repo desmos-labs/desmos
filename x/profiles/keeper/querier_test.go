@@ -82,21 +82,21 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 
 func (suite *KeeperTestSuite) Test_queryParams() {
 	tests := []struct {
-		name                string
-		path                []string
-		nsParamsStored      types.MonikerParams
-		monikerParamsStored types.DTagParams
-		bioParamStored      sdk.Int
-		expResult           types.Params
+		name                 string
+		path                 []string
+		usernameParamsStored types.UsernameParams
+		dTagParamsStored     types.DTagParams
+		bioParamStored       sdk.Int
+		expResult            types.Params
 	}{
 		{
-			name:                "Returning profile parameters correctly",
-			path:                []string{types.QueryParams},
-			nsParamsStored:      types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(30)),
-			monikerParamsStored: types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
-			bioParamStored:      sdk.NewInt(30),
+			name:                 "Returning profile parameters correctly",
+			path:                 []string{types.QueryParams},
+			usernameParamsStored: types.NewUsernameParams(sdk.NewInt(3), sdk.NewInt(30)),
+			dTagParamsStored:     types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
+			bioParamStored:       sdk.NewInt(30),
 			expResult: types.NewParams(
-				types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(30)),
+				types.NewUsernameParams(sdk.NewInt(3), sdk.NewInt(30)),
 				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30)),
 				sdk.NewInt(30),
 			),
@@ -107,7 +107,7 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.k.SetParams(suite.ctx, types.NewParams(test.nsParamsStored, test.monikerParamsStored, test.bioParamStored))
+			suite.k.SetParams(suite.ctx, types.NewParams(test.usernameParamsStored, test.dTagParamsStored, test.bioParamStored))
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
 			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})

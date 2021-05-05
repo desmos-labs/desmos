@@ -45,13 +45,13 @@ proposal through the `gov` module of the Cosmos SDK.
   "content": {
     "@type": "/cosmos.params.v1beta1.ParameterChangeProposal",
     "value": {
-      "title": "Moniker Param Change",
-      "description": "Update moniker lengths",
+      "title": "Username Param Change",
+      "description": "Update username lengths",
       "changes": [
         {
           "subspace": "profiles",
-          "key": "monikerParams",
-          "value": "{\"type\": \"desmos/MonikerParams\",\"value\": {\"min_moniker_len\":\"5\",\"max_moniker_len\":\"40\"}}"
+          "key": "usernameParams",
+          "value": "{\"type\": \"desmos/UsernameParams\",\"value\": {\"min_username_len\":\"5\",\"max_username_len\":\"40\"}}"
         }
       ]
     }

@@ -16,19 +16,19 @@ const (
 
 // Default profile paramsModule
 var (
-	DefaultMinMonikerLength = sdk.NewInt(2)
-	DefaultMaxMonikerLength = sdk.NewInt(1000) //longest name on earth count 954 chars
-	DefaultRegEx            = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength    = sdk.NewInt(3)
-	DefaultMaxDTagLength    = sdk.NewInt(30)
-	DefaultMaxBioLength     = sdk.NewInt(1000)
+	DefaultMinUsernameLength = sdk.NewInt(2)
+	DefaultMaxUsernameLength = sdk.NewInt(1000) //longest name on earth count 954 chars
+	DefaultRegEx             = `^[A-Za-z0-9_]+$`
+	DefaultMinDTagLength     = sdk.NewInt(3)
+	DefaultMaxDTagLength     = sdk.NewInt(30)
+	DefaultMaxBioLength      = sdk.NewInt(1000)
 )
 
 // Parameters store keys
 var (
-	MonikerLenParamsKey = []byte("MonikerParams")
-	DTagLenParamsKey    = []byte("DTagParams")
-	MaxBioLenParamsKey  = []byte("MaxBioLen")
+	UsernameLenParamsKey = []byte("UsernameParams")
+	DTagLenParamsKey     = []byte("DTagParams")
+	MaxBioLenParamsKey   = []byte("MaxBioLen")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -39,20 +39,20 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(monikerParams MonikerParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(usernameParams UsernameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
 	return Params{
-		MonikerParams: monikerParams,
-		DTagParams:    dTagParams,
-		MaxBioLength:  maxBioLen,
+		UsernameParams: usernameParams,
+		DTagParams:     dTagParams,
+		MaxBioLength:   maxBioLen,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		MonikerParams: DefaultMonikerParams(),
-		DTagParams:    DefaultDTagParams(),
-		MaxBioLength:  DefaultMaxBioLength,
+		UsernameParams: DefaultUsernameParams(),
+		DTagParams:     DefaultDTagParams(),
+		MaxBioLength:   DefaultMaxBioLength,
 	}
 }
 
@@ -60,7 +60,7 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(MonikerLenParamsKey, &params.MonikerParams, ValidateMonikerParams),
+		paramstypes.NewParamSetPair(UsernameLenParamsKey, &params.UsernameParams, ValidateUsernameParams),
 		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
 		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
 	}
@@ -68,7 +68,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 
 // Validate perform basic checks on all parameters to ensure they are correct
 func (params Params) Validate() error {
-	if err := ValidateMonikerParams(params.MonikerParams); err != nil {
+	if err := ValidateUsernameParams(params.UsernameParams); err != nil {
 		return err
 	}
 
@@ -81,37 +81,37 @@ func (params Params) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewMonikerParams creates a new MonikerParams obj
-func NewMonikerParams(minLen, maxLen sdk.Int) MonikerParams {
-	return MonikerParams{
-		MinMonikerLength: minLen,
-		MaxMonikerLength: maxLen,
+// NewUsernameParams creates a new UsernameParams obj
+func NewUsernameParams(minLen, maxLen sdk.Int) UsernameParams {
+	return UsernameParams{
+		MinUsernameLength: minLen,
+		MaxUsernameLength: maxLen,
 	}
 }
 
-// DefaultMonikerParams return default moniker params
-func DefaultMonikerParams() MonikerParams {
-	return NewMonikerParams(
-		DefaultMinMonikerLength,
-		DefaultMaxMonikerLength,
+// DefaultUsernameParams return default username params
+func DefaultUsernameParams() UsernameParams {
+	return NewUsernameParams(
+		DefaultMinUsernameLength,
+		DefaultMaxUsernameLength,
 	)
 }
 
-func ValidateMonikerParams(i interface{}) error {
-	params, isNameSurnParams := i.(MonikerParams)
+func ValidateUsernameParams(i interface{}) error {
+	params, isNameSurnParams := i.(UsernameParams)
 	if !isNameSurnParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	minLength := params.MinMonikerLength
-	if minLength.IsNil() || minLength.LT(DefaultMinMonikerLength) {
-		return fmt.Errorf("invalid minimum moniker length param: %s", minLength)
+	minLength := params.MinUsernameLength
+	if minLength.IsNil() || minLength.LT(DefaultMinUsernameLength) {
+		return fmt.Errorf("invalid minimum username length param: %s", minLength)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	maxLength := params.MaxMonikerLength
-	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxMonikerLength) {
-		return fmt.Errorf("invalid max moniker length param: %s", maxLength)
+	maxLength := params.MaxUsernameLength
+	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxUsernameLength) {
+		return fmt.Errorf("invalid max username length param: %s", maxLength)
 	}
 
 	return nil
@@ -138,8 +138,8 @@ func DefaultDTagParams() DTagParams {
 }
 
 func ValidateDTagParams(i interface{}) error {
-	params, isMonikerParams := i.(DTagParams)
-	if !isMonikerParams {
+	params, isUsernameParams := i.(DTagParams)
+	if !isUsernameParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 

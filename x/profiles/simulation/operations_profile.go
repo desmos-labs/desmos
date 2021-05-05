@@ -37,7 +37,7 @@ func SimulateMsgSaveProfile(
 
 		msg := types.NewMsgSaveProfile(
 			data.DTag,
-			data.Moniker,
+			data.Username,
 			data.Bio,
 			data.Pictures.Profile,
 			data.Pictures.Cover,
@@ -123,7 +123,7 @@ func randomProfileSaveFields(
 	if r.Intn(101) <= 50 {
 		profile, _ = profile.Update(types.NewProfileUpdate(
 			RandomDTag(r),
-			RandomMoniker(r),
+			RandomUsername(r),
 			RandomBio(r),
 			types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		))

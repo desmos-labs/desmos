@@ -29,7 +29,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)),
+					types.NewUsernameParams(sdk.NewInt(-1), sdk.NewInt(10)),
 					types.DefaultDTagParams(),
 					types.DefaultMaxBioLength,
 				),

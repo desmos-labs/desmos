@@ -7,10 +7,10 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
-	nsParams := types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(1000))
-	monikerParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
+	usernameParams := types.NewUsernameParams(sdk.NewInt(3), sdk.NewInt(1000))
+	dtagParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
 
-	params := types.NewParams(nsParams, monikerParams, sdk.NewInt(1000))
+	params := types.NewParams(usernameParams, dtagParams, sdk.NewInt(1000))
 	suite.k.SetParams(suite.ctx, params)
 
 	actualParams := suite.k.GetParams(suite.ctx)
@@ -18,9 +18,9 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
-	nsParams := types.NewMonikerParams(sdk.NewInt(3), sdk.NewInt(1000))
-	monikerParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
-	params := types.NewParams(nsParams, monikerParams, sdk.NewInt(1000))
+	usernameParams := types.NewUsernameParams(sdk.NewInt(3), sdk.NewInt(1000))
+	dtagParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
+	params := types.NewParams(usernameParams, dtagParams, sdk.NewInt(1000))
 
 	tests := []struct {
 		name      string

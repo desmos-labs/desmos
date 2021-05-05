@@ -17,7 +17,7 @@ import (
 var addr, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 var testProfile, _ = types.NewProfile(
 	"dtag",
-	"moniker",
+	"username",
 	"biography",
 	types.NewPictures(
 		"https://shorturl.at/adnX3",
@@ -31,7 +31,7 @@ var testProfile, _ = types.NewProfile(
 
 var msgEditProfile = types.NewMsgSaveProfile(
 	"monk",
-	testProfile.Moniker,
+	testProfile.Username,
 	testProfile.Bio,
 	testProfile.Pictures.Profile,
 	testProfile.Pictures.Cover,
@@ -56,7 +56,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "Empty owner returns error",
 			msg: types.NewMsgSaveProfile(
 				testProfile.DTag,
-				testProfile.Moniker,
+				testProfile.Username,
 				testProfile.Bio,
 				testProfile.Pictures.Profile,
 				testProfile.Pictures.Cover,
@@ -73,7 +73,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			name: "No error message",
 			msg: types.NewMsgSaveProfile(
 				"_crazy_papa_21",
-				"custom-moniker",
+				"custom-username",
 				"custom-bio",
 				"https://test.com/my-custom-profile-pic",
 				"https://test.com/my-custom-cover-pic",
@@ -99,7 +99,7 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
 	actual := msgEditProfile.GetSignBytes()
-	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","moniker":"moniker","profile_picture":"https://shorturl.at/adnX3"}}`
+	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","profile_picture":"https://shorturl.at/adnX3","username":"username"}}`
 	require.Equal(t, expected, string(actual))
 }
 
