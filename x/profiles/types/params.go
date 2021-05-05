@@ -16,8 +16,8 @@ const (
 
 // Default profile paramsModule
 var (
-	DefaultMinUsernameLength = sdk.NewInt(2)
-	DefaultMaxUsernameLength = sdk.NewInt(1000) //longest name on earth count 954 chars
+	DefaultMinNicknameLength = sdk.NewInt(2)
+	DefaultMaxNicknameLength = sdk.NewInt(1000) //longest name on earth count 954 chars
 	DefaultRegEx             = `^[A-Za-z0-9_]+$`
 	DefaultMinDTagLength     = sdk.NewInt(3)
 	DefaultMaxDTagLength     = sdk.NewInt(30)
@@ -26,7 +26,7 @@ var (
 
 // Parameters store keys
 var (
-	UsernameLenParamsKey = []byte("UsernameParams")
+	NicknameLenParamsKey = []byte("NicknameParams")
 	DTagLenParamsKey     = []byte("DTagParams")
 	MaxBioLenParamsKey   = []byte("MaxBioLen")
 )
@@ -39,9 +39,9 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(usernameParams UsernameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(nicknameParams NicknameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
 	return Params{
-		UsernameParams: usernameParams,
+		NicknameParams: nicknameParams,
 		DTagParams:     dTagParams,
 		MaxBioLength:   maxBioLen,
 	}
@@ -50,7 +50,7 @@ func NewParams(usernameParams UsernameParams, dTagParams DTagParams, maxBioLen s
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		UsernameParams: DefaultUsernameParams(),
+		NicknameParams: DefaultNicknameParams(),
 		DTagParams:     DefaultDTagParams(),
 		MaxBioLength:   DefaultMaxBioLength,
 	}
@@ -60,7 +60,7 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(UsernameLenParamsKey, &params.UsernameParams, ValidateUsernameParams),
+		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.NicknameParams, ValidateNicknameParams),
 		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
 		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
 	}
@@ -68,7 +68,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 
 // Validate perform basic checks on all parameters to ensure they are correct
 func (params Params) Validate() error {
-	if err := ValidateUsernameParams(params.UsernameParams); err != nil {
+	if err := ValidateNicknameParams(params.NicknameParams); err != nil {
 		return err
 	}
 
@@ -81,37 +81,37 @@ func (params Params) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewUsernameParams creates a new UsernameParams obj
-func NewUsernameParams(minLen, maxLen sdk.Int) UsernameParams {
-	return UsernameParams{
-		MinUsernameLength: minLen,
-		MaxUsernameLength: maxLen,
+// NewNicknameParams creates a new NicknameParams obj
+func NewNicknameParams(minLen, maxLen sdk.Int) NicknameParams {
+	return NicknameParams{
+		MinNicknameLength: minLen,
+		MaxNicknameLength: maxLen,
 	}
 }
 
-// DefaultUsernameParams return default username params
-func DefaultUsernameParams() UsernameParams {
-	return NewUsernameParams(
-		DefaultMinUsernameLength,
-		DefaultMaxUsernameLength,
+// DefaultNicknameParams return default nickname params
+func DefaultNicknameParams() NicknameParams {
+	return NewNicknameParams(
+		DefaultMinNicknameLength,
+		DefaultMaxNicknameLength,
 	)
 }
 
-func ValidateUsernameParams(i interface{}) error {
-	params, isNameSurnParams := i.(UsernameParams)
-	if !isNameSurnParams {
+func ValidateNicknameParams(i interface{}) error {
+	params, areNicknameParams := i.(NicknameParams)
+	if !areNicknameParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	minLength := params.MinUsernameLength
-	if minLength.IsNil() || minLength.LT(DefaultMinUsernameLength) {
-		return fmt.Errorf("invalid minimum username length param: %s", minLength)
+	minLength := params.MinNicknameLength
+	if minLength.IsNil() || minLength.LT(DefaultMinNicknameLength) {
+		return fmt.Errorf("invalid minimum nickname length param: %s", minLength)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	maxLength := params.MaxUsernameLength
-	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxUsernameLength) {
-		return fmt.Errorf("invalid max username length param: %s", maxLength)
+	maxLength := params.MaxNicknameLength
+	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxNicknameLength) {
+		return fmt.Errorf("invalid max nickname length param: %s", maxLength)
 	}
 
 	return nil
@@ -138,8 +138,8 @@ func DefaultDTagParams() DTagParams {
 }
 
 func ValidateDTagParams(i interface{}) error {
-	params, isUsernameParams := i.(DTagParams)
-	if !isUsernameParams {
+	params, isDtagParams := i.(DTagParams)
+	if !isDtagParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 

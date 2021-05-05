@@ -29,7 +29,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			name: "Profile saved (with no previous profile created)",
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
-				"my-username",
+				"my-nickname",
 				"my-bio",
 				"https://test.com/profile-picture",
 				"https://test.com/cover-pic",
@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expStoredProfiles: []*types.Profile{
 				suite.CheckProfileNoError(types.NewProfile(
 					"custom_dtag",
-					"my-username",
+					"my-nickname",
 					"my-bio",
 					types.NewPictures(
 						"https://test.com/profile-picture",
@@ -63,7 +63,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			existentProfiles: []*types.Profile{
 				suite.CheckProfileNoError(types.NewProfile(
 					"test_dtag",
-					"old-username",
+					"old-nickname",
 					"old-biography",
 					types.NewPictures(
 						"https://test.com/old-profile-pic",
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			},
 			msg: types.NewMsgSaveProfile(
 				"other_dtag",
-				"username",
+				"nickname",
 				"biography",
 				"https://test.com/profile-pic",
 				"https://test.com/cover-pic",
@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			expStoredProfiles: []*types.Profile{
 				suite.CheckProfileNoError(types.NewProfile(
 					"other_dtag",
-					"username",
+					"nickname",
 					"biography",
 					types.NewPictures(
 						"https://test.com/profile-pic",

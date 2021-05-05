@@ -64,7 +64,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 
 	updatedProfile, err := types.NewProfile(
 		"updated-dtag",
-		"updated-username",
+		"updated-nickname",
 		suite.testData.profile.Bio,
 		suite.testData.profile.Pictures,
 		suite.testData.profile.CreationDate,
@@ -299,7 +299,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 		expErr  error
 	}{
 		{
-			name: "Max username length exceeded",
+			name: "Max nickname length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				strings.Repeat("A", 1005),
@@ -311,10 +311,10 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
 			)),
-			expErr: fmt.Errorf("profile username cannot exceed 1000 characters"),
+			expErr: fmt.Errorf("profile nickname cannot exceed 1000 characters"),
 		},
 		{
-			name: "Min username length not reached",
+			name: "Min nickname length not reached",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				"m",
@@ -327,13 +327,13 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
 			)),
-			expErr: fmt.Errorf("profile username cannot be less than 2 characters"),
+			expErr: fmt.Errorf("profile nickname cannot be less than 2 characters"),
 		},
 		{
 			name: "Max bio length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
-				"username",
+				"nickname",
 				strings.Repeat("A", 1005),
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			name: "Invalid dtag doesn't match regEx",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom.",
-				"username",
+				"nickname",
 				strings.Repeat("A", 1000),
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -364,7 +364,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			name: "Min dtag length not reached",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"d",
-				"username",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -380,7 +380,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			name: "Max dtag length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"9YfrVVi3UEI1ymN7n6isSct30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEyHNS",
-				"username",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -395,7 +395,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			name: "Invalid profile pictures returns error",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
-				"username",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"pic",
@@ -410,7 +410,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			name: "Valid profile returns no error",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
-				"username",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",

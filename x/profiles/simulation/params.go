@@ -15,11 +15,11 @@ import (
 
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.UsernameLenParamsKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.NicknameLenParamsKey),
 			func(r *rand.Rand) string {
-				params := RandomUsernameParams(r)
-				return fmt.Sprintf(`{"min_username_len":"%s","max_username_len":"%s"}`,
-					params.MinUsernameLength, params.MaxUsernameLength)
+				params := RandomNicknameParams(r)
+				return fmt.Sprintf(`{"min_nickname_len":"%s","max_nickname_len":"%s"}`,
+					params.MinNicknameLength, params.MaxNicknameLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.DTagLenParamsKey),

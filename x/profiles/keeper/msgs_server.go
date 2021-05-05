@@ -58,7 +58,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	// Update the existing profile with the values provided from the user
 	updated, err := profile.Update(types.NewProfileUpdate(
 		msg.DTag,
-		msg.Username,
+		msg.Nickname,
 		msg.Bio,
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
 	))

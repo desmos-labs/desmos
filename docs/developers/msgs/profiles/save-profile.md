@@ -6,7 +6,7 @@ This message allows you to save a new profile or edit an existent one.
 {
   "@type": "/desmos.profiles.v1beta1.MsgSaveProfile",
   "dtag": "<Profile dtag>",
-  "username": "<Profile username>",
+  "nickname": "<Profile nickname>",
   "bio": "<Profile biography>",  
   "profile_picture": "<URI of the profile account's picture>",
   "cover_picture": "<URI of the profile cover picture>",
@@ -18,7 +18,7 @@ This message allows you to save a new profile or edit an existent one.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `dtag` | String | DTag of the user |
-| `username` | String (Optional) | Username of the user | 
+| `nickname` | String (Optional) | Nickname of the user | 
 | `bio` | String | (Optional) Biography of the user |
 | `profile_picture` | String | (Optional) URL to the user profile picture |
 | `cover_picture` | String | (Optional) URL to the user cover picture |
@@ -33,7 +33,7 @@ value `[do-not-modify]`.
 {
   "@type": "/desmos.profiles.v1beta1.MsgSaveProfile",
   "dtag": "Eva00",
-  "username": "Rei Ayanami",
+  "nickname": "Rei Ayanami",
   "bio": "The real pilot",
   "profile_picture": "[do-not-modify]",
   "cover_picture": "https://shorturl.at/cgpyF",

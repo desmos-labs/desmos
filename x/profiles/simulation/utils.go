@@ -60,7 +60,7 @@ var (
 func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
 	profile, err := types.NewProfile(
 		RandomDTag(r),
-		RandomUsername(r),
+		RandomNickname(r),
 		RandomBio(r),
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
@@ -90,8 +90,8 @@ func RandomDTag(r *rand.Rand) string {
 	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 3, 30))
 }
 
-// RandomUsername return a random username
-func RandomUsername(r *rand.Rand) string {
+// RandomNickname return a random nickname
+func RandomNickname(r *rand.Rand) string {
 	return simtypes.RandStringOfLength(r, 30)
 }
 
@@ -123,14 +123,14 @@ func GetSimAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Accou
 	return nil
 }
 
-// RandomUsernameParams return a random set of username params
-func RandomUsernameParams(r *rand.Rand) types.UsernameParams {
+// RandomNicknameParams return a random set of nickname params
+func RandomNicknameParams(r *rand.Rand) types.NicknameParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 1000)))
-	return types.NewUsernameParams(randomMin, randomMax)
+	return types.NewNicknameParams(randomMin, randomMax)
 }
 
-// RandomDTagParams return a random set of username params
+// RandomDTagParams return a random set of nickname params
 func RandomDTagParams(r *rand.Rand) types.DTagParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))

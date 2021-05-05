@@ -11,11 +11,11 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	nameSurnameParams := types.NewUsernameParams(sdk.NewInt(2), sdk.NewInt(1000))
-	usernameParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
+	nameSurnameParams := types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	nicknameParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	bioParams := sdk.NewInt(1000)
 
-	params := types.NewParams(nameSurnameParams, usernameParams, bioParams)
+	params := types.NewParams(nameSurnameParams, nicknameParams, bioParams)
 
 	require.Equal(t, params, types.DefaultParams())
 }
@@ -32,23 +32,23 @@ func TestValidateParams(t *testing.T) {
 		expErr error
 	}{
 		{
-			name:   "Invalid min username param returns error",
-			params: types.NewParams(types.NewUsernameParams(invalidNameMin, validNameMax), types.DefaultDTagParams(), types.DefaultMaxBioLength),
-			expErr: fmt.Errorf("invalid minimum username length param: 1"),
+			name:   "Invalid min nickname param returns error",
+			params: types.NewParams(types.NewNicknameParams(invalidNameMin, validNameMax), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			expErr: fmt.Errorf("invalid minimum nickname length param: 1"),
 		},
 		{
 			name:   "Invalid max dTag param return error",
-			params: types.NewParams(types.DefaultUsernameParams(), types.NewDTagParams("regEx", validDTagMin, invalidDTagMax), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultNicknameParams(), types.NewDTagParams("regEx", validDTagMin, invalidDTagMax), types.DefaultMaxBioLength),
 			expErr: fmt.Errorf("invalid max dTag length param: -30"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewParams(types.DefaultUsernameParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
+			params: types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
 			expErr: fmt.Errorf("invalid max bio length param: -1000"),
 		},
 		{
 			name:   "Valid params return no error",
-			params: types.NewParams(types.DefaultUsernameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
 			expErr: nil,
 		},
 	}
@@ -61,10 +61,10 @@ func TestValidateParams(t *testing.T) {
 	}
 }
 
-func TestDefaultUsernameParams(t *testing.T) {
-	usernameParams := types.NewUsernameParams(sdk.NewInt(2), sdk.NewInt(1000))
-	defaultusernameParams := types.DefaultUsernameParams()
-	require.Equal(t, defaultusernameParams, usernameParams)
+func TestDefaultNicknameParams(t *testing.T) {
+	nicknameParams := types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	defaultnicknameParams := types.DefaultNicknameParams()
+	require.Equal(t, defaultnicknameParams, nicknameParams)
 }
 
 func TestDefaultDTagParams(t *testing.T) {
@@ -73,11 +73,11 @@ func TestDefaultDTagParams(t *testing.T) {
 	require.Equal(t, defaultDTagParams, dTagParams)
 }
 
-func TestValidateUsernameParams(t *testing.T) {
-	invalidUsernameMin := sdk.NewInt(1)
-	invalidUsernameMax := sdk.NewInt(-10)
-	validUsernameMin := sdk.NewInt(2)
-	validUsernameMax := sdk.NewInt(1000)
+func TestValidateNicknameParams(t *testing.T) {
+	invalidNicknameMin := sdk.NewInt(1)
+	invalidNicknameMax := sdk.NewInt(-10)
+	validNicknameMin := sdk.NewInt(2)
+	validNicknameMax := sdk.NewInt(1000)
 
 	tests := []struct {
 		name   string
@@ -86,17 +86,17 @@ func TestValidateUsernameParams(t *testing.T) {
 	}{
 		{
 			name:   "Invalid min param returns error",
-			params: types.NewUsernameParams(invalidUsernameMin, validUsernameMax),
-			expErr: fmt.Errorf("invalid minimum username length param: 1"),
+			params: types.NewNicknameParams(invalidNicknameMin, validNicknameMax),
+			expErr: fmt.Errorf("invalid minimum nickname length param: 1"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewUsernameParams(validUsernameMin, invalidUsernameMax),
-			expErr: fmt.Errorf("invalid max username length param: -10"),
+			params: types.NewNicknameParams(validNicknameMin, invalidNicknameMax),
+			expErr: fmt.Errorf("invalid max nickname length param: -10"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: types.NewUsernameParams(validUsernameMin, validUsernameMax),
+			params: types.NewNicknameParams(validNicknameMin, validNicknameMax),
 			expErr: nil,
 		},
 	}
@@ -104,7 +104,7 @@ func TestValidateUsernameParams(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, types.ValidateUsernameParams(test.params))
+			require.Equal(t, test.expErr, types.ValidateNicknameParams(test.params))
 		})
 	}
 }

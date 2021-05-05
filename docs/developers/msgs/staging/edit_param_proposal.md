@@ -45,13 +45,13 @@ proposal through the `gov` module of the Cosmos SDK.
   "content": {
     "@type": "/cosmos.params.v1beta1.ParameterChangeProposal",
     "value": {
-      "title": "Username Param Change",
-      "description": "Update username lengths",
+      "title": "Nickname Param Change",
+      "description": "Update nickname lengths",
       "changes": [
         {
           "subspace": "profiles",
-          "key": "usernameParams",
-          "value": "{\"type\": \"desmos/UsernameParams\",\"value\": {\"min_username_len\":\"5\",\"max_username_len\":\"40\"}}"
+          "key": "nicknameParams",
+          "value": "{\"type\": \"desmos/NicknameParams\",\"value\": {\"min_nickname_len\":\"5\",\"max_nickname_len\":\"40\"}}"
         }
       ]
     }

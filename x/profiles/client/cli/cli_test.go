@@ -49,7 +49,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	account, err := types.NewProfile(
 		"dtag",
-		"username",
+		"nickname",
 		"bio",
 		types.Pictures{},
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -121,7 +121,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 
 	profile, err := types.NewProfile(
 		"dtag",
-		"username",
+		"nickname",
 		"bio",
 		types.Pictures{},
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),

@@ -1,7 +1,7 @@
 # Version 0.16.2
 
 ## Bug Fixes
-- Fixed the `x/profiles` `--moniker` flag taking the full-node moniker as value ([#413](https://github.com/desmos-labs/desmos/issues/413))
+- Renamed `profile` `moniker` field into `nickname` to fix a `--moniker` flag bug ([#413](https://github.com/desmos-labs/desmos/issues/413))
 
 # Version 0.16.1
 

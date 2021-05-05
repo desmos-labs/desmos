@@ -58,7 +58,7 @@ message MsgSaveProfile {
     (gogoproto.customname) = "DTag"
   ];
 
-  string username = 2 [(gogoproto.moretags) = "yaml:\"username\""];
+  string nickname = 2 [(gogoproto.moretags) = "yaml:\"nickname\""];
 
   string bio = 3 [(gogoproto.moretags) = "yaml:\"bio\""];
 
