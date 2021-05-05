@@ -82,14 +82,13 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 	}
 
 	srcPubkeyBz, _ := hex.DecodeString(data.SourcePubKey)
-	destAddr, _ := hex.DecodeString(data.DestinationAddress)
 	srcSig, _ := hex.DecodeString(data.SourceSignature)
 	destSig, _ := hex.DecodeString(data.DestinationSignature)
-	link := types.NewLink(data.SourceAddress, string(destAddr))
+	link := types.NewLink(data.SourceAddress, data.DestinationAddress)
 
 	linkBz, _ := link.Marshal()
 	srcPubkey := &secp256k1.PubKey{Key: srcPubkeyBz}
-	destAccAddr, _ := sdk.AccAddressFromBech32(string(destAddr))
+	destAccAddr, _ := sdk.AccAddressFromBech32(data.DestinationAddress)
 
 	destPubkey, err := k.GetLinkPubKey(ctx, destAccAddr)
 	if err != nil {
