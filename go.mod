@@ -26,4 +26,6 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/cosmos/cosmos-sdk => github.com/RiccardoM/cosmos-sdk v0.40.2-0.20210413061315-e274652f0ed8
+replace github.com/cosmos/cosmos-sdk => github.com/RiccardoM/cosmos-sdk v0.40.2-0.20210429130302-3b4e6431b99b
+
+replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
