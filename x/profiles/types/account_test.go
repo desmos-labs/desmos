@@ -26,13 +26,13 @@ func assertNoProfileError(profile *types.Profile, err error) *types.Profile {
 func TestProfile_Serialization(t *testing.T) {
 	cdc := app.MakeTestEncodingConfig().Marshaler
 
-	// Crete a BaseAccount
-	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	require.NoError(t, err)
-
-	protoAccount := authtypes.NewBaseAccountWithAddress(addr)
-
 	// Create a profile
+	protoAccount := &authtypes.BaseAccount{
+		Address:       "",
+		PubKey:        nil,
+		AccountNumber: 0,
+		Sequence:      0,
+	}
 	accountAny, err := codectypes.NewAnyWithValue(protoAccount)
 	require.NoError(t, err)
 
@@ -40,12 +40,34 @@ func TestProfile_Serialization(t *testing.T) {
 		Account: accountAny,
 	}
 
-	// Update the sequence
-	err = profile.SetSequence(profile.GetSequence() + 1)
+	bz, err := cdc.MarshalInterface(profile)
+	require.NoError(t, err)
+
+	var original authtypes.AccountI
+	err = cdc.UnmarshalInterface(bz, &original)
+	require.NoError(t, err)
+
+	// Update the data
+	addr2, err := sdk.AccAddressFromBech32("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k")
+	err = profile.SetAddress(addr2)
+	require.NoError(t, err)
+
+	pubKey, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqtkndttcutq2sehejxs2x3jl2uhxzuds4705u8nkgayuct0khqkzjd0vvln",
+	)
+	require.NoError(t, err)
+	err = profile.SetPubKey(pubKey)
+	require.NoError(t, err)
+
+	err = profile.SetAccountNumber(100)
+	require.NoError(t, err)
+
+	err = profile.SetSequence(20)
 	require.NoError(t, err)
 
 	// Serialize
-	bz, err := cdc.MarshalInterface(profile)
+	bz, err = cdc.MarshalInterface(profile)
 	require.NoError(t, err)
 
 	// Deserialize
@@ -53,7 +75,15 @@ func TestProfile_Serialization(t *testing.T) {
 	err = cdc.UnmarshalInterface(bz, &serialized)
 	require.NoError(t, err)
 
-	// Check the sequence
+	// Check the data
+	require.False(t, serialized.GetAddress().Equals(original.GetAddress()), "address not updated")
+	require.NotEqual(t, serialized.GetPubKey(), original.GetPubKey(), "pub key not updated")
+	require.NotEqual(t, serialized.GetAccountNumber(), original.GetAccountNumber(), "account number not updated")
+	require.NotEqual(t, serialized.GetSequence(), original.GetSequence(), "sequence not updated")
+
+	require.True(t, profile.GetAddress().Equals(serialized.GetAddress()), "addresses do not match")
+	require.Equal(t, profile.GetPubKey(), serialized.GetPubKey(), "pub keys do not match")
+	require.Equal(t, profile.GetAccountNumber(), serialized.GetAccountNumber(), "account numbers do not match")
 	require.Equal(t, profile.GetSequence(), serialized.GetSequence(), "sequences do not match")
 }
 
