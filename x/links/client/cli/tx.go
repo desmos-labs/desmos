@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	channelutils "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/client/utils"
@@ -53,9 +52,6 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 			destKeyBasePath := args[3]
 			destKeyName := args[4]
 
-			// get source key info from cli
-			srcKeybase, srcKeyName, srcAddr := getSourceKeyInfo(clientCtx)
-
 			// get destination key info from path
 			keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
 			destKeybase, err := keyring.New(destChainPrefix, keyringBackend, destKeyBasePath, clientCtx.Input)
@@ -67,22 +63,17 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 				return err
 			}
 
-			// Get bech32 encoded address on destination chain
-			destAddr, err := bech32.ConvertAndEncode(destChainPrefix, destKey.GetAddress().Bytes())
+			srcKeybase, srcKey, err := GetSourceKeyInfo(clientCtx)
 			if err != nil {
 				return err
 			}
 
-			link := types.NewLink(srcAddr, destAddr)
-			linkBz, _ := link.Marshal()
-
-			// Create signature by keys
-			srcPubKey, srcSig, destSig, err := accountConnectionSign(
-				linkBz,
+			packet, err := GetIBCAccountConnectionPacket(
 				srcKeybase,
-				srcKeyName,
+				srcKey,
 				destKeybase,
-				destKeyName,
+				destKey,
+				destChainPrefix,
 			)
 			if err != nil {
 				return err
@@ -104,14 +95,7 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 			msg := types.NewMsgCreateIBCAccountConnection(
 				srcPort,
 				srcChannel,
-				types.NewIBCAccountConnectionPacketData(
-					sdk.GetConfig().GetBech32AccountAddrPrefix(),
-					srcAddr,
-					hex.EncodeToString(srcPubKey.Bytes()),
-					destAddr,
-					hex.EncodeToString(srcSig),
-					hex.EncodeToString(destSig),
-				),
+				packet,
 				timeoutTimestamp,
 			)
 
@@ -133,25 +117,45 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 	return cmd
 }
 
-func accountConnectionSign(
-	msg []byte,
+func GetIBCAccountConnectionPacket(
 	srcKeybase keyring.Keyring,
-	srcKeyName string,
-	destKeyBase keyring.Keyring,
-	destKeyName string,
-) (cryptotypes.PubKey, []byte, []byte, error) {
-	// Create signature by src key
-	srcSig, srcPubKey, err := srcKeybase.Sign(srcKeyName, msg)
+	srcKey keyring.Info,
+	destKeybase keyring.Keyring,
+	destKey keyring.Info,
+	destChainPrefix string,
+) (types.IBCAccountConnectionPacketData, error) {
+	// Get bech32 encoded address on destination chain
+	destAddr, err := bech32.ConvertAndEncode(destChainPrefix, destKey.GetAddress().Bytes())
 	if err != nil {
-		return nil, nil, nil, err
+		return types.IBCAccountConnectionPacketData{}, err
+	}
+
+	srcAddr := srcKey.GetAddress().String()
+	link := types.NewLink(srcAddr, destAddr)
+	linkBz, _ := link.Marshal()
+
+	// Create signature by src keys
+	srcSig, srcPubKey, err := srcKeybase.Sign(srcKey.GetName(), linkBz)
+	if err != nil {
+		return types.IBCAccountConnectionPacketData{}, err
 	}
 
 	// Create signature by dest key
-	destSig, _, err := destKeyBase.Sign(destKeyName, srcSig)
+	destSig, _, err := destKeybase.Sign(destKey.GetName(), srcSig)
 	if err != nil {
-		return nil, nil, nil, err
+		return types.IBCAccountConnectionPacketData{}, err
 	}
-	return srcPubKey, srcSig, destSig, nil
+
+	packet := types.NewIBCAccountConnectionPacketData(
+		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+		srcAddr,
+		hex.EncodeToString(srcPubKey.Bytes()),
+		destAddr,
+		hex.EncodeToString(srcSig),
+		hex.EncodeToString(destSig),
+	)
+
+	return packet, nil
 }
 
 // GetCmdCreateIBCAccountLink return the command to create an account link on other chain
@@ -170,21 +174,16 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 			srcChannel := args[1]
 			destChainPrefix := args[2]
 
-			destAddr, err := bech32.ConvertAndEncode(destChainPrefix, clientCtx.GetFromAddress().Bytes())
+			srcKeybase, srcKey, err := GetSourceKeyInfo(clientCtx)
 			if err != nil {
 				return err
 			}
 
-			// get source chain key info
-			keybase, keyName, srcAddr := getSourceKeyInfo(clientCtx)
-
-			link := types.NewLink(srcAddr, destAddr)
-			linkBz, _ := link.Marshal()
-
-			sig, pubKey, err := keybase.Sign(keyName, linkBz)
-			if err != nil {
-				return err
-			}
+			packet, err := GetIBCAccountLinkPacket(
+				srcKeybase,
+				srcKey,
+				destChainPrefix,
+			)
 
 			// Get the relative timeout timestamp
 			timeoutTimestamp, err := cmd.Flags().GetUint64(FlagPacketTimeoutTimestamp)
@@ -202,12 +201,7 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 			msg := types.NewMsgCreateIBCAccountLink(
 				srcPort,
 				srcChannel,
-				types.NewIBCAccountLinkPacketData(
-					sdk.GetConfig().GetBech32AccountAddrPrefix(),
-					srcAddr,
-					hex.EncodeToString(pubKey.Bytes()),
-					hex.EncodeToString(sig),
-				),
+				packet,
 				timeoutTimestamp,
 			)
 
@@ -225,9 +219,41 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 	return cmd
 }
 
-func getSourceKeyInfo(clientCtx client.Context) (keyring.Keyring, string, string) {
+func GetIBCAccountLinkPacket(
+	srcKeybase keyring.Keyring,
+	srcKey keyring.Info,
+	destChainPrefix string,
+) (types.IBCAccountLinkPacketData, error) {
+	destAddr, err := bech32.ConvertAndEncode(destChainPrefix, srcKey.GetAddress().Bytes())
+	if err != nil {
+		return types.IBCAccountLinkPacketData{}, err
+	}
+
+	srcAddr := srcKey.GetAddress().String()
+	link := types.NewLink(srcAddr, destAddr)
+	linkBz, _ := link.Marshal()
+
+	sig, pubKey, err := srcKeybase.Sign(srcKey.GetName(), linkBz)
+	if err != nil {
+		return types.IBCAccountLinkPacketData{}, err
+	}
+
+	packet := types.NewIBCAccountLinkPacketData(
+		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+		srcAddr,
+		hex.EncodeToString(pubKey.Bytes()),
+		hex.EncodeToString(sig),
+	)
+
+	return packet, nil
+}
+
+func GetSourceKeyInfo(clientCtx client.Context) (keyring.Keyring, keyring.Info, error) {
 	keybase := clientCtx.Keyring
 	keyName := clientCtx.GetFromName()
-	addr := clientCtx.GetFromAddress().String()
-	return keybase, keyName, addr
+	key, err := keybase.Key(keyName)
+	if err != nil {
+		return nil, nil, err
+	}
+	return keybase, key, nil
 }
