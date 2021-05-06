@@ -17,7 +17,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/desmos-labs/desmos/app"
-	ibctesting "github.com/desmos-labs/desmos/testing"
+	ibctesting "github.com/desmos-labs/desmos/testutil/ibctesting"
 	"github.com/desmos-labs/desmos/x/links/keeper"
 	"github.com/desmos-labs/desmos/x/links/types"
 	"github.com/stretchr/testify/suite"

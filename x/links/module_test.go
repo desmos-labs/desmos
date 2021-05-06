@@ -12,7 +12,7 @@ import (
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
-	ibctesting "github.com/desmos-labs/desmos/testing"
+	ibctesting "github.com/desmos-labs/desmos/testutil/ibctesting"
 	"github.com/desmos-labs/desmos/x/links/types"
 	"github.com/stretchr/testify/suite"
 )
