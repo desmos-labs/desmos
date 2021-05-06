@@ -24,24 +24,13 @@ func (k msgServer) CreateIBCAccountConnection(
 	goCtx context.Context, msg *types.MsgCreateIBCAccountConnection,
 ) (*types.MsgCreateIBCAccountConnectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	prefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-
-	// Construct the packet
-	packet := types.NewIBCAccountConnectionPacketData(
-		prefix,
-		msg.SourceAddress,
-		msg.SourcePubKey,
-		msg.DestinationAddress,
-		msg.SourceSignature,
-		msg.DestinationSignature,
-	)
 
 	height := uint64(ctx.BlockHeight())
 
 	// Transmit the packet
 	if err := k.TransmitIBCAccountConnectionPacket(
 		ctx,
-		packet,
+		msg.Packet,
 		msg.Port,
 		msg.ChannelId,
 		clienttypes.NewHeight(height, height+100),
@@ -59,22 +48,13 @@ func (k msgServer) CreateIBCAccountLink(
 	goCtx context.Context, msg *types.MsgCreateIBCAccountLink,
 ) (*types.MsgCreateIBCAccountLinkResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	prefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-
-	// Construct the packet
-	packet := types.NewIBCAccountLinkPacketData(
-		prefix,
-		msg.SourceAddress,
-		msg.SourcePubKey,
-		msg.Signature,
-	)
 
 	height := uint64(ctx.BlockHeight())
 
 	// Transmit the packet
 	if err := k.TransmitIBCAccountLinkPacket(
 		ctx,
-		packet,
+		msg.Packet,
 		msg.Port,
 		msg.ChannelId,
 		clienttypes.NewHeight(height, height+100),

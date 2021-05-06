@@ -44,10 +44,13 @@ func createIBCAccountLinkHandler(cliCtx client.Context) http.HandlerFunc {
 		msg := types.NewMsgCreateIBCAccountLink(
 			req.Port,
 			req.ChannelID,
-			0,
-			addr.String(),
-			pubKey,
-			req.Signature,
+			types.NewIBCAccountLinkPacketData(
+				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				addr.String(),
+				pubKey,
+				req.Signature,
+			),
+			1000,
 		)
 
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
@@ -83,12 +86,15 @@ func createIBCAccountConnectionHandler(cliCtx client.Context) http.HandlerFunc {
 		msg := types.NewMsgCreateIBCAccountConnection(
 			req.Port,
 			req.ChannelID,
-			0,
-			addr.String(),
-			pubKey,
-			req.DestinationAddress,
-			req.SourceSignature,
-			req.DestinationSignature,
+			types.NewIBCAccountConnectionPacketData(
+				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				addr.String(),
+				pubKey,
+				req.DestinationAddress,
+				req.SourceSignature,
+				req.DestinationSignature,
+			),
+			1000,
 		)
 
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {

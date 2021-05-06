@@ -60,7 +60,7 @@ message QueryProfileRequest {
 // QueryProfileResponse is the response type for the Query/Profile RPC method.
 message QueryProfileResponse {
   google.protobuf.Any profile = 1
-  [(cosmos_proto.accepts_interface) = "AccountI"];
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -90,7 +90,7 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  desmos.profiles.v1beta1.Params params = 1 [(gogoproto.nullable) = false];
+  desmos.profiles.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -113,7 +113,7 @@ message QueryUserRelationshipsResponse {
   // relationships represent the list of all the relationships for the queried
   // user
   repeated desmos.profiles.v1beta1.Relationship relationships = 2
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -133,5 +133,5 @@ message QueryUserBlocksRequest {
 message QueryUserBlocksResponse {
   // blocks represent the list of all the blocks for the queried user
   repeated desmos.profiles.v1beta1.UserBlock blocks = 1
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
 }

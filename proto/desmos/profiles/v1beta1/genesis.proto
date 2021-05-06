@@ -9,11 +9,12 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // GenesisState defines the profiles module's genesis state.
 message GenesisState {
-  repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests = 1 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\"",
-    (gogoproto.customname) = "DTagTransferRequest"
-  ];
+  repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests =
+      1 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\"",
+        (gogoproto.customname) = "DTagTransferRequest"
+      ];
 
   repeated desmos.profiles.v1beta1.Relationship relationships = 2 [
     (gogoproto.moretags) = "yaml:\"users_relationships\"",

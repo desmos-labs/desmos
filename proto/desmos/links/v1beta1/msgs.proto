@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.links.v1beta1;
 
 import "gogoproto/gogo.proto";
+import "desmos/links/v1beta1/packets.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/links/types";
 
@@ -27,18 +28,12 @@ message MsgCreateIBCAccountConnection {
 
   string port = 1 [ (gogoproto.moretags) = "yaml:\"port\"" ];
   string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
-  uint64 timeout_timestamp = 3
+  desmos.links.v1beta1.IBCAccountConnectionPacketData packet = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"packet\""
+  ];
+  uint64 timeout_timestamp = 4
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
-  string source_address = 4
-      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-  string source_pub_key = 5
-      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
-  string destination_address = 6
-      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
-  string source_signature = 7
-      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
-  string destination_signature = 8
-      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
 // MsgCreateIBCAccountConnectionResponse defines the
@@ -55,13 +50,12 @@ message MsgCreateIBCAccountLink {
 
   string port = 1 [ (gogoproto.moretags) = "yaml:\"port\"" ];
   string channel_id = 2 [ (gogoproto.moretags) = "yaml:\"channel_id\"" ];
-  uint64 timeout_timestamp = 3
+  desmos.links.v1beta1.IBCAccountLinkPacketData packet = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"packet\""
+  ];
+  uint64 timeout_timestamp = 4
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
-  string source_address = 4
-      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-  string source_pub_key = 5
-      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
-  string signature = 6 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 }
 
 // MsgCreateIBCAccountLinkResponse defines the
