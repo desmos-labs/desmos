@@ -184,6 +184,9 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 				srcKey,
 				destChainPrefix,
 			)
+			if err != nil {
+				return err
+			}
 
 			// Get the relative timeout timestamp
 			timeoutTimestamp, err := cmd.Flags().GetUint64(FlagPacketTimeoutTimestamp)
