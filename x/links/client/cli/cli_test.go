@@ -175,15 +175,6 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			},
 			expPass: false,
 		},
-		{
-			name: "Invalid dest key",
-			malleate: func() {
-				destChainPrefix = "cosmos"
-				srcKeybase, srcKey = generateKey("test")
-				destKeybase, _ = generateKey("test")
-			},
-			expPass: false,
-		},
 	}
 
 	for _, test := range tests {
@@ -228,14 +219,6 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 				destChainPrefix = "cosmos"
 				srcKeybase, _ = generateKey("test")
 				_, srcKey = generateKey("wrong")
-			},
-			expPass: false,
-		},
-		{
-			name: "Invalid src key",
-			malleate: func() {
-				destChainPrefix = "no problem to fuck"
-				srcKeybase, _ = generateKey("test")
 			},
 			expPass: false,
 		},
