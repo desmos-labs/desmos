@@ -325,7 +325,7 @@ jobs:
           ./contrib/localnet_liveness.sh 100 5 50 localhost
         if: env.GIT_DIFF
 
-  Test-IBC:
+  Test-IBC-Link:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
