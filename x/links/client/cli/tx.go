@@ -76,7 +76,7 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 
 			destKey, err := destKeybase.Key(destKeyName)
 			if err != nil {
-				return fmt.Errorf("Could not get destination key")
+				return fmt.Errorf("could not get destination key")
 			}
 
 			packet, err := GetIBCAccountConnectionPacket(
