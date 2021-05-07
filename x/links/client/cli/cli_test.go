@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
@@ -66,6 +67,13 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 
 // ___________________________________________________________________________________________________________________
 
+func TestGetQueryCmd(t *testing.T) {
+	cmd := cli.GetQueryCmd("link")
+	if cmd == nil {
+		t.Errorf("get no query command")
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdQueryLink() {
 	val := s.network.Validators[0]
 
@@ -76,18 +84,18 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 		expOutput types.QueryLinkResponse
 	}{
 		{
-			name: "empty slice is returned properly",
+			name: "empty slice is returned error",
 			args: []string{
-				s.network.Validators[2].Address.String(),
+				"",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expErr: false,
+			expErr: true,
 			expOutput: types.QueryLinkResponse{
 				Link: types.Link{},
 			},
 		},
 		{
-			name: "existing user blocks are returned properly",
+			name: "existing link is returned properly",
 			args: []string{
 				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -112,8 +120,171 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 				s.Require().Error(err)
 
 				var response types.QueryLinkResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Error(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(test.expOutput, response)
+			}
+		})
+	}
+}
+
+func TestNewTxCmd(t *testing.T) {
+	cmd := cli.NewTxCmd()
+	if cmd == nil {
+		t.Errorf("get no tx command")
+	}
+}
+
+func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
+	ctx := s.network.Validators[0].ClientCtx
+
+	tests := []struct {
+		name     string
+		args     []string
+		malleate func()
+		expErr   bool
+	}{
+		{
+			name: "Empty keybase",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				".",
+				"test",
+				fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendMemory),
+			},
+			malleate: func() {
+				ctx.Keyring = keyring.NewInMemory()
+			},
+			expErr: true,
+		},
+		{
+			name: "Invalid destination keybase",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				".",
+				"test",
+			},
+			malleate: func() {
+				keybase, _ := generateMemoryKeybase("")
+				ctx.Keyring = keybase
+			},
+			expErr: true,
+		},
+		{
+			name: "Wrong destination key name for destination keybase",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				"",
+				"wrongname",
+				fmt.Sprintf("--%s=%s", cli.FlagTesting, "true"),
+			},
+			malleate: func() {
+				keybase, _ := generateMemoryKeybase("")
+				ctx.Keyring = keybase
+			},
+			expErr: true,
+		},
+		{
+			name: "Channel is not available",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				".",
+				"test",
+				fmt.Sprintf("--%s=%s", cli.FlagTesting, "true"),
+			},
+			malleate: func() {
+				keybase, _ := generateMemoryKeybase("")
+				ctx.Keyring = keybase
+			},
+			expErr: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		s.Run(test.name, func() {
+			test.malleate()
+			cmd := cli.GetCmdCreateIBCAccountConnection()
+			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
+
+			if test.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
+	ctx := s.network.Validators[0].ClientCtx
+
+	tests := []struct {
+		name     string
+		args     []string
+		malleate func()
+		expErr   bool
+	}{
+		{
+			name: "Empty keybase",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendMemory),
+			},
+			malleate: func() {
+				ctx.Keyring = keyring.NewInMemory()
+			},
+			expErr: true,
+		},
+		{
+			name: "Channel is not available",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+			},
+			malleate: func() {
+				keybase, _ := generateMemoryKeybase("")
+				ctx.Keyring = keybase
+			},
+			expErr: true,
+		},
+		{
+			name: "Invalid args number",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				"456",
+			},
+			malleate: func() {
+			},
+			expErr: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		s.Run(test.name, func() {
+			test.malleate()
+			cmd := cli.GetCmdCreateIBCAccountLink()
+			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
+
+			if test.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
 			}
 		})
 	}
@@ -121,7 +292,7 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 
 // ___________________________________________________________________________________________________________________
 
-func generateKey(keyname string) (keyring.Keyring, keyring.Info) {
+func generateMemoryKeybase(keyname string) (keyring.Keyring, keyring.Info) {
 	keyBase := keyring.NewInMemory()
 	keyringAlgos, _ := keyBase.SupportedAlgorithms()
 	algo, _ := keyring.NewSigningAlgoFromString("secp256k1", keyringAlgos)
@@ -150,8 +321,8 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Get packet successfully",
 			malleate: func() {
 				destChainPrefix = "cosmos"
-				srcKeybase, srcKey = generateKey("test")
-				destKeybase, destKey = generateKey("test")
+				srcKeybase, srcKey = generateMemoryKeybase("test")
+				destKeybase, destKey = generateMemoryKeybase("test")
 			},
 			expPass: true,
 		},
@@ -159,9 +330,9 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Wrong source key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
-				srcKeybase, _ = generateKey("test")
-				_, srcKey = generateKey("wrong")
-				destKeybase, destKey = generateKey("test")
+				srcKeybase, _ = generateMemoryKeybase("test")
+				_, srcKey = generateMemoryKeybase("wrong")
+				destKeybase, destKey = generateMemoryKeybase("test")
 			},
 			expPass: false,
 		},
@@ -169,9 +340,9 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Wrong dest key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
-				srcKeybase, srcKey = generateKey("test")
-				destKeybase, _ = generateKey("test")
-				_, destKey = generateKey("wrong")
+				srcKeybase, srcKey = generateMemoryKeybase("test")
+				destKeybase, _ = generateMemoryKeybase("test")
+				_, destKey = generateMemoryKeybase("wrong")
 			},
 			expPass: false,
 		},
@@ -209,7 +380,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 			name: "Get packet successfully",
 			malleate: func() {
 				destChainPrefix = "cosmos"
-				srcKeybase, srcKey = generateKey("test")
+				srcKeybase, srcKey = generateMemoryKeybase("test")
 			},
 			expPass: true,
 		},
@@ -217,8 +388,8 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 			name: "Wrong source key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
-				srcKeybase, _ = generateKey("test")
-				_, srcKey = generateKey("wrong")
+				srcKeybase, _ = generateMemoryKeybase("test")
+				_, srcKey = generateMemoryKeybase("wrong")
 			},
 			expPass: false,
 		},
@@ -250,7 +421,7 @@ func (s *IntegrationTestSuite) TestGetSourceKeyInfo() {
 		{
 			name: "Get key info successfully",
 			malleate: func() {
-				srcKeybase, srcKey := generateKey("test")
+				srcKeybase, srcKey := generateMemoryKeybase("test")
 				val.ClientCtx.Keyring = srcKeybase
 				val.ClientCtx.FromAddress = srcKey.GetAddress()
 				val.ClientCtx.FromName = srcKey.GetName()

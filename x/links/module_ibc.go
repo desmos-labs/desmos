@@ -260,16 +260,9 @@ func (am AppModule) OnTimeoutPacket(
 
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
+	// Do nothing when timeout is reached
 	case *types.LinksPacketData_IbcAccountConnectionPacket:
-		err := am.keeper.OnTimeoutIBCAccountConnectionPacket(ctx, modulePacket, *packet.IbcAccountConnectionPacket)
-		if err != nil {
-			return nil, err
-		}
 	case *types.LinksPacketData_IbcAccountLinkPacket:
-		err := am.keeper.OnTimeoutIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket)
-		if err != nil {
-			return nil, err
-		}
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)

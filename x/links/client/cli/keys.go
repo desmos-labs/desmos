@@ -8,4 +8,5 @@ var (
 
 const (
 	FlagPacketTimeoutTimestamp = "packet-timeout-timestamp"
+	FlagTesting                = "testing"
 )

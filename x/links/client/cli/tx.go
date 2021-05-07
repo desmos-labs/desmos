@@ -9,7 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/go-bip39"
 
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
@@ -52,20 +54,29 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 			destKeyBasePath := args[3]
 			destKeyName := args[4]
 
-			// get destination key info from path
-			keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
-			destKeybase, err := keyring.New(destChainPrefix, keyringBackend, destKeyBasePath, clientCtx.Input)
-			if err != nil {
-				return err
-			}
-			destKey, err := destKeybase.Key(destKeyName)
+			srcKeybase, srcKey, err := GetSourceKeyInfo(clientCtx)
 			if err != nil {
 				return err
 			}
 
-			srcKeybase, srcKey, err := GetSourceKeyInfo(clientCtx)
+			// get destination key info from path
+			keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
+			testing, _ := cmd.Flags().GetBool(FlagTesting)
+
+			var destKeybase keyring.Keyring
+			if !testing {
+				destKeybase, err = keyring.New(destChainPrefix, keyringBackend, destKeyBasePath, clientCtx.Input)
+				if err != nil {
+					return err
+				}
+			} else {
+				// Only for test
+				destKeybase = generateTestKeybase()
+			}
+
+			destKey, err := destKeybase.Key(destKeyName)
 			if err != nil {
-				return err
+				return fmt.Errorf("Could not get destination key")
 			}
 
 			packet, err := GetIBCAccountConnectionPacket(
@@ -111,6 +122,11 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 		FlagPacketTimeoutTimestamp,
 		DefaultRelativePacketTimeoutTimestamp,
 		"Packet timeout timestamp in nanoseconds. Default is 10 minutes. The timeout is disabled when set to 0.",
+	)
+	cmd.Flags().Bool(
+		FlagTesting,
+		false,
+		"For unit testing, default is false",
 	)
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -259,4 +275,16 @@ func GetSourceKeyInfo(clientCtx client.Context) (keyring.Keyring, keyring.Info, 
 		return nil, nil, err
 	}
 	return keybase, key, nil
+}
+
+// unit test helpler for cli
+func generateTestKeybase() keyring.Keyring {
+	keyBase := keyring.NewInMemory()
+	keyringAlgos, _ := keyBase.SupportedAlgorithms()
+	algo, _ := keyring.NewSigningAlgoFromString("secp256k1", keyringAlgos)
+	hdPath := hd.CreateHDPath(0, 0, 0).String()
+	entropySeed, _ := bip39.NewEntropy(256)
+	mnemonic, _ := bip39.NewMnemonic(entropySeed)
+	keyBase.NewAccount("test", mnemonic, "", hdPath, algo)
+	return keyBase
 }

@@ -345,11 +345,24 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 			expPass: true,
 		},
 		{
-			name: "Invalid packet",
+			name: "Invalid packet struct",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				bz := []byte{}
+				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+			},
+			expPass: false,
+		},
+		{
+			name: "Invalid packet type",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				var modulePacket types.LinksPacketData
+				modulePacket.Packet = &types.LinksPacketData_NoData{}
+				bz, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&modulePacket))
+				suite.Require().NoError(err)
 				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			},
 			expPass: false,
@@ -665,6 +678,16 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			},
 			expPass: true,
+		},
+		{
+			name: "Invalid packet struct",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				bz := []byte{}
+				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+			},
+			expPass: false,
 		},
 		{
 			name: "Invalid packet type",
