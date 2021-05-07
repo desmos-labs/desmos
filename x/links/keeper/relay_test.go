@@ -176,9 +176,10 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 	)
 
 	tests := []struct {
-		name     string
-		malleate func()
-		expPass  bool
+		name       string
+		malleate   func()
+		stubPacket func(*types.IBCAccountConnectionPacketData)
+		expPass    bool
 	}{
 		{
 			name: "successful create link from source chain",
@@ -220,6 +221,46 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			},
 			expPass: false,
 		},
+		{
+			name: "Invalid packet",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = suite.chainB.Account.GetAddress().String()
+
+				link := types.NewLink(srcAddr, dstAddr)
+				linkBz, _ := link.Marshal()
+				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				srcSigHex = hex.EncodeToString(srcSig)
+			},
+			stubPacket: func(p *types.IBCAccountConnectionPacketData) {
+				p.DestinationSignature = "---"
+			},
+			expPass: false,
+		},
+		{
+			name: "Invalid signature",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = suite.chainB.Account.GetAddress().String()
+
+				link := types.NewLink(srcAddr, dstAddr)
+				linkBz, _ := link.Marshal()
+				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				srcSigHex = hex.EncodeToString(srcSig)
+				dstSig, _ := suite.chainB.PrivKey.Sign([]byte{0})
+				dstSigHex = hex.EncodeToString(dstSig)
+
+			},
+			expPass: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -238,6 +279,10 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			)
 			err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
 			suite.Require().NoError(err) // message committed
+
+			if test.stubPacket != nil {
+				test.stubPacket(&packetData)
+			}
 
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
@@ -286,6 +331,15 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			},
 			success: false,
 		},
+		{
+			name: "invalid ack",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				ack = channeltypes.Acknowledgement{}
+			},
+			success: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -324,6 +378,37 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
+	suite.Run("Do nothing and returns nil", func() {
+		suite.SetupIBCTest()
+		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+		srcAddr := suite.chainA.Account.GetAddress().String()
+		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+		dstAddr := suite.chainA.Account.GetAddress().String()
+
+		link := types.NewLink(srcAddr, dstAddr)
+		linkBz, _ := link.Marshal()
+		srcSig, _ := suite.chainB.PrivKey.Sign(linkBz)
+		srcSigHex := hex.EncodeToString(srcSig)
+		dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+		dstSigHex := hex.EncodeToString(dstSig)
+
+		data := types.NewIBCAccountConnectionPacketData(
+			"cosmos",
+			srcAddr,
+			srcPubKeyHex,
+			dstAddr,
+			srcSigHex,
+			dstSigHex,
+		)
+		bz, _ := data.GetBytes()
+		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+		err := suite.chainA.App.LinksKeeper.OnTimeoutIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data)
+		suite.Require().NoError(err)
+	})
 }
 
 // ___________________________________________________________________________________________________________________
@@ -486,9 +571,10 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 	)
 
 	tests := []struct {
-		name     string
-		malleate func()
-		expPass  bool
+		name       string
+		malleate   func()
+		stubPacket func(*types.IBCAccountLinkPacketData)
+		expPass    bool
 	}{
 		{
 			name: "successful create link from source chain",
@@ -507,6 +593,42 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 
 			},
 			expPass: true,
+		},
+		{
+			name: "Invalid packet information",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = srcAddr
+
+				link := types.NewLink(srcAddr, dstAddr)
+				linkBz, _ := link.Marshal()
+				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				sigHex = hex.EncodeToString(srcSig)
+			},
+			stubPacket: func(p *types.IBCAccountLinkPacketData) {
+				p.Signature = "---"
+			},
+			expPass: false,
+		},
+		{
+			name: "Invalid source signature",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = srcAddr
+
+				srcSig, _ := suite.chainA.PrivKey.Sign([]byte{0})
+				sigHex = hex.EncodeToString(srcSig)
+
+			},
+			expPass: false,
 		},
 	}
 
@@ -527,6 +649,10 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			)
 			err := suite.coordinator.SendMsg(suite.chainA, suite.chainB, channelB.ClientID, msg)
 			suite.Require().NoError(err) // message committed
+
+			if test.stubPacket != nil {
+				test.stubPacket(&packetData)
+			}
 
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
@@ -575,6 +701,15 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 			},
 			success: false,
 		},
+		{
+			name: "invalid ack",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				ack = channeltypes.Acknowledgement{}
+			},
+			success: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -608,4 +743,30 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountLinkPacket() {
+	suite.Run("Do nothing and returns nil", func() {
+		suite.SetupIBCTest()
+		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+		srcAddr := suite.chainA.Account.GetAddress().String()
+		pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+		dstAddress := srcAddr
+		link := types.NewLink(srcAddr, dstAddress)
+		linkBz, _ := link.Marshal()
+		sig, _ := suite.chainA.PrivKey.Sign(linkBz)
+		sigHex := hex.EncodeToString(sig)
+
+		data := types.NewIBCAccountLinkPacketData(
+			"cosmos",
+			srcAddr,
+			pubKeyHex,
+			sigHex,
+		)
+		bz, _ := data.GetBytes()
+		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+		err := suite.chainA.App.LinksKeeper.OnTimeoutIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data)
+		suite.Require().NoError(err)
+	})
 }
