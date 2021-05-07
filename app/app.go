@@ -444,8 +444,8 @@ func NewDesmosApp(
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
 		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
-		reportsTypes.ModuleName, // custom modules
-		linkstypes.ModuleName,   // custom modules
+		reportsTypes.ModuleName,
+		linkstypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
