@@ -48,6 +48,18 @@ func (p *Profile) GetAccount() authtypes.AccountI {
 	return p.Account.GetCachedValue().(authtypes.AccountI)
 }
 
+// setAccount sets the given account as the underlying account instance.
+// This should be called after updating anything about the account (eg. after calling SetSequence).
+func (p *Profile) setAccount(account authtypes.AccountI) error {
+	accAny, err := codectypes.NewAnyWithValue(account)
+	if err != nil {
+		return err
+	}
+
+	p.Account = accAny
+	return nil
+}
+
 // GetAddress implements authtypes.AccountI
 func (p *Profile) GetAddress() sdk.AccAddress {
 	return p.GetAccount().GetAddress()
@@ -55,7 +67,13 @@ func (p *Profile) GetAddress() sdk.AccAddress {
 
 // SetAddress implements authtypes.AccountI
 func (p *Profile) SetAddress(addr sdk.AccAddress) error {
-	return p.GetAccount().SetAddress(addr)
+	acc := p.GetAccount()
+	err := acc.SetAddress(addr)
+	if err != nil {
+		return err
+	}
+
+	return p.setAccount(acc)
 }
 
 // GetPubKey implements authtypes.AccountI
@@ -65,7 +83,13 @@ func (p *Profile) GetPubKey() cryptotypes.PubKey {
 
 // SetPubKey implements authtypes.AccountI
 func (p *Profile) SetPubKey(pubKey cryptotypes.PubKey) error {
-	return p.GetAccount().SetPubKey(pubKey)
+	acc := p.GetAccount()
+	err := acc.SetPubKey(pubKey)
+	if err != nil {
+		return err
+	}
+
+	return p.setAccount(acc)
 }
 
 // GetAccountNumber implements authtypes.AccountI
@@ -75,7 +99,13 @@ func (p *Profile) GetAccountNumber() uint64 {
 
 // SetAccountNumber implements authtypes.AccountI
 func (p *Profile) SetAccountNumber(accountNumber uint64) error {
-	return p.GetAccount().SetAccountNumber(accountNumber)
+	acc := p.GetAccount()
+	err := acc.SetAccountNumber(accountNumber)
+	if err != nil {
+		return err
+	}
+
+	return p.setAccount(acc)
 }
 
 // GetSequence implements authtypes.AccountI
@@ -85,7 +115,13 @@ func (p *Profile) GetSequence() uint64 {
 
 // SetSequence implements authtypes.AccountI
 func (p *Profile) SetSequence(sequence uint64) error {
-	return p.GetAccount().SetSequence(sequence)
+	acc := p.GetAccount()
+	err := acc.SetSequence(sequence)
+	if err != nil {
+		return err
+	}
+
+	return p.setAccount(acc)
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage

@@ -109,8 +109,7 @@ message Relationship {
 
 // Relationships wraps a list of Relationship objects
 message Relationships {
-  repeated Relationship relationships = 1
-  [(gogoproto.nullable) = false];
+  repeated Relationship relationships = 1 [(gogoproto.nullable) = false];
 }
 
 // UserBlock represents the fact that the Blocker has blocked the given Blocked
@@ -129,6 +128,5 @@ message UserBlock {
 
 // UserBlocks wraps a list of UserBlock objects
 message UserBlocks {
-  repeated UserBlock blocks = 1
-  [(gogoproto.nullable) = false];
+  repeated UserBlock blocks = 1 [(gogoproto.nullable) = false];
 }
