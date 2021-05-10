@@ -31,7 +31,7 @@ message Profile {
     (gogoproto.moretags) = "yaml:\"dtag\"",
     (gogoproto.customname) = "DTag"
   ];
-  string moniker = 3 [(gogoproto.moretags) = "yaml:\"moniker\""];
+  string nickname = 3 [(gogoproto.moretags) = "yaml:\"nickname\""];
   string bio = 4 [(gogoproto.moretags) = "yaml:\"bio\""];
   Pictures pictures = 5 [
     (gogoproto.nullable) = false,

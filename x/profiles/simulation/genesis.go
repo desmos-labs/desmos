@@ -20,7 +20,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		randomRelationships(simsState),
 		randomUsersBlocks(simsState),
 		types.NewParams(
-			RandomMonikerParams(simsState.Rand),
+			RandomNicknameParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
 			RandomBioParams(simsState.Rand),
 		),
