@@ -111,7 +111,6 @@
 - Implemented users `Relationships` ([\#168](https://github.com/desmos-labs/desmos/issues/168))
 
 # Version 0.10.0
-
 ## Changes
 - Changed application errors to make them more clear ([\#237](https://github.com/desmos-labs/desmos/issues/237))
 - Implemented the `x/upgrade` module ([\#174](https://github.com/desmos-labs/desmos/issues/174))
