@@ -227,7 +227,6 @@
 - Removed the `gov` and `upgrade` modules as they are currently not used ([\#142](https://github.com/desmos-labs/desmos/issues/142))
 
 ## Bug fixes
-
 - Fixed a bug inside the migration procedure of the `magpie`
   module ([\#106](https://github.com/desmos-labs/desmos/issues/106))
 
