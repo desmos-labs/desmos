@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 
 			if test.expErr {
 				s.Require().Error(err)
-
+			} else {
 				var response types.QueryLinkResponse
 				s.Require().Error(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(test.expOutput, response)
@@ -130,7 +130,7 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 func TestNewTxCmd(t *testing.T) {
 	cmd := cli.NewTxCmd()
 	if cmd == nil {
-		t.Errorf("get no tx command")
+		t.Errorf("Failed to get tx command")
 	}
 }
 
@@ -141,7 +141,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		name     string
 		args     []string
 		malleate func()
-		expErr   bool
+		expPass  bool
+		expErr   error
 	}{
 		{
 			name: "Empty keybase",
@@ -156,7 +157,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 			malleate: func() {
 				ctx.Keyring = keyring.NewInMemory()
 			},
-			expErr: true,
+			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 		{
 			name: "Invalid destination keybase",
@@ -168,10 +170,11 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				"test",
 			},
 			malleate: func() {
-				keybase, _ := generateMemoryKeybase("")
+				keybase, _ := generateMemoryKeybase("could not get destination key")
 				ctx.Keyring = keybase
 			},
-			expErr: true,
+			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 		{
 			name: "Wrong destination key name for destination keybase",
@@ -187,7 +190,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				keybase, _ := generateMemoryKeybase("")
 				ctx.Keyring = keybase
 			},
-			expErr: true,
+			expPass: false,
+			expErr:  fmt.Errorf("could not get destination key"),
 		},
 		{
 			name: "Channel is not available",
@@ -203,7 +207,21 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				keybase, _ := generateMemoryKeybase("")
 				ctx.Keyring = keybase
 			},
-			expErr: true,
+			expPass: false,
+		},
+		{
+			name: "Invalid args number",
+			args: []string{
+				"links",
+				"channel-0",
+				"desmos",
+				".",
+				"test",
+				"hi123",
+			},
+			malleate: func() {},
+			expPass:  false,
+			expErr:   fmt.Errorf("accepts 5 arg(s), received 6"),
 		},
 	}
 
@@ -215,8 +233,11 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 			cmd := cli.GetCmdCreateIBCAccountConnection()
 			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
 
-			if test.expErr {
+			if !test.expPass {
 				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
 			} else {
 				s.Require().NoError(err)
 			}
@@ -231,7 +252,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 		name     string
 		args     []string
 		malleate func()
-		expErr   bool
+		expPass  bool
+		expErr   error
 	}{
 		{
 			name: "Empty keybase",
@@ -244,7 +266,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 			malleate: func() {
 				ctx.Keyring = keyring.NewInMemory()
 			},
-			expErr: true,
+			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 		{
 			name: "Channel is not available",
@@ -257,7 +280,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 				keybase, _ := generateMemoryKeybase("")
 				ctx.Keyring = keybase
 			},
-			expErr: true,
+			expPass: false,
 		},
 		{
 			name: "Invalid args number",
@@ -269,7 +292,8 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 			},
 			malleate: func() {
 			},
-			expErr: true,
+			expPass: false,
+			expErr:  fmt.Errorf("accepts 3 arg(s), received 4"),
 		},
 	}
 
@@ -281,8 +305,11 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 			cmd := cli.GetCmdCreateIBCAccountLink()
 			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
 
-			if test.expErr {
+			if !test.expPass {
 				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
 			} else {
 				s.Require().NoError(err)
 			}
@@ -316,6 +343,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 		name     string
 		malleate func()
 		expPass  bool
+		expErr   error
 	}{
 		{
 			name: "Get packet successfully",
@@ -335,6 +363,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 				destKeybase, destKey = generateMemoryKeybase("test")
 			},
 			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 		{
 			name: "Wrong dest key name",
@@ -345,6 +374,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 				_, destKey = generateMemoryKeybase("wrong")
 			},
 			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 	}
 
@@ -357,6 +387,9 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 
 			if !test.expPass {
 				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
 			} else {
 				s.Require().NoError(err)
 			}
@@ -375,6 +408,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 		name     string
 		malleate func()
 		expPass  bool
+		expErr   error
 	}{
 		{
 			name: "Get packet successfully",
@@ -392,6 +426,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 				_, srcKey = generateMemoryKeybase("wrong")
 			},
 			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 	}
 
@@ -404,6 +439,9 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 
 			if !test.expPass {
 				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
 			} else {
 				s.Require().NoError(err)
 			}
@@ -417,6 +455,7 @@ func (s *IntegrationTestSuite) TestGetSourceKeyInfo() {
 		name     string
 		malleate func()
 		expPass  bool
+		expErr   error
 	}{
 		{
 			name: "Get key info successfully",
@@ -434,6 +473,7 @@ func (s *IntegrationTestSuite) TestGetSourceKeyInfo() {
 				val.ClientCtx.Keyring = keyring.NewInMemory()
 			},
 			expPass: false,
+			expErr:  fmt.Errorf("The specified item could not be found in the keyring"),
 		},
 	}
 
@@ -446,6 +486,9 @@ func (s *IntegrationTestSuite) TestGetSourceKeyInfo() {
 
 			if !test.expPass {
 				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
 			} else {
 				s.Require().NoError(err)
 			}

@@ -13,7 +13,7 @@ import (
 
 func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 
-	suite.Run("packet transformation test", func() {
+	suite.Run("Packet transformation test", func() {
 		suite.SetupIBCTest()
 
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
@@ -69,7 +69,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 		expPass  bool
 	}{
 		{
-			name: "successful create link from source chain",
+			name: "Create link from source chain successfully",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, _ = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -78,7 +78,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 			expPass: true,
 		},
 		{
-			name: "source channel not found",
+			name: "Source channel not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, _ = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -87,7 +87,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 			expPass: false,
 		},
 		{
-			name: "next seq send not found",
+			name: "Next seq send not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA = suite.chainA.NextTestChannel(connA, ibctesting.LinksPort)
@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 			expPass: false,
 		},
 		{
-			name: "channel capability not found",
+			name: "Channel capability not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -182,7 +182,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 		expPass    bool
 	}{
 		{
-			name: "successful create link from source chain",
+			name: "Create link from source chain successfully",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
@@ -202,7 +202,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			expPass: true,
 		},
 		{
-			name: "non exist destination address on destination chain",
+			name: "Non exist destination address on destination chain",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
@@ -312,7 +312,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 		success  bool // success of ack
 	}{
 		{
-			name: "success ack",
+			name: "Receive success ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -323,7 +323,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			success: true,
 		},
 		{
-			name: "unsuccess ack",
+			name: "Receive unsuccess ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -332,7 +332,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			success: false,
 		},
 		{
-			name: "invalid ack",
+			name: "Receive invalid ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -381,7 +381,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 }
 
 func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
-	suite.Run("Do nothing and returns nil", func() {
+	suite.Run("Receive timeout packet and returns nil", func() {
 		suite.SetupIBCTest()
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -415,7 +415,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
 
 func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 
-	suite.Run("packet transformation test", func() {
+	suite.Run("Packet transformation test", func() {
 		suite.SetupIBCTest()
 
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
@@ -469,7 +469,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 		expPass  bool
 	}{
 		{
-			name: "successful create link from source chain",
+			name: "Create link from source chain successfully",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, _ = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -478,7 +478,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 			expPass: true,
 		},
 		{
-			name: "source channel not found",
+			name: "Source channel not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, _ = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -487,7 +487,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 			expPass: false,
 		},
 		{
-			name: "next seq send not found",
+			name: "Next seq send not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA = suite.chainA.NextTestChannel(connA, ibctesting.LinksPort)
@@ -510,7 +510,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 			expPass: false,
 		},
 		{
-			name: "channel capability not found",
+			name: "Channel capability not found",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -577,7 +577,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 		expPass    bool
 	}{
 		{
-			name: "successful create link from source chain",
+			name: "Create link from source chain successfully",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
@@ -595,7 +595,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			expPass: true,
 		},
 		{
-			name: "Invalid packet information",
+			name: "Invalid packet",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
@@ -682,7 +682,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 		success  bool // success of ack
 	}{
 		{
-			name: "success ack",
+			name: "Receive success ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -693,7 +693,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 			success: true,
 		},
 		{
-			name: "unsuccess ack",
+			name: "Receive unsuccess ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -702,7 +702,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 			success: false,
 		},
 		{
-			name: "invalid ack",
+			name: "Receive invalid ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
@@ -746,7 +746,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 }
 
 func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountLinkPacket() {
-	suite.Run("Do nothing and returns nil", func() {
+	suite.Run("Receive timeout packet and returns nil", func() {
 		suite.SetupIBCTest()
 		_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 		channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
