@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -12,18 +14,18 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// Profiles implements the Query/Profiles gRPC method
+// Profile implements the Query/Profile gRPC method
 func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest) (*types.QueryProfileResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	dTagOrAddress := request.User
 	if strings.TrimSpace(dTagOrAddress) == "" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or sdkAddress cannot be empty or blank")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank")
 	}
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
-		addr := k.GetDTagRelatedAddress(sdkCtx, dTagOrAddress)
+		addr := k.GetAddressFromDTag(sdkCtx, dTagOrAddress)
 		if addr == "" {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)
@@ -35,13 +37,21 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 		}
 	}
 
-	account, found := k.GetProfile(sdkCtx, sdkAddress.String())
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"Profile with sdkAddress %s doesn't exists", dTagOrAddress)
+	account, found, err := k.GetProfile(sdkCtx, sdkAddress.String())
+	if err != nil {
+		return nil, err
 	}
 
-	return &types.QueryProfileResponse{Profile: account}, nil
+	if !found {
+		return &types.QueryProfileResponse{Profile: nil}, nil
+	}
+
+	accountAny, err := codectypes.NewAnyWithValue(account)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryProfileResponse{Profile: accountAny}, nil
 }
 
 // DTagTransfers implements the Query/DTagTransfers gRPC method
@@ -55,6 +65,20 @@ func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTrans
 
 	requests := k.GetUserIncomingDTagTransferRequests(sdkCtx, user.String())
 	return &types.QueryDTagTransfersResponse{Requests: requests}, nil
+}
+
+// UserRelationships implements the Query/UserRelationships gRPC method
+func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserRelationshipsRequest) (*types.QueryUserRelationshipsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	relationships := k.GetUserRelationships(sdkCtx, request.User)
+	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships}, nil
+}
+
+// UserBlocks implements the Query/UserBlocks gRPC method
+func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	blocks := k.GetUserBlocks(sdkCtx, request.User)
+	return &types.QueryUserBlocksResponse{Blocks: blocks}, nil
 }
 
 // Params implements the Query/Params gRPC method

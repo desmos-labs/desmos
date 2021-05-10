@@ -26,9 +26,9 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params contains the parameters for the profiles module
 type Params struct {
-	MonikerParams MonikerParams                          `protobuf:"bytes,1,opt,name=moniker_params,json=monikerParams,proto3" json:"moniker_params" yaml:"moniker_params"`
-	DtagParams    DTagParams                             `protobuf:"bytes,2,opt,name=dtag_params,json=dtagParams,proto3" json:"dtag_params" yaml:"dtag_params"`
-	MaxBioLength  github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=max_bio_length,json=maxBioLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_bio_length" yaml:"max_bio_length"`
+	NicknameParams NicknameParams                         `protobuf:"bytes,1,opt,name=nickname_params,json=nicknameParams,proto3" json:"nickname_params" yaml:"nickname_params"`
+	DTagParams     DTagParams                             `protobuf:"bytes,2,opt,name=dtag_params,json=dtagParams,proto3" json:"dtag_params" yaml:"dtag_params"`
+	MaxBioLength   github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=max_bio_length,json=maxBioLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_bio_length" yaml:"max_bio_length"`
 }
 
 func (m *Params) Reset()         { *m = Params{} }
@@ -64,38 +64,38 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
-func (m *Params) GetMonikerParams() MonikerParams {
+func (m *Params) GetNicknameParams() NicknameParams {
 	if m != nil {
-		return m.MonikerParams
+		return m.NicknameParams
 	}
-	return MonikerParams{}
+	return NicknameParams{}
 }
 
-func (m *Params) GetDtagParams() DTagParams {
+func (m *Params) GetDTagParams() DTagParams {
 	if m != nil {
-		return m.DtagParams
+		return m.DTagParams
 	}
 	return DTagParams{}
 }
 
-// MonikerParams defines the parameters related to the profiles monikers
-type MonikerParams struct {
-	MinMonikerLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=min_moniker_length,json=minMonikerLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_moniker_length" yaml:"min_moniker_length"`
-	MaxMonikerLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=max_moniker_length,json=maxMonikerLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_moniker_length" yaml:"max_moniker_length"`
+// NicknameParams defines the parameters related to the profiles nicknames
+type NicknameParams struct {
+	MinNicknameLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=min_nickname_length,json=minNicknameLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_nickname_length" yaml:"min_nickname_length"`
+	MaxNicknameLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=max_nickname_length,json=maxNicknameLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_nickname_length" yaml:"max_nickname_length"`
 }
 
-func (m *MonikerParams) Reset()         { *m = MonikerParams{} }
-func (m *MonikerParams) String() string { return proto.CompactTextString(m) }
-func (*MonikerParams) ProtoMessage()    {}
-func (*MonikerParams) Descriptor() ([]byte, []int) {
+func (m *NicknameParams) Reset()         { *m = NicknameParams{} }
+func (m *NicknameParams) String() string { return proto.CompactTextString(m) }
+func (*NicknameParams) ProtoMessage()    {}
+func (*NicknameParams) Descriptor() ([]byte, []int) {
 	return fileDescriptor_821862d20041ec2d, []int{1}
 }
-func (m *MonikerParams) XXX_Unmarshal(b []byte) error {
+func (m *NicknameParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MonikerParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *NicknameParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MonikerParams.Marshal(b, m, deterministic)
+		return xxx_messageInfo_NicknameParams.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -105,23 +105,23 @@ func (m *MonikerParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (m *MonikerParams) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MonikerParams.Merge(m, src)
+func (m *NicknameParams) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NicknameParams.Merge(m, src)
 }
-func (m *MonikerParams) XXX_Size() int {
+func (m *NicknameParams) XXX_Size() int {
 	return m.Size()
 }
-func (m *MonikerParams) XXX_DiscardUnknown() {
-	xxx_messageInfo_MonikerParams.DiscardUnknown(m)
+func (m *NicknameParams) XXX_DiscardUnknown() {
+	xxx_messageInfo_NicknameParams.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MonikerParams proto.InternalMessageInfo
+var xxx_messageInfo_NicknameParams proto.InternalMessageInfo
 
 // DTagParams defines the parameters related to profile DTags
 type DTagParams struct {
 	RegEx         string                                 `protobuf:"bytes,1,opt,name=reg_ex,json=regEx,proto3" json:"reg_ex,omitempty" yaml:"reg_ex"`
-	MinDtagLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=min_dtag_length,json=minDtagLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_dtag_length" yaml:"min_dtag_length"`
-	MaxDtagLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=max_dtag_length,json=maxDtagLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_dtag_length" yaml:"max_dtag_length"`
+	MinDTagLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=min_dtag_length,json=minDtagLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_dtag_length" yaml:"min_dtag_length"`
+	MaxDTagLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=max_dtag_length,json=maxDtagLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_dtag_length" yaml:"max_dtag_length"`
 }
 
 func (m *DTagParams) Reset()         { *m = DTagParams{} }
@@ -166,7 +166,7 @@ func (m *DTagParams) GetRegEx() string {
 
 func init() {
 	proto.RegisterType((*Params)(nil), "desmos.profiles.v1beta1.Params")
-	proto.RegisterType((*MonikerParams)(nil), "desmos.profiles.v1beta1.MonikerParams")
+	proto.RegisterType((*NicknameParams)(nil), "desmos.profiles.v1beta1.NicknameParams")
 	proto.RegisterType((*DTagParams)(nil), "desmos.profiles.v1beta1.DTagParams")
 }
 
@@ -175,36 +175,38 @@ func init() {
 }
 
 var fileDescriptor_821862d20041ec2d = []byte{
-	// 457 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
-	0x18, 0xc6, 0x9b, 0x4c, 0x54, 0xc2, 0x5b, 0x07, 0x58, 0xfc, 0x19, 0x93, 0x48, 0x27, 0x83, 0xa6,
-	0x5e, 0xe6, 0x68, 0x70, 0xe3, 0x18, 0x0d, 0x31, 0x04, 0x48, 0x28, 0xe2, 0xc4, 0x25, 0x38, 0xab,
-	0xf1, 0xac, 0xc5, 0x71, 0x94, 0x18, 0xe4, 0x7e, 0x00, 0xee, 0x9c, 0xf9, 0x42, 0xec, 0xb8, 0x23,
-	0xe2, 0x50, 0xa1, 0xf6, 0x1b, 0xec, 0x13, 0x20, 0xff, 0xa9, 0x92, 0x30, 0xed, 0x30, 0xf5, 0x54,
-	0xbb, 0x7a, 0xde, 0xe7, 0xf7, 0xbc, 0xaf, 0xf3, 0x82, 0x67, 0x53, 0xda, 0x08, 0xd9, 0xc4, 0x55,
-	0x2d, 0xbf, 0xf0, 0x82, 0x36, 0xf1, 0xb7, 0xc3, 0x9c, 0x2a, 0x72, 0x18, 0x57, 0xa4, 0x26, 0xa2,
-	0xc1, 0x55, 0x2d, 0x95, 0x84, 0x8f, 0x9c, 0x0a, 0xaf, 0x54, 0xd8, 0xab, 0x76, 0xef, 0x33, 0xc9,
-	0xa4, 0xd5, 0xc4, 0xe6, 0xe4, 0xe4, 0xe8, 0x57, 0x08, 0x86, 0x1f, 0x6c, 0x3d, 0x2c, 0xc0, 0xb6,
-	0x90, 0x25, 0x3f, 0xa3, 0x75, 0xe6, 0x1c, 0x77, 0x82, 0xbd, 0x60, 0xb2, 0xf9, 0x7c, 0x1f, 0x5f,
-	0x63, 0x89, 0xdf, 0x3b, 0xb9, 0xab, 0x4f, 0x9e, 0x9c, 0xcf, 0xc7, 0x83, 0xcb, 0xf9, 0xf8, 0xc1,
-	0x8c, 0x88, 0xe2, 0x25, 0xea, 0x7b, 0xa1, 0x74, 0x24, 0xba, 0x6a, 0xf8, 0x19, 0x6c, 0x4e, 0x15,
-	0x61, 0x2b, 0x54, 0x68, 0x51, 0x4f, 0xaf, 0x45, 0x1d, 0x7d, 0x24, 0xcc, 0x73, 0x76, 0x3d, 0x07,
-	0x3a, 0x4e, 0xc7, 0x05, 0xa5, 0xc0, 0xdc, 0x3c, 0x41, 0x80, 0x6d, 0x41, 0x74, 0x96, 0x73, 0x99,
-	0x15, 0xb4, 0x64, 0xea, 0x74, 0x67, 0x63, 0x2f, 0x98, 0x6c, 0x25, 0xaf, 0x4d, 0xfd, 0x9f, 0xf9,
-	0x78, 0x9f, 0x71, 0x75, 0xfa, 0x35, 0xc7, 0x27, 0x52, 0xc4, 0x27, 0xd2, 0x8e, 0xd6, 0xfd, 0x1c,
-	0x34, 0xd3, 0xb3, 0x58, 0xcd, 0x2a, 0xda, 0xe0, 0x37, 0xa5, 0xea, 0x74, 0xd4, 0x73, 0x43, 0xe9,
-	0x96, 0x20, 0x3a, 0xe1, 0xf2, 0x9d, 0xbb, 0x7e, 0x0f, 0xc1, 0xa8, 0x37, 0x10, 0x38, 0x03, 0x50,
-	0xf0, 0x32, 0x5b, 0x0d, 0xc2, 0x87, 0x08, 0x6c, 0x88, 0xb7, 0x37, 0x0e, 0xf1, 0xd8, 0x87, 0xb8,
-	0xe2, 0x88, 0xd2, 0xbb, 0x82, 0x97, 0x1e, 0xed, 0xc2, 0x58, 0x34, 0xd1, 0xff, 0xa3, 0xc3, 0x35,
-	0xd1, 0x57, 0x1c, 0x0d, 0x9a, 0xe8, 0x1e, 0x1a, 0xfd, 0x0c, 0x01, 0x68, 0x5f, 0x0b, 0x4e, 0xc0,
-	0xb0, 0xa6, 0x2c, 0xa3, 0xda, 0x36, 0x7e, 0x3b, 0xb9, 0x77, 0x39, 0x1f, 0x8f, 0x9c, 0x9f, 0xfb,
-	0x1f, 0xa5, 0xb7, 0x6a, 0xca, 0x5e, 0x69, 0x58, 0x81, 0x3b, 0xa6, 0x39, 0xfb, 0x9e, 0xbd, 0xc0,
-	0xc7, 0x37, 0x0e, 0xfc, 0xb0, 0x9d, 0x55, 0xc7, 0xce, 0x7c, 0x83, 0xbc, 0x3c, 0x52, 0x84, 0xf9,
-	0x29, 0x19, 0x22, 0xd1, 0x3d, 0xe2, 0xc6, 0x9a, 0xc4, 0xbe, 0x9d, 0x21, 0x12, 0xdd, 0x12, 0x93,
-	0xe3, 0xf3, 0x45, 0x14, 0x5c, 0x2c, 0xa2, 0xe0, 0xef, 0x22, 0x0a, 0x7e, 0x2c, 0xa3, 0xc1, 0xc5,
-	0x32, 0x1a, 0xfc, 0x5e, 0x46, 0x83, 0x4f, 0xb8, 0x83, 0x72, 0x4b, 0x70, 0x50, 0x90, 0xbc, 0xf1,
-	0xe7, 0x58, 0xb7, 0x6b, 0x6f, 0xb1, 0xf9, 0xd0, 0xee, 0xef, 0x8b, 0x7f, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0xce, 0x1d, 0x51, 0xff, 0x16, 0x04, 0x00, 0x00,
+	// 481 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xcf, 0x6e, 0xd3, 0x30,
+	0x00, 0xc6, 0x9b, 0x4c, 0x54, 0xc2, 0x5b, 0x3b, 0x2d, 0xfc, 0x9b, 0x76, 0x48, 0x26, 0x83, 0xa0,
+	0x97, 0x25, 0x1a, 0xdc, 0x38, 0x46, 0x43, 0x80, 0x34, 0x10, 0x8a, 0xb8, 0xc0, 0x25, 0x72, 0x5a,
+	0x93, 0x59, 0xab, 0xed, 0x28, 0x31, 0xc8, 0x93, 0xb8, 0x70, 0xe7, 0xc0, 0x13, 0x71, 0xde, 0x71,
+	0x47, 0xe0, 0x60, 0xa1, 0xf4, 0x0d, 0xfa, 0x04, 0xc8, 0x76, 0x4a, 0x9a, 0x95, 0x1d, 0xca, 0x4e,
+	0xb5, 0xad, 0xaf, 0xdf, 0xef, 0x67, 0xbb, 0x2e, 0x78, 0x30, 0xc1, 0x15, 0xe5, 0x55, 0x54, 0x94,
+	0xfc, 0x03, 0x99, 0xe2, 0x2a, 0xfa, 0x74, 0x98, 0x61, 0x81, 0x0e, 0xa3, 0x02, 0x95, 0x88, 0x56,
+	0x61, 0x51, 0x72, 0xc1, 0xbd, 0x7b, 0x36, 0x15, 0x2e, 0x52, 0x61, 0x93, 0xda, 0xbb, 0x9d, 0xf3,
+	0x9c, 0x9b, 0x4c, 0xa4, 0x47, 0x36, 0x0e, 0x7f, 0xba, 0xa0, 0xff, 0xc6, 0x7c, 0xdf, 0x2b, 0xc0,
+	0x36, 0x23, 0xe3, 0x53, 0x86, 0x28, 0x4e, 0x6d, 0xe5, 0xae, 0xb3, 0xef, 0x8c, 0x36, 0x1f, 0x3f,
+	0x0a, 0xaf, 0xe8, 0x0c, 0x5f, 0x37, 0x79, 0xdb, 0x10, 0xfb, 0xe7, 0x2a, 0xe8, 0xcd, 0x55, 0x70,
+	0xf7, 0x0c, 0xd1, 0xe9, 0x53, 0x78, 0xa9, 0x0d, 0x26, 0x43, 0xd6, 0xc9, 0x7b, 0x0c, 0x6c, 0x4e,
+	0x04, 0xca, 0x17, 0x34, 0xd7, 0xd0, 0xee, 0x5f, 0x49, 0x3b, 0x7a, 0x8b, 0xf2, 0x86, 0x34, 0xd2,
+	0xa4, 0x5a, 0x05, 0xa0, 0x5d, 0x9b, 0xab, 0xc0, 0xb3, 0xdc, 0xa5, 0x4e, 0x98, 0x00, 0x3d, 0x6b,
+	0x78, 0x14, 0x0c, 0x29, 0x92, 0x69, 0x46, 0x78, 0x3a, 0xc5, 0x2c, 0x17, 0x27, 0xbb, 0x1b, 0xfb,
+	0xce, 0x68, 0x2b, 0x7e, 0xae, 0xdb, 0x7e, 0xa9, 0xe0, 0x61, 0x4e, 0xc4, 0xc9, 0xc7, 0x2c, 0x1c,
+	0x73, 0x1a, 0x8d, 0xb9, 0x39, 0x6c, 0xfb, 0x71, 0x50, 0x4d, 0x4e, 0x23, 0x71, 0x56, 0xe0, 0x2a,
+	0x7c, 0xc9, 0xc4, 0x5c, 0x05, 0x77, 0x2c, 0xa9, 0xdb, 0x06, 0x93, 0x2d, 0x8a, 0x64, 0x4c, 0xf8,
+	0xb1, 0x9d, 0x7e, 0x75, 0xc1, 0xb0, 0x7b, 0x42, 0xde, 0x67, 0x70, 0x8b, 0x12, 0x96, 0xfe, 0x3d,
+	0x99, 0x46, 0xc3, 0x31, 0x1a, 0xc7, 0x6b, 0x6b, 0xec, 0x35, 0x1a, 0xab, 0x95, 0x30, 0xd9, 0xa1,
+	0x84, 0x2d, 0xe8, 0x56, 0xc8, 0xd0, 0x91, 0x5c, 0xa1, 0xbb, 0xd7, 0xa4, 0xaf, 0x56, 0x6a, 0x3a,
+	0x92, 0x5d, 0x3a, 0xfc, 0xee, 0x82, 0xa5, 0xeb, 0xf2, 0x46, 0xa0, 0x5f, 0xe2, 0x3c, 0xc5, 0xd2,
+	0xec, 0xfe, 0x66, 0xbc, 0x33, 0x57, 0xc1, 0xc0, 0x36, 0xda, 0x75, 0x98, 0xdc, 0x28, 0x71, 0xfe,
+	0x4c, 0x7a, 0x5f, 0x1c, 0xb0, 0xad, 0xb7, 0x68, 0xee, 0xb5, 0xe3, 0xfc, 0x6e, 0x3d, 0xe7, 0x5a,
+	0x05, 0x83, 0x57, 0x84, 0x69, 0x09, 0xeb, 0xd4, 0xfe, 0x56, 0x2f, 0xf5, 0xc3, 0x64, 0x40, 0x09,
+	0x3b, 0x12, 0x8b, 0xa0, 0x75, 0x40, 0xb2, 0xe3, 0xb0, 0xf1, 0xdf, 0x0e, 0x48, 0xfe, 0xd3, 0xa1,
+	0xdb, 0xaf, 0x1d, 0x90, 0x6c, 0x1d, 0xe2, 0x17, 0xe7, 0xb5, 0xef, 0x5c, 0xd4, 0xbe, 0xf3, 0xbb,
+	0xf6, 0x9d, 0x6f, 0x33, 0xbf, 0x77, 0x31, 0xf3, 0x7b, 0x3f, 0x66, 0x7e, 0xef, 0x7d, 0xb8, 0xc4,
+	0xb6, 0xaf, 0xe7, 0x60, 0x8a, 0xb2, 0xaa, 0x19, 0x47, 0xb2, 0xfd, 0xcf, 0x30, 0x1e, 0x59, 0xdf,
+	0x3c, 0xfe, 0x27, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0xcd, 0x03, 0x42, 0x1a, 0x53, 0x04, 0x00,
+	0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -238,7 +240,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x1a
 	{
-		size, err := m.DtagParams.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.DTagParams.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -248,7 +250,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x12
 	{
-		size, err := m.MonikerParams.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.NicknameParams.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -260,7 +262,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MonikerParams) Marshal() (dAtA []byte, err error) {
+func (m *NicknameParams) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -270,20 +272,20 @@ func (m *MonikerParams) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MonikerParams) MarshalTo(dAtA []byte) (int, error) {
+func (m *NicknameParams) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MonikerParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *NicknameParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size := m.MaxMonikerLength.Size()
+		size := m.MaxNicknameLength.Size()
 		i -= size
-		if _, err := m.MaxMonikerLength.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MaxNicknameLength.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
@@ -291,9 +293,9 @@ func (m *MonikerParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x12
 	{
-		size := m.MinMonikerLength.Size()
+		size := m.MinNicknameLength.Size()
 		i -= size
-		if _, err := m.MinMonikerLength.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MinNicknameLength.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
@@ -324,9 +326,9 @@ func (m *DTagParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	{
-		size := m.MaxDtagLength.Size()
+		size := m.MaxDTagLength.Size()
 		i -= size
-		if _, err := m.MaxDtagLength.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MaxDTagLength.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
@@ -334,9 +336,9 @@ func (m *DTagParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x1a
 	{
-		size := m.MinDtagLength.Size()
+		size := m.MinDTagLength.Size()
 		i -= size
-		if _, err := m.MinDtagLength.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MinDTagLength.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
@@ -370,24 +372,24 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.MonikerParams.Size()
+	l = m.NicknameParams.Size()
 	n += 1 + l + sovParams(uint64(l))
-	l = m.DtagParams.Size()
+	l = m.DTagParams.Size()
 	n += 1 + l + sovParams(uint64(l))
 	l = m.MaxBioLength.Size()
 	n += 1 + l + sovParams(uint64(l))
 	return n
 }
 
-func (m *MonikerParams) Size() (n int) {
+func (m *NicknameParams) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = m.MinMonikerLength.Size()
+	l = m.MinNicknameLength.Size()
 	n += 1 + l + sovParams(uint64(l))
-	l = m.MaxMonikerLength.Size()
+	l = m.MaxNicknameLength.Size()
 	n += 1 + l + sovParams(uint64(l))
 	return n
 }
@@ -402,9 +404,9 @@ func (m *DTagParams) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
-	l = m.MinDtagLength.Size()
+	l = m.MinDTagLength.Size()
 	n += 1 + l + sovParams(uint64(l))
-	l = m.MaxDtagLength.Size()
+	l = m.MaxDTagLength.Size()
 	n += 1 + l + sovParams(uint64(l))
 	return n
 }
@@ -446,7 +448,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MonikerParams", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field NicknameParams", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -473,13 +475,13 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MonikerParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.NicknameParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DtagParams", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DTagParams", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -506,7 +508,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.DtagParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.DTagParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -549,10 +551,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthParams
 			}
 			if (iNdEx + skippy) > l {
@@ -567,7 +566,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MonikerParams) Unmarshal(dAtA []byte) error {
+func (m *NicknameParams) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -590,15 +589,15 @@ func (m *MonikerParams) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MonikerParams: wiretype end group for non-group")
+			return fmt.Errorf("proto: NicknameParams: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MonikerParams: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: NicknameParams: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinMonikerLength", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MinNicknameLength", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -625,13 +624,13 @@ func (m *MonikerParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MinMonikerLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.MinNicknameLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxMonikerLength", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxNicknameLength", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -658,7 +657,7 @@ func (m *MonikerParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MaxMonikerLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.MaxNicknameLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -668,10 +667,7 @@ func (m *MonikerParams) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthParams
 			}
 			if (iNdEx + skippy) > l {
@@ -749,7 +745,7 @@ func (m *DTagParams) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinDtagLength", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MinDTagLength", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -776,13 +772,13 @@ func (m *DTagParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MinDtagLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.MinDTagLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxDtagLength", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxDTagLength", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -809,7 +805,7 @@ func (m *DTagParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MaxDtagLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.MaxDTagLength.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -819,10 +815,7 @@ func (m *DTagParams) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthParams
 			}
 			if (iNdEx + skippy) > l {

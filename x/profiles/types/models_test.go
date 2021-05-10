@@ -3,7 +3,8 @@ package types_test
 import (
 	"fmt"
 	"testing"
-	"time"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
@@ -36,300 +37,6 @@ func TestPictures_Validate(t *testing.T) {
 	for _, test := range tests {
 		actErr := test.pictures.Validate()
 		require.Equal(t, test.expErr, actErr)
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func TestProfile_Update(t *testing.T) {
-	tests := []struct {
-		name       string
-		original   types.Profile
-		update     types.Profile
-		expError   bool
-		expProfile types.Profile
-	}{
-		{
-			name: "DoNotModify and empty fields do not update original values",
-			original: types.NewProfile(
-				"dtag",
-				"moniker",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			update: types.NewProfile(
-				types.DoNotModify,
-				types.DoNotModify,
-				types.DoNotModify,
-				types.NewPictures(types.DoNotModify, types.DoNotModify),
-				time.Time{},
-				types.DoNotModify,
-			),
-			expError: false,
-			expProfile: types.NewProfile(
-				"dtag",
-				"moniker",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-		},
-		{
-			name: "Update works properly with all fields",
-			original: types.NewProfile(
-				"dtag",
-				"moniker",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			update: types.NewProfile(
-				"dtag-2",
-				"moniker-2",
-				"bio-2",
-				types.NewPictures(
-					"https://example.com/2",
-					"https://example.com/2",
-				),
-				time.Unix(200, 0),
-				"cosmos1pqcac4w0k8z4elysqppgce5vauzu5krew7jegg",
-			),
-			expError: false,
-			expProfile: types.NewProfile(
-				"dtag-2",
-				"moniker-2",
-				"bio-2",
-				types.NewPictures(
-					"https://example.com/2",
-					"https://example.com/2",
-				),
-				time.Unix(200, 0),
-				"cosmos1pqcac4w0k8z4elysqppgce5vauzu5krew7jegg",
-			),
-		},
-		{
-			name: "Update does not allow setting invalid fields",
-			original: types.NewProfile(
-				"dtag",
-				"moniker",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			update: types.NewProfile(
-				"dtag-2",
-				"",
-				"",
-				types.NewPictures("", ""),
-				time.Time{},
-				"invalid-address",
-			),
-			expError: true,
-		},
-		{
-			name: "Update allows to set empty fields",
-			original: types.NewProfile(
-				"dtag",
-				"moniker",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			update: types.NewProfile(
-				types.DoNotModify,
-				"",
-				"",
-				types.NewPictures("", ""),
-				time.Time{},
-				types.DoNotModify,
-			),
-			expError: false,
-			expProfile: types.NewProfile(
-				"dtag",
-				"",
-				"",
-				types.NewPictures("", ""),
-				time.Unix(100, 0),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			updated, err := test.original.Update(test.update)
-
-			if test.expError {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, test.expProfile, updated)
-			}
-		})
-	}
-}
-
-func TestProfile_Validate(t *testing.T) {
-	tests := []struct {
-		name    string
-		account types.Profile
-		expErr  error
-	}{
-		{
-			name: "Empty profile creator returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"bio",
-				types.NewPictures(
-					"https://shorturl.at/adnX3",
-					"https://shorturl.at/cgpyF",
-				),
-				time.Now(),
-				"",
-			),
-			expErr: fmt.Errorf("invalid creator address: "),
-		},
-		{
-			name: "Empty profile DTag returns error",
-			account: types.NewProfile(
-				"",
-				"",
-				"bio",
-				types.NewPictures(
-					"https://shorturl.at/adnX3",
-					"https://shorturl.at/cgpyF",
-				),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile DTag: "),
-		},
-		{
-			name: "Invalid profile picture returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"bio",
-				types.NewPictures("pic", "https://example.com"),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile picture uri provided"),
-		},
-		{
-			name: "Invalid cover picture returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"bio",
-				types.NewPictures("https://example.com", "cov"),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile cover uri provided"),
-		},
-		{
-			name: "Do not modify moniker returns error",
-			account: types.NewProfile(
-				"dtag",
-				types.DoNotModify,
-				"",
-				types.Pictures{},
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile moniker: %s", types.DoNotModify),
-		},
-		{
-			name: "Do not modify bio returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				types.DoNotModify,
-				types.Pictures{},
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile bio: %s", types.DoNotModify),
-		},
-		{
-			name: "Do not modify profile picture returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"",
-				types.NewPictures(types.DoNotModify, ""),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile picture: %s", types.DoNotModify),
-		},
-		{
-			name: "Do not modify profile cover returns error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"",
-				types.NewPictures("", types.DoNotModify),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: fmt.Errorf("invalid profile cover: %s", types.DoNotModify),
-		},
-		{
-			name: "Profile with only DTag does not error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"",
-				types.Pictures{},
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: nil,
-		},
-		{
-			name: "Valid profile returns no error",
-			account: types.NewProfile(
-				"dtag",
-				"",
-				"bio",
-				types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
-				time.Now(),
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expErr: nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, test.account.Validate())
-		})
 	}
 }
 
@@ -392,6 +99,337 @@ func TestDTagTransferRequest_Validate(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.expErr, test.request.Validate())
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestRelationship_Validate(t *testing.T) {
+	tests := []struct {
+		name         string
+		relationship types.Relationship
+		expErr       error
+	}{
+		{
+			name: "Empty creator returns error",
+			relationship: types.NewRelationship(
+				"",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("invalid creator address: "),
+		},
+		{
+			name: "Empty recipient returns error",
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("invalid recipient address: "),
+		},
+		{
+			name: "Invalid subspace returns error",
+			relationship: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+			),
+			expErr: fmt.Errorf("subspace must be a valid sha-256"),
+		},
+		{
+			name: "Same creator and recipient return error",
+			relationship: types.NewRelationship(
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: fmt.Errorf("creator and recipient cannot be the same user"),
+		},
+		{
+			name: "Valid relationship returns no error",
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expErr, test.relationship.Validate())
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestRemoveRelationship(t *testing.T) {
+	tests := []struct {
+		name     string
+		slice    []types.Relationship
+		toRemove types.Relationship
+		expFound bool
+		expSlice []types.Relationship
+	}{
+		{
+			name:     "cannot delete from empty slice",
+			slice:    nil,
+			toRemove: types.NewRelationship("creator", "recipient_2", "subspace"),
+			expFound: false,
+			expSlice: nil,
+		},
+		{
+			name: "first relationship is removed correctly",
+			slice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_1", "subspace"),
+				types.NewRelationship("creator", "recipient_2", "subspace"),
+				types.NewRelationship("creator", "recipient_3", "subspace"),
+			},
+			toRemove: types.NewRelationship("creator", "recipient_1", "subspace"),
+			expFound: true,
+			expSlice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_2", "subspace"),
+				types.NewRelationship("creator", "recipient_3", "subspace"),
+			},
+		},
+		{
+			name: "middle relationship is removed correctly",
+			slice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_1", "subspace"),
+				types.NewRelationship("creator", "recipient_2", "subspace"),
+				types.NewRelationship("creator", "recipient_3", "subspace"),
+			},
+			toRemove: types.NewRelationship("creator", "recipient_2", "subspace"),
+			expFound: true,
+			expSlice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_1", "subspace"),
+				types.NewRelationship("creator", "recipient_3", "subspace"),
+			},
+		},
+		{
+			name: "last relationship is removed correctly",
+			slice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_1", "subspace"),
+				types.NewRelationship("creator", "recipient_2", "subspace"),
+				types.NewRelationship("creator", "recipient_3", "subspace"),
+			},
+			toRemove: types.NewRelationship("creator", "recipient_3", "subspace"),
+			expFound: true,
+			expSlice: []types.Relationship{
+				types.NewRelationship("creator", "recipient_1", "subspace"),
+				types.NewRelationship("creator", "recipient_2", "subspace"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			slice, found := types.RemoveRelationship(test.slice, test.toRemove)
+			require.Equal(t, slice, test.expSlice)
+			require.Equal(t, found, test.expFound)
+		})
+	}
+}
+
+func TestRelationshipsMarshaling(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	relationships := []types.Relationship{
+		types.NewRelationship("creator", "recipient_1", "subspace"),
+		types.NewRelationship("creator", "recipient_2", "subspace"),
+		types.NewRelationship("creator", "recipient_3", "subspace"),
+	}
+	marshalled := types.MustMarshalRelationships(cdc, relationships)
+	unmarshalled := types.MustUnmarshalRelationships(cdc, marshalled)
+	require.Equal(t, relationships, unmarshalled)
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestRemoveUserBlock(t *testing.T) {
+	tests := []struct {
+		name   string
+		blocks []types.UserBlock
+		data   struct {
+			blocker  string
+			blocked  string
+			subspace string
+		}
+		expFound bool
+		expSlice []types.UserBlock
+	}{
+		{
+			name:   "empty slice does not allow removal",
+			blocks: nil,
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace",
+			},
+			expFound: false,
+			expSlice: nil,
+		},
+		{
+			name: "first block is removed properly",
+			blocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked_1",
+				subspace: "subspace",
+			},
+			expFound: true,
+			expSlice: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+			},
+		},
+		{
+			name: "middle block is removed properly",
+			blocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked_2",
+				subspace: "subspace",
+			},
+			expFound: true,
+			expSlice: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+			},
+		},
+		{
+			name: "last block is removed properly",
+			blocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked_3",
+				subspace: "subspace",
+			},
+			expFound: true,
+			expSlice: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			slice, found := types.RemoveUserBlock(test.blocks, test.data.blocker, test.data.blocked, test.data.subspace)
+			require.Equal(t, test.expSlice, slice)
+			require.Equal(t, test.expFound, found)
+		})
+	}
+}
+
+func TestUserBlocksMarshaling(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	blocks := []types.UserBlock{
+		types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
+		types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+		types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
+	}
+	marshaled := types.MustMarshalUserBlocks(cdc, blocks)
+	unmarshalled := types.MustUnmarshalUserBlocks(cdc, marshaled)
+	require.Equal(t, blocks, unmarshalled)
+}
+
+// ___________________________________________________________________________________________________________________
+
+func TestUserBlock_Validate(t *testing.T) {
+	tests := []struct {
+		name      string
+		userBlock types.UserBlock
+		expError  error
+	}{
+		{
+			name: "empty blocker address returns error",
+			userBlock: types.NewUserBlock(
+				"",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expError: fmt.Errorf("blocker address cannot be empty"),
+		},
+		{
+			name: "empty blocked address returns error",
+			userBlock: types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expError: fmt.Errorf("the address of the blocked user cannot be empty"),
+		},
+		{
+			name: "equals blocker and blocked addresses returns error",
+			userBlock: types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expError: fmt.Errorf("blocker and blocked addresses cannot be equals"),
+		},
+		{
+			name: "invalid subspace returns error",
+			userBlock: types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"reason",
+				"yeah",
+			),
+			expError: fmt.Errorf("subspace must be a valid sha-256 hash"),
+		},
+		{
+			name: "correct user block returns no error",
+			userBlock: types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expError: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expError, test.userBlock.Validate())
 		})
 	}
 }

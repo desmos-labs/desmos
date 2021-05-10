@@ -29,7 +29,7 @@ func SimulateMsgRequestDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		sender, request, skip := randomDtagRequestTransferFields(r, ctx, accs, k)
+		sender, request, skip := randomDTagRequestTransferFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -82,9 +82,9 @@ func sendMsgRequestDTagTransfer(
 	return nil
 }
 
-// randomDtagRequestTransferFields returns random dTagRequest data
-func randomDtagRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+// randomDTagRequestTransferFields returns random dTagRequest data
+func randomDTagRequestTransferFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, types.DTagTransferRequest, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
@@ -94,27 +94,45 @@ func randomDtagRequestTransferFields(
 	receiver, _ := simtypes.RandomAcc(r, accs)
 	sender, _ := simtypes.RandomAcc(r, accs)
 
-	// skip if the two addresses are equals
+	// Skip if the two addresses are equals
 	if receiver.Equals(sender) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
+	// Skip if the receiver is blocked
 	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	randomDTag := RandomDTag(r)
-	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
-	_ = k.StoreProfile(ctx, types.NewProfile(
+
+	// Get the current auth account of the receiver.
+	// If the receiver already has a profile, we need to first extract the auth account from it. This is done in order
+	// to avoid later storing a Profile that contains a Profile inside itself (which would cause later bugs in the
+	// export/import process)
+	account := ak.GetAccount(ctx, receiver.Address)
+	if customProfile, ok := account.(*types.Profile); ok {
+		account = customProfile.GetAccount()
+	}
+
+	// Create the receiver profile
+	receiverProfile, err := types.NewProfile(
 		randomDTag,
 		"",
 		"",
 		types.NewPictures("", ""),
 		ctx.BlockTime(),
-		receiver.Address.String(),
-	))
+		account,
+	)
+	if err != nil {
+		return simtypes.Account{}, types.DTagTransferRequest{}, true
+	}
+	_ = k.StoreProfile(ctx, receiverProfile)
 
-	// skip if requests already exists
+	// Create a request
+	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
+
+	// Skip if requests already exists
 	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiver.Address.String())
 	for _, request := range requests {
 		if request.Sender == req.Sender {
@@ -135,13 +153,13 @@ func SimulateMsgAcceptDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		acc, request, dtag, skip := randomDtagAcceptRequestTransferFields(r, ctx, accs, k)
+		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
 		msg := types.NewMsgAcceptDTagTransfer(
-			dtag,
+			dTag,
 			request.Sender,
 			request.Receiver,
 		)
@@ -192,9 +210,9 @@ func sendMsgMsgAcceptDTagTransfer(
 	return nil
 }
 
-// randomDtagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
-func randomDtagAcceptRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+// randomDTagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
+func randomDTagAcceptRequestTransferFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, types.DTagTransferRequest, string, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
@@ -229,8 +247,8 @@ func randomDtagAcceptRequestTransferFields(
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
-	profile := NewRandomProfile(r, sender.Address)
-	profile.Dtag = "dtag"
+	profile := NewRandomProfile(r, ak.GetAccount(ctx, sender.Address))
+	profile.DTag = "dtag"
 
 	err := k.ValidateProfile(ctx, profile)
 	if err != nil {

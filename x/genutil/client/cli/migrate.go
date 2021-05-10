@@ -16,9 +16,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cobra"
-
-	v0130 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.13.0"
-	v0150 "github.com/desmos-labs/desmos/x/genutil/legacy/v0.15.0"
 )
 
 const chainUpgradeGuide = "https://docs.cosmos.network/master/migrations/chain-upgrade-guide-040.html"
@@ -26,10 +23,7 @@ const chainUpgradeGuide = "https://docs.cosmos.network/master/migrations/chain-u
 // migrationMap contains the list of migrations that should be performed when migrating
 // a version of the chain to the next one. It contains an array as we need to support Cosmos SDK migrations
 // too if needed.
-var migrationMap = map[string]genutiltypes.MigrationCallback{
-	"v0.13.0": v0130.Migrate,
-	"v0.15.0": v0150.Migrate,
-}
+var migrationMap = map[string]genutiltypes.MigrationCallback{}
 
 const (
 	flagGenesisTime = "genesis-time"

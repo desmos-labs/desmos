@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "desmos/posts/v1beta1/posts.proto";
 import "desmos/posts/v1beta1/polls.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // Msg defines the relationships Msg service.
 service Msg {
