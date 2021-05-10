@@ -2,6 +2,7 @@
 ## Bug fixes
 - Fixed failing transactions performed by a `Profile` continuously depleting
   funds ([\#416](https://github.com/desmos-labs/desmos/issues/416))
+- Renamed `profile` `moniker` field into `nickname` to fix a `--moniker` flag bug ([#413](https://github.com/desmos-labs/desmos/issues/413))
 
 # Version 0.16.1
 ## Changes

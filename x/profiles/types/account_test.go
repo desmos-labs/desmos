@@ -102,7 +102,7 @@ func TestProfile_Update(t *testing.T) {
 			name: "DoNotModify do not update original values",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"bio",
 				types.NewPictures(
 					"https://example.com",
@@ -137,7 +137,7 @@ func TestProfile_Update(t *testing.T) {
 			name: "Update works properly with all fields",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"bio",
 				types.NewPictures(
 					"https://example.com",
@@ -148,7 +148,7 @@ func TestProfile_Update(t *testing.T) {
 			)),
 			update: types.NewProfileUpdate(
 				"dtag-2",
-				"moniker-2",
+				"nickname-2",
 				"bio-2",
 				types.NewPictures(
 					"https://example.com/2",
@@ -158,7 +158,7 @@ func TestProfile_Update(t *testing.T) {
 			expError: false,
 			expProfile: assertNoProfileError(types.NewProfile(
 				"dtag-2",
-				"moniker-2",
+				"nickname-2",
 				"bio-2",
 				types.NewPictures(
 					"https://example.com/2",
@@ -172,7 +172,7 @@ func TestProfile_Update(t *testing.T) {
 			name: "Update does not allow setting invalid fields",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"bio",
 				types.NewPictures(
 					"https://example.com",
@@ -193,7 +193,7 @@ func TestProfile_Update(t *testing.T) {
 			name: "Update allows to set empty fields",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"bio",
 				types.NewPictures(
 					"https://example.com",
@@ -299,7 +299,7 @@ func TestProfile_Validate(t *testing.T) {
 			expErr: fmt.Errorf("invalid profile cover uri provided"),
 		},
 		{
-			name: "Do not modify moniker returns error",
+			name: "Do not modify nickname returns error",
 			account: assertNoProfileError(types.NewProfile(
 				"dtag",
 				types.DoNotModify,
@@ -308,7 +308,7 @@ func TestProfile_Validate(t *testing.T) {
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
 			)),
-			expErr: fmt.Errorf("invalid profile moniker: %s", types.DoNotModify),
+			expErr: fmt.Errorf("invalid profile nickname: %s", types.DoNotModify),
 		},
 		{
 			name: "Do not modify bio returns error",
