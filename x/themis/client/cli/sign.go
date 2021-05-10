@@ -8,10 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
-
-	"github.com/desmos-labs/desmos/app"
 )
 
 // GetRootCmd returns the root command for the themis module
@@ -61,12 +58,6 @@ func GetSignCmd() *cobra.Command {
 				return err
 			}
 
-			// Get the Bech32 address
-			addr, err := types.Bech32ifyAddressBytes(app.Bech32MainPrefix, pubKey.Address())
-			if err != nil {
-				return err
-			}
-
 			// Build the signature data output
 			signatureData := struct {
 				Address   string `json:"address"`
@@ -74,7 +65,7 @@ func GetSignCmd() *cobra.Command {
 				Signature string `json:"signature"`
 				Value     string `json:"value"`
 			}{
-				Address:   addr,
+				Address:   pubKey.Address().String(),
 				Signature: hex.EncodeToString(bz),
 				PubKey:    hex.EncodeToString(pubKey.Bytes()),
 				Value:     value,
