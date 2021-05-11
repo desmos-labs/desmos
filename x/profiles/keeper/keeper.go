@@ -133,16 +133,16 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	params := k.GetParams(ctx)
 
-	minMonikerLen := params.MonikerParams.MinMonikerLength.Int64()
-	maxMonikerLen := params.MonikerParams.MaxMonikerLength.Int64()
+	minNicknameLen := params.NicknameParams.MinNicknameLength.Int64()
+	maxNicknameLen := params.NicknameParams.MaxNicknameLength.Int64()
 
-	if profile.Moniker != "" {
-		nameLen := int64(len(profile.Moniker))
-		if nameLen < minMonikerLen {
-			return fmt.Errorf("profile moniker cannot be less than %d characters", minMonikerLen)
+	if profile.Nickname != "" {
+		nameLen := int64(len(profile.Nickname))
+		if nameLen < minNicknameLen {
+			return fmt.Errorf("profile nickname cannot be less than %d characters", minNicknameLen)
 		}
-		if nameLen > maxMonikerLen {
-			return fmt.Errorf("profile moniker cannot exceed %d characters", maxMonikerLen)
+		if nameLen > maxNicknameLen {
+			return fmt.Errorf("profile nickname cannot exceed %d characters", maxNicknameLen)
 		}
 	}
 

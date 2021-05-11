@@ -69,7 +69,7 @@ func saveProfileHandler(clientCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgSaveProfile(
 			req.DTag,
-			req.Moniker,
+			req.Nickname,
 			req.Bio,
 			req.Pictures.Profile,
 			req.Pictures.Cover,
