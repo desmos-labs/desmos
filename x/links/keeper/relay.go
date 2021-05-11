@@ -96,7 +96,10 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, fmt.Errorf("failed to verify destination signature")
 	}
 
-	k.StoreLink(ctx, link)
+	err = k.StoreLink(ctx, link)
+	if err != nil {
+		return packetAck, err
+	}
 
 	packetAck.SourceAddress = link.SourceAddress
 
