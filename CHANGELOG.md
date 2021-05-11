@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.16.2
 ## Changes
 - Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))
 
