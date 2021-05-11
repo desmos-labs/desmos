@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	"github.com/desmos-labs/desmos/x/links/types"
 )
 
@@ -13,8 +14,8 @@ type Keeper struct {
 	cdc      codec.BinaryMarshaler
 	storeKey sdk.StoreKey
 
-	channelKeeper types.ChannelKeeper
-	portKeeper    types.PortKeeper
+	channelKeeper ibctypes.ChannelKeeper
+	portKeeper    ibctypes.PortKeeper
 	scopedKeeper  capabilitykeeper.ScopedKeeper
 	accountKeeper authkeeper.AccountKeeper
 }
@@ -22,8 +23,8 @@ type Keeper struct {
 func NewKeeper(
 	cdc codec.BinaryMarshaler,
 	storeKey sdk.StoreKey,
-	channelKeeper types.ChannelKeeper,
-	portKeeper types.PortKeeper,
+	channelKeeper ibctypes.ChannelKeeper,
+	portKeeper ibctypes.PortKeeper,
 	scopedKeeper capabilitykeeper.ScopedKeeper,
 	accountKeeper authkeeper.AccountKeeper,
 ) Keeper {
