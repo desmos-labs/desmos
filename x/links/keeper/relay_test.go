@@ -202,7 +202,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			expPass: true,
 		},
 		{
-			name: "Non exist destination address on destination chain",
+			name: "Non existent destination address on destination chain",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
