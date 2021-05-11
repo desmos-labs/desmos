@@ -202,7 +202,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			expPass: true,
 		},
 		{
-			name: "Non exist destination address on destination chain",
+			name: "Non existent destination address on destination chain",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 
@@ -273,7 +273,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			packetData := types.NewIBCAccountConnectionPacketData(
 				"cosmos", srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
 			)
-			// send coin from chainA to chainB
+			// create account connection from chainA to chainB
 			msg := types.NewMsgCreateIBCAccountConnection(
 				channelA.PortID, channelA.ID, packetData, 0,
 			)

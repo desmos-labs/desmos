@@ -4,7 +4,7 @@ id=$1
 ACCOUNTNUM=$2
 HOMEDIR=$3
 
-# initial a test chain genesis and keybase config
+# initialize a test chain genesis and a keybase config
 desmos init testnet --chain-id "ibc$id"  --home "$HOMEDIR/ibc$id"
 
 # Add test node key
@@ -18,7 +18,7 @@ do
     desmos add-genesis-account "test$id-$i" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id" --keyring-backend "test"
 done
 
-# Add relayer account defiened in relayer-config to genesis
+# Add relayer account defined in relayer-config to genesis
 desmos add-genesis-account "desmos1punhxfyxvnwup70mc6cz9cmuxu74ars7x6hgjm" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id"
 
 # Create validator set to genesis
