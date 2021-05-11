@@ -273,7 +273,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			packetData := types.NewIBCAccountConnectionPacketData(
 				"cosmos", srcAddr, srcPubKeyHex, dstAddr, srcSigHex, dstSigHex,
 			)
-			// send coin from chainA to chainB
+			// create account connection from chainA to chainB
 			msg := types.NewMsgCreateIBCAccountConnection(
 				channelA.PortID, channelA.ID, packetData, 0,
 			)
