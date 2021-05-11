@@ -18,7 +18,7 @@ do
     desmos add-genesis-account "test$id-$i" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id" --keyring-backend "test"
 done
 
-# Add relayer account defiened in relayer-config to genesis
+# Add relayer account defined in relayer-config to genesis
 desmos add-genesis-account "desmos1punhxfyxvnwup70mc6cz9cmuxu74ars7x6hgjm" "100000000000desmos,100000000000stake" --home "$HOMEDIR/ibc$id"
 
 # Create validator set to genesis
