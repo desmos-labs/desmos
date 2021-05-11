@@ -4,7 +4,7 @@ id=$1
 ACCOUNTNUM=$2
 HOMEDIR=$3
 
-# initial a test chain genesis and keybase config
+# initialize a test chain genesis and a keybase config
 desmos init testnet --chain-id "ibc$id"  --home "$HOMEDIR/ibc$id"
 
 # Add test node key
