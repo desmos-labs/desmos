@@ -84,7 +84,7 @@ func (s *IntegrationTestSuite) TestCmdQueryLink() {
 		expOutput types.QueryLinkResponse
 	}{
 		{
-			name: "empty slice is returned error",
+			name: "empty slice returns error",
 			args: []string{
 				"",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
