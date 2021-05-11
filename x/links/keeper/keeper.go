@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
@@ -40,9 +41,13 @@ func NewKeeper(
 
 // StoreLink sotres the given link inside the current context.
 // It assumes that the given link has already been validated.
+// If the source address has already been inserted, nothing will be changed.
 func (k Keeper) StoreLink(ctx sdk.Context, link types.Link) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.LinkStoreKey(link.SourceAddress)
+	if store.Has(key) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "source address already exists")
+	}
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
 	return nil
 }

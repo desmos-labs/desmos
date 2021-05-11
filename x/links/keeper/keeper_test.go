@@ -1,6 +1,9 @@
 package keeper_test
 
-import "github.com/desmos-labs/desmos/x/links/types"
+import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/links/types"
+)
 
 func (suite *KeeperTestSuite) TestKeeper_StoreLink() {
 	tests := []struct {
@@ -15,11 +18,19 @@ func (suite *KeeperTestSuite) TestKeeper_StoreLink() {
 			storedLinks: nil,
 			expError:    nil,
 		},
+		{
+			name:        "Link already exists returns error",
+			link:        suite.testData.link,
+			storedLinks: []types.Link{suite.testData.link},
+			expError:    sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "source address already exists"),
+		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
+
 			for _, link := range test.storedLinks {
 				err := suite.k.StoreLink(suite.ctx, link)
 				suite.Require().NoError(err)

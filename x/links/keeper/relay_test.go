@@ -261,6 +261,28 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			},
 			expPass: false,
 		},
+		{
+			name: "Create link with duplicated source address returns error",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = suite.chainB.Account.GetAddress().String()
+
+				link := types.NewLink(srcAddr, dstAddr)
+				linkBz, _ := link.Marshal()
+				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				srcSigHex = hex.EncodeToString(srcSig)
+				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+				dstSigHex = hex.EncodeToString(dstSig)
+
+				err := suite.chainB.App.LinksKeeper.StoreLink(suite.chainB.GetContext(), types.NewLink(srcAddr, dstAddr))
+				suite.Require().NoError(err)
+			},
+			expPass: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -627,6 +649,22 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				srcSig, _ := suite.chainA.PrivKey.Sign([]byte{0})
 				sigHex = hex.EncodeToString(srcSig)
 
+			},
+			expPass: false,
+		},
+		{
+			name: "Create link with duplicated source address returns error",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB = suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				dstAddr = srcAddr
+
+				err := suite.chainB.App.LinksKeeper.StoreLink(suite.chainB.GetContext(), types.NewLink(srcAddr, dstAddr))
+				suite.Require().NoError(err)
 			},
 			expPass: false,
 		},
