@@ -18,8 +18,7 @@ const (
 var (
 	SubspaceStorePrefix     = []byte("susbpace")
 	AdminsStorePrefix       = []byte("admins")
-	UsersPostsAllowedPrefix = []byte("allowed")
-	UsersPostsBlockedPrefix = []byte("blocked")
+	BlockedUsersPostsPrefix = []byte("blocked")
 )
 
 // SubspaceStoreKey turns an id to a key used to store a subspace into the subspaces store
@@ -32,12 +31,7 @@ func AdminsStoreKey(subspaceId string) []byte {
 	return append(AdminsStorePrefix, []byte(subspaceId)...)
 }
 
-// AllowedToPostUsersKey turn an id to a key used to store users that are allowed to post inside a subspace
-func AllowedToPostUsersKey(subspaceId string) []byte {
-	return append(UsersPostsAllowedPrefix, []byte(subspaceId)...)
-}
-
 // BlockedToPostUsersKey turn an id to a key used to store users that are not allowed to post inside a subspace
 func BlockedToPostUsersKey(subspaceId string) []byte {
-	return append(UsersPostsBlockedPrefix, []byte(subspaceId)...)
+	return append(BlockedUsersPostsPrefix, []byte(subspaceId)...)
 }

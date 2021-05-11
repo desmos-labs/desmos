@@ -21,7 +21,7 @@ func (sub Subspace) Validate() error {
 	}
 
 	if sub.Creator == "" {
-		return fmt.Errorf("invalid post owner: %s", sub.Creator)
+		return fmt.Errorf("invalid subspace creator: %s", sub.Creator)
 	}
 
 	return nil

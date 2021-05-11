@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"bytes"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -56,6 +57,22 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.
 
 	k.cdc.MustUnmarshalBinaryBare(store.Get(types.SubspaceStoreKey(subspaceId)), &subspace)
 	return subspace, true
+}
+
+// GetAllSubspaces returns a list of all the subspaces that have been store inside the given context
+func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceStorePrefix)
+	defer iterator.Close()
+
+	var subspaces []types.Subspace
+	for ; iterator.Valid(); iterator.Next() {
+		var subspace types.Subspace
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &subspace)
+		subspaces = append(subspaces, subspace)
+	}
+
+	return subspaces
 }
 
 // addUserToList insert the given user inside a users list of a specific susbspace identified by the given subspaceId;
@@ -140,7 +157,7 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin strin
 // EnableUserPosts give a user the possibility to post inside the given subspace.
 // It returns error when the user can already post inside the subspace.
 func (k Keeper) EnableUserPosts(ctx sdk.Context, user, subspaceId string) error {
-	if err := k.addUserToList(ctx, types.AllowedToPostUsersKey(subspaceId), subspaceId, user,
+	if err := k.removeUserFromList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, user,
 		"the user: %s is already allowed to post inside the subspace: %s"); err != nil {
 		return err
 	}
@@ -150,9 +167,51 @@ func (k Keeper) EnableUserPosts(ctx sdk.Context, user, subspaceId string) error 
 // DisableUserPosts block the given user to post anything inside the given subspace.
 // It returns error if the user already can't post inside the subspace.
 func (k Keeper) DisableUserPosts(ctx sdk.Context, userToBlock, subspaceId string) error {
-	if err := k.removeUserFromList(ctx, types.AllowedToPostUsersKey(subspaceId), subspaceId, userToBlock,
+	if err := k.addUserToList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, userToBlock,
 		"the user: %s already can't post inside the subspace: %s"); err != nil {
 		return err
 	}
 	return nil
+}
+
+// GetSubspaceBlockedUsers returns a list of all the blocked users unable to post inside the given subspace
+func (k Keeper) GetSubspaceBlockedUsers(ctx sdk.Context, subspaceId string) types.Users {
+	store := ctx.KVStore(k.storeKey)
+	key := types.BlockedToPostUsersKey(subspaceId)
+
+	return types.MustUnmarshalUsers(k.cdc, store.Get(key))
+}
+
+// GetSubspaceAdminsEntry returns a list of all the subspaces associated with their admins
+func (k Keeper) GetSubspaceAdminsEntry(ctx sdk.Context) []types.SubspaceAdminsEntry {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.AdminsStorePrefix)
+	defer iterator.Close()
+
+	var entries []types.SubspaceAdminsEntry
+	for ; iterator.Valid(); iterator.Next() {
+		admins := types.MustUnmarshalUsers(k.cdc, iterator.Value())
+		idBytes := bytes.TrimPrefix(iterator.Key(), types.AdminsStorePrefix)
+		subspaceId := string(idBytes)
+		entries = append(entries, types.NewAdminsEntries(subspaceId, admins))
+	}
+
+	return entries
+}
+
+// GetBlockedToPostUsers returns a list of all the subspaces associated with the users not allowed to post inside of them
+func (k Keeper) GetBlockedToPostUsers(ctx sdk.Context) []types.BlockedUsersEntry {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.AdminsStorePrefix)
+	defer iterator.Close()
+
+	var entries []types.BlockedUsersEntry
+	for ; iterator.Valid(); iterator.Next() {
+		users := types.MustUnmarshalUsers(k.cdc, iterator.Value())
+		idBytes := bytes.TrimPrefix(iterator.Key(), types.BlockedUsersPostsPrefix)
+		subspaceId := string(idBytes)
+		entries = append(entries, types.NewBlockedUsersEntry(subspaceId, users))
+	}
+
+	return entries
 }

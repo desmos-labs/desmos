@@ -1,0 +1,34 @@
+syntax = "proto3";
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/subspaces/v1beta1/subspace.proto";
+import "desmos/subspaces/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+
+// GenesisState contains the data of the genesis state for the subspaces module
+message GenesisState {
+  repeated desmos.subspaces.v1beta1.Subspace subspaces = 1
+        [ (gogoproto.nullable) = false ];
+  repeated SubspaceAdminsEntry subspace_admins = 2
+        [ (gogoproto.nullable) = false ];
+  repeated BlockedUsersEntry blocked_to_post_users = 3
+        [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceAdminsEntry represents an entry containing all the admins of a subspace
+message SubspaceAdminsEntry {
+  string subspace_id = 1;
+  desmos.subspaces.v1beta1.Users admins = 2
+     [ (gogoproto.nullable) = false ];
+}
+
+// BlockedUsersEntry represents an entry containing all the users not allowed to post inside a subspace
+message BlockedUsersEntry {
+  string subspace_id = 1;
+  desmos.subspaces.v1beta1.Users users = 2
+     [ (gogoproto.nullable) = false ];
+}
+
+
