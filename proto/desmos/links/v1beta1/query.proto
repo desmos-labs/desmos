@@ -18,7 +18,7 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPostRequest is the request type for the Query/Link RPC method.
+// QueryLinkRequest is the request type for the Query/Link RPC method.
 message QueryLinkRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
