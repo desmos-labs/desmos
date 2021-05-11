@@ -39,7 +39,7 @@ func NewKeeper(
 	}
 }
 
-// StoreLink sotres the given link inside the current context.
+// StoreLink stores the given link inside the current context.
 // It assumes that the given link has already been validated.
 // If the source address has already been inserted, nothing will be changed.
 func (k Keeper) StoreLink(ctx sdk.Context, link types.Link) error {
