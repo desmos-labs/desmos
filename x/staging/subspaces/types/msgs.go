@@ -157,9 +157,9 @@ func (msg MsgRemoveAdmin) MarshalJSON() ([]byte, error) {
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgAllowUserPosts is a constructor function for MsgAllowUserPosts
-func NewMsgAllowUserPosts(id, user, admin string) *MsgAllowUserPosts {
-	return &MsgAllowUserPosts{
+// NewMsgEnableUserPosts is a constructor function for MsgEnableUserPosts
+func NewMsgEnableUserPosts(user, id, admin string) *MsgEnableUserPosts {
+	return &MsgEnableUserPosts{
 		User:       user,
 		SubspaceId: id,
 		Admin:      admin,
@@ -167,13 +167,13 @@ func NewMsgAllowUserPosts(id, user, admin string) *MsgAllowUserPosts {
 }
 
 // Route should return the name of the module
-func (msg MsgAllowUserPosts) Route() string { return RouterKey }
+func (msg MsgEnableUserPosts) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAllowUserPosts) Type() string { return ActionAllowUserPosts }
+func (msg MsgEnableUserPosts) Type() string { return ActionAllowUserPosts }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgAllowUserPosts) ValidateBasic() error {
+func (msg MsgEnableUserPosts) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -192,26 +192,26 @@ func (msg MsgAllowUserPosts) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgAllowUserPosts) GetSignBytes() []byte {
+func (msg MsgEnableUserPosts) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgAllowUserPosts) GetSigners() []sdk.AccAddress {
+func (msg MsgEnableUserPosts) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgAllowUserPosts) MarshalJSON() ([]byte, error) {
-	type temp MsgAllowUserPosts
+func (msg MsgEnableUserPosts) MarshalJSON() ([]byte, error) {
+	type temp MsgEnableUserPosts
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgBlockUserPosts is a constructor function for MsgBlockUserPosts
-func NewMsgBlockUserPosts(id, user, admin string) *MsgBlockUserPosts {
-	return &MsgBlockUserPosts{
+// NewMsgDisableUserPosts is a constructor function for MsgDisableUserPosts
+func NewMsgDisableUserPosts(user, id, admin string) *MsgDisableUserPosts {
+	return &MsgDisableUserPosts{
 		User:       user,
 		SubspaceId: id,
 		Admin:      admin,
@@ -219,13 +219,13 @@ func NewMsgBlockUserPosts(id, user, admin string) *MsgBlockUserPosts {
 }
 
 // Route should return the name of the module
-func (msg MsgBlockUserPosts) Route() string { return RouterKey }
+func (msg MsgDisableUserPosts) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgBlockUserPosts) Type() string { return ActionBlockUserPosts }
+func (msg MsgDisableUserPosts) Type() string { return ActionBlockUserPosts }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgBlockUserPosts) ValidateBasic() error {
+func (msg MsgDisableUserPosts) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -244,19 +244,19 @@ func (msg MsgBlockUserPosts) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgBlockUserPosts) GetSignBytes() []byte {
+func (msg MsgDisableUserPosts) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgBlockUserPosts) GetSigners() []sdk.AccAddress {
+func (msg MsgDisableUserPosts) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgBlockUserPosts) MarshalJSON() ([]byte, error) {
-	type temp MsgBlockUserPosts
+func (msg MsgDisableUserPosts) MarshalJSON() ([]byte, error) {
+	type temp MsgDisableUserPosts
 	return json.Marshal(temp(msg))
 }

@@ -30,6 +30,11 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 		return nil, err
 	}
 
+	// this error should never happen, adding the creator to the admins list to better handle admins checks
+	if err = k.AddAdminToSubspace(ctx, subspace.Id, subspace.Creator); err != nil {
+		return nil, err
+	}
+
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSubspace,
 		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.Id),
@@ -83,24 +88,24 @@ func (k msgServer) RemoveSubspaceAdmin(goCtx context.Context, msg *types.MsgRemo
 	return &types.MsgRemoveAdminResponse{}, nil
 }
 
-func (k msgServer) AllowUserPosts(goCtx context.Context, msg *types.MsgAllowUserPosts) (*types.MsgAllowUserPostsResponse, error) {
+func (k msgServer) EnableUserPosts(goCtx context.Context, msg *types.MsgEnableUserPosts) (*types.MsgEnableUserPostsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if err := k.CheckSubspaceExistenceAndAdminValidity(ctx, msg.Admin, msg.SubspaceId); err != nil {
 		return nil, err
 	}
 
-	if err := k.EnableUserPosts(ctx, msg.User, msg.SubspaceId); err != nil {
+	if err := k.UnblockPostsForUser(ctx, msg.User, msg.SubspaceId); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeAllowUserPosts,
+		types.EventTypeEnableUserPosts,
 		sdk.NewAttribute(types.AttributeKeyAllowedUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
 	))
 
-	return &types.MsgAllowUserPostsResponse{}, nil
+	return &types.MsgEnableUserPostsResponse{}, nil
 }
 
 func (k msgServer) BlockUserPosts(goCtx context.Context, msg *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
@@ -110,7 +115,7 @@ func (k msgServer) BlockUserPosts(goCtx context.Context, msg *types.MsgBlockUser
 		return nil, err
 	}
 
-	if err := k.DisableUserPosts(ctx, msg.User, msg.SubspaceId); err != nil {
+	if err := k.BlockPostsForUser(ctx, msg.User, msg.SubspaceId); err != nil {
 		return nil, err
 	}
 

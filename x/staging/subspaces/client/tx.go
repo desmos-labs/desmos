@@ -25,9 +25,11 @@ func NewTxCmd() *cobra.Command {
 		GetCmdCreateSubspace(),
 		GetCmdAddSubspaceAdmin(),
 		GetCmdRemoveSubspaceAdmin(),
-		GetCmdAllowUserPosts(),
-		GetCmdBlockUserPosts(),
+		GetCmdEnablePostsForUser(),
+		GetCmdDisablePostsForUser(),
 	)
+
+	return subspacesTxCmd
 }
 
 // GetCmdCreateSubspace returns the command used to create a subspace
@@ -124,10 +126,60 @@ func GetCmdRemoveSubspaceAdmin() *cobra.Command {
 	return cmd
 }
 
-func GetCmdAllowUserPosts() *cobra.Command {
+func GetCmdEnablePostsForUser() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "enable-posts [address] [subspace-id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Enable the possibility to post inside the subspace with the given [subspace-id] for the user with the given [address]",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
 
+			user := args[0]
+			subspaceId := args[1]
+			admin := clientCtx.FromAddress.String()
+			msg := types.NewMsgEnableUserPosts(user, subspaceId, admin)
+
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }
 
-func GetCmdBlockUserPosts() *cobra.Command {
+func GetCmdDisablePostsForUser() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "disable-posts [address] [subspace-id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Disable the possibility to post inside the subspace with the given [subspace-id] for the user with the given [address]",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
 
+			user := args[0]
+			subspaceId := args[1]
+			admin := clientCtx.FromAddress.String()
+			msg := types.NewMsgDisableUserPosts(user, subspaceId, admin)
+
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }

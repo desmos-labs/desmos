@@ -10,14 +10,8 @@ option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 
 // Query defines the gRPC querier service
 service Query {
-  // Subspaces queries all the subspaces inside desmos
-  rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1beta1/all";
-  }
-
-  // SubspaceAdmins queries all the admins of the subspaces with the given id
-  rpc SubspaceAdmins(QuerySubspaceAdminsRequest) returns (QuerySubspaceAdminsResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1beta1/admins/{subspace_id}";
+  rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}";
   }
 
   // SubspaceBlockedUsers queries all the blocked users of the subspace with the given id
@@ -28,30 +22,18 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-// QuerySubspaces is the request type for the Query/Subspaces RPC method
-message QuerySubspacesRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-}
-
-// QuerySubspacesResponse is the response type for the Query/Subspaces method
-message QuerySubspacesResponse {
-  // subspaces represents the list of all subspaces inside the store
-  repeated desmos.subspaces.v1beta1.Subspace subspaces = 1 [ (gogoproto.nullable) = false ];
-}
-
-
-// QuerySubspaceAdmins is the request type for the Query/SubspaceAdmins method
-message QuerySubspaceAdminsRequest {
+// QuerySubspace is the request type for the Query/Subspace RPC method
+message QuerySubspaceRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
   string subspace_id = 1;
 }
 
-// QuerySubspaceAdminsResponse is the response type for the Query/SubspaceAdmins method
-message QuerySubspaceAdminsResponse {
-  desmos.subspaces.v1beta1.Users admins = 1 [ (gogoproto.nullable) = false ];
+// QuerySubspaceResponse is the response type for the Query/Subspace method
+message QuerySubspaceResponse {
+  desmos.subspaces.v1beta1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  desmos.subspaces.v1beta1.Users admins = 2 [ (gogoproto.nullable) = false ];
 }
 
 // QuerySubspaceBlockedUsersRequest is the request type for the Query/SubspaceBlockedUsers method

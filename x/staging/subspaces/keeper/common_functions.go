@@ -3,7 +3,31 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
+
+func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace types.Subspace) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var subspace types.Subspace
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &subspace)
+
+		var stop = false
+		stop = fn(i, subspace)
+
+		if stop {
+			break
+		}
+
+		i++
+	}
+}
 
 // CheckSubspaceExistenceAndAdminValidity checks if the subspace with the given id exists and
 // if the address belongs to one of its admins

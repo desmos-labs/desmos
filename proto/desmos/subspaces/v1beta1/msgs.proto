@@ -17,11 +17,11 @@ service Msg {
   // RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
   rpc RemoveSubspaceAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
 
-  // AllowUserPosts defines the method to let user posts inside a specific subspace
-  rpc AllowUserPosts(MsgAllowUserPosts) returns (MsgAllowUserPostsResponse);
+  // EnableUserPosts defines the method to let user posts inside a specific subspace
+  rpc EnableUserPosts(MsgEnableUserPosts) returns (MsgEnableUserPostsResponse);
 
-  // BlockUserPosts defines the method to block user posts inside a specific subspace
-  rpc BlockUserPosts(MsgBlockUserPosts) returns (MsgBlockUserPostsResponse);
+  // DisableUserPosts defines the method to block user posts inside a specific subspace
+  rpc DisableUserPosts(MsgDisableUserPosts) returns (MsgDisableUserPostsResponse);
 }
 
 // ___________________________________________________________________________________________________________________
@@ -81,8 +81,8 @@ message MsgRemoveAdminResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgAllowUserPosts represents the message used to allow a user to post inside a specific subspace
-message MsgAllowUserPosts {
+// MsgEnableUserPosts represents the message used to allow a user to post inside a specific subspace
+message MsgEnableUserPosts {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -94,13 +94,13 @@ message MsgAllowUserPosts {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgAllowUserPostsResponse defines the Msg/MsgAllowUserPosts response type
-message MsgAllowUserPostsResponse {}
+// MsgEnableUserPostsResponse defines the Msg/MsgEnableUserPosts response type
+message MsgEnableUserPostsResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgBlockUserPosts represents the message used to block a user to post inside a specific subspace
-message MsgBlockUserPosts {
+// MsgDisableUserPosts represents the message used to block a user to post inside a specific subspace
+message MsgDisableUserPosts {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -112,5 +112,5 @@ message MsgBlockUserPosts {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgBlockUserPostsResponse defines the Msg/MsgBlockUserPosts response type
-message MsgBlockUserPostsResponse{}
+// MsgDisableUserPostsResponse defines the Msg/MsgDisableUserPosts response type
+message MsgDisableUserPostsResponse{}

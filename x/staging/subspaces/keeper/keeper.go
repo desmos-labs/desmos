@@ -32,11 +32,6 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.Id)
 	}
 
-	// this error should never happen, adding the creator to the admins list to better handle admins/creator checks
-	if err := k.AddAdminToSubspace(ctx, subspace.Id, subspace.Creator); err != nil {
-		return err
-	}
-
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
@@ -154,9 +149,9 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin strin
 	return nil
 }
 
-// EnableUserPosts give a user the possibility to post inside the given subspace.
+// UnblockPostsForUser give a user the possibility to post inside the given subspace.
 // It returns error when the user can already post inside the subspace.
-func (k Keeper) EnableUserPosts(ctx sdk.Context, user, subspaceId string) error {
+func (k Keeper) UnblockPostsForUser(ctx sdk.Context, user, subspaceId string) error {
 	if err := k.removeUserFromList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, user,
 		"the user: %s is already allowed to post inside the subspace: %s"); err != nil {
 		return err
@@ -164,9 +159,9 @@ func (k Keeper) EnableUserPosts(ctx sdk.Context, user, subspaceId string) error 
 	return nil
 }
 
-// DisableUserPosts block the given user to post anything inside the given subspace.
+// BlockPostsForUser block the given user to post anything inside the given subspace.
 // It returns error if the user already can't post inside the subspace.
-func (k Keeper) DisableUserPosts(ctx sdk.Context, userToBlock, subspaceId string) error {
+func (k Keeper) BlockPostsForUser(ctx sdk.Context, userToBlock, subspaceId string) error {
 	if err := k.addUserToList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, userToBlock,
 		"the user: %s already can't post inside the subspace: %s"); err != nil {
 		return err

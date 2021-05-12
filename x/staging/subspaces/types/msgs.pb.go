@@ -258,25 +258,25 @@ func (m *MsgRemoveAdminResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveAdminResponse proto.InternalMessageInfo
 
-// MsgAllowUserPosts represents the message used to allow a user to post inside a specific subspace
-type MsgAllowUserPosts struct {
+// MsgEnableUserPosts represents the message used to allow a user to post inside a specific subspace
+type MsgEnableUserPosts struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	SubspaceId string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
-func (m *MsgAllowUserPosts) Reset()         { *m = MsgAllowUserPosts{} }
-func (m *MsgAllowUserPosts) String() string { return proto.CompactTextString(m) }
-func (*MsgAllowUserPosts) ProtoMessage()    {}
-func (*MsgAllowUserPosts) Descriptor() ([]byte, []int) {
+func (m *MsgEnableUserPosts) Reset()         { *m = MsgEnableUserPosts{} }
+func (m *MsgEnableUserPosts) String() string { return proto.CompactTextString(m) }
+func (*MsgEnableUserPosts) ProtoMessage()    {}
+func (*MsgEnableUserPosts) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{6}
 }
-func (m *MsgAllowUserPosts) XXX_Unmarshal(b []byte) error {
+func (m *MsgEnableUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgAllowUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgEnableUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgAllowUserPosts.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgEnableUserPosts.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -286,34 +286,34 @@ func (m *MsgAllowUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *MsgAllowUserPosts) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgAllowUserPosts.Merge(m, src)
+func (m *MsgEnableUserPosts) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEnableUserPosts.Merge(m, src)
 }
-func (m *MsgAllowUserPosts) XXX_Size() int {
+func (m *MsgEnableUserPosts) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgAllowUserPosts) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgAllowUserPosts.DiscardUnknown(m)
+func (m *MsgEnableUserPosts) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEnableUserPosts.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgAllowUserPosts proto.InternalMessageInfo
+var xxx_messageInfo_MsgEnableUserPosts proto.InternalMessageInfo
 
-// MsgAllowUserPostsResponse defines the Msg/MsgAllowUserPosts response type
-type MsgAllowUserPostsResponse struct {
+// MsgEnableUserPostsResponse defines the Msg/MsgEnableUserPosts response type
+type MsgEnableUserPostsResponse struct {
 }
 
-func (m *MsgAllowUserPostsResponse) Reset()         { *m = MsgAllowUserPostsResponse{} }
-func (m *MsgAllowUserPostsResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgAllowUserPostsResponse) ProtoMessage()    {}
-func (*MsgAllowUserPostsResponse) Descriptor() ([]byte, []int) {
+func (m *MsgEnableUserPostsResponse) Reset()         { *m = MsgEnableUserPostsResponse{} }
+func (m *MsgEnableUserPostsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgEnableUserPostsResponse) ProtoMessage()    {}
+func (*MsgEnableUserPostsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{7}
 }
-func (m *MsgAllowUserPostsResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgEnableUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgAllowUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgEnableUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgAllowUserPostsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgEnableUserPostsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -323,37 +323,37 @@ func (m *MsgAllowUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *MsgAllowUserPostsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgAllowUserPostsResponse.Merge(m, src)
+func (m *MsgEnableUserPostsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEnableUserPostsResponse.Merge(m, src)
 }
-func (m *MsgAllowUserPostsResponse) XXX_Size() int {
+func (m *MsgEnableUserPostsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgAllowUserPostsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgAllowUserPostsResponse.DiscardUnknown(m)
+func (m *MsgEnableUserPostsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEnableUserPostsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgAllowUserPostsResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgEnableUserPostsResponse proto.InternalMessageInfo
 
-// MsgBlockUserPosts represents the message used to block a user to post inside a specific subspace
-type MsgBlockUserPosts struct {
+// MsgDisableUserPosts represents the message used to block a user to post inside a specific subspace
+type MsgDisableUserPosts struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	SubspaceId string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
-func (m *MsgBlockUserPosts) Reset()         { *m = MsgBlockUserPosts{} }
-func (m *MsgBlockUserPosts) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockUserPosts) ProtoMessage()    {}
-func (*MsgBlockUserPosts) Descriptor() ([]byte, []int) {
+func (m *MsgDisableUserPosts) Reset()         { *m = MsgDisableUserPosts{} }
+func (m *MsgDisableUserPosts) String() string { return proto.CompactTextString(m) }
+func (*MsgDisableUserPosts) ProtoMessage()    {}
+func (*MsgDisableUserPosts) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{8}
 }
-func (m *MsgBlockUserPosts) XXX_Unmarshal(b []byte) error {
+func (m *MsgDisableUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgDisableUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockUserPosts.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgDisableUserPosts.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -363,34 +363,34 @@ func (m *MsgBlockUserPosts) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockUserPosts) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockUserPosts.Merge(m, src)
+func (m *MsgDisableUserPosts) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDisableUserPosts.Merge(m, src)
 }
-func (m *MsgBlockUserPosts) XXX_Size() int {
+func (m *MsgDisableUserPosts) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockUserPosts) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockUserPosts.DiscardUnknown(m)
+func (m *MsgDisableUserPosts) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDisableUserPosts.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockUserPosts proto.InternalMessageInfo
+var xxx_messageInfo_MsgDisableUserPosts proto.InternalMessageInfo
 
-// MsgBlockUserPostsResponse defines the Msg/MsgBlockUserPosts response type
-type MsgBlockUserPostsResponse struct {
+// MsgDisableUserPostsResponse defines the Msg/MsgDisableUserPosts response type
+type MsgDisableUserPostsResponse struct {
 }
 
-func (m *MsgBlockUserPostsResponse) Reset()         { *m = MsgBlockUserPostsResponse{} }
-func (m *MsgBlockUserPostsResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockUserPostsResponse) ProtoMessage()    {}
-func (*MsgBlockUserPostsResponse) Descriptor() ([]byte, []int) {
+func (m *MsgDisableUserPostsResponse) Reset()         { *m = MsgDisableUserPostsResponse{} }
+func (m *MsgDisableUserPostsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDisableUserPostsResponse) ProtoMessage()    {}
+func (*MsgDisableUserPostsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{9}
 }
-func (m *MsgBlockUserPostsResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgDisableUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgDisableUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockUserPostsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgDisableUserPostsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -400,17 +400,17 @@ func (m *MsgBlockUserPostsResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockUserPostsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockUserPostsResponse.Merge(m, src)
+func (m *MsgDisableUserPostsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDisableUserPostsResponse.Merge(m, src)
 }
-func (m *MsgBlockUserPostsResponse) XXX_Size() int {
+func (m *MsgDisableUserPostsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockUserPostsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockUserPostsResponse.DiscardUnknown(m)
+func (m *MsgDisableUserPostsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDisableUserPostsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockUserPostsResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgDisableUserPostsResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateSubspace)(nil), "desmos.subspaces.v1beta1.MsgCreateSubspace")
@@ -419,10 +419,10 @@ func init() {
 	proto.RegisterType((*MsgAddAdminResponse)(nil), "desmos.subspaces.v1beta1.MsgAddAdminResponse")
 	proto.RegisterType((*MsgRemoveAdmin)(nil), "desmos.subspaces.v1beta1.MsgRemoveAdmin")
 	proto.RegisterType((*MsgRemoveAdminResponse)(nil), "desmos.subspaces.v1beta1.MsgRemoveAdminResponse")
-	proto.RegisterType((*MsgAllowUserPosts)(nil), "desmos.subspaces.v1beta1.MsgAllowUserPosts")
-	proto.RegisterType((*MsgAllowUserPostsResponse)(nil), "desmos.subspaces.v1beta1.MsgAllowUserPostsResponse")
-	proto.RegisterType((*MsgBlockUserPosts)(nil), "desmos.subspaces.v1beta1.MsgBlockUserPosts")
-	proto.RegisterType((*MsgBlockUserPostsResponse)(nil), "desmos.subspaces.v1beta1.MsgBlockUserPostsResponse")
+	proto.RegisterType((*MsgEnableUserPosts)(nil), "desmos.subspaces.v1beta1.MsgEnableUserPosts")
+	proto.RegisterType((*MsgEnableUserPostsResponse)(nil), "desmos.subspaces.v1beta1.MsgEnableUserPostsResponse")
+	proto.RegisterType((*MsgDisableUserPosts)(nil), "desmos.subspaces.v1beta1.MsgDisableUserPosts")
+	proto.RegisterType((*MsgDisableUserPostsResponse)(nil), "desmos.subspaces.v1beta1.MsgDisableUserPostsResponse")
 }
 
 func init() {
@@ -430,42 +430,43 @@ func init() {
 }
 
 var fileDescriptor_ba19b97e9f94db77 = []byte{
-	// 549 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0x31, 0x6f, 0xd3, 0x40,
-	0x14, 0xc7, 0xe3, 0xa4, 0x40, 0x7b, 0x41, 0x21, 0x5c, 0x0b, 0x0a, 0x41, 0xb2, 0x91, 0xab, 0xa2,
-	0x4a, 0x50, 0x9b, 0x50, 0x21, 0xa4, 0x6e, 0x09, 0x12, 0x12, 0x43, 0x24, 0x30, 0x62, 0x61, 0xa9,
-	0x9c, 0xdc, 0xe9, 0x6a, 0x61, 0xfb, 0x82, 0x9f, 0xd3, 0xd0, 0x95, 0x89, 0x91, 0x8f, 0xd0, 0xcf,
-	0xc0, 0xc4, 0x84, 0x18, 0x19, 0x3b, 0x32, 0x59, 0x28, 0x59, 0x10, 0xa3, 0x3f, 0x01, 0x72, 0xce,
-	0xb6, 0x6c, 0xa7, 0xb8, 0x0d, 0xb0, 0x74, 0x73, 0xee, 0xfd, 0xdf, 0xfb, 0xbf, 0x9f, 0xf5, 0xbf,
-	0x18, 0x6d, 0x12, 0x0a, 0x0e, 0x07, 0x1d, 0xc6, 0x03, 0x18, 0x99, 0x43, 0x0a, 0xfa, 0x61, 0x67,
-	0x40, 0x7d, 0xb3, 0xa3, 0x3b, 0xc0, 0x40, 0x1b, 0x79, 0xdc, 0xe7, 0xb8, 0x25, 0x44, 0x5a, 0x2a,
-	0xd2, 0x62, 0x51, 0x7b, 0x83, 0x71, 0xc6, 0xe7, 0x22, 0x3d, 0x7a, 0x12, 0x7a, 0xf5, 0xbd, 0x84,
-	0xae, 0xf7, 0x81, 0x3d, 0xf1, 0xa8, 0xe9, 0xd3, 0x97, 0x71, 0x13, 0x7e, 0x84, 0xaa, 0x16, 0x69,
-	0x49, 0x77, 0xa4, 0xed, 0xb5, 0xde, 0xd6, 0xaf, 0x40, 0xa9, 0x27, 0xe3, 0xf6, 0x2d, 0x12, 0x06,
-	0x0a, 0x3e, 0x32, 0x1d, 0x7b, 0x4f, 0xcd, 0x1c, 0xaa, 0x46, 0xd5, 0x22, 0xf8, 0x3e, 0xba, 0x32,
-	0x8c, 0x06, 0x71, 0xaf, 0x55, 0x9d, 0xf7, 0xe2, 0x30, 0x50, 0x1a, 0x42, 0x1c, 0x17, 0x54, 0x23,
-	0x91, 0xec, 0xad, 0x7e, 0x38, 0x56, 0x2a, 0x3f, 0x8f, 0x95, 0x8a, 0x7a, 0x1b, 0xdd, 0x5a, 0xd8,
-	0xc1, 0xa0, 0x30, 0xe2, 0x2e, 0x50, 0xf5, 0xab, 0x84, 0xea, 0x7d, 0x60, 0x5d, 0x42, 0xba, 0xc4,
-	0xb1, 0x5c, 0xfc, 0x14, 0x65, 0xb7, 0x59, 0x6e, 0x49, 0x94, 0xfc, 0x7a, 0x46, 0x70, 0x07, 0xad,
-	0xb9, 0x74, 0xb2, 0x6f, 0x46, 0x43, 0xe3, 0x75, 0x37, 0xc2, 0x40, 0x69, 0x8a, 0xb6, 0xb4, 0xa4,
-	0x1a, 0xab, 0x2e, 0x9d, 0x08, 0xeb, 0x0c, 0x5f, 0x6d, 0x19, 0xbe, 0x1b, 0x68, 0x3d, 0x43, 0x90,
-	0x92, 0x7d, 0x96, 0x50, 0xa3, 0x0f, 0xcc, 0xa0, 0x0e, 0x3f, 0xa4, 0xff, 0x17, 0xee, 0x2e, 0xba,
-	0x94, 0x05, 0x6b, 0x86, 0x81, 0x72, 0x55, 0xb4, 0xc4, 0x50, 0xa2, 0xfc, 0xd7, 0x44, 0x2d, 0x74,
-	0x33, 0xbf, 0x79, 0x0a, 0xf5, 0x49, 0x04, 0xaa, 0x6b, 0xdb, 0x7c, 0xf2, 0x0a, 0xa8, 0xf7, 0x9c,
-	0x83, 0x0f, 0x78, 0x13, 0xad, 0x8c, 0x81, 0x7a, 0x31, 0xd0, 0xb5, 0x30, 0x50, 0xea, 0xc2, 0x24,
-	0x3a, 0x55, 0x8d, 0x79, 0xb1, 0x08, 0x5f, 0xfd, 0x67, 0xf8, 0x5a, 0x29, 0xfc, 0x42, 0x00, 0xf3,
-	0x3b, 0x17, 0x89, 0x7a, 0x36, 0x1f, 0xbe, 0xb9, 0x60, 0x44, 0xf9, 0x9d, 0x13, 0xa2, 0x87, 0x5f,
-	0x56, 0x50, 0xad, 0x0f, 0x0c, 0x7b, 0xa8, 0x51, 0xb8, 0xf8, 0xf7, 0xb4, 0x3f, 0xfd, 0x7f, 0x68,
-	0x0b, 0x37, 0xb4, 0xbd, 0xbb, 0x84, 0x38, 0xf1, 0xc6, 0x07, 0xa8, 0xd9, 0x25, 0x24, 0x39, 0x16,
-	0xa9, 0xdf, 0x2a, 0x1d, 0x94, 0xdc, 0x9b, 0xf6, 0xce, 0xb9, 0x64, 0xa9, 0xd3, 0x5b, 0xb4, 0x2e,
-	0x02, 0x9a, 0x37, 0xdb, 0x2e, 0x9d, 0x92, 0x89, 0x74, 0xfb, 0xc1, 0x79, 0x95, 0xa9, 0xa5, 0x87,
-	0x1a, 0x85, 0xe0, 0x97, 0xbf, 0xd0, 0xbc, 0xf8, 0x8c, 0x17, 0x7a, 0x7a, 0x3c, 0x23, 0xcf, 0x42,
-	0x34, 0xcb, 0x3d, 0xf3, 0xe2, 0x33, 0x3c, 0x4f, 0x0f, 0x50, 0xef, 0xc5, 0xb7, 0xa9, 0x2c, 0x9d,
-	0x4c, 0x65, 0xe9, 0xc7, 0x54, 0x96, 0x3e, 0xce, 0xe4, 0xca, 0xc9, 0x4c, 0xae, 0x7c, 0x9f, 0xc9,
-	0x95, 0xd7, 0x8f, 0x99, 0xe5, 0x1f, 0x8c, 0x07, 0xda, 0x90, 0x3b, 0xba, 0x18, 0xbc, 0x63, 0x9b,
-	0x03, 0x88, 0x9f, 0xf5, 0x77, 0x3a, 0xf8, 0x26, 0xb3, 0x5c, 0x96, 0xf9, 0x8a, 0xf9, 0x47, 0x23,
-	0x0a, 0x83, 0xcb, 0xf3, 0xef, 0xd1, 0xee, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb5, 0xb8, 0x2b,
-	0x3c, 0xe6, 0x06, 0x00, 0x00,
+	// 562 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0xbf, 0x6f, 0xd3, 0x40,
+	0x14, 0xc7, 0xe3, 0xa4, 0x40, 0xfb, 0x82, 0xd2, 0x70, 0x2d, 0x28, 0xb8, 0x60, 0x23, 0x57, 0x45,
+	0x95, 0x68, 0x6d, 0x42, 0xa9, 0x90, 0xba, 0xa5, 0xfc, 0x90, 0x18, 0x22, 0x81, 0x11, 0x0b, 0x4b,
+	0x65, 0xe7, 0x4e, 0x57, 0x4b, 0xb1, 0x2f, 0xf8, 0x39, 0xfd, 0xb1, 0x32, 0x31, 0xf2, 0x27, 0xf4,
+	0x7f, 0x80, 0x81, 0x91, 0x0d, 0xc6, 0x8e, 0x4c, 0x16, 0x4a, 0x16, 0xc4, 0x98, 0xbf, 0x00, 0x25,
+	0x67, 0x5b, 0x6e, 0x02, 0x51, 0x03, 0x2c, 0x6c, 0xe7, 0x7b, 0xdf, 0xf7, 0xbe, 0xef, 0x63, 0xbf,
+	0xf3, 0xc1, 0x2a, 0x65, 0xe8, 0x0b, 0xb4, 0xb0, 0xeb, 0x62, 0xc7, 0x69, 0x31, 0xb4, 0x0e, 0xea,
+	0x2e, 0x8b, 0x9c, 0xba, 0xe5, 0x23, 0x47, 0xb3, 0x13, 0x8a, 0x48, 0x90, 0x9a, 0x14, 0x99, 0x99,
+	0xc8, 0x4c, 0x44, 0xea, 0x32, 0x17, 0x5c, 0x8c, 0x44, 0xd6, 0x70, 0x25, 0xf5, 0xc6, 0x1b, 0x05,
+	0xae, 0x34, 0x91, 0x3f, 0x0c, 0x99, 0x13, 0xb1, 0x17, 0x49, 0x12, 0xd9, 0x86, 0xa2, 0x47, 0x6b,
+	0xca, 0x2d, 0x65, 0x7d, 0x61, 0x77, 0xed, 0x47, 0xac, 0x97, 0xd3, 0x72, 0x7b, 0x1e, 0x1d, 0xc4,
+	0x3a, 0x39, 0x76, 0xfc, 0xf6, 0x8e, 0x91, 0xdb, 0x34, 0xec, 0xa2, 0x47, 0xc9, 0x06, 0x5c, 0x6a,
+	0x0d, 0x0b, 0x89, 0xb0, 0x56, 0x1c, 0xe5, 0x92, 0x41, 0xac, 0x57, 0xa4, 0x38, 0x09, 0x18, 0x76,
+	0x2a, 0xd9, 0x99, 0x7f, 0x7b, 0xa2, 0x17, 0xbe, 0x9f, 0xe8, 0x05, 0x63, 0x05, 0xae, 0x4f, 0xf4,
+	0x60, 0x33, 0xec, 0x88, 0x00, 0x99, 0xf1, 0x49, 0x81, 0x72, 0x13, 0x79, 0x83, 0xd2, 0x06, 0xf5,
+	0xbd, 0x80, 0x3c, 0x81, 0x7c, 0x37, 0xb3, 0x35, 0x09, 0xe9, 0xd3, 0x53, 0x4a, 0xea, 0xb0, 0x10,
+	0xb0, 0xc3, 0x3d, 0x67, 0x58, 0x34, 0x69, 0x77, 0x79, 0x10, 0xeb, 0x55, 0x99, 0x96, 0x85, 0x0c,
+	0x7b, 0x3e, 0x60, 0x87, 0xd2, 0x3a, 0xc7, 0x57, 0x9a, 0x85, 0xef, 0x2a, 0x2c, 0xe5, 0x08, 0x32,
+	0xb2, 0x8f, 0x0a, 0x54, 0x9a, 0xc8, 0x6d, 0xe6, 0x8b, 0x03, 0xf6, 0x6f, 0xe1, 0x6e, 0xc3, 0x85,
+	0x3c, 0x58, 0x75, 0x10, 0xeb, 0x97, 0x65, 0x4a, 0x02, 0x25, 0xc3, 0x7f, 0x4c, 0x54, 0x83, 0x6b,
+	0x67, 0x3b, 0xcf, 0xa0, 0xde, 0x2b, 0x40, 0x9a, 0xc8, 0x1f, 0x07, 0x8e, 0xdb, 0x66, 0x2f, 0x91,
+	0x85, 0xcf, 0x04, 0x46, 0x48, 0x56, 0x61, 0xae, 0x8b, 0x2c, 0x4c, 0x88, 0x16, 0x07, 0xb1, 0x5e,
+	0x96, 0x2e, 0xc3, 0x5d, 0xc3, 0x1e, 0x05, 0xc7, 0xe9, 0x8b, 0x7f, 0x4d, 0x5f, 0x9a, 0x4a, 0x9f,
+	0xe3, 0xb9, 0x01, 0xea, 0x64, 0xd3, 0x19, 0xd3, 0x07, 0x65, 0xf4, 0x01, 0x1f, 0x79, 0xf8, 0x5f,
+	0x41, 0xdd, 0x84, 0x95, 0x5f, 0x74, 0x9d, 0x52, 0xdd, 0xfb, 0x3c, 0x07, 0xa5, 0x26, 0x72, 0x12,
+	0x42, 0x65, 0xec, 0xf8, 0xdf, 0x31, 0x7f, 0xf7, 0x17, 0x31, 0x27, 0xce, 0xa9, 0xba, 0x35, 0x83,
+	0x38, 0xf5, 0x26, 0xfb, 0x50, 0x6d, 0x50, 0x9a, 0x6e, 0xcb, 0xd9, 0x5f, 0x9b, 0x5a, 0x28, 0x3d,
+	0x3d, 0xea, 0xe6, 0xb9, 0x64, 0x99, 0xd3, 0x6b, 0x58, 0x92, 0x63, 0x7a, 0xd6, 0x6c, 0x7d, 0x6a,
+	0x95, 0xdc, 0x60, 0xab, 0x77, 0xcf, 0xab, 0xcc, 0x2c, 0xbb, 0xb0, 0x38, 0x3e, 0xfe, 0x1b, 0x53,
+	0x8b, 0x8c, 0xa9, 0xd5, 0xfb, 0xb3, 0xa8, 0x33, 0xdb, 0x23, 0xa8, 0x4e, 0x4c, 0xe8, 0xf4, 0x97,
+	0x35, 0x2e, 0x57, 0xb7, 0x67, 0x92, 0xa7, 0xce, 0xbb, 0xcf, 0xbf, 0xf4, 0x34, 0xe5, 0xb4, 0xa7,
+	0x29, 0xdf, 0x7a, 0x9a, 0xf2, 0xae, 0xaf, 0x15, 0x4e, 0xfb, 0x5a, 0xe1, 0x6b, 0x5f, 0x2b, 0xbc,
+	0x7a, 0xc0, 0xbd, 0x68, 0xbf, 0xeb, 0x9a, 0x2d, 0xe1, 0x5b, 0xb2, 0xf4, 0x66, 0xdb, 0x71, 0x31,
+	0x59, 0x5b, 0x47, 0x16, 0x46, 0x0e, 0xf7, 0x02, 0x9e, 0xbb, 0xd4, 0xa2, 0xe3, 0x0e, 0x43, 0xf7,
+	0xe2, 0xe8, 0x7a, 0xda, 0xfa, 0x19, 0x00, 0x00, 0xff, 0xff, 0xa4, 0x88, 0x22, 0x2c, 0xf5, 0x06,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -486,10 +487,10 @@ type MsgClient interface {
 	AddSubspaceAdmin(ctx context.Context, in *MsgAddAdmin, opts ...grpc.CallOption) (*MsgAddAdminResponse, error)
 	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
 	RemoveSubspaceAdmin(ctx context.Context, in *MsgRemoveAdmin, opts ...grpc.CallOption) (*MsgRemoveAdminResponse, error)
-	// AllowUserPosts defines the method to let user posts inside a specific subspace
-	AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, opts ...grpc.CallOption) (*MsgAllowUserPostsResponse, error)
-	// BlockUserPosts defines the method to block user posts inside a specific subspace
-	BlockUserPosts(ctx context.Context, in *MsgBlockUserPosts, opts ...grpc.CallOption) (*MsgBlockUserPostsResponse, error)
+	// EnableUserPosts defines the method to let user posts inside a specific subspace
+	EnableUserPosts(ctx context.Context, in *MsgEnableUserPosts, opts ...grpc.CallOption) (*MsgEnableUserPostsResponse, error)
+	// DisableUserPosts defines the method to block user posts inside a specific subspace
+	DisableUserPosts(ctx context.Context, in *MsgDisableUserPosts, opts ...grpc.CallOption) (*MsgDisableUserPostsResponse, error)
 }
 
 type msgClient struct {
@@ -527,18 +528,18 @@ func (c *msgClient) RemoveSubspaceAdmin(ctx context.Context, in *MsgRemoveAdmin,
 	return out, nil
 }
 
-func (c *msgClient) AllowUserPosts(ctx context.Context, in *MsgAllowUserPosts, opts ...grpc.CallOption) (*MsgAllowUserPostsResponse, error) {
-	out := new(MsgAllowUserPostsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/AllowUserPosts", in, out, opts...)
+func (c *msgClient) EnableUserPosts(ctx context.Context, in *MsgEnableUserPosts, opts ...grpc.CallOption) (*MsgEnableUserPostsResponse, error) {
+	out := new(MsgEnableUserPostsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/EnableUserPosts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) BlockUserPosts(ctx context.Context, in *MsgBlockUserPosts, opts ...grpc.CallOption) (*MsgBlockUserPostsResponse, error) {
-	out := new(MsgBlockUserPostsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/BlockUserPosts", in, out, opts...)
+func (c *msgClient) DisableUserPosts(ctx context.Context, in *MsgDisableUserPosts, opts ...grpc.CallOption) (*MsgDisableUserPostsResponse, error) {
+	out := new(MsgDisableUserPostsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/DisableUserPosts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -553,10 +554,10 @@ type MsgServer interface {
 	AddSubspaceAdmin(context.Context, *MsgAddAdmin) (*MsgAddAdminResponse, error)
 	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
 	RemoveSubspaceAdmin(context.Context, *MsgRemoveAdmin) (*MsgRemoveAdminResponse, error)
-	// AllowUserPosts defines the method to let user posts inside a specific subspace
-	AllowUserPosts(context.Context, *MsgAllowUserPosts) (*MsgAllowUserPostsResponse, error)
-	// BlockUserPosts defines the method to block user posts inside a specific subspace
-	BlockUserPosts(context.Context, *MsgBlockUserPosts) (*MsgBlockUserPostsResponse, error)
+	// EnableUserPosts defines the method to let user posts inside a specific subspace
+	EnableUserPosts(context.Context, *MsgEnableUserPosts) (*MsgEnableUserPostsResponse, error)
+	// DisableUserPosts defines the method to block user posts inside a specific subspace
+	DisableUserPosts(context.Context, *MsgDisableUserPosts) (*MsgDisableUserPostsResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -572,11 +573,11 @@ func (*UnimplementedMsgServer) AddSubspaceAdmin(ctx context.Context, req *MsgAdd
 func (*UnimplementedMsgServer) RemoveSubspaceAdmin(ctx context.Context, req *MsgRemoveAdmin) (*MsgRemoveAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubspaceAdmin not implemented")
 }
-func (*UnimplementedMsgServer) AllowUserPosts(ctx context.Context, req *MsgAllowUserPosts) (*MsgAllowUserPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AllowUserPosts not implemented")
+func (*UnimplementedMsgServer) EnableUserPosts(ctx context.Context, req *MsgEnableUserPosts) (*MsgEnableUserPostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableUserPosts not implemented")
 }
-func (*UnimplementedMsgServer) BlockUserPosts(ctx context.Context, req *MsgBlockUserPosts) (*MsgBlockUserPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BlockUserPosts not implemented")
+func (*UnimplementedMsgServer) DisableUserPosts(ctx context.Context, req *MsgDisableUserPosts) (*MsgDisableUserPostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableUserPosts not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -637,38 +638,38 @@ func _Msg_RemoveSubspaceAdmin_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_AllowUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgAllowUserPosts)
+func _Msg_EnableUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgEnableUserPosts)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).AllowUserPosts(ctx, in)
+		return srv.(MsgServer).EnableUserPosts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/AllowUserPosts",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/EnableUserPosts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).AllowUserPosts(ctx, req.(*MsgAllowUserPosts))
+		return srv.(MsgServer).EnableUserPosts(ctx, req.(*MsgEnableUserPosts))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_BlockUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgBlockUserPosts)
+func _Msg_DisableUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDisableUserPosts)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).BlockUserPosts(ctx, in)
+		return srv.(MsgServer).DisableUserPosts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/BlockUserPosts",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/DisableUserPosts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).BlockUserPosts(ctx, req.(*MsgBlockUserPosts))
+		return srv.(MsgServer).DisableUserPosts(ctx, req.(*MsgDisableUserPosts))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -690,12 +691,12 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_RemoveSubspaceAdmin_Handler,
 		},
 		{
-			MethodName: "AllowUserPosts",
-			Handler:    _Msg_AllowUserPosts_Handler,
+			MethodName: "EnableUserPosts",
+			Handler:    _Msg_EnableUserPosts_Handler,
 		},
 		{
-			MethodName: "BlockUserPosts",
-			Handler:    _Msg_BlockUserPosts_Handler,
+			MethodName: "DisableUserPosts",
+			Handler:    _Msg_DisableUserPosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -896,7 +897,7 @@ func (m *MsgRemoveAdminResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgAllowUserPosts) Marshal() (dAtA []byte, err error) {
+func (m *MsgEnableUserPosts) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -906,12 +907,12 @@ func (m *MsgAllowUserPosts) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgAllowUserPosts) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgEnableUserPosts) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgAllowUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgEnableUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -940,7 +941,7 @@ func (m *MsgAllowUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgAllowUserPostsResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgEnableUserPostsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -950,12 +951,12 @@ func (m *MsgAllowUserPostsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgAllowUserPostsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgEnableUserPostsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgAllowUserPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgEnableUserPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -963,7 +964,7 @@ func (m *MsgAllowUserPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgBlockUserPosts) Marshal() (dAtA []byte, err error) {
+func (m *MsgDisableUserPosts) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -973,12 +974,12 @@ func (m *MsgBlockUserPosts) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockUserPosts) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgDisableUserPosts) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgDisableUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1007,7 +1008,7 @@ func (m *MsgBlockUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgBlockUserPostsResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgDisableUserPostsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1017,12 +1018,12 @@ func (m *MsgBlockUserPostsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockUserPostsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgDisableUserPostsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockUserPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgDisableUserPostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1127,7 +1128,7 @@ func (m *MsgRemoveAdminResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgAllowUserPosts) Size() (n int) {
+func (m *MsgEnableUserPosts) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1148,7 +1149,7 @@ func (m *MsgAllowUserPosts) Size() (n int) {
 	return n
 }
 
-func (m *MsgAllowUserPostsResponse) Size() (n int) {
+func (m *MsgEnableUserPostsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1157,7 +1158,7 @@ func (m *MsgAllowUserPostsResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgBlockUserPosts) Size() (n int) {
+func (m *MsgDisableUserPosts) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1178,7 +1179,7 @@ func (m *MsgBlockUserPosts) Size() (n int) {
 	return n
 }
 
-func (m *MsgBlockUserPostsResponse) Size() (n int) {
+func (m *MsgDisableUserPostsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1749,7 +1750,7 @@ func (m *MsgRemoveAdminResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgAllowUserPosts) Unmarshal(dAtA []byte) error {
+func (m *MsgEnableUserPosts) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1772,10 +1773,10 @@ func (m *MsgAllowUserPosts) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgAllowUserPosts: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgEnableUserPosts: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgAllowUserPosts: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgEnableUserPosts: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1895,7 +1896,7 @@ func (m *MsgAllowUserPosts) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgAllowUserPostsResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgEnableUserPostsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1918,10 +1919,10 @@ func (m *MsgAllowUserPostsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgAllowUserPostsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgEnableUserPostsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgAllowUserPostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgEnableUserPostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1945,7 +1946,7 @@ func (m *MsgAllowUserPostsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgBlockUserPosts) Unmarshal(dAtA []byte) error {
+func (m *MsgDisableUserPosts) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1968,10 +1969,10 @@ func (m *MsgBlockUserPosts) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockUserPosts: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgDisableUserPosts: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockUserPosts: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgDisableUserPosts: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2091,7 +2092,7 @@ func (m *MsgBlockUserPosts) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgBlockUserPostsResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgDisableUserPostsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2114,10 +2115,10 @@ func (m *MsgBlockUserPostsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockUserPostsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgDisableUserPostsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockUserPostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgDisableUserPostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
