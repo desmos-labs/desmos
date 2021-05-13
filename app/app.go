@@ -70,9 +70,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/x/links"
-	linkskeeper "github.com/desmos-labs/desmos/x/links/keeper"
-	linkstypes "github.com/desmos-labs/desmos/x/links/types"
+	links "github.com/desmos-labs/desmos/x/ibc/profiles"
+	ibcprofileskeeper "github.com/desmos-labs/desmos/x/ibc/profiles/keeper"
+	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
@@ -202,7 +202,7 @@ type DesmosApp struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
-	ScopedLinksKeeper       capabilitykeeper.ScopedKeeper
+	ScopedIBCProfilesKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
 	FeesKeeper    feeskeeper.Keeper
@@ -210,7 +210,7 @@ type DesmosApp struct {
 	ProfileKeeper profileskeeper.Keeper
 	ReportsKeeper reportsKeeper.Keeper
 
-	LinksKeeper linkskeeper.Keeper
+	IBCProfilesKeeper ibcprofileskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -254,7 +254,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey, linkstypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey, ibcprofilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -280,7 +280,7 @@ func NewDesmosApp(
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	scopedLinksKeeper := app.CapabilityKeeper.ScopeToModule(linkstypes.ModuleName)
+	ScopedIBCProfilesKeeper := app.CapabilityKeeper.ScopeToModule(ibcprofilestypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -340,20 +340,20 @@ func NewDesmosApp(
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
 	// Create Link Keeper
-	app.LinksKeeper = linkskeeper.NewKeeper(
+	app.IBCProfilesKeeper = ibcprofileskeeper.NewKeeper(
 		appCodec,
-		keys[linkstypes.StoreKey],
+		keys[ibcprofilestypes.StoreKey],
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
-		scopedLinksKeeper,
+		ScopedIBCProfilesKeeper,
 		app.AccountKeeper,
 	)
-	linksModule := links.NewAppModule(appCodec, app.LinksKeeper)
+	linksModule := links.NewAppModule(appCodec, app.IBCProfilesKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
-	ibcRouter.AddRoute(linkstypes.ModuleName, linksModule)
+	ibcRouter.AddRoute(ibcprofilestypes.ModuleName, linksModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -445,7 +445,7 @@ func NewDesmosApp(
 
 		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
 		reportsTypes.ModuleName,
-		linkstypes.ModuleName, // custom modules
+		ibcprofilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -518,7 +518,7 @@ func NewDesmosApp(
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 		app.CapabilityKeeper.InitializeAndSeal(ctx)
 	}
-	app.ScopedLinksKeeper = scopedLinksKeeper
+	app.ScopedIBCProfilesKeeper = ScopedIBCProfilesKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 
@@ -704,7 +704,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
-	paramsKeeper.Subspace(linkstypes.ModuleName)
+	paramsKeeper.Subspace(ibcprofilestypes.ModuleName)
 
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)

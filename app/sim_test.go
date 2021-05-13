@@ -16,7 +16,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	linkstypes "github.com/desmos-labs/desmos/x/links/types"
+	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
@@ -223,7 +223,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
-		{app.keys[linkstypes.StoreKey], newApp.keys[linkstypes.StoreKey], [][]byte{}},
+		{app.keys[ibcprofilestypes.StoreKey], newApp.keys[ibcprofilestypes.StoreKey], [][]byte{}},
 
 		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},

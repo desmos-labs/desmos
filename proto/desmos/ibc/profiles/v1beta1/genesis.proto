@@ -1,0 +1,14 @@
+syntax = "proto3";
+package desmos.ibc.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/ibc/profiles/v1beta1/links.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
+
+// GenesisState defines the links module's genesis state.
+message GenesisState {
+  string port_id = 1 [ (gogoproto.moretags) = "yaml:\"port_id\"" ];
+  repeated desmos.ibc.profiles.v1beta1.Link links = 2
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"links\"" ];
+}

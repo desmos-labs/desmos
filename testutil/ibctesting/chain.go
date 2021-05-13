@@ -36,7 +36,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	simapp "github.com/desmos-labs/desmos/app"
-	linkstypes "github.com/desmos-labs/desmos/x/links/types"
+	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
 )
 
 const (
@@ -46,13 +46,13 @@ const (
 	MaxClockDrift      time.Duration = time.Second * 10
 	DefaultDelayPeriod uint64        = 0
 
-	DefaultChannelVersion = linkstypes.Version
+	DefaultChannelVersion = ibcprofilestypes.Version
 	InvalidID             = "IDisInvalid"
 
 	ConnectionIDPrefix = "conn"
 	ChannelIDPrefix    = "chan"
 
-	LinksPort = linkstypes.ModuleName
+	LinksPort = ibcprofilestypes.ModuleName
 	MockPort  = "mock"
 
 	// used for testing UpdateClientProposal
@@ -717,7 +717,7 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 		switch portID {
 		case LinksPort:
 			// claim capability using the links capability keeper
-			err = chain.App.ScopedLinksKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
+			err = chain.App.ScopedIBCProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)
 		default:
 			panic(fmt.Sprintf("unsupported ibc testing package port ID %s", portID))
@@ -738,7 +738,7 @@ func (chain *TestChain) CreateChannelCapability(portID, channelID string) {
 	if !ok {
 		cap, err := chain.App.ScopedIBCKeeper.NewCapability(chain.GetContext(), capName)
 		require.NoError(chain.t, err)
-		err = chain.App.ScopedLinksKeeper.ClaimCapability(chain.GetContext(), cap, capName)
+		err = chain.App.ScopedIBCProfilesKeeper.ClaimCapability(chain.GetContext(), cap, capName)
 		require.NoError(chain.t, err)
 	}
 
