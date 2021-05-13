@@ -101,14 +101,14 @@ func (k msgServer) EnableUserPosts(goCtx context.Context, msg *types.MsgEnableUs
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEnableUserPosts,
-		sdk.NewAttribute(types.AttributeKeyAllowedUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeyEnabledToPostUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
 	))
 
 	return &types.MsgEnableUserPostsResponse{}, nil
 }
 
-func (k msgServer) BlockUserPosts(goCtx context.Context, msg *types.MsgBlockUserPosts) (*types.MsgBlockUserPostsResponse, error) {
+func (k msgServer) DisableUserPosts(goCtx context.Context, msg *types.MsgDisableUserPosts) (*types.MsgDisableUserPostsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if err := k.CheckSubspaceExistenceAndAdminValidity(ctx, msg.Admin, msg.SubspaceId); err != nil {
@@ -121,9 +121,9 @@ func (k msgServer) BlockUserPosts(goCtx context.Context, msg *types.MsgBlockUser
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeBlockUserPosts,
-		sdk.NewAttribute(types.AttributeKeyBlockedUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeyDisabledToPostUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
 	))
 
-	return &types.MsgBlockUserPostsResponse{}, nil
+	return &types.MsgDisableUserPostsResponse{}, nil
 }

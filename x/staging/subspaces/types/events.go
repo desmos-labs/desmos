@@ -12,6 +12,6 @@ const (
 	AttributeKeySubspaceCreator      = "subspace_creator"
 	AttributeKeySubspaceNewAdmin     = "new_admin"
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"
-	AttributeKeyAllowedUser          = "allowed_user"
-	AttributeKeyBlockedUser          = "blocked_user"
+	AttributeKeyEnabledToPostUser    = "enabled_user_to_post"
+	AttributeKeyDisabledToPostUser   = "disabled_user_to_post"
 )

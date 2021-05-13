@@ -18,11 +18,7 @@ func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceReques
 
 	admins := k.GetAllSubspaceAdmins(sdkCtx, request.SubspaceId)
 
-	return &types.QuerySubspaceResponse{Subspace: subspace, Admins: admins}, nil
-}
-
-func (k Keeper) SubspaceBlockedUsers(ctx context.Context, request *types.QuerySubspaceBlockedUsersRequest) (*types.QuerySubspaceBlockedUsersResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	blockedUsers := k.GetSubspaceBlockedUsers(sdkCtx, request.SubspaceId)
-	return &types.QuerySubspaceBlockedUsersResponse{Users: blockedUsers}, nil
+
+	return &types.QuerySubspaceResponse{Subspace: subspace, Admins: admins, BlockedToPostUsers: blockedUsers}, nil
 }

@@ -12,10 +12,8 @@ const (
 	ActionBlockUserPosts = "block_user_posts"
 
 	// Queries
-	QuerierRoute              = ModuleName
-	QuerySubspaces            = "subspaces"
-	QuerySubspaceAdmins       = "subspace_admins"
-	QuerySubspaceBlockedUsers = "subspace_blocked_users"
+	QuerierRoute  = ModuleName
+	QuerySubspace = "subspace"
 )
 
 var (

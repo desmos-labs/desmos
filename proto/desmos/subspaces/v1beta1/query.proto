@@ -10,13 +10,10 @@ option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 
 // Query defines the gRPC querier service
 service Query {
+
+  // Subspace queries all the information about the subspace with the given id
   rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
     option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}";
-  }
-
-  // SubspaceBlockedUsers queries all the blocked users of the subspace with the given id
-  rpc SubspaceBlockedUsers(QuerySubspaceBlockedUsersRequest) returns (QuerySubspaceBlockedUsersResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}/blocked_users";
   }
 }
 
@@ -34,17 +31,5 @@ message QuerySubspaceRequest {
 message QuerySubspaceResponse {
   desmos.subspaces.v1beta1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
   desmos.subspaces.v1beta1.Users admins = 2 [ (gogoproto.nullable) = false ];
-}
-
-// QuerySubspaceBlockedUsersRequest is the request type for the Query/SubspaceBlockedUsers method
-message QuerySubspaceBlockedUsersRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string subspace_id = 1;
-}
-
-// QuerySubspaceBlockedUsersResponse is the response type for the Query/SubspaceBlockedUsers method
-message QuerySubspaceBlockedUsersResponse {
-  desmos.subspaces.v1beta1.Users users = 1 [ (gogoproto.nullable) = false ];
+  desmos.subspaces.v1beta1.Users blocked_to_post_users = 3 [ (gogoproto.nullable) = false ];
 }
