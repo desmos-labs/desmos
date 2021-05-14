@@ -3,6 +3,7 @@ package ibcprofiles
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -15,10 +16,12 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/05-port/types"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/client/cli"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/client/rest"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/keeper"
+	"github.com/desmos-labs/desmos/x/ibc/profiles/simulation"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/types"
 )
 
@@ -156,4 +159,33 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // returns no validator updates.
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
+}
+
+//____________________________________________________________________________
+
+// AppModuleSimulation defines the module simulation functions used by the relationships module.
+type AppModuleSimulation struct{}
+
+// GenerateGenesisState creates a randomized GenState of the links module.
+func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+	simulation.RandomizedGenState(simState)
+}
+
+// ProposalContents doesn't return any content functions for governance proposals.
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
+	return nil
+}
+
+// RandomizedParams creates randomized links param changes for the simulator.
+func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+	return nil
+}
+
+// RegisterStoreDecoder registers a decoder for links module's types
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+}
+
+// WeightedOperations returns the all the links module operations with their respective weights.
+func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
+	return nil
 }
