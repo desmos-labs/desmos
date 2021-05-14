@@ -22,4 +22,9 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_optional_data_field_value_length\""
   ];
+  bytes max_optional_data_field_key_length = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"max_optional_data_field_key_length\""
+  ];
 }

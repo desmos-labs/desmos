@@ -44,7 +44,7 @@ Available flags:
 
 ```bash
 # Example
-# desmos query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --allows-comments=true --subspace=desmos --sort=created --sort-order=descending
+# desmos query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --disable-comments=false --subspace=desmos --sort=created --sort-order=descending
 ```
 
 **REST**
@@ -63,6 +63,6 @@ Available parameters:
 
 ```bash
 # Example
-# curl http://lcd.morpheus.desmos.network:1317/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&allows_comments=true&subspace=desmos&sort_by=created&sort_order=descending
+# curl http://lcd.morpheus.desmos.network:1317/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&disable_comments=true&subspace=desmos&sort_by=created&sort_order=descending
 
 ```

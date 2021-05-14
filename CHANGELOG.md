@@ -1,3 +1,8 @@
+# Unreleased
+## Changes
+- Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
+- Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
+
 # Version 0.16.2
 ## Changes
 - Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))
