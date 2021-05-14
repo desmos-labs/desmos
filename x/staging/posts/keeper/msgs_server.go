@@ -24,15 +24,15 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 	post := types.Post{
-		ParentId:       msg.ParentId,
-		Message:        msg.Message,
-		Created:        ctx.BlockTime(),
-		AllowsComments: msg.AllowsComments,
-		Subspace:       msg.Subspace,
-		OptionalData:   msg.OptionalData,
-		Creator:        msg.Creator,
-		Attachments:    msg.Attachments,
-		PollData:       msg.PollData,
+		ParentId:        msg.ParentId,
+		Message:         msg.Message,
+		Created:         ctx.BlockTime(),
+		DisableComments: msg.AllowsComments,
+		Subspace:        msg.Subspace,
+		OptionalData:    msg.OptionalData,
+		Creator:         msg.Creator,
+		Attachments:     msg.Attachments,
+		PollData:        msg.PollData,
 	}
 
 	bytes, err := post.Marshal()
@@ -84,7 +84,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 				"parent post with id %s not found", post.ParentId)
 		}
 
-		if !parentPost.AllowsComments {
+		if parentPost.DisableComments {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"post with id %s does not allow comments", parentPost.PostId)
 		}

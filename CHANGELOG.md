@@ -1,8 +1,16 @@
 # Unreleased
+## Changes
+- Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
+- Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
+
+# Version 0.16.2
+## Changes
+- Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))
+
 ## Bug fixes
 - Fixed failing transactions performed by a `Profile` continuously depleting
   funds ([\#416](https://github.com/desmos-labs/desmos/issues/416))
-- Renamed `profile` `moniker` field into `nickname` to fix a `--moniker` flag bug ([#413](https://github.com/desmos-labs/desmos/issues/413))
+- Fixed vesting accounts not working properly ([\#384](https://github.com/desmos-labs/desmos/issues/384))
 
 # Version 0.16.1
 ## Changes

@@ -35,7 +35,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 		msg := types.NewMsgCreatePost(
 			data.Message,
 			data.ParentId,
-			data.AllowsComments,
+			data.DisableComments,
 			data.Subspace,
 			data.OptionalData,
 			data.CreatorAccount.Address.String(),
@@ -120,7 +120,7 @@ func randomPostCreateFields(
 	postData.ParentId = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
-		if parent, _ := RandomPost(r, posts); parent.AllowsComments {
+		if parent, _ := RandomPost(r, posts); parent.DisableComments {
 			postData.ParentId = parent.PostId
 		}
 	}

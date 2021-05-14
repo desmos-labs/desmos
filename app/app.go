@@ -453,7 +453,9 @@ func NewDesmosApp(
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
-	app.mm.RegisterServices(module.NewConfigurator(app.MsgServiceRouter(), app.GRPCQueryRouter()))
+
+	configurator := module.NewConfigurator(app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.mm.RegisterServices(configurator)
 
 	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
@@ -520,6 +522,17 @@ func NewDesmosApp(
 	app.ScopedIBCProfilesKeeper = ScopedIBCProfilesKeeper
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
+
+	// ---------------------------------------------------------------------------------------------------------------
+	// --- Morpheus-apollo-1 migration to fix vesting accounts
+
+	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		migrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
+		err := migrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+	})
 
 	return app
 }

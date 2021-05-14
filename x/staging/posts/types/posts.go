@@ -12,22 +12,22 @@ import (
 
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
-	postID string, parentID string, message string, allowsComments bool, subspace string,
+	postID string, parentID string, message string, disableComments bool, subspace string,
 	optionalData OptionalData, attachments []Attachment, pollData *PollData,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
-		PostId:         postID,
-		ParentId:       parentID,
-		Message:        message,
-		Created:        created,
-		LastEdited:     lastEdited,
-		AllowsComments: allowsComments,
-		Subspace:       subspace,
-		OptionalData:   optionalData,
-		Attachments:    attachments,
-		PollData:       pollData,
-		Creator:        creator,
+		PostId:          postID,
+		ParentId:        parentID,
+		Message:         message,
+		Created:         created,
+		LastEdited:      lastEdited,
+		DisableComments: disableComments,
+		Subspace:        subspace,
+		OptionalData:    optionalData,
+		Attachments:     attachments,
+		PollData:        pollData,
+		Creator:         creator,
 	}
 }
 
