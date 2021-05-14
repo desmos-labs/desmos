@@ -7,20 +7,20 @@ DSTNODE=$4
 
 echo "Waiting for channel open"
 # Check channel is open on ibc0
-channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
 while [ "$channel" = "" ]
 do
     sleep 10
-    channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+    channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
 done
 echo "Src links channel available now"
 
 # Check channel is open on ibc1
-channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
 while [ "$channel" = "" ]
 do
     sleep 10
-    channel=$(desmos query ibc channel channels | grep -A1 "link" | grep "STATE_OPEN")
+    channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
 done
 echo "Dst links channel available now"
 
@@ -33,10 +33,10 @@ echo "Starting sending transactions"
 for (( i = 0; i < $ACCOUNTNUM; i++ ))
 do
     if [ `expr $i % 2` == 0 ]; then
-        desmos tx links create-ibc-connection links channel-1 desmos $IBCDIR/ibc1 test1-$i --home $IBCDIR/ibc0 \
+        desmos tx ibc-profiles create-ibc-connection ibcprofiles channel-1 desmos $IBCDIR/ibc1 test1-$i --home $IBCDIR/ibc0 \
         --keyring-backend test --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> /dev/null
     else
-        desmos tx links create-ibc-link links channel-1 desmos --home $IBCDIR/ibc0 --keyring-backend test \
+        desmos tx ibc-profiles create-ibc-link ibcprofiles channel-1 desmos --home $IBCDIR/ibc0 --keyring-backend test \
         --from test0-$i --chain-id ibc0 --node $SRCNODE --broadcast-mode async --yes &> /dev/null
     fi
 done
