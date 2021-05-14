@@ -118,7 +118,7 @@ func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-	var modulePacketData types.LinksPacketData
+	var modulePacketData types.IBCProfilesPacketData
 	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
@@ -127,7 +127,7 @@ func (am AppModule) OnRecvPacket(
 
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
-	case *types.LinksPacketData_IbcAccountConnectionPacket:
+	case *types.IBCProfilesPacketData_IbcAccountConnectionPacket:
 		packetAck, err := am.keeper.OnRecvIBCAccountConnectionPacket(ctx, modulePacket, *packet.IbcAccountConnectionPacket)
 		if err != nil {
 			ack = channeltypes.NewErrorAcknowledgement(err.Error())
@@ -146,7 +146,7 @@ func (am AppModule) OnRecvPacket(
 				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 			),
 		)
-	case *types.LinksPacketData_IbcAccountLinkPacket:
+	case *types.IBCProfilesPacketData_IbcAccountLinkPacket:
 		packetAck, err := am.keeper.OnRecvIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket)
 		if err != nil {
 			ack = channeltypes.NewErrorAcknowledgement(err.Error())
@@ -192,7 +192,7 @@ func (am AppModule) OnAcknowledgementPacket(
 	if err := types.ProtoCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
-	var modulePacketData types.LinksPacketData
+	var modulePacketData types.IBCProfilesPacketData
 	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
@@ -201,13 +201,13 @@ func (am AppModule) OnAcknowledgementPacket(
 
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
-	case *types.LinksPacketData_IbcAccountConnectionPacket:
+	case *types.IBCProfilesPacketData_IbcAccountConnectionPacket:
 		err := am.keeper.OnAcknowledgementIBCAccountConnectionPacket(ctx, modulePacket, *packet.IbcAccountConnectionPacket, ack)
 		if err != nil {
 			return nil, err
 		}
 		eventType = types.EventTypeIBCAccountConnectionPacket
-	case *types.LinksPacketData_IbcAccountLinkPacket:
+	case *types.IBCProfilesPacketData_IbcAccountLinkPacket:
 		err := am.keeper.OnAcknowledgementIBCAccountLinkPacket(ctx, modulePacket, *packet.IbcAccountLinkPacket, ack)
 		if err != nil {
 			return nil, err
@@ -253,7 +253,7 @@ func (am AppModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, error) {
-	var modulePacketData types.LinksPacketData
+	var modulePacketData types.IBCProfilesPacketData
 	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &modulePacketData); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
 	}
@@ -261,8 +261,8 @@ func (am AppModule) OnTimeoutPacket(
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	// Do nothing when timeout is reached
-	case *types.LinksPacketData_IbcAccountConnectionPacket:
-	case *types.LinksPacketData_IbcAccountLinkPacket:
+	case *types.IBCProfilesPacketData_IbcAccountConnectionPacket:
+	case *types.IBCProfilesPacketData_IbcAccountLinkPacket:
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
