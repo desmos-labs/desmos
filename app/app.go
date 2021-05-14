@@ -80,8 +80,12 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	postsWasm "github.com/desmos-labs/desmos/x/staging/posts/wasm"
 	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
+	reportsWasm "github.com/desmos-labs/desmos/x/staging/reports/wasm"
+
+	desmosWasm "github.com/desmos-labs/desmos/x/staging/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -255,8 +259,8 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		magpieTypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey,
-		reportsTypes.StoreKey, relationshipstypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey,
+		reportsTypes.StoreKey,
 
 		wasm.StoreKey,
 	)

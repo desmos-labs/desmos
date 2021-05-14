@@ -8,8 +8,8 @@ import (
 	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 )
 
 type Querier interface {

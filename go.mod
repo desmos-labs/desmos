@@ -5,7 +5,6 @@ go 1.15
 require (
 	github.com/CosmWasm/wasmd v0.15.1
 	github.com/CosmWasm/wasmvm v0.13.0
-	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/cosmos/cosmos-sdk v0.42.4
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/ghodss/yaml v1.0.0

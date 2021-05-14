@@ -3,7 +3,7 @@ package wasm
 import (
 	"time"
 
-	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 type Post struct {

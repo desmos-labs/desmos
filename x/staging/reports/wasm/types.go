@@ -1,6 +1,6 @@
 package wasm
 
-import reportsTypes "github.com/desmos-labs/desmos/x/reports/types"
+import reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 type ReportsModuleQuery struct {
 	Reports *ReportsQuery `json:"reports"`

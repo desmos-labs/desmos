@@ -6,7 +6,7 @@ import (
 	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	reportsKeeper "github.com/desmos-labs/desmos/x/reports/keeper"
+	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
 )
 
 type Querier interface {
