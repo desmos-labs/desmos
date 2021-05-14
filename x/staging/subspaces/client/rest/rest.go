@@ -10,8 +10,8 @@ const (
 	SubspaceID = "subspace_id"
 )
 
-// RegisterRouters - Central function to define routes that get registered by the main application
-func RegisterRouters(cliCtx client.Context, r *mux.Router) {
+// RegisterRestRouters - Central function to define routes that get registered by the main application
+func RegisterRestRoutes(cliCtx client.Context, r *mux.Router) {
 	registerTxRoutes(cliCtx, r)
 	registerQueryRouters(cliCtx, r)
 }

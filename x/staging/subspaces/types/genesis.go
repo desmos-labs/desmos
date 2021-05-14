@@ -56,7 +56,7 @@ func ValidateGenesis(data *GenesisState) error {
 // doesSubspaceExists check if the subspaces array contains a subspace with the given id
 func doesSubspaceExists(subspaces []Subspace, id string) bool {
 	for _, sub := range subspaces {
-		if sub.Id == id {
+		if sub.ID == id {
 			return true
 		}
 	}

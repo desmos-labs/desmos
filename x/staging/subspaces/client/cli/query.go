@@ -27,7 +27,7 @@ func GetQueryCmd() *cobra.Command {
 func GetCmdQuerySubspace() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "subspace [id]",
-		Short: "Retrieve the subspace with the given [id] along with its admins and the users that cant post on it",
+		Short: "Retrieve the subspace with the given [id] alongside its admins and the users that cant post in it",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

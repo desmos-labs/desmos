@@ -27,6 +27,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdRemoveSubspaceAdmin(),
 		GetCmdEnablePostsForUser(),
 		GetCmdDisablePostsForUser(),
+		GetCmdTransferOwnership(),
 	)
 
 	return subspacesTxCmd
@@ -172,6 +173,35 @@ func GetCmdDisablePostsForUser() *cobra.Command {
 			subspaceId := args[1]
 			admin := clientCtx.FromAddress.String()
 			msg := types.NewMsgDisableUserPosts(user, subspaceId, admin)
+
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdTransferOwnership() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "transfer-ownership [address] [subspace-id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Transfer the ownership of the subspace with the given [subspace-id] to the user with the given [address]",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			newOwner := args[0]
+			subspaceId := args[1]
+			owner := clientCtx.FromAddress.String()
+			msg := types.NewMsgTransferOwnership(newOwner, subspaceId, owner)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)

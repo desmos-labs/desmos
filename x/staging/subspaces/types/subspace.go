@@ -2,7 +2,9 @@ package types
 
 import (
 	"fmt"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/commons"
+	"strings"
 	"time"
 )
 
@@ -11,7 +13,7 @@ func NewSubspace(creationTime time.Time, subspaceId, name, creator string) Subsp
 	return Subspace{
 		ID:           subspaceId,
 		Name:         name,
-		Creator:      creator,
+		Owner:        creator,
 		CreationTime: creationTime,
 	}
 }
@@ -21,8 +23,12 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace id: %s it must be a valid sha-256 hash", sub.ID)
 	}
 
-	if sub.Creator == "" {
-		return fmt.Errorf("invalid subspace creator: %s", sub.Creator)
+	if strings.TrimSpace(sub.Name) == "" {
+		return sdkerrors.Wrap(ErrInvalidSubspaceName, "subspace name cannot be empty or blank")
+	}
+
+	if sub.Owner == "" {
+		return fmt.Errorf("invalid subspace owner: %s", sub.Owner)
 	}
 
 	return nil

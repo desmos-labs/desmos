@@ -79,6 +79,8 @@ import (
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
+	subspaceKeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacesTypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -146,6 +148,7 @@ var (
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		//reports.AppModuleBasic{},
+		//subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -200,10 +203,11 @@ type DesmosApp struct {
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper    feeskeeper.Keeper
-	postsKeeper   postskeeper.Keeper
-	ProfileKeeper profileskeeper.Keeper
-	ReportsKeeper reportsKeeper.Keeper
+	FeesKeeper      feeskeeper.Keeper
+	postsKeeper     postskeeper.Keeper
+	ProfileKeeper   profileskeeper.Keeper
+	ReportsKeeper   reportsKeeper.Keeper
+	SubspacesKeeper subspaceKeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -247,7 +251,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey, subspacesTypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -365,6 +369,10 @@ func NewDesmosApp(
 		keys[reportsTypes.StoreKey],
 		app.postsKeeper,
 	)
+	app.SubspacesKeeper = subspaceKeeper.NewKeeper(
+		keys[subspacesTypes.StoreKey],
+		app.appCodec,
+	)
 
 	/****  Module Options ****/
 
@@ -402,7 +410,7 @@ func NewDesmosApp(
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+		//subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -422,7 +430,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
+		feestypes.ModuleName, subspacesTypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
 		reportsTypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
@@ -462,6 +470,7 @@ func NewDesmosApp(
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		//subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

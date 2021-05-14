@@ -44,7 +44,7 @@ message MsgCreateSubspace {
     (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -67,6 +67,8 @@ message MsgTransferOwnership {
     (gogoproto.jsontag) = "new_owner",
     (gogoproto.moretags) = "yaml:\"new_owner\""
   ];
+
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
 // MsgTransferOwnershipResponse defines the Msg/TransferOwnership response type
@@ -86,7 +88,7 @@ message MsgAddAdmin {
   ];
 
   string new_admin = 2 [(gogoproto.moretags) = "yaml:\"new_admin\""];
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
 // MsgAddAdminResponse defines the Msg/AddAdmin response type
@@ -106,7 +108,7 @@ message MsgRemoveAdmin {
   ];
 
   string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
-  string creator = 3 [(gogoproto.moretags) = "yaml:\"creator\""];
+  string owner = 3 [(gogoproto.moretags) = "yaml:\"owner\""];
 }
 
 // MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type

@@ -47,9 +47,9 @@ func (k Keeper) CheckSubspaceExistenceAndAdminValidity(ctx sdk.Context, address,
 	return nil
 }
 
-// CheckSubspaceExistenceAndCreatorValidity check if the subspace with the given id exists and
+// CheckSubspaceExistenceAndOwnerValidity check if the subspace with the given id exists and
 // if the address belongs to its creator
-func (k Keeper) CheckSubspaceExistenceAndCreatorValidity(ctx sdk.Context, subspaceId, address string) error {
+func (k Keeper) CheckSubspaceExistenceAndOwnerValidity(ctx sdk.Context, address, subspaceId string) error {
 	subspace, exist := k.GetSubspace(ctx, subspaceId)
 	if !exist {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -57,9 +57,9 @@ func (k Keeper) CheckSubspaceExistenceAndCreatorValidity(ctx sdk.Context, subspa
 		)
 	}
 
-	if subspace.Creator != address {
+	if subspace.Owner != address {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the user: %s is not the subspace creator and can't perform this operation on the subspace: %s",
+			"the user: %s is not the subspace owner and can't perform this operation on the subspace: %s",
 			address, subspaceId,
 		)
 	}

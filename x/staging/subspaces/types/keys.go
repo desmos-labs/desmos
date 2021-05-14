@@ -5,11 +5,12 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreateSubspace = "create_subspace"
-	ActionAddAdmin       = "add_admin"
-	ActionRemoveAdmin    = "remove_admin"
-	ActionAllowUserPosts = "allow_user_posts"
-	ActionBlockUserPosts = "block_user_posts"
+	ActionCreateSubspace    = "create_subspace"
+	ActionAddAdmin          = "add_admin"
+	ActionRemoveAdmin       = "remove_admin"
+	ActionEnableUserPosts   = "enable_user_posts"
+	ActionDisableUserPosts  = "disable_user_posts"
+	ActionTransferOwnership = "transfer_ownership"
 
 	// Queries
 	QuerierRoute  = ModuleName

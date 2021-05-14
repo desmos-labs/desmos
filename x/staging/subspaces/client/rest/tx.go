@@ -25,6 +25,9 @@ func registerTxRoutes(clientCtx client.Context, r *mux.Router) {
 
 	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/disable-user-posts", SubspaceID),
 		disablePostsForUserHandler(clientCtx)).Methods("PUT")
+
+	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/transfer-ownership", SubspaceID),
+		transferSubspaceOwnershipHandler(clientCtx)).Methods("POST")
 }
 
 func createSubspaceHandler(clientCtx client.Context) http.HandlerFunc {
@@ -149,6 +152,32 @@ func disablePostsForUserHandler(clientCtx client.Context) http.HandlerFunc {
 		subspaceID := vars[SubspaceID]
 
 		msg := types.NewMsgDisableUserPosts(req.Address, subspaceID, req.BaseReq.From)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
+func transferSubspaceOwnershipHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req CommonSubspaceReq
+
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		subspaceID := vars[SubspaceID]
+
+		msg := types.NewMsgTransferOwnership(subspaceID, req.Address, req.BaseReq.From)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}

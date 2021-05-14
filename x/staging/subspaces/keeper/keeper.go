@@ -29,7 +29,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 
 	// Check if the subspace already exists inside the store
 	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.ID)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspace with id %s already exists", subspace.ID)
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
@@ -37,20 +37,20 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 }
 
 // DoesSubspaceExists returns true if the subspace with the given id exists inside the store.
-func (k Keeper) DoesSubspaceExists(ctx sdk.Context, subspaceId string) bool {
+func (k Keeper) DoesSubspaceExists(ctx sdk.Context, subspaceID string) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.SubspaceStoreKey(subspaceId))
+	return store.Has(types.SubspaceStoreKey(subspaceID))
 }
 
 // GetSubspace returns the subspace associated with the given ID.
 // If there is no subspace associated with the given ID the function will return an error.
-func (k Keeper) GetSubspace(ctx sdk.Context, subspaceId string) (subspace types.Subspace, found bool) {
+func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.Subspace, found bool) {
 	store := ctx.KVStore(k.storeKey)
-	if !store.Has(types.SubspaceStoreKey(subspaceId)) {
+	if !store.Has(types.SubspaceStoreKey(subspaceID)) {
 		return types.Subspace{}, false
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.SubspaceStoreKey(subspaceId)), &subspace)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(types.SubspaceStoreKey(subspaceID)), &subspace)
 	return subspace, true
 }
 
@@ -68,6 +68,20 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 	}
 
 	return subspaces
+}
+
+// TransferOwnership transfer the ownership of the subspace with the given subspaceID to the newOwner.
+// It returns error if the subspace doesnt exist.
+func (k Keeper) TransferOwnership(ctx sdk.Context, subspaceID, newOwner string) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspaceID)
+
+	var subspace types.Subspace
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &subspace)
+
+	// set new owner
+	subspace.Owner = newOwner
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 }
 
 // addUserToList insert the given user inside a users list of a specific susbspace identified by the given subspaceId;
