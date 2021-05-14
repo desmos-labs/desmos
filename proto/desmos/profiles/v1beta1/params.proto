@@ -7,14 +7,15 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // Params contains the parameters for the profiles module
 message Params {
-  MonikerParams moniker_params = 1 [
+  NicknameParams nickname_params = 1 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"moniker_params\""
+    (gogoproto.moretags) = "yaml:\"nickname_params\""
   ];
 
   DTagParams dtag_params = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"dtag_params\""
+    (gogoproto.moretags) = "yaml:\"dtag_params\"",
+    (gogoproto.customname) = "DTagParams"
   ];
 
   bytes max_bio_length = 3 [
@@ -24,18 +25,18 @@ message Params {
   ];
 }
 
-// MonikerParams defines the parameters related to the profiles monikers
-message MonikerParams {
-  bytes min_moniker_length = 1 [
+// NicknameParams defines the parameters related to the profiles nicknames
+message NicknameParams {
+  bytes min_nickname_length = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_moniker_length\""
+    (gogoproto.moretags) = "yaml:\"min_nickname_length\""
   ];
 
-  bytes max_moniker_length = 2 [
+  bytes max_nickname_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_moniker_length\""
+    (gogoproto.moretags) = "yaml:\"max_nickname_length\""
   ];
 }
 
@@ -46,12 +47,14 @@ message DTagParams {
   bytes min_dtag_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_dtag_length\""
+    (gogoproto.moretags) = "yaml:\"min_dtag_length\"",
+    (gogoproto.customname) = "MinDTagLength"
   ];
 
   bytes max_dtag_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_dtag_length\""
+    (gogoproto.moretags) = "yaml:\"max_dtag_length\"",
+    (gogoproto.customname) = "MaxDTagLength"
   ];
 }

@@ -2,7 +2,6 @@ package types_test
 
 import (
 	"testing"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -11,8 +10,7 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
-	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
-	require.NoError(t, err)
+	addr1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
 	tests := []struct {
 		name        string
@@ -25,66 +23,64 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: false,
 		},
 		{
-			name: "Genesis with invalid profile returns error (empty DTag)",
-			genesis: types.NewGenesisState(
-				[]types.Profile{
-					types.NewProfile(
-						"",
-						"",
-						"",
-						types.NewPictures("", ""),
-						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					), // An empty tag should return an error
-				},
-				nil,
-				types.DefaultParams(),
-			),
-			shouldError: true,
-		},
-		{
 			name: "Invalid params returns error",
 			genesis: types.NewGenesisState(
-				[]types.Profile{
-					types.NewProfile(
-						"custom_dtag1",
-						"",
-						"biography",
-						types.NewPictures("https://test.com/profile-pic", "https://test.com/cover-pic"),
-						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					),
-				},
+				nil,
+				nil,
 				nil,
 				types.NewParams(
-					types.NewMonikerParams(sdk.NewInt(-1), sdk.NewInt(10)),
-					types.DefaultDtagParams(),
+					types.NewNicknameParams(sdk.NewInt(-1), sdk.NewInt(10)),
+					types.DefaultDTagParams(),
 					types.DefaultMaxBioLength,
 				),
 			),
 			shouldError: true,
 		},
 		{
-			name: "Invalid dTag requests returns error",
+			name: "Invalid DTag requests returns error",
 			genesis: types.NewGenesisState(
-				[]types.Profile{
-					types.NewProfile(
-						"custom_dtag1",
-						"",
-						"biography",
-						types.NewPictures(
-							"https://test.com/profile-pic",
-							"https://test.com/cover-pic",
-						),
-						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					),
-				},
+
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
 						"",
+						addr1.String(),
+					),
+				},
+				nil,
+				nil,
+				types.DefaultParams(),
+			),
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid relationship returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"",
+						"",
+					),
+					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"",
+					),
+				},
+				[]types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
 				types.DefaultParams(),
@@ -92,69 +88,72 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Valid Genesis returns no errors",
+			name: "Genesis with invalid users blocks return error",
 			genesis: types.NewGenesisState(
-				[]types.Profile{
-					types.NewProfile(
-						"custom_dtag1",
-						"",
-						"biography",
-						types.NewPictures(
-							"https://test.com/profile-pic",
-							"https://test.com/cover-pic",
-						),
-						date,
+				nil,
+				[]types.Relationship{
+					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					),
-					types.NewProfile(
-						"custom_dtag2",
-						"",
-						"biography",
-						types.NewPictures(
-							"https://test.com/profile-pic",
-							"https://test.com/cover-pic",
-						),
-						date,
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
+				[]types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				types.DefaultParams(),
+			),
+			shouldError: true,
+		},
+		{
+			name: "Valid genesis returns no errors",
+			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
+						addr1.String(),
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
+				[]types.Relationship{
+					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRelationship(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				[]types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
 				types.DefaultParams(),
 			),
 			shouldError: false,
-		},
-		{
-			name: "Missing profile should error",
-			genesis: types.NewGenesisState(
-				[]types.Profile{
-					types.NewProfile(
-						"custom_dtag1",
-						"",
-						"biography",
-						types.NewPictures(
-							"https://test.com/profile-pic",
-							"https://test.com/cover-pic",
-						),
-						date,
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					),
-				},
-				[]types.DTagTransferRequest{
-					types.NewDTagTransferRequest(
-						"dtag",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					),
-				},
-				types.DefaultParams(),
-			),
-			shouldError: true,
 		},
 	}
 

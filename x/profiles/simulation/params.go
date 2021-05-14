@@ -3,7 +3,6 @@ package simulation
 // DONTCOVER
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -16,24 +15,24 @@ import (
 
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.MonikerLenParamsKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.NicknameLenParamsKey),
 			func(r *rand.Rand) string {
-				params := RandomMonikerParams(r)
-				jsonBz, _ := json.Marshal(params)
-				return string(jsonBz)
+				params := RandomNicknameParams(r)
+				return fmt.Sprintf(`{"min_nickname_len":"%s","max_nickname_len":"%s"}`,
+					params.MinNicknameLength, params.MaxNicknameLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.DtagLenParamsKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.DTagLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
-				jsonBz, _ := json.Marshal(params)
-				return string(jsonBz)
+				return fmt.Sprintf(`{"min_dtag_len":"%s","max_dtag_len":"%s"}`,
+					params.MinDTagLength, params.MaxDTagLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxBioLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomBioParams(r)
-				return fmt.Sprintf("%q", params)
+				return fmt.Sprintf(`{"max_bio_len":"%s"}`, params)
 			},
 		),
 	}

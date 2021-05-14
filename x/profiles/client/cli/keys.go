@@ -1,7 +1,7 @@
 package cli
 
 const (
-	FlagMoniker    = "moniker"
+	FlagNickname   = "nickname"
 	FlagBio        = "bio"
 	FlagProfilePic = "profile-pic"
 	FlagCoverPic   = "cover-pic"

@@ -6,19 +6,26 @@
 ## Glossary
 Before digging into the available transactions, let's clarify the meaning of some terms that we will be using a lot.
 
-* A **post** is a public message that everyone can read on the chain. 
-  When creating it you can also specify if it allows to be commented on or not. 
+* A **post** is a public message that everyone can read on the chain. When creating it you can also specify if it allows
+  to be commented on or not.
 
-* A **comment** is a post that has been liked to a parent post. 
+* A **comment** is a post that has been liked to a parent post.
 
-* A **reaction** is the way that allows users to express a feeling on a specific post. 
+* A **reaction** is the way that allows users to express a feeling on a specific post.
 
 * A **profile** contains a series of (personal) data associated to an account that a user can create on the chain.
 
-* A **session** is the current method that we use in order to associate an external chain account to a Desmos account. This methodology will be completely removed and replace with [IBC](https://cosmos.network/docs/spec/ibc/) once it is stable and ready for production.  
+## Types
 
-## Performing transactions 
-If you want to know more about performing transactions to change the current chain state, please go to the [*"Performing transactions"* page](perform-transactions.md). 
+If you want to know more about how we store the data on-chain and the custom types, please refer to
+the [*"Types"*page](types.md).
+
+## Performing transactions
+
+If you want to know more about performing transactions to change the current chain state, please go to the [*"Performing
+transactions"* page](perform-transactions.md).
 
 ## Querying data
-If you want to know all the REST APIs endpoints and CLI commands available to query the existing chain state and the saved data, please go to the [*"Querying data"* page](query-data.md). 
+
+If you want to know all the REST APIs endpoints and CLI commands available to query the existing chain state and the
+saved data, please go to the [*"Querying data"* page](query-data.md). 

@@ -30,14 +30,14 @@ func SimulateMsgSaveProfile(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k)
+		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, nil
 		}
 
 		msg := types.NewMsgSaveProfile(
-			data.Dtag,
-			data.Moniker,
+			data.DTag,
+			data.Nickname,
 			data.Bio,
 			data.Pictures.Profile,
 			data.Pictures.Cover,
@@ -45,10 +45,10 @@ func SimulateMsgSaveProfile(
 		)
 		err = sendMsgSaveProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "save profile"), nil, nil
 	}
 }
 
@@ -91,35 +91,42 @@ func sendMsgSaveProfile(
 
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, types.Profile, bool) {
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+) (account simtypes.Account, profile *types.Profile, skip bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.Profile{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get a random account
-	account, _ := simtypes.RandomAcc(r, accs)
+	account, _ = simtypes.RandomAcc(r, accs)
+	acc := ak.GetAccount(ctx, account.Address)
 
 	// See if there is already the profile, otherwise create it from scratch
-	var profile types.Profile
-	existing, found := k.GetProfile(ctx, account.Address.String())
+	existing, found, err := k.GetProfile(ctx, account.Address.String())
+	if err != nil {
+		return simtypes.Account{}, nil, true
+	}
+
 	if found {
 		profile = existing
 	} else {
-		profile = NewRandomProfile(r, account.Address)
+		profile = NewRandomProfile(r, acc)
+	}
+
+	// Skip if another profile with the same DTag exists
+	address := k.GetAddressFromDTag(ctx, profile.DTag)
+	if address != acc.GetAddress().String() {
+		return simtypes.Account{}, nil, true
 	}
 
 	// 50% chance of changing something
 	if r.Intn(101) <= 50 {
-		profile, _ = profile.Update(types.NewProfile(
+		profile, _ = profile.Update(types.NewProfileUpdate(
 			RandomDTag(r),
-			RandomMoniker(r),
+			RandomNickname(r),
 			RandomBio(r),
 			types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
-			profile.CreationDate,
-			profile.Creator,
 		))
-
 	}
 
 	return account, profile, false
@@ -138,17 +145,17 @@ func SimulateMsgDeleteProfile(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, skip := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
 		err = sendMsgDeleteProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "delete profile"), nil, nil
 	}
 }
 
@@ -191,26 +198,21 @@ func sendMsgDeleteProfile(
 
 // randomProfileDeleteFields returns random profile data
 func randomProfileDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, _ authkeeper.AccountKeeper,
-) (simtypes.Account, bool) {
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+) (account simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, true
 	}
 
-	accounts := k.GetProfiles(ctx)
+	// Get a random account
+	account, _ = simtypes.RandomAcc(r, accs)
+	acc := ak.GetAccount(ctx, account.Address)
 
-	if len(accounts) == 0 {
-		return simtypes.Account{}, true
-	}
-	account := RandomProfile(r, accounts)
-
-	addr, _ := sdk.AccAddressFromBech32(account.Creator)
-	acc := GetSimAccount(addr, accs)
-
-	// Skip the operation without error as the profile is not valid
-	if acc == nil {
+	// See if the account has a profile, and skip if he does not
+	_, found, err := k.GetProfile(ctx, acc.GetAddress().String())
+	if !found || err != nil {
 		return simtypes.Account{}, true
 	}
 
-	return *acc, false
+	return account, false
 }

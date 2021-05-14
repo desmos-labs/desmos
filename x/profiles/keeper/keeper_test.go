@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	relationshipstypes "github.com/desmos-labs/desmos/x/relationships/types"
-
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -18,15 +17,15 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 		name       string
 		blocker    string
 		blocked    string
-		userBlocks []relationshipstypes.UserBlock
+		userBlocks []types.UserBlock
 		expBool    bool
 	}{
 		{
 			name:    "blocked user found returns true",
 			blocker: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			userBlocks: []relationshipstypes.UserBlock{
-				relationshipstypes.NewUserBlock(
+			userBlocks: []types.UserBlock{
+				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"test",
@@ -48,7 +47,7 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.userBlocks != nil {
-				_ = suite.rk.SaveUserBlock(suite.ctx, test.userBlocks[0])
+				_ = suite.k.SaveUserBlock(suite.ctx, test.userBlocks[0])
 			}
 			res := suite.k.IsUserBlocked(suite.ctx, test.blocker, test.blocked)
 			suite.Equal(test.expBool, res)
@@ -56,108 +55,160 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetDtagFromAddress() {
+func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
+	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+	suite.Require().NoError(err)
+
+	accountAny, err := codectypes.NewAnyWithValue(authtypes.NewBaseAccountWithAddress(addr))
+	suite.Require().NoError(err)
+
+	updatedProfile, err := types.NewProfile(
+		"updated-dtag",
+		"updated-nickname",
+		suite.testData.profile.Bio,
+		suite.testData.profile.Pictures,
+		suite.testData.profile.CreationDate,
+		suite.testData.profile.GetAccount(),
+	)
+	suite.Require().NoError(err)
+
 	tests := []struct {
 		name           string
-		storedProfiles []types.Profile
-		address        string
-		expDTag        string
+		account        *types.Profile
+		storedProfiles []*types.Profile
+		shouldErr      bool
 	}{
 		{
-			name: "found right dtag",
-			storedProfiles: []types.Profile{
-				suite.testData.profile,
-			},
-			address: suite.testData.profile.Creator,
-			expDTag: suite.testData.profile.Dtag,
+			name:      "Non existent profile is saved correctly",
+			account:   suite.testData.profile,
+			shouldErr: false,
 		},
 		{
-			name: "no dtag found",
-			storedProfiles: []types.Profile{
+			name: "Edited profile is saved correctly",
+			storedProfiles: []*types.Profile{
 				suite.testData.profile,
 			},
-			address: "non_existent",
-			expDTag: "",
+			account:   updatedProfile,
+			shouldErr: false,
+		},
+		{
+			name: "Existent account with different creator returns error",
+			storedProfiles: []*types.Profile{
+				suite.testData.profile,
+			},
+			account: &types.Profile{
+				DTag:     suite.testData.profile.DTag,
+				Bio:      suite.testData.profile.Bio,
+				Pictures: suite.testData.profile.Pictures,
+				Account:  accountAny,
+			},
+			shouldErr: true,
 		},
 	}
 
 	for _, test := range tests {
-		suite.SetupTest() //reset
 		test := test
 		suite.Run(test.name, func() {
 			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
+				err = suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 			}
 
-			dTag := suite.k.GetDtagFromAddress(suite.ctx, test.address)
-			suite.Require().Equal(test.expDTag, dTag)
+			err = suite.k.StoreProfile(suite.ctx, test.account)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				// Verify the DTag -> Address association
+				store := suite.ctx.KVStore(suite.storeKey)
+				suite.Require().Equal(test.account.GetAddress().Bytes(), store.Get(types.DTagStoreKey(test.account.DTag)),
+					"DTag -> Address association not correct")
+
+				for _, stored := range test.storedProfiles {
+					// Make sure that if the DTag has been edited, the old association has been removed
+					if stored.GetAddress().Equals(test.account.GetAddress()) && stored.DTag != test.account.DTag {
+						suite.Require().Nil(store.Get(types.DTagStoreKey(stored.DTag)),
+							"Old DTag -> Address association still exists")
+					}
+				}
+			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
-	tests := []struct {
-		name           string
-		account        types.Profile
-		storedProfiles []types.Profile
-		expError       error
-	}{
-		{
-			name:           "Non existent Profile saved correctly",
-			account:        suite.testData.profile,
-			storedProfiles: nil,
-			expError:       nil,
-		},
-		{
-			name: "Existent account with different creator returns error",
-			account: types.Profile{
-				Dtag:     suite.testData.profile.Dtag,
-				Bio:      suite.testData.profile.Bio,
-				Pictures: suite.testData.profile.Pictures,
-				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			},
-			storedProfiles: []types.Profile{suite.testData.profile},
-			expError: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"a profile with dtag dtag has already been created"),
-		},
-	}
+func (suite *KeeperTestSuite) TestKeeper_StoreProfile_Update() {
+	// Store the initial profile
+	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, suite.testData.profile))
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
-			}
+	// Verify the store keys
+	store := suite.ctx.KVStore(suite.storeKey)
+	suite.Require().Equal(
+		suite.testData.profile.GetAddress().String(),
+		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.DTag))).String(),
+	)
 
-			err := suite.k.StoreProfile(suite.ctx, test.account)
-			suite.RequireErrorsEqual(test.expError, err)
-		})
+	oldAccounts := suite.ak.GetAllAccounts(suite.ctx)
+	suite.Require().Len(oldAccounts, 1)
+
+	// Update the profile
+	updatedProfile, err := types.NewProfile(
+		suite.testData.profile.DTag+"-update",
+		"",
+		"",
+		types.NewPictures("", ""),
+		suite.testData.profile.CreationDate,
+		suite.ak.GetAccount(suite.ctx, suite.testData.profile.GetAddress()),
+	)
+	suite.Require().NoError(err)
+	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, updatedProfile))
+
+	// Verify the store keys
+	suite.Require().Nil(
+		store.Get(types.DTagStoreKey(suite.testData.profile.DTag)),
+	)
+	suite.Require().Equal(
+		suite.testData.profile.GetAddress().String(),
+		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.DTag+"-update"))).String(),
+	)
+
+	newAccounts := suite.ak.GetAllAccounts(suite.ctx)
+	suite.Require().Len(newAccounts, 1)
+
+	for _, account := range newAccounts {
+		suite.Require().NotContains(oldAccounts, account)
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 	tests := []struct {
 		name           string
-		storedProfiles []types.Profile
+		storedProfiles []*types.Profile
 		address        string
+		shouldErr      bool
 		expFound       bool
 		expProfile     *types.Profile
 	}{
 		{
-			name: "Profile founded",
-			storedProfiles: []types.Profile{
+			name:           "Invalid address",
+			storedProfiles: nil,
+			address:        "",
+			shouldErr:      true,
+		},
+		{
+			name: "Profile found",
+			storedProfiles: []*types.Profile{
 				suite.testData.profile,
 			},
-			address:    suite.testData.profile.Creator,
+			address:    suite.testData.profile.GetAddress().String(),
+			shouldErr:  false,
 			expFound:   true,
-			expProfile: &suite.testData.profile,
+			expProfile: suite.testData.profile,
 		},
 		{
 			name:           "Profile not found",
-			storedProfiles: []types.Profile{},
-			address:        suite.testData.profile.Creator,
+			storedProfiles: []*types.Profile{},
+			address:        suite.testData.profile.GetAddress().String(),
 			expFound:       false,
 		},
 	}
@@ -172,42 +223,39 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 				suite.Require().NoError(err)
 			}
 
-			res, found := suite.k.GetProfile(suite.ctx, test.address)
-			suite.Require().Equal(test.expFound, found)
+			res, found, err := suite.k.GetProfile(suite.ctx, test.address)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expFound, found)
 
-			if found {
-				suite.Require().True(res.Equal(test.expProfile))
+				if found {
+					suite.Require().Equal(test.expProfile, res)
+				}
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
-	err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
-	suite.Require().Nil(err)
-
-	_, found := suite.k.GetProfile(suite.ctx, suite.testData.profile.Creator)
-	suite.True(found)
-
-	err = suite.k.RemoveProfile(suite.ctx, suite.testData.profile.Creator)
-	suite.Require().NoError(err)
-
-	_, found = suite.k.GetProfile(suite.ctx, suite.testData.profile.Creator)
-	suite.Require().False(found)
-}
-
-func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
+func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
 	tests := []struct {
-		name     string
-		accounts []types.Profile
+		name    string
+		profile *types.Profile
+		dTag    string
+		expAddr string
 	}{
 		{
-			name:     "Non empty Profiles list returned",
-			accounts: []types.Profile{suite.testData.profile},
+			name:    "valid profile returns correct address",
+			profile: suite.testData.profile,
+			dTag:    suite.testData.profile.DTag,
+			expAddr: suite.testData.profile.GetAddress().String(),
 		},
 		{
-			name:     "Profile not found",
-			accounts: nil,
+			name:    "non existing profile returns empty address",
+			profile: nil,
+			dTag:    "test",
+			expAddr: "",
 		},
 	}
 
@@ -216,27 +264,43 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			if len(test.accounts) != 0 {
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ProfileStoreKey(test.accounts[0].Creator)
-				store.Set(key, suite.cdc.MustMarshalBinaryBare(&test.accounts[0]))
+			if test.profile != nil {
+				err := suite.k.StoreProfile(suite.ctx, test.profile)
+				suite.Require().NoError(err)
 			}
 
-			res := suite.k.GetProfiles(suite.ctx)
-			suite.Require().Equal(test.accounts, res)
+			addr := suite.k.GetAddressFromDTag(suite.ctx, test.dTag)
+			suite.Require().Equal(test.expAddr, addr)
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
+	err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
+	suite.Require().Nil(err)
+
+	_, found, _ := suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
+	suite.True(found)
+
+	err = suite.k.RemoveProfile(suite.ctx, suite.testData.profile.GetAddress().String())
+	suite.Require().NoError(err)
+
+	_, found, _ = suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
+	suite.Require().False(found)
+
+	addr := suite.k.GetAddressFromDTag(suite.ctx, suite.testData.profile.DTag)
+	suite.Require().Equal("", addr)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 	tests := []struct {
 		name    string
-		profile types.Profile
+		profile *types.Profile
 		expErr  error
 	}{
 		{
-			name: "Max moniker length exceeded",
-			profile: types.NewProfile(
+			name: "Max nickname length exceeded",
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				strings.Repeat("A", 1005),
 				"my-bio",
@@ -245,13 +309,13 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
-			expErr: fmt.Errorf("profile moniker cannot exceed 1000 characters"),
+				suite.testData.profile.GetAccount(),
+			)),
+			expErr: fmt.Errorf("profile nickname cannot exceed 1000 characters"),
 		},
 		{
-			name: "Min moniker length not reached",
-			profile: types.NewProfile(
+			name: "Min nickname length not reached",
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				"m",
 				"my-bio",
@@ -261,15 +325,15 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
-			expErr: fmt.Errorf("profile moniker cannot be less than 2 characters"),
+				suite.testData.profile.GetAccount(),
+			)),
+			expErr: fmt.Errorf("profile nickname cannot be less than 2 characters"),
 		},
 		{
 			name: "Max bio length exceeded",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
-				"moniker",
+				"nickname",
 				strings.Repeat("A", 1005),
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -277,30 +341,30 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
 		},
 		{
 			name: "Invalid dtag doesn't match regEx",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom.",
-				"moniker",
+				"nickname",
 				strings.Repeat("A", 1000),
 				types.NewPictures(
 					"https://test.com/profile-picture",
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]+$"),
 		},
 		{
 			name: "Min dtag length not reached",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"d",
-				"moniker",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -308,45 +372,45 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
 		},
 		{
 			name: "Max dtag length exceeded",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"9YfrVVi3UEI1ymN7n6isSct30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEyHNS",
-				"moniker",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",
 					"https://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
 		},
 		{
 			name: "Invalid profile pictures returns error",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"pic",
 					"htts://test.com/cover-pic",
 				),
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
 		{
 			name: "Valid profile returns no error",
-			profile: types.NewProfile(
+			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
-				"moniker",
+				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"https://test.com/profile-picture",
@@ -354,8 +418,8 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				suite.testData.profile.CreationDate,
-				suite.testData.profile.Creator,
-			),
+				suite.testData.profile.GetAccount(),
+			)),
 			expErr: nil,
 		},
 	}
@@ -380,7 +444,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 		name                  string
 		storedTransferReqs    []types.DTagTransferRequest
 		transferReq           types.DTagTransferRequest
-		expErr                error
+		shouldErr             bool
 		expStoredTransferReqs []types.DTagTransferRequest
 	}{
 		{
@@ -389,10 +453,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the transfer request from %s to %s has already been made",
-				suite.testData.user, suite.testData.otherUser,
-			),
+			shouldErr:   true,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -403,7 +464,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
-			expErr:      nil,
+			shouldErr:   false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 				types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
@@ -415,7 +476,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
-			expErr:      nil,
+			shouldErr:   false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
@@ -427,11 +488,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
 			transferReq: types.NewDTagTransferRequest("dtag1", suite.testData.user, suite.testData.otherUser),
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"the transfer request from %s to %s has already been made",
-				suite.testData.user, suite.testData.otherUser,
-			),
+			shouldErr:   true,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -440,7 +497,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			name:               "Not already present request is saved correctly",
 			storedTransferReqs: nil,
 			transferReq:        types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			expErr:             nil,
+			shouldErr:          false,
 			expStoredTransferReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
@@ -456,7 +513,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 			}
 
 			err := suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
-			suite.RequireErrorsEqual(test.expErr, err)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 
 			stored := suite.k.GetDTagTransferRequests(suite.ctx)
 			suite.Require().Len(stored, len(test.expStoredTransferReqs))
@@ -494,9 +556,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
-					types.DtagTransferRequestStoreKey(suite.testData.user),
+					types.DTagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),
 				)
 			}
@@ -535,9 +597,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
-					types.DtagTransferRequestStoreKey(suite.testData.user),
+					types.DTagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),
 				)
 			}
@@ -568,9 +630,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 		suite.Run(test.name, func() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			if test.storedReqs != nil {
-				reqs := keeper.NewWrappedDTagTransferRequests(test.storedReqs)
+				reqs := types.NewDTagTransferRequests(test.storedReqs)
 				store.Set(
-					types.DtagTransferRequestStoreKey(suite.testData.user),
+					types.DTagTransferRequestStoreKey(suite.testData.user),
 					suite.cdc.MustMarshalBinaryBare(&reqs),
 				)
 			}
@@ -587,7 +649,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 		storedReqs      []types.DTagTransferRequest
 		sender          string
 		receiver        string
-		expErr          error
+		shouldErr       bool
 		storedReqsAfter []types.DTagTransferRequest
 	}{
 		{
@@ -595,26 +657,16 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 			storedReqs: nil,
 			sender:     suite.testData.user,
 			receiver:   suite.testData.otherUser,
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"request from %s to %s not found",
-				suite.testData.user,
-				suite.testData.otherUser,
-			),
+			shouldErr:  true,
 		},
 		{
 			name: "Deleting non existent request returns an error and doesn't change the store",
 			storedReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 			},
-			sender:   suite.testData.user,
-			receiver: suite.testData.otherUser,
-			expErr: sdkerrors.Wrapf(
-				sdkerrors.ErrInvalidRequest,
-				"request from %s to %s not found",
-				suite.testData.user,
-				suite.testData.otherUser,
-			),
+			sender:    suite.testData.user,
+			receiver:  suite.testData.otherUser,
+			shouldErr: true,
 			storedReqsAfter: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
 			},
@@ -651,10 +703,508 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 			}
 
 			err := suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
-			suite.RequireErrorsEqual(test.expErr, err)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 
 			reqs := suite.k.GetDTagTransferRequests(suite.ctx)
 			suite.Require().Equal(test.storedReqsAfter, reqs)
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
+	tests := []struct {
+		name             string
+		stored           []types.Relationship
+		user             string
+		relationship     types.Relationship
+		expErr           bool
+		expRelationships []types.Relationship
+	}{
+		{
+			name: "already existent relationship returns error",
+			stored: []types.Relationship{
+				types.NewRelationship("user", "recipient", "subspace"),
+			},
+			user:         "user",
+			relationship: types.NewRelationship("user", "recipient", "subspace"),
+			expErr:       true,
+		},
+		{
+			name:         "relationship added correctly",
+			stored:       nil,
+			user:         "user",
+			relationship: types.NewRelationship("user", "recipient", "subspace"),
+			expErr:       false,
+			expRelationships: []types.Relationship{
+				types.NewRelationship("user", "recipient", "subspace"),
+			},
+		},
+		{
+			name: "relationship added correctly (another subspace)",
+			stored: []types.Relationship{
+				types.NewRelationship("user", "recipient", "subspace"),
+			},
+			user:         "user",
+			relationship: types.NewRelationship("user", "recipient", "subspace_2"),
+			expErr:       false,
+		},
+		{
+			name: "relationship added correctly (another receiver)",
+			stored: []types.Relationship{
+				types.NewRelationship("user", "recipient", "subspace"),
+			},
+			user:         "user",
+			relationship: types.NewRelationship("user", "user", "subspace"),
+			expErr:       false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, relationship := range test.stored {
+				err := suite.k.SaveRelationship(suite.ctx, relationship)
+				suite.Require().NoError(err)
+			}
+
+			err := suite.k.SaveRelationship(suite.ctx, test.relationship)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetAllRelationships() {
+	tests := []struct {
+		name     string
+		stored   []types.Relationship
+		expected []types.Relationship
+	}{
+		{
+			name: "non empty relationships slice is returned properly",
+			stored: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "subspace"),
+				types.NewRelationship("creator", "another_recipient", "subspace"),
+				types.NewRelationship("recipient", "creator", "subspace"),
+				types.NewRelationship("recipient", "creator", "subspace_2"),
+			},
+			expected: []types.Relationship{
+				types.NewRelationship("creator", "recipient", "subspace"),
+				types.NewRelationship("creator", "another_recipient", "subspace"),
+				types.NewRelationship("recipient", "creator", "subspace"),
+				types.NewRelationship("recipient", "creator", "subspace_2"),
+			},
+		},
+		{
+			name:     "empty relationships slice is returned properly",
+			stored:   nil,
+			expected: []types.Relationship{},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, rel := range test.stored {
+				err := suite.k.SaveRelationship(suite.ctx, rel)
+				suite.Require().NoError(err)
+			}
+
+			relationships := suite.k.GetAllRelationships(suite.ctx)
+
+			suite.Require().Len(relationships, len(test.expected))
+			for _, rel := range relationships {
+				suite.Require().Contains(test.expected, rel)
+			}
+		})
+	}
+
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
+	tests := []struct {
+		name     string
+		stored   []types.Relationship
+		user     string
+		expected []types.Relationship
+	}{
+		{
+			name: "Returns non empty relationships slice",
+			stored: []types.Relationship{
+				types.NewRelationship("user_1", "user_2", "subspace"),
+				types.NewRelationship("user_2", "user_1", "subspace"),
+			},
+			user: "user_1",
+			expected: []types.Relationship{
+				types.NewRelationship("user_1", "user_2", "subspace"),
+				types.NewRelationship("user_2", "user_1", "subspace"),
+			},
+		},
+		{
+			name:     "Returns empty relationships slice",
+			stored:   nil,
+			expected: nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, rel := range test.stored {
+				err := suite.k.SaveRelationship(suite.ctx, rel)
+				suite.Require().NoError(err)
+			}
+
+			relationships := suite.k.GetUserRelationships(suite.ctx, test.user)
+			suite.Require().Equal(test.expected, relationships)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
+	tests := []struct {
+		name                 string
+		stored               []types.Relationship
+		relationshipToDelete types.Relationship
+		expErr               bool
+		expRelationships     []types.Relationship
+	}{
+		{
+			name: "delete a relationship with len(relationships) > 1",
+			stored: []types.Relationship{
+				types.NewRelationship("user_1", "user_2", "subspace"),
+				types.NewRelationship("user_2", "user_3", "subspace"),
+				types.NewRelationship("user_1", "user_3", "subspace"),
+			},
+			relationshipToDelete: types.NewRelationship("user_1", "user_3", "subspace"),
+			expErr:               false,
+			expRelationships: []types.Relationship{
+				types.NewRelationship("user_1", "user_2", "subspace"),
+				types.NewRelationship("user_2", "user_3", "subspace"),
+			},
+		},
+		{
+			name: "delete a relationship with len(relationships) == 1",
+			stored: []types.Relationship{
+				types.NewRelationship("user_3", "user_2", "subspace"),
+			},
+			relationshipToDelete: types.NewRelationship("user_3", "user_2", "subspace"),
+			expErr:               false,
+		},
+		{
+			name:                 "deleting a non existing relationship returns an error",
+			stored:               nil,
+			relationshipToDelete: types.NewRelationship("user_3", "user_2", "subspace"),
+			expErr:               true,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, rel := range test.stored {
+				err := suite.k.SaveRelationship(suite.ctx, rel)
+				suite.Require().NoError(err)
+			}
+
+			err := suite.k.RemoveRelationship(suite.ctx, test.relationshipToDelete)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				rel := suite.k.GetAllRelationships(suite.ctx)
+				suite.Require().Equal(test.expRelationships, rel)
+			}
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		userBlock        types.UserBlock
+		expErr           bool
+		expBlocks        []types.UserBlock
+	}{
+		{
+			name: "already blocked user returns error",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			},
+			userBlock: types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			expErr:    true,
+		},
+		{
+			name:             "user block added correctly",
+			storedUserBlocks: nil,
+			userBlock:        types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			expErr:           false,
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, block := range test.storedUserBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			err := suite.k.SaveUserBlock(suite.ctx, test.userBlock)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				stored := suite.k.GetAllUsersBlocks(suite.ctx)
+				suite.Require().Equal(test.expBlocks, stored)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		data             struct {
+			blocker  string
+			blocked  string
+			subspace string
+		}
+		expError  bool
+		expBlocks []types.UserBlock
+	}{
+		{
+			name: "delete user block with len(stored) > 1",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace",
+			},
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+			},
+			expError: false,
+		},
+		{
+			name: "delete user block with len(stored) == 1",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace",
+			},
+			expError: false,
+		},
+		{
+			name:             "deleting a user block that does not exist returns an error",
+			storedUserBlocks: nil,
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace",
+			},
+			expError: true,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, block := range test.storedUserBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			err := suite.k.DeleteUserBlock(suite.ctx, test.data.blocker, test.data.blocked, test.data.subspace)
+
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				blocks := suite.k.GetAllUsersBlocks(suite.ctx)
+				suite.Require().Equal(test.expBlocks, blocks)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
+	tests := []struct {
+		name             string
+		storedUserBlocks []types.UserBlock
+		user             string
+		expUserBlocks    []types.UserBlock
+	}{
+		{
+			name: "non empty slice is returned properly",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+			user: "blocker",
+			expUserBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+		},
+		{
+			name:             "empty slice is returned properly",
+			storedUserBlocks: nil,
+			user:             "blocker",
+			expUserBlocks:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, block := range test.storedUserBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			blocks := suite.k.GetUserBlocks(suite.ctx, test.user)
+			suite.Require().Equal(test.expUserBlocks, blocks)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
+	tests := []struct {
+		name              string
+		storedUsersBlocks []types.UserBlock
+		expUsersBlocks    []types.UserBlock
+	}{
+		{
+			name: "Returns a non-empty users blocks slice",
+			storedUsersBlocks: []types.UserBlock{
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace_1"),
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace_2"),
+				types.NewUserBlock("user_2", "user_1", "reason", "subspace_1"),
+				types.NewUserBlock("user_2", "user_1", "reason", "subspace_2"),
+			},
+			expUsersBlocks: []types.UserBlock{
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace_1"),
+				types.NewUserBlock("user_1", "user_2", "reason", "subspace_2"),
+				types.NewUserBlock("user_2", "user_1", "reason", "subspace_1"),
+				types.NewUserBlock("user_2", "user_1", "reason", "subspace_2"),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, userBlock := range test.storedUsersBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, userBlock)
+				suite.Require().NoError(err)
+			}
+
+			actualBlocks := suite.k.GetAllUsersBlocks(suite.ctx)
+
+			suite.Require().Len(actualBlocks, len(test.expUsersBlocks))
+			for _, block := range test.expUsersBlocks {
+				suite.Require().Contains(actualBlocks, block)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
+	tests := []struct {
+		name         string
+		storedBlocks []types.UserBlock
+		data         struct {
+			blocker  string
+			blocked  string
+			subspace string
+		}
+		expBlocked bool
+	}{
+		{
+			name: "blocked user found returns true",
+			storedBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace",
+			},
+			expBlocked: true,
+		},
+		{
+			name: "blocked user not found returns false",
+			storedBlocks: []types.UserBlock{
+				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+			},
+			data: struct {
+				blocker  string
+				blocked  string
+				subspace string
+			}{
+				blocker:  "blocker",
+				blocked:  "blocked",
+				subspace: "subspace_2",
+			},
+			expBlocked: false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			for _, block := range test.storedBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, block)
+				suite.Require().NoError(err)
+			}
+
+			blocked := suite.k.HasUserBlocked(suite.ctx, test.data.blocker, test.data.blocked, test.data.subspace)
+			suite.Equal(test.expBlocked, blocked)
 		})
 	}
 }

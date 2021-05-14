@@ -11,11 +11,11 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	nameSurnameParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	monikerParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
+	nameSurnameParams := types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	nicknameParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
 	bioParams := sdk.NewInt(1000)
 
-	params := types.NewParams(nameSurnameParams, monikerParams, bioParams)
+	params := types.NewParams(nameSurnameParams, nicknameParams, bioParams)
 
 	require.Equal(t, params, types.DefaultParams())
 }
@@ -23,8 +23,8 @@ func TestDefaultParams(t *testing.T) {
 func TestValidateParams(t *testing.T) {
 	invalidNameMin := sdk.NewInt(1)
 	validNameMax := sdk.NewInt(1000)
-	validDtagMin := sdk.NewInt(3)
-	invalidDtagMax := sdk.NewInt(-30)
+	validDTagMin := sdk.NewInt(3)
+	invalidDTagMax := sdk.NewInt(-30)
 
 	tests := []struct {
 		name   string
@@ -32,23 +32,23 @@ func TestValidateParams(t *testing.T) {
 		expErr error
 	}{
 		{
-			name:   "Invalid min moniker param returns error",
-			params: types.NewParams(types.NewMonikerParams(invalidNameMin, validNameMax), types.DefaultDtagParams(), types.DefaultMaxBioLength),
-			expErr: fmt.Errorf("invalid minimum moniker length param: 1"),
+			name:   "Invalid min nickname param returns error",
+			params: types.NewParams(types.NewNicknameParams(invalidNameMin, validNameMax), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			expErr: fmt.Errorf("invalid minimum nickname length param: 1"),
 		},
 		{
 			name:   "Invalid max dTag param return error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.NewDtagParams("regEx", validDtagMin, invalidDtagMax), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultNicknameParams(), types.NewDTagParams("regEx", validDTagMin, invalidDTagMax), types.DefaultMaxBioLength),
 			expErr: fmt.Errorf("invalid max dTag length param: -30"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.DefaultDtagParams(), sdk.NewInt(-1000)),
+			params: types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
 			expErr: fmt.Errorf("invalid max bio length param: -1000"),
 		},
 		{
 			name:   "Valid params return no error",
-			params: types.NewParams(types.DefaultMonikerParams(), types.DefaultDtagParams(), types.DefaultMaxBioLength),
+			params: types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
 			expErr: nil,
 		},
 	}
@@ -61,23 +61,23 @@ func TestValidateParams(t *testing.T) {
 	}
 }
 
-func TestDefaultMonikerParams(t *testing.T) {
-	monikerParams := types.NewMonikerParams(sdk.NewInt(2), sdk.NewInt(1000))
-	defaultMonikerParams := types.DefaultMonikerParams()
-	require.Equal(t, defaultMonikerParams, monikerParams)
+func TestDefaultNicknameParams(t *testing.T) {
+	nicknameParams := types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000))
+	defaultnicknameParams := types.DefaultNicknameParams()
+	require.Equal(t, defaultnicknameParams, nicknameParams)
 }
 
 func TestDefaultDTagParams(t *testing.T) {
-	dTagParams := types.NewDtagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
-	defaultDTagParams := types.DefaultDtagParams()
+	dTagParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(30))
+	defaultDTagParams := types.DefaultDTagParams()
 	require.Equal(t, defaultDTagParams, dTagParams)
 }
 
-func TestValidateMonikerParams(t *testing.T) {
-	invalidMonikerMin := sdk.NewInt(1)
-	invalidMonikerMax := sdk.NewInt(-10)
-	validMonikerMin := sdk.NewInt(2)
-	validMonikerMax := sdk.NewInt(1000)
+func TestValidateNicknameParams(t *testing.T) {
+	invalidNicknameMin := sdk.NewInt(1)
+	invalidNicknameMax := sdk.NewInt(-10)
+	validNicknameMin := sdk.NewInt(2)
+	validNicknameMax := sdk.NewInt(1000)
 
 	tests := []struct {
 		name   string
@@ -86,17 +86,17 @@ func TestValidateMonikerParams(t *testing.T) {
 	}{
 		{
 			name:   "Invalid min param returns error",
-			params: types.NewMonikerParams(invalidMonikerMin, validMonikerMax),
-			expErr: fmt.Errorf("invalid minimum moniker length param: 1"),
+			params: types.NewNicknameParams(invalidNicknameMin, validNicknameMax),
+			expErr: fmt.Errorf("invalid minimum nickname length param: 1"),
 		},
 		{
 			name:   "Invalid max param returns error",
-			params: types.NewMonikerParams(validMonikerMin, invalidMonikerMax),
-			expErr: fmt.Errorf("invalid max moniker length param: -10"),
+			params: types.NewNicknameParams(validNicknameMin, invalidNicknameMax),
+			expErr: fmt.Errorf("invalid max nickname length param: -10"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: types.NewMonikerParams(validMonikerMin, validMonikerMax),
+			params: types.NewNicknameParams(validNicknameMin, validNicknameMax),
 			expErr: nil,
 		},
 	}
@@ -104,7 +104,7 @@ func TestValidateMonikerParams(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, types.ValidateMonikerParams(test.params))
+			require.Equal(t, test.expErr, types.ValidateNicknameParams(test.params))
 		})
 	}
 }
@@ -124,22 +124,22 @@ func TestValidateDTagParams(t *testing.T) {
 	}{
 		{
 			name:   "Invalid empty regEx return error",
-			params: types.NewDtagParams("", validMin, validMax),
+			params: types.NewDTagParams("", validMin, validMax),
 			expErr: fmt.Errorf("empty dTag regEx param"),
 		},
 		{
 			name:   "Invalid min param return error",
-			params: types.NewDtagParams(regEx, invalidMin, validMax),
+			params: types.NewDTagParams(regEx, invalidMin, validMax),
 			expErr: fmt.Errorf("invalid minimum dTag length param: 1"),
 		},
 		{
 			name:   "Invalid max param return error",
-			params: types.NewDtagParams(regEx, validMin, invalidMax),
+			params: types.NewDTagParams(regEx, validMin, invalidMax),
 			expErr: fmt.Errorf("invalid max dTag length param: -30"),
 		},
 		{
 			name:   "Valid params returns no error",
-			params: types.NewDtagParams(regEx, validMin, validMax),
+			params: types.NewDTagParams(regEx, validMin, validMax),
 			expErr: nil,
 		},
 	}
@@ -147,7 +147,7 @@ func TestValidateDTagParams(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, types.ValidateDtagParams(test.params))
+			require.Equal(t, test.expErr, types.ValidateDTagParams(test.params))
 		})
 	}
 }

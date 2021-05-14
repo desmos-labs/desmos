@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,43 +44,55 @@ var (
 		"https://shorturl.at/cgpyF",
 		"https://shorturl.at/cgpyG",
 	}
+
+	subspaces = []string{
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
+		"3d59f7548e1af2151b64135003ce63c0a484c26b9b8b166a7b1c1805ec34b00a",
+		"ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1",
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
+	}
 )
 
 // NewRandomProfile return a random ProfileData from random data and the given account
 // nolint:interfacer
-func NewRandomProfile(r *rand.Rand, account sdk.AccAddress) types.Profile {
-	return types.NewProfile(
+func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
+	profile, err := types.NewProfile(
 		RandomDTag(r),
-		RandomMoniker(r),
+		RandomNickname(r),
 		RandomBio(r),
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
-		account.String(),
+		account,
 	)
+	if err != nil {
+		panic(err)
+	}
+	return profile
 }
 
 // RandomProfile picks and returns a random profile from an array
-func RandomProfile(r *rand.Rand, accounts []types.Profile) types.Profile {
+func RandomProfile(r *rand.Rand, accounts []*types.Profile) *types.Profile {
 	idx := r.Intn(len(accounts))
 	return accounts[idx]
 }
 
-// RandomDTagTransferRequest picks and returns a random dtag transfer request from an array of requests
+// RandomDTagTransferRequest picks and returns a random DTag transfer request from an array of requests
 func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
 	idx := r.Intn(len(requests))
 	return requests[idx]
 }
 
-// RandomDTag return a random dtag
+// RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
 	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 3, 30))
 }
 
-// RandomMoniker return a random moniker
-func RandomMoniker(r *rand.Rand) string {
-	randomMoniker := simtypes.RandStringOfLength(r, 30)
-	return randomMoniker
+// RandomNickname return a random nickname
+func RandomNickname(r *rand.Rand) string {
+	return simtypes.RandStringOfLength(r, 30)
 }
 
 // RandomBio return a random bio value from the list of randomBios given
@@ -109,21 +123,39 @@ func GetSimAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Accou
 	return nil
 }
 
-// RandomMonikerParams return a random set of moniker params
-func RandomMonikerParams(r *rand.Rand) types.MonikerParams {
+// RandomNicknameParams return a random set of nickname params
+func RandomNicknameParams(r *rand.Rand) types.NicknameParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 2, 3)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 1000)))
-	return types.NewMonikerParams(randomMin, randomMax)
+	return types.NewNicknameParams(randomMin, randomMax)
 }
 
-// RandomDTagParams return a random set of moniker params
+// RandomDTagParams return a random set of nickname params
 func RandomDTagParams(r *rand.Rand) types.DTagParams {
 	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
-	return types.NewDtagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+	return types.NewDTagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param
 func RandomBioParams(r *rand.Rand) sdk.Int {
 	return sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
+}
+
+// RandomRelationship picks and returns a random relationships from an array
+func RandomRelationship(r *rand.Rand, relationships []types.Relationship) types.Relationship {
+	idx := r.Intn(len(relationships))
+	return relationships[idx]
+}
+
+// RandomSubspace returns a random post subspace from the above random subspaces
+func RandomSubspace(r *rand.Rand) string {
+	idx := r.Intn(len(subspaces))
+	return subspaces[idx]
+}
+
+// RandomUserBlock picks and returns a random user block from an array
+func RandomUserBlock(r *rand.Rand, userBlocks []types.UserBlock) types.UserBlock {
+	idx := r.Intn(len(userBlocks))
+	return userBlocks[idx]
 }

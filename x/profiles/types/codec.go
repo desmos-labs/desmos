@@ -6,6 +6,7 @@ import (
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
@@ -15,9 +16,18 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCancelDTagTransfer{}, "desmos/MsgCancelDTagTransfer", nil)
 	cdc.RegisterConcrete(MsgAcceptDTagTransfer{}, "desmos/MsgAcceptDTagTransfer", nil)
 	cdc.RegisterConcrete(MsgRefuseDTagTransfer{}, "desmos/MsgRefuseDTagTransfer", nil)
+	cdc.RegisterConcrete(MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
+	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
+	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
+	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
+
+	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
+	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
+
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
 		&MsgDeleteProfile{},
@@ -25,6 +35,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgCancelDTagTransfer{},
 		&MsgAcceptDTagTransfer{},
 		&MsgRefuseDTagTransfer{},
+		&MsgCreateRelationship{},
+		&MsgDeleteRelationship{},
+		&MsgBlockUser{},
+		&MsgUnblockUser{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

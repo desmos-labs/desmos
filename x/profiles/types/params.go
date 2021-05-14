@@ -10,25 +10,25 @@ import (
 )
 
 const (
-	// default paramspace for paramsModule keeper
-	DefaultParamspace = ModuleName
+	// DefaultParamsSpace represents the default paramspace for the Params keeper
+	DefaultParamsSpace = ModuleName
 )
 
 // Default profile paramsModule
 var (
-	DefaultMinMonikerLength = sdk.NewInt(2)
-	DefaultMaxMonikerLength = sdk.NewInt(1000) //longest name on earth count 954 chars
-	DefaultRegEx            = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength    = sdk.NewInt(3)
-	DefaultMaxDTagLength    = sdk.NewInt(30)
-	DefaultMaxBioLength     = sdk.NewInt(1000)
+	DefaultMinNicknameLength = sdk.NewInt(2)
+	DefaultMaxNicknameLength = sdk.NewInt(1000) //longest name on earth count 954 chars
+	DefaultRegEx             = `^[A-Za-z0-9_]+$`
+	DefaultMinDTagLength     = sdk.NewInt(3)
+	DefaultMaxDTagLength     = sdk.NewInt(30)
+	DefaultMaxBioLength      = sdk.NewInt(1000)
 )
 
 // Parameters store keys
 var (
-	MonikerLenParamsKey = []byte("MonikerParams")
-	DtagLenParamsKey    = []byte("DtagParams")
-	MaxBioLenParamsKey  = []byte("MaxBioLen")
+	NicknameLenParamsKey = []byte("NicknameParams")
+	DTagLenParamsKey     = []byte("DTagParams")
+	MaxBioLenParamsKey   = []byte("MaxBioLen")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -39,20 +39,20 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(monikerLen MonikerParams, dtagLen DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(nicknameParams NicknameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
 	return Params{
-		MonikerParams: monikerLen,
-		DtagParams:    dtagLen,
-		MaxBioLength:  maxBioLen,
+		NicknameParams: nicknameParams,
+		DTagParams:     dTagParams,
+		MaxBioLength:   maxBioLen,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		MonikerParams: DefaultMonikerParams(),
-		DtagParams:    DefaultDtagParams(),
-		MaxBioLength:  DefaultMaxBioLength,
+		NicknameParams: DefaultNicknameParams(),
+		DTagParams:     DefaultDTagParams(),
+		MaxBioLength:   DefaultMaxBioLength,
 	}
 }
 
@@ -60,19 +60,19 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(MonikerLenParamsKey, &params.MonikerParams, ValidateMonikerParams),
-		paramstypes.NewParamSetPair(DtagLenParamsKey, &params.DtagParams, ValidateDtagParams),
+		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.NicknameParams, ValidateNicknameParams),
+		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
 		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
 	}
 }
 
 // Validate perform basic checks on all parameters to ensure they are correct
 func (params Params) Validate() error {
-	if err := ValidateMonikerParams(params.MonikerParams); err != nil {
+	if err := ValidateNicknameParams(params.NicknameParams); err != nil {
 		return err
 	}
 
-	if err := ValidateDtagParams(params.DtagParams); err != nil {
+	if err := ValidateDTagParams(params.DTagParams); err != nil {
 		return err
 	}
 
@@ -81,37 +81,37 @@ func (params Params) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewMonikerParams creates a new MonikerParams obj
-func NewMonikerParams(minLen, maxLen sdk.Int) MonikerParams {
-	return MonikerParams{
-		MinMonikerLength: minLen,
-		MaxMonikerLength: maxLen,
+// NewNicknameParams creates a new NicknameParams obj
+func NewNicknameParams(minLen, maxLen sdk.Int) NicknameParams {
+	return NicknameParams{
+		MinNicknameLength: minLen,
+		MaxNicknameLength: maxLen,
 	}
 }
 
-// DefaultMonikerParams return default moniker params
-func DefaultMonikerParams() MonikerParams {
-	return NewMonikerParams(
-		DefaultMinMonikerLength,
-		DefaultMaxMonikerLength,
+// DefaultNicknameParams return default nickname params
+func DefaultNicknameParams() NicknameParams {
+	return NewNicknameParams(
+		DefaultMinNicknameLength,
+		DefaultMaxNicknameLength,
 	)
 }
 
-func ValidateMonikerParams(i interface{}) error {
-	params, isNameSurnParams := i.(MonikerParams)
-	if !isNameSurnParams {
+func ValidateNicknameParams(i interface{}) error {
+	params, areNicknameParams := i.(NicknameParams)
+	if !areNicknameParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	minLength := params.MinMonikerLength
-	if minLength.IsNil() || minLength.LT(DefaultMinMonikerLength) {
-		return fmt.Errorf("invalid minimum moniker length param: %s", minLength)
+	minLength := params.MinNicknameLength
+	if minLength.IsNil() || minLength.LT(DefaultMinNicknameLength) {
+		return fmt.Errorf("invalid minimum nickname length param: %s", minLength)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	maxLength := params.MaxMonikerLength
-	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxMonikerLength) {
-		return fmt.Errorf("invalid max moniker length param: %s", maxLength)
+	maxLength := params.MaxNicknameLength
+	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxNicknameLength) {
+		return fmt.Errorf("invalid max nickname length param: %s", maxLength)
 	}
 
 	return nil
@@ -119,27 +119,27 @@ func ValidateMonikerParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewDtagParams creates a new DtagParams obj
-func NewDtagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
+// NewDTagParams creates a new DTagParams obj
+func NewDTagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
 	return DTagParams{
 		RegEx:         regEx,
-		MinDtagLength: minLen,
-		MaxDtagLength: maxLen,
+		MinDTagLength: minLen,
+		MaxDTagLength: maxLen,
 	}
 }
 
-// DefaultDtagParams return default paramsModule
-func DefaultDtagParams() DTagParams {
-	return NewDtagParams(
+// DefaultDTagParams return default paramsModule
+func DefaultDTagParams() DTagParams {
+	return NewDTagParams(
 		DefaultRegEx,
 		DefaultMinDTagLength,
 		DefaultMaxDTagLength,
 	)
 }
 
-func ValidateDtagParams(i interface{}) error {
-	params, isMonikerParams := i.(DTagParams)
-	if !isMonikerParams {
+func ValidateDTagParams(i interface{}) error {
+	params, isDtagParams := i.(DTagParams)
+	if !isDtagParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
@@ -147,12 +147,12 @@ func ValidateDtagParams(i interface{}) error {
 		return fmt.Errorf("empty dTag regEx param")
 	}
 
-	if params.MinDtagLength.IsNegative() || params.MinDtagLength.LT(DefaultMinDTagLength) {
-		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinDtagLength)
+	if params.MinDTagLength.IsNegative() || params.MinDTagLength.LT(DefaultMinDTagLength) {
+		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinDTagLength)
 	}
 
-	if params.MaxDtagLength.IsNegative() {
-		return fmt.Errorf("invalid max dTag length param: %s", params.MaxDtagLength)
+	if params.MaxDTagLength.IsNegative() {
+		return fmt.Errorf("invalid max dTag length param: %s", params.MaxDTagLength)
 	}
 
 	return nil
