@@ -56,10 +56,10 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Save the post
-	store.Set(types.PostStoreKey(post.PostId), k.cdc.MustMarshalBinaryBare(&post))
+	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
 	// Check if the postID got an associated post, if not, increment the number of posts
-	if !store.Has(types.PostIndexedIDStoreKey(post.PostId)) {
+	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
 		postIndex := types.PostIndex{Value: 0}
 		if store.Has(types.PostTotalNumberPrefix) {
@@ -69,17 +69,17 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 		postIndex = types.PostIndex{Value: postIndex.Value + 1}
 
 		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIndexedIDStoreKey(post.PostId), k.cdc.MustMarshalBinaryBare(&postIndex))
+		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&postIndex))
 		store.Set(types.PostTotalNumberPrefix, k.cdc.MustMarshalBinaryBare(&postIndex))
 	}
 
 	// Save the comments to the parent post, if it is valid
-	if types.IsValidPostID(post.ParentId) {
-		parentCommentsKey := types.PostCommentsStoreKey(post.ParentId)
+	if types.IsValidPostID(post.ParentID) {
+		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
 
 		var commentsIDs types.CommentIDs
 		k.cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
-		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostId); appended {
+		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
 			store.Set(parentCommentsKey, k.cdc.MustMarshalBinaryBare(&editedIDs))
 		}
 	}
@@ -137,8 +137,8 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostID(params.ParentId) {
-			matchParentID = params.ParentId == post.ParentId
+		if types.IsValidPostID(params.ParentID) {
+			matchParentID = params.ParentID == post.ParentID
 		}
 
 		// match creation time if valid height
@@ -187,9 +187,9 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 			}
 
 		default:
-			result = first.PostId < second.PostId
+			result = first.PostID < second.PostID
 			if params.SortOrder == types.PostSortOrderDescending {
-				result = first.PostId > second.PostId
+				result = first.PostID > second.PostID
 			}
 		}
 

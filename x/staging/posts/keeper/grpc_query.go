@@ -18,13 +18,13 @@ var _ types.QueryServer = Keeper{}
 
 func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPostResponse {
 	// Get the reactions
-	postReactions := k.GetPostReactions(ctx, post.PostId)
+	postReactions := k.GetPostReactions(ctx, post.PostID)
 	if postReactions == nil {
 		postReactions = []types.PostReaction{}
 	}
 
 	// Get the children
-	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostId)
+	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostID)
 	if childrenIDs == nil {
 		childrenIDs = []string{}
 	}
@@ -32,7 +32,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	//Get the poll answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = k.GetPollAnswers(ctx, post.PostId)
+		answers = k.GetPollAnswers(ctx, post.PostID)
 	}
 
 	// Crete the response object
@@ -60,8 +60,8 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostID(req.ParentId) {
-			matchParentID = req.ParentId == post.ParentId
+		if types.IsValidPostID(req.ParentID) {
+			matchParentID = req.ParentID == post.ParentID
 		}
 
 		// match creation time if valid height
@@ -109,14 +109,14 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 }
 
 func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
-	if !types.IsValidPostID(req.PostId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
+	if !types.IsValidPostID(req.PostID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostID)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	post, found := k.GetPost(ctx, req.PostId)
+	post, found := k.GetPost(ctx, req.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostID)
 	}
 
 	response := k.getPostResponse(ctx, post)
@@ -124,23 +124,23 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 }
 
 func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
-	if !types.IsValidPostID(req.PostId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
+	if !types.IsValidPostID(req.PostID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostID)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	post, found := k.GetPost(ctx, req.PostId)
+	post, found := k.GetPost(ctx, req.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostID)
 	}
 
 	if post.PollData == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostID)
 	}
 
-	pollAnswers := k.GetPollAnswers(ctx, req.PostId)
-	return &types.QueryPollAnswersResponse{PostId: req.PostId, Answers: pollAnswers}, nil
+	pollAnswers := k.GetPollAnswers(ctx, req.PostID)
+	return &types.QueryPollAnswersResponse{PostID: req.PostID, Answers: pollAnswers}, nil
 }
 
 func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {

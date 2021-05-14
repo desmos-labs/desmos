@@ -17,8 +17,8 @@ func NewPost(
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
-		PostId:          postID,
-		ParentId:        parentID,
+		PostID:          postID,
+		ParentID:        parentID,
 		Message:         message,
 		Created:         created,
 		LastEdited:      lastEdited,
@@ -33,16 +33,16 @@ func NewPost(
 
 // Validate implements validator
 func (post Post) Validate() error {
-	if !IsValidPostID(post.PostId) {
-		return fmt.Errorf("invalid post id: %s", post.PostId)
+	if !IsValidPostID(post.PostID) {
+		return fmt.Errorf("invalid post id: %s", post.PostID)
 	}
 
-	if post.PostId == post.ParentId {
+	if post.PostID == post.ParentID {
 		return fmt.Errorf("post id and parent id cannot be the same")
 	}
 
-	if len(strings.TrimSpace(post.ParentId)) != 0 && !IsValidPostID(post.ParentId) {
-		return fmt.Errorf("invalid parent id: %s", post.ParentId)
+	if len(strings.TrimSpace(post.ParentID)) != 0 && !IsValidPostID(post.ParentID) {
+		return fmt.Errorf("invalid parent id: %s", post.ParentID)
 	}
 
 	if post.Creator == "" {

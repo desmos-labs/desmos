@@ -42,7 +42,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name: "Post without reactions is returned properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					OptionalData: nil,
@@ -51,8 +51,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -69,7 +69,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError:            false,
 			expResult: types.NewPostResponse(
 				types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					OptionalData: nil,
@@ -88,7 +88,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name: "Post without children is returned properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -106,7 +106,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError:            false,
 			expResult: types.NewPostResponse(
 				types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -126,7 +126,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name: "Post without medias is returned properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -135,8 +135,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -176,7 +176,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -206,7 +206,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name: "Post without poll and poll answers is returned properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -215,8 +215,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					Attachments:  suite.testData.post.Attachments,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -254,7 +254,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -282,7 +282,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			name: "Post with all data is returned properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -292,8 +292,8 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -334,7 +334,7 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			expError: false,
 			expResult: types.NewPostResponse(
 				types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -377,12 +377,12 @@ func (suite *KeeperTestSuite) Test_queryPost() {
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}
@@ -414,8 +414,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			name: "Empty params returns all",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentId:     "",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentID:     "",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -425,8 +425,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -442,8 +442,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.Post{
-						PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						ParentId:     "",
+						PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						ParentID:     "",
 						Message:      "Parent",
 						Created:      suite.testData.post.Created,
 						LastEdited:   suite.testData.post.LastEdited,
@@ -460,8 +460,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 				),
 				types.NewPostResponse(
 					types.Post{
-						PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-						ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+						ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						Message:      "Child",
 						Created:      suite.testData.post.Created,
 						LastEdited:   suite.testData.post.LastEdited,
@@ -479,8 +479,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			name: "Empty params returns all posts without medias",
 			storedPosts: []types.Post{
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -496,8 +496,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.Post{
-						PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-						ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+						ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						Message:      "Child",
 						Created:      suite.testData.post.Created,
 						LastEdited:   suite.testData.post.LastEdited,
@@ -517,7 +517,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			name: "Empty params returns all posts without poll data and poll answers",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -526,8 +526,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					Attachments:  suite.testData.post.Attachments,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -540,7 +540,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.Post{
-						PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						Message:      "Parent",
 						Created:      suite.testData.post.Created,
 						LastEdited:   suite.testData.post.LastEdited,
@@ -558,7 +558,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			name: "Non empty params return proper posts",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Parent",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -568,8 +568,8 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 					PollData:     suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Child",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -585,7 +585,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			expResponse: []types.PostQueryResponse{
 				types.NewPostResponse(
 					types.Post{
-						PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						Message:      "Parent",
 						Created:      suite.testData.post.Created,
 						LastEdited:   suite.testData.post.LastEdited,
@@ -614,7 +614,7 @@ func (suite *KeeperTestSuite) Test_queryPosts() {
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
@@ -658,7 +658,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			path: []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
 			storedPosts: []types.Post{
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					Message:      "post with poll",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -674,7 +674,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			path: []string{types.QueryPollAnswers, "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd"},
 			storedPosts: []types.Post{
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					Message:      "post with poll",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -688,7 +688,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 				types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 			},
 			expResult: types.QueryPollAnswersResponse{
-				PostId: "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+				PostID: "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Answers: []types.UserAnswer{
 					types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				},
@@ -704,7 +704,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 			}
 
 			for index, ans := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostId, ans)
+				suite.k.SavePollAnswers(suite.ctx, test.storedPosts[index].PostID, ans)
 			}
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
