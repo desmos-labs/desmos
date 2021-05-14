@@ -352,5 +352,5 @@ jobs:
       
       - name: Test IBC links module ✅
         run: |
-          make ibclink-test
+          make ibcprofiles-test
         if: env.GIT_DIFF

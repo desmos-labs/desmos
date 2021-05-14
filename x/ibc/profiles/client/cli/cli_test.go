@@ -59,13 +59,6 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 
 // ___________________________________________________________________________________________________________________
 
-func TestGetQueryCmd(t *testing.T) {
-	cmd := cli.GetQueryCmd("link")
-	if cmd == nil {
-		t.Errorf("get no query command")
-	}
-}
-
 func TestNewTxCmd(t *testing.T) {
 	cmd := cli.NewTxCmd()
 	if cmd == nil {
