@@ -9,9 +9,9 @@ import (
 )
 
 // NewChainConfig is a constructor function for ChainConfig
-func NewChainConfig(ID string, prefix string) ChainConfig {
+func NewChainConfig(id string, prefix string) ChainConfig {
 	return ChainConfig{
-		Id:               ID,
+		Id:               id,
 		Bech32AddrPrefix: prefix,
 	}
 }
