@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,13 +45,11 @@ type KeeperTestSuite struct {
 	coordinator *ibctesting.Coordinator
 	chainA      *ibctesting.TestChain
 	chainB      *ibctesting.TestChain
-	queryClient types.QueryClient
 }
 
 type TestData struct {
 	user      string
 	otherUser string
-	link      types.Link
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -123,17 +120,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// setup Data
 	suite.testData.user = "desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk"
 	suite.testData.otherUser = "desmos1488h84vd9rc0dmwxx9gzskmymwr7afcemegt9q"
-	suite.testData.link = types.NewLink("desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk", "cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn")
 }
 
 func (suite *KeeperTestSuite) SetupIBCTest() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
-
-	queryHelper := baseapp.NewQueryServerTestHelper(suite.chainA.GetContext(), suite.chainA.App.InterfaceRegistry())
-	types.RegisterQueryServer(queryHelper, suite.chainA.App.IBCProfilesKeeper)
-	suite.queryClient = types.NewQueryClient(queryHelper)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

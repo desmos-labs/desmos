@@ -83,10 +83,9 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 
 	srcSig, _ := hex.DecodeString(data.SourceSignature)
 	destSig, _ := hex.DecodeString(data.DestinationSignature)
-	link := types.NewLink(data.SourceAddress, data.DestinationAddress)
 	destAccAddr, _ := sdk.AccAddressFromBech32(data.DestinationAddress)
 
-	destPubkey, err := k.GetLinkPubKey(ctx, destAccAddr)
+	destPubkey, err := k.GetAccountPubKey(ctx, destAccAddr)
 	if err != nil {
 		return packetAck, err
 	}
@@ -96,12 +95,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, fmt.Errorf("failed to verify destination signature")
 	}
 
-	err = k.StoreLink(ctx, link)
-	if err != nil {
-		return packetAck, err
-	}
-
-	packetAck.SourceAddress = link.SourceAddress
+	packetAck.SourceAddress = data.SourceAddress
 
 	return packetAck, nil
 }
@@ -211,22 +205,16 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	sig, _ := hex.DecodeString(data.Signature)
 	srcPubKey := &secp256k1.PubKey{Key: srcPubkeyBz}
 
-	destAccAddr := sdk.AccAddress(srcPubKey.Address().Bytes())
+	destAddr := sdk.AccAddress(srcPubKey.Address().Bytes()).String()
 
-	link := types.NewLink(data.SourceAddress, destAccAddr.String())
-	linkBz, _ := link.Marshal()
+	packetProof := []byte(data.SourceAddress + "-" + destAddr)
 
 	// Signature should be verified here because source chain doesn't know the destination of packet
-	if !types.VerifySignature(linkBz, sig, srcPubKey) {
+	if !types.VerifySignature(packetProof, sig, srcPubKey) {
 		return packetAck, fmt.Errorf("failed to verify source signature")
 	}
 
-	err = k.StoreLink(ctx, link)
-	if err != nil {
-		return packetAck, err
-	}
-
-	packetAck.SourceAddress = link.SourceAddress
+	packetAck.SourceAddress = data.SourceAddress
 
 	return packetAck, nil
 }

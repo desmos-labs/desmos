@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/suite"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/testutil"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/client/cli"
@@ -36,21 +35,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 3
 
-	var linksData types.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &linksData))
+	var gs types.GenesisState
+	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &gs))
 
-	linksData.Links = []types.Link{
-		types.NewLink(
-			"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-			"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-		),
-	}
+	gs.PortId = "ibc-profiles"
 
-	linksData.PortId = "links"
-
-	linsDataBz, err := cfg.Codec.MarshalJSON(&linksData)
+	gsBz, err := cfg.Codec.MarshalJSON(&gs)
 	s.Require().NoError(err)
-	genesisState[types.ModuleName] = linsDataBz
+	genesisState[types.ModuleName] = gsBz
 	cfg.GenesisState = genesisState
 
 	s.cfg = cfg
@@ -74,59 +66,6 @@ func TestGetQueryCmd(t *testing.T) {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdQueryLink() {
-	val := s.network.Validators[0]
-
-	tests := []struct {
-		name      string
-		args      []string
-		expErr    bool
-		expOutput types.QueryLinkResponse
-	}{
-		{
-			name: "empty slice returns error",
-			args: []string{
-				"",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expErr: true,
-			expOutput: types.QueryLinkResponse{
-				Link: types.Link{},
-			},
-		},
-		{
-			name: "existing link is returned properly",
-			args: []string{
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expErr: false,
-			expOutput: types.QueryLinkResponse{
-				Link: types.Link{},
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-
-		s.Run(test.name, func() {
-
-			cmd := cli.GetCmdQueryLink()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, test.args)
-
-			if test.expErr {
-				s.Require().Error(err)
-			} else {
-				var response types.QueryLinkResponse
-				s.Require().Error(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(test.expOutput, response)
-			}
-		})
-	}
-}
-
 func TestNewTxCmd(t *testing.T) {
 	cmd := cli.NewTxCmd()
 	if cmd == nil {
@@ -147,7 +86,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		{
 			name: "Empty keybase",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				".",
@@ -163,7 +102,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		{
 			name: "Invalid destination keybase",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				".",
@@ -179,7 +118,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		{
 			name: "Wrong destination key name for destination keybase",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				"",
@@ -196,7 +135,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		{
 			name: "Channel is not available",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				".",
@@ -212,7 +151,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 		{
 			name: "Invalid args number",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				".",
@@ -258,7 +197,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 		{
 			name: "Empty keybase",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendMemory),
@@ -272,7 +211,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 		{
 			name: "Channel is not available",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 			},
@@ -285,7 +224,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 		{
 			name: "Invalid args number",
 			args: []string{
-				"links",
+				"ibcprofiles",
 				"channel-0",
 				"desmos",
 				"456",

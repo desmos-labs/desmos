@@ -18,23 +18,6 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.DefaultGenesisState(),
 			expPass: true,
 		},
-		{
-			name: "Genesis with invalid links returns error",
-			genesis: types.NewGenesisState(
-				types.PortID,
-				[]types.Link{
-					types.NewLink(
-						"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-						"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					),
-					types.NewLink(
-						"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-						"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-					),
-				},
-			),
-			expPass: false,
-		},
 	}
 
 	for _, test := range tests {

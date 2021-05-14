@@ -401,5 +401,5 @@ initialize-ibctestchains:
 ibctestnet-init:
 	bash ./scripts/init-ibctestnet.sh $(BUILDDIR)/ibc 100 http://localhost:26657 http://localhost:26667
 
-ibclink-test:
-	bash ./scripts/test-ibclink.sh $(BUILDDIR)/ibc 100 http://localhost:26657 http://localhost:26667
+ibcprofiles-test:
+	bash ./scripts/test-ibcprofiles.sh $(BUILDDIR)/ibc 100 http://localhost:26657 http://localhost:26667

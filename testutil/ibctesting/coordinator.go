@@ -149,14 +149,14 @@ func (coord *Coordinator) CreateConnection(
 }
 
 // CreateTransferChannels constructs and executes channel handshake messages to create OPEN
-// ibc-transfer channels on chainA and chainB. The function expects the channels to be
+// ibcprofiles channels on chainA and chainB. The function expects the channels to be
 // successfully opened otherwise testing will fail.
-func (coord *Coordinator) CreateLinksChannels(
+func (coord *Coordinator) CreateIBCProfilesChannels(
 	chainA, chainB *TestChain,
 	connA, connB *TestConnection,
 	order channeltypes.Order,
 ) (TestChannel, TestChannel) {
-	return coord.CreateChannel(chainA, chainB, connA, connB, LinksPort, LinksPort, order)
+	return coord.CreateChannel(chainA, chainB, connA, connB, IBCProfilesPort, IBCProfilesPort, order)
 }
 
 // CreateChannel constructs and executes channel handshake messages in order to create

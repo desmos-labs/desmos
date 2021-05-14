@@ -1,4 +1,4 @@
-package links_test
+package ibcprofiles_test
 
 import (
 	"encoding/hex"
@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type LinksTestSuite struct {
+type IBCProfilesTestSuite struct {
 	suite.Suite
 
 	coordinator *ibctesting.Coordinator
@@ -28,7 +28,7 @@ type LinksTestSuite struct {
 	queryClient types.QueryClient
 }
 
-func (suite *LinksTestSuite) SetupTest() {
+func (suite *IBCProfilesTestSuite) SetupTest() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 3)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
@@ -38,11 +38,11 @@ func (suite *LinksTestSuite) SetupTest() {
 	suite.queryClient = types.NewQueryClient(queryHelper)
 }
 
-func TestLinksTestSuite(t *testing.T) {
-	suite.Run(t, new(LinksTestSuite))
+func TestIBCProfilesTestSuite(t *testing.T) {
+	suite.Run(t, new(IBCProfilesTestSuite))
 }
 
-func (suite *LinksTestSuite) TestOnChanOpenInit() {
+func (suite *IBCProfilesTestSuite) TestOnChanOpenInit() {
 	var (
 		channel     *channeltypes.Channel
 		testChannel ibctesting.TestChannel
@@ -94,7 +94,7 @@ func (suite *LinksTestSuite) TestOnChanOpenInit() {
 			suite.SetupTest() // reset
 
 			_, _, connA, _ = suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.LinksPort)
+			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.IBCProfilesPort)
 			counterparty := channeltypes.NewCounterparty(testChannel.PortID, testChannel.ID)
 			channel = &channeltypes.Channel{
 				State:          channeltypes.INIT,
@@ -104,10 +104,10 @@ func (suite *LinksTestSuite) TestOnChanOpenInit() {
 				Version:        types.Version,
 			}
 
-			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
-			chanCap, err = suite.chainA.App.ScopedIBCKeeper.NewCapability(suite.chainA.GetContext(), host.ChannelCapabilityPath(ibctesting.LinksPort, testChannel.ID))
+			chanCap, err = suite.chainA.App.ScopedIBCKeeper.NewCapability(suite.chainA.GetContext(), host.ChannelCapabilityPath(ibctesting.IBCProfilesPort, testChannel.ID))
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainA.App.IBCKeeper.Router.GetRoute(module)
@@ -129,7 +129,7 @@ func (suite *LinksTestSuite) TestOnChanOpenInit() {
 	}
 }
 
-func (suite *LinksTestSuite) TestOnChanOpenTry() {
+func (suite *IBCProfilesTestSuite) TestOnChanOpenTry() {
 	var (
 		channel             *channeltypes.Channel
 		testChannel         ibctesting.TestChannel
@@ -187,7 +187,7 @@ func (suite *LinksTestSuite) TestOnChanOpenTry() {
 			suite.SetupTest() // reset
 
 			_, _, connA, _ = suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.LinksPort)
+			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.IBCProfilesPort)
 			counterparty := channeltypes.NewCounterparty(testChannel.PortID, testChannel.ID)
 			channel = &channeltypes.Channel{
 				State:          channeltypes.TRYOPEN,
@@ -198,10 +198,10 @@ func (suite *LinksTestSuite) TestOnChanOpenTry() {
 			}
 			counterpartyVersion = types.Version
 
-			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
-			chanCap, err = suite.chainA.App.ScopedIBCKeeper.NewCapability(suite.chainA.GetContext(), host.ChannelCapabilityPath(ibctesting.LinksPort, testChannel.ID))
+			chanCap, err = suite.chainA.App.ScopedIBCKeeper.NewCapability(suite.chainA.GetContext(), host.ChannelCapabilityPath(ibctesting.IBCProfilesPort, testChannel.ID))
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainA.App.IBCKeeper.Router.GetRoute(module)
@@ -223,7 +223,7 @@ func (suite *LinksTestSuite) TestOnChanOpenTry() {
 	}
 }
 
-func (suite *LinksTestSuite) TestOnChanOpenAck() {
+func (suite *IBCProfilesTestSuite) TestOnChanOpenAck() {
 	var (
 		testChannel         ibctesting.TestChannel
 		connA               *ibctesting.TestConnection
@@ -253,10 +253,10 @@ func (suite *LinksTestSuite) TestOnChanOpenAck() {
 			suite.SetupTest() // reset
 
 			_, _, connA, _ = suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.LinksPort)
+			testChannel = suite.chainA.NextTestChannel(connA, ibctesting.IBCProfilesPort)
 			counterpartyVersion = types.Version
 
-			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainA.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainA.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainA.App.IBCKeeper.Router.GetRoute(module)
@@ -278,7 +278,7 @@ func (suite *LinksTestSuite) TestOnChanOpenAck() {
 
 // ___________________________________________________________________________________________________________________
 
-func (suite *LinksTestSuite) TestOnRecvPacket() {
+func (suite *IBCProfilesTestSuite) TestOnRecvPacket() {
 	var packet channeltypes.Packet
 	testCases := []struct {
 		name     string
@@ -290,13 +290,12 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 			name: "Success IBCAccountLink packet",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := srcAddr
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				sig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := srcAddr
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex := hex.EncodeToString(sig)
 
 				packetData := types.NewIBCAccountLinkPacketData(
@@ -316,14 +315,14 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 			name: "Success IBCAccountConnection packet",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := suite.chainB.Account.GetAddress().String()
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex := hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex := hex.EncodeToString(dstSig)
@@ -333,7 +332,7 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 					"cosmos",
 					srcAddr,
 					srcPubKeyHex,
-					dstAddress,
+					destAddr,
 					srcSigHex,
 					dstSigHex,
 				)
@@ -348,7 +347,7 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 			name: "Invalid packet struct",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				bz := []byte{}
 				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			},
@@ -358,7 +357,7 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 			name: "Invalid packet type",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				var modulePacket types.LinksPacketData
 				modulePacket.Packet = &types.LinksPacketData_NoData{}
 				bz, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&modulePacket))
@@ -375,7 +374,7 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 		suite.Run(tc.name, func() {
 			suite.SetupTest() // reset
 			tc.malleate()
-			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainB.App.IBCKeeper.Router.GetRoute(module)
@@ -391,7 +390,7 @@ func (suite *LinksTestSuite) TestOnRecvPacket() {
 	}
 }
 
-func (suite *LinksTestSuite) TestOnAcknowledgement() {
+func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 	var packet channeltypes.Packet
 	var ack channeltypes.Acknowledgement
 	testCases := []struct {
@@ -404,13 +403,13 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Success IBCAccountLink ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := srcAddr
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				sig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := srcAddr
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex := hex.EncodeToString(sig)
 
 				packetData := types.NewIBCAccountLinkPacketData(
@@ -434,13 +433,13 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Invalid IBCAccountLink ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := srcAddr
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				sig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := srcAddr
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex := hex.EncodeToString(sig)
 
 				packetData := types.NewIBCAccountLinkPacketData(
@@ -464,14 +463,14 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Success IBCAccountConnection ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := suite.chainB.Account.GetAddress().String()
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex := hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex := hex.EncodeToString(dstSig)
@@ -481,7 +480,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 					"cosmos",
 					srcAddr,
 					srcPubKeyHex,
-					dstAddress,
+					destAddr,
 					srcSigHex,
 					dstSigHex,
 				)
@@ -500,14 +499,14 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Invalid IBCAccountLink ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := suite.chainB.Account.GetAddress().String()
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex := hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex := hex.EncodeToString(dstSig)
@@ -517,7 +516,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 					"cosmos",
 					srcAddr,
 					srcPubKeyHex,
-					dstAddress,
+					destAddr,
 					srcSigHex,
 					dstSigHex,
 				)
@@ -536,7 +535,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Invalid packet struct",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				bz := []byte{}
 				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 				ack = channeltypes.NewErrorAcknowledgement("failed")
@@ -547,7 +546,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Invalid packet type",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				var modulePacket types.LinksPacketData
 				modulePacket.Packet = &types.LinksPacketData_NoData{}
 				bz, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&modulePacket))
@@ -561,13 +560,13 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 			name: "Error ack",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := suite.chainB.Account.GetAddress().String()
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex := hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex := hex.EncodeToString(dstSig)
@@ -577,7 +576,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 					"cosmos",
 					srcAddr,
 					srcPubKeyHex,
-					dstAddress,
+					destAddr,
 					srcSigHex,
 					dstSigHex,
 				)
@@ -596,7 +595,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 		suite.Run(tc.name, func() {
 			suite.SetupTest() // reset
 			tc.malleate()
-			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainB.App.IBCKeeper.Router.GetRoute(module)
@@ -613,7 +612,7 @@ func (suite *LinksTestSuite) TestOnAcknowledgement() {
 	}
 }
 
-func (suite *LinksTestSuite) TestOnTimeoutPacket() {
+func (suite *IBCProfilesTestSuite) TestOnTimeoutPacket() {
 	var packet channeltypes.Packet
 	testCases := []struct {
 		name     string
@@ -625,13 +624,13 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 			name: "Success IBCAccountLink timout",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := srcAddr
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				sig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := srcAddr
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex := hex.EncodeToString(sig)
 
 				packetData := types.NewIBCAccountLinkPacketData(
@@ -651,14 +650,14 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 			name: "Success IBCAccountConnection timout",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 
 				srcAddr := suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				dstAddress := suite.chainB.Account.GetAddress().String()
-				link := types.NewLink(srcAddr, dstAddress)
-				linkBz, _ := link.Marshal()
-				srcSig, _ := suite.chainA.PrivKey.Sign(linkBz)
+				destAddr := suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr + "-" + destAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex := hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex := hex.EncodeToString(dstSig)
@@ -668,7 +667,7 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 					"cosmos",
 					srcAddr,
 					srcPubKeyHex,
-					dstAddress,
+					destAddr,
 					srcSigHex,
 					dstSigHex,
 				)
@@ -683,7 +682,7 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 			name: "Invalid packet struct",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				bz := []byte{}
 				packet = channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 			},
@@ -693,7 +692,7 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 			name: "Invalid packet type",
 			malleate: func() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB := suite.coordinator.CreateLinksChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				var modulePacket types.LinksPacketData
 				modulePacket.Packet = &types.LinksPacketData_NoData{}
 				bz, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&modulePacket))
@@ -710,7 +709,7 @@ func (suite *LinksTestSuite) TestOnTimeoutPacket() {
 		suite.Run(tc.name, func() {
 			suite.SetupTest() // reset
 			tc.malleate()
-			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.LinksPort)
+			module, _, err := suite.chainB.App.IBCKeeper.PortKeeper.LookupModuleByPort(suite.chainB.GetContext(), ibctesting.IBCProfilesPort)
 			suite.Require().NoError(err)
 
 			cbs, ok := suite.chainB.App.IBCKeeper.Router.GetRoute(module)

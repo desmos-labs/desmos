@@ -4,7 +4,7 @@ package desmos.ibc.profiles.v1beta1;
 option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
 
 // Declare types of packet data
-message LinksPacketData {
+message IBCProfilesPacketData {
   // Switch one of packet type
   oneof packet {
     NoData no_data = 1;

@@ -52,8 +52,8 @@ const (
 	ConnectionIDPrefix = "conn"
 	ChannelIDPrefix    = "chan"
 
-	LinksPort = ibcprofilestypes.ModuleName
-	MockPort  = "mock"
+	IBCProfilesPort = ibcprofilestypes.ModuleName
+	MockPort        = "mock"
 
 	// used for testing UpdateClientProposal
 	Title       = "title"
@@ -704,7 +704,7 @@ func (chain *TestChain) ConnectionOpenConfirm(
 
 // CreatePortCapability binds and claims a capability for the given portID if it does not
 // already exist. This function will fail testing on any resulting error.
-// NOTE: only creation of a capbility for a links is supported
+// NOTE: only creation of a capbility for a ibcporfiles is supported
 // Other applications must bind to the port in InitGenesis or modify this code.
 func (chain *TestChain) CreatePortCapability(portID string) {
 	// check if the portId is already binded, if not bind it
@@ -715,8 +715,8 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 		require.NoError(chain.t, err)
 
 		switch portID {
-		case LinksPort:
-			// claim capability using the links capability keeper
+		case IBCProfilesPort:
+			// claim capability using the ibcporfiles capability keeper
 			err = chain.App.ScopedIBCProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)
 		default:

@@ -21,20 +21,20 @@ import (
 
 // NewTxCmd returns the transaction commands for this module
 func NewTxCmd() *cobra.Command {
-	linksTxCmd := &cobra.Command{
-		Use:                        types.ModuleName,
-		Short:                      "Links transactions subcommands",
+	txCmd := &cobra.Command{
+		Use:                        "ibc-profiles",
+		Short:                      "IBC profiles transactions subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	linksTxCmd.AddCommand(
+	txCmd.AddCommand(
 		GetCmdCreateIBCAccountLink(),
 		GetCmdCreateIBCAccountConnection(),
 	)
 
-	return linksTxCmd
+	return txCmd
 }
 
 // GetCmdCreateIBCAccountConnection returns the command to create an account link on other chain with different private keys
@@ -147,11 +147,10 @@ func GetIBCAccountConnectionPacket(
 	}
 
 	srcAddr := srcKey.GetAddress().String()
-	link := types.NewLink(srcAddr, destAddr)
-	linkBz, _ := link.Marshal()
+	packetProof := []byte(srcAddr + "-" + destAddr)
 
 	// Create signature by src keys
-	srcSig, srcPubKey, err := srcKeybase.Sign(srcKey.GetName(), linkBz)
+	srcSig, srcPubKey, err := srcKeybase.Sign(srcKey.GetName(), packetProof)
 	if err != nil {
 		return types.IBCAccountConnectionPacketData{}, err
 	}
@@ -249,10 +248,9 @@ func GetIBCAccountLinkPacket(
 	}
 
 	srcAddr := srcKey.GetAddress().String()
-	link := types.NewLink(srcAddr, destAddr)
-	linkBz, _ := link.Marshal()
+	packetProof := []byte(srcAddr + "-" + destAddr)
 
-	sig, pubKey, err := srcKeybase.Sign(srcKey.GetName(), linkBz)
+	sig, pubKey, err := srcKeybase.Sign(srcKey.GetName(), packetProof)
 	if err != nil {
 		return types.IBCAccountLinkPacketData{}, err
 	}

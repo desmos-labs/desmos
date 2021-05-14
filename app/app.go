@@ -70,7 +70,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	links "github.com/desmos-labs/desmos/x/ibc/profiles"
+	ibcprofiles "github.com/desmos-labs/desmos/x/ibc/profiles"
 	ibcprofileskeeper "github.com/desmos-labs/desmos/x/ibc/profiles/keeper"
 	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
 	"github.com/desmos-labs/desmos/x/profiles"
@@ -149,7 +149,7 @@ var (
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		//reports.AppModuleBasic{},
-		links.AppModuleBasic{},
+		ibcprofiles.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -348,12 +348,12 @@ func NewDesmosApp(
 		ScopedIBCProfilesKeeper,
 		app.AccountKeeper,
 	)
-	linksModule := links.NewAppModule(appCodec, app.IBCProfilesKeeper)
+	ibcprofilesModule := ibcprofiles.NewAppModule(appCodec, app.IBCProfilesKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
-	ibcRouter.AddRoute(ibcprofilestypes.ModuleName, linksModule)
+	ibcRouter.AddRoute(ibcprofilestypes.ModuleName, ibcprofilesModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -423,7 +423,7 @@ func NewDesmosApp(
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
-		linksModule,
+		ibcprofilesModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -482,7 +482,6 @@ func NewDesmosApp(
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		linksModule,
 	)
 
 	app.sm.RegisterStoreDecoders()

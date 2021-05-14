@@ -9,23 +9,12 @@ func (suite *KeeperTestSuite) TestExportGenesis() {
 		expGenesis types.GenesisState
 	}{
 		{
-			name:       "empty data is exported correctly",
-			state:      *types.NewGenesisState(types.PortID, nil),
-			expGenesis: *types.NewGenesisState(types.PortID, nil),
-		},
-		{
-			name: "data is exported correctly",
+			name: "Data is exported correctly",
 			state: *types.NewGenesisState(
 				types.PortID,
-				[]types.Link{
-					suite.testData.link,
-				},
 			),
 			expGenesis: *types.NewGenesisState(
 				types.PortID,
-				[]types.Link{
-					suite.testData.link,
-				},
 			),
 		},
 	}
@@ -36,9 +25,6 @@ func (suite *KeeperTestSuite) TestExportGenesis() {
 			suite.SetupTest()
 
 			suite.k.SetPort(suite.ctx, types.PortID)
-			for _, link := range test.state.Links {
-				suite.k.StoreLink(suite.ctx, link)
-			}
 
 			genesis := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(test.expGenesis, *genesis)
@@ -54,25 +40,12 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 		expState types.GenesisState
 	}{
 		{
-			name:     "empty genesis is initialized properly",
-			genesis:  *types.NewGenesisState(types.PortID, nil),
-			expPanic: false,
-			expState: types.GenesisState{
-				PortId: types.PortID,
-				Links:  nil,
-			},
-		},
-		{
 			name: "proper genesis is initialized properly",
 			genesis: *types.NewGenesisState(
-				types.PortID, []types.Link{
-					suite.testData.link,
-				}),
+				types.PortID),
 			expPanic: false,
 			expState: *types.NewGenesisState(
-				types.PortID, []types.Link{
-					suite.testData.link,
-				}),
+				types.PortID),
 		},
 	}
 
@@ -86,8 +59,6 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 			} else {
 				suite.k.InitGenesis(suite.ctx, test.genesis)
 				suite.Require().Equal(types.PortID, suite.k.GetPort(suite.ctx))
-				links := suite.k.GetAllLinks(suite.ctx)
-				suite.Require().Equal(test.expState.Links, links)
 			}
 		})
 	}

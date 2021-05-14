@@ -13,9 +13,9 @@ import (
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
-	r.HandleFunc("/links/ibclink",
+	r.HandleFunc("/ibcprofiles/ibclink",
 		createIBCAccountLinkHandler(cliCtx)).Methods("Post")
-	r.HandleFunc("/links/ibconnection",
+	r.HandleFunc("/ibcprofiles/ibcconnection",
 		createIBCAccountConnectionHandler(cliCtx)).Methods("Post")
 }
 

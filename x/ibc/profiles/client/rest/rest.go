@@ -8,10 +8,9 @@ import (
 	// this line is used by starport scaffolding # 1
 )
 
-// RegisterRoutes registers links-related REST handlers to a router
+// RegisterRoutes registers ibcprofiles-related REST handlers to a router
 func RegisterRoutes(cliCtx client.Context, r *mux.Router) {
 	registerTxRoutes(cliCtx, r)
-	registerQueryRoutes(cliCtx, r)
 }
 
 // CreateIBCAccountLinkReq defines the properties of the request's body of creating ibc link with same key

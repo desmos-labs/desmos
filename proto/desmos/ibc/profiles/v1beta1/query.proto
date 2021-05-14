@@ -3,30 +3,8 @@ package desmos.ibc.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "desmos/ibc/profiles/v1beta1/links.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
 
 // Query defines the gRPC querier service.
-service Query {
-  // Post queries a specific post
-  rpc Link(QueryLinkRequest) returns (QueryLinkResponse) {
-    option (google.api.http).get =
-        "/desmos/ibc/profiles/v1beta1/links/{source_address}";
-  }
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryLinkRequest is the request type for the Query/Link RPC method.
-message QueryLinkRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string source_address = 1;
-}
-
-// QueryLinkResponse is the response type for the Query/Link RPC method
-message QueryLinkResponse {
-  desmos.ibc.profiles.v1beta1.Link link = 1 [ (gogoproto.nullable) = false ];
-}
+service Query {}

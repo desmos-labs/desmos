@@ -46,15 +46,15 @@ echo "Waiting for chains deal with transactions"
 sleep 60
 
 # Check database if including results 
-echo "Starting checking links"
-for (( i = 0; i < $ACCOUNTNUM; i++ ))
-do
-    result=$(desmos query links link  $(desmos keys show test0-$i --home $IBCDIR/ibc0 --keyring-backend test  --address) \
-    --home $IBCDIR/ibc1 --chain-id ibc1 --node $DSTNODE)
-    if [ "$result" = "" ]; then
-        echo "Failed to get  test0-$i link"
-        exit 1
-    fi
-done
+# echo "Starting checking links"
+# for (( i = 0; i < $ACCOUNTNUM; i++ ))
+# do
+#     result=$(desmos query links link  $(desmos keys show test0-$i --home $IBCDIR/ibc0 --keyring-backend test  --address) \
+#     --home $IBCDIR/ibc1 --chain-id ibc1 --node $DSTNODE)
+#     if [ "$result" = "" ]; then
+#         echo "Failed to get  test0-$i link"
+#         exit 1
+#     fi
+# done
 
 echo "Test successfully"

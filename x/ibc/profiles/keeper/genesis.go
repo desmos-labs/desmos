@@ -20,17 +20,12 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 			panic("could not claim port capability: " + err.Error())
 		}
 	}
-
-	for _, link := range genState.Links {
-		k.StoreLink(ctx, link)
-	}
 }
 
 // ExportGenesis returns the capability module's exported genesis.
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	genesis := types.NewGenesisState(
 		k.GetPort(ctx),
-		k.GetAllLinks(ctx),
 	)
 
 	return genesis

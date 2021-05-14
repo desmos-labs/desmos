@@ -6,7 +6,7 @@ import "desmos/ibc/profiles/v1beta1/packets.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
 
-// Msg defines the links Msg service.
+// Msg defines the ibc/profiles Msg service.
 service Msg {
   // CreateIBCAccountConnection defines the method to create a link by two
   // different private keys

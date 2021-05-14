@@ -9,33 +9,33 @@ import (
 )
 
 var validConnectionMsg = types.NewMsgCreateIBCAccountConnection(
-	"links",
+	"ibc-profiles",
 	"desmos-0",
 	types.NewIBCAccountConnectionPacketData(
 		"cosmos",
-		"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-		"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-		"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-		"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-		"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
+		"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
+		"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+		"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+		"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+		"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 	),
 	1000,
 )
 
 var validLinkMsg = types.NewMsgCreateIBCAccountLink(
-	"links",
+	"ibc-profiles",
 	"desmos-0",
 	types.NewIBCAccountLinkPacketData(
 		"cosmos",
-		"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-		"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-		"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+		"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+		"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+		"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 	),
 	1000,
 )
 
 func TestMsgIBCAccountConnection_Route(t *testing.T) {
-	require.Equal(t, "links", validConnectionMsg.Route())
+	require.Equal(t, "ibcprofiles", validConnectionMsg.Route())
 }
 
 func TestMsgIBCAccountConnection_Type(t *testing.T) {
@@ -43,7 +43,7 @@ func TestMsgIBCAccountConnection_Type(t *testing.T) {
 }
 
 func TestMsgIBCAccountConnection_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateIBCAccountConnection","value":{"channel_id":"desmos-0","packet":{"destination_address":"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn","destination_signature":"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561","source_address":"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn","source_chain_prefix":"cosmos","source_pub_key":"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b","source_signature":"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2"},"port":"links","timeout_timestamp":1000}}`
+	expected := `{"type":"desmos/MsgCreateIBCAccountConnection","value":{"channel_id":"desmos-0","packet":{"destination_address":"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p","destination_signature":"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636","source_address":"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97","source_chain_prefix":"cosmos","source_pub_key":"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e","source_signature":"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d"},"port":"ibc-profiles","timeout_timestamp":1000}}`
 	require.Equal(t, expected, string(validConnectionMsg.GetSignBytes()))
 }
 
@@ -62,15 +62,15 @@ func TestMsgIBCAccountConnection_ValidateBasic(t *testing.T) {
 		{
 			name: "Valid msg",
 			msg: types.NewMsgCreateIBCAccountConnection(
-				"links",
+				"ibc-profiles",
 				"desmos-0",
 				types.NewIBCAccountConnectionPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-					"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
+					"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
+					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+					"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 				),
 				1000,
 			),
@@ -83,11 +83,11 @@ func TestMsgIBCAccountConnection_ValidateBasic(t *testing.T) {
 				"desmos-0",
 				types.NewIBCAccountConnectionPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-					"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
+					"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
+					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+					"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 				),
 				1000,
 			),
@@ -96,15 +96,15 @@ func TestMsgIBCAccountConnection_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid channel",
 			msg: types.NewMsgCreateIBCAccountConnection(
-				"links",
+				"ibc-profiles",
 				"(invalidchannel)",
 				types.NewIBCAccountConnectionPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-					"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
+					"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
+					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+					"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 				),
 				1000,
 			),
@@ -113,15 +113,15 @@ func TestMsgIBCAccountConnection_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid packet",
 			msg: types.NewMsgCreateIBCAccountConnection(
-				"links",
+				"ibc-profiles",
 				"desmos-0",
 				types.NewIBCAccountConnectionPacketData(
 					"",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"cosmos1wnv4pk0ueawnt06dsdpnqmhqrqpwll39ssx6kn",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-					"fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
+					"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
+					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+					"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 				),
 				1000,
 			),
@@ -148,7 +148,7 @@ func TestMsgIBCAccountConnection_ValidateBasic(t *testing.T) {
 // ___________________________________________________________________________________________________________________
 
 func TestMsgIBCAccountLink_Route(t *testing.T) {
-	require.Equal(t, "links", validLinkMsg.Route())
+	require.Equal(t, "ibcprofiles", validLinkMsg.Route())
 }
 
 func TestMsgIBCAccountLink_Type(t *testing.T) {
@@ -156,7 +156,7 @@ func TestMsgIBCAccountLink_Type(t *testing.T) {
 }
 
 func TestMsgIBCAccountLink_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateIBCAccountLink","value":{"channel_id":"desmos-0","packet":{"signature":"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2","source_address":"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn","source_chain_prefix":"cosmos","source_pub_key":"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b"},"port":"links","timeout_timestamp":"1000"}}`
+	expected := `{"type":"desmos/MsgCreateIBCAccountLink","value":{"channel_id":"desmos-0","packet":{"signature":"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d","source_address":"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf","source_chain_prefix":"cosmos","source_pub_key":"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682"},"port":"ibc-profiles","timeout_timestamp":"1000"}}`
 	require.Equal(t, expected, string(validLinkMsg.GetSignBytes()))
 }
 
@@ -175,13 +175,13 @@ func TestMsgIBCAccountLink_ValidateBasic(t *testing.T) {
 		{
 			name: "Valid msg",
 			msg: types.NewMsgCreateIBCAccountLink(
-				"links",
+				"ibc-profiles",
 				"desmos-0",
 				types.NewIBCAccountLinkPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+					"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+					"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+					"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 				),
 				1000,
 			),
@@ -194,9 +194,9 @@ func TestMsgIBCAccountLink_ValidateBasic(t *testing.T) {
 				"desmos-0",
 				types.NewIBCAccountLinkPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+					"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+					"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+					"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 				),
 				1000,
 			),
@@ -205,13 +205,13 @@ func TestMsgIBCAccountLink_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid channel",
 			msg: types.NewMsgCreateIBCAccountLink(
-				"links",
+				"ibc-profiles",
 				"(invalidchannel)",
 				types.NewIBCAccountLinkPacketData(
 					"cosmos",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+					"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+					"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+					"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 				),
 				1000,
 			),
@@ -220,13 +220,13 @@ func TestMsgIBCAccountLink_ValidateBasic(t *testing.T) {
 		{
 			name: "Invalid packet",
 			msg: types.NewMsgCreateIBCAccountLink(
-				"links",
+				"ibc-profiles",
 				"desmos-0",
 				types.NewIBCAccountLinkPacketData(
 					"",
-					"cosmos1c07g02fjmsl6dcumfsgttjkvnk4n9lxzek0dvn",
-					"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-					"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+					"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+					"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+					"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 				),
 				1000,
 			),

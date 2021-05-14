@@ -1,4 +1,4 @@
-package links
+package ibcprofiles
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func (am AppModule) OnChanOpenInit(
 	counterparty channeltypes.Counterparty,
 	version string,
 ) error {
-	if err := ValidateLinksChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
+	if err := ValidateIBCProfilesChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
 		return err
 	}
 
@@ -50,7 +50,7 @@ func (am AppModule) OnChanOpenTry(
 	counterpartyVersion string,
 ) error {
 
-	if err := ValidateLinksChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
+	if err := ValidateIBCProfilesChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
 		return err
 	}
 
@@ -273,10 +273,10 @@ func (am AppModule) OnTimeoutPacket(
 	}, nil
 }
 
-// ValidateLinksChannelParams does validation of a newly created links channel. A links
-// channel must be UNORDERED, use the correct port (by default 'links'), and use the current
+// ValidateIBCProfilesChannelParams does validation of a newly created ibcprofiles channel. A ibcprofiles
+// channel must be UNORDERED, use the correct port (by default 'ibcprofiles'), and use the current
 // supported version. Only 2^32 channels are allowed to be created.
-func ValidateLinksChannelParams(
+func ValidateIBCProfilesChannelParams(
 	ctx sdk.Context,
 	keeper keeper.Keeper,
 	order channeltypes.Order,
@@ -291,13 +291,13 @@ func ValidateLinksChannelParams(
 		return err
 	}
 	if channelSequence > uint64(math.MaxUint32) {
-		return sdkerrors.Wrapf(types.ErrMaxLinksChannels, "channel sequence %d is greater than max allowed links channels %d", channelSequence, uint64(math.MaxUint32))
+		return sdkerrors.Wrapf(types.ErrMaxIBCProfilesChannels, "channel sequence %d is greater than max allowed ibcprofiles channels %d", channelSequence, uint64(math.MaxUint32))
 	}
 	if order != channeltypes.UNORDERED {
 		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
 	}
 
-	// Require portID is the portID links module is bound to
+	// Require portID is the portID ibcprofiles module is bound to
 	boundPort := keeper.GetPort(ctx)
 	if boundPort != portID {
 		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
