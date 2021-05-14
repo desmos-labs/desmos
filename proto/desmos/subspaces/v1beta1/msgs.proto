@@ -11,6 +11,9 @@ service Msg {
   // CreateSubspace defines the method to create a subspace
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 
+  // TransferSubspaceOwnership defines the method to transfer a subspace ownership
+  rpc TransferSubspaceOwnership(MsgTransferOwnership) returns (MsgTransferOwnershipResponse);
+
   // AddSubspaceAdmin defines the method to add a new admin to the subspace
   rpc AddSubspaceAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
 
@@ -32,14 +35,42 @@ message MsgCreateSubspace {
   option (gogoproto.goproto_getters) = false;
 
   string id = 1 [
+    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  string name = 2 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
 message MsgCreateSubspaceResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgTransferOwnership represents the message used to transfer a subspace ownership
+message MsgTransferOwnership {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  string new_owner = 2 [
+    (gogoproto.jsontag) = "new_owner",
+    (gogoproto.moretags) = "yaml:\"new_owner\""
+  ];
+}
+
+// MsgTransferOwnershipResponse defines the Msg/TransferOwnership response type
+message MsgTransferOwnershipResponse{}
 
 // ___________________________________________________________________________________________________________________
 
@@ -49,6 +80,7 @@ message MsgAddAdmin {
   option (gogoproto.goproto_getters) = false;
 
   string subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
@@ -68,6 +100,7 @@ message MsgRemoveAdmin {
   option (gogoproto.goproto_getters) = false;
 
   string subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
@@ -88,6 +121,7 @@ message MsgEnableUserPosts {
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string subspace_id = 2 [
+    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
@@ -106,6 +140,7 @@ message MsgDisableUserPosts {
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string subspace_id = 2 [
+    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];

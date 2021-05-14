@@ -7,17 +7,18 @@ import (
 )
 
 // NewSubspace returns a Subspace
-func NewSubspace(creationTime time.Time, subspaceId, creator string) Subspace {
+func NewSubspace(creationTime time.Time, subspaceId, name, creator string) Subspace {
 	return Subspace{
-		Id:           subspaceId,
+		ID:           subspaceId,
+		Name:         name,
 		Creator:      creator,
 		CreationTime: creationTime,
 	}
 }
 
 func (sub Subspace) Validate() error {
-	if !commons.IsValidSubspace(sub.Id) {
-		return fmt.Errorf("invalid subspace id: %s it must be a valid sha-256 hash", sub.Id)
+	if !commons.IsValidSubspace(sub.ID) {
+		return fmt.Errorf("invalid subspace id: %s it must be a valid sha-256 hash", sub.ID)
 	}
 
 	if sub.Creator == "" {

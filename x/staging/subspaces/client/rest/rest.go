@@ -19,6 +19,7 @@ func RegisterRouters(cliCtx client.Context, r *mux.Router) {
 // CreateSubspaceReq defines the properties of a create subspace request's body
 type CreateSubspaceReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
+	Name    string       `json:"name"`
 }
 
 // CommonSubspaceAdminReq defines the properties request's body of add/remove admin and enable/disable user posts

@@ -44,7 +44,7 @@ func createSubspaceHandler(clientCtx client.Context) http.HandlerFunc {
 
 		subspaceID := vars[SubspaceID]
 
-		msg := types.NewMsgCreateSubspace(subspaceID, req.BaseReq.From)
+		msg := types.NewMsgCreateSubspace(subspaceID, req.Name, req.BaseReq.From)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}

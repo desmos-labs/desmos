@@ -30,8 +30,9 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgCreateSubspace represents the message used to create a subspace
 type MsgCreateSubspace struct {
-	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"subspace_id" yaml:"subspace_id"`
-	Creator string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+	SubspaceID string `protobuf:"bytes,1,opt,name=id,proto3" json:"subspace_id" yaml:"subspace_id"`
+	Name       string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	Creator    string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
 
 func (m *MsgCreateSubspace) Reset()         { *m = MsgCreateSubspace{} }
@@ -104,9 +105,85 @@ func (m *MsgCreateSubspaceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateSubspaceResponse proto.InternalMessageInfo
 
+// MsgTransferOwnership represents the message used to transfer a subspace ownership
+type MsgTransferOwnership struct {
+	SubspaceID string `protobuf:"bytes,1,opt,name=id,proto3" json:"subspace_id" yaml:"subspace_id"`
+	NewOwner   string `protobuf:"bytes,2,opt,name=new_owner,json=newOwner,proto3" json:"new_owner" yaml:"new_owner"`
+}
+
+func (m *MsgTransferOwnership) Reset()         { *m = MsgTransferOwnership{} }
+func (m *MsgTransferOwnership) String() string { return proto.CompactTextString(m) }
+func (*MsgTransferOwnership) ProtoMessage()    {}
+func (*MsgTransferOwnership) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba19b97e9f94db77, []int{2}
+}
+func (m *MsgTransferOwnership) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTransferOwnership) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTransferOwnership.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTransferOwnership) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTransferOwnership.Merge(m, src)
+}
+func (m *MsgTransferOwnership) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTransferOwnership) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTransferOwnership.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTransferOwnership proto.InternalMessageInfo
+
+// MsgTransferOwnershipResponse defines the Msg/TransferOwnership response type
+type MsgTransferOwnershipResponse struct {
+}
+
+func (m *MsgTransferOwnershipResponse) Reset()         { *m = MsgTransferOwnershipResponse{} }
+func (m *MsgTransferOwnershipResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgTransferOwnershipResponse) ProtoMessage()    {}
+func (*MsgTransferOwnershipResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba19b97e9f94db77, []int{3}
+}
+func (m *MsgTransferOwnershipResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTransferOwnershipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTransferOwnershipResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTransferOwnershipResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTransferOwnershipResponse.Merge(m, src)
+}
+func (m *MsgTransferOwnershipResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTransferOwnershipResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTransferOwnershipResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTransferOwnershipResponse proto.InternalMessageInfo
+
 // MsgAddSubspaceAdmin represents the message used to add an admin to a specific subspace
 type MsgAddAdmin struct {
-	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
+	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	NewAdmin   string `protobuf:"bytes,2,opt,name=new_admin,json=newAdmin,proto3" json:"new_admin,omitempty" yaml:"new_admin"`
 	Creator    string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
@@ -115,7 +192,7 @@ func (m *MsgAddAdmin) Reset()         { *m = MsgAddAdmin{} }
 func (m *MsgAddAdmin) String() string { return proto.CompactTextString(m) }
 func (*MsgAddAdmin) ProtoMessage()    {}
 func (*MsgAddAdmin) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{2}
+	return fileDescriptor_ba19b97e9f94db77, []int{4}
 }
 func (m *MsgAddAdmin) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -152,7 +229,7 @@ func (m *MsgAddAdminResponse) Reset()         { *m = MsgAddAdminResponse{} }
 func (m *MsgAddAdminResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddAdminResponse) ProtoMessage()    {}
 func (*MsgAddAdminResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{3}
+	return fileDescriptor_ba19b97e9f94db77, []int{5}
 }
 func (m *MsgAddAdminResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -183,7 +260,7 @@ var xxx_messageInfo_MsgAddAdminResponse proto.InternalMessageInfo
 
 // MsgRemoveSubspaceAdmin represents the message used to remove an admin from a specific subspace
 type MsgRemoveAdmin struct {
-	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
+	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,2,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 	Creator    string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
@@ -192,7 +269,7 @@ func (m *MsgRemoveAdmin) Reset()         { *m = MsgRemoveAdmin{} }
 func (m *MsgRemoveAdmin) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveAdmin) ProtoMessage()    {}
 func (*MsgRemoveAdmin) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{4}
+	return fileDescriptor_ba19b97e9f94db77, []int{6}
 }
 func (m *MsgRemoveAdmin) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -229,7 +306,7 @@ func (m *MsgRemoveAdminResponse) Reset()         { *m = MsgRemoveAdminResponse{}
 func (m *MsgRemoveAdminResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveAdminResponse) ProtoMessage()    {}
 func (*MsgRemoveAdminResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{5}
+	return fileDescriptor_ba19b97e9f94db77, []int{7}
 }
 func (m *MsgRemoveAdminResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -261,7 +338,7 @@ var xxx_messageInfo_MsgRemoveAdminResponse proto.InternalMessageInfo
 // MsgEnableUserPosts represents the message used to allow a user to post inside a specific subspace
 type MsgEnableUserPosts struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	SubspaceId string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
+	SubspaceID string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
@@ -269,7 +346,7 @@ func (m *MsgEnableUserPosts) Reset()         { *m = MsgEnableUserPosts{} }
 func (m *MsgEnableUserPosts) String() string { return proto.CompactTextString(m) }
 func (*MsgEnableUserPosts) ProtoMessage()    {}
 func (*MsgEnableUserPosts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{6}
+	return fileDescriptor_ba19b97e9f94db77, []int{8}
 }
 func (m *MsgEnableUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -306,7 +383,7 @@ func (m *MsgEnableUserPostsResponse) Reset()         { *m = MsgEnableUserPostsRe
 func (m *MsgEnableUserPostsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgEnableUserPostsResponse) ProtoMessage()    {}
 func (*MsgEnableUserPostsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{7}
+	return fileDescriptor_ba19b97e9f94db77, []int{9}
 }
 func (m *MsgEnableUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -338,7 +415,7 @@ var xxx_messageInfo_MsgEnableUserPostsResponse proto.InternalMessageInfo
 // MsgDisableUserPosts represents the message used to block a user to post inside a specific subspace
 type MsgDisableUserPosts struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	SubspaceId string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
+	SubspaceID string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
@@ -346,7 +423,7 @@ func (m *MsgDisableUserPosts) Reset()         { *m = MsgDisableUserPosts{} }
 func (m *MsgDisableUserPosts) String() string { return proto.CompactTextString(m) }
 func (*MsgDisableUserPosts) ProtoMessage()    {}
 func (*MsgDisableUserPosts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{8}
+	return fileDescriptor_ba19b97e9f94db77, []int{10}
 }
 func (m *MsgDisableUserPosts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -383,7 +460,7 @@ func (m *MsgDisableUserPostsResponse) Reset()         { *m = MsgDisableUserPosts
 func (m *MsgDisableUserPostsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDisableUserPostsResponse) ProtoMessage()    {}
 func (*MsgDisableUserPostsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ba19b97e9f94db77, []int{9}
+	return fileDescriptor_ba19b97e9f94db77, []int{11}
 }
 func (m *MsgDisableUserPostsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -415,6 +492,8 @@ var xxx_messageInfo_MsgDisableUserPostsResponse proto.InternalMessageInfo
 func init() {
 	proto.RegisterType((*MsgCreateSubspace)(nil), "desmos.subspaces.v1beta1.MsgCreateSubspace")
 	proto.RegisterType((*MsgCreateSubspaceResponse)(nil), "desmos.subspaces.v1beta1.MsgCreateSubspaceResponse")
+	proto.RegisterType((*MsgTransferOwnership)(nil), "desmos.subspaces.v1beta1.MsgTransferOwnership")
+	proto.RegisterType((*MsgTransferOwnershipResponse)(nil), "desmos.subspaces.v1beta1.MsgTransferOwnershipResponse")
 	proto.RegisterType((*MsgAddAdmin)(nil), "desmos.subspaces.v1beta1.MsgAddAdmin")
 	proto.RegisterType((*MsgAddAdminResponse)(nil), "desmos.subspaces.v1beta1.MsgAddAdminResponse")
 	proto.RegisterType((*MsgRemoveAdmin)(nil), "desmos.subspaces.v1beta1.MsgRemoveAdmin")
@@ -430,43 +509,49 @@ func init() {
 }
 
 var fileDescriptor_ba19b97e9f94db77 = []byte{
-	// 562 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0xbf, 0x6f, 0xd3, 0x40,
-	0x14, 0xc7, 0xe3, 0xa4, 0x40, 0xfb, 0x82, 0xd2, 0x70, 0x2d, 0x28, 0xb8, 0x60, 0x23, 0x57, 0x45,
-	0x95, 0x68, 0x6d, 0x42, 0xa9, 0x90, 0xba, 0xa5, 0xfc, 0x90, 0x18, 0x22, 0x81, 0x11, 0x0b, 0x4b,
-	0x65, 0xe7, 0x4e, 0x57, 0x4b, 0xb1, 0x2f, 0xf8, 0x39, 0xfd, 0xb1, 0x32, 0x31, 0xf2, 0x27, 0xf4,
-	0x7f, 0x80, 0x81, 0x91, 0x0d, 0xc6, 0x8e, 0x4c, 0x16, 0x4a, 0x16, 0xc4, 0x98, 0xbf, 0x00, 0x25,
-	0x67, 0x5b, 0x6e, 0x02, 0x51, 0x03, 0x2c, 0x6c, 0xe7, 0x7b, 0xdf, 0xf7, 0xbe, 0xef, 0x63, 0xbf,
-	0xf3, 0xc1, 0x2a, 0x65, 0xe8, 0x0b, 0xb4, 0xb0, 0xeb, 0x62, 0xc7, 0x69, 0x31, 0xb4, 0x0e, 0xea,
-	0x2e, 0x8b, 0x9c, 0xba, 0xe5, 0x23, 0x47, 0xb3, 0x13, 0x8a, 0x48, 0x90, 0x9a, 0x14, 0x99, 0x99,
-	0xc8, 0x4c, 0x44, 0xea, 0x32, 0x17, 0x5c, 0x8c, 0x44, 0xd6, 0x70, 0x25, 0xf5, 0xc6, 0x1b, 0x05,
-	0xae, 0x34, 0x91, 0x3f, 0x0c, 0x99, 0x13, 0xb1, 0x17, 0x49, 0x12, 0xd9, 0x86, 0xa2, 0x47, 0x6b,
-	0xca, 0x2d, 0x65, 0x7d, 0x61, 0x77, 0xed, 0x47, 0xac, 0x97, 0xd3, 0x72, 0x7b, 0x1e, 0x1d, 0xc4,
-	0x3a, 0x39, 0x76, 0xfc, 0xf6, 0x8e, 0x91, 0xdb, 0x34, 0xec, 0xa2, 0x47, 0xc9, 0x06, 0x5c, 0x6a,
-	0x0d, 0x0b, 0x89, 0xb0, 0x56, 0x1c, 0xe5, 0x92, 0x41, 0xac, 0x57, 0xa4, 0x38, 0x09, 0x18, 0x76,
-	0x2a, 0xd9, 0x99, 0x7f, 0x7b, 0xa2, 0x17, 0xbe, 0x9f, 0xe8, 0x05, 0x63, 0x05, 0xae, 0x4f, 0xf4,
-	0x60, 0x33, 0xec, 0x88, 0x00, 0x99, 0xf1, 0x49, 0x81, 0x72, 0x13, 0x79, 0x83, 0xd2, 0x06, 0xf5,
-	0xbd, 0x80, 0x3c, 0x81, 0x7c, 0x37, 0xb3, 0x35, 0x09, 0xe9, 0xd3, 0x53, 0x4a, 0xea, 0xb0, 0x10,
-	0xb0, 0xc3, 0x3d, 0x67, 0x58, 0x34, 0x69, 0x77, 0x79, 0x10, 0xeb, 0x55, 0x99, 0x96, 0x85, 0x0c,
-	0x7b, 0x3e, 0x60, 0x87, 0xd2, 0x3a, 0xc7, 0x57, 0x9a, 0x85, 0xef, 0x2a, 0x2c, 0xe5, 0x08, 0x32,
-	0xb2, 0x8f, 0x0a, 0x54, 0x9a, 0xc8, 0x6d, 0xe6, 0x8b, 0x03, 0xf6, 0x6f, 0xe1, 0x6e, 0xc3, 0x85,
-	0x3c, 0x58, 0x75, 0x10, 0xeb, 0x97, 0x65, 0x4a, 0x02, 0x25, 0xc3, 0x7f, 0x4c, 0x54, 0x83, 0x6b,
-	0x67, 0x3b, 0xcf, 0xa0, 0xde, 0x2b, 0x40, 0x9a, 0xc8, 0x1f, 0x07, 0x8e, 0xdb, 0x66, 0x2f, 0x91,
-	0x85, 0xcf, 0x04, 0x46, 0x48, 0x56, 0x61, 0xae, 0x8b, 0x2c, 0x4c, 0x88, 0x16, 0x07, 0xb1, 0x5e,
-	0x96, 0x2e, 0xc3, 0x5d, 0xc3, 0x1e, 0x05, 0xc7, 0xe9, 0x8b, 0x7f, 0x4d, 0x5f, 0x9a, 0x4a, 0x9f,
-	0xe3, 0xb9, 0x01, 0xea, 0x64, 0xd3, 0x19, 0xd3, 0x07, 0x65, 0xf4, 0x01, 0x1f, 0x79, 0xf8, 0x5f,
-	0x41, 0xdd, 0x84, 0x95, 0x5f, 0x74, 0x9d, 0x52, 0xdd, 0xfb, 0x3c, 0x07, 0xa5, 0x26, 0x72, 0x12,
-	0x42, 0x65, 0xec, 0xf8, 0xdf, 0x31, 0x7f, 0xf7, 0x17, 0x31, 0x27, 0xce, 0xa9, 0xba, 0x35, 0x83,
-	0x38, 0xf5, 0x26, 0xfb, 0x50, 0x6d, 0x50, 0x9a, 0x6e, 0xcb, 0xd9, 0x5f, 0x9b, 0x5a, 0x28, 0x3d,
-	0x3d, 0xea, 0xe6, 0xb9, 0x64, 0x99, 0xd3, 0x6b, 0x58, 0x92, 0x63, 0x7a, 0xd6, 0x6c, 0x7d, 0x6a,
-	0x95, 0xdc, 0x60, 0xab, 0x77, 0xcf, 0xab, 0xcc, 0x2c, 0xbb, 0xb0, 0x38, 0x3e, 0xfe, 0x1b, 0x53,
-	0x8b, 0x8c, 0xa9, 0xd5, 0xfb, 0xb3, 0xa8, 0x33, 0xdb, 0x23, 0xa8, 0x4e, 0x4c, 0xe8, 0xf4, 0x97,
-	0x35, 0x2e, 0x57, 0xb7, 0x67, 0x92, 0xa7, 0xce, 0xbb, 0xcf, 0xbf, 0xf4, 0x34, 0xe5, 0xb4, 0xa7,
-	0x29, 0xdf, 0x7a, 0x9a, 0xf2, 0xae, 0xaf, 0x15, 0x4e, 0xfb, 0x5a, 0xe1, 0x6b, 0x5f, 0x2b, 0xbc,
-	0x7a, 0xc0, 0xbd, 0x68, 0xbf, 0xeb, 0x9a, 0x2d, 0xe1, 0x5b, 0xb2, 0xf4, 0x66, 0xdb, 0x71, 0x31,
-	0x59, 0x5b, 0x47, 0x16, 0x46, 0x0e, 0xf7, 0x02, 0x9e, 0xbb, 0xd4, 0xa2, 0xe3, 0x0e, 0x43, 0xf7,
-	0xe2, 0xe8, 0x7a, 0xda, 0xfa, 0x19, 0x00, 0x00, 0xff, 0xff, 0xa4, 0x88, 0x22, 0x2c, 0xf5, 0x06,
-	0x00, 0x00,
+	// 660 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x96, 0xcd, 0x4e, 0xd4, 0x50,
+	0x14, 0xc7, 0xe7, 0x0e, 0xa2, 0x70, 0x30, 0x30, 0x16, 0x34, 0x43, 0xc1, 0x56, 0x4b, 0x34, 0x24,
+	0x42, 0x2b, 0xe2, 0x47, 0xc2, 0xc2, 0x84, 0x0f, 0x17, 0x2c, 0x26, 0x6a, 0xc5, 0x8d, 0x1b, 0xd2,
+	0xa1, 0xd7, 0x4b, 0x13, 0xda, 0x8e, 0x3d, 0x1d, 0x3e, 0xd6, 0x6e, 0x5c, 0xfa, 0x08, 0x6c, 0x7c,
+	0x04, 0x1f, 0x40, 0x17, 0xc6, 0x8d, 0x86, 0xa5, 0xab, 0xc6, 0x0c, 0x1b, 0xc3, 0x72, 0x9e, 0xc0,
+	0xb4, 0xb7, 0xb7, 0x74, 0x66, 0x70, 0xc2, 0x20, 0x2e, 0xdc, 0xb5, 0xe7, 0xfc, 0x7b, 0xfe, 0xe7,
+	0x77, 0x9b, 0x73, 0x72, 0x61, 0xca, 0xa6, 0xe8, 0xfa, 0x68, 0x60, 0xbd, 0x8a, 0x35, 0x6b, 0x83,
+	0xa2, 0xb1, 0x3d, 0x57, 0xa5, 0xa1, 0x35, 0x67, 0xb8, 0xc8, 0x50, 0xaf, 0x05, 0x7e, 0xe8, 0x4b,
+	0x65, 0x2e, 0xd2, 0x33, 0x91, 0x9e, 0x8a, 0xe4, 0x31, 0xe6, 0x33, 0x3f, 0x11, 0x19, 0xf1, 0x13,
+	0xd7, 0x6b, 0x1f, 0x09, 0x5c, 0xa9, 0x20, 0x5b, 0x0e, 0xa8, 0x15, 0xd2, 0x17, 0xe9, 0x47, 0xd2,
+	0x32, 0x14, 0x1d, 0xbb, 0x4c, 0x6e, 0x90, 0xe9, 0xc1, 0xa5, 0xf9, 0x46, 0xa4, 0x82, 0xc8, 0xac,
+	0xae, 0x1c, 0x45, 0xea, 0x90, 0x28, 0xbe, 0xee, 0xd8, 0xcd, 0x48, 0x95, 0xf6, 0x2c, 0x77, 0x6b,
+	0x41, 0xcb, 0x05, 0x35, 0xb3, 0xe8, 0xd8, 0xd2, 0x14, 0x5c, 0xf0, 0x2c, 0x97, 0x96, 0x8b, 0x49,
+	0x99, 0x91, 0x66, 0xa4, 0x0e, 0x71, 0x65, 0x1c, 0xd5, 0xcc, 0x24, 0x29, 0xcd, 0xc0, 0xa5, 0x8d,
+	0xd8, 0xdb, 0x0f, 0xca, 0x7d, 0x89, 0x4e, 0x6a, 0x46, 0xea, 0x30, 0xd7, 0xa5, 0x09, 0xcd, 0x14,
+	0x92, 0x85, 0x81, 0x77, 0xfb, 0x6a, 0xe1, 0xd7, 0xbe, 0x5a, 0xd0, 0x26, 0x60, 0xbc, 0xa3, 0x6d,
+	0x93, 0x62, 0xcd, 0xf7, 0x90, 0x6a, 0x1f, 0x08, 0x8c, 0x55, 0x90, 0xad, 0x05, 0x96, 0x87, 0xaf,
+	0x69, 0xf0, 0x74, 0xc7, 0xa3, 0x01, 0x6e, 0x3a, 0xb5, 0xf3, 0xe1, 0x7a, 0x0c, 0x83, 0x1e, 0xdd,
+	0x59, 0xf7, 0xe3, 0xaa, 0x29, 0xdc, 0xcd, 0xa3, 0x48, 0x3d, 0x0e, 0x36, 0x23, 0xb5, 0x94, 0x92,
+	0x8a, 0x90, 0x66, 0x0e, 0x78, 0x74, 0x27, 0x69, 0x24, 0x07, 0xa1, 0xc0, 0xe4, 0x49, 0x6d, 0x66,
+	0x1c, 0xdf, 0x09, 0x0c, 0x55, 0x90, 0x2d, 0xda, 0xf6, 0xa2, 0xed, 0x3a, 0x9e, 0xb4, 0x06, 0xf9,
+	0x16, 0xff, 0x86, 0x03, 0xc4, 0xdb, 0xaa, 0x2d, 0xcd, 0x71, 0x1e, 0x2b, 0xb6, 0x48, 0x79, 0xc6,
+	0x5a, 0x11, 0x92, 0x14, 0x47, 0xe0, 0x8d, 0x9c, 0xf5, 0xaf, 0x5d, 0x85, 0xd1, 0x1c, 0x4f, 0xc6,
+	0xf9, 0x85, 0xc0, 0x70, 0x05, 0x99, 0x49, 0x5d, 0x7f, 0x9b, 0xfe, 0x4b, 0xd4, 0xdb, 0xd0, 0x9f,
+	0xc7, 0x2c, 0x35, 0x23, 0xf5, 0x32, 0xff, 0x24, 0x45, 0xe4, 0xe9, 0x33, 0xf3, 0x95, 0xe1, 0x5a,
+	0x2b, 0x47, 0x86, 0xf8, 0x89, 0x80, 0x54, 0x41, 0xf6, 0xc4, 0xb3, 0xaa, 0x5b, 0xf4, 0x25, 0xd2,
+	0xe0, 0x99, 0x8f, 0x21, 0xc6, 0x33, 0x52, 0x47, 0x1a, 0xa4, 0x7c, 0xb9, 0x19, 0x89, 0xa3, 0x9a,
+	0x99, 0x24, 0xdb, 0xcf, 0xa2, 0x78, 0xce, 0x67, 0xd1, 0xd7, 0xf5, 0x2c, 0x72, 0x74, 0x93, 0x20,
+	0x77, 0x22, 0x64, 0x84, 0x9f, 0x49, 0xf2, 0x73, 0x57, 0x1c, 0xfc, 0x8f, 0x11, 0xaf, 0xc3, 0xc4,
+	0x09, 0x0c, 0x82, 0xf1, 0xde, 0xb7, 0x7e, 0xe8, 0xab, 0x20, 0x93, 0x02, 0x18, 0x6e, 0xdb, 0x98,
+	0x77, 0xf4, 0x3f, 0x2d, 0x5e, 0xbd, 0x63, 0x4f, 0xc9, 0xf3, 0x3d, 0x88, 0x85, 0xb7, 0xf4, 0x96,
+	0xc0, 0xb8, 0x58, 0x15, 0x22, 0x79, 0xbc, 0xd9, 0xf4, 0xae, 0x25, 0x3b, 0x56, 0x8c, 0xfc, 0xb0,
+	0x37, 0x7d, 0xd6, 0xc5, 0x26, 0x94, 0x16, 0x6d, 0x5b, 0xf8, 0xf3, 0x59, 0xbd, 0xd5, 0xb5, 0x96,
+	0x98, 0x76, 0x79, 0xf6, 0x54, 0xb2, 0xcc, 0xe9, 0x0d, 0x8c, 0xf2, 0x41, 0x6a, 0x35, 0x9b, 0xee,
+	0x5a, 0x25, 0x37, 0x7a, 0xf2, 0xdd, 0xd3, 0x2a, 0x33, 0xcb, 0x3a, 0x8c, 0xb4, 0x0f, 0xe8, 0x4c,
+	0xd7, 0x22, 0x6d, 0x6a, 0xf9, 0x7e, 0x2f, 0xea, 0xcc, 0x76, 0x17, 0x4a, 0x1d, 0x53, 0xd3, 0xfd,
+	0xb0, 0xda, 0xe5, 0xf2, 0x83, 0x9e, 0xe4, 0xc2, 0x79, 0xe9, 0xf9, 0xd7, 0x86, 0x42, 0x0e, 0x1a,
+	0x0a, 0xf9, 0xd9, 0x50, 0xc8, 0xfb, 0x43, 0xa5, 0x70, 0x70, 0xa8, 0x14, 0x7e, 0x1c, 0x2a, 0x85,
+	0x57, 0x8f, 0x98, 0x13, 0x6e, 0xd6, 0xab, 0xfa, 0x86, 0xef, 0x1a, 0xbc, 0xf4, 0xec, 0x96, 0x55,
+	0xc5, 0xf4, 0xd9, 0xd8, 0x35, 0x30, 0xb4, 0x98, 0xe3, 0xb1, 0xdc, 0x6d, 0x24, 0xdc, 0xab, 0x51,
+	0xac, 0x5e, 0x4c, 0xee, 0x15, 0xf3, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0x22, 0x6b, 0xad, 0x7a,
+	0xae, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -483,6 +568,8 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// CreateSubspace defines the method to create a subspace
 	CreateSubspace(ctx context.Context, in *MsgCreateSubspace, opts ...grpc.CallOption) (*MsgCreateSubspaceResponse, error)
+	// TransferSubspaceOwnership defines the method to transfer a subspace ownership
+	TransferSubspaceOwnership(ctx context.Context, in *MsgTransferOwnership, opts ...grpc.CallOption) (*MsgTransferOwnershipResponse, error)
 	// AddSubspaceAdmin defines the method to add a new admin to the subspace
 	AddSubspaceAdmin(ctx context.Context, in *MsgAddAdmin, opts ...grpc.CallOption) (*MsgAddAdminResponse, error)
 	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
@@ -504,6 +591,15 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 func (c *msgClient) CreateSubspace(ctx context.Context, in *MsgCreateSubspace, opts ...grpc.CallOption) (*MsgCreateSubspaceResponse, error) {
 	out := new(MsgCreateSubspaceResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/CreateSubspace", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) TransferSubspaceOwnership(ctx context.Context, in *MsgTransferOwnership, opts ...grpc.CallOption) (*MsgTransferOwnershipResponse, error) {
+	out := new(MsgTransferOwnershipResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/TransferSubspaceOwnership", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -550,6 +646,8 @@ func (c *msgClient) DisableUserPosts(ctx context.Context, in *MsgDisableUserPost
 type MsgServer interface {
 	// CreateSubspace defines the method to create a subspace
 	CreateSubspace(context.Context, *MsgCreateSubspace) (*MsgCreateSubspaceResponse, error)
+	// TransferSubspaceOwnership defines the method to transfer a subspace ownership
+	TransferSubspaceOwnership(context.Context, *MsgTransferOwnership) (*MsgTransferOwnershipResponse, error)
 	// AddSubspaceAdmin defines the method to add a new admin to the subspace
 	AddSubspaceAdmin(context.Context, *MsgAddAdmin) (*MsgAddAdminResponse, error)
 	// RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
@@ -566,6 +664,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) CreateSubspace(ctx context.Context, req *MsgCreateSubspace) (*MsgCreateSubspaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSubspace not implemented")
+}
+func (*UnimplementedMsgServer) TransferSubspaceOwnership(ctx context.Context, req *MsgTransferOwnership) (*MsgTransferOwnershipResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransferSubspaceOwnership not implemented")
 }
 func (*UnimplementedMsgServer) AddSubspaceAdmin(ctx context.Context, req *MsgAddAdmin) (*MsgAddAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddSubspaceAdmin not implemented")
@@ -598,6 +699,24 @@ func _Msg_CreateSubspace_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).CreateSubspace(ctx, req.(*MsgCreateSubspace))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_TransferSubspaceOwnership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgTransferOwnership)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).TransferSubspaceOwnership(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/TransferSubspaceOwnership",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).TransferSubspaceOwnership(ctx, req.(*MsgTransferOwnership))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -683,6 +802,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_CreateSubspace_Handler,
 		},
 		{
+			MethodName: "TransferSubspaceOwnership",
+			Handler:    _Msg_TransferSubspaceOwnership_Handler,
+		},
+		{
 			MethodName: "AddSubspaceAdmin",
 			Handler:    _Msg_AddSubspaceAdmin_Handler,
 		},
@@ -728,12 +851,19 @@ func (m *MsgCreateSubspace) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Creator)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
 		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
+		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Id) > 0 {
-		i -= len(m.Id)
-		copy(dAtA[i:], m.Id)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Id)))
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -756,6 +886,66 @@ func (m *MsgCreateSubspaceResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgCreateSubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTransferOwnership) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTransferOwnership) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTransferOwnership) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.NewOwner) > 0 {
+		i -= len(m.NewOwner)
+		copy(dAtA[i:], m.NewOwner)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.NewOwner)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTransferOwnershipResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTransferOwnershipResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTransferOwnershipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -797,10 +987,10 @@ func (m *MsgAddAdmin) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.SubspaceId) > 0 {
-		i -= len(m.SubspaceId)
-		copy(dAtA[i:], m.SubspaceId)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceId)))
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -864,10 +1054,10 @@ func (m *MsgRemoveAdmin) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.SubspaceId) > 0 {
-		i -= len(m.SubspaceId)
-		copy(dAtA[i:], m.SubspaceId)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceId)))
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -924,10 +1114,10 @@ func (m *MsgEnableUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.SubspaceId) > 0 {
-		i -= len(m.SubspaceId)
-		copy(dAtA[i:], m.SubspaceId)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceId)))
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -991,10 +1181,10 @@ func (m *MsgDisableUserPosts) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.SubspaceId) > 0 {
-		i -= len(m.SubspaceId)
-		copy(dAtA[i:], m.SubspaceId)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceId)))
+	if len(m.SubspaceID) > 0 {
+		i -= len(m.SubspaceID)
+		copy(dAtA[i:], m.SubspaceID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.SubspaceID)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -1048,7 +1238,11 @@ func (m *MsgCreateSubspace) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Id)
+	l = len(m.SubspaceID)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1068,13 +1262,39 @@ func (m *MsgCreateSubspaceResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgTransferOwnership) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SubspaceID)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.NewOwner)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgTransferOwnershipResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgAddAdmin) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.SubspaceId)
+	l = len(m.SubspaceID)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1104,7 +1324,7 @@ func (m *MsgRemoveAdmin) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.SubspaceId)
+	l = len(m.SubspaceID)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1138,7 +1358,7 @@ func (m *MsgEnableUserPosts) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	l = len(m.SubspaceId)
+	l = len(m.SubspaceID)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1168,7 +1388,7 @@ func (m *MsgDisableUserPosts) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	l = len(m.SubspaceId)
+	l = len(m.SubspaceID)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1225,7 +1445,7 @@ func (m *MsgCreateSubspace) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1253,9 +1473,41 @@ func (m *MsgCreateSubspace) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
@@ -1358,6 +1610,170 @@ func (m *MsgCreateSubspaceResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgTransferOwnership) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTransferOwnership: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTransferOwnership: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewOwner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NewOwner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTransferOwnershipResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTransferOwnershipResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTransferOwnershipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgAddAdmin) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1389,7 +1805,7 @@ func (m *MsgAddAdmin) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1417,7 +1833,7 @@ func (m *MsgAddAdmin) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SubspaceId = string(dAtA[iNdEx:postIndex])
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1585,7 +2001,7 @@ func (m *MsgRemoveAdmin) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1613,7 +2029,7 @@ func (m *MsgRemoveAdmin) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SubspaceId = string(dAtA[iNdEx:postIndex])
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1813,7 +2229,7 @@ func (m *MsgEnableUserPosts) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1841,7 +2257,7 @@ func (m *MsgEnableUserPosts) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SubspaceId = string(dAtA[iNdEx:postIndex])
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2009,7 +2425,7 @@ func (m *MsgDisableUserPosts) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2037,7 +2453,7 @@ func (m *MsgDisableUserPosts) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SubspaceId = string(dAtA[iNdEx:postIndex])
+			m.SubspaceID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {

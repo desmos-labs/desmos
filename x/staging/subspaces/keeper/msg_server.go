@@ -22,7 +22,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Create and store the new subspace
-	subspace := types.NewSubspace(ctx.BlockTime(), msg.Id, msg.Creator)
+	subspace := types.NewSubspace(ctx.BlockTime(), msg.SubspaceID, msg.Name, msg.Creator)
 
 	// Return error if it has already been created
 	err := k.SaveSubspace(ctx, subspace)
@@ -31,13 +31,13 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// this error should never happen, adding the creator to the admins list to better handle admins checks
-	if err = k.AddAdminToSubspace(ctx, subspace.Id, subspace.Creator); err != nil {
+	if err = k.AddAdminToSubspace(ctx, subspace.ID, subspace.Creator); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSubspace,
-		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.Id),
+		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceID),
 		sdk.NewAttribute(types.AttributeKeySubspaceCreator, msg.Creator),
 	))
 
@@ -47,19 +47,19 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 func (k msgServer) AddSubspaceAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*types.MsgAddAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.CheckSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
+	err := k.CheckSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceID, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
 
-	err = k.AddAdminToSubspace(ctx, msg.SubspaceId, msg.NewAdmin)
+	err = k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.NewAdmin)
 	if err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeAddAdmin,
-		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceId),
+		sdk.NewAttribute(types.AttributeKeySubspaceId, msg.SubspaceID),
 		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.NewAdmin),
 	))
 
@@ -69,7 +69,7 @@ func (k msgServer) AddSubspaceAdmin(goCtx context.Context, msg *types.MsgAddAdmi
 func (k msgServer) RemoveSubspaceAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin) (*types.MsgRemoveAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.CheckSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceId, msg.Creator)
+	err := k.CheckSubspaceExistenceAndCreatorValidity(ctx, msg.SubspaceID, msg.Creator)
 	if err != nil {
 		return nil, err
 	}

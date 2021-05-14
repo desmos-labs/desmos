@@ -12,13 +12,16 @@ message Subspace {
   option (gogoproto.goproto_stringer) = true;
 
   string id = 1 [
+    (gogoproto.customname) = "ID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string creator = 2 [ (gogoproto.moretags) = "yaml:\"creator\""];
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
-  google.protobuf.Timestamp creation_time = 3 [
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\""];
+
+  google.protobuf.Timestamp creation_time = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.jsontag) = "creation_time",

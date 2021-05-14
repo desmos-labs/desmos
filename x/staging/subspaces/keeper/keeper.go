@@ -25,11 +25,11 @@ func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
 // It assumes that the subspaces has been validated already.
 func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceStoreKey(subspace.Id)
+	key := types.SubspaceStoreKey(subspace.ID)
 
 	// Check if the subspace already exists inside the store
 	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.Id)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s already exists", subspace.ID)
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))

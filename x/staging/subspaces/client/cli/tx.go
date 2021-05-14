@@ -35,10 +35,11 @@ func NewTxCmd() *cobra.Command {
 // GetCmdCreateSubspace returns the command used to create a subspace
 func GetCmdCreateSubspace() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace-id]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Create a subspace with the given id",
-		Long: fmt.Sprintf(`Create a new subspace with the given id. The given id must be a sha256 string identifying the subspace 
+		Use:   "create [subspace-id] [name]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Create a subspace with the given [subspace-id] and [name]",
+		Long: fmt.Sprintf(`Create a new subspace with the given [subspace-id] and name. 
+The given id must be a sha256 string identifying the subspace 
 %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -48,8 +49,9 @@ func GetCmdCreateSubspace() *cobra.Command {
 			}
 
 			subspaceId := args[0]
+			subspaceName := args[1]
 
-			msg := types.NewMsgCreateSubspace(subspaceId, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateSubspace(subspaceId, subspaceName, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

@@ -6,6 +6,9 @@ import sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 const RootCodespace = "subspaces"
 
 var (
-	// ErrInvalidSubspace is returned if a post subspace is not valid
+	// ErrInvalidSubspace is returned if a subspace id is not valid
 	ErrInvalidSubspace = sdkerrors.Register(RootCodespace, 1, "invalid subspace")
+
+	// ErrInvalidSubspaceName is returned if a subspace name is empty or blank
+	ErrInvalidSubspaceName = sdkerrors.Register(RootCodespace, 2, "invalid subspace name")
 )
