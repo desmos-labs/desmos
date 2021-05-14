@@ -48,7 +48,7 @@ func GetCmdSaveProfile() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Short: "Save your profile associating to it the given DTag.",
 		Long: fmt.Sprintf(`
-Save a new profile or edit the existing one specifying a DTag, a moniker, biography, profile picture and cover picture.
+Save a new profile or edit the existing one specifying a DTag, a nickname, biography, profile picture and cover picture.
 Every data given through the flags is optional.
 If you are editing an existing profile you should fill only the fields that you want to edit. 
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
@@ -58,7 +58,7 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 	%s "Hollywood actor. Proud environmentalist" \
 	%s "https://profilePic.jpg"
 	%s "https://profileCover.jpg"
-`, version.AppName, FlagMoniker, FlagBio, FlagProfilePic, FlagCoverPic),
+`, version.AppName, FlagNickname, FlagBio, FlagProfilePic, FlagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -66,12 +66,12 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 			}
 
 			dTag := args[0]
-			moniker, _ := cmd.Flags().GetString(FlagMoniker)
+			nickname, _ := cmd.Flags().GetString(FlagNickname)
 			bio, _ := cmd.Flags().GetString(FlagBio)
 			profilePic, _ := cmd.Flags().GetString(FlagProfilePic)
 			coverPic, _ := cmd.Flags().GetString(FlagCoverPic)
 
-			msg := types.NewMsgSaveProfile(dTag, moniker, bio, profilePic, coverPic, clientCtx.FromAddress.String())
+			msg := types.NewMsgSaveProfile(dTag, nickname, bio, profilePic, coverPic, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -80,7 +80,7 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 		},
 	}
 
-	cmd.Flags().String(FlagMoniker, types.DoNotModify, "Moniker to be used")
+	cmd.Flags().String(FlagNickname, types.DoNotModify, "Nickname to be used")
 	cmd.Flags().String(FlagBio, types.DoNotModify, "Biography to be used")
 	cmd.Flags().String(FlagProfilePic, types.DoNotModify, "Profile picture")
 	cmd.Flags().String(FlagCoverPic, types.DoNotModify, "Cover picture")
