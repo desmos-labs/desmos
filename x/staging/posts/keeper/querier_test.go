@@ -801,10 +801,10 @@ func (suite *KeeperTestSuite) Test_queryParams() {
 			expResult:    types.DefaultParams(),
 		},
 		{
-			name:         "Non default params",
-			storedParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			name:         "Returning non default params",
+			storedParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
 			path:         []string{types.QueryParams},
-			expResult:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			expResult:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
 		},
 	}
 
