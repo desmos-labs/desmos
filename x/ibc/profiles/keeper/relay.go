@@ -91,7 +91,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 	}
 
 	// Signature should be verified here because source chain doesn't know the pubkey on the destination chain
-	if !types.VerifySignature(srcSig, destSig, destPubkey) {
+	if !destPubkey.VerifySignature(srcSig, destSig) {
 		return packetAck, fmt.Errorf("failed to verify destination signature")
 	}
 
@@ -210,7 +210,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	packetProof := []byte(data.SourceAddress + "-" + destAddr)
 
 	// Signature should be verified here because source chain doesn't know the destination of packet
-	if !types.VerifySignature(packetProof, sig, srcPubKey) {
+	if !srcPubKey.VerifySignature(packetProof, sig) {
 		return packetAck, fmt.Errorf("failed to verify source signature")
 	}
 

@@ -5,7 +5,6 @@ import (
 	fmt "fmt"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -67,7 +66,7 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 
 	packetProof := []byte(p.SourceAddress + "-" + p.DestinationAddress)
 
-	if !VerifySignature(packetProof, srcSig, srcPubKey) {
+	if !srcPubKey.VerifySignature(packetProof, srcSig) {
 		return fmt.Errorf("failed to verify source signature")
 	}
 
@@ -133,10 +132,4 @@ func (p IBCAccountLinkPacketData) GetBytes() ([]byte, error) {
 	var modulePacket IBCProfilesPacketData
 	modulePacket.Packet = &IBCProfilesPacketData_IbcAccountLinkPacket{&p}
 	return sdk.SortJSON(ProtoCdc.MustMarshalJSON(&modulePacket))
-}
-
-// ___________________________________________________________________________________________________________________
-
-func VerifySignature(msg []byte, sig []byte, pubKey cryptotypes.PubKey) bool {
-	return pubKey.VerifySignature(msg, sig)
 }

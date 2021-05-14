@@ -1,11 +1,9 @@
 package types_test
 
 import (
-	"encoding/hex"
 	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/types"
 	"github.com/stretchr/testify/require"
 )
@@ -131,20 +129,20 @@ func TestIBCAccountLinkPacketData_Validate(t *testing.T) {
 		{
 			name: "Valid IBCAccountConnectionPacketData",
 			packet: types.NewIBCAccountLinkPacketData(
-				"desmos",
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-				"02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e84",
-				"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+				"cosmos",
+				"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+				"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+				"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 			),
 			expErr: nil,
 		},
 		{
 			name: "Source Pubkey and address are mismatched",
 			packet: types.NewIBCAccountLinkPacketData(
-				"desmos",
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-				"033162405bee8a826a3d4a62842f525f1e88f821a6225289b3d44c209be41c257b",
-				"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+				"cosmos",
+				"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+				"02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e84",
+				"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 			),
 			expErr: fmt.Errorf("source pubkey and source address are mismatched"),
 		},
@@ -161,30 +159,30 @@ func TestIBCAccountLinkPacketData_Validate(t *testing.T) {
 		{
 			name: "Invalid source address",
 			packet: types.NewIBCAccountLinkPacketData(
-				"desmos",
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsy",
-				"02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e84",
-				"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+				"cosmos",
+				"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6",
+				"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+				"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 			),
 			expErr: fmt.Errorf("failed to parse source address"),
 		},
 		{
-			name: "Invalid source pubkey",
+			name: "Invalid hex string of source pubkey",
 			packet: types.NewIBCAccountLinkPacketData(
-				"desmos",
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-				"02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e8",
-				"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
+				"cosmos",
+				"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+				"-",
+				"8bf29f79659fb52ba3f8305b4610c195bef0eb80debf4018b68f43be01066a441e243a5634f4f327d7b7d20848490a04c3f7355d2bbe512c5f1035c775dfad3d",
 			),
 			expErr: fmt.Errorf("failed to decode source pubkey"),
 		},
 		{
-			name: "Invalid source signature",
+			name: "Invalid hex string of source signature",
 			packet: types.NewIBCAccountLinkPacketData(
-				"desmos",
-				"desmos1tw3jl54lmwn3mq6hjfvl5nsk4q70v34wc9nsyk",
-				"02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e84",
-				"28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b",
+				"cosmos",
+				"cosmos1fc6dg2f85hsd7nc7c4ng89uad7hzh6thpwa6xf",
+				"039d2b5c2e5be3f0f3e1665f622734aa21bbfcb1bc0099fbdb127c1a20d6570682",
+				"-",
 			),
 			expErr: fmt.Errorf("failed to decode source signature"),
 		},
@@ -206,39 +204,4 @@ func TestIBCAccountLinkPacketData_GetBytes(t *testing.T) {
 	)
 	_, err := p.GetBytes()
 	require.NoError(t, err)
-}
-
-func Test_VerifySignature(t *testing.T) {
-	tests := []struct {
-		name   string
-		msg    string // Hex-encoded msg
-		sig    string // Hex-encoded sig
-		pubKey string // Hex-encoded pubKey
-		expRes bool
-	}{
-		{
-			name:   "Valid signature",
-			msg:    "28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-			sig:    "fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
-			pubKey: "02b493a33f104de068e93d51ffe9929409a20635a68d0c2bc2b51d95e186e58f07",
-			expRes: true,
-		},
-		{
-			name:   "Invalid signature",
-			msg:    "28620f478ad11508ff4fbd01554f6dc4870e6d0ac656221774cabf9cef60951956324097b8642c0d09d23ab37bf0d6c1ea02816d92a0251acab42097a25e74b2",
-			sig:    "fc0bc7dd041c736b8fa3bb6638fc003944b430aaa656d08b823836894338d30d5bb8c96e43d4c40d820acf2f6d03c8123df525c59eed114564b877ed1f7dd561",
-			pubKey: "02466b245623786131225676fbcf4eb5a32c835a8acc733a989af45b0cbbcc0e84",
-			expRes: false,
-		},
-	}
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			msg, _ := hex.DecodeString(test.msg)
-			sig, _ := hex.DecodeString(test.sig)
-			pubKeyBs, _ := hex.DecodeString(test.pubKey)
-			pubKey := &secp256k1.PubKey{Key: pubKeyBs}
-			require.Equal(t, test.expRes, types.VerifySignature(msg, sig, pubKey))
-		})
-	}
 }
