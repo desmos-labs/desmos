@@ -1,4 +1,4 @@
-# Version 0.16.3
+# Unreleased
 ## Changes
 - Capped the `optionalDataEntry` `key` field length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
 
