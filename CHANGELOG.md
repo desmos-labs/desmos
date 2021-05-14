@@ -1,6 +1,6 @@
 # Unreleased
 ## Changes
-- Capped the `optionalDataEntry` `key` field length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
+- Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
 
 ## Bug fixes
 - Fixed `--allows-comments` bug misbehavior and renamed it to `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
