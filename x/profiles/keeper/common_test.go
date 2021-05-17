@@ -12,6 +12,7 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/testutil/ibctesting"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -49,6 +50,11 @@ type KeeperTestSuite struct {
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 	testData         TestData
+
+	// for ibc test
+	coordinator *ibctesting.Coordinator
+	chainA      *ibctesting.TestChain
+	chainB      *ibctesting.TestChain
 }
 
 type TestData struct {
@@ -146,6 +152,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 		baseAcc,
 	)
 	suite.Require().NoError(err)
+}
+
+func (suite *KeeperTestSuite) SetupIBCTest() {
+	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
+	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
+	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
 }
 
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {

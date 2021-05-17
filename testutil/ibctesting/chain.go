@@ -36,7 +36,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	simapp "github.com/desmos-labs/desmos/app"
+
 	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 const (
@@ -52,7 +54,8 @@ const (
 	ConnectionIDPrefix = "conn"
 	ChannelIDPrefix    = "chan"
 
-	IBCProfilesPort = ibcprofilestypes.ModuleName
+	IBCProfilesPort = ibcprofilestypes.PortID
+	ProfilesPort    = profilestypes.PortID
 	MockPort        = "mock"
 
 	// used for testing UpdateClientProposal
@@ -718,6 +721,10 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 		case IBCProfilesPort:
 			// claim capability using the ibcporfiles capability keeper
 			err = chain.App.ScopedIBCProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
+			require.NoError(chain.t, err)
+		case ProfilesPort:
+			// claim capability using the ibcporfiles capability keeper
+			err = chain.App.ScopedProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)
 		default:
 			panic(fmt.Sprintf("unsupported ibc testing package port ID %s", portID))
