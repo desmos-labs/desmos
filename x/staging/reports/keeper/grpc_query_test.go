@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestQueryPostReports() {
 		{
 			name:          "empty reports return nil",
 			storedReports: []types.Report{},
-			request:       &types.QueryPostReportsRequest{PostId: "post_id"},
+			request:       &types.QueryPostReportsRequest{PostID: "post_id"},
 			expError:      false,
 			expResponse:   &types.QueryPostReportsResponse{Reports: nil},
 		},
@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) TestQueryPostReports() {
 				types.NewReport("post_id_1", "type_1", "message_1", "user_1"),
 				types.NewReport("post_id_2", "type_2", "message_2", "user_2"),
 			},
-			request:  &types.QueryPostReportsRequest{PostId: "post_id_1"},
+			request:  &types.QueryPostReportsRequest{PostID: "post_id_1"},
 			expError: false,
 			expResponse: &types.QueryPostReportsResponse{Reports: []types.Report{
 				types.NewReport("post_id_1", "type_1", "message_1", "user_1"),

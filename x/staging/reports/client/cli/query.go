@@ -41,7 +41,7 @@ func GetCmdQueryPostReports() *cobra.Command {
 
 			res, err := queryClient.PostReports(
 				context.Background(),
-				&types.QueryPostReportsRequest{PostId: args[0]},
+				&types.QueryPostReportsRequest{PostID: args[0]},
 			)
 			if err != nil {
 				return err

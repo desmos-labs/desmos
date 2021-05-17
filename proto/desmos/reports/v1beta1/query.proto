@@ -24,7 +24,9 @@ message QueryPostReportsRequest {
   option (gogoproto.goproto_getters) = false;
 
   // ID of the post to which query the reports for
-  string post_id = 1;
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID"
+  ];
 }
 
 // QueryPostReportsResponse is the response type for the Query/PostReports RPC
