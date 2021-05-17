@@ -58,113 +58,6 @@ func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 	})
 }
 
-func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
-	var (
-		channelA, channelB ibctesting.TestChannel
-	)
-
-	tests := []struct {
-		name     string
-		malleate func()
-		expPass  bool
-	}{
-		{
-			name: "Create link from source chain successfully",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-
-			},
-			expPass: true,
-		},
-		{
-			name: "Source channel not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				channelA.ID = ibctesting.InvalidID
-			},
-			expPass: false,
-		},
-		{
-			name: "Next seq send not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA = suite.chainA.NextTestChannel(connA, ibctesting.IBCProfilesPort)
-				channelB = suite.chainB.NextTestChannel(connB, ibctesting.IBCProfilesPort)
-
-				// manually create channel so next seq send is never set
-				suite.chainA.App.IBCKeeper.ChannelKeeper.SetChannel(
-					suite.chainA.GetContext(),
-					channelA.PortID, channelA.ID,
-					channeltypes.NewChannel(
-						channeltypes.OPEN,
-						channeltypes.ORDERED,
-						channeltypes.NewCounterparty(channelB.PortID, channelB.ID),
-						[]string{connA.ID},
-						ibctesting.DefaultChannelVersion,
-					),
-				)
-				suite.chainA.CreateChannelCapability(channelA.PortID, channelA.ID)
-			},
-			expPass: false,
-		},
-		{
-			name: "Channel capability not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				cap := suite.chainA.GetChannelCapability(channelA.PortID, channelA.ID)
-				// Release channel capability
-				suite.chainA.App.ScopedIBCProfilesKeeper.ReleaseCapability(suite.chainA.GetContext(), cap)
-			},
-			expPass: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-
-		suite.Run(test.name, func() {
-			suite.SetupIBCTest()
-			test.malleate()
-
-			srcAddr := suite.chainA.Account.GetAddress().String()
-			srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-			destAddr := suite.chainB.Account.GetAddress().String()
-			packetProof := []byte(srcAddr)
-			srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
-			srcSigHex := hex.EncodeToString(srcSig)
-			dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
-			dstSigHex := hex.EncodeToString(dstSig)
-
-			// send link from chainA to chainB
-			packet := ibcprofilestypes.NewIBCAccountConnectionPacketData(
-				"cosmos",
-				"test-net",
-				srcAddr,
-				srcPubKeyHex,
-				destAddr,
-				srcSigHex,
-				dstSigHex,
-			)
-			err := suite.chainA.App.IBCProfilesKeeper.TransmitIBCAccountConnectionPacket(
-				suite.chainA.GetContext(),
-				packet,
-				channelA.PortID,
-				channelA.ID,
-				clienttypes.NewHeight(0, 100),
-				0,
-			)
-			if test.expPass {
-				suite.Require().NoError(err) // message committed
-			} else {
-				suite.Require().Error(err)
-			}
-		})
-	}
-}
-
 func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 	var (
 		channelA, channelB ibctesting.TestChannel
@@ -284,7 +177,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
-			_, err = suite.chainB.App.IBCProfilesKeeper.OnRecvIBCAccountConnectionPacket(
+			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountConnectionPacket(
 				suite.chainB.GetContext(),
 				packet,
 				packetData,
@@ -367,7 +260,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			)
 			bz, _ := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-			err := suite.chainA.App.IBCProfilesKeeper.OnAcknowledgementIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data, ack)
+			err := suite.chainA.App.ProfileKeeper.OnAcknowledgementIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data, ack)
 			if test.success {
 				suite.Require().NoError(err)
 			} else {
@@ -403,7 +296,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
 		)
 		bz, _ := data.GetBytes()
 		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-		err := suite.chainA.App.IBCProfilesKeeper.OnTimeoutIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data)
+		err := suite.chainA.App.ProfileKeeper.OnTimeoutIBCAccountConnectionPacket(suite.chainA.GetContext(), packet, data)
 		suite.Require().NoError(err)
 	})
 }
@@ -452,108 +345,6 @@ func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 		err = suite.coordinator.SendMsg(suite.chainB, suite.chainA, channelA.ClientID, recvMsg)
 		suite.Require().NoError(err) // message committed
 	})
-}
-
-func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
-	var (
-		channelA, channelB ibctesting.TestChannel
-	)
-
-	tests := []struct {
-		name     string
-		malleate func()
-		expPass  bool
-	}{
-		{
-			name: "Create link from source chain successfully",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-
-			},
-			expPass: true,
-		},
-		{
-			name: "Source channel not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				channelA.ID = ibctesting.InvalidID
-			},
-			expPass: false,
-		},
-		{
-			name: "Next seq send not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA = suite.chainA.NextTestChannel(connA, ibctesting.IBCProfilesPort)
-				channelB = suite.chainB.NextTestChannel(connB, ibctesting.IBCProfilesPort)
-
-				// manually create channel so next seq send is never set
-				suite.chainA.App.IBCKeeper.ChannelKeeper.SetChannel(
-					suite.chainA.GetContext(),
-					channelA.PortID, channelA.ID,
-					channeltypes.NewChannel(
-						channeltypes.OPEN,
-						channeltypes.ORDERED,
-						channeltypes.NewCounterparty(channelB.PortID, channelB.ID),
-						[]string{connA.ID},
-						ibctesting.DefaultChannelVersion,
-					),
-				)
-				suite.chainA.CreateChannelCapability(channelA.PortID, channelA.ID)
-			},
-			expPass: false,
-		},
-		{
-			name: "Channel capability not found",
-			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				cap := suite.chainA.GetChannelCapability(channelA.PortID, channelA.ID)
-				// Release channel capability
-				suite.chainA.App.ScopedIBCProfilesKeeper.ReleaseCapability(suite.chainA.GetContext(), cap)
-			},
-			expPass: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-
-		suite.Run(test.name, func() {
-			suite.SetupIBCTest()
-			test.malleate()
-
-			srcAddr := suite.chainA.Account.GetAddress().String()
-			pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-			packetProof := []byte(srcAddr)
-			sig, _ := suite.chainA.PrivKey.Sign(packetProof)
-			sigHex := hex.EncodeToString(sig)
-
-			// send link from chainA to chainB
-			packet := ibcprofilestypes.NewIBCAccountLinkPacketData(
-				"cosmos",
-				"test-net",
-				srcAddr,
-				pubKeyHex,
-				sigHex,
-			)
-			err := suite.chainA.App.IBCProfilesKeeper.TransmitIBCAccountLinkPacket(
-				suite.chainA.GetContext(),
-				packet,
-				channelA.PortID,
-				channelA.ID,
-				clienttypes.NewHeight(0, 100),
-				0,
-			)
-			if test.expPass {
-				suite.Require().NoError(err) // message committed
-			} else {
-				suite.Require().Error(err)
-			}
-		})
-	}
 }
 
 func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
@@ -647,7 +438,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
-			_, err = suite.chainB.App.IBCProfilesKeeper.OnRecvIBCAccountLinkPacket(
+			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountLinkPacket(
 				suite.chainB.GetContext(),
 				packet,
 				packetData,
@@ -724,7 +515,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 			)
 			bz, _ := data.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-			err := suite.chainA.App.IBCProfilesKeeper.OnAcknowledgementIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data, ack)
+			err := suite.chainA.App.ProfileKeeper.OnAcknowledgementIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data, ack)
 			if test.success {
 				suite.Require().NoError(err)
 			} else {
@@ -754,7 +545,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountLinkPacket() {
 		)
 		bz, _ := data.GetBytes()
 		packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-		err := suite.chainA.App.IBCProfilesKeeper.OnTimeoutIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data)
+		err := suite.chainA.App.ProfileKeeper.OnTimeoutIBCAccountLinkPacket(suite.chainA.GetContext(), packet, data)
 		suite.Require().NoError(err)
 	})
 }

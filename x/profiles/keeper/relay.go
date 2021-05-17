@@ -7,67 +7,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
-	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	"github.com/desmos-labs/desmos/x/ibc/profiles/types"
 )
-
-// TransmitIBCAccountConnectionPacket transmits the packet over IBC with the specified source port and source channel
-func (k Keeper) TransmitIBCAccountConnectionPacket(
-	ctx sdk.Context,
-	packetData types.IBCAccountConnectionPacketData,
-	sourcePort,
-	sourceChannel string,
-	timeoutHeight clienttypes.Height,
-	timeoutTimestamp uint64,
-) error {
-
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
-	}
-
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
-
-	// get the next sequence
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	packetBytes, err := packetData.GetBytes()
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, "cannot marshal the packet: "+err.Error())
-	}
-
-	packet := channeltypes.NewPacket(
-		packetBytes,
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destinationPort,
-		destinationChannel,
-		timeoutHeight,
-		timeoutTimestamp,
-	)
-
-	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 // OnRecvIBCAccountConnectionPacket processes packet reception
 func (k Keeper) OnRecvIBCAccountConnectionPacket(
@@ -138,57 +80,6 @@ func (k Keeper) OnTimeoutIBCAccountConnectionPacket(
 
 // ___________________________________________________________________________________________________________________
 
-// TransmitIBCAccountLinkPacket transmits the packet over IBC with the specified source port and source channel
-func (k Keeper) TransmitIBCAccountLinkPacket(
-	ctx sdk.Context,
-	packetData types.IBCAccountLinkPacketData,
-	sourcePort,
-	sourceChannel string,
-	timeoutHeight clienttypes.Height,
-	timeoutTimestamp uint64,
-) error {
-
-	srcChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
-	}
-
-	destPort := srcChannelEnd.GetCounterparty().GetPortID()
-	destChannel := srcChannelEnd.GetCounterparty().GetChannelID()
-
-	// get the next sequence
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	packetBz, _ := packetData.GetBytes()
-	packet := channeltypes.NewPacket(
-		packetBz,
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destPort,
-		destChannel,
-		timeoutHeight,
-		timeoutTimestamp,
-	)
-
-	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // OnRecvIBCAccountLinkPacket processes packet reception
 func (k Keeper) OnRecvIBCAccountLinkPacket(
 	ctx sdk.Context,
@@ -205,9 +96,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	sig, _ := hex.DecodeString(data.Signature)
 	srcPubKey := &secp256k1.PubKey{Key: srcPubkeyBz}
 
-	destAddr := sdk.AccAddress(srcPubKey.Address().Bytes()).String()
-
-	packetProof := []byte(data.SourceAddress + "-" + destAddr)
+	packetProof := []byte(data.SourceAddress)
 
 	// Signature should be verified here because source chain doesn't know the destination of packet
 	if !srcPubKey.VerifySignature(packetProof, sig) {
