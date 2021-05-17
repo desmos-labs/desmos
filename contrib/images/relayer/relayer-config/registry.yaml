@@ -14,6 +14,6 @@ chains:
     prefix: desmos
     gas_price: 0.001desmos
     hd_path: m/44'/852'/0'/0/0'
-    ics20_port: 'ibcprofiles'
+    ics20_port: 'profiles'
     rpc:
       - http://192.168.10.3:26657

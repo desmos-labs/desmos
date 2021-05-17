@@ -29,7 +29,7 @@ const (
 	DoNotModify = "[do-not-modify]"
 
 	// IBC keys
-	Version = "profiles-1"
+	Version = "ibcprofiles-1"
 	PortID  = "profiles"
 )
 

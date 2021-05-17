@@ -16,11 +16,11 @@ done
 echo "Src links channel available now"
 
 # Check channel is open on ibc1
-channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
+channel=$(desmos query ibc channel channels | grep -A1 "profiles" | grep "STATE_OPEN")
 while [ "$channel" = "" ]
 do
     sleep 10
-    channel=$(desmos query ibc channel channels | grep -A1 "ibcprofiles" | grep "STATE_OPEN")
+    channel=$(desmos query ibc channel channels | grep -A1 "profiles" | grep "STATE_OPEN")
 done
 echo "Dst links channel available now"
 
