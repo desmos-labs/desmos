@@ -205,9 +205,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	sig, _ := hex.DecodeString(data.Signature)
 	srcPubKey := &secp256k1.PubKey{Key: srcPubkeyBz}
 
-	destAddr := sdk.AccAddress(srcPubKey.Address().Bytes()).String()
-
-	packetProof := []byte(data.SourceAddress + "-" + destAddr)
+	packetProof := []byte(data.SourceAddress)
 
 	// Signature should be verified here because source chain doesn't know the destination of packet
 	if !srcPubKey.VerifySignature(packetProof, sig) {

@@ -18,11 +18,10 @@ func TestLink_Validate(t *testing.T) {
 		{
 			name: "Valid proof",
 			link: types.NewLink(
-				"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
-				"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
-					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
-					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 				),
 				types.NewChainConfig("test-chain", "cosmos"),
 				time.Now(),
@@ -33,10 +32,9 @@ func TestLink_Validate(t *testing.T) {
 			name: "Empty src address returns error",
 			link: types.NewLink(
 				"",
-				"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
 				types.NewProof(
-					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
-					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 				),
 				types.NewChainConfig("test-chain", "cosmos"),
 				time.Now(),
@@ -44,27 +42,12 @@ func TestLink_Validate(t *testing.T) {
 			expErr: fmt.Errorf("source address cannot be empty"),
 		},
 		{
-			name: "Empty dest address returns error",
-			link: types.NewLink(
-				"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
-				"",
-				types.NewProof(
-					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
-					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
-				),
-				types.NewChainConfig("test-chain", "cosmos"),
-				time.Now(),
-			),
-			expErr: fmt.Errorf("destination address cannot be empty"),
-		},
-		{
 			name: "Invalid proof returns error",
 			link: types.NewLink(
-				"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
-				"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
-					"---",
-					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"=",
+					"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 				),
 				types.NewChainConfig("test-chain", "cosmos"),
 				time.Now(),
@@ -74,11 +57,10 @@ func TestLink_Validate(t *testing.T) {
 		{
 			name: "Invalid chain config returns error",
 			link: types.NewLink(
-				"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
-				"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
-					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
-					"143bbd3131d76232f973f84a9ea7be751243044315056dbecb968942da97e474401caa1c8f2c4ce5e48052cf44066717f2166c21a7277de9911d75c57eca598d",
+					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 				),
 				types.NewChainConfig("", "cosmos"),
 				time.Now(),
@@ -88,10 +70,9 @@ func TestLink_Validate(t *testing.T) {
 		{
 			name: "Invalid signature returns error",
 			link: types.NewLink(
-				"cosmos1u33w3u4ler4654phrpt6xqvh92ch0v6mcjrj97",
-				"cosmos1qdasq0mzpajknaaj32kf9lk5nmcy8g65mddd4p",
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
-					"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
 					"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
 				),
 				types.NewChainConfig("test-chain", "cosmos"),
@@ -117,8 +98,8 @@ func TestProof_Validate(t *testing.T) {
 		{
 			name: "Valid proof",
 			proof: types.NewProof(
-				"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
-				"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
+				"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 			),
 			expErr: nil,
 		},
@@ -126,14 +107,14 @@ func TestProof_Validate(t *testing.T) {
 			name: "Invalid hex string of pub key",
 			proof: types.NewProof(
 				"=",
-				"1a18d5f012ce0e8258fd3455c01b48249bb019231e416c4323ab2bb170b4ad0951b370138d2ea69a376feb942d3c619c9152d63a6d2e0232aaff77162df66636",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
 			),
 			expErr: fmt.Errorf("failed to decode hex string of pubkey"),
 		},
 		{
 			name: "Invalid hex string of signature",
 			proof: types.NewProof(
-				"02bcd0738e3b7e0f6650c8e6eb10bd4266fd6818c92a0283b4cb0884f046051c3e",
+				"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
 				"=",
 			),
 			expErr: fmt.Errorf("failed to decode hex string of signature"),

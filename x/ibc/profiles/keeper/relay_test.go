@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 		srcAddr := suite.chainA.Account.GetAddress().String()
 		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 		destAddr := suite.chainB.Account.GetAddress().String()
-		packetProof := []byte(srcAddr + "-" + destAddr)
+		packetProof := []byte(srcAddr)
 		srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 		srcSigHex := hex.EncodeToString(srcSig)
 		dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -131,7 +131,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 			srcAddr := suite.chainA.Account.GetAddress().String()
 			srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 			destAddr := suite.chainB.Account.GetAddress().String()
-			packetProof := []byte(srcAddr + "-" + destAddr)
+			packetProof := []byte(srcAddr)
 			srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 			srcSigHex := hex.EncodeToString(srcSig)
 			dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -189,7 +189,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 				destAddr = suite.chainB.Account.GetAddress().String()
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex = hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -208,7 +208,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 				destAddr = suite.chainA.Account.GetAddress().String()
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex = hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -227,7 +227,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 				destAddr = suite.chainB.Account.GetAddress().String()
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex = hex.EncodeToString(srcSig)
 			},
@@ -246,7 +246,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 				destAddr = suite.chainB.Account.GetAddress().String()
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				srcSigHex = hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign([]byte{0})
@@ -347,7 +347,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 			srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 			destAddr := suite.chainA.Account.GetAddress().String()
 
-			packetProof := []byte(srcAddr + "-" + destAddr)
+			packetProof := []byte(srcAddr)
 			srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 			srcSigHex := hex.EncodeToString(srcSig)
 			dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -382,7 +382,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
 		srcPubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
 		destAddr := suite.chainA.Account.GetAddress().String()
 
-		packetProof := []byte(srcAddr + "-" + destAddr)
+		packetProof := []byte(srcAddr)
 		srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 		srcSigHex := hex.EncodeToString(srcSig)
 		dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
@@ -417,8 +417,7 @@ func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 
 		srcAddr := suite.chainA.Account.GetAddress().String()
 		pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-		destAddr := srcAddr
-		packetProof := []byte(srcAddr + "-" + destAddr)
+		packetProof := []byte(srcAddr)
 		sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 		sigHex := hex.EncodeToString(sig)
 
@@ -522,8 +521,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 
 			srcAddr := suite.chainA.Account.GetAddress().String()
 			pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-			destAddr := srcAddr
-			packetProof := []byte(srcAddr + "-" + destAddr)
+			packetProof := []byte(srcAddr)
 			sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 			sigHex := hex.EncodeToString(sig)
 
@@ -556,7 +554,6 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 		channelA, channelB ibctesting.TestChannel
 		srcAddr            string
 		srcPubKeyHex       string
-		destAddr           string
 		sigHex             string
 	)
 
@@ -574,9 +571,8 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr = suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				destAddr = srcAddr
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex = hex.EncodeToString(srcSig)
 
@@ -591,14 +587,13 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr = suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				destAddr = srcAddr
 
-				packetProof := []byte(srcAddr + "-" + destAddr)
+				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex = hex.EncodeToString(srcSig)
 			},
 			stubPacket: func(p *types.IBCAccountLinkPacketData) {
-				p.Signature = "---"
+				p.Signature = "="
 			},
 			expPass: false,
 		},
@@ -610,7 +605,6 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				srcAddr = suite.chainA.Account.GetAddress().String()
 				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-				destAddr = srcAddr
 
 				srcSig, _ := suite.chainA.PrivKey.Sign([]byte{0})
 				sigHex = hex.EncodeToString(srcSig)
@@ -709,8 +703,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 
 			srcAddr := suite.chainA.Account.GetAddress().String()
 			pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-			destAddr := srcAddr
-			packetProof := []byte(srcAddr + "-" + destAddr)
+			packetProof := []byte(srcAddr)
 			sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 			sigHex := hex.EncodeToString(sig)
 
@@ -739,8 +732,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountLinkPacket() {
 		channelA, channelB := suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 		srcAddr := suite.chainA.Account.GetAddress().String()
 		pubKeyHex := hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
-		destAddr := srcAddr
-		packetProof := []byte(srcAddr + "-" + destAddr)
+		packetProof := []byte(srcAddr)
 		sig, _ := suite.chainA.PrivKey.Sign(packetProof)
 		sigHex := hex.EncodeToString(sig)
 

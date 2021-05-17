@@ -64,7 +64,7 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 		return fmt.Errorf("failed to decode destination signature")
 	}
 
-	packetProof := []byte(p.SourceAddress + "-" + p.DestinationAddress)
+	packetProof := []byte(p.SourceAddress)
 
 	if !srcPubKey.VerifySignature(packetProof, srcSig) {
 		return fmt.Errorf("failed to verify source signature")

@@ -10,7 +10,7 @@ const DefaultIndex uint64 = 1
 // NewGenesisState creates a new genesis state
 func NewGenesisState(portID string) *GenesisState {
 	return &GenesisState{
-		PortId: portID,
+		PortID: portID,
 	}
 }
 
@@ -21,7 +21,7 @@ func DefaultGenesisState() *GenesisState {
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(gs *GenesisState) error {
-	if err := host.PortIdentifierValidator(gs.PortId); err != nil {
+	if err := host.PortIdentifierValidator(gs.PortID); err != nil {
 		return err
 	}
 	return nil

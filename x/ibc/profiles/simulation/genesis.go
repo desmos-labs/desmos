@@ -21,7 +21,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 	)
 
 	gs := types.GenesisState{
-		PortId: portID,
+		PortID: portID,
 	}
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&gs)

@@ -49,24 +49,19 @@ func (proof Proof) Validate() error {
 }
 
 // NewLink is a constructor function for Link
-func NewLink(srcaddr string, destAddr string, proof Proof, chainConfig ChainConfig, creationTime time.Time) Link {
+func NewLink(addr string, proof Proof, chainConfig ChainConfig, creationTime time.Time) Link {
 	return Link{
-		SourceAddress:      srcaddr,
-		DestinationAddress: destAddr,
-		Proof:              proof,
-		ChainConfig:        chainConfig,
-		CreationTime:       creationTime,
+		Address:      addr,
+		Proof:        proof,
+		ChainConfig:  chainConfig,
+		CreationTime: creationTime,
 	}
 }
 
 func (link Link) Validate() error {
 
-	if link.SourceAddress == "" {
+	if link.Address == "" {
 		return fmt.Errorf("source address cannot be empty")
-	}
-
-	if link.DestinationAddress == "" {
-		return fmt.Errorf("destination address cannot be empty")
 	}
 
 	chainConfig := link.ChainConfig
@@ -83,7 +78,7 @@ func (link Link) Validate() error {
 	sigBz, _ := hex.DecodeString(proof.Signature)
 	pubKey := &secp256k1.PubKey{Key: pubKeyBz}
 
-	proofContent := []byte(link.SourceAddress + "-" + link.DestinationAddress)
+	proofContent := []byte(link.Address)
 
 	if !pubKey.VerifySignature(proofContent, sigBz) {
 		return fmt.Errorf("failed to verify signature")

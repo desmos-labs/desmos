@@ -16,7 +16,7 @@ func NewMsgCreateIBCAccountConnection(
 ) *MsgCreateIBCAccountConnection {
 	return &MsgCreateIBCAccountConnection{
 		Port:             port,
-		ChannelId:        channelID,
+		ChannelID:        channelID,
 		Packet:           packet,
 		TimeoutTimestamp: timeoutTimestamp,
 	}
@@ -33,7 +33,7 @@ func (msg *MsgCreateIBCAccountConnection) ValidateBasic() error {
 	if err := host.PortIdentifierValidator(msg.Port); err != nil {
 		return sdkerrors.Wrap(err, "invalid source port ID")
 	}
-	if err := host.ChannelIdentifierValidator(msg.ChannelId); err != nil {
+	if err := host.ChannelIdentifierValidator(msg.ChannelID); err != nil {
 		return sdkerrors.Wrap(err, "invalid source channel ID")
 	}
 	if err := msg.Packet.Validate(); err != nil {
@@ -70,7 +70,7 @@ func NewMsgCreateIBCAccountLink(
 ) *MsgCreateIBCAccountLink {
 	return &MsgCreateIBCAccountLink{
 		Port:             port,
-		ChannelId:        channelID,
+		ChannelID:        channelID,
 		Packet:           packet,
 		TimeoutTimestamp: timeoutTimestamp,
 	}
@@ -87,7 +87,7 @@ func (msg *MsgCreateIBCAccountLink) ValidateBasic() error {
 	if err := host.PortIdentifierValidator(msg.Port); err != nil {
 		return sdkerrors.Wrap(err, "invalid source port ID")
 	}
-	if err := host.ChannelIdentifierValidator(msg.ChannelId); err != nil {
+	if err := host.ChannelIdentifierValidator(msg.ChannelID); err != nil {
 		return sdkerrors.Wrap(err, "invalid source channel ID")
 	}
 	if err := msg.Packet.Validate(); err != nil {

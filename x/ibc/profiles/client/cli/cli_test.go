@@ -38,7 +38,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var gs types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &gs))
 
-	gs.PortId = "ibc-profiles"
+	gs.PortID = "ibcprofiles"
 
 	gsBz, err := cfg.Codec.MarshalJSON(&gs)
 	s.Require().NoError(err)
