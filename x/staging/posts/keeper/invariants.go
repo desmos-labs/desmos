@@ -54,17 +54,17 @@ func formatOutputIDs(ids []string) (outputIDs string) {
 // ValidPostsInvariant checks that the all posts are valid
 func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPostIds []string
+		var invalidPostIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 			if k.ValidatePost(ctx, post) != nil {
-				invalidPostIds = append(invalidPostIds, post.PostID)
+				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid posts IDs",
-			fmt.Sprintf("The following posts are invalid:\n %s", formatOutputIDs(invalidPostIds)),
-		), invalidPostIds != nil
+			fmt.Sprintf("The following posts are invalid:\n %s", formatOutputIDs(invalidPostIDs)),
+		), invalidPostIDs != nil
 	}
 }
 
