@@ -2,7 +2,7 @@
 ## Changes
 - Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
 - Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
-- Standardize `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
+- Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
 
 # Version 0.16.2
 ## Changes
