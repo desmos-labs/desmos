@@ -8,14 +8,14 @@ import (
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portId string,
+	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portID string,
 ) *GenesisState {
 	return &GenesisState{
 		Params:              params,
 		DTagTransferRequest: request,
 		Relationships:       relationships,
 		Blocks:              blocks,
-		PortID:              portId,
+		PortID:              portID,
 	}
 }
 
