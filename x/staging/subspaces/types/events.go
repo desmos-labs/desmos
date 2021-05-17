@@ -9,7 +9,7 @@ const (
 	EventTypeTransferOwnership = "transfer_subspace_ownership"
 
 	// Subspaces attributes
-	AttributeKeySubspaceId           = "subspace_id"
+	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeySubspaceCreator      = "subspace_creator"
 	AttributeKeySubspaceNewAdmin     = "new_admin"
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"

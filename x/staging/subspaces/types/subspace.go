@@ -2,16 +2,17 @@ package types
 
 import (
 	"fmt"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 	"time"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewSubspace returns a Subspace
-func NewSubspace(creationTime time.Time, subspaceId, name, creator string) Subspace {
+func NewSubspace(creationTime time.Time, subspaceID, name, creator string) Subspace {
 	return Subspace{
-		ID:           subspaceId,
+		ID:           subspaceID,
 		Name:         name,
 		Owner:        creator,
 		CreationTime: creationTime,

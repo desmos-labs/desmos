@@ -19,10 +19,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateSubspace(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgAddAdmin:
-			res, err := msgServer.AddSubspaceAdmin(sdk.WrapSDKContext(ctx), msg)
+			res, err := msgServer.AddAdmin(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgRemoveAdmin:
-			res, err := msgServer.RemoveSubspaceAdmin(sdk.WrapSDKContext(ctx), msg)
+			res, err := msgServer.RemoveAdmin(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgEnableUserPosts:
 			res, err := msgServer.EnableUserPosts(sdk.WrapSDKContext(ctx), msg)

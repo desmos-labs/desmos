@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -25,20 +26,20 @@ func NewQuerier(keeper Keeper, legacyQuerierCodec *codec.LegacyAmino) sdk.Querie
 // querySubspace handles the request to get the subspace with the given id
 func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
-	subspaceId := path[0]
+	subspaceID := path[0]
 
-	if !commons.IsValidSubspace(subspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %s", subspaceId)
+	if !commons.IsValidSubspace(subspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %s", subspaceID)
 	}
 
-	subspace, exists := keeper.GetSubspace(ctx, subspaceId)
+	subspace, exists := keeper.GetSubspace(ctx, subspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id: %s not found", subspaceId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id: %s not found", subspaceID)
 	}
 
-	admins := keeper.GetAllSubspaceAdmins(ctx, subspaceId)
+	admins := keeper.GetAllSubspaceAdmins(ctx, subspaceID)
 
-	blockedUsers := keeper.GetSubspaceBlockedUsers(ctx, subspaceId)
+	blockedUsers := keeper.GetSubspaceBlockedUsers(ctx, subspaceID)
 
 	response := types.QuerySubspaceResponse{
 		Subspace:           subspace,

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -49,10 +50,10 @@ The given id must be a sha256 string identifying the subspace
 				return err
 			}
 
-			subspaceId := args[0]
+			subspaceID := args[0]
 			subspaceName := args[1]
 
-			msg := types.NewMsgCreateSubspace(subspaceId, subspaceName, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateSubspace(subspaceID, subspaceName, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -81,9 +82,9 @@ func GetCmdAddSubspaceAdmin() *cobra.Command {
 				return err
 			}
 
-			subspaceId := args[1]
+			subspaceID := args[1]
 
-			msg := types.NewMsgAddAdmin(subspaceId, newAdminAddress.String(), clientCtx.FromAddress.String())
+			msg := types.NewMsgAddAdmin(subspaceID, newAdminAddress.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -113,9 +114,9 @@ func GetCmdRemoveSubspaceAdmin() *cobra.Command {
 				return err
 			}
 
-			subspaceId := args[1]
+			subspaceID := args[1]
 
-			msg := types.NewMsgRemoveAdmin(subspaceId, existentAdminAddress.String(), clientCtx.FromAddress.String())
+			msg := types.NewMsgRemoveAdmin(subspaceID, existentAdminAddress.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -141,9 +142,9 @@ func GetCmdEnablePostsForUser() *cobra.Command {
 			}
 
 			user := args[0]
-			subspaceId := args[1]
+			subspaceID := args[1]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgEnableUserPosts(user, subspaceId, admin)
+			msg := types.NewMsgEnableUserPosts(user, subspaceID, admin)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -170,9 +171,9 @@ func GetCmdDisablePostsForUser() *cobra.Command {
 			}
 
 			user := args[0]
-			subspaceId := args[1]
+			subspaceID := args[1]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgDisableUserPosts(user, subspaceId, admin)
+			msg := types.NewMsgDisableUserPosts(user, subspaceID, admin)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -199,9 +200,9 @@ func GetCmdTransferOwnership() *cobra.Command {
 			}
 
 			newOwner := args[0]
-			subspaceId := args[1]
+			subspaceID := args[1]
 			owner := clientCtx.FromAddress.String()
-			msg := types.NewMsgTransferOwnership(newOwner, subspaceId, owner)
+			msg := types.NewMsgTransferOwnership(newOwner, subspaceID, owner)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)

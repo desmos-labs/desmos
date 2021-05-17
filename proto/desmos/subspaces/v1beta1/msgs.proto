@@ -11,14 +11,14 @@ service Msg {
   // CreateSubspace defines the method to create a subspace
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 
-  // TransferSubspaceOwnership defines the method to transfer a subspace ownership
-  rpc TransferSubspaceOwnership(MsgTransferOwnership) returns (MsgTransferOwnershipResponse);
+  // TransferOwnership defines the method to transfer a subspace ownership
+  rpc TransferOwnership(MsgTransferOwnership) returns (MsgTransferOwnershipResponse);
 
-  // AddSubspaceAdmin defines the method to add a new admin to the subspace
-  rpc AddSubspaceAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
+  // AddAdmin defines the method to add a new admin to the subspace
+  rpc AddAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
 
-  // RemoveSubspaceAdmin defines the method to remove an admin from a specific subspace
-  rpc RemoveSubspaceAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
+  // RemoveAdmin defines the method to remove an admin from a specific subspace
+  rpc RemoveAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
 
   // EnableUserPosts defines the method to let user posts inside a specific subspace
   rpc EnableUserPosts(MsgEnableUserPosts) returns (MsgEnableUserPostsResponse);
@@ -76,7 +76,7 @@ message MsgTransferOwnershipResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgAddSubspaceAdmin represents the message used to add an admin to a specific subspace
+// MsgAddAdmin represents the message used to add an admin to a specific subspace
 message MsgAddAdmin {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -96,7 +96,7 @@ message MsgAddAdminResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgRemoveSubspaceAdmin represents the message used to remove an admin from a specific subspace
+// MsgRemoveAdmin represents the message used to remove an admin from a specific subspace
 message MsgRemoveAdmin {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;

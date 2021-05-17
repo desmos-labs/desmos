@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"bytes"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -70,9 +71,9 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 	return subspaces
 }
 
-// TransferOwnership transfer the ownership of the subspace with the given subspaceID to the newOwner.
+// TransferSubspaceOwnership transfer the ownership of the subspace with the given subspaceID to the newOwner.
 // It returns error if the subspace doesnt exist.
-func (k Keeper) TransferOwnership(ctx sdk.Context, subspaceID, newOwner string) {
+func (k Keeper) TransferSubspaceOwnership(ctx sdk.Context, subspaceID, newOwner string) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspaceID)
 
@@ -87,12 +88,12 @@ func (k Keeper) TransferOwnership(ctx sdk.Context, subspaceID, newOwner string) 
 // addUserToList insert the given user inside a users list of a specific susbspace identified by the given subspaceId;
 // this list is stored under the given storeKey.
 // It returns error when the user is already present in that list.
-func (k Keeper) addUserToList(ctx sdk.Context, storeKey []byte, subspaceId, user, error string) error {
+func (k Keeper) addUserToList(ctx sdk.Context, storeKey []byte, subspaceID, user, error string) error {
 	store := ctx.KVStore(k.storeKey)
 
 	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(storeKey))
 	if wrapped.IsPresent(user) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceId)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceID)
 	}
 
 	wrapped.Users = append(wrapped.Users, user)
@@ -103,7 +104,7 @@ func (k Keeper) addUserToList(ctx sdk.Context, storeKey []byte, subspaceId, user
 // removeUserFromList remove the given user from a users list of a specific subspace identified by the given subspaceId;
 // this list is stored under the given storeKey.
 // It returns error when the user is not present in that list.
-func (k Keeper) removeUserFromList(ctx sdk.Context, storeKey []byte, subspaceId, user, error string) error {
+func (k Keeper) removeUserFromList(ctx sdk.Context, storeKey []byte, subspaceID, user, error string) error {
 	store := ctx.KVStore(k.storeKey)
 
 	wrapped := types.MustUnmarshalUsers(k.cdc, store.Get(storeKey))
@@ -111,7 +112,7 @@ func (k Keeper) removeUserFromList(ctx sdk.Context, storeKey []byte, subspaceId,
 
 	// The user isn't present inside the list, return error
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceId)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, error, user, subspaceID)
 	}
 
 	// Delete the key if no users left inside the list.
@@ -127,8 +128,8 @@ func (k Keeper) removeUserFromList(ctx sdk.Context, storeKey []byte, subspaceId,
 
 // AddAdminToSubspace insert the newAdmin inside the admins list of the given subspace if its not present.
 // Returns an error if the admin is already present.
-func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, user string) error {
-	if err := k.addUserToList(ctx, types.AdminsStoreKey(subspaceId), subspaceId, user,
+func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user string) error {
+	if err := k.addUserToList(ctx, types.AdminsStoreKey(subspaceID), subspaceID, user,
 		"the user: %s is already an admin of the subspace: %s"); err != nil {
 		return err
 	}
@@ -136,27 +137,27 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceId, user string) err
 }
 
 // IsAdmin returns true if the given address is an admin inside the given subspace id, false otherwise.
-func (k Keeper) IsAdmin(ctx sdk.Context, address, subspaceId string) bool {
+func (k Keeper) IsAdmin(ctx sdk.Context, address, subspaceID string) bool {
 	store := ctx.KVStore(k.storeKey)
-	key := types.AdminsStoreKey(subspaceId)
+	key := types.AdminsStoreKey(subspaceID)
 
 	admins := types.MustUnmarshalUsers(k.cdc, store.Get(key))
 	return admins.IsPresent(address)
 }
 
 // GetAllSubspaceAdmins returns a list of all the subspace admins
-func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceId string) types.Users {
+func (k Keeper) GetAllSubspaceAdmins(ctx sdk.Context, subspaceID string) types.Users {
 	store := ctx.KVStore(k.storeKey)
-	key := types.AdminsStoreKey(subspaceId)
+	key := types.AdminsStoreKey(subspaceID)
 
 	return types.MustUnmarshalUsers(k.cdc, store.Get(key))
 }
 
 // RemoveAdminFromSubspace remove the given admin from the given subspace.
 // It returns error when the admin is not present inside the subspace.
-func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin string) error {
+func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, admin string) error {
 	// If the admin doesn't exist, return error
-	if err := k.removeUserFromList(ctx, types.AdminsStoreKey(subspaceId), subspaceId, admin,
+	if err := k.removeUserFromList(ctx, types.AdminsStoreKey(subspaceID), subspaceID, admin,
 		"this address: %s is not an admin of the subspace %s"); err != nil {
 		return err
 	}
@@ -165,8 +166,8 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceId, admin strin
 
 // UnblockPostsForUser give a user the possibility to post inside the given subspace.
 // It returns error when the user can already post inside the subspace.
-func (k Keeper) UnblockPostsForUser(ctx sdk.Context, user, subspaceId string) error {
-	if err := k.removeUserFromList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, user,
+func (k Keeper) UnblockPostsForUser(ctx sdk.Context, user, subspaceID string) error {
+	if err := k.removeUserFromList(ctx, types.BlockedToPostUsersKey(subspaceID), subspaceID, user,
 		"the user: %s is already allowed to post inside the subspace: %s"); err != nil {
 		return err
 	}
@@ -175,8 +176,8 @@ func (k Keeper) UnblockPostsForUser(ctx sdk.Context, user, subspaceId string) er
 
 // BlockPostsForUser block the given user to post anything inside the given subspace.
 // It returns error if the user already can't post inside the subspace.
-func (k Keeper) BlockPostsForUser(ctx sdk.Context, userToBlock, subspaceId string) error {
-	if err := k.addUserToList(ctx, types.BlockedToPostUsersKey(subspaceId), subspaceId, userToBlock,
+func (k Keeper) BlockPostsForUser(ctx sdk.Context, userToBlock, subspaceID string) error {
+	if err := k.addUserToList(ctx, types.BlockedToPostUsersKey(subspaceID), subspaceID, userToBlock,
 		"the user: %s already can't post inside the subspace: %s"); err != nil {
 		return err
 	}
@@ -184,9 +185,9 @@ func (k Keeper) BlockPostsForUser(ctx sdk.Context, userToBlock, subspaceId strin
 }
 
 // GetSubspaceBlockedUsers returns a list of all the blocked users unable to post inside the given subspace
-func (k Keeper) GetSubspaceBlockedUsers(ctx sdk.Context, subspaceId string) types.Users {
+func (k Keeper) GetSubspaceBlockedUsers(ctx sdk.Context, subspaceID string) types.Users {
 	store := ctx.KVStore(k.storeKey)
-	key := types.BlockedToPostUsersKey(subspaceId)
+	key := types.BlockedToPostUsersKey(subspaceID)
 
 	return types.MustUnmarshalUsers(k.cdc, store.Get(key))
 }
@@ -201,8 +202,8 @@ func (k Keeper) GetSubspaceAdminsEntry(ctx sdk.Context) []types.SubspaceAdminsEn
 	for ; iterator.Valid(); iterator.Next() {
 		admins := types.MustUnmarshalUsers(k.cdc, iterator.Value())
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.AdminsStorePrefix)
-		subspaceId := string(idBytes)
-		entries = append(entries, types.NewAdminsEntries(subspaceId, admins))
+		subspaceID := string(idBytes)
+		entries = append(entries, types.NewAdminsEntries(subspaceID, admins))
 	}
 
 	return entries
@@ -218,8 +219,8 @@ func (k Keeper) GetBlockedToPostUsers(ctx sdk.Context) []types.BlockedUsersEntry
 	for ; iterator.Valid(); iterator.Next() {
 		users := types.MustUnmarshalUsers(k.cdc, iterator.Value())
 		idBytes := bytes.TrimPrefix(iterator.Key(), types.BlockedUsersPostsPrefix)
-		subspaceId := string(idBytes)
-		entries = append(entries, types.NewBlockedUsersEntry(subspaceId, users))
+		subspaceID := string(idBytes)
+		entries = append(entries, types.NewBlockedUsersEntry(subspaceID, users))
 	}
 
 	return entries

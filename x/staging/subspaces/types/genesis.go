@@ -11,16 +11,16 @@ func NewGenesisState(subspaces []Subspace, adminsEntries []SubspaceAdminsEntry, 
 	}
 }
 
-func NewAdminsEntries(subspaceId string, admins Users) SubspaceAdminsEntry {
+func NewAdminsEntries(subspaceID string, admins Users) SubspaceAdminsEntry {
 	return SubspaceAdminsEntry{
-		SubspaceId: subspaceId,
+		SubspaceId: subspaceID,
 		Admins:     admins,
 	}
 }
 
-func NewBlockedUsersEntry(subspaceId string, users Users) BlockedUsersEntry {
+func NewBlockedUsersEntry(subspaceID string, users Users) BlockedUsersEntry {
 	return BlockedUsersEntry{
-		SubspaceId: subspaceId,
+		SubspaceId: subspaceID,
 		Users:      users,
 	}
 }

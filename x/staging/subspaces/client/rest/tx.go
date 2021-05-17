@@ -2,12 +2,13 @@ package rest
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 func registerTxRoutes(clientCtx client.Context, r *mux.Router) {

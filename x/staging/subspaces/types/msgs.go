@@ -2,10 +2,11 @@ package types
 
 import (
 	"encoding/json"
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/x/commons"
-	"strings"
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
@@ -60,11 +61,11 @@ func (msg MsgCreateSubspace) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgAddAdmin is a constructor function for MsgAddAdmin
-func NewMsgAddAdmin(id, newAdmin, Owner string) *MsgAddAdmin {
+func NewMsgAddAdmin(id, newAdmin, owner string) *MsgAddAdmin {
 	return &MsgAddAdmin{
 		SubspaceID: id,
 		NewAdmin:   newAdmin,
-		Owner:      Owner,
+		Owner:      owner,
 	}
 }
 
@@ -112,11 +113,11 @@ func (msg MsgAddAdmin) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgRemoveAdmin is a constructor function for MsgRemoveAdmin
-func NewMsgRemoveAdmin(id, admin, Owner string) *MsgRemoveAdmin {
+func NewMsgRemoveAdmin(id, admin, owner string) *MsgRemoveAdmin {
 	return &MsgRemoveAdmin{
 		SubspaceID: id,
 		Admin:      admin,
-		Owner:      Owner,
+		Owner:      owner,
 	}
 }
 

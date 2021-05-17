@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"

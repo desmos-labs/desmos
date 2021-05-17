@@ -29,11 +29,11 @@ func SubspaceStoreKey(id string) []byte {
 }
 
 // AdminsStoreKey turn an id in to a key used to store admins into the admins store
-func AdminsStoreKey(subspaceId string) []byte {
-	return append(AdminsStorePrefix, []byte(subspaceId)...)
+func AdminsStoreKey(subspaceID string) []byte {
+	return append(AdminsStorePrefix, []byte(subspaceID)...)
 }
 
 // BlockedToPostUsersKey turn an id to a key used to store users that are not allowed to post inside a subspace
-func BlockedToPostUsersKey(subspaceId string) []byte {
-	return append(BlockedUsersPostsPrefix, []byte(subspaceId)...)
+func BlockedToPostUsersKey(subspaceID string) []byte {
+	return append(BlockedUsersPostsPrefix, []byte(subspaceID)...)
 }

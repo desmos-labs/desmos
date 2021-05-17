@@ -18,8 +18,7 @@ func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace 
 		var subspace types.Subspace
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &subspace)
 
-		var stop = false
-		stop = fn(i, subspace)
+		stop := fn(i, subspace)
 
 		if stop {
 			break
@@ -31,17 +30,17 @@ func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace 
 
 // CheckSubspaceExistenceAndAdminValidity checks if the subspace with the given id exists and
 // if the address belongs to one of its admins
-func (k Keeper) CheckSubspaceExistenceAndAdminValidity(ctx sdk.Context, address, subspaceId string) error {
-	if !k.DoesSubspaceExists(ctx, subspaceId) {
+func (k Keeper) CheckSubspaceExistenceAndAdminValidity(ctx sdk.Context, address, subspaceID string) error {
+	if !k.DoesSubspaceExists(ctx, subspaceID) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the subspace with id %s doesn't exist", subspaceId,
+			"the subspace with id %s doesn't exist", subspaceID,
 		)
 	}
 
-	if !k.IsAdmin(ctx, address, subspaceId) {
+	if !k.IsAdmin(ctx, address, subspaceID) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user: %s is not an admin and can't perform this operation on the subspace: %s",
-			address, subspaceId)
+			address, subspaceID)
 	}
 
 	return nil
@@ -49,18 +48,18 @@ func (k Keeper) CheckSubspaceExistenceAndAdminValidity(ctx sdk.Context, address,
 
 // CheckSubspaceExistenceAndOwnerValidity check if the subspace with the given id exists and
 // if the address belongs to its creator
-func (k Keeper) CheckSubspaceExistenceAndOwnerValidity(ctx sdk.Context, address, subspaceId string) error {
-	subspace, exist := k.GetSubspace(ctx, subspaceId)
+func (k Keeper) CheckSubspaceExistenceAndOwnerValidity(ctx sdk.Context, address, subspaceID string) error {
+	subspace, exist := k.GetSubspace(ctx, subspaceID)
 	if !exist {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the subspace with id %s doesn't exist", subspaceId,
+			"the subspace with id %s doesn't exist", subspaceID,
 		)
 	}
 
 	if subspace.Owner != address {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user: %s is not the subspace owner and can't perform this operation on the subspace: %s",
-			address, subspaceId,
+			address, subspaceID,
 		)
 	}
 
