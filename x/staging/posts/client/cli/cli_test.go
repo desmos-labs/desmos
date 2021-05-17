@@ -56,7 +56,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	postsData.Posts = []types.Post{
 		{
-			PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			Message:      "Post message",
 			Created:      creationDate,
 			LastEdited:   creationDate.Add(1),
@@ -155,7 +155,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 			expectErr: false,
 			expectedOutput: types.QueryPostResponse{
 				Post: types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      creationDate,
 					LastEdited:   creationDate.Add(1),
@@ -246,7 +246,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				Posts: []types.QueryPostResponse{
 					{
 						Post: types.Post{
-							PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+							PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 							Message:      "Post message",
 							Created:      creationDate,
 							LastEdited:   creationDate.Add(1),

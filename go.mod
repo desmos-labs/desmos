@@ -7,7 +7,7 @@ require (
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/golang/protobuf v1.5.1
+	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/rakyll/statik v0.1.7
@@ -18,8 +18,8 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.9
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/genproto v0.0.0-20210114201628-6edceaf6022f
-	google.golang.org/grpc v1.35.0
+	google.golang.org/genproto v0.0.0-20210510173355-fb37daa5cd7a
+	google.golang.org/grpc v1.36.1
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

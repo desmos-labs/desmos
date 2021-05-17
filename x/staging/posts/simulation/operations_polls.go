@@ -107,7 +107,7 @@ func randomPollAnswerFields(
 	}
 
 	// Skip the operation without err as the poll does not allow to edit answers
-	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostId, acc.GetAddress().String())
+	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostID, acc.GetAddress().String())
 	if len(currentAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
 		return simtypes.Account{}, nil, "", true
 	}
@@ -124,5 +124,5 @@ func randomPollAnswerFields(
 		answers[i] = providedAnswers[i].ID
 	}
 
-	return simAccount, answers, post.PostId, false
+	return simAccount, answers, post.PostID, false
 }

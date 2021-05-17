@@ -53,7 +53,11 @@ message QueryPostsParams {
   string sort_by = 3;
   string sort_order = 4;
 
-  string parent_id = 5;
+  string parent_id = 5 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
   google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
   string subspace = 7;
   string creator = 8;
@@ -67,7 +71,12 @@ message QueryPostsRequest {
   string sort_by = 1;
   string sort_order = 2;
 
-  string parent_id = 3;
+  string parent_id = 3 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.jsontag) = "parent_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
+  ;
   google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
   string subspace = 5;
   string creator = 6;
@@ -90,7 +99,11 @@ message QueryPostRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1;
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
 }
 
 // QueryPostResponse is the response type for the Query/Post RPC method
@@ -114,13 +127,21 @@ message QueryPollAnswersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1;
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
 }
 
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
 // method
 message QueryPollAnswersResponse {
-  string post_id = 1;
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
   repeated desmos.posts.v1beta1.UserAnswer answers = 2
       [ (gogoproto.nullable) = false ];
 }

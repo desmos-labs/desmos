@@ -23,7 +23,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Genesis with invalid post errors",
 			genesis: types.NewGenesisState(
-				[]types.Post{{PostId: ""}},
+				[]types.Post{{PostID: ""}},
 				nil,
 				nil,
 				nil,

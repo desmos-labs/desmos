@@ -18,8 +18,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "Reaction from same user already present returns error",
 			storedPosts: []types.Post{
 				{
-					PostId:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentID:        suite.testData.post.ParentID,
 					Message:         suite.testData.post.Message,
 					Created:         suite.testData.post.Created,
 					LastEdited:      suite.testData.post.LastEdited,
@@ -60,8 +60,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "First liker is stored properly",
 			storedPosts: []types.Post{
 				{
-					PostId:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentID:        suite.testData.post.ParentID,
 					Message:         suite.testData.post.Message,
 					Created:         suite.testData.post.Created,
 					LastEdited:      suite.testData.post.LastEdited,
@@ -90,8 +90,8 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 			name: "Second liker is stored properly",
 			storedPosts: []types.Post{
 				{
-					PostId:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					ParentID:        suite.testData.post.ParentID,
 					Message:         suite.testData.post.Message,
 					Created:         suite.testData.post.Created,
 					LastEdited:      suite.testData.post.LastEdited,
@@ -146,7 +146,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostReaction() {
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}
@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeletePostReaction() {
 
 			for _, entry := range test.storedReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}
@@ -362,7 +362,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactionsEntries() {
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, entry := range test.entries {
 				wrapped := types.PostReactions{Reactions: entry.Reactions}
-				store.Set(types.PostReactionsStoreKey(entry.PostId), suite.cdc.MustMarshalBinaryBare(&wrapped))
+				store.Set(types.PostReactionsStoreKey(entry.PostID), suite.cdc.MustMarshalBinaryBare(&wrapped))
 			}
 
 			likesData := suite.k.GetPostReactionsEntries(suite.ctx)
