@@ -4,14 +4,14 @@ import "fmt"
 
 func NewPostReactionsEntry(postID string, reactions []PostReaction) PostReactionsEntry {
 	return PostReactionsEntry{
-		PostId:    postID,
+		PostID:    postID,
 		Reactions: reactions,
 	}
 }
 
 func NewUserAnswersEntry(postID string, answers []UserAnswer) UserAnswersEntry {
 	return UserAnswersEntry{
-		PostId:      postID,
+		PostID:      postID,
 		UserAnswers: answers,
 	}
 }
@@ -54,8 +54,8 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, pollAnswers := range data.UsersPollAnswers {
-		if !containsPostWithID(data.Posts, pollAnswers.PostId) {
-			return fmt.Errorf("invalid poll answers; post with id %s does not exist", pollAnswers.PostId)
+		if !containsPostWithID(data.Posts, pollAnswers.PostID) {
+			return fmt.Errorf("invalid poll answers; post with id %s does not exist", pollAnswers.PostID)
 		}
 
 		for _, pollAnswer := range pollAnswers.UserAnswers {
@@ -67,8 +67,8 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, postReaction := range data.PostsReactions {
-		if !containsPostWithID(data.Posts, postReaction.PostId) {
-			return fmt.Errorf("invalid reactions; post with id %s does not exist", postReaction.PostId)
+		if !containsPostWithID(data.Posts, postReaction.PostID) {
+			return fmt.Errorf("invalid reactions; post with id %s does not exist", postReaction.PostID)
 		}
 
 		for _, record := range postReaction.Reactions {
@@ -85,7 +85,7 @@ func ValidateGenesis(data *GenesisState) error {
 // containsPostWithID tells whether or not the given posts contain one having the provided id
 func containsPostWithID(posts []Post, id string) bool {
 	for _, p := range posts {
-		if p.PostId == id {
+		if p.PostID == id {
 			return true
 		}
 	}

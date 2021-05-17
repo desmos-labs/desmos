@@ -26,8 +26,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Trying to store post with same id returns error",
 			storedPosts: []types.Post{
 				{
-					PostId:          "849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          "849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
+					ParentID:        suite.testData.post.ParentID,
 					Message:         suite.testData.post.Message,
 					Created:         suite.testData.post.Created,
 					DisableComments: suite.testData.post.DisableComments,
@@ -39,7 +39,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
-				suite.testData.post.ParentId,
+				suite.testData.post.ParentID,
 				suite.testData.post.DisableComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			storedPosts: nil,
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
-				suite.testData.post.ParentId,
+				suite.testData.post.ParentID,
 				suite.testData.post.DisableComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expPosts: []types.Post{
 				types.NewPost(
 					"849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
-					suite.testData.post.ParentId,
+					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.DisableComments,
 					suite.testData.post.Subspace,
@@ -97,8 +97,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Storing a valid post with parent stored but not accepting comments returns error",
 			storedPosts: []types.Post{
 				{
-					PostId:          "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:        "1234",
+					PostID:          "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:        "1234",
 					Message:         "Parent post",
 					Created:         suite.testData.post.Created,
 					DisableComments: true,
@@ -124,7 +124,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			storedPosts: []types.Post{
 				types.NewPost(
 					"849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
-					suite.testData.post.ParentId,
+					suite.testData.post.ParentID,
 					suite.testData.post.Message,
 					suite.testData.post.DisableComments,
 					suite.testData.post.Subspace,
@@ -138,7 +138,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
-				suite.testData.post.ParentId,
+				suite.testData.post.ParentID,
 				suite.testData.post.DisableComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Post message cannot be longer than 500 characters",
 			msg: types.NewMsgCreatePost(
 				strings.Repeat("a", 550),
-				suite.testData.post.ParentId,
+				suite.testData.post.ParentID,
 				suite.testData.post.DisableComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -174,7 +174,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			msg: types.NewMsgCreatePost(
 				"blocked",
-				suite.testData.post.ParentId,
+				suite.testData.post.ParentID,
 				suite.testData.post.DisableComments,
 				suite.testData.post.Subspace,
 				suite.testData.post.OptionalData,
@@ -249,7 +249,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 				suite.testData.post,
 			},
 			msg: types.NewMsgEditPost(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"Edited message",
 				nil,
 				nil,
@@ -264,7 +264,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			},
 			timeDifference: -10,
 			msg: types.NewMsgEditPost(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"Edited message",
 				nil,
 				nil,
@@ -285,7 +285,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 				suite.testData.post,
 			},
 			msg: types.NewMsgEditPost(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"blocked",
 				types.NewAttachments(
 					types.NewAttachment(
@@ -303,8 +303,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			name: "Valid request is handled properly without attachments and poll data",
 			storedPosts: []types.Post{
 				{
-					PostId:          suite.testData.post.PostId,
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          suite.testData.post.PostID,
+					ParentID:        suite.testData.post.ParentID,
 					Message:         "Message",
 					Created:         suite.ctx.BlockTime(),
 					LastEdited:      suite.testData.post.Created.AddDate(0, 0, 1),
@@ -329,7 +329,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			},
 			timeDifference: time.Hour * 24,
 			msg: types.NewMsgEditPost(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"Edited message",
 				nil,
 				nil,
@@ -337,8 +337,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			),
 			expPosts: []types.Post{
 				{
-					PostId:          suite.testData.post.PostId,
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          suite.testData.post.PostID,
+					ParentID:        suite.testData.post.ParentID,
 					Message:         "Edited message",
 					Created:         suite.ctx.BlockTime(),
 					LastEdited:      suite.testData.post.Created.AddDate(0, 0, 1),
@@ -369,7 +369,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			},
 			timeDifference: time.Hour * 24,
 			msg: types.NewMsgEditPost(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"Edited message",
 				types.NewAttachments(
 					types.NewAttachment("https://edited.com", "text/plain", nil),
@@ -388,8 +388,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			),
 			expPosts: []types.Post{
 				{
-					PostId:          suite.testData.post.PostId,
-					ParentId:        suite.testData.post.ParentId,
+					PostID:          suite.testData.post.PostID,
+					ParentID:        suite.testData.post.ParentID,
 					Message:         "Edited message",
 					Created:         suite.ctx.BlockTime(),
 					LastEdited:      suite.testData.post.Created.AddDate(0, 0, 1),
@@ -470,7 +470,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 				suite.testData.post,
 			},
 			msg: types.NewMsgAddPostReaction(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				":super-smile:",
 				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 			),
@@ -485,7 +485,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 				suite.testData.post,
 			},
 			msg: types.NewMsgAddPostReaction(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				":smile:",
 				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 			),
@@ -501,7 +501,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			},
 			expPostReactionEntries: []types.PostReactionsEntry{
 				types.NewPostReactionsEntry(
-					suite.testData.post.PostId,
+					suite.testData.post.PostID,
 					[]types.PostReaction{
 						types.NewPostReaction(
 							":smile:",
@@ -518,7 +518,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 				suite.testData.post,
 			},
 			msg: types.NewMsgAddPostReaction(
-				suite.testData.post.PostId,
+				suite.testData.post.PostID,
 				"🙂",
 				"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 			),
@@ -534,7 +534,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			},
 			expPostReactionEntries: []types.PostReactionsEntry{
 				types.NewPostReactionsEntry(
-					suite.testData.post.PostId,
+					suite.testData.post.PostID,
 					[]types.PostReaction{
 						types.NewPostReaction(
 							":slightly_smiling_face:",
@@ -597,7 +597,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			name: "Reaction not found",
 			storedPosts: []types.Post{
 				{
-					PostId:       suite.testData.postID,
+					PostID:       suite.testData.postID,
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -616,7 +616,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			name: "Removing a registeredReactions using the code works properly (registered registeredReactions)",
 			storedPosts: []types.Post{
 				{
-					PostId:       suite.testData.postID,
+					PostID:       suite.testData.postID,
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -661,7 +661,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			name: "Removing a registeredReactions using the code works properly (emoji shortcode)",
 			storedPosts: []types.Post{
 				{
-					PostId:       suite.testData.postID,
+					PostID:       suite.testData.postID,
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -698,7 +698,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			name: "Removing a registeredReactions using the emoji works properly",
 			storedPosts: []types.Post{
 				{
-					PostId:       suite.testData.postID,
+					PostID:       suite.testData.postID,
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -748,7 +748,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 
 			for _, entry := range test.existingReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}
@@ -786,7 +786,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "No poll associated with post",
 			storedPosts: []types.Post{
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					PostID:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     suite.testData.post.Subspace,
@@ -805,7 +805,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Answer after poll ending",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     suite.testData.post.Subspace,
@@ -831,7 +831,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Poll doesn't allow multiple answers",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     suite.testData.post.Subspace,
@@ -857,7 +857,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Too many answers provided",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     suite.testData.post.Subspace,
@@ -883,7 +883,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Provided answers are not the ones provided by the poll",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "desmos",
@@ -909,7 +909,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Poll doesn't allow answers' edits",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					Subspace:     "desmos",
@@ -942,7 +942,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "Answered correctly to post's poll",
 			storedPosts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					PostID:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:      "Post message",
 					Created:      suite.testData.post.Created,
 					LastEdited:   suite.testData.post.LastEdited,
@@ -985,7 +985,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 
 			for _, entry := range test.storedAnswers {
 				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
 				}
 			}
 
