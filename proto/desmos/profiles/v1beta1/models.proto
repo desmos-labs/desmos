@@ -116,7 +116,8 @@ message Proof {
 
 // ChainConfig contains the data of the chain on the other end of the link.
 message ChainConfig {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id\"" ];
+  string id = 1
+      [ (gogoproto.moretags) = "yaml:\"id\"", (gogoproto.customname) = "ID" ];
   string bech32_addr_prefix = 2
       [ (gogoproto.moretags) = "yaml:\"bech32_addr_prefix\"" ];
 }

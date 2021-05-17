@@ -1,22 +1,27 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+)
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params,
+	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portId string,
 ) *GenesisState {
 	return &GenesisState{
 		Params:              params,
 		DTagTransferRequest: request,
 		Relationships:       relationships,
 		Blocks:              blocks,
+		PortID:              portId,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, DefaultParams(), PortID)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -49,6 +54,10 @@ func ValidateGenesis(data *GenesisState) error {
 		if err != nil {
 			return err
 		}
+	}
+
+	if err := host.PortIdentifierValidator(data.PortID); err != nil {
+		return err
 	}
 
 	return nil

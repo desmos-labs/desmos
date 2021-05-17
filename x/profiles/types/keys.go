@@ -27,6 +27,10 @@ const (
 	QueryParams               = "params"
 
 	DoNotModify = "[do-not-modify]"
+
+	// IBC keys
+	Version = "profiles-1"
+	PortID  = "profiles"
 )
 
 var (
@@ -34,6 +38,9 @@ var (
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 	RelationshipsStorePrefix   = []byte("relationships")
 	UsersBlocksStorePrefix     = []byte("users_blocks")
+
+	// PortKey defines the key to store the port ID in store
+	PortKey = []byte("port")
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store

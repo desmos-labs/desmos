@@ -54,6 +54,7 @@ var (
 	// The actual codec used for serialization should be provided to x/relationships and
 	// defined at the application level.
 	ModuleCdc = codec.NewAminoCodec(amino)
+	ProtoCdc  = codec.NewProtoCodec(types.NewInterfaceRegistry())
 )
 
 func init() {

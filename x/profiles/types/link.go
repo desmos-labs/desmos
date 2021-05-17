@@ -11,13 +11,13 @@ import (
 // NewChainConfig is a constructor function for ChainConfig
 func NewChainConfig(id string, prefix string) ChainConfig {
 	return ChainConfig{
-		Id:               id,
+		ID:               id,
 		Bech32AddrPrefix: prefix,
 	}
 }
 
 func (chainConfig ChainConfig) Validate() error {
-	if chainConfig.Id == "" {
+	if chainConfig.ID == "" {
 		return fmt.Errorf("chain config id cannot be empty")
 	}
 

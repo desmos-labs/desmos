@@ -33,7 +33,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships: nil,
 				Blocks:        nil,
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.PortID),
 		},
 		{
 			name: "non-empty state",
@@ -115,6 +115,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				types.PortID,
 			),
 		},
 	}
@@ -186,7 +187,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.PortID),
 			expState: struct {
 				Profiles             []*types.Profile
 				DTagTransferRequests []types.DTagTransferRequest
@@ -211,6 +212,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				[]types.UserBlock{},
 				types.DefaultParams(),
+				types.PortID,
 			),
 			expErr: true,
 		},
@@ -224,6 +226,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				},
 				types.DefaultParams(),
+				types.PortID,
 			),
 			expErr: true,
 		},
@@ -270,6 +273,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				types.PortID,
 			),
 			expState: struct {
 				Profiles             []*types.Profile

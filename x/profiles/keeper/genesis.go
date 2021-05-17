@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllRelationships(ctx),
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
+		types.PortID,
 	)
 }
 

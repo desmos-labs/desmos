@@ -60,9 +60,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	accountKey := sdk.NewKVStoreKey(authtypes.StoreKey)
 	ibchostKey := sdk.NewKVStoreKey(ibchost.StoreKey)
 	capabilityKey := sdk.NewKVStoreKey(capabilitytypes.StoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 	paramsKey := sdk.NewKVStoreKey(paramstypes.StoreKey)
 	paramsTKey := sdk.NewTransientStoreKey(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
