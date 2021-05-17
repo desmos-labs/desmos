@@ -22,7 +22,7 @@ var _ types.MsgServer = msgServer{}
 func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSubspace) (*types.MsgCreateSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Create and store the new subspace
+	// Create and store the new subspaces
 	subspace := types.NewSubspace(ctx.BlockTime(), msg.SubspaceID, msg.Name, msg.Owner)
 
 	// Return error if it has already been created

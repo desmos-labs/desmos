@@ -23,21 +23,21 @@ func NewQuerier(keeper Keeper, legacyQuerierCodec *codec.LegacyAmino) sdk.Querie
 	}
 }
 
-// querySubspace handles the request to get the subspace with the given id
+// querySubspace handles the request to get the subspaces with the given id
 func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
 	subspaceID := path[0]
 
 	if !commons.IsValidSubspace(subspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %s", subspaceID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspaces id: %s", subspaceID)
 	}
 
 	subspace, exists := keeper.GetSubspace(ctx, subspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id: %s not found", subspaceID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not found", subspaceID)
 	}
 
-	admins := keeper.GetAllSubspaceAdmins(ctx, subspaceID)
+	admins := keeper.GetSubspaceAdmins(ctx, subspaceID)
 
 	blockedUsers := keeper.GetSubspaceBlockedUsers(ctx, subspaceID)
 

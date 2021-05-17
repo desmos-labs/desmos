@@ -9,7 +9,7 @@ import (
 
 // RegisterInvariants registers all subspaces invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
-	ir.RegisterRoute(types.ModuleName, "valid-subspace",
+	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
 		ValidSubspacesInvariant(keeper))
 }
 
