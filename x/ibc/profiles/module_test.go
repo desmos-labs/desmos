@@ -300,6 +300,7 @@ func (suite *IBCProfilesTestSuite) TestOnRecvPacket() {
 
 				packetData := types.NewIBCAccountLinkPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					pubKeyHex,
 					sigHex,
@@ -330,6 +331,7 @@ func (suite *IBCProfilesTestSuite) TestOnRecvPacket() {
 				// send link from chainA to chainB
 				packetData := types.NewIBCAccountConnectionPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					srcPubKeyHex,
 					destAddr,
@@ -414,6 +416,7 @@ func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 
 				packetData := types.NewIBCAccountLinkPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					pubKeyHex,
 					sigHex,
@@ -444,6 +447,7 @@ func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 
 				packetData := types.NewIBCAccountLinkPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					pubKeyHex,
 					sigHex,
@@ -478,6 +482,7 @@ func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 				// send link from chainA to chainB
 				packetData := types.NewIBCAccountConnectionPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					srcPubKeyHex,
 					destAddr,
@@ -514,6 +519,7 @@ func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 				// send link from chainA to chainB
 				packetData := types.NewIBCAccountConnectionPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					srcPubKeyHex,
 					destAddr,
@@ -574,6 +580,7 @@ func (suite *IBCProfilesTestSuite) TestOnAcknowledgement() {
 				// send link from chainA to chainB
 				packetData := types.NewIBCAccountConnectionPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					srcPubKeyHex,
 					destAddr,
@@ -635,6 +642,7 @@ func (suite *IBCProfilesTestSuite) TestOnTimeoutPacket() {
 
 				packetData := types.NewIBCAccountLinkPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					pubKeyHex,
 					sigHex,
@@ -665,6 +673,7 @@ func (suite *IBCProfilesTestSuite) TestOnTimeoutPacket() {
 				// send link from chainA to chainB
 				packetData := types.NewIBCAccountConnectionPacketData(
 					"cosmos",
+					"test-net",
 					srcAddr,
 					srcPubKeyHex,
 					destAddr,

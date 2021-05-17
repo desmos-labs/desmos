@@ -33,6 +33,7 @@ func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
 		// send link from chainA to chainB
 		packetData := types.NewIBCAccountConnectionPacketData(
 			"cosmos",
+			"test-net",
 			srcAddr,
 			srcPubKeyHex,
 			destAddr,
@@ -140,6 +141,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountConnectionPacket() {
 			// send link from chainA to chainB
 			packet := types.NewIBCAccountConnectionPacketData(
 				"cosmos",
+				"test-net",
 				srcAddr,
 				srcPubKeyHex,
 				destAddr,
@@ -265,7 +267,8 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			test.malleate()
 
 			packetData := types.NewIBCAccountConnectionPacketData(
-				"cosmos", srcAddr, srcPubKeyHex, destAddr, srcSigHex, dstSigHex,
+				"cosmos",
+				"test-net", srcAddr, srcPubKeyHex, destAddr, srcSigHex, dstSigHex,
 			)
 			// create account connection from chainA to chainB
 			msg := types.NewMsgCreateIBCAccountConnection(
@@ -355,6 +358,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountConnectionPacket() 
 
 			data := types.NewIBCAccountConnectionPacketData(
 				"cosmos",
+				"test-net",
 				srcAddr,
 				srcPubKeyHex,
 				destAddr,
@@ -390,6 +394,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountConnectionPacket() {
 
 		data := types.NewIBCAccountConnectionPacketData(
 			"cosmos",
+			"test-net",
 			srcAddr,
 			srcPubKeyHex,
 			destAddr,
@@ -423,6 +428,7 @@ func (suite *KeeperTestSuite) TestIBCAccountLinkPacket() {
 
 		packetData := types.NewIBCAccountLinkPacketData(
 			"cosmos",
+			"test-net",
 			srcAddr,
 			pubKeyHex,
 			sigHex,
@@ -528,6 +534,7 @@ func (suite *KeeperTestSuite) TestTransmitIBCAccountLinkPacket() {
 			// send link from chainA to chainB
 			packet := types.NewIBCAccountLinkPacketData(
 				"cosmos",
+				"test-net",
 				srcAddr,
 				pubKeyHex,
 				sigHex,
@@ -622,7 +629,8 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			test.malleate()
 
 			packetData := types.NewIBCAccountLinkPacketData(
-				"cosmos", srcAddr, srcPubKeyHex, sigHex,
+				"cosmos",
+				"test-net", srcAddr, srcPubKeyHex, sigHex,
 			)
 
 			// send coin from chainA to chainB
@@ -709,6 +717,7 @@ func (suite *KeeperTestSuite) TestOnAcknowledgementIBCAccountLinkPacket() {
 
 			data := types.NewIBCAccountLinkPacketData(
 				"cosmos",
+				"test-net",
 				srcAddr,
 				pubKeyHex,
 				sigHex,
@@ -738,6 +747,7 @@ func (suite *KeeperTestSuite) TestOnTimeoutIBCAccountLinkPacket() {
 
 		data := types.NewIBCAccountLinkPacketData(
 			"cosmos",
+			"test-net",
 			srcAddr,
 			pubKeyHex,
 			sigHex,

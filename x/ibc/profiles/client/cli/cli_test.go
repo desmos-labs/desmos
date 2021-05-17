@@ -265,6 +265,7 @@ func generateMemoryKeybase(keyname string) (keyring.Keyring, keyring.Info) {
 func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 	var (
 		destChainPrefix string
+		chainID         string
 		destKey         keyring.Info
 		srcKey          keyring.Info
 		destKeybase     keyring.Keyring
@@ -281,6 +282,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Get packet successfully",
 			malleate: func() {
 				destChainPrefix = "cosmos"
+				chainID = "test-net"
 				srcKeybase, srcKey = generateMemoryKeybase("test")
 				destKeybase, destKey = generateMemoryKeybase("test")
 			},
@@ -290,6 +292,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Wrong source key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
+				chainID = "test-net"
 				srcKeybase, _ = generateMemoryKeybase("test")
 				_, srcKey = generateMemoryKeybase("wrong")
 				destKeybase, destKey = generateMemoryKeybase("test")
@@ -301,6 +304,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 			name: "Wrong dest key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
+				chainID = "test-net"
 				srcKeybase, srcKey = generateMemoryKeybase("test")
 				destKeybase, _ = generateMemoryKeybase("test")
 				_, destKey = generateMemoryKeybase("wrong")
@@ -315,7 +319,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 
 		s.Run(test.name, func() {
 			test.malleate()
-			_, err := cli.GetIBCAccountConnectionPacket(srcKeybase, srcKey, destKeybase, destKey, destChainPrefix)
+			_, err := cli.GetIBCAccountConnectionPacket(srcKeybase, srcKey, destKeybase, destKey, destChainPrefix, chainID)
 
 			if !test.expPass {
 				s.Require().Error(err)
@@ -332,6 +336,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountConnectionPacket() {
 func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 	var (
 		destChainPrefix string
+		chainID         string
 		srcKey          keyring.Info
 		srcKeybase      keyring.Keyring
 	)
@@ -346,6 +351,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 			name: "Get packet successfully",
 			malleate: func() {
 				destChainPrefix = "cosmos"
+				chainID = "test-net"
 				srcKeybase, srcKey = generateMemoryKeybase("test")
 			},
 			expPass: true,
@@ -354,6 +360,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 			name: "Wrong source key name",
 			malleate: func() {
 				destChainPrefix = "cosmos"
+				chainID = "test-net"
 				srcKeybase, _ = generateMemoryKeybase("test")
 				_, srcKey = generateMemoryKeybase("wrong")
 			},
@@ -367,7 +374,7 @@ func (s *IntegrationTestSuite) TestGetIBCAccountLinkPacket() {
 
 		s.Run(test.name, func() {
 			test.malleate()
-			_, err := cli.GetIBCAccountLinkPacket(srcKeybase, srcKey, destChainPrefix)
+			_, err := cli.GetIBCAccountLinkPacket(srcKeybase, srcKey, destChainPrefix, chainID)
 
 			if !test.expPass {
 				s.Require().Error(err)

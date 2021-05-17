@@ -46,6 +46,7 @@ func createIBCAccountLinkHandler(cliCtx client.Context) http.HandlerFunc {
 			req.ChannelID,
 			types.NewIBCAccountLinkPacketData(
 				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				cliCtx.ChainID,
 				addr.String(),
 				pubKey,
 				req.Signature,
@@ -88,6 +89,7 @@ func createIBCAccountConnectionHandler(cliCtx client.Context) http.HandlerFunc {
 			req.ChannelID,
 			types.NewIBCAccountConnectionPacketData(
 				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				cliCtx.ChainID,
 				addr.String(),
 				pubKey,
 				req.DestinationAddress,

@@ -85,6 +85,7 @@ func GetCmdCreateIBCAccountConnection() *cobra.Command {
 				destKeybase,
 				destKey,
 				destChainPrefix,
+				clientCtx.ChainID,
 			)
 			if err != nil {
 				return err
@@ -139,6 +140,7 @@ func GetIBCAccountConnectionPacket(
 	destKeybase keyring.Keyring,
 	destKey keyring.Info,
 	destChainPrefix string,
+	chainID string,
 ) (types.IBCAccountConnectionPacketData, error) {
 	// Get bech32 encoded address on destination chain
 	destAddr, err := bech32.ConvertAndEncode(destChainPrefix, destKey.GetAddress().Bytes())
@@ -147,7 +149,7 @@ func GetIBCAccountConnectionPacket(
 	}
 
 	srcAddr := srcKey.GetAddress().String()
-	packetProof := []byte(srcAddr + "-" + destAddr)
+	packetProof := []byte(srcAddr)
 
 	// Create signature by src keys
 	srcSig, srcPubKey, err := srcKeybase.Sign(srcKey.GetName(), packetProof)
@@ -163,6 +165,7 @@ func GetIBCAccountConnectionPacket(
 
 	packet := types.NewIBCAccountConnectionPacketData(
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+		chainID,
 		srcAddr,
 		hex.EncodeToString(srcPubKey.Bytes()),
 		destAddr,
@@ -198,6 +201,7 @@ func GetCmdCreateIBCAccountLink() *cobra.Command {
 				srcKeybase,
 				srcKey,
 				destChainPrefix,
+				clientCtx.ChainID,
 			)
 			if err != nil {
 				return err
@@ -241,6 +245,7 @@ func GetIBCAccountLinkPacket(
 	srcKeybase keyring.Keyring,
 	srcKey keyring.Info,
 	destChainPrefix string,
+	chainID string,
 ) (types.IBCAccountLinkPacketData, error) {
 	destAddr, err := bech32.ConvertAndEncode(destChainPrefix, srcKey.GetAddress().Bytes())
 	if err != nil {
@@ -257,6 +262,7 @@ func GetIBCAccountLinkPacket(
 
 	packet := types.NewIBCAccountLinkPacketData(
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+		chainID,
 		srcAddr,
 		hex.EncodeToString(pubKey.Bytes()),
 		hex.EncodeToString(sig),

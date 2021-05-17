@@ -10,6 +10,7 @@ import (
 
 func NewIBCAccountConnectionPacketData(
 	sourceChainPrefix string,
+	sourceChainID string,
 	sourceAddress string,
 	sourcePubKey string,
 	destinationAddress string,
@@ -18,6 +19,7 @@ func NewIBCAccountConnectionPacketData(
 ) IBCAccountConnectionPacketData {
 	return IBCAccountConnectionPacketData{
 		SourceChainPrefix:    sourceChainPrefix,    // Bech32 prefix of the source chain
+		SourceChainID:        sourceChainID,        // Chain ID of source chain
 		SourceAddress:        sourceAddress,        // Bech32-encoded address
 		SourcePubKey:         sourcePubKey,         // Hex-encoded public key related to the address
 		DestinationAddress:   destinationAddress,   // Bech32-encoded  destination address
@@ -31,6 +33,10 @@ func (p IBCAccountConnectionPacketData) Validate() error {
 
 	if p.SourceChainPrefix == "" {
 		return fmt.Errorf("chain prefix cannot be empty")
+	}
+
+	if p.SourceChainID == "" {
+		return fmt.Errorf("chain id cannot be empty")
 	}
 
 	srcAddrBz, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
@@ -84,12 +90,14 @@ func (p IBCAccountConnectionPacketData) GetBytes() ([]byte, error) {
 
 func NewIBCAccountLinkPacketData(
 	sourceChainPrefix string,
+	sourceChainID string,
 	sourceAddress string,
 	sourcePubKey string,
 	signature string,
 ) IBCAccountLinkPacketData {
 	return IBCAccountLinkPacketData{
 		SourceChainPrefix: sourceChainPrefix, // Bech32 prefix of the source chain
+		SourceChainID:     sourceChainID,     // Chain ID of source chain
 		SourceAddress:     sourceAddress,     // Bech32-encoded address
 		SourcePubKey:      sourcePubKey,      // Hex-encoded public key related to the address
 		Signature:         signature,         // Hex-encoded signature by source key
@@ -101,6 +109,10 @@ func (p IBCAccountLinkPacketData) Validate() error {
 
 	if p.SourceChainPrefix == "" {
 		return fmt.Errorf("chain prefix cannot be empty")
+	}
+
+	if p.SourceChainID == "" {
+		return fmt.Errorf("chain id cannot be empty")
 	}
 
 	srcAddrBz, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)

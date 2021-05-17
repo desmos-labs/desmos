@@ -1,6 +1,8 @@
 syntax = "proto3";
 package desmos.ibc.profiles.v1beta1;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
 
 // Declare types of packet data
@@ -18,12 +20,22 @@ message NoData {}
 
 // IBCAccountConnectionPacketData defines a struct for the packet payload
 message IBCAccountConnectionPacketData {
-  string source_chain_prefix = 1;
-  string source_address = 2;
-  string source_pub_key = 3;
-  string destination_address = 4;
-  string source_signature = 5;
-  string destination_signature = 6;
+  string source_chain_prefix = 1
+      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
+  string source_chain_id = 2 [
+    (gogoproto.moretags) = "yaml:\"source_chain_id\"",
+    (gogoproto.customname) = "SourceChainID"
+  ];
+  string source_address = 3
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string source_pub_key = 4
+      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
+  string destination_address = 5
+      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
+  string source_signature = 6
+      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
+  string destination_signature = 7
+      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
 // IBCAccountConnectionPacketAck defines a struct for the packet acknowledgment
@@ -33,10 +45,17 @@ message IBCAccountConnectionPacketAck { string source_address = 1; }
 
 // IBCAccountLinkPacketData defines a struct for the packet payload
 message IBCAccountLinkPacketData {
-  string source_chain_prefix = 1;
-  string source_address = 2;
-  string source_pub_key = 3;
-  string signature = 4;
+  string source_chain_prefix = 1
+      [ (gogoproto.moretags) = "yaml:\"source_chain_prefix\"" ];
+  string source_chain_id = 2 [
+    (gogoproto.moretags) = "yaml:\"source_chain_id\"",
+    (gogoproto.customname) = "SourceChainID"
+  ];
+  string source_address = 3
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string source_pub_key = 4
+      [ (gogoproto.moretags) = "yaml:\"source_pub_key\"" ];
+  string signature = 5 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 }
 
 // IBCAccountLinkPacketAck defines a struct for the packet acknowledgment
