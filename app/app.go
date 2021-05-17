@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/applications/profiles/types"
+
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -106,6 +108,9 @@ import (
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
+
+	ibcprofiles "github.com/desmos-labs/desmos/x/ibc/applications/profiles"
+	ibcprofileskeeper "github.com/desmos-labs/desmos/x/ibc/applications/profiles/keeper"
 )
 
 const (
@@ -145,6 +150,7 @@ var (
 		//fees.AppModuleBasic{},
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
+		ibcprofiles.AppModuleBasic{},
 		//reports.AppModuleBasic{},
 	)
 
@@ -200,10 +206,11 @@ type DesmosApp struct {
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper    feeskeeper.Keeper
-	postsKeeper   postskeeper.Keeper
-	ProfileKeeper profileskeeper.Keeper
-	ReportsKeeper reportsKeeper.Keeper
+	FeesKeeper        feeskeeper.Keeper
+	postsKeeper       postskeeper.Keeper
+	ProfileKeeper     profileskeeper.Keeper
+	ReportsKeeper     reportsKeeper.Keeper
+	IBCProfilesKeeper ibcprofileskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -248,6 +255,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		ibcprofilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -266,15 +274,22 @@ func NewDesmosApp(
 
 	app.paramsKeeper = initParamsKeeper(appCodec, legacyAmino, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey])
 
-	// set the BaseApp's parameter store
+	// Set the BaseApp's parameter store
 	bApp.SetParamStore(app.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramskeeper.ConsensusParamsKeyTable()))
 
-	// add capability keeper and ScopeToModule for ibc module
+	// Add capability keeper and ScopeToModule for ibc modules
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
-	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
-	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
-	// add keepers
+	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	app.ScopedIBCKeeper = scopedIBCKeeper
+
+	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
+
+	scopedIBCProfilesKeeper := app.CapabilityKeeper.ScopeToModule(ibcprofilestypes.ModuleName)
+	app.ScopedIBCTransferKeeper = scopedIBCProfilesKeeper
+
+	// Add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
 	)
@@ -300,7 +315,7 @@ func NewDesmosApp(
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
-	// register the staking hooks
+	// Register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
@@ -311,7 +326,7 @@ func NewDesmosApp(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.stakingKeeper, scopedIBCKeeper,
 	)
 
-	// register the proposal types
+	// Register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
@@ -364,6 +379,11 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[reportsTypes.StoreKey],
 		app.postsKeeper,
+	)
+
+	app.IBCProfilesKeeper = ibcprofileskeeper.NewKeeper(
+		appCodec, keys[ibctransfertypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper, scopedIBCProfilesKeeper,
 	)
 
 	/****  Module Options ****/
@@ -497,8 +517,6 @@ func NewDesmosApp(
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 		app.CapabilityKeeper.InitializeAndSeal(ctx)
 	}
-	app.ScopedIBCKeeper = scopedIBCKeeper
-	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// --- Morpheus-apollo-1 migration to fix vesting accounts
