@@ -87,3 +87,12 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
+
+func (k Keeper) Link(ctx context.Context, request *types.QueryLinkRequest) (*types.QueryLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	link, found := k.GetLink(sdkCtx, request.ChainId, request.User)
+	if !found {
+		return &types.QueryLinkResponse{Link: nil}, nil
+	}
+	return &types.QueryLinkResponse{Link: &link}, nil
+}

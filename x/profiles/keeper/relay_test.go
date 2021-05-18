@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
@@ -74,6 +75,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 		name        string
 		malleate    func()
 		stubPacket  func(*ibcprofilestypes.IBCAccountConnectionPacketData)
+		stubProfile func()
 		doubleStore bool
 		expPass     bool
 	}{
@@ -92,7 +94,26 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcSigHex = hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
 				dstSigHex = hex.EncodeToString(dstSig)
+			},
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
 
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
 			},
 			expPass: true,
 		},
@@ -113,6 +134,26 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				dstSigHex = hex.EncodeToString(dstSig)
 
 			},
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
 			expPass: false,
 		},
 		{
@@ -130,7 +171,27 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcSigHex = hex.EncodeToString(srcSig)
 			},
 			stubPacket: func(p *ibcprofilestypes.IBCAccountConnectionPacketData) {
-				p.DestinationSignature = "---"
+				p.DestinationSignature = "="
+			},
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
 			},
 			expPass: false,
 		},
@@ -149,7 +210,26 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				srcSigHex = hex.EncodeToString(srcSig)
 				dstSig, _ := suite.chainB.PrivKey.Sign([]byte{0})
 				dstSigHex = hex.EncodeToString(dstSig)
+			},
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
 
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
 			},
 			expPass: false,
 		},
@@ -170,7 +250,83 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 				dstSigHex = hex.EncodeToString(dstSig)
 			},
 			doubleStore: true,
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
+			expPass: false,
+		},
+		{
+			name: "Non existent profile on destination address",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				destAddr = suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
+				srcSigHex = hex.EncodeToString(srcSig)
+				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+				dstSigHex = hex.EncodeToString(dstSig)
+			},
+			stubProfile: func() {},
 			expPass:     false,
+		},
+		{
+			name: "Non existent pubkey on destination address",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				destAddr = suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
+				srcSigHex = hex.EncodeToString(srcSig)
+				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+				dstSigHex = hex.EncodeToString(dstSig)
+			},
+			stubProfile: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
+			expPass: false,
 		},
 	}
 
@@ -199,12 +355,14 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
-			if test.doubleStore == true {
+			if test.doubleStore {
 				proof := types.NewProof(packetData.SourcePubKey, packetData.SourceSignature)
 				chainConfig := types.NewChainConfig(packetData.SourceChainID, packetData.SourceChainPrefix)
 				link := types.NewLink(packetData.SourceAddress, proof, chainConfig, time.Now())
 				suite.chainB.App.ProfileKeeper.StoreLink(suite.chainB.GetContext(), link)
 			}
+
+			test.stubProfile()
 
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountConnectionPacket(
 				suite.chainB.GetContext(),
@@ -389,6 +547,7 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 		malleate    func()
 		stubPacket  func(*ibcprofilestypes.IBCAccountLinkPacketData)
 		doubleStore bool
+		stubProfile func()
 		expPass     bool
 	}{
 		{
@@ -405,6 +564,26 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				sigHex = hex.EncodeToString(srcSig)
 
 			},
+			stubProfile: func() {
+				addr := suite.chainA.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
 			expPass: true,
 		},
 		{
@@ -419,9 +598,30 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex = hex.EncodeToString(srcSig)
+
 			},
 			stubPacket: func(p *ibcprofilestypes.IBCAccountLinkPacketData) {
 				p.Signature = "="
+			},
+			stubProfile: func() {
+				addr := suite.chainA.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
 			},
 			expPass: false,
 		},
@@ -436,7 +636,26 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 
 				srcSig, _ := suite.chainA.PrivKey.Sign([]byte{0})
 				sigHex = hex.EncodeToString(srcSig)
+			},
+			stubProfile: func() {
+				addr := suite.chainA.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
 
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
 			},
 			expPass: false,
 		},
@@ -452,10 +671,46 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 				packetProof := []byte(srcAddr)
 				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
 				sigHex = hex.EncodeToString(srcSig)
-
 			},
 			doubleStore: true,
-			expPass:     false,
+			stubProfile: func() {
+				addr := suite.chainA.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
+			expPass: false,
+		},
+		{
+			name: "Non existent profile on destination address",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+
+				packetProof := []byte(srcAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
+				sigHex = hex.EncodeToString(srcSig)
+			},
+			stubProfile: func() {
+			},
+			expPass: false,
 		},
 	}
 
@@ -485,12 +740,14 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
 
-			if test.doubleStore == true {
+			if test.doubleStore {
 				proof := types.NewProof(packetData.SourcePubKey, packetData.Signature)
 				chainConfig := types.NewChainConfig(packetData.SourceChainID, packetData.SourceChainPrefix)
 				link := types.NewLink(packetData.SourceAddress, proof, chainConfig, time.Now())
 				suite.chainB.App.ProfileKeeper.StoreLink(suite.chainB.GetContext(), link)
 			}
+
+			test.stubProfile()
 
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountLinkPacket(
 				suite.chainB.GetContext(),

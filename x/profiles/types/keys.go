@@ -25,6 +25,7 @@ const (
 	QueryRelationships        = "relationships"
 	QueryUserBlocks           = "user_blocks"
 	QueryParams               = "params"
+	QueryLink                 = "link"
 
 	DoNotModify = "[do-not-modify]"
 
@@ -64,6 +65,7 @@ func UsersBlocksStoreKey(user string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(user)...)
 }
 
+// LinksStoreKey turns a chainID and address to a key used to store a Link
 func LinksStoreKey(chainID string, address string) []byte {
-	return append(LinksPrefix, []byte(chainID+address)...)
+	return append(LinksPrefix, []byte(address+chainID)...)
 }

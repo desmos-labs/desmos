@@ -90,6 +90,10 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, err
 	}
 
+	if destPubkey == nil {
+		return packetAck, fmt.Errorf("non existent pubkey on destination address")
+	}
+
 	// Signature should be verified here because source chain doesn't know the pubkey on the destination chain
 	if !destPubkey.VerifySignature(srcSig, destSig) {
 		return packetAck, fmt.Errorf("failed to verify destination signature")

@@ -34,12 +34,23 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, err
 	}
 
+	if destPubkey == nil {
+		return packetAck, fmt.Errorf("non existent pubkey on destination address")
+	}
+
 	// Signature should be verified here because source chain doesn't know the pubkey on the destination chain
 	if !destPubkey.VerifySignature(srcSig, destSig) {
 		return packetAck, fmt.Errorf("failed to verify destination signature")
 	}
 
-	// TODO Check if address has the profile
+	// Check if address has the profile
+	profile, found, err := k.GetProfile(ctx, destAccAddr.String())
+	if err != nil {
+		return packetAck, err
+	}
+	if !found {
+		return packetAck, fmt.Errorf("address does not have any profile")
+	}
 
 	// Store link
 	proof := types.NewProof(data.SourcePubKey, data.SourceSignature)
@@ -49,7 +60,11 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, err
 	}
 
-	// TODO Store link to the profile
+	// Store link to the profile
+	profile.Links = append(profile.Links, link)
+	if err := k.StoreProfile(ctx, profile); err != nil {
+		return packetAck, err
+	}
 
 	packetAck.SourceAddress = data.SourceAddress
 
@@ -117,7 +132,16 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 		return packetAck, fmt.Errorf("failed to verify source signature")
 	}
 
-	// TODO Check if address has the profile
+	destAddr := sdk.AccAddress(srcPubKey.Address().Bytes()).String()
+
+	// Check if address has the profile and get the profile
+	profile, found, err := k.GetProfile(ctx, destAddr)
+	if err != nil {
+		return packetAck, err
+	}
+	if !found {
+		return packetAck, fmt.Errorf("non existent profile on destination address")
+	}
 
 	// Store link
 	proof := types.NewProof(data.SourcePubKey, data.Signature)
@@ -127,7 +151,11 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 		return packetAck, err
 	}
 
-	// TODO Store link to the profile
+	// Store link to the profile
+	profile.Links = append(profile.Links, link)
+	if err := k.StoreProfile(ctx, profile); err != nil {
+		return packetAck, err
+	}
 
 	packetAck.SourceAddress = data.SourceAddress
 
