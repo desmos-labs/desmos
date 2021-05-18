@@ -4,19 +4,21 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
-	"github.com/desmos-labs/desmos/x/ibc/profiles/types"
+	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // OnRecvIBCAccountConnectionPacket processes packet reception
 func (k Keeper) OnRecvIBCAccountConnectionPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountConnectionPacketData,
-) (packetAck types.IBCAccountConnectionPacketAck, err error) {
+	data ibcprofilestypes.IBCAccountConnectionPacketData,
+) (packetAck ibcprofilestypes.IBCAccountConnectionPacketAck, err error) {
 
 	// validate packet data upon receiving
 	if err := data.Validate(); err != nil {
@@ -37,6 +39,18 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 		return packetAck, fmt.Errorf("failed to verify destination signature")
 	}
 
+	// TODO Check if address has the profile
+
+	// Store link
+	proof := types.NewProof(data.SourcePubKey, data.SourceSignature)
+	chainConfig := types.NewChainConfig(data.SourceChainID, data.SourceChainPrefix)
+	link := types.NewLink(data.SourceAddress, proof, chainConfig, time.Now())
+	if err := k.StoreLink(ctx, link); err != nil {
+		return packetAck, err
+	}
+
+	// TODO Store link to the profile
+
 	packetAck.SourceAddress = data.SourceAddress
 
 	return packetAck, nil
@@ -46,7 +60,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 // acknowledgement written on the receiving chain.
 func (k Keeper) OnAcknowledgementIBCAccountConnectionPacket(ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountConnectionPacketData,
+	data ibcprofilestypes.IBCAccountConnectionPacketData,
 	ack channeltypes.Acknowledgement,
 ) error {
 	switch dispatchedAck := ack.Response.(type) {
@@ -54,7 +68,7 @@ func (k Keeper) OnAcknowledgementIBCAccountConnectionPacket(ctx sdk.Context,
 		return errors.New(dispatchedAck.Error)
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
-		var packetAck types.IBCAccountConnectionPacketAck
+		var packetAck ibcprofilestypes.IBCAccountConnectionPacketAck
 		err := packetAck.Unmarshal(dispatchedAck.Result)
 		if err != nil {
 			// The counter-party module doesn't implement the correct acknowledgment format
@@ -73,7 +87,7 @@ func (k Keeper) OnAcknowledgementIBCAccountConnectionPacket(ctx sdk.Context,
 func (k Keeper) OnTimeoutIBCAccountConnectionPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountConnectionPacketData,
+	data ibcprofilestypes.IBCAccountConnectionPacketData,
 ) error {
 	return nil
 }
@@ -84,8 +98,8 @@ func (k Keeper) OnTimeoutIBCAccountConnectionPacket(
 func (k Keeper) OnRecvIBCAccountLinkPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountLinkPacketData,
-) (packetAck types.IBCAccountLinkPacketAck, err error) {
+	data ibcprofilestypes.IBCAccountLinkPacketData,
+) (packetAck ibcprofilestypes.IBCAccountLinkPacketAck, err error) {
 
 	// validate packet data upon receiving
 	if err := data.Validate(); err != nil {
@@ -103,6 +117,18 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 		return packetAck, fmt.Errorf("failed to verify source signature")
 	}
 
+	// TODO Check if address has the profile
+
+	// Store link
+	proof := types.NewProof(data.SourcePubKey, data.Signature)
+	chainConfig := types.NewChainConfig(data.SourceChainID, data.SourceChainPrefix)
+	link := types.NewLink(data.SourceAddress, proof, chainConfig, time.Now())
+	if err := k.StoreLink(ctx, link); err != nil {
+		return packetAck, err
+	}
+
+	// TODO Store link to the profile
+
 	packetAck.SourceAddress = data.SourceAddress
 
 	return packetAck, nil
@@ -113,7 +139,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 func (k Keeper) OnAcknowledgementIBCAccountLinkPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountLinkPacketData,
+	data ibcprofilestypes.IBCAccountLinkPacketData,
 	ack channeltypes.Acknowledgement,
 ) error {
 	switch dispatchedAck := ack.Response.(type) {
@@ -121,7 +147,7 @@ func (k Keeper) OnAcknowledgementIBCAccountLinkPacket(
 		return errors.New(dispatchedAck.Error)
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
-		var packetAck types.IBCAccountLinkPacketAck
+		var packetAck ibcprofilestypes.IBCAccountLinkPacketAck
 		err := packetAck.Unmarshal(dispatchedAck.Result)
 		if err != nil {
 			// The counter-party module doesn't implement the correct acknowledgment format
@@ -142,7 +168,7 @@ func (k Keeper) OnAcknowledgementIBCAccountLinkPacket(
 func (k Keeper) OnTimeoutIBCAccountLinkPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data types.IBCAccountLinkPacketData,
+	data ibcprofilestypes.IBCAccountLinkPacketData,
 ) error {
 	return nil
 }

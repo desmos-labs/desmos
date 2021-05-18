@@ -49,9 +49,9 @@ func (proof Proof) Validate() error {
 }
 
 // NewLink is a constructor function for Link
-func NewLink(addr string, proof Proof, chainConfig ChainConfig, creationTime time.Time) Link {
+func NewLink(address string, proof Proof, chainConfig ChainConfig, creationTime time.Time) Link {
 	return Link{
-		Address:      addr,
+		Address:      address,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
 		CreationTime: creationTime,

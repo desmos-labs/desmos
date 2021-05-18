@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"encoding/hex"
+	"time"
 
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
@@ -9,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
 	ibctesting "github.com/desmos-labs/desmos/testutil/ibctesting"
 	ibcprofilestypes "github.com/desmos-labs/desmos/x/ibc/profiles/types"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestIBCAccountConnectionPacket() {
@@ -69,10 +71,11 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 	)
 
 	tests := []struct {
-		name       string
-		malleate   func()
-		stubPacket func(*ibcprofilestypes.IBCAccountConnectionPacketData)
-		expPass    bool
+		name        string
+		malleate    func()
+		stubPacket  func(*ibcprofilestypes.IBCAccountConnectionPacketData)
+		doubleStore bool
+		expPass     bool
 	}{
 		{
 			name: "Create link from source chain successfully",
@@ -150,6 +153,25 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 			},
 			expPass: false,
 		},
+		{
+			name: "Link already exists",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+				destAddr = suite.chainB.Account.GetAddress().String()
+
+				packetProof := []byte(srcAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
+				srcSigHex = hex.EncodeToString(srcSig)
+				dstSig, _ := suite.chainB.PrivKey.Sign(srcSig)
+				dstSigHex = hex.EncodeToString(dstSig)
+			},
+			doubleStore: true,
+			expPass:     false,
+		},
 	}
 
 	for _, test := range tests {
@@ -176,6 +198,13 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountConnectionPacket() {
 
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+
+			if test.doubleStore == true {
+				proof := types.NewProof(packetData.SourcePubKey, packetData.SourceSignature)
+				chainConfig := types.NewChainConfig(packetData.SourceChainID, packetData.SourceChainPrefix)
+				link := types.NewLink(packetData.SourceAddress, proof, chainConfig, time.Now())
+				suite.chainB.App.ProfileKeeper.StoreLink(suite.chainB.GetContext(), link)
+			}
 
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountConnectionPacket(
 				suite.chainB.GetContext(),
@@ -356,10 +385,11 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 	)
 
 	tests := []struct {
-		name       string
-		malleate   func()
-		stubPacket func(*ibcprofilestypes.IBCAccountLinkPacketData)
-		expPass    bool
+		name        string
+		malleate    func()
+		stubPacket  func(*ibcprofilestypes.IBCAccountLinkPacketData)
+		doubleStore bool
+		expPass     bool
 	}{
 		{
 			name: "Create link from source chain successfully",
@@ -410,6 +440,23 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 			},
 			expPass: false,
 		},
+		{
+			name: "Link already exists",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				srcAddr = suite.chainA.Account.GetAddress().String()
+				srcPubKeyHex = hex.EncodeToString(suite.chainA.Account.GetPubKey().Bytes())
+
+				packetProof := []byte(srcAddr)
+				srcSig, _ := suite.chainA.PrivKey.Sign(packetProof)
+				sigHex = hex.EncodeToString(srcSig)
+
+			},
+			doubleStore: true,
+			expPass:     false,
+		},
 	}
 
 	for _, test := range tests {
@@ -437,6 +484,13 @@ func (suite *KeeperTestSuite) TestOnRecvIBCAccountLinkPacket() {
 
 			bz, _ := packetData.GetBytes()
 			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
+
+			if test.doubleStore == true {
+				proof := types.NewProof(packetData.SourcePubKey, packetData.Signature)
+				chainConfig := types.NewChainConfig(packetData.SourceChainID, packetData.SourceChainPrefix)
+				link := types.NewLink(packetData.SourceAddress, proof, chainConfig, time.Now())
+				suite.chainB.App.ProfileKeeper.StoreLink(suite.chainB.GetContext(), link)
+			}
 
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvIBCAccountLinkPacket(
 				suite.chainB.GetContext(),

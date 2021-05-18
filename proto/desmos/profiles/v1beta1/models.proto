@@ -43,6 +43,8 @@ message Profile {
     (gogoproto.jsontag) = "creation_date",
     (gogoproto.nullable) = false
   ];
+  repeated Link links = 7
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"links\"" ];
 }
 
 // ___________________________________________________________________________________________________________________

@@ -418,3 +418,29 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user, subspace string) 
 func (k Keeper) GetAccountPubKey(ctx sdk.Context, acc sdk.AccAddress) (cryptotypes.PubKey, error) {
 	return k.ak.GetPubKey(ctx, acc)
 }
+
+// StoreLink sotres the given link inside the current context.
+// It assumes that the given link has already been validated.
+func (k Keeper) StoreLink(ctx sdk.Context, link types.Link) error {
+
+	if _, found := k.GetLink(ctx, link.ChainConfig.ID, link.Address); found {
+		return fmt.Errorf("link already exists")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.LinksStoreKey(link.ChainConfig.ID, link.Address)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
+	return nil
+}
+
+// GetLink returns the link corresponding to the given address inside the current context.
+func (k Keeper) GetLink(ctx sdk.Context, chainID string, address string) (link types.Link, found bool) {
+	store := ctx.KVStore((k.storeKey))
+
+	bz := store.Get(types.LinksStoreKey(chainID, address))
+	if bz != nil {
+		k.cdc.MustUnmarshalBinaryBare(bz, &link)
+		return link, true
+	}
+	return types.Link{}, false
+}
