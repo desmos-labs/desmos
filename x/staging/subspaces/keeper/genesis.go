@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
@@ -9,8 +10,6 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetAllSubspaces(ctx),
-		k.GetSubspaceAdminsEntry(ctx),
-		k.GetBlockedToPostUsers(ctx),
 	)
 }
 
@@ -21,27 +20,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		if err := subspace.Validate(); err != nil {
 			panic(err)
 		}
-
-		if err := k.SaveSubspace(ctx, subspace); err != nil {
-			panic(err)
+		if k.DoesSubspaceExists(ctx, subspace.ID) {
+			panic(fmt.Sprintf("The subspace %s already exist", subspace.ID))
 		}
+		k.SaveSubspace(ctx, subspace)
 	}
-
-	for _, adminsEntry := range data.SubspaceAdmins {
-		for _, admin := range adminsEntry.Admins.Users {
-			if err := k.AddAdminToSubspace(ctx, adminsEntry.SubspaceId, admin); err != nil {
-				panic(err)
-			}
-		}
-
-	}
-
-	for _, blockedUsersEntry := range data.BlockedToPostUsers {
-		for _, userToBlock := range blockedUsersEntry.Users.Users {
-			if err := k.BlockPostsForUser(ctx, userToBlock, blockedUsersEntry.SubspaceId); err != nil {
-				panic(err)
-			}
-		}
-	}
-
 }

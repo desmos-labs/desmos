@@ -13,6 +13,7 @@ func TestMsgCreateSubspace_Route(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		true,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
@@ -22,6 +23,7 @@ func TestMsgCreateSubspace_Type(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		true,
 	)
 	require.Equal(t, "create_subspace", msg.Type())
 }
@@ -38,6 +40,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				true,
 			),
 			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
 		},
@@ -47,6 +50,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"",
+				true,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address"),
 		},
@@ -56,6 +60,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				true,
 			),
 			error: sdkerrors.Wrap(types.ErrInvalidSubspaceName, "subspace name cannot be empty or blank"),
 		},
@@ -65,6 +70,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				true,
 			),
 			error: nil,
 		},
@@ -89,8 +95,9 @@ func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		true,
 	)
-	expected := `{"name":"mooncake","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := ``
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -99,8 +106,9 @@ func TestMsgCreateSubspace_GetSigners(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		true,
 	)
-	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
@@ -296,8 +304,8 @@ func TestMsgRemoveAdmin_GetSigners(t *testing.T) {
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
-func TestMsgAllowUserPosts_Route(t *testing.T) {
-	msg := types.NewMsgEnableUserPosts(
+func TestMsgRegisterUser_Route(t *testing.T) {
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -305,8 +313,8 @@ func TestMsgAllowUserPosts_Route(t *testing.T) {
 	require.Equal(t, "subspaces", msg.Route())
 }
 
-func TestMsgAllowUserPosts_Type(t *testing.T) {
-	msg := types.NewMsgEnableUserPosts(
+func TestMsgRegisterUser_Type(t *testing.T) {
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -314,15 +322,15 @@ func TestMsgAllowUserPosts_Type(t *testing.T) {
 	require.Equal(t, "enable_user_posts", msg.Type())
 }
 
-func TestMsgAllowUserPosts_ValidateBasic(t *testing.T) {
+func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   *types.MsgEnableUserPosts
+		msg   *types.MsgRegisterUser
 		error error
 	}{
 		{
 			name: "invalid subspace returns error",
-			msg: types.NewMsgEnableUserPosts(
+			msg: types.NewMsgRegisterUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -331,7 +339,7 @@ func TestMsgAllowUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types.NewMsgEnableUserPosts(
+			msg: types.NewMsgRegisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -340,7 +348,7 @@ func TestMsgAllowUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types.NewMsgEnableUserPosts(
+			msg: types.NewMsgRegisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -349,7 +357,7 @@ func TestMsgAllowUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types.NewMsgEnableUserPosts(
+			msg: types.NewMsgRegisterUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -372,8 +380,8 @@ func TestMsgAllowUserPosts_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAllowUserPosts_GetSignBytes(t *testing.T) {
-	msg := types.NewMsgEnableUserPosts(
+func TestMsgRegisterUser_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -382,8 +390,8 @@ func TestMsgAllowUserPosts_GetSignBytes(t *testing.T) {
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
-func TestMsgAllowUserPosts_GetSigners(t *testing.T) {
-	msg := types.NewMsgEnableUserPosts(
+func TestMsgRegisterUser_GetSigners(t *testing.T) {
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -393,7 +401,7 @@ func TestMsgAllowUserPosts_GetSigners(t *testing.T) {
 }
 
 func TestMsgBlockUserPosts_Route(t *testing.T) {
-	msg := types.NewMsgDisableUserPosts(
+	msg := types.NewMsgBlockUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -402,7 +410,7 @@ func TestMsgBlockUserPosts_Route(t *testing.T) {
 }
 
 func TestMsgBlockUserPosts_Type(t *testing.T) {
-	msg := types.NewMsgDisableUserPosts(
+	msg := types.NewMsgBlockUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -418,7 +426,7 @@ func TestMsgBlockUserPosts_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name: "invalid subspace returns error",
-			msg: types.NewMsgDisableUserPosts(
+			msg: types.NewMsgBlockUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -427,7 +435,7 @@ func TestMsgBlockUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types.NewMsgDisableUserPosts(
+			msg: types.NewMsgBlockUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -436,7 +444,7 @@ func TestMsgBlockUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types.NewMsgDisableUserPosts(
+			msg: types.NewMsgBlockUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -445,7 +453,7 @@ func TestMsgBlockUserPosts_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types.NewMsgDisableUserPosts(
+			msg: types.NewMsgBlockUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -469,7 +477,7 @@ func TestMsgBlockUserPosts_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgBlockUserPosts_GetSignBytes(t *testing.T) {
-	msg := types.NewMsgDisableUserPosts(
+	msg := types.NewMsgBlockUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -479,7 +487,7 @@ func TestMsgBlockUserPosts_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgBlockUserPosts_GetSigners(t *testing.T) {
-	msg := types.NewMsgDisableUserPosts(
+	msg := types.NewMsgBlockUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -489,7 +497,7 @@ func TestMsgBlockUserPosts_GetSigners(t *testing.T) {
 }
 
 func TestMsgTransferOwnership_Route(t *testing.T) {
-	msg := types.NewMsgTransferOwnership(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -498,7 +506,7 @@ func TestMsgTransferOwnership_Route(t *testing.T) {
 }
 
 func TestMsgTransferOwnership_Type(t *testing.T) {
-	msg := types.NewMsgTransferOwnership(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -514,7 +522,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name: "invalid subspace returns error",
-			msg: types.NewMsgTransferOwnership(
+			msg: types.NewMsgEditSubspace(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -523,7 +531,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace owner address returns error",
-			msg: types.NewMsgTransferOwnership(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -532,7 +540,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace new owner address returns error",
-			msg: types.NewMsgTransferOwnership(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -541,7 +549,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "equal subspace owner and new owner addresses returns error",
-			msg: types.NewMsgTransferOwnership(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -550,7 +558,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types.NewMsgTransferOwnership(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -574,7 +582,7 @@ func TestMsgTransferOwnership_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgTransferOwnership_GetSignBytes(t *testing.T) {
-	msg := types.NewMsgTransferOwnership(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -584,7 +592,7 @@ func TestMsgTransferOwnership_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgTransferOwnership_GetSigners(t *testing.T) {
-	msg := types.NewMsgTransferOwnership(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",

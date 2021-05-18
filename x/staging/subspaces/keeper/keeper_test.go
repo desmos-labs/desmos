@@ -495,10 +495,77 @@ func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
-			key := types.BlockedToPostUsersKey(test.subspaceID)
+			key := types.BlockedUsersStoreKey(test.subspaceID)
 			store.Set(key, types.MustMarshalUsers(suite.cdc, *test.users))
 
-			err := suite.k.UnblockPostsForUser(suite.ctx, test.user, test.subspaceID)
+			err := suite.k.RegisterUserInSubspace(suite.ctx, test.user, test.subspaceID)
+			if test.expError {
+				suite.NotNil(err)
+				suite.Error(err)
+			} else {
+				suite.Nil(err)
+			}
+
+			users := types.MustUnmarshalUsers(suite.cdc, store.Get(key))
+			suite.Equal(test.expUsers.Users, users.Users)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
+	tests := []struct {
+		name       string
+		users      *types.Users
+		user       string
+		subspaceID string
+		expUsers   *types.Users
+		expError   bool
+	}{
+		{
+			name: "Already added admin returns error",
+			users: &types.Users{
+				Users: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				},
+			},
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			expUsers: &types.Users{
+				Users: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				},
+			},
+			subspaceID: "123",
+			expError:   true,
+		},
+		{
+			name: "Admin added correctly",
+			users: &types.Users{
+				Users: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				},
+			},
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			expUsers: &types.Users{
+				Users: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				},
+			},
+			subspaceID: "123",
+			expError:   false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			store := suite.ctx.KVStore(suite.storeKey)
+			key := types.AdminsStoreKey(test.subspaceID)
+			store.Set(key, types.MustMarshalUsers(suite.cdc, *test.users))
+
+			err := suite.k.AddAdminToSubspace(suite.ctx, test.subspaceID, test.user)
 			if test.expError {
 				suite.NotNil(err)
 				suite.Error(err)

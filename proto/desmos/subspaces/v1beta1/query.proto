@@ -30,6 +30,4 @@ message QuerySubspaceRequest {
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
   desmos.subspaces.v1beta1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
-  desmos.subspaces.v1beta1.Users admins = 2 [ (gogoproto.nullable) = false ];
-  desmos.subspaces.v1beta1.Users blocked_to_post_users = 3 [ (gogoproto.nullable) = false ];
 }

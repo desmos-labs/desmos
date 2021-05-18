@@ -20,9 +20,17 @@ func RegisterRestRoutes(cliCtx client.Context, r *mux.Router) {
 type CreateSubspaceReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Name    string       `json:"name"`
+	Open    bool         `json:"open"`
 }
 
-// CommonSubspaceAdminReq defines the properties request's body of add/remove admin and enable/disable user posts
+// EditSubspaceReq defines the properties of a edit subspace request's body
+type EditSubspaceReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	NewName  string       `json:"new_name"`
+	NewOwner string       `json:"new_owner"`
+}
+
+// CommonSubspaceAdminReq defines the properties request's body of add/remove admin and register/block users
 type CommonSubspaceReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Address string       `json:"address"`

@@ -17,9 +17,5 @@ func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceReques
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id %s not found", request.SubspaceId)
 	}
 
-	admins := k.GetSubspaceAdmins(sdkCtx, request.SubspaceId)
-
-	blockedUsers := k.GetSubspaceBlockedUsers(sdkCtx, request.SubspaceId)
-
-	return &types.QuerySubspaceResponse{Subspace: subspace, Admins: admins, BlockedToPostUsers: blockedUsers}, nil
+	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
 }

@@ -2,18 +2,19 @@ package types
 
 // Subspaces module event types
 const (
-	EventTypeCreateSubspace    = "subspace_created"
-	EventTypeAddAdmin          = "admin_added"
-	EventTypeEnableUserPosts   = "allowed_user_posts"
-	EventTypeBlockUserPosts    = "blocked_user_posts"
-	EventTypeTransferOwnership = "transfer_subspace_ownership"
+	EventTypeCreateSubspace = "create_subspace"
+	EventTypeEditSubspace   = "edit_subspace"
+	EventTypeAddAdmin       = "admin_added"
+	EventTypeRegisterUser   = "register_user"
+	EventTypeBlockUser      = "block_user"
 
 	// Subspaces attributes
 	AttributeKeySubspaceID           = "subspace_id"
+	AttributeKeySubspaceName         = "subspace_name"
 	AttributeKeySubspaceCreator      = "subspace_creator"
 	AttributeKeySubspaceNewAdmin     = "new_admin"
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"
-	AttributeKeyEnabledToPostUser    = "enabled_user_to_post"
-	AttributeKeyDisabledToPostUser   = "disabled_user_to_post"
+	AttributeKeyRegisteredUser       = "registered_user"
+	AttributeKeyBlockedUser          = "blocked_user"
 	AttributeKeyNewOwner             = "new_owner"
 )

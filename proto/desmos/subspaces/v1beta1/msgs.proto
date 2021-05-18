@@ -11,8 +11,8 @@ service Msg {
   // CreateSubspace defines the method to create a subspace
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 
-  // TransferOwnership defines the method to transfer a subspace ownership
-  rpc TransferOwnership(MsgTransferOwnership) returns (MsgTransferOwnershipResponse);
+  // EditSubspace defines the method to edit a subspace fields
+  rpc EditSubspace(MsgEditSubspace) returns (MsgEditSubspaceResponse);
 
   // AddAdmin defines the method to add a new admin to the subspace
   rpc AddAdmin(MsgAddAdmin) returns (MsgAddAdminResponse);
@@ -20,11 +20,11 @@ service Msg {
   // RemoveAdmin defines the method to remove an admin from a specific subspace
   rpc RemoveAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
 
-  // EnableUserPosts defines the method to let user posts inside a specific subspace
-  rpc EnableUserPosts(MsgEnableUserPosts) returns (MsgEnableUserPostsResponse);
+  // RegisterUser defines the method to let user posts inside a specific subspace
+  rpc RegisterUser(MsgRegisterUser) returns (MsgRegisterUserResponse);
 
-  // DisableUserPosts defines the method to block user posts inside a specific subspace
-  rpc DisableUserPosts(MsgDisableUserPosts) returns (MsgDisableUserPostsResponse);
+  // BlockUser defines the method to block user posts inside a specific subspace
+  rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);
 }
 
 // ___________________________________________________________________________________________________________________
@@ -44,7 +44,9 @@ message MsgCreateSubspace {
     (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  bool open = 4 [ (gogoproto.moretags) = "yaml:\"open\""];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -52,8 +54,8 @@ message MsgCreateSubspaceResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgTransferOwnership represents the message used to transfer a subspace ownership
-message MsgTransferOwnership {
+// MsgEditSubspace represents the message used to edit a subspace fields
+message MsgEditSubspace {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -68,11 +70,16 @@ message MsgTransferOwnership {
     (gogoproto.moretags) = "yaml:\"new_owner\""
   ];
 
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string new_name = 3 [
+    (gogoproto.jsontag) = "new_name",
+    (gogoproto.moretags) = "yaml:\"new_name\""
+  ];
+
+  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
-// MsgTransferOwnershipResponse defines the Msg/TransferOwnership response type
-message MsgTransferOwnershipResponse{}
+// MsgEditSubspaceResponse defines the Msg/EditSubspace response type
+message MsgEditSubspaceResponse{}
 
 // ___________________________________________________________________________________________________________________
 
@@ -116,8 +123,8 @@ message MsgRemoveAdminResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgEnableUserPosts represents the message used to allow a user to post inside a specific subspace
-message MsgEnableUserPosts {
+// MsgRegisterUser represents the message used to allow a user to post inside a specific subspace
+message MsgRegisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -130,13 +137,13 @@ message MsgEnableUserPosts {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgEnableUserPostsResponse defines the Msg/MsgEnableUserPosts response type
-message MsgEnableUserPostsResponse {}
+// MsgRegisterUserResponse defines the Msg/MsgRegisterUser response type
+message MsgRegisterUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgDisableUserPosts represents the message used to block a user to post inside a specific subspace
-message MsgDisableUserPosts {
+// MsgBlockUser represents the message used to block a user to post inside a specific subspace
+message MsgBlockUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -149,5 +156,5 @@ message MsgDisableUserPosts {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgDisableUserPostsResponse defines the Msg/MsgDisableUserPosts response type
-message MsgDisableUserPostsResponse{}
+// MsgBlockUserResponse defines the Msg/MsgBlockUser response type
+message MsgBlockUserResponse{}

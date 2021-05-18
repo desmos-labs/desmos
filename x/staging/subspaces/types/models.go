@@ -1,6 +1,9 @@
 package types
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"fmt"
+	"github.com/cosmos/cosmos-sdk/codec"
+)
 
 // ____________________________________________________________________________________________________________________
 
@@ -14,16 +17,31 @@ func (users Users) IsPresent(address string) bool {
 	return false
 }
 
-// RemoveUser removes the given user address from the provided users slice.
-// If the user is found, returns the slice with it removed and true.
-// Otherwise, returns the original slice and false
-func RemoveUser(users []string, address string) ([]string, bool) {
-	for index, user := range users {
+// AppendUser append the given address to the users slice
+func (users Users) AppendUser(address string) Users {
+	users.Users = append(users.Users, address)
+	return users
+}
+
+// RemoveUser remove the given address from the users slice
+func (users Users) RemoveUser(address string) Users {
+	for index, user := range users.Users {
 		if user == address {
-			return append(users[:index], users[index+1:]...), true
+			users.Users = append(users.Users[:index], users.Users[index+1:]...)
 		}
 	}
-	return users, false
+	return users
+}
+
+// ValidateUsers checks the validity of the given wrapped users slice that contains users of the given userType.
+// It returns error if one of them is invalid.
+func (users Users) ValidateUsers(userType string) error {
+	for _, user := range users.Users {
+		if user == "" {
+			return fmt.Errorf("empty %s address", userType)
+		}
+	}
+	return nil
 }
 
 // MustMarshalUsers marshals the given users into an array of bytes.

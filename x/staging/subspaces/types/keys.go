@@ -5,12 +5,12 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreateSubspace    = "create_subspace"
-	ActionAddAdmin          = "add_admin"
-	ActionRemoveAdmin       = "remove_admin"
-	ActionEnableUserPosts   = "enable_user_posts"
-	ActionDisableUserPosts  = "disable_user_posts"
-	ActionTransferOwnership = "transfer_ownership"
+	ActionCreateSubspace = "create_subspace"
+	ActionEditSubspace   = "edit_subspace"
+	ActionAddAdmin       = "add_admin"
+	ActionRemoveAdmin    = "remove_admin"
+	ActionRegisterUser   = "register_user"
+	ActionBlockUser      = "block_user"
 
 	// Queries
 	QuerierRoute  = ModuleName
@@ -18,9 +18,10 @@ const (
 )
 
 var (
-	SubspaceStorePrefix     = []byte("subspace")
-	AdminsStorePrefix       = []byte("admins")
-	BlockedUsersPostsPrefix = []byte("blocked")
+	SubspaceStorePrefix   = []byte("subspace")
+	AdminsStorePrefix     = []byte("admins")
+	BlockedUsersPrefix    = []byte("blocked")
+	RegisteredUsersPrefix = []byte("registered")
 )
 
 // SubspaceStoreKey turns an id to a key used to store a subspace into the subspaces store
@@ -33,7 +34,12 @@ func AdminsStoreKey(subspaceID string) []byte {
 	return append(AdminsStorePrefix, []byte(subspaceID)...)
 }
 
-// BlockedToPostUsersKey turn an id to a key used to store users that are not allowed to post inside a subspace
-func BlockedToPostUsersKey(subspaceID string) []byte {
-	return append(BlockedUsersPostsPrefix, []byte(subspaceID)...)
+// BlockedUsersStoreKey turn an id to a key used to store users that are blocked inside a subspace with the given id
+func BlockedUsersStoreKey(subspaceID string) []byte {
+	return append(BlockedUsersPrefix, []byte(subspaceID)...)
+}
+
+// RegisteredUsersStoreKey turn an id to a key used to store users that are registered under the subspace with the given id
+func RegisteredUsersStoreKey(subspaceID string) []byte {
+	return append(RegisteredUsersPrefix, []byte(subspaceID)...)
 }

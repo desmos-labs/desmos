@@ -1,33 +1,15 @@
 package types
 
-import "fmt"
-
 // NewGenesisState creates a new genesis state
-func NewGenesisState(subspaces []Subspace, adminsEntries []SubspaceAdminsEntry, blockedUsers []BlockedUsersEntry) *GenesisState {
+func NewGenesisState(subspaces []Subspace) *GenesisState {
 	return &GenesisState{
-		Subspaces:          subspaces,
-		SubspaceAdmins:     adminsEntries,
-		BlockedToPostUsers: blockedUsers,
-	}
-}
-
-func NewAdminsEntries(subspaceID string, admins Users) SubspaceAdminsEntry {
-	return SubspaceAdminsEntry{
-		SubspaceId: subspaceID,
-		Admins:     admins,
-	}
-}
-
-func NewBlockedUsersEntry(subspaceID string, users Users) BlockedUsersEntry {
-	return BlockedUsersEntry{
-		SubspaceId: subspaceID,
-		Users:      users,
+		Subspaces: subspaces,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil)
+	return NewGenesisState(nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -35,18 +17,6 @@ func ValidateGenesis(data *GenesisState) error {
 	for _, subspace := range data.Subspaces {
 		if err := subspace.Validate(); err != nil {
 			return err
-		}
-	}
-
-	for _, adminsEntry := range data.SubspaceAdmins {
-		if !doesSubspaceExists(data.Subspaces, adminsEntry.SubspaceId) {
-			return fmt.Errorf("the subspace with id: %s does not exist", adminsEntry.SubspaceId)
-		}
-	}
-
-	for _, blockedUsersEntry := range data.BlockedToPostUsers {
-		if !doesSubspaceExists(data.Subspaces, blockedUsersEntry.SubspaceId) {
-			return fmt.Errorf("the subspace with id: %s does not exist", blockedUsersEntry.SubspaceId)
 		}
 	}
 

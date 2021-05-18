@@ -18,17 +18,20 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgCreateSubspace:
 			res, err := msgServer.CreateSubspace(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgEditSubspace:
+			res, err := msgServer.EditSubspace(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgAddAdmin:
 			res, err := msgServer.AddAdmin(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgRemoveAdmin:
 			res, err := msgServer.RemoveAdmin(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgEnableUserPosts:
-			res, err := msgServer.EnableUserPosts(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRegisterUser:
+			res, err := msgServer.RegisterUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgDisableUserPosts:
-			res, err := msgServer.DisableUserPosts(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgBlockUser:
+			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:

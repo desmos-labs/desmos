@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
@@ -22,38 +23,57 @@ var _ types.MsgServer = msgServer{}
 func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSubspace) (*types.MsgCreateSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check the if the subspace already exists
+	if k.DoesSubspaceExists(ctx, msg.SubspaceID) {
+		return nil,
+			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s already exists", msg.SubspaceID)
+	}
+
 	// Create and store the new subspaces
-	subspace := types.NewSubspace(ctx.BlockTime(), msg.SubspaceID, msg.Name, msg.Owner)
+	subspace := types.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.Open, ctx.BlockTime())
 
-	// Return error if it has already been created
-	err := k.SaveSubspace(ctx, subspace)
-	if err != nil {
-		return nil, err
-	}
-
-	// this error should never happen, adding the creator to the admins list to better handle admins checks
-	if err = k.AddAdminToSubspace(ctx, subspace.ID, subspace.Owner); err != nil {
-		return nil, err
-	}
+	k.SaveSubspace(ctx, subspace)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSubspace,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types.AttributeKeySubspaceCreator, msg.Owner),
+		sdk.NewAttribute(types.AttributeKeySubspaceName, msg.Name),
+		sdk.NewAttribute(types.AttributeKeySubspaceCreator, msg.Creator),
 	))
 
 	return &types.MsgCreateSubspaceResponse{}, nil
 }
 
+func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspace) (*types.MsgEditSubspaceResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	subspace, exist := k.GetSubspace(ctx, msg.SubspaceID)
+	if !exist {
+		return nil,
+			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s doesn't exists", msg.SubspaceID)
+	}
+
+	editedSubspace := subspace.
+		WithName(msg.NewName).
+		WithOwner(msg.NewOwner)
+
+	k.SaveSubspace(ctx, editedSubspace)
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeEditSubspace,
+		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyNewOwner, subspace.Owner),
+		sdk.NewAttribute(types.AttributeKeySubspaceName, subspace.Name),
+	))
+
+	return &types.MsgEditSubspaceResponse{}, nil
+}
+
 func (k msgServer) AddAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*types.MsgAddAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.CheckSubspaceExistenceAndOwnerValidity(ctx, msg.SubspaceID, msg.Owner)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.NewAdmin)
+	err := k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.NewAdmin, msg.Owner)
 	if err != nil {
 		return nil, err
 	}
@@ -70,12 +90,7 @@ func (k msgServer) AddAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*typ
 func (k msgServer) RemoveAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin) (*types.MsgRemoveAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.CheckSubspaceExistenceAndOwnerValidity(ctx, msg.SubspaceID, msg.Owner)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.RemoveAdminFromSubspace(ctx, msg.SubspaceID, msg.Admin)
+	err := k.RemoveAdminFromSubspace(ctx, msg.SubspaceID, msg.Admin, msg.Owner)
 	if err != nil {
 		return nil, err
 	}
@@ -89,60 +104,34 @@ func (k msgServer) RemoveAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin)
 	return &types.MsgRemoveAdminResponse{}, nil
 }
 
-func (k msgServer) EnableUserPosts(goCtx context.Context, msg *types.MsgEnableUserPosts) (*types.MsgEnableUserPostsResponse, error) {
+func (k msgServer) RegisterUser(goCtx context.Context, msg *types.MsgRegisterUser) (*types.MsgRegisterUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.CheckSubspaceExistenceAndAdminValidity(ctx, msg.Admin, msg.SubspaceID); err != nil {
-		return nil, err
-	}
-
-	if err := k.UnblockPostsForUser(ctx, msg.User, msg.SubspaceID); err != nil {
+	if err := k.RegisterUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeEnableUserPosts,
-		sdk.NewAttribute(types.AttributeKeyEnabledToPostUser, msg.User),
+		types.EventTypeRegisterUser,
+		sdk.NewAttribute(types.AttributeKeyRegisteredUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 	))
 
-	return &types.MsgEnableUserPostsResponse{}, nil
+	return &types.MsgRegisterUserResponse{}, nil
 }
 
-func (k msgServer) DisableUserPosts(goCtx context.Context, msg *types.MsgDisableUserPosts) (*types.MsgDisableUserPostsResponse, error) {
+func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.CheckSubspaceExistenceAndAdminValidity(ctx, msg.Admin, msg.SubspaceID); err != nil {
-		return nil, err
-	}
-
-	if err := k.BlockPostsForUser(ctx, msg.User, msg.SubspaceID); err != nil {
+	if err := k.BlockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeBlockUserPosts,
-		sdk.NewAttribute(types.AttributeKeyDisabledToPostUser, msg.User),
+		types.EventTypeBlockUser,
+		sdk.NewAttribute(types.AttributeKeyBlockedUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 	))
 
-	return &types.MsgDisableUserPostsResponse{}, nil
-}
-
-func (k msgServer) TransferOwnership(goCtx context.Context, msg *types.MsgTransferOwnership) (*types.MsgTransferOwnershipResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := k.CheckSubspaceExistenceAndOwnerValidity(ctx, msg.Owner, msg.SubspaceID); err != nil {
-		return nil, err
-	}
-
-	k.TransferSubspaceOwnership(ctx, msg.SubspaceID, msg.NewOwner)
-
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeTransferOwnership,
-		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types.AttributeKeyNewOwner, msg.NewOwner),
-	))
-
-	return &types.MsgTransferOwnershipResponse{}, nil
+	return &types.MsgBlockUserResponse{}, nil
 }

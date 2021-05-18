@@ -10,11 +10,12 @@ import (
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
-func NewMsgCreateSubspace(id, name, owner string) *MsgCreateSubspace {
+func NewMsgCreateSubspace(id, name, creator string, open bool) *MsgCreateSubspace {
 	return &MsgCreateSubspace{
 		SubspaceID: id,
 		Name:       name,
-		Owner:      owner,
+		Creator:    creator,
+		Open:       open,
 	}
 }
 
@@ -26,9 +27,9 @@ func (msg MsgCreateSubspace) Type() string { return ActionCreateSubspace }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateSubspace) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
@@ -49,7 +50,7 @@ func (msg MsgCreateSubspace) GetSignBytes() []byte {
 
 // GetSigners defines the required signature
 func (msg MsgCreateSubspace) GetSigners() []sdk.AccAddress {
-	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	return []sdk.AccAddress{addr}
 }
 
@@ -164,9 +165,9 @@ func (msg MsgRemoveAdmin) MarshalJSON() ([]byte, error) {
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgEnableUserPosts is a constructor function for MsgEnableUserPosts
-func NewMsgEnableUserPosts(user, id, admin string) *MsgEnableUserPosts {
-	return &MsgEnableUserPosts{
+// NewMsgRegisterUser is a constructor function for MsgRegisterUser
+func NewMsgRegisterUser(user, id, admin string) *MsgRegisterUser {
+	return &MsgRegisterUser{
 		User:       user,
 		SubspaceID: id,
 		Admin:      admin,
@@ -174,13 +175,13 @@ func NewMsgEnableUserPosts(user, id, admin string) *MsgEnableUserPosts {
 }
 
 // Route should return the name of the module
-func (msg MsgEnableUserPosts) Route() string { return RouterKey }
+func (msg MsgRegisterUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgEnableUserPosts) Type() string { return ActionEnableUserPosts }
+func (msg MsgRegisterUser) Type() string { return ActionRegisterUser }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgEnableUserPosts) ValidateBasic() error {
+func (msg MsgRegisterUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -199,26 +200,26 @@ func (msg MsgEnableUserPosts) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgEnableUserPosts) GetSignBytes() []byte {
+func (msg MsgRegisterUser) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgEnableUserPosts) GetSigners() []sdk.AccAddress {
+func (msg MsgRegisterUser) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgEnableUserPosts) MarshalJSON() ([]byte, error) {
-	type temp MsgEnableUserPosts
+func (msg MsgRegisterUser) MarshalJSON() ([]byte, error) {
+	type temp MsgRegisterUser
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgDisableUserPosts is a constructor function for MsgDisableUserPosts
-func NewMsgDisableUserPosts(user, id, admin string) *MsgDisableUserPosts {
-	return &MsgDisableUserPosts{
+// NewMsgBlockUser is a constructor function for MsgBlockUser
+func NewMsgBlockUser(user, id, admin string) *MsgBlockUser {
+	return &MsgBlockUser{
 		User:       user,
 		SubspaceID: id,
 		Admin:      admin,
@@ -226,13 +227,13 @@ func NewMsgDisableUserPosts(user, id, admin string) *MsgDisableUserPosts {
 }
 
 // Route should return the name of the module
-func (msg MsgDisableUserPosts) Route() string { return RouterKey }
+func (msg MsgBlockUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgDisableUserPosts) Type() string { return ActionDisableUserPosts }
+func (msg MsgBlockUser) Type() string { return ActionBlockUser }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDisableUserPosts) ValidateBasic() error {
+func (msg MsgBlockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -251,41 +252,43 @@ func (msg MsgDisableUserPosts) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDisableUserPosts) GetSignBytes() []byte {
+func (msg MsgBlockUser) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgDisableUserPosts) GetSigners() []sdk.AccAddress {
+func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgDisableUserPosts) MarshalJSON() ([]byte, error) {
-	type temp MsgDisableUserPosts
+func (msg MsgBlockUser) MarshalJSON() ([]byte, error) {
+	type temp MsgBlockUser
 	return json.Marshal(temp(msg))
 }
 
-func NewMsgTransferOwnership(subspaceID, newOwner, owner string) *MsgTransferOwnership {
-	return &MsgTransferOwnership{
+// NewMsgEditSubspace is a constructor function for MsgEditSubspace
+func NewMsgEditSubspace(subspaceID, newOwner, newName, owner string) *MsgEditSubspace {
+	return &MsgEditSubspace{
 		SubspaceID: subspaceID,
 		NewOwner:   newOwner,
+		NewName:    newName,
 		Owner:      owner,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgTransferOwnership) Route() string { return RouterKey }
+func (msg MsgEditSubspace) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgTransferOwnership) Type() string { return ActionTransferOwnership }
+func (msg MsgEditSubspace) Type() string { return ActionEditSubspace }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgTransferOwnership) ValidateBasic() error {
+func (msg MsgEditSubspace) ValidateBasic() error {
 	if msg.Owner == msg.NewOwner {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the new owner is equal to the owner")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the new owner address is equal to the owner address")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
@@ -293,9 +296,11 @@ func (msg MsgTransferOwnership) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
 	}
 
-	_, err = sdk.AccAddressFromBech32(msg.NewOwner)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid new owner address")
+	if strings.TrimSpace(msg.NewOwner) != "" {
+		_, err = sdk.AccAddressFromBech32(msg.NewOwner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid new owner address")
+		}
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
@@ -306,19 +311,19 @@ func (msg MsgTransferOwnership) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgTransferOwnership) GetSignBytes() []byte {
+func (msg MsgEditSubspace) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgTransferOwnership) GetSigners() []sdk.AccAddress {
+func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgTransferOwnership) MarshalJSON() ([]byte, error) {
-	type temp MsgTransferOwnership
+func (msg MsgEditSubspace) MarshalJSON() ([]byte, error) {
+	type temp MsgEditSubspace
 	return json.Marshal(temp(msg))
 }

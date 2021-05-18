@@ -9,10 +9,11 @@ import (
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCreateSubspace{}, "desmos/MsgCreateSubspace", nil)
+	cdc.RegisterConcrete(MsgEditSubspace{}, "desmos/MsgEditSubspace", nil)
 	cdc.RegisterConcrete(MsgAddAdmin{}, "desmos/MsgAddAdmin", nil)
 	cdc.RegisterConcrete(MsgRemoveAdmin{}, "desmos/MsgRemoveAdmin", nil)
-	cdc.RegisterConcrete(MsgEnableUserPosts{}, "desmos/MsgAllowUserPosts", nil)
-	cdc.RegisterConcrete(MsgDisableUserPosts{}, "desmos/MsgBlockUserPosts", nil)
+	cdc.RegisterConcrete(MsgRegisterUser{}, "desmos/MsgRegisterUser", nil)
+	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
