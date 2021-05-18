@@ -5,6 +5,9 @@
 - Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
 - Renamed all events `Attribute` into `AttributeKey` ([#423](https://github.com/desmos-labs/desmos/issues/423))
 
+## Bug fixes
+- Added missing `CommunitySpendProposal` handler ([#421](https://github.com/desmos-labs/desmos/issues/421))
+ 
 # Version 0.16.2
 ## Changes
 - Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))
