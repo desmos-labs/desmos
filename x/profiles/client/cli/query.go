@@ -26,6 +26,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserRelationships(),
 		GetCmdQueryUserBlocks(),
 		GetCmdQueryParams(),
+		GetCmdQueryLink(),
 	)
 	return profileQueryCmd
 }
@@ -163,6 +164,35 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 			res, err := queryClient.UserBlocks(
 				context.Background(),
 				&types.QueryUserBlocksRequest{User: args[0]})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryLink returns the command allowing to query the link with chain id of a single user
+func GetCmdQueryLink() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "link [chain-id] [address]",
+		Short: "Retrieve the link of the given address and chain id",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Link(
+				context.Background(),
+				&types.QueryLinkRequest{User: args[0], ChainId: args[1]})
 			if err != nil {
 				return err
 			}
