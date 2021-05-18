@@ -4,7 +4,6 @@
 - Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
 - Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
 - Renamed all events `Attribute` into `AttributeKey` ([#423](https://github.com/desmos-labs/desmos/issues/423))
-- Updated `DTag` regEx docs ([#424](https://github.com/desmos-labs/desmos/issues/424))
 
 # Version 0.16.2
 ## Changes
