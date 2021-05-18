@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -12,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions

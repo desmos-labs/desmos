@@ -37,14 +37,8 @@ func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper K
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not found", subspaceID)
 	}
 
-	admins := keeper.GetSubspaceAdmins(ctx, subspaceID)
-
-	blockedUsers := keeper.GetSubspaceBlockedUsers(ctx, subspaceID)
-
 	response := types.QuerySubspaceResponse{
-		Subspace:           subspace,
-		Admins:             admins,
-		BlockedToPostUsers: blockedUsers,
+		Subspace: subspace,
 	}
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &response)
