@@ -819,10 +819,10 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBlockUser,
-					sdk.NewAttribute(types.AttributeUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
-					sdk.NewAttribute(types.AttributeUserBlockReason, "reason"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockReason, "reason"),
 				),
 			},
 			expBlocks: []types.UserBlock{
@@ -885,9 +885,9 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeUserBlockBlocker, "blocker"),
-					sdk.NewAttribute(types.AttributeUserBlockBlocked, "blocked"),
-					sdk.NewAttribute(types.AttributeSubspace, "subspace"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
 				),
 			},
 			expBlocks: nil,
@@ -903,9 +903,9 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeUserBlockBlocker, "blocker"),
-					sdk.NewAttribute(types.AttributeUserBlockBlocked, "blocked"),
-					sdk.NewAttribute(types.AttributeSubspace, "subspace"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
 				),
 			},
 			expBlocks: []types.UserBlock{
