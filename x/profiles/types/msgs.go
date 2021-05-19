@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"strings"
 
@@ -485,4 +486,64 @@ func (msg MsgUnblockUser) GetSignBytes() []byte {
 func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func NewMsgLink(sourceAddress, destinationAddress, sourceSignature, destinationSignature string) *MsgLink {
+	return &MsgLink{
+		SourceAddress:        sourceAddress,
+		DestinationAddress:   destinationAddress,
+		SourceSignature:      sourceSignature,
+		DestinationSignature: destinationSignature,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgLink) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgLink) Type() string {
+	return ActionLink
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgLink) ValidateBasic() error {
+
+	_, err := sdk.AccAddressFromBech32(msg.SourceAddress)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid source address")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.DestinationAddress)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid destination address")
+	}
+
+	if msg.SourceAddress == msg.DestinationAddress {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "source address and destination must be different")
+	}
+
+	_, err = hex.DecodeString(msg.SourceSignature)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid source signature")
+	}
+
+	_, err = hex.DecodeString(msg.DestinationSignature)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid destination signature")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgLink) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgLink) GetSigners() []sdk.AccAddress {
+	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	return []sdk.AccAddress{signer}
 }

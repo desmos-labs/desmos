@@ -174,6 +174,7 @@ type profilePretty struct {
 	Bio           string         `json:"bio" yaml:"bio"`
 	Pictures      Pictures       `json:"pictures" yaml:"pictures"`
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
+	Links         []Link         `json:"links" yaml:"links"`
 }
 
 // Ensure that acc
@@ -195,6 +196,7 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
+		Links:         p.Links,
 	})
 
 	if err != nil {
@@ -221,6 +223,7 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
+		Links:         p.Links,
 	})
 }
 

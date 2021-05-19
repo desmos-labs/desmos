@@ -874,3 +874,113 @@ func TestMsgUnblockUser_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgUnblockUser.Blocker)
 	require.Equal(t, []sdk.AccAddress{addr}, msgUnblockUser.GetSigners())
 }
+
+// ___________________________________________________________________________________________________________________
+
+var msgLink = types.NewMsgLink(
+	"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+	"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+	"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+	"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+)
+
+func TestMsgLink_Route(t *testing.T) {
+	require.Equal(t, "profiles", msgLink.Route())
+}
+
+func TestMsgLink_Type(t *testing.T) {
+	require.Equal(t, "link", msgLink.Type())
+}
+
+func TestMsgLink_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  *types.MsgLink
+		err  error
+	}{
+		{
+			name: "Invalid source address returns error",
+			msg: types.NewMsgLink(
+				"",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+				"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid source address"),
+		},
+		{
+			name: "Invalid destination address returns error",
+			msg: types.NewMsgLink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+				"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid destination address"),
+		},
+		{
+			name: "Source address is same as destination address returns error",
+			msg: types.NewMsgLink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+				"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "source address and destination must be different"),
+		},
+		{
+			name: "Invalid source signature returns error",
+			msg: types.NewMsgLink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+				"=",
+				"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid source signature"),
+		},
+		{
+			name: "Invalid destination signature returns error",
+			msg: types.NewMsgLink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+				"=",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid destination signature"),
+		},
+		{
+			name: "No errors message",
+			msg: types.NewMsgLink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+				"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c",
+				"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0",
+			),
+			err: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.err == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.err.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgLink_GetSignBytes(t *testing.T) {
+	actual := msgLink.GetSignBytes()
+	expected := `{"type":"desmos/MsgLink","value":{"destination_address":"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq","destination_signature":"42dd1f8d98c5de91a12259cf46098104132f69b61eaa24e112bf504d17e1a0b71274dad981bbb4a13dc440905a19be92eaf4497940751f431c530cc4d68e78b0","source_address":"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70","source_signature":"82b1a7005a04b8863fee46af0663d33704dab037f077527f51383b1de09e388a4354c9791a7ceb765d6f6b71e758232cb1d0fd1c82bdef7dfd30e1722a493b1c"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgLink_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgLink.SourceAddress)
+	require.Equal(t, []sdk.AccAddress{addr}, msgLink.GetSigners())
+}

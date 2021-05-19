@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -55,7 +54,7 @@ func (k Keeper) OnRecvIBCAccountConnectionPacket(
 	// Store link
 	proof := types.NewProof(data.SourcePubKey, data.SourceSignature)
 	chainConfig := types.NewChainConfig(data.SourceChainID, data.SourceChainPrefix)
-	link := types.NewLink(data.SourceAddress, proof, chainConfig, time.Now())
+	link := types.NewLink(data.SourceAddress, proof, chainConfig, ctx.BlockTime())
 	if err := k.StoreLink(ctx, link); err != nil {
 		return packetAck, err
 	}
@@ -146,7 +145,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	// Store link
 	proof := types.NewProof(data.SourcePubKey, data.Signature)
 	chainConfig := types.NewChainConfig(data.SourceChainID, data.SourceChainPrefix)
-	link := types.NewLink(data.SourceAddress, proof, chainConfig, time.Now())
+	link := types.NewLink(data.SourceAddress, proof, chainConfig, ctx.BlockTime())
 	if err := k.StoreLink(ctx, link); err != nil {
 		return packetAck, err
 	}
@@ -154,6 +153,7 @@ func (k Keeper) OnRecvIBCAccountLinkPacket(
 	// Store link to the profile
 	profile.Links = append(profile.Links, link)
 	if err := k.StoreProfile(ctx, profile); err != nil {
+		k.RemoveLink(ctx, data.SourceChainID, data.SourceAddress)
 		return packetAck, err
 	}
 

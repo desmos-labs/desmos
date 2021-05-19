@@ -1,15 +1,18 @@
 package keeper_test
 
 import (
+	"encoding/hex"
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -935,6 +938,351 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 
 				stored := suite.k.GetAllUsersBlocks(suite.ctx)
 				suite.Require().Equal(test.expBlocks, stored)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgLink() {
+	var existentLinks []types.Link
+	var existentProfiles []*types.Profile
+
+	// Generate source and destination key
+	srcPriv := secp256k1.GenPrivKey()
+	destPriv := secp256k1.GenPrivKey()
+	srcPubKey := srcPriv.PubKey()
+	destPubKey := destPriv.PubKey()
+
+	// Get bech32 encoded addresses
+	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
+	suite.Require().NoError(err)
+	destAddr, err := bech32.ConvertAndEncode("cosmos", destPubKey.Address().Bytes())
+	suite.Require().NoError(err)
+
+	// Get signature by signing with keys
+	srcSig, err := srcPriv.Sign([]byte(srcAddr))
+	suite.Require().NoError(err)
+	destSig, err := destPriv.Sign(srcSig)
+	suite.Require().NoError(err)
+
+	srcSigHex := hex.EncodeToString(srcSig)
+	destSigHex := hex.EncodeToString(destSig)
+
+	blockTime := suite.testData.profile.CreationDate
+
+	tests := []struct {
+		name           string
+		malleate       func()
+		msg            *types.MsgLink
+		shouldErr      bool
+		expEvents      sdk.Events
+		expStoredLinks []types.Link
+	}{
+		{
+			name:     "Invalid msg returns error",
+			malleate: func() {},
+			msg: types.NewMsgLink(
+				"",
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name:     "Invalid source address returns error (unknown source address)",
+			malleate: func() {},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Invalid source address returns error (non existent pubkey on source address)",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Invalid destination address returns error (unknown dest address)",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Invalid destination address returns error (non existent pubkey on source address)",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Invalid destination signature",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				srcSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Invalid source signature",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(destPubKey) // wrong public key
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "non existent profile on destination address returns error",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Link already exists returns error",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+
+				existentProfiles = []*types.Profile{
+					suite.CheckProfileNoError(types.NewProfile(
+						"custom_dtag",
+						"my-nickname",
+						"my-bio",
+						types.NewPictures(
+							"https://test.com/profile-picture",
+							"https://test.com/cover-pic",
+						),
+						suite.testData.profile.CreationDate,
+						destBaseAcc,
+					)),
+				}
+
+				existentLinks = []types.Link{
+					types.NewLink(
+						srcAddr,
+						types.NewProof("pubKey", "signature"),
+						types.NewChainConfig(suite.ctx.ChainID(), sdk.GetConfig().GetBech32AccountAddrPrefix()),
+						time.Time{},
+					),
+				}
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
+			name: "Create link successfully",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+
+				existentProfiles = []*types.Profile{
+					suite.CheckProfileNoError(types.NewProfile(
+						"custom_dtag",
+						"my-nickname",
+						"my-bio",
+						types.NewPictures(
+							"https://test.com/profile-picture",
+							"https://test.com/cover-pic",
+						),
+						suite.testData.profile.CreationDate,
+						destBaseAcc,
+					)),
+				}
+
+				existentLinks = nil
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr: false,
+			expEvents: sdk.EmptyEvents(),
+			expStoredLinks: []types.Link{
+				types.NewLink(
+					srcAddr,
+					types.NewProof(hex.EncodeToString(srcPubKey.Bytes()), srcSigHex),
+					types.NewChainConfig(suite.ctx.ChainID(), sdk.GetConfig().GetBech32AccountAddrPrefix()),
+					blockTime,
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			test.malleate()
+
+			suite.ctx = suite.ctx.WithBlockTime(blockTime)
+			for _, acc := range existentProfiles {
+				err := suite.k.StoreProfile(suite.ctx, acc)
+				suite.Require().NoError(err)
+			}
+
+			for _, link := range existentLinks {
+				err := suite.k.StoreLink(suite.ctx, link)
+				suite.Require().NoError(err)
+			}
+
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.Link(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				stored := suite.k.GetAllLinks(suite.ctx)
+				suite.Require().NotEmpty(stored)
+				for _, link := range stored {
+					suite.Require().Contains(test.expStoredLinks, link)
+				}
+				profile, found, err := suite.k.GetProfile(suite.ctx, destAddr)
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+
+				suite.Require().NotEmpty(profile.Links)
+				for _, link := range profile.Links {
+					suite.Require().Contains(test.expStoredLinks, link)
+				}
 			}
 		})
 	}

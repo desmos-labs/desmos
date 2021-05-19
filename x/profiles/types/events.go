@@ -31,4 +31,11 @@ const (
 	AttributeUserBlockBlocked = "blocked"
 	AttributeUserBlockReason  = "reason"
 	AttributeSubspace         = "subspace"
+
+	EventTypeLink = "link"
+
+	AttributeLinkSourceAddress        = "source_addres"
+	AttributeLinkDestinationAddress   = "destination_addres"
+	AttributeLinkSourceSignature      = "source_signature"
+	AttributeLinkDestinationSignature = "destination_address"
 )

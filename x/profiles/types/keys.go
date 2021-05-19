@@ -17,6 +17,7 @@ const (
 	ActionDeleteRelationship        = "delete_relationship"
 	ActionBlockUser                 = "block_user"
 	ActionUnblockUser               = "unblock_user"
+	ActionLink                      = "link"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"

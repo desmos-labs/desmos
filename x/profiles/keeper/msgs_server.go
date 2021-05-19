@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/hex"
 	"time"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -364,4 +365,79 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 	))
 
 	return &types.UnblockUserResponse{}, nil
+}
+
+func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	// Get source public key
+	srcAccAddr, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	srcPubKey, err := k.GetAccountPubKey(ctx, srcAccAddr)
+	if err != nil {
+		return nil, err
+	}
+	if srcPubKey == nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "non existent pubkey on source address")
+	}
+
+	// Get destination public key
+	destAccAddr, _ := sdk.AccAddressFromBech32(msg.DestinationAddress)
+	destPubKey, err := k.GetAccountPubKey(ctx, destAccAddr)
+	if err != nil {
+		return nil, err
+	}
+	if destPubKey == nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "non existent pubkey on destination address")
+	}
+
+	srcSig, _ := hex.DecodeString(msg.SourceSignature)
+	destSig, _ := hex.DecodeString(msg.DestinationSignature)
+
+	// Verify signatures
+	if !destPubKey.VerifySignature(srcSig, destSig) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "failed to verify destination signature")
+	}
+
+	if !srcPubKey.VerifySignature([]byte(msg.SourceAddress), srcSig) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "failed to verify source signature")
+	}
+
+	// Check if address has the profile and get the profile
+	profile, found, err := k.GetProfile(ctx, msg.DestinationAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, ("non existent profile on destination address"))
+	}
+
+	proof := types.NewProof(hex.EncodeToString(srcPubKey.Bytes()), msg.SourceSignature)
+	chainConfig := types.NewChainConfig(ctx.ChainID(), sdk.GetConfig().GetBech32AccountAddrPrefix())
+	link := types.NewLink(msg.SourceAddress, proof, chainConfig, ctx.BlockTime())
+
+	if err := k.StoreLink(ctx, link); err != nil {
+		return nil, err
+	}
+
+	profile.Links = append(profile.Links, link)
+
+	if err := k.StoreProfile(ctx, profile); err != nil {
+		k.RemoveLink(ctx, link.ChainConfig.ID, link.Address)
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeLink,
+		sdk.NewAttribute(types.AttributeLinkSourceAddress, msg.SourceAddress),
+		sdk.NewAttribute(types.AttributeLinkDestinationAddress, msg.DestinationAddress),
+		sdk.NewAttribute(types.AttributeLinkSourceSignature, msg.SourceSignature),
+		sdk.NewAttribute(types.AttributeLinkDestinationSignature, msg.DestinationSignature),
+	))
+
+	return &types.LinkResponse{}, nil
 }
