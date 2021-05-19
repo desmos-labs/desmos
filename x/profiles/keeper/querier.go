@@ -33,7 +33,7 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 			return queryUserBlocks(ctx, path[1:], req, keeper, legacyQuerierCdc)
 
 		case types.QueryLink:
-			return queryUserBlocks(ctx, path[1:], req, keeper, legacyQuerierCdc)
+			return queryLink(ctx, path[1:], req, keeper, legacyQuerierCdc)
 
 		default:
 			return nil, fmt.Errorf("unknown Profiles query endpoint")
@@ -146,10 +146,23 @@ func queryUserBlocks(
 func queryLink(
 	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
 ) ([]byte, error) {
-	link, found := keeper.GetLink(ctx, path[0], path[1])
+
+	chainID := path[0]
+	if strings.TrimSpace(chainID) == "" {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "ChainID cannot be empty or blank")
+	}
+
+	addr := path[1]
+	sdkAddress, err := sdk.AccAddressFromBech32(addr)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, addr)
+	}
+
+	link, found := keeper.GetLink(ctx, chainID, sdkAddress.String())
 
 	if !found {
-		return nil, nil
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"Link with address %s doesn't exists", addr)
 	}
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &link)

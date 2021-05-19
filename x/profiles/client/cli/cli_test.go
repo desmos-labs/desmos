@@ -94,6 +94,15 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	profilesData.Params = types.DefaultParams()
 
+	profilesData.Links = []types.Link{
+		types.NewLink(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			types.NewProof("pubkey", "signature"),
+			types.NewChainConfig("test-net", "cosmos"),
+			time.Time{},
+		),
+	}
+
 	profilesDataBz, err := cfg.Codec.MarshalJSON(&profilesData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = profilesDataBz
@@ -399,6 +408,68 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 				s.Require().NoError(err)
 
 				var response types.QueryUserBlocksResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryLink() {
+	val := s.network.Validators[0]
+	link := types.NewLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		types.NewProof("pubkey", "signature"),
+		types.NewChainConfig("test-net", "cosmos"),
+		time.Time{},
+	)
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryLinkResponse
+	}{
+		{
+			name: "non existing link",
+			args: []string{
+				s.network.Validators[1].Address.String(),
+				"test-net",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryLinkResponse{
+				Link: nil,
+			},
+		},
+		{
+			name: "existing link is returned properly",
+			args: []string{
+				"test-net",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryLinkResponse{
+				Link: &link,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryLink()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryLinkResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}

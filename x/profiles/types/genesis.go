@@ -8,7 +8,7 @@ import (
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portID string,
+	request []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portID string, links []Link,
 ) *GenesisState {
 	return &GenesisState{
 		Params:              params,
@@ -16,12 +16,13 @@ func NewGenesisState(
 		Relationships:       relationships,
 		Blocks:              blocks,
 		PortID:              portID,
+		Links:               links,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, DefaultParams(), PortID)
+	return NewGenesisState(nil, nil, nil, DefaultParams(), PortID, nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid

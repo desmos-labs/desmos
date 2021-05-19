@@ -142,6 +142,10 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
+	for _, link := range profile.Links {
+		k.RemoveLink(ctx, link.ChainConfig.ID, link.Address)
+	}
+
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
 	return nil
@@ -443,4 +447,29 @@ func (k Keeper) GetLink(ctx sdk.Context, chainID string, address string) (link t
 		return link, true
 	}
 	return types.Link{}, false
+}
+
+// GetAllLinks returns a list of all the links inside the given context.
+func (k Keeper) GetAllLinks(ctx sdk.Context) []types.Link {
+	var links []types.Link
+
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.LinksPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var link types.Link
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &link)
+		links = append(links, link)
+	}
+
+	return links
+}
+
+// RemoveLink allows to delete a link associated with the given address and chain id inside the current context.
+// It assumes that the related link exists.
+func (k Keeper) RemoveLink(ctx sdk.Context, chainID string, address string) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.LinksStoreKey(chainID, address)
+	store.Delete(key)
 }

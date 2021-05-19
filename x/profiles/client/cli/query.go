@@ -192,7 +192,7 @@ func GetCmdQueryLink() *cobra.Command {
 
 			res, err := queryClient.Link(
 				context.Background(),
-				&types.QueryLinkRequest{User: args[0], ChainId: args[1]})
+				&types.QueryLinkRequest{User: args[1], ChainId: args[0]})
 			if err != nil {
 				return err
 			}

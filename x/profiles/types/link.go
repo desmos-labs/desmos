@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 )
 
@@ -85,4 +86,12 @@ func (link Link) Validate() error {
 	}
 
 	return nil
+}
+
+// MustUnmarshalLink deserializes the given byte array as an array of the link using
+// the provided BinaryMarshaler
+func MustUnmarshalLink(codec codec.BinaryMarshaler, bz []byte) Link {
+	var link Link
+	codec.MustUnmarshalBinaryBare(bz, &link)
+	return link
 }

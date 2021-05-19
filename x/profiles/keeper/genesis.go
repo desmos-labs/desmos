@@ -15,7 +15,8 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllRelationships(ctx),
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
-		types.PortID,
+		k.GetPort(ctx),
+		k.GetAllLinks(ctx),
 	)
 }
 
@@ -54,6 +55,14 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Store the user blocks
 	for _, userBlock := range data.Blocks {
 		err := k.SaveUserBlock(ctx, userBlock)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Store the links
+	for _, link := range data.Links {
+		err := k.StoreLink(ctx, link)
 		if err != nil {
 			panic(err)
 		}

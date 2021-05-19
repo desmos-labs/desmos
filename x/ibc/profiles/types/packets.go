@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/hex"
 	fmt "fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,12 +32,12 @@ func NewIBCAccountConnectionPacketData(
 // Validate is used for validating the packet
 func (p IBCAccountConnectionPacketData) Validate() error {
 
-	if p.SourceChainPrefix == "" {
-		return fmt.Errorf("chain prefix cannot be empty")
+	if strings.TrimSpace(p.SourceChainPrefix) == "" {
+		return fmt.Errorf("chain prefix cannot be empty or blank")
 	}
 
-	if p.SourceChainID == "" {
-		return fmt.Errorf("chain id cannot be empty")
+	if strings.TrimSpace(p.SourceChainID) == "" {
+		return fmt.Errorf("chain id cannot be empty or blank")
 	}
 
 	srcAddrBz, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)
@@ -107,12 +108,12 @@ func NewIBCAccountLinkPacketData(
 // Validate is used for validating the packet
 func (p IBCAccountLinkPacketData) Validate() error {
 
-	if p.SourceChainPrefix == "" {
-		return fmt.Errorf("chain prefix cannot be empty")
+	if strings.TrimSpace(p.SourceChainPrefix) == "" {
+		return fmt.Errorf("chain prefix cannot be empty or blank")
 	}
 
-	if p.SourceChainID == "" {
-		return fmt.Errorf("chain id cannot be empty")
+	if strings.TrimSpace(p.SourceChainID) == "" {
+		return fmt.Errorf("chain id cannot be empty or blank")
 	}
 
 	srcAddrBz, err := sdk.GetFromBech32(p.SourceAddress, p.SourceChainPrefix)

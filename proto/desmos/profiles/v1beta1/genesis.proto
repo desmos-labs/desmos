@@ -35,4 +35,7 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"port_id\"",
     (gogoproto.customname) = "PortID"
   ];
+
+  repeated desmos.profiles.v1beta1.Link links = 6
+      [ (gogoproto.moretags) = "yaml:\"links\"", (gogoproto.nullable) = false ];
 }

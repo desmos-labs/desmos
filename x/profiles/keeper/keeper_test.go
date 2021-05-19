@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -1205,6 +1206,113 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 
 			blocked := suite.k.HasUserBlocked(suite.ctx, test.data.blocker, test.data.blocked, test.data.subspace)
 			suite.Equal(test.expBlocked, blocked)
+		})
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
+func (suite *KeeperTestSuite) TestKeeper_StoreLink() {
+	link := types.NewLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		types.NewProof("pubkey", "signature"),
+		types.NewChainConfig("test-net", "cosmos"),
+		time.Time{},
+	)
+
+	tests := []struct {
+		name   string
+		link   types.Link
+		stored []types.Link
+		expErr bool
+	}{
+		{
+			name: "Non existent link is saved correctly",
+			link: link,
+			stored: []types.Link{
+				types.NewLink(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewProof("pubkey", "signature"),
+					types.NewChainConfig("test-net", "cosmos"),
+					time.Time{},
+				),
+			},
+			expErr: false,
+		},
+		{
+			name: "already existent link returns error",
+			link: link,
+			stored: []types.Link{
+				types.NewLink(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewProof("pubkey", "signature"),
+					types.NewChainConfig("test-net", "cosmos"),
+					time.Time{},
+				),
+				link,
+			},
+			expErr: true,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, link := range test.stored {
+				err := suite.k.StoreLink(suite.ctx, link)
+				suite.Require().NoError(err)
+			}
+			err := suite.k.StoreLink(suite.ctx, test.link)
+
+			if test.expErr {
+				suite.Require().Error(err)
+				suite.Require().Equal(fmt.Errorf("link already exists"), err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(append(test.stored, test.link), suite.k.GetAllLinks(suite.ctx))
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_RemoveLink() {
+	link := types.NewLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		types.NewProof("pubkey", "signature"),
+		types.NewChainConfig("test-net", "cosmos"),
+		time.Time{},
+	)
+
+	tests := []struct {
+		name   string
+		link   types.Link
+		stored []types.Link
+	}{
+		{
+			name: "Remove link successfully",
+			link: link,
+			stored: []types.Link{
+				types.NewLink(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewProof("pubkey", "signature"),
+					types.NewChainConfig("test-net", "cosmos"),
+					time.Time{},
+				),
+				link,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			for _, link := range test.stored {
+				err := suite.k.StoreLink(suite.ctx, link)
+				suite.Require().NoError(err)
+			}
+			suite.k.RemoveLink(suite.ctx, test.link.ChainConfig.ID, link.Address)
+			result := test.stored[:1]
+			suite.Require().Equal(result, suite.k.GetAllLinks(suite.ctx))
 		})
 	}
 }

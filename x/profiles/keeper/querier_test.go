@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -319,6 +321,79 @@ func (suite *KeeperTestSuite) Test_queryUserBlocks() {
 		suite.Run(test.name, func() {
 			for _, ub := range test.userBlocks {
 				_ = suite.k.SaveUserBlock(suite.ctx, ub)
+			}
+
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+
+			if test.expResult != nil {
+				suite.Require().Nil(err)
+				expectedIndented, err := codec.MarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+				suite.Require().NoError(err)
+				suite.Require().Equal(string(expectedIndented), string(result))
+			}
+
+			if result == nil {
+				suite.Require().Error(err)
+				suite.Require().Equal(test.expErr.Error(), err.Error())
+				suite.Require().Nil(result)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_queryLink() {
+	link := types.NewLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		types.NewProof("pubkey", "signature"),
+		types.NewChainConfig("test-net", "cosmos"),
+		time.Now(),
+	)
+
+	tests := []struct {
+		name      string
+		path      []string
+		links     []types.Link
+		expResult *types.Link
+		expErr    error
+	}{
+		{
+			name:      "Empty chain id returns error",
+			path:      []string{types.QueryLink, "", "invalidAddress"},
+			links:     []types.Link{},
+			expResult: nil,
+			expErr:    sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "ChainID cannot be empty or blank"),
+		},
+		{
+			name:      "Invalid bech32 address returns error",
+			path:      []string{types.QueryLink, "test-net", "invalidAddress"},
+			links:     []types.Link{},
+			expResult: nil,
+			expErr:    sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalidAddress"),
+		},
+		{
+			name:      "Link does not exist",
+			path:      []string{types.QueryLink, "test-net", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			links:     []types.Link{},
+			expResult: nil,
+			expErr:    sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Link with address %s doesn't exists", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+		},
+		{
+			name:      "Link returned correctly",
+			path:      []string{types.QueryLink, "test-net", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			links:     []types.Link{link},
+			expResult: &link,
+			expErr:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.SetupTest() // reset
+		suite.Run(test.name, func() {
+			for _, link := range test.links {
+				err := suite.k.StoreLink(suite.ctx, link)
+				suite.Require().NoError(err)
 			}
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)

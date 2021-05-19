@@ -17,6 +17,8 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			Relationships []types.Relationship
 			Blocks        []types.UserBlock
 			Params        types.Params
+			PortID        string
+			Links         []types.Link
 		}
 		expGenesis *types.GenesisState
 	}{
@@ -27,13 +29,17 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				PortID        string
+				Links         []types.Link
 			}{
 				DTagRequests:  nil,
 				Params:        types.DefaultParams(),
 				Relationships: nil,
 				Blocks:        nil,
+				PortID:        "",
+				Links:         nil,
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.PortID),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil),
 		},
 		{
 			name: "non-empty state",
@@ -42,6 +48,8 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				PortID        string
+				Links         []types.Link
 			}{
 				DTagRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
@@ -78,6 +86,21 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				PortID: types.PortID,
+				Links: []types.Link{
+					types.NewLink(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+				},
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -116,6 +139,20 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				types.PortID,
+				[]types.Link{
+					types.NewLink(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+				},
 			),
 		},
 	}
@@ -134,7 +171,12 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			for _, block := range uc.state.Blocks {
 				suite.Require().NoError(suite.k.SaveUserBlock(suite.ctx, block))
 			}
+			for _, link := range uc.state.Links {
+				suite.Require().NoError(suite.k.StoreLink(suite.ctx, link))
+				suite.T().Log(link)
+			}
 			suite.k.SetParams(suite.ctx, uc.state.Params)
+			suite.k.SetPort(suite.ctx, uc.state.PortID)
 
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(uc.expGenesis, exported)
@@ -183,23 +225,26 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			Relationships        []types.Relationship
 			Blocks               []types.UserBlock
 			Params               types.Params
+			Links                []types.Link
 		}
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.PortID),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.PortID, nil),
 			expState: struct {
 				Profiles             []*types.Profile
 				DTagTransferRequests []types.DTagTransferRequest
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				Links                []types.Link
 			}{
 				Profiles:             nil,
 				DTagTransferRequests: nil,
 				Relationships:        nil,
 				Blocks:               nil,
 				Params:               types.DefaultParams(),
+				Links:                nil,
 			},
 		},
 		{
@@ -213,6 +258,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.UserBlock{},
 				types.DefaultParams(),
 				types.PortID,
+				[]types.Link{},
 			),
 			expErr: true,
 		},
@@ -227,6 +273,32 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				types.DefaultParams(),
 				types.PortID,
+				[]types.Link{},
+			),
+			expErr: true,
+		},
+		{
+			name: "double link panics",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{},
+				[]types.UserBlock{},
+				types.DefaultParams(),
+				types.PortID,
+				[]types.Link{
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+				},
 			),
 			expErr: true,
 		},
@@ -274,6 +346,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				types.PortID,
+				[]types.Link{
+					types.NewLink(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+				},
 			),
 			expState: struct {
 				Profiles             []*types.Profile
@@ -281,6 +367,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				Links                []types.Link
 			}{
 				Profiles: []*types.Profile{
 					profile1,
@@ -321,6 +408,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				Links: []types.Link{
+					types.NewLink(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+					types.NewLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewProof("pubkey", "signature"),
+						types.NewChainConfig("test-net", "cosmos"),
+						time.Time{},
+					),
+				},
 			},
 		},
 	}
@@ -342,6 +443,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				suite.Require().Equal(uc.expState.Profiles, suite.k.GetProfiles(suite.ctx))
 				suite.Require().Equal(uc.expState.DTagTransferRequests, suite.k.GetDTagTransferRequests(suite.ctx))
 				suite.Require().Equal(uc.expState.Params, suite.k.GetParams(suite.ctx))
+				suite.Require().Equal(uc.expState.Links, suite.k.GetAllLinks(suite.ctx))
 			}
 		})
 	}
