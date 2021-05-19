@@ -120,7 +120,7 @@ cosmovisor version
 
 This should output the Desmos version.
 
-### 4. Restating your node
+### 4. Restarting your node
 Finally, if you setup everything correctly you can now restart your node. To do this you can simply stop the running `desmos start` and re-start your Desmos node using the following command: 
 
 ```
