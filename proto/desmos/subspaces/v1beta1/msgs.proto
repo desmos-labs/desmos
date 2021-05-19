@@ -130,7 +130,7 @@ message MsgRemoveAdminResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgRegisterUser represents the message used to allow a user to post inside a specific subspace
+// MsgRegisterUser represents the message used to register a user inside a specific subspace
 message MsgRegisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -148,6 +148,8 @@ message MsgRegisterUser {
 message MsgRegisterUserResponse {}
 
 // ___________________________________________________________________________________________________________________
+
+// MsgUnregisterUser represent the message used to unregister a user inside a specific subspace
 message MsgUnregisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -161,6 +163,7 @@ message MsgUnregisterUser {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
+// MsgUnregisterUserResponse defines the Msg/MsgUnregisterUser response type
 message MsgUnregisterUserResponse{}
 
 // ___________________________________________________________________________________________________________________
@@ -184,7 +187,7 @@ message MsgBlockUserResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgBlockUser represents the message used to block a user to post inside a specific subspace
+// MsgUnblockUser represents the message used to unblock a user inside a specific subspace
 message MsgUnblockUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -198,6 +201,6 @@ message MsgUnblockUser {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgBlockUserResponse defines the Msg/MsgBlockUser response type
+// MsgUnblockUserResponse defines the Msg/MsgUnblockUser response type
 message MsgUnblockUserResponse{}
 

@@ -39,7 +39,7 @@ func GetCmdQuerySubspace() *cobra.Command {
 
 			res, err := queryClient.Subspace(
 				context.Background(),
-				&types.QuerySubspaceRequest{SubspaceId: args[0]},
+				&types.QuerySubspaceRequest{SubspaceID: args[0]},
 			)
 			if err != nil {
 				return err
