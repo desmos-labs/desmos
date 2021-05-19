@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"time"
@@ -577,4 +578,4 @@ func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
 			suite.Equal(test.expUsers.Users, users.Users)
 		})
 	}
-}
+}*/

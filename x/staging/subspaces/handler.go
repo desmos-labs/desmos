@@ -30,8 +30,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgRegisterUser:
 			res, err := msgServer.RegisterUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgUnregisterUser:
+			res, err := msgServer.UnregisterUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgBlockUser:
 			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgUnblockUser:
+			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:

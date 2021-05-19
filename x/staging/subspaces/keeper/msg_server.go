@@ -48,10 +48,10 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the if the subspace exists
-	subspace, exist := k.GetSubspace(ctx, msg.SubspaceID)
+	subspace, exist := k.GetSubspace(ctx, msg.ID)
 	if !exist {
 		return nil,
-			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s doesn't exists", msg.SubspaceID)
+			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s doesn't exists", msg.ID)
 	}
 
 	editedSubspace := subspace.
@@ -62,7 +62,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEditSubspace,
-		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.ID),
 		sdk.NewAttribute(types.AttributeKeyNewOwner, subspace.Owner),
 		sdk.NewAttribute(types.AttributeKeySubspaceName, subspace.Name),
 	))
@@ -73,7 +73,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 func (k msgServer) AddAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*types.MsgAddAdminResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.NewAdmin, msg.Owner)
+	err := k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.Admin, msg.Owner)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (k msgServer) AddAdmin(goCtx context.Context, msg *types.MsgAddAdmin) (*typ
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeAddAdmin,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.NewAdmin),
+		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.Admin),
 	))
 
 	return &types.MsgAddAdminResponse{}, nil
@@ -120,6 +120,22 @@ func (k msgServer) RegisterUser(goCtx context.Context, msg *types.MsgRegisterUse
 	return &types.MsgRegisterUserResponse{}, nil
 }
 
+func (k msgServer) UnregisterUser(goCtx context.Context, msg *types.MsgUnregisterUser) (*types.MsgUnregisterUserResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := k.UnregisterUserFromSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeUnregisterUser,
+		sdk.NewAttribute(types.AttributeKeyUnregisteredUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+	))
+
+	return &types.MsgUnregisterUserResponse{}, nil
+}
+
 func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -134,4 +150,20 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 	))
 
 	return &types.MsgBlockUserResponse{}, nil
+}
+
+func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := k.BlockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeUnblockUser,
+		sdk.NewAttribute(types.AttributeKeyUnblockedUser, msg.User),
+		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+	))
+
+	return &types.MsgUnblockUserResponse{}, nil
 }

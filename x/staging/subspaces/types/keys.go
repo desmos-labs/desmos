@@ -10,7 +10,9 @@ const (
 	ActionAddAdmin       = "add_admin"
 	ActionRemoveAdmin    = "remove_admin"
 	ActionRegisterUser   = "register_user"
+	ActionUnregisterUser = "unregister_user"
 	ActionBlockUser      = "block_user"
+	ActionUnblockUser    = "unblock_user"
 
 	// Queries
 	QuerierRoute  = ModuleName

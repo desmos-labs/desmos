@@ -2,5 +2,7 @@ package cli
 
 // Subspaces flag
 const (
-	FlagNewName = "new-name"
+	FlagOpen  = "open"
+	FlagName  = "name"
+	FlagOwner = "owner"
 )

@@ -25,10 +25,16 @@ func registerTxRoutes(clientCtx client.Context, r *mux.Router) {
 		removeSubspaceAdminHandler(clientCtx)).Methods("DELETE")
 
 	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/register-user", SubspaceID),
-		registerUserHandler(clientCtx)).Methods("PUT")
+		registerUserHandler(clientCtx)).Methods("POST")
+
+	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/unregister-user", SubspaceID),
+		unregisterUserHandler(clientCtx)).Methods("DELETE")
 
 	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/block-user", SubspaceID),
-		blockUserHandler(clientCtx)).Methods("PUT")
+		blockUserHandler(clientCtx)).Methods("POST")
+
+	r.HandleFunc(fmt.Sprintf("/subspaces/{%s}/unblock-user", SubspaceID),
+		unblockUserHandler(clientCtx)).Methods("DELETE")
 }
 
 func createSubspaceHandler(clientCtx client.Context) http.HandlerFunc {
@@ -161,6 +167,32 @@ func registerUserHandler(clientCtx client.Context) http.HandlerFunc {
 	}
 }
 
+func unregisterUserHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req CommonSubspaceReq
+
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		subspaceID := vars[SubspaceID]
+
+		msg := types.NewMsgUnregisterUser(req.Address, subspaceID, req.BaseReq.From)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
 func blockUserHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -179,6 +211,32 @@ func blockUserHandler(clientCtx client.Context) http.HandlerFunc {
 		subspaceID := vars[SubspaceID]
 
 		msg := types.NewMsgBlockUser(req.Address, subspaceID, req.BaseReq.From)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
+func unblockUserHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var req CommonSubspaceReq
+
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		subspaceID := vars[SubspaceID]
+
+		msg := types.NewMsgUnblockUser(req.Address, subspaceID, req.BaseReq.From)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}

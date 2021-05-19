@@ -129,6 +129,31 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	return nil
 }
 
+// UnregisterUserFromSubspace unregister the user from the subspace with the given ID.
+// It returns error when the user is not registered.
+func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspaceID)
+
+	subspaceBytes := store.Get(key)
+	// check if the subspace exists and the admin is an actual admin
+	subspace, err := k.CheckSubspaceAndAdmin(subspaceBytes, subspaceID, admin)
+	if err != nil {
+		return err
+	}
+
+	// check if the user is already registered inside the subspace
+	if !subspace.RegisteredUsers.IsPresent(user) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user with address : %s is not registered inside the subspace: %s", user, subspaceID)
+	}
+
+	subspace.RegisteredUsers = subspace.RegisteredUsers.RemoveUser(user)
+
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+	return nil
+}
+
 // BlockUserInSubspace block the given user inside the given subspace.
 // It returns error if the user is already blocked inside the subspace.
 func (k Keeper) BlockUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
@@ -149,6 +174,31 @@ func (k Keeper) BlockUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	}
 
 	subspace.RegisteredUsers = subspace.BlockedUsers.AppendUser(user)
+
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+	return nil
+}
+
+// UnblockUserInSubspace unblock the given user inside the given subspace.
+// It returns error if the user is not blocked inside the subspace.
+func (k Keeper) UnblockUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspaceID)
+
+	subspaceBytes := store.Get(key)
+	// check if the subspace exists and the admin is an actual admin
+	subspace, err := k.CheckSubspaceAndAdmin(subspaceBytes, subspaceID, admin)
+	if err != nil {
+		return err
+	}
+
+	// check if the user is already registered inside the subspace
+	if !subspace.BlockedUsers.IsPresent(user) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the user with address : %s is not blocked inside the subspace: %s", user, subspaceID)
+	}
+
+	subspace.RegisteredUsers = subspace.BlockedUsers.RemoveUser(user)
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil

@@ -24,7 +24,11 @@ message QuerySubspaceRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string subspace_id = 1;
+  string subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
 }
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method

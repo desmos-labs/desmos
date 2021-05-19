@@ -39,6 +39,8 @@ func (k Keeper) CheckSubspaceAndAdmin(subspaceBytes []byte, subspaceID, address 
 		)
 	}
 
+	k.cdc.MustUnmarshalBinaryBare(subspaceBytes, &subspace)
+
 	if subspace.Owner != address {
 		if !subspace.Admins.IsPresent(address) {
 			return types.Subspace{}, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -48,7 +50,6 @@ func (k Keeper) CheckSubspaceAndAdmin(subspaceBytes []byte, subspaceID, address 
 		}
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(subspaceBytes, &subspace)
 	return subspace, nil
 }
 
@@ -63,6 +64,8 @@ func (k Keeper) CheckSubspaceAndOwner(subspaceBytes []byte, subspaceID, address 
 		)
 	}
 
+	k.cdc.MustUnmarshalBinaryBare(subspaceBytes, &subspace)
+
 	if subspace.Owner != address {
 		return types.Subspace{}, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user: %s is not the subspace owner and can't perform this operation on the subspaces: %s",
@@ -70,6 +73,5 @@ func (k Keeper) CheckSubspaceAndOwner(subspaceBytes []byte, subspaceID, address 
 		)
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(subspaceBytes, &subspace)
 	return subspace, nil
 }

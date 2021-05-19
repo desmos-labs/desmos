@@ -23,8 +23,15 @@ service Msg {
   // RegisterUser defines the method to let user posts inside a specific subspace
   rpc RegisterUser(MsgRegisterUser) returns (MsgRegisterUserResponse);
 
-  // BlockUser defines the method to block user posts inside a specific subspace
+  // UnregisterUser defines the method to unregister a user from a subspace
+  rpc UnregisterUser(MsgUnregisterUser) returns (MsgUnregisterUserResponse);
+
+  // BlockUser defines the method to block a user inside a specific subspace
   rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);
+
+  // UnblockUser defines the method to unblock a user inside a specific subspace
+  rpc UnblockUser(MsgUnblockUser) returns (MsgUnblockUserResponse);
+
 }
 
 // ___________________________________________________________________________________________________________________
@@ -44,9 +51,9 @@ message MsgCreateSubspace {
     (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  string creator = 3 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  bool open = 3 [ (gogoproto.moretags) = "yaml:\"open\""];
 
-  bool open = 4 [ (gogoproto.moretags) = "yaml:\"open\""];
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -60,7 +67,7 @@ message MsgEditSubspace {
   option (gogoproto.goproto_getters) = false;
 
   string id = 1 [
-    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.customname) = "ID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
@@ -94,7 +101,7 @@ message MsgAddAdmin {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string new_admin = 2 [(gogoproto.moretags) = "yaml:\"new_admin\""];
+  string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
   string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
@@ -141,6 +148,22 @@ message MsgRegisterUser {
 message MsgRegisterUserResponse {}
 
 // ___________________________________________________________________________________________________________________
+message MsgUnregisterUser {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string subspace_id = 2 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
+
+message MsgUnregisterUserResponse{}
+
+// ___________________________________________________________________________________________________________________
 
 // MsgBlockUser represents the message used to block a user to post inside a specific subspace
 message MsgBlockUser {
@@ -158,3 +181,23 @@ message MsgBlockUser {
 
 // MsgBlockUserResponse defines the Msg/MsgBlockUser response type
 message MsgBlockUserResponse{}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgBlockUser represents the message used to block a user to post inside a specific subspace
+message MsgUnblockUser {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string subspace_id = 2 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
+
+// MsgBlockUserResponse defines the Msg/MsgBlockUser response type
+message MsgUnblockUserResponse{}
+
