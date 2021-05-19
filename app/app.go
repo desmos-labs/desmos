@@ -511,7 +511,7 @@ func NewDesmosApp(
 			panic(err)
 		}
 
-		profilesMigrator := profileskeeper.NewMigrator(app.ProfileKeeper)
+		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfileKeeper)
 		err = profilesMigrator.Migrate1to2(ctx)
 		if err != nil {
 			panic(err)
