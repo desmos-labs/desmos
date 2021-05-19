@@ -505,8 +505,14 @@ func NewDesmosApp(
 	// --- Morpheus-apollo-1 migration to fix vesting accounts
 
 	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
-		migrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
-		err := migrator.Migrate1to2(ctx)
+		authMigrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
+		err := authMigrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		profilesMigrator := profileskeeper.NewMigrator(app.ProfileKeeper)
+		err = profilesMigrator.Migrate1to2(ctx)
 		if err != nil {
 			panic(err)
 		}
