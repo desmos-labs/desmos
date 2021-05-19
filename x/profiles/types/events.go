@@ -34,8 +34,8 @@ const (
 
 	EventTypeLink = "link"
 
-	AttributeLinkSourceAddress        = "source_addres"
-	AttributeLinkDestinationAddress   = "destination_addres"
+	AttributeLinkSourceAddress        = "source_address"
+	AttributeLinkDestinationAddress   = "destination_address"
 	AttributeLinkSourceSignature      = "source_signature"
 	AttributeLinkDestinationSignature = "destination_address"
 )
