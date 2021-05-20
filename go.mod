@@ -3,7 +3,9 @@ module github.com/desmos-labs/desmos
 go 1.15
 
 require (
-	github.com/cosmos/cosmos-sdk v0.42.4
+	github.com/armon/go-metrics v0.3.8
+	github.com/bandprotocol/chain v1.0.1-0.20210519090833-cb190e5f333a
+	github.com/cosmos/cosmos-sdk v0.42.5
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.3
@@ -20,6 +22,7 @@ require (
 	github.com/tendermint/tm-db v0.6.4
 	google.golang.org/genproto v0.0.0-20210510173355-fb37daa5cd7a
 	google.golang.org/grpc v1.37.0
+	google.golang.org/protobuf v1.26.0
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
