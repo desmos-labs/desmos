@@ -63,8 +63,8 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEditSubspace,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.ID),
-		sdk.NewAttribute(types.AttributeKeyNewOwner, subspace.Owner),
-		sdk.NewAttribute(types.AttributeKeySubspaceName, subspace.Name),
+		sdk.NewAttribute(types.AttributeKeyNewOwner, editedSubspace.Owner),
+		sdk.NewAttribute(types.AttributeKeySubspaceName, editedSubspace.Name),
 	))
 
 	return &types.MsgEditSubspaceResponse{}, nil
@@ -96,7 +96,7 @@ func (k msgServer) RemoveAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin)
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeAddAdmin,
+		types.EventTypeRemoveAdmin,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 		sdk.NewAttribute(types.AttributeKeySubspaceRemovedAdmin, msg.Admin),
 	))
@@ -155,7 +155,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.BlockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	if err := k.UnblockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
 		return nil, err
 	}
 

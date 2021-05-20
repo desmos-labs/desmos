@@ -5,6 +5,7 @@ const (
 	EventTypeCreateSubspace = "create_subspace"
 	EventTypeEditSubspace   = "edit_subspace"
 	EventTypeAddAdmin       = "admin_added"
+	EventTypeRemoveAdmin    = "remove_admin"
 	EventTypeRegisterUser   = "register_user"
 	EventTypeUnregisterUser = "unregister_user"
 	EventTypeBlockUser      = "block_user"
