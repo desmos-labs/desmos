@@ -2,7 +2,11 @@ package types
 
 const (
 	// ModuleName defines the IBC profiles name
-	ModuleName = "ibc-profiles"
+	ModuleName = "ibcprofiles"
+
+	// Version defines the current version the IBC profiles module supports
+	// TODO: Using our new version for profile packet (new ics?)
+	Version = "ics20-1"
 
 	// StoreKey is the store key string for IBC profiles
 	StoreKey = ModuleName
@@ -14,9 +18,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// PortID is the default port id that profiles module binds to
-	PortID = "transfer"
-
-	EventTypeConnectProfile = "connect_profile"
+	PortID = ModuleName
 )
 
 var (

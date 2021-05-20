@@ -119,3 +119,41 @@ func (k Keeper) StartProfileConnection(
 
 	return nil
 }
+
+func (k Keeper) OnRecvPacket(
+	ctx sdk.Context,
+	packet channeltypes.Packet,
+	data oracletypes.OracleResponsePacketData,
+) error {
+	// TODO: Update the request status
+	return nil
+}
+
+func (k Keeper) OnAcknowledgementPacket(
+	ctx sdk.Context,
+	packet channeltypes.Packet,
+	data oracletypes.OracleRequestPacketAcknowledgement,
+	ack channeltypes.Acknowledgement,
+) error {
+	switch ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Error:
+		// TODO
+		// the acknowledgment failed on the receiving chain
+		// we need to set the request as invalid
+		return nil
+	default:
+		// TODO
+		// the acknowledgement succeeded on the receiving chain
+		// we need to store the request ID for later access
+		return nil
+	}
+}
+
+func (k Keeper) OnTimeoutPacket(
+	ctx sdk.Context,
+	packet channeltypes.Packet,
+	data oracletypes.OracleRequestPacketData,
+) error {
+	// TODO: Set request as timed out
+	return nil
+}

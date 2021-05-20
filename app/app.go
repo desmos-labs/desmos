@@ -204,6 +204,7 @@ type DesmosApp struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedIBCProfilesKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
 	FeesKeeper        feeskeeper.Keeper
@@ -287,7 +288,7 @@ func NewDesmosApp(
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 
 	scopedIBCProfilesKeeper := app.CapabilityKeeper.ScopeToModule(ibcprofilestypes.ModuleName)
-	app.ScopedIBCTransferKeeper = scopedIBCProfilesKeeper
+	app.ScopedIBCProfilesKeeper = scopedIBCProfilesKeeper
 
 	// Add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -338,20 +339,28 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
-	// Create Transfer Keepers
+	// Create IBC Transfer keeper and module
 	app.IBCTransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedIBCTransferKeeper,
 	)
-	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
+	ibcTransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
-	// Create static IBC router, add transfer route, then set and seal it
+	// Create IBC Profiles keeper and module
+	app.IBCProfilesKeeper = ibcprofileskeeper.NewKeeper(
+		appCodec, keys[ibctransfertypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper, scopedIBCProfilesKeeper,
+	)
+	ibcProfilesModule := ibcprofiles.NewAppModule(app.IBCProfilesKeeper)
+
+	// Create static IBC router, add all routes, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibcTransferModule)
+	ibcRouter.AddRoute(ibcprofilestypes.ModuleName, ibcProfilesModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	// create evidence keeper with router
+	// Create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec, keys[evidencetypes.StoreKey], &app.stakingKeeper, app.slashingKeeper,
 	)
@@ -379,11 +388,6 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[reportsTypes.StoreKey],
 		app.postsKeeper,
-	)
-
-	app.IBCProfilesKeeper = ibcprofileskeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper, scopedIBCProfilesKeeper,
 	)
 
 	/****  Module Options ****/
@@ -415,7 +419,7 @@ func NewDesmosApp(
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		ibctransferModule,
+		ibcTransferModule,
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
@@ -423,6 +427,8 @@ func NewDesmosApp(
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
+
+		ibcProfilesModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -434,19 +440,23 @@ func NewDesmosApp(
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
+	// NOTE: The genutils module must occur after staking so that pools are
+	// properly initialized with tokens from genesis accounts.
+	// NOTE: The capability module must occur first so that it can initialize any capabilities
+	// so that other modules that want to create or claim capabilities afterwards in InitChain
+	// can do so safely.
+	// NOTE: The auth module must occur before any module that has a module account
+	// NOTE: The crisis module runs the invariants at genesis amd should run after other modules
 	app.mm.SetOrderInitGenesis(
-		authtypes.ModuleName, // loads all accounts - should run before any module with a module account
-		distrtypes.ModuleName,
-		stakingtypes.ModuleName, banktypes.ModuleName, slashingtypes.ModuleName,
-		govtypes.ModuleName, minttypes.ModuleName, evidencetypes.ModuleName,
-		capabilitytypes.ModuleName,
-		ibchost.ModuleName, ibctransfertypes.ModuleName,
+		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName, distrtypes.ModuleName, stakingtypes.ModuleName,
+		slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName, crisistypes.ModuleName,
+		ibchost.ModuleName, evidencetypes.ModuleName, ibctransfertypes.ModuleName,
 
+		// Custom modules
 		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
-		reportsTypes.ModuleName, // custom modules
+		reportsTypes.ModuleName, ibcprofilestypes.ModuleName,
 
-		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
-		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
+		genutiltypes.ModuleName, crisistypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -475,7 +485,7 @@ func NewDesmosApp(
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		ibctransferModule,
+		ibcTransferModule,
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),

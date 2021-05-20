@@ -25,7 +25,7 @@ const (
 // NewConnectProfileTxCmd returns the command to create a NewMsgTransfer transaction
 func NewConnectProfileTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "connect [src-port] [src-channel] [application] [username] [verification-method] [verification-value] [feePayer]",
+		Use:   "connect [src-port] [src-channel] [application] [username] [verification-method] [verification-value] [fee-payer]",
 		Short: "Transfer a fungible token through IBC",
 		Long: strings.TrimSpace(`Connect a Desmos profile to a centralized social network account through IBC. 
 Timeouts can be specified as absolute or relative using the "absolute-timeouts" flag. 
@@ -33,7 +33,7 @@ Timeout height can be set by passing in the height string in the form {revision}
 Relative timeouts are added to the block height and block timestamp queried from the latest consensus state corresponding 
 to the counterparty channel. Any timeout set to 0 is disabled.`),
 		Example: fmt.Sprintf("%s tx ibc-transfer transfer [src-port] [src-channel] [application] [username] [verification-method] [verification-value]", version.AppName),
-		Args:    cobra.ExactArgs(4),
+		Args:    cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
