@@ -84,7 +84,6 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				"desmos",
 				".",
 				"test",
-				fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendMemory),
 			},
 			malleate: func() {
 				ctx.Keyring = keyring.NewInMemory()
@@ -102,7 +101,7 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				"test",
 			},
 			malleate: func() {
-				keybase, _ := generateMemoryKeybase("could not get destination key")
+				keybase, _ := generateMemoryKeybase("src")
 				ctx.Keyring = keybase
 			},
 			expPass: false,
@@ -116,10 +115,11 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				"desmos",
 				"",
 				"wrongname",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
 				fmt.Sprintf("--%s=%s", cli.FlagTesting, "true"),
 			},
 			malleate: func() {
-				keybase, _ := generateMemoryKeybase("")
+				keybase, _ := generateMemoryKeybase("src")
 				ctx.Keyring = keybase
 			},
 			expPass: false,
@@ -133,10 +133,11 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountConnection() {
 				"desmos",
 				".",
 				"test",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
 				fmt.Sprintf("--%s=%s", cli.FlagTesting, "true"),
 			},
 			malleate: func() {
-				keybase, _ := generateMemoryKeybase("")
+				keybase, _ := generateMemoryKeybase("src")
 				ctx.Keyring = keybase
 			},
 			expPass: false,
@@ -207,9 +208,10 @@ func (s *IntegrationTestSuite) TestGetCmdCreateIBCAccountLink() {
 				"ibcprofiles",
 				"channel-0",
 				"desmos",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
 			},
 			malleate: func() {
-				keybase, _ := generateMemoryKeybase("")
+				keybase, _ := generateMemoryKeybase("src")
 				ctx.Keyring = keybase
 			},
 			expPass: false,

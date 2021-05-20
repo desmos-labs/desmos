@@ -247,13 +247,8 @@ func GetIBCAccountLinkPacket(
 	destChainPrefix string,
 	chainID string,
 ) (types.IBCAccountLinkPacketData, error) {
-	destAddr, err := bech32.ConvertAndEncode(destChainPrefix, srcKey.GetAddress().Bytes())
-	if err != nil {
-		return types.IBCAccountLinkPacketData{}, err
-	}
-
 	srcAddr := srcKey.GetAddress().String()
-	packetProof := []byte(srcAddr + "-" + destAddr)
+	packetProof := []byte(srcAddr)
 
 	sig, pubKey, err := srcKeybase.Sign(srcKey.GetName(), packetProof)
 	if err != nil {
