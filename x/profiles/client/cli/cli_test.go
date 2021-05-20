@@ -6,6 +6,9 @@ import (
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/go-bip39"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -24,6 +27,8 @@ import (
 
 type IntegrationTestSuite struct {
 	suite.Suite
+
+	keyBase keyring.Keyring
 
 	cfg     network.Config
 	network *network.Network
@@ -61,6 +66,33 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	authData.Accounts = append(authData.Accounts, accountAny)
+
+	// Setting for inter chain cli test
+	s.keyBase = generateMemoryKeybase("src", "dest")
+	srcKey, err := s.keyBase.Key("src")
+	s.Require().NoError(err)
+	srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcKey.GetAddress())
+	srcAccountAny, err := codectypes.NewAnyWithValue(srcBaseAcc)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, srcAccountAny)
+
+	destKey, err := s.keyBase.Key("dest")
+	s.Require().NoError(err)
+
+	destBaseAcc := authtypes.NewBaseAccountWithAddress(destKey.GetAddress())
+	destAccount, err := types.NewProfile(
+		"dtag2",
+		"nickname",
+		"bio",
+		types.Pictures{},
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		destBaseAcc,
+	)
+	s.Require().NoError(err)
+	destAccountAny, err := codectypes.NewAnyWithValue(destAccount)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, destAccountAny)
+
 	authDataBz, err := cfg.Codec.MarshalJSON(&authData)
 	s.Require().NoError(err)
 	genesisState[authtypes.ModuleName] = authDataBz
@@ -1113,4 +1145,97 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			}
 		})
 	}
+}
+
+func (s *IntegrationTestSuite) TestCmdLink() {
+	val := s.network.Validators[0]
+	ctx := val.ClientCtx
+	tests := []struct {
+		name     string
+		args     []string
+		malleate func()
+		expPass  bool
+		expErr   error
+	}{
+		{
+			name: "empty keybase returns error",
+			args: []string{
+				"",
+				fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendMemory),
+			},
+			malleate: func() {
+				ctx.Keyring = keyring.NewInMemory()
+			},
+			expPass: false,
+		},
+		{
+			name: "non existent of source key name returns error",
+			args: []string{
+				"",
+			},
+			malleate: func() {
+				ctx.Keyring = s.keyBase
+				ctx.FromName = "wrong"
+			},
+			expPass: false,
+		},
+		{
+			name: "non existent of destination key name returns error",
+			args: []string{
+				"wrong",
+			},
+			malleate: func() {
+				ctx.Keyring = s.keyBase
+			},
+			expPass: false,
+		},
+		{
+			name: "valid request works properly",
+			args: []string{
+				"dest",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			malleate: func() {
+				ctx.Keyring = s.keyBase
+			},
+			expPass: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+
+		s.Run(test.name, func() {
+			test.malleate()
+			cmd := cli.GetCmdLink()
+			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
+
+			if !test.expPass {
+				s.Require().Error(err)
+				if test.expErr != nil {
+					s.Require().Equal(test.expErr, err)
+				}
+			} else {
+				s.Require().NoError(err)
+			}
+
+		})
+	}
+}
+
+func generateMemoryKeybase(srcKeyName, destKeyName string) keyring.Keyring {
+	keyBase := keyring.NewInMemory()
+	keyringAlgos, _ := keyBase.SupportedAlgorithms()
+	algo, _ := keyring.NewSigningAlgoFromString("secp256k1", keyringAlgos)
+	hdPath := hd.CreateHDPath(0, 0, 0).String()
+	srcEntropySeed, _ := bip39.NewEntropy(256)
+	destEntropySeed, _ := bip39.NewEntropy(256)
+	srcMnemonic, _ := bip39.NewMnemonic(srcEntropySeed)
+	destMnemonic, _ := bip39.NewMnemonic(destEntropySeed)
+	keyBase.NewAccount(srcKeyName, srcMnemonic, "", hdPath, algo)
+	keyBase.NewAccount(destKeyName, destMnemonic, "", hdPath, algo)
+	return keyBase
 }

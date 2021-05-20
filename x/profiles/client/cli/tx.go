@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -36,6 +37,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdDeleteRelationship(),
 		GetCmdBlockUser(),
 		GetCmdUnblockUser(),
+		GetCmdLink(),
 	)
 
 	return profileTxCmd
@@ -331,6 +333,62 @@ func GetCmdUnblockUser() *cobra.Command {
 			}
 
 			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdLink returns the command allowing to link an account
+func GetCmdLink() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "link [dest-keyname]",
+		Short: "Link the account with the given keybase",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			destKeyName := args[0]
+
+			keyBase := clientCtx.Keyring
+			srcKeyName := clientCtx.GetFromName()
+			srcKey, err := keyBase.Key(srcKeyName)
+			if err != nil {
+				return fmt.Errorf("could not get source key")
+			}
+			srcAddr := srcKey.GetAddress().String()
+
+			destKey, err := keyBase.Key(destKeyName)
+			if err != nil {
+				return fmt.Errorf("could not get destination key")
+			}
+			destAddr := destKey.GetAddress().String()
+
+			srcSig, _, err := keyBase.Sign(srcKeyName, []byte(srcAddr))
+			if err != nil {
+				return err
+			}
+
+			destSig, _, err := keyBase.Sign(destKeyName, srcSig)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				hex.EncodeToString(srcSig),
+				hex.EncodeToString(destSig),
+			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
