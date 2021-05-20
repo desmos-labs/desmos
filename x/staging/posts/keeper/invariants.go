@@ -54,17 +54,17 @@ func formatOutputIDs(ids []string) (outputIDs string) {
 // ValidPostsInvariant checks that the all posts are valid
 func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPostIds []string
+		var invalidPostIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 			if k.ValidatePost(ctx, post) != nil {
-				invalidPostIds = append(invalidPostIds, post.PostId)
+				invalidPostIDs = append(invalidPostIDs, post.PostID)
 			}
 			return false
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid posts IDs",
-			fmt.Sprintf("The following posts are invalid:\n %s", formatOutputIDs(invalidPostIds)),
-		), invalidPostIds != nil
+			fmt.Sprintf("The following posts are invalid:\n %s", formatOutputIDs(invalidPostIDs)),
+		), invalidPostIDs != nil
 	}
 }
 
@@ -75,10 +75,10 @@ func ValidCommentsDateInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidCommentsIDs []string
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
-			if types.IsValidPostID(post.ParentId) {
-				parentPost, _ := k.GetPost(ctx, post.ParentId)
+			if types.IsValidPostID(post.ParentID) {
+				parentPost, _ := k.GetPost(ctx, post.ParentID)
 				if post.Created.Before(parentPost.Created) {
-					invalidCommentsIDs = append(invalidCommentsIDs, post.PostId)
+					invalidCommentsIDs = append(invalidCommentsIDs, post.PostID)
 				}
 			}
 			return false
@@ -108,7 +108,7 @@ func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 		var invalidReactions []types.PostReaction
 		reactions := k.GetPostReactionsEntries(ctx)
 		for _, entry := range reactions {
-			if !k.DoesPostExist(ctx, entry.PostId) {
+			if !k.DoesPostExist(ctx, entry.PostID) {
 				invalidReactions = append(invalidReactions, entry.Reactions...)
 			}
 		}
@@ -136,7 +136,7 @@ func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
 		var invalidPollAnswers []types.UserAnswer
 		answers := k.GetUserAnswersEntries(ctx)
 		for _, entry := range answers {
-			if post, found := k.GetPost(ctx, entry.PostId); !found || (found && post.PollData == nil) {
+			if post, found := k.GetPost(ctx, entry.PostID); !found || (found && post.PollData == nil) {
 				invalidPollAnswers = append(invalidPollAnswers, entry.UserAnswers...)
 			}
 		}

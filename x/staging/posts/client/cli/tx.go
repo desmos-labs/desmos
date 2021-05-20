@@ -144,11 +144,11 @@ Optional attachments and polls are also supported. See the below sections to kno
 E.g.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
 
-Comments to the post can be disabled by including the --disable-comments flag.
+Comments to the post could be locked by including the --disable-comments flag.
 By default this field is set to false.
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
-   --disable-comments
+   --disable-comments true
 
 === Attachments ===
 If you want to add one or more attachment(s), you have to use the --attachment flag.

@@ -34,7 +34,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 
 		msg := types.NewMsgCreatePost(
 			data.Message,
-			data.ParentId,
+			data.ParentID,
 			data.DisableComments,
 			data.Subspace,
 			data.OptionalData,
@@ -117,11 +117,11 @@ func randomPostCreateFields(
 	}
 
 	// Set the parent id properly
-	postData.ParentId = ""
+	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
 		if parent, _ := RandomPost(r, posts); parent.DisableComments {
-			postData.ParentId = parent.PostId
+			postData.ParentID = parent.PostID
 		}
 	}
 
@@ -222,5 +222,5 @@ func randomPostEditFields(
 		}
 	}
 
-	return *acc, post.PostId, RandomMessage(r), editedAttachments, RandomPollData(r), false
+	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPollData(r), false
 }

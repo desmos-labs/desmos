@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"math/rand"
 	"testing"
@@ -12,28 +10,6 @@ import (
 	postssim "github.com/desmos-labs/desmos/x/staging/posts/simulation"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
-
-// RandomPostIdOrSubspace returns a random PostID
-func RandomPostIdOrSubspace() string {
-	bytes := make([]byte, 128)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		panic(err)
-	}
-	hash := sha256.Sum256(bytes)
-	return hex.EncodeToString(hash[:])
-}
-
-// RandomMessage returns a random String with len <= 500
-func RandomMessage(r *rand.Rand) string {
-	bytes := make([]byte, r.Intn(100))
-	_, err := rand.Read(bytes)
-	if err != nil {
-		panic(err)
-	}
-
-	return hex.EncodeToString(bytes)
-}
 
 // RandomPost returns a post with a 50% chance to have random medias and random poll
 func RandomPost() types.Post {
@@ -61,7 +37,7 @@ func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
 		Limit:        r.Uint64(),
 		SortBy:       sortBy,
 		SortOrder:    sortOrder,
-		ParentId:     "",
+		ParentID:     "",
 		CreationTime: nil,
 		Subspace:     "",
 		Creator:      "",
@@ -93,7 +69,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPost(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPost(suite.ctx, randomPost.PostId)
+		suite.k.GetPost(suite.ctx, randomPost.PostID)
 	}
 
 }
@@ -141,7 +117,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostId, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
 		suite.Require().NoError(err)
 	}
 }
@@ -159,12 +135,12 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	reaction := postssim.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostId, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
 		suite.Require().NoError(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPostReactions(suite.ctx, post.PostId)
+		suite.k.GetPostReactions(suite.ctx, post.PostID)
 	}
 }

@@ -35,7 +35,8 @@ var (
 
 // ParamKeyTable Key declaration for parameters
 func ParamKeyTable() paramstypes.KeyTable {
-	return paramstypes.NewKeyTable().RegisterParamSet(&Params{})
+	return paramstypes.NewKeyTable().
+		RegisterParamSet(&Params{})
 }
 
 // NewParams creates a new ProfileParams obj
