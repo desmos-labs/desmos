@@ -28,13 +28,13 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 }
 
-// DoesSubspaceExists returns true if the subspaces with the given id exists inside the store.
+// DoesSubspaceExists checks if the subspace with the given id exists.
 func (k Keeper) DoesSubspaceExists(ctx sdk.Context, subspaceID string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.SubspaceStoreKey(subspaceID))
 }
 
-// GetSubspace returns the subspaces associated with the given ID.
+// GetSubspace returns the subspace associated with the given ID.
 // If there is no subspace associated with the given ID the function will return an empty subspace and false.
 func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.Subspace, found bool) {
 	store := ctx.KVStore(k.storeKey)
@@ -57,14 +57,14 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 	return subspaces
 }
 
-// AddAdminToSubspace insert the newAdmin inside the admins list of the given subspaces if its not present.
-// Returns an error if the admin is already present.
+// AddAdminToSubspace insert the user inside the admins array of the given subspace if his not present.
+// Returns an error if the user is already an admin.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspaceID)
 
 	subspaceBytes := store.Get(key)
-	// check if the subspace exists and the owner is the actual owner of it
+	// check if the subspace exists and the admin is the actual admin of it
 	subspace, err := k.CheckSubspaceAndOwner(subspaceBytes, subspaceID, owner)
 	if err != nil {
 		return err
@@ -81,14 +81,14 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 	return nil
 }
 
-// RemoveAdminFromSubspace remove the given admin from the given subspaces.
-// It returns error when the admin is not present inside the subspaces.
+// RemoveAdminFromSubspace remove the given admin from the given subspace.
+// It returns error when the admin is not present inside the subspace.
 func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspaceID)
 
 	subspaceBytes := store.Get(key)
-	// check if the subspace exists and the owner is the actual owner of it
+	// check if the subspace exists and the admin is the actual admin of it
 	subspace, err := k.CheckSubspaceAndOwner(subspaceBytes, subspaceID, owner)
 	if err != nil {
 		return err
@@ -173,7 +173,7 @@ func (k Keeper) BlockUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 			"the user with address : %s is already blocked inside the subspace: %s", user, subspaceID)
 	}
 
-	subspace.RegisteredUsers = subspace.BlockedUsers.AppendUser(user)
+	subspace.BlockedUsers = subspace.BlockedUsers.AppendUser(user)
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
@@ -198,7 +198,7 @@ func (k Keeper) UnblockUserInSubspace(ctx sdk.Context, subspaceID, user, admin s
 			"the user with address : %s is not blocked inside the subspace: %s", user, subspaceID)
 	}
 
-	subspace.RegisteredUsers = subspace.BlockedUsers.RemoveUser(user)
+	subspace.BlockedUsers = subspace.BlockedUsers.RemoveUser(user)
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil

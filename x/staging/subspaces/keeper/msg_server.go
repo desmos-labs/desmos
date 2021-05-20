@@ -55,8 +55,8 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	editedSubspace := subspace.
-		WithName(msg.NewName).
-		WithOwner(msg.NewOwner)
+		WithName(msg.Name).
+		WithOwner(msg.Owner)
 
 	k.SaveSubspace(ctx, editedSubspace)
 

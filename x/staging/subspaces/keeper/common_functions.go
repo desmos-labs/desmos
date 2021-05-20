@@ -29,7 +29,7 @@ func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace 
 }
 
 // CheckSubspaceAndAdmin check if the subspaces with the given id exists and
-// if the address belongs to the owner of the subspace or one of its admins.
+// if the address belongs to the admin of the subspace or one of its admins.
 // It returns an error or the subspace itself if everything's fine.
 func (k Keeper) CheckSubspaceAndAdmin(subspaceBytes []byte, subspaceID, address string) (types.Subspace, error) {
 	var subspace types.Subspace
@@ -44,7 +44,7 @@ func (k Keeper) CheckSubspaceAndAdmin(subspaceBytes []byte, subspaceID, address 
 	if subspace.Owner != address {
 		if !subspace.Admins.IsPresent(address) {
 			return types.Subspace{}, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the user: %s is not the subspace owner or an admin and can't perform this operation on the subspaces: %s",
+				"the user: %s is not the subspace admin or an admin and can't perform this operation on the subspaces: %s",
 				address, subspaceID,
 			)
 		}
@@ -54,7 +54,7 @@ func (k Keeper) CheckSubspaceAndAdmin(subspaceBytes []byte, subspaceID, address 
 }
 
 // CheckSubspaceAndOwner check if the subspaces with the given id exists and
-// if the address belongs to the owner of the subspace.
+// if the address belongs to the admin of the subspace.
 // It returns an error or the subspace itself if everything's fine.
 func (k Keeper) CheckSubspaceAndOwner(subspaceBytes []byte, subspaceID, address string) (types.Subspace, error) {
 	var subspace types.Subspace
@@ -68,7 +68,7 @@ func (k Keeper) CheckSubspaceAndOwner(subspaceBytes []byte, subspaceID, address 
 
 	if subspace.Owner != address {
 		return types.Subspace{}, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the user: %s is not the subspace owner and can't perform this operation on the subspaces: %s",
+			"the user: %s is not the subspace admin and can't perform this operation on the subspaces: %s",
 			address, subspaceID,
 		)
 	}

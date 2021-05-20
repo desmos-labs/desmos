@@ -105,7 +105,7 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceAndAdmin() {
 			expError:      true,
 		},
 		{
-			name:          "Different subspace owner and not admin address returns error",
+			name:          "Different subspace admin and not admin address returns error",
 			subspace:      types.Subspace{},
 			subspaceID:    subspace.ID,
 			subspaceBytes: subspaceBytes,
@@ -113,7 +113,7 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceAndAdmin() {
 			expError:      true,
 		},
 		{
-			name:          "Valid owner and subspace returns no error",
+			name:          "Valid admin and subspace returns no error",
 			subspace:      *subspace,
 			subspaceID:    subspace.ID,
 			subspaceBytes: subspaceBytes,
@@ -171,7 +171,7 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceAndOwner() {
 			expError:      true,
 		},
 		{
-			name:          "Different subspace owner than address returns error",
+			name:          "Different subspace admin than address returns error",
 			subspace:      types.Subspace{},
 			subspaceID:    subspace.ID,
 			subspaceBytes: subspaceBytes,
@@ -179,7 +179,7 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceAndOwner() {
 			expError:      true,
 		},
 		{
-			name:          "Valid owner and subspace returns no error",
+			name:          "Valid admin and subspace returns no error",
 			subspace:      *subspace,
 			subspaceID:    subspace.ID,
 			subspaceBytes: subspaceBytes,

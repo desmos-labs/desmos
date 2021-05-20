@@ -72,17 +72,17 @@ message MsgEditSubspace {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string new_owner = 2 [
-    (gogoproto.jsontag) = "new_owner",
-    (gogoproto.moretags) = "yaml:\"new_owner\""
+  string owner = 2 [
+    (gogoproto.jsontag) = "owner",
+    (gogoproto.moretags) = "yaml:\"owner\""
   ];
 
-  string new_name = 3 [
-    (gogoproto.jsontag) = "new_name",
-    (gogoproto.moretags) = "yaml:\"new_name\""
+  string name = 3 [
+    (gogoproto.jsontag) = "name",
+    (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string editor = 4 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type

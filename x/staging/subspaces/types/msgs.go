@@ -382,12 +382,12 @@ func (msg MsgUnblockUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgEditSubspace is a constructor function for MsgEditSubspace
-func NewMsgEditSubspace(subspaceID, newOwner, newName, owner string) *MsgEditSubspace {
+func NewMsgEditSubspace(subspaceID, owner, name, editor string) *MsgEditSubspace {
 	return &MsgEditSubspace{
-		ID:       subspaceID,
-		NewOwner: newOwner,
-		NewName:  newName,
-		Owner:    owner,
+		ID:     subspaceID,
+		Owner:  owner,
+		Name:   name,
+		Editor: editor,
 	}
 }
 
@@ -399,19 +399,19 @@ func (msg MsgEditSubspace) Type() string { return ActionEditSubspace }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditSubspace) ValidateBasic() error {
-	if msg.Owner == msg.NewOwner {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the new owner address is equal to the owner address")
+	if msg.Editor == msg.Owner {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address")
 	}
 
-	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	_, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")
 	}
 
-	if strings.TrimSpace(msg.NewOwner) != "" {
-		_, err = sdk.AccAddressFromBech32(msg.NewOwner)
+	if strings.TrimSpace(msg.Owner) != "" {
+		_, err = sdk.AccAddressFromBech32(msg.Owner)
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid new owner address")
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
 		}
 	}
 

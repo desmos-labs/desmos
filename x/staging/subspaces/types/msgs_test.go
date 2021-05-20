@@ -156,7 +156,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"star",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor address"),
 		},
 		{
 			name: "equal subspace owner and new owner addresses returns error",
@@ -166,7 +166,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the new owner address is equal to the owner address"),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address"),
 		},
 		{
 			name: "valid message returns no error",
@@ -201,7 +201,7 @@ func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"new_name":"star","new_owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
