@@ -66,9 +66,18 @@ type UserUnblockReq struct {
 	Subspace string       `json:"subspace"`
 }
 
+// LinkReq defines the properties of a create link operation request's body
 type LinkReq struct {
-	BaseReq              rest.BaseReq `json: "base_req"`
-	DestinationAddress   string       `json: destination_address`
-	SourceSignature      string       `json: source_signature`
-	DestinationSignature string       `json: destination_signature`
+	BaseReq              rest.BaseReq `json:"base_req"`
+	DestinationAddress   string       `json:"destination_address"`
+	SourceSignature      string       `json:"source_signature"`
+	DestinationSignature string       `json:"destination_signature"`
+}
+
+// UnlinkReq defines the properties of a link deletion operation request's body
+type UnlinkReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	Owner   string       `json:"owner"`
+	ChainID string       `json:"chain_id"`
+	Target  string       `json:"target"`
 }

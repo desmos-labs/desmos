@@ -47,8 +47,11 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // Link defines a method for linking a account
+  // Link defines a method for linking an account
   rpc Link(MsgLink) returns (LinkResponse);
+
+  // Unlink defines a method for unlink an account from a profile
+  rpc Unlink(MsgUnlink) returns (UnlinkResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -220,7 +223,7 @@ message UnblockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgLink represents a message to link a account.
+// MsgLink represents a message to link an account.
 message MsgLink {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
@@ -234,3 +237,18 @@ message MsgLink {
 
 // LinkResponse defines the Msg/Link response type.
 message LinkResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgUnLink represents a message to unlink an account from a profile.
+message MsgUnlink {
+  string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string chain_id = 2 [
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.customname) = "ChainID"
+  ];
+  string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+}
+
+// UnlinkResponse defines the Msg/Unlink response type.
+message UnlinkResponse {}

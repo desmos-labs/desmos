@@ -577,8 +577,7 @@ func (msg MsgUnlink) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain id cannot be empty or blank")
 	}
 
-	_, err = sdk.AccAddressFromBech32(msg.Target)
-	if err != nil {
+	if strings.TrimSpace(msg.Target) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target")
 	}
 

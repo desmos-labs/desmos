@@ -60,6 +60,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.Link(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUnlink:
+			res, err := msgServer.Unlink(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 				"unrecognized %s message type: %v", types.ModuleName, msg.Type())

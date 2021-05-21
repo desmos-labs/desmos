@@ -38,6 +38,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdBlockUser(),
 		GetCmdUnblockUser(),
 		GetCmdLink(),
+		GetCmdUnlink(),
 	)
 
 	return profileTxCmd
@@ -389,6 +390,32 @@ func GetCmdLink() *cobra.Command {
 				hex.EncodeToString(srcSig),
 				hex.EncodeToString(destSig),
 			)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdUnlink returns the command allowing to unlink an account from a profile
+func GetCmdUnlink() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "unlink [chain-id] [address]",
+		Short: "Unlink an account with the given address from owner profile",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUnlink(clientCtx.FromAddress.String(), args[0], args[1])
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

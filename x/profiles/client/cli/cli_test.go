@@ -88,6 +88,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		destBaseAcc,
 	)
+	destAccount.Links = []types.Link{
+		types.NewLink(
+			"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+			types.NewProof("pubkey", "signature"),
+			types.NewChainConfig("test-net", "cosmos"),
+			time.Time{},
+		),
+	}
 	s.Require().NoError(err)
 	destAccountAny, err := codectypes.NewAnyWithValue(destAccount)
 	s.Require().NoError(err)
@@ -129,6 +137,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	profilesData.Links = []types.Link{
 		types.NewLink(
 			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			types.NewProof("pubkey", "signature"),
+			types.NewChainConfig("test-net", "cosmos"),
+			time.Time{},
+		),
+		types.NewLink(
+			"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
 			types.NewProof("pubkey", "signature"),
 			types.NewChainConfig("test-net", "cosmos"),
 			time.Time{},
@@ -1150,12 +1164,13 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 func (s *IntegrationTestSuite) TestCmdLink() {
 	val := s.network.Validators[0]
 	ctx := val.ClientCtx
-	tests := []struct {
+	testCases := []struct {
 		name     string
 		args     []string
 		malleate func()
 		expPass  bool
 		expErr   error
+		respType proto.Message
 	}{
 		{
 			name: "empty keybase returns error",
@@ -1201,27 +1216,28 @@ func (s *IntegrationTestSuite) TestCmdLink() {
 			malleate: func() {
 				ctx.Keyring = s.keyBase
 			},
-			expPass: true,
+			expPass:  true,
+			respType: &sdk.TxResponse{},
 		},
 	}
 
-	for _, test := range tests {
-		test := test
+	for _, tc := range testCases {
+		tc := tc
 
-		s.Run(test.name, func() {
-			test.malleate()
+		s.Run(tc.name, func() {
+			tc.malleate()
 			cmd := cli.GetCmdLink()
-			_, err := clitestutil.ExecTestCLICmd(ctx, cmd, test.args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cmd, tc.args)
 
-			if !test.expPass {
+			if !tc.expPass {
 				s.Require().Error(err)
-				if test.expErr != nil {
-					s.Require().Equal(test.expErr, err)
+				if tc.expErr != nil {
+					s.Require().Equal(tc.expErr, err)
 				}
 			} else {
 				s.Require().NoError(err)
+				s.Require().NoError(ctx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
-
 		})
 	}
 }
@@ -1238,4 +1254,54 @@ func generateMemoryKeybase(srcKeyName, destKeyName string) keyring.Keyring {
 	keyBase.NewAccount(srcKeyName, srcMnemonic, "", hdPath, algo)
 	keyBase.NewAccount(destKeyName, destMnemonic, "", hdPath, algo)
 	return keyBase
+}
+
+func (s *IntegrationTestSuite) TestCmdUnlink() {
+	ctx := s.network.Validators[0].ClientCtx
+	ctx.Keyring = s.keyBase
+	testCases := []struct {
+		name     string
+		args     []string
+		expErr   bool
+		respType proto.Message
+	}{
+		{
+			name: "invalid message returns error",
+			args: []string{
+				"",
+				"",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
+			},
+			expErr: true,
+		},
+		{
+			name: "valid request works properly",
+			args: []string{
+				"test-net",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "src"),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			expErr:   false,
+			respType: &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdUnlink()
+
+			out, err := clitestutil.ExecTestCLICmd(ctx, cmd, tc.args)
+			if tc.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(ctx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
 }

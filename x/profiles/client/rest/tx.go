@@ -47,6 +47,9 @@ func registerTxRoutes(clientCtx client.Context, r *mux.Router) {
 
 	r.HandleFunc("/link",
 		linkHandler(clientCtx)).Methods("POST")
+
+	r.HandleFunc("/link",
+		unlinkHandler(clientCtx)).Methods("DELETE")
 }
 
 func saveProfileHandler(clientCtx client.Context) http.HandlerFunc {
@@ -399,6 +402,35 @@ func linkHandler(cliCtx client.Context) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgLink(user.String(), destAddr.String(), req.SourceSignature, req.DestinationSignature)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
+	}
+}
+
+func unlinkHandler(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req UnlinkReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &r) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		owner, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgUnlink(owner.String(), req.ChainID, req.Target)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
