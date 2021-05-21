@@ -21,6 +21,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
 	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
 	cdc.RegisterConcrete(MsgLink{}, "desmos/MsgLink", nil)
+	cdc.RegisterConcrete(MsgUnlink{}, "desmos/MsgUnlink", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -41,6 +42,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgBlockUser{},
 		&MsgUnblockUser{},
 		&MsgLink{},
+		&MsgUnlink{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

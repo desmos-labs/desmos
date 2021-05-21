@@ -547,3 +547,51 @@ func (msg MsgLink) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
 	return []sdk.AccAddress{signer}
 }
+
+// ___________________________________________________________________________________________________________________
+
+func NewMsgUnlink(owner, chainID, target string) *MsgUnlink {
+	return &MsgUnlink{
+		Owner:   owner,
+		ChainID: chainID,
+		Target:  target,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgUnlink) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgUnlink) Type() string {
+	return ActionUnlink
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgUnlink) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
+	}
+
+	if strings.TrimSpace(msg.ChainID) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain id cannot be empty or blank")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Target)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgUnlink) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgUnlink) GetSigners() []sdk.AccAddress {
+	signer, _ := sdk.AccAddressFromBech32(msg.Owner)
+	return []sdk.AccAddress{signer}
+}

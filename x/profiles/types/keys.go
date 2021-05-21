@@ -18,6 +18,7 @@ const (
 	ActionBlockUser                 = "block_user"
 	ActionUnblockUser               = "unblock_user"
 	ActionLink                      = "link"
+	ActionUnlink                    = "unlink"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"

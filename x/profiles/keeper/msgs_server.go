@@ -381,7 +381,7 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 		return nil, err
 	}
 	if srcPubKey == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "non existent pubkey on source address")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "non existent pubkey on source address")
 	}
 
 	// Get destination public key
@@ -391,7 +391,7 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 		return nil, err
 	}
 	if destPubKey == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "non existent pubkey on destination address")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "non existent pubkey on destination address")
 	}
 
 	srcSig, _ := hex.DecodeString(msg.SourceSignature)
@@ -399,11 +399,11 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 
 	// Verify signatures
 	if !destPubKey.VerifySignature(srcSig, destSig) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "failed to verify destination signature")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "failed to verify destination signature")
 	}
 
 	if !srcPubKey.VerifySignature([]byte(msg.SourceAddress), srcSig) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "failed to verify source signature")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "failed to verify source signature")
 	}
 
 	// Check if address has the profile and get the profile
@@ -440,4 +440,56 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 	))
 
 	return &types.LinkResponse{}, nil
+}
+
+func (k msgServer) Unlink(goCtx context.Context, msg *types.MsgUnlink) (*types.UnlinkResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	// Check if owner has the profile and get the profile
+	profile, found, err := k.GetProfile(ctx, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent profile on destination address"))
+	}
+
+	isTargetExist := false
+	newLinks := []types.Link{}
+
+	// Try to find the target link
+	for _, link := range profile.Links {
+		chainID := link.ChainConfig.ID
+		address := link.Address
+		if chainID == msg.ChainID && address == msg.Target {
+			isTargetExist = true
+			continue
+		}
+		newLinks = append(newLinks, link)
+	}
+
+	if !isTargetExist {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent target link in the profile"))
+	}
+
+	// Update profile status
+	profile.Links = newLinks
+	err = k.StoreProfile(ctx, profile)
+	if err != nil {
+		return nil, err
+	}
+
+	k.RemoveLink(ctx, msg.ChainID, msg.Target)
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeUnlink,
+		sdk.NewAttribute(types.AttributeUnlinkOwner, msg.Owner),
+		sdk.NewAttribute(types.AttributeUnlinkChainID, msg.ChainID),
+		sdk.NewAttribute(types.AttributeUnlinkTarget, msg.Target),
+	))
+	return &types.UnlinkResponse{}, nil
 }

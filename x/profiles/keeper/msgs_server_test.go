@@ -1234,7 +1234,15 @@ func (suite *KeeperTestSuite) Test_handleMsgLink() {
 				destSigHex,
 			),
 			shouldErr: false,
-			expEvents: sdk.EmptyEvents(),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeLink,
+					sdk.NewAttribute(types.AttributeLinkSourceAddress, srcAddr),
+					sdk.NewAttribute(types.AttributeLinkDestinationAddress, destAddr),
+					sdk.NewAttribute(types.AttributeLinkSourceSignature, srcSigHex),
+					sdk.NewAttribute(types.AttributeLinkDestinationSignature, destSigHex),
+				),
+			},
 			expStoredLinks: []types.Link{
 				types.NewLink(
 					srcAddr,
@@ -1265,11 +1273,13 @@ func (suite *KeeperTestSuite) Test_handleMsgLink() {
 
 			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.Link(sdk.WrapSDKContext(suite.ctx), test.msg)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 			if test.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+
 				stored := suite.k.GetAllLinks(suite.ctx)
 				suite.Require().NotEmpty(stored)
 				for _, link := range stored {
@@ -1283,6 +1293,121 @@ func (suite *KeeperTestSuite) Test_handleMsgLink() {
 				for _, link := range profile.Links {
 					suite.Require().Contains(test.expStoredLinks, link)
 				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_handleMsgUnlink() {
+	link := types.NewLink(
+		suite.testData.otherUser,
+		types.NewProof("pubKey", "signature"),
+		types.NewChainConfig("test-net", "cosmos"),
+		time.Time{},
+	)
+	validProfile := *suite.testData.profile
+	validProfile.Links = []types.Link{
+		link,
+	}
+	tests := []struct {
+		name             string
+		msg              *types.MsgUnlink
+		shouldErr        bool
+		expEvents        sdk.Events
+		existentProfiles []*types.Profile
+		existentLinks    []types.Link
+		expStoredLinks   []types.Link
+	}{
+		{
+			name:             "Invalid msg returns error",
+			msg:              types.NewMsgUnlink("", "", ""),
+			shouldErr:        true,
+			expEvents:        sdk.EmptyEvents(),
+			existentProfiles: nil,
+			existentLinks:    nil,
+			expStoredLinks:   nil,
+		},
+		{
+			name:             "Non existent profile on owner returns error",
+			msg:              types.NewMsgUnlink(suite.testData.user, "test-net", suite.testData.otherUser),
+			shouldErr:        true,
+			expEvents:        sdk.EmptyEvents(),
+			existentProfiles: nil,
+			existentLinks:    nil,
+			expStoredLinks:   nil,
+		},
+		{
+			name:             "Non existent target link in the profile returns error",
+			msg:              types.NewMsgUnlink(suite.testData.user, "test-net", suite.testData.otherUser),
+			shouldErr:        true,
+			expEvents:        sdk.EmptyEvents(),
+			existentProfiles: []*types.Profile{suite.testData.profile},
+			existentLinks:    nil,
+			expStoredLinks:   nil,
+		},
+		{
+			name:      "No error message",
+			msg:       types.NewMsgUnlink(suite.testData.user, "test-net", suite.testData.otherUser),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeUnlink,
+					sdk.NewAttribute(types.AttributeUnlinkOwner, suite.testData.user),
+					sdk.NewAttribute(types.AttributeUnlinkChainID, "test-net"),
+					sdk.NewAttribute(types.AttributeUnlinkTarget, suite.testData.otherUser),
+				),
+			},
+			existentProfiles: []*types.Profile{&validProfile},
+			existentLinks: []types.Link{
+				link,
+				types.NewLink(
+					"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+					types.NewProof("pubkey", "signature"),
+					types.NewChainConfig("test-net", "cosmos"),
+					time.Time{},
+				),
+			},
+			expStoredLinks: []types.Link{
+				types.NewLink(
+					"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+					types.NewProof("pubkey", "signature"),
+					types.NewChainConfig("test-net", "cosmos"),
+					time.Time{},
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			for _, acc := range test.existentProfiles {
+				err := suite.k.StoreProfile(suite.ctx, acc)
+				suite.Require().NoError(err)
+			}
+
+			for _, link := range test.existentLinks {
+				err := suite.k.StoreLink(suite.ctx, link)
+				suite.Require().NoError(err)
+			}
+
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.Unlink(sdk.WrapSDKContext(suite.ctx), test.msg)
+			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				stored := suite.k.GetAllLinks(suite.ctx)
+				suite.Require().Equal(test.expStoredLinks, stored)
+
+				profile, found, err := suite.k.GetProfile(suite.ctx, suite.testData.user)
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+				suite.Require().Empty(profile.Links)
 			}
 		})
 	}

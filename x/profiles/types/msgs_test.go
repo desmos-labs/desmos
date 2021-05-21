@@ -984,3 +984,88 @@ func TestMsgLink_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgLink.SourceAddress)
 	require.Equal(t, []sdk.AccAddress{addr}, msgLink.GetSigners())
 }
+
+// ___________________________________________________________________________________________________________________
+
+var msgUnlink = types.NewMsgUnlink(
+	"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+	"test-net",
+	"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+)
+
+func TestMsgUnlink_Route(t *testing.T) {
+	require.Equal(t, "profiles", msgUnlink.Route())
+}
+
+func TestMsgUnlink_Type(t *testing.T) {
+	require.Equal(t, "unlink", msgUnlink.Type())
+}
+
+func TestMsgUnlink_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  *types.MsgUnlink
+		err  error
+	}{
+		{
+			name: "Invalid owner returns error",
+			msg: types.NewMsgUnlink(
+				"",
+				"test-net",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner"),
+		},
+		{
+			name: "Invalid chain id returns error",
+			msg: types.NewMsgUnlink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain id cannot be empty or blank"),
+		},
+		{
+			name: "Invalid target returns error",
+			msg: types.NewMsgUnlink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"test-net",
+				"",
+			),
+			err: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target"),
+		},
+		{
+			name: "No errors message",
+			msg: types.NewMsgUnlink(
+				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
+				"test-net",
+				"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq",
+			),
+			err: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.err == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.err.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgUnlink_GetSignBytes(t *testing.T) {
+	actual := msgUnlink.GetSignBytes()
+	expected := `{"type":"desmos/MsgUnlink","value":{"chain_id":"test-net","owner":"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70","target":"cosmos13rzf5gph4drs3qnf63jmuyf4g9q7a4cv9n0uqq"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgUnlink_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgUnlink.Owner)
+	require.Equal(t, []sdk.AccAddress{addr}, msgUnlink.GetSigners())
+}

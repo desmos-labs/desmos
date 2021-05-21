@@ -32,10 +32,15 @@ const (
 	AttributeUserBlockReason  = "reason"
 	AttributeSubspace         = "subspace"
 
-	EventTypeLink = "link"
+	EventTypeLink   = "link"
+	EventTypeUnlink = "unlink"
 
 	AttributeLinkSourceAddress        = "source_address"
 	AttributeLinkDestinationAddress   = "destination_address"
 	AttributeLinkSourceSignature      = "source_signature"
 	AttributeLinkDestinationSignature = "destination_address"
+
+	AttributeUnlinkOwner   = "owner"
+	AttributeUnlinkChainID = "chain_id"
+	AttributeUnlinkTarget  = "target"
 )
