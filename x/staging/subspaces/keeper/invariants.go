@@ -26,7 +26,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 // formatOutputSubspaces concatenate the subspaces given into a unique string
 func formatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
 	for _, subspace := range subspaces {
-		outputSubspaces += subspace.String() + "\n"
+		outputSubspaces += subspace.ID + "\n"
 	}
 	return outputSubspaces
 }

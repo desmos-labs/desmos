@@ -14,13 +14,20 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRemoveAdmin{}, "desmos/MsgRemoveAdmin", nil)
 	cdc.RegisterConcrete(MsgRegisterUser{}, "desmos/MsgRegisterUser", nil)
 	cdc.RegisterConcrete(MsgUnregisterUser{}, "desmos/MsgUnregisterUser", nil)
-	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
-	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
+	cdc.RegisterConcrete(MsgBanUser{}, "desmos/MsgBanUser", nil)
+	cdc.RegisterConcrete(MsgUnbanUser{}, "desmos/MsgUnbanUser", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateSubspace{},
+		&MsgEditSubspace{},
+		&MsgAddAdmin{},
+		&MsgRemoveAdmin{},
+		&MsgRegisterUser{},
+		&MsgUnregisterUser{},
+		&MsgBanUser{},
+		&MsgUnbanUser{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

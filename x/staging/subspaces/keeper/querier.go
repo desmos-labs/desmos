@@ -17,10 +17,25 @@ func NewQuerier(keeper Keeper, legacyQuerierCodec *codec.LegacyAmino) sdk.Querie
 		switch path[0] {
 		case types.QuerySubspace:
 			return querySubspace(ctx, path[1:], req, keeper, legacyQuerierCodec)
+		case types.QuerySubspaces:
+			return querySubspaces(ctx, req, keeper, legacyQuerierCodec)
 		default:
 			return nil, fmt.Errorf("unknown Subspaces query endpoint")
 		}
 	}
+}
+
+func querySubspaces(ctx sdk.Context, _ abci.RequestQuery, keeper Keeper, legacyQuerierCodec *codec.LegacyAmino,
+) ([]byte, error) {
+	subspaces := keeper.GetAllSubspaces(ctx)
+
+	subspacesResponse := types.QuerySubspacesResponse{Subspaces: subspaces}
+	bytes, err := codec.MarshalJSONIndent(legacyQuerierCodec, &subspacesResponse)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bytes, nil
 }
 
 // querySubspace handles the request to get the subspaces with the given id

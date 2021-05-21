@@ -15,8 +15,9 @@ const (
 	ActionUnblockUser    = "unblock_user"
 
 	// Queries
-	QuerierRoute  = ModuleName
-	QuerySubspace = "subspace"
+	QuerierRoute   = ModuleName
+	QuerySubspace  = "subspace"
+	QuerySubspaces = "subspaces"
 )
 
 var (

@@ -492,25 +492,25 @@ func (m *MsgUnregisterUserResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnregisterUserResponse proto.InternalMessageInfo
 
-// MsgBlockUser represents the message used to block a user to post inside a specific subspace
-type MsgBlockUser struct {
+// MsgBanUser represents the message used to ban a user inside a specific subspace
+type MsgBanUser struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	SubspaceID string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
-func (m *MsgBlockUser) Reset()         { *m = MsgBlockUser{} }
-func (m *MsgBlockUser) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockUser) ProtoMessage()    {}
-func (*MsgBlockUser) Descriptor() ([]byte, []int) {
+func (m *MsgBanUser) Reset()         { *m = MsgBanUser{} }
+func (m *MsgBanUser) String() string { return proto.CompactTextString(m) }
+func (*MsgBanUser) ProtoMessage()    {}
+func (*MsgBanUser) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{12}
 }
-func (m *MsgBlockUser) XXX_Unmarshal(b []byte) error {
+func (m *MsgBanUser) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgBanUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockUser.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgBanUser.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -520,34 +520,34 @@ func (m *MsgBlockUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockUser) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockUser.Merge(m, src)
+func (m *MsgBanUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBanUser.Merge(m, src)
 }
-func (m *MsgBlockUser) XXX_Size() int {
+func (m *MsgBanUser) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockUser) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockUser.DiscardUnknown(m)
+func (m *MsgBanUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBanUser.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockUser proto.InternalMessageInfo
+var xxx_messageInfo_MsgBanUser proto.InternalMessageInfo
 
-// MsgBlockUserResponse defines the Msg/MsgBlockUser response type
-type MsgBlockUserResponse struct {
+// MsgBanUserResponse defines the Msg/MsgBanUser response type
+type MsgBanUserResponse struct {
 }
 
-func (m *MsgBlockUserResponse) Reset()         { *m = MsgBlockUserResponse{} }
-func (m *MsgBlockUserResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockUserResponse) ProtoMessage()    {}
-func (*MsgBlockUserResponse) Descriptor() ([]byte, []int) {
+func (m *MsgBanUserResponse) Reset()         { *m = MsgBanUserResponse{} }
+func (m *MsgBanUserResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgBanUserResponse) ProtoMessage()    {}
+func (*MsgBanUserResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{13}
 }
-func (m *MsgBlockUserResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgBanUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgBanUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockUserResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgBanUserResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -557,37 +557,37 @@ func (m *MsgBlockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockUserResponse.Merge(m, src)
+func (m *MsgBanUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBanUserResponse.Merge(m, src)
 }
-func (m *MsgBlockUserResponse) XXX_Size() int {
+func (m *MsgBanUserResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockUserResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockUserResponse.DiscardUnknown(m)
+func (m *MsgBanUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBanUserResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockUserResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgBanUserResponse proto.InternalMessageInfo
 
-// MsgUnblockUser represents the message used to unblock a user inside a specific subspace
-type MsgUnblockUser struct {
+// MsgUnbanUser represents the message used to unban a user inside a specific subspace
+type MsgUnbanUser struct {
 	User       string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	SubspaceID string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,3,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
-func (m *MsgUnblockUser) Reset()         { *m = MsgUnblockUser{} }
-func (m *MsgUnblockUser) String() string { return proto.CompactTextString(m) }
-func (*MsgUnblockUser) ProtoMessage()    {}
-func (*MsgUnblockUser) Descriptor() ([]byte, []int) {
+func (m *MsgUnbanUser) Reset()         { *m = MsgUnbanUser{} }
+func (m *MsgUnbanUser) String() string { return proto.CompactTextString(m) }
+func (*MsgUnbanUser) ProtoMessage()    {}
+func (*MsgUnbanUser) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{14}
 }
-func (m *MsgUnblockUser) XXX_Unmarshal(b []byte) error {
+func (m *MsgUnbanUser) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUnblockUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUnbanUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUnblockUser.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUnbanUser.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -597,34 +597,34 @@ func (m *MsgUnblockUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *MsgUnblockUser) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUnblockUser.Merge(m, src)
+func (m *MsgUnbanUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnbanUser.Merge(m, src)
 }
-func (m *MsgUnblockUser) XXX_Size() int {
+func (m *MsgUnbanUser) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUnblockUser) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUnblockUser.DiscardUnknown(m)
+func (m *MsgUnbanUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnbanUser.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUnblockUser proto.InternalMessageInfo
+var xxx_messageInfo_MsgUnbanUser proto.InternalMessageInfo
 
-// MsgUnblockUserResponse defines the Msg/MsgUnblockUser response type
-type MsgUnblockUserResponse struct {
+// MsgUnbanUserResponse defines the Msg/MsgUnbanUser response type
+type MsgUnbanUserResponse struct {
 }
 
-func (m *MsgUnblockUserResponse) Reset()         { *m = MsgUnblockUserResponse{} }
-func (m *MsgUnblockUserResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUnblockUserResponse) ProtoMessage()    {}
-func (*MsgUnblockUserResponse) Descriptor() ([]byte, []int) {
+func (m *MsgUnbanUserResponse) Reset()         { *m = MsgUnbanUserResponse{} }
+func (m *MsgUnbanUserResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnbanUserResponse) ProtoMessage()    {}
+func (*MsgUnbanUserResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ba19b97e9f94db77, []int{15}
 }
-func (m *MsgUnblockUserResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgUnbanUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUnblockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUnbanUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUnblockUserResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUnbanUserResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -634,17 +634,17 @@ func (m *MsgUnblockUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *MsgUnblockUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUnblockUserResponse.Merge(m, src)
+func (m *MsgUnbanUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnbanUserResponse.Merge(m, src)
 }
-func (m *MsgUnblockUserResponse) XXX_Size() int {
+func (m *MsgUnbanUserResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUnblockUserResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUnblockUserResponse.DiscardUnknown(m)
+func (m *MsgUnbanUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnbanUserResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUnblockUserResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgUnbanUserResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateSubspace)(nil), "desmos.subspaces.v1beta1.MsgCreateSubspace")
@@ -659,10 +659,10 @@ func init() {
 	proto.RegisterType((*MsgRegisterUserResponse)(nil), "desmos.subspaces.v1beta1.MsgRegisterUserResponse")
 	proto.RegisterType((*MsgUnregisterUser)(nil), "desmos.subspaces.v1beta1.MsgUnregisterUser")
 	proto.RegisterType((*MsgUnregisterUserResponse)(nil), "desmos.subspaces.v1beta1.MsgUnregisterUserResponse")
-	proto.RegisterType((*MsgBlockUser)(nil), "desmos.subspaces.v1beta1.MsgBlockUser")
-	proto.RegisterType((*MsgBlockUserResponse)(nil), "desmos.subspaces.v1beta1.MsgBlockUserResponse")
-	proto.RegisterType((*MsgUnblockUser)(nil), "desmos.subspaces.v1beta1.MsgUnblockUser")
-	proto.RegisterType((*MsgUnblockUserResponse)(nil), "desmos.subspaces.v1beta1.MsgUnblockUserResponse")
+	proto.RegisterType((*MsgBanUser)(nil), "desmos.subspaces.v1beta1.MsgBanUser")
+	proto.RegisterType((*MsgBanUserResponse)(nil), "desmos.subspaces.v1beta1.MsgBanUserResponse")
+	proto.RegisterType((*MsgUnbanUser)(nil), "desmos.subspaces.v1beta1.MsgUnbanUser")
+	proto.RegisterType((*MsgUnbanUserResponse)(nil), "desmos.subspaces.v1beta1.MsgUnbanUserResponse")
 }
 
 func init() {
@@ -670,53 +670,53 @@ func init() {
 }
 
 var fileDescriptor_ba19b97e9f94db77 = []byte{
-	// 728 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x96, 0x3f, 0x6f, 0xd3, 0x4e,
-	0x18, 0xc7, 0xe3, 0xa4, 0xed, 0xaf, 0x7d, 0xd2, 0x5f, 0x4a, 0x4d, 0x69, 0xd3, 0x20, 0xc5, 0xd5,
-	0x55, 0x54, 0xa9, 0x4a, 0x6d, 0x4a, 0x07, 0xa4, 0x32, 0xb5, 0x85, 0xa1, 0x43, 0x06, 0x0c, 0x5d,
-	0x58, 0xc0, 0x89, 0x4f, 0x87, 0x45, 0xec, 0x8b, 0x7c, 0x6e, 0xa1, 0xef, 0x80, 0x91, 0x97, 0xd0,
-	0xf7, 0x81, 0x40, 0x8c, 0x8c, 0x1d, 0x11, 0x83, 0x05, 0xa9, 0x84, 0x50, 0xc7, 0xbc, 0x02, 0x74,
-	0x3e, 0xdb, 0xb9, 0xfc, 0x21, 0x49, 0x05, 0x4b, 0x36, 0xfb, 0xb9, 0x8f, 0x9f, 0x7b, 0xbe, 0xdf,
-	0xbb, 0x7b, 0xce, 0xb0, 0x6e, 0x63, 0xe6, 0x52, 0x66, 0xb0, 0x93, 0x1a, 0x6b, 0x5a, 0x75, 0xcc,
-	0x8c, 0xd3, 0x9d, 0x1a, 0x0e, 0xac, 0x1d, 0xc3, 0x65, 0x84, 0xe9, 0x4d, 0x9f, 0x06, 0x54, 0x2d,
-	0x0a, 0x48, 0x4f, 0x21, 0x3d, 0x86, 0x4a, 0x4b, 0x84, 0x12, 0x1a, 0x41, 0x06, 0x7f, 0x12, 0x3c,
-	0xfa, 0xa6, 0xc0, 0x62, 0x95, 0x91, 0x43, 0x1f, 0x5b, 0x01, 0x7e, 0x1a, 0x7f, 0xa4, 0x1e, 0x42,
-	0xd6, 0xb1, 0x8b, 0xca, 0x9a, 0x52, 0x99, 0x3b, 0xd8, 0x6d, 0x85, 0x1a, 0x24, 0x23, 0x47, 0x8f,
-	0xae, 0x42, 0x2d, 0x9f, 0x24, 0x7f, 0xe1, 0xd8, 0xed, 0x50, 0x53, 0xcf, 0x2c, 0xb7, 0xb1, 0x87,
-	0xa4, 0x20, 0x32, 0xb3, 0x8e, 0xad, 0xae, 0xc3, 0x94, 0x67, 0xb9, 0xb8, 0x98, 0x8d, 0xd2, 0x2c,
-	0xb4, 0x43, 0x2d, 0x2f, 0x48, 0x1e, 0x45, 0x66, 0x34, 0xc8, 0x21, 0xda, 0xc4, 0x5e, 0x31, 0xb7,
-	0xa6, 0x54, 0x66, 0x65, 0x88, 0x47, 0x91, 0x19, 0x0d, 0xaa, 0x77, 0xe1, 0xbf, 0x3a, 0x2f, 0x90,
-	0xfa, 0xc5, 0xa9, 0x28, 0x99, 0xda, 0x0e, 0xb5, 0x82, 0xe0, 0xe2, 0x01, 0x64, 0x26, 0xc8, 0xde,
-	0xec, 0xbb, 0x73, 0x2d, 0xf3, 0xeb, 0x5c, 0xcb, 0xa0, 0xdb, 0xb0, 0xda, 0xa7, 0xcd, 0xc4, 0xac,
-	0x49, 0x3d, 0x86, 0xd1, 0x0f, 0x05, 0x16, 0xaa, 0x8c, 0x3c, 0xb6, 0x9d, 0x20, 0xd5, 0xfd, 0x50,
-	0xd2, 0xbd, 0xd5, 0x0a, 0xb5, 0xec, 0x75, 0xf4, 0x1a, 0x30, 0x4d, 0xdf, 0x78, 0xd8, 0x8f, 0x05,
-	0xaf, 0x5e, 0x85, 0x9a, 0x08, 0xb4, 0x43, 0x6d, 0x3e, 0x16, 0xc5, 0x5f, 0x91, 0x29, 0xc2, 0xea,
-	0x56, 0x6c, 0x50, 0x2e, 0xe2, 0x57, 0xae, 0x42, 0x2d, 0x7a, 0x1f, 0x6c, 0xd4, 0x26, 0xcc, 0x60,
-	0xdb, 0xe9, 0x58, 0xb0, 0xd8, 0x0e, 0xb5, 0xff, 0x05, 0x26, 0xe2, 0xc8, 0x8c, 0x01, 0xc9, 0x80,
-	0x55, 0x58, 0xe9, 0x91, 0x98, 0xca, 0xff, 0xa8, 0x40, 0xbe, 0xca, 0xc8, 0xbe, 0x6d, 0xef, 0xdb,
-	0xae, 0xe3, 0xa9, 0xcf, 0x40, 0x96, 0xf9, 0x37, 0x6b, 0x0f, 0xc9, 0xdb, 0x91, 0xad, 0x6e, 0xc0,
-	0xb4, 0xc5, 0xd3, 0xc7, 0x9e, 0xdc, 0xe8, 0x58, 0x11, 0x85, 0x91, 0x29, 0x86, 0x39, 0x27, 0xbc,
-	0xcb, 0xf5, 0x72, 0x5d, 0x96, 0x49, 0xd2, 0x6e, 0xc1, 0x4d, 0xa9, 0xfc, 0x54, 0xd6, 0x67, 0x05,
-	0x0a, 0x55, 0x46, 0x4c, 0xec, 0xd2, 0x53, 0x3c, 0x99, 0xca, 0x8a, 0xb0, 0xdc, 0xad, 0x20, 0x15,
-	0xf7, 0x49, 0x6c, 0x59, 0x13, 0x13, 0x87, 0x05, 0xd8, 0x3f, 0x66, 0xd8, 0xe7, 0x07, 0xe8, 0x84,
-	0x61, 0x3f, 0x96, 0x25, 0x1d, 0x20, 0x1e, 0x45, 0x66, 0x34, 0xd8, 0x6b, 0x41, 0xf6, 0x1f, 0x5b,
-	0x90, 0x1b, 0x6a, 0x41, 0xdf, 0x7e, 0x94, 0xeb, 0x97, 0x17, 0x8e, 0x37, 0xa2, 0x63, 0xcf, 0x9f,
-	0x58, 0x75, 0xa2, 0xdd, 0x74, 0x2b, 0x48, 0xf5, 0x7d, 0x50, 0x60, 0xbe, 0xca, 0xc8, 0x41, 0x83,
-	0xd6, 0x5f, 0x4f, 0x9e, 0xb4, 0x65, 0x58, 0x92, 0x8b, 0x97, 0xbb, 0x48, 0x21, 0xd2, 0x5c, 0x9b,
-	0x4c, 0x5d, 0xe2, 0xac, 0x49, 0xe5, 0x27, 0xca, 0xee, 0xff, 0x9c, 0x81, 0x5c, 0x95, 0x11, 0xd5,
-	0x87, 0x42, 0xcf, 0xe5, 0xb8, 0xa5, 0xff, 0xe9, 0x8e, 0xd5, 0xfb, 0x6e, 0x9b, 0xd2, 0xee, 0x35,
-	0xe0, 0x64, 0x6e, 0xb5, 0x01, 0xf3, 0x5d, 0xd7, 0xd2, 0xe6, 0xd0, 0x24, 0x32, 0x5a, 0xda, 0x19,
-	0x1b, 0x4d, 0x67, 0x7b, 0x09, 0xb3, 0xe9, 0x2d, 0x70, 0x67, 0xe8, 0xe7, 0x09, 0x56, 0xda, 0x1e,
-	0x0b, 0x4b, 0x67, 0x70, 0x20, 0x2f, 0x37, 0xe4, 0xca, 0xd0, 0xaf, 0x25, 0xb2, 0x74, 0x6f, 0x5c,
-	0x52, 0xb6, 0xae, 0xab, 0x3d, 0x6e, 0x8e, 0xc8, 0xd0, 0x41, 0x47, 0x58, 0x37, 0xa8, 0x69, 0xf1,
-	0xcd, 0xd1, 0xd3, 0xb0, 0x86, 0x6f, 0x8e, 0x6e, 0x78, 0xc4, 0xe6, 0x18, 0xdc, 0x48, 0xd4, 0x3a,
-	0xcc, 0x75, 0x9a, 0xc8, 0xc6, 0xd0, 0x0c, 0x29, 0x57, 0xd2, 0xc7, 0xe3, 0xe4, 0x15, 0x93, 0xcf,
-	0x74, 0x65, 0x44, 0xa1, 0x29, 0x39, 0x62, 0xc5, 0x06, 0x1c, 0xb4, 0x83, 0x27, 0x5f, 0x5a, 0x65,
-	0xe5, 0xa2, 0x55, 0x56, 0xbe, 0xb7, 0xca, 0xca, 0xfb, 0xcb, 0x72, 0xe6, 0xe2, 0xb2, 0x9c, 0xf9,
-	0x7a, 0x59, 0xce, 0x3c, 0x7f, 0x40, 0x9c, 0xe0, 0xd5, 0x49, 0x4d, 0xaf, 0x53, 0xd7, 0x10, 0x59,
-	0xb7, 0x1b, 0x56, 0x8d, 0xc5, 0xcf, 0xc6, 0x5b, 0x83, 0x05, 0x16, 0x71, 0x3c, 0x22, 0xfd, 0x11,
-	0x07, 0x67, 0x4d, 0xcc, 0x6a, 0x33, 0xd1, 0xbf, 0xed, 0xee, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xb7, 0xed, 0xb2, 0x76, 0x32, 0x0b, 0x00, 0x00,
+	// 730 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x96, 0x4f, 0x4f, 0xd4, 0x4e,
+	0x18, 0xc7, 0xb7, 0xbb, 0xfc, 0x7d, 0x96, 0x1f, 0xfc, 0x18, 0x11, 0x96, 0x9a, 0x6c, 0x49, 0x51,
+	0x02, 0x01, 0x5a, 0x91, 0x83, 0x09, 0x9e, 0x00, 0x3d, 0x70, 0xd8, 0x83, 0x55, 0x2e, 0x26, 0x46,
+	0xbb, 0xdb, 0xc9, 0xd8, 0x84, 0xb6, 0x9b, 0x4e, 0x41, 0x79, 0x07, 0x1e, 0x7d, 0x09, 0xbc, 0x0d,
+	0x63, 0x34, 0x1e, 0x3d, 0x72, 0x34, 0x1c, 0x1a, 0x5d, 0x2e, 0x86, 0xe3, 0xbe, 0x02, 0x33, 0x9d,
+	0x69, 0x77, 0x76, 0x59, 0x77, 0x97, 0xe8, 0x65, 0x6f, 0xed, 0x33, 0x9f, 0x79, 0xe6, 0xf9, 0x7e,
+	0x3b, 0xf3, 0x4c, 0x61, 0xd9, 0xc1, 0xd4, 0x0b, 0xa8, 0x49, 0x8f, 0xab, 0xb4, 0x6e, 0xd7, 0x30,
+	0x35, 0x4f, 0xb6, 0xaa, 0x38, 0xb2, 0xb7, 0x4c, 0x8f, 0x12, 0x6a, 0xd4, 0xc3, 0x20, 0x0a, 0x50,
+	0x89, 0x43, 0x46, 0x06, 0x19, 0x02, 0x52, 0xe7, 0x48, 0x40, 0x82, 0x04, 0x32, 0xd9, 0x13, 0xe7,
+	0xf5, 0x0b, 0x05, 0x66, 0x2b, 0x94, 0xec, 0x87, 0xd8, 0x8e, 0xf0, 0x33, 0x31, 0x09, 0xed, 0x43,
+	0xde, 0x75, 0x4a, 0xca, 0x92, 0xb2, 0x3a, 0xb9, 0xb7, 0xdd, 0x88, 0x35, 0x48, 0x47, 0x0e, 0x1e,
+	0x5f, 0xc5, 0x5a, 0x31, 0x4d, 0xfe, 0xca, 0x75, 0x9a, 0xb1, 0x86, 0x4e, 0x6d, 0xef, 0x68, 0x47,
+	0x97, 0x82, 0xba, 0x95, 0x77, 0x1d, 0xb4, 0x0c, 0x23, 0xbe, 0xed, 0xe1, 0x52, 0x3e, 0x49, 0x33,
+	0xd3, 0x8c, 0xb5, 0x22, 0x27, 0x59, 0x54, 0xb7, 0x92, 0x41, 0x06, 0x05, 0x75, 0xec, 0x97, 0x0a,
+	0x4b, 0xca, 0xea, 0x84, 0x0c, 0xb1, 0xa8, 0x6e, 0x25, 0x83, 0x68, 0x03, 0xc6, 0x6b, 0xac, 0xc0,
+	0x20, 0x2c, 0x8d, 0x24, 0xc9, 0x50, 0x33, 0xd6, 0xa6, 0x39, 0x27, 0x06, 0x74, 0x2b, 0x45, 0x76,
+	0x26, 0xde, 0x9f, 0x69, 0xb9, 0x5f, 0x67, 0x5a, 0x4e, 0xbf, 0x03, 0x8b, 0xd7, 0xb4, 0x59, 0x98,
+	0xd6, 0x03, 0x9f, 0x62, 0xfd, 0xa7, 0x02, 0x33, 0x15, 0x4a, 0x9e, 0x38, 0x6e, 0x94, 0xe9, 0x7e,
+	0x24, 0xe9, 0x5e, 0x6f, 0xc4, 0x5a, 0xfe, 0x26, 0x7a, 0x4d, 0x18, 0x0d, 0xde, 0xfa, 0x38, 0x14,
+	0x82, 0x17, 0xaf, 0x62, 0x8d, 0x07, 0x9a, 0xb1, 0x36, 0x25, 0x44, 0xb1, 0x57, 0xdd, 0xe2, 0x61,
+	0xb4, 0x2e, 0x0c, 0x2a, 0x24, 0xfc, 0xc2, 0x55, 0xac, 0x25, 0xef, 0xdd, 0x8d, 0x5a, 0x83, 0x31,
+	0xec, 0xb8, 0x2d, 0x0b, 0x66, 0x9b, 0xb1, 0xf6, 0x1f, 0xc7, 0x78, 0x5c, 0xb7, 0x04, 0x20, 0x19,
+	0xb0, 0x08, 0x0b, 0x1d, 0x12, 0x33, 0xf9, 0x9f, 0x15, 0x28, 0x56, 0x28, 0xd9, 0x75, 0x9c, 0x5d,
+	0xc7, 0x73, 0x7d, 0xf4, 0x1c, 0x64, 0x99, 0x7f, 0xf3, 0xed, 0x21, 0x7d, 0x3b, 0x70, 0xd0, 0x0a,
+	0x8c, 0xda, 0x2c, 0xbd, 0xf0, 0xe4, 0xff, 0x96, 0x15, 0x49, 0x58, 0xb7, 0xf8, 0x30, 0xe3, 0xb8,
+	0x77, 0x85, 0x4e, 0xae, 0xcd, 0x32, 0x49, 0xda, 0x6d, 0xb8, 0x25, 0x95, 0x9f, 0xc9, 0xfa, 0xaa,
+	0xc0, 0x74, 0x85, 0x12, 0x0b, 0x7b, 0xc1, 0x09, 0x1e, 0x4e, 0x65, 0x25, 0x98, 0x6f, 0x57, 0x90,
+	0x89, 0xfb, 0xc2, 0xb7, 0xac, 0x85, 0x89, 0x4b, 0x23, 0x1c, 0x1e, 0x52, 0x1c, 0xb2, 0x03, 0x74,
+	0x4c, 0x71, 0x28, 0x64, 0x49, 0x07, 0x88, 0x45, 0x75, 0x2b, 0x19, 0xec, 0xb4, 0x20, 0xff, 0x8f,
+	0x2d, 0x28, 0xf4, 0xb4, 0xe0, 0xda, 0x7e, 0x94, 0xeb, 0x97, 0x3f, 0x1c, 0x6b, 0x44, 0x87, 0x7e,
+	0x38, 0xb4, 0xea, 0x78, 0xbb, 0x69, 0x57, 0x90, 0xe9, 0xfb, 0xa8, 0x00, 0x54, 0x28, 0xd9, 0xb3,
+	0xfd, 0xe1, 0x13, 0x36, 0x07, 0xa8, 0x55, 0x7a, 0xa6, 0xe8, 0x93, 0x02, 0x53, 0x89, 0xde, 0xea,
+	0x30, 0x6a, 0x9a, 0x87, 0x39, 0xb9, 0xf8, 0x54, 0xd5, 0x83, 0x8b, 0x31, 0x28, 0x54, 0x28, 0x41,
+	0x21, 0x4c, 0x77, 0x5c, 0x8a, 0xeb, 0xc6, 0x9f, 0xee, 0x56, 0xe3, 0xda, 0x2d, 0xa3, 0x6e, 0xdf,
+	0x00, 0x4e, 0xd7, 0x46, 0x47, 0x30, 0xd5, 0x76, 0x1d, 0xad, 0xf5, 0x4c, 0x22, 0xa3, 0xea, 0xd6,
+	0xc0, 0x68, 0xb6, 0xda, 0x6b, 0x98, 0xc8, 0xba, 0xff, 0xbd, 0x9e, 0xd3, 0x53, 0x4c, 0xdd, 0x1c,
+	0x08, 0xcb, 0x56, 0x70, 0xa1, 0x28, 0x37, 0xe2, 0xd5, 0x9e, 0xb3, 0x25, 0x52, 0xbd, 0x3f, 0x28,
+	0x29, 0x5b, 0xd7, 0xd6, 0x16, 0xd7, 0xfa, 0x64, 0x68, 0xa1, 0x7d, 0xac, 0xeb, 0xd6, 0xac, 0xd8,
+	0xe6, 0xe8, 0x68, 0x54, 0xbd, 0x37, 0x47, 0x3b, 0xdc, 0x67, 0x73, 0x74, 0x6f, 0x20, 0xe8, 0x25,
+	0x8c, 0xa7, 0xcd, 0xe3, 0x6e, 0xcf, 0xf9, 0x82, 0x52, 0x37, 0x06, 0xa1, 0xb2, 0xf4, 0x35, 0x98,
+	0x6c, 0x9d, 0xe4, 0x95, 0x3e, 0x05, 0x0a, 0x4e, 0x35, 0x06, 0xe3, 0xd2, 0x45, 0xf6, 0x9e, 0x7e,
+	0x6b, 0x94, 0x95, 0xf3, 0x46, 0x59, 0xf9, 0xd1, 0x28, 0x2b, 0x1f, 0x2e, 0xcb, 0xb9, 0xf3, 0xcb,
+	0x72, 0xee, 0xfb, 0x65, 0x39, 0xf7, 0xe2, 0x21, 0x71, 0xa3, 0x37, 0xc7, 0x55, 0xa3, 0x16, 0x78,
+	0x26, 0xcf, 0xb9, 0x79, 0x64, 0x57, 0xa9, 0x78, 0x36, 0xdf, 0x99, 0x34, 0xb2, 0x89, 0xeb, 0x13,
+	0xe9, 0xef, 0x37, 0x3a, 0xad, 0x63, 0x5a, 0x1d, 0x4b, 0xfe, 0x63, 0xb7, 0x7f, 0x07, 0x00, 0x00,
+	0xff, 0xff, 0xf5, 0xf7, 0xcf, 0xee, 0x1e, 0x0b, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -743,10 +743,10 @@ type MsgClient interface {
 	RegisterUser(ctx context.Context, in *MsgRegisterUser, opts ...grpc.CallOption) (*MsgRegisterUserResponse, error)
 	// UnregisterUser defines the method to unregister a user from a subspace
 	UnregisterUser(ctx context.Context, in *MsgUnregisterUser, opts ...grpc.CallOption) (*MsgUnregisterUserResponse, error)
-	// BlockUser defines the method to block a user inside a specific subspace
-	BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*MsgBlockUserResponse, error)
-	// UnblockUser defines the method to unblock a user inside a specific subspace
-	UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*MsgUnblockUserResponse, error)
+	// BanUser defines the method to ban a user inside a specific subspace
+	BanUser(ctx context.Context, in *MsgBanUser, opts ...grpc.CallOption) (*MsgBanUserResponse, error)
+	// UnbanUser defines the method to unban a user inside a specific subspace
+	UnbanUser(ctx context.Context, in *MsgUnbanUser, opts ...grpc.CallOption) (*MsgUnbanUserResponse, error)
 }
 
 type msgClient struct {
@@ -811,18 +811,18 @@ func (c *msgClient) UnregisterUser(ctx context.Context, in *MsgUnregisterUser, o
 	return out, nil
 }
 
-func (c *msgClient) BlockUser(ctx context.Context, in *MsgBlockUser, opts ...grpc.CallOption) (*MsgBlockUserResponse, error) {
-	out := new(MsgBlockUserResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/BlockUser", in, out, opts...)
+func (c *msgClient) BanUser(ctx context.Context, in *MsgBanUser, opts ...grpc.CallOption) (*MsgBanUserResponse, error) {
+	out := new(MsgBanUserResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/BanUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) UnblockUser(ctx context.Context, in *MsgUnblockUser, opts ...grpc.CallOption) (*MsgUnblockUserResponse, error) {
-	out := new(MsgUnblockUserResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/UnblockUser", in, out, opts...)
+func (c *msgClient) UnbanUser(ctx context.Context, in *MsgUnbanUser, opts ...grpc.CallOption) (*MsgUnbanUserResponse, error) {
+	out := new(MsgUnbanUserResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Msg/UnbanUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -843,10 +843,10 @@ type MsgServer interface {
 	RegisterUser(context.Context, *MsgRegisterUser) (*MsgRegisterUserResponse, error)
 	// UnregisterUser defines the method to unregister a user from a subspace
 	UnregisterUser(context.Context, *MsgUnregisterUser) (*MsgUnregisterUserResponse, error)
-	// BlockUser defines the method to block a user inside a specific subspace
-	BlockUser(context.Context, *MsgBlockUser) (*MsgBlockUserResponse, error)
-	// UnblockUser defines the method to unblock a user inside a specific subspace
-	UnblockUser(context.Context, *MsgUnblockUser) (*MsgUnblockUserResponse, error)
+	// BanUser defines the method to ban a user inside a specific subspace
+	BanUser(context.Context, *MsgBanUser) (*MsgBanUserResponse, error)
+	// UnbanUser defines the method to unban a user inside a specific subspace
+	UnbanUser(context.Context, *MsgUnbanUser) (*MsgUnbanUserResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -871,11 +871,11 @@ func (*UnimplementedMsgServer) RegisterUser(ctx context.Context, req *MsgRegiste
 func (*UnimplementedMsgServer) UnregisterUser(ctx context.Context, req *MsgUnregisterUser) (*MsgUnregisterUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnregisterUser not implemented")
 }
-func (*UnimplementedMsgServer) BlockUser(ctx context.Context, req *MsgBlockUser) (*MsgBlockUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BlockUser not implemented")
+func (*UnimplementedMsgServer) BanUser(ctx context.Context, req *MsgBanUser) (*MsgBanUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BanUser not implemented")
 }
-func (*UnimplementedMsgServer) UnblockUser(ctx context.Context, req *MsgUnblockUser) (*MsgUnblockUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnblockUser not implemented")
+func (*UnimplementedMsgServer) UnbanUser(ctx context.Context, req *MsgUnbanUser) (*MsgUnbanUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnbanUser not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -990,38 +990,38 @@ func _Msg_UnregisterUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_BlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgBlockUser)
+func _Msg_BanUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgBanUser)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).BlockUser(ctx, in)
+		return srv.(MsgServer).BanUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/BlockUser",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/BanUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).BlockUser(ctx, req.(*MsgBlockUser))
+		return srv.(MsgServer).BanUser(ctx, req.(*MsgBanUser))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_UnblockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUnblockUser)
+func _Msg_UnbanUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnbanUser)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).UnblockUser(ctx, in)
+		return srv.(MsgServer).UnbanUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Msg/UnblockUser",
+		FullMethod: "/desmos.subspaces.v1beta1.Msg/UnbanUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UnblockUser(ctx, req.(*MsgUnblockUser))
+		return srv.(MsgServer).UnbanUser(ctx, req.(*MsgUnbanUser))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1055,12 +1055,12 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UnregisterUser_Handler,
 		},
 		{
-			MethodName: "BlockUser",
-			Handler:    _Msg_BlockUser_Handler,
+			MethodName: "BanUser",
+			Handler:    _Msg_BanUser_Handler,
 		},
 		{
-			MethodName: "UnblockUser",
-			Handler:    _Msg_UnblockUser_Handler,
+			MethodName: "UnbanUser",
+			Handler:    _Msg_UnbanUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1486,7 +1486,7 @@ func (m *MsgUnregisterUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgBlockUser) Marshal() (dAtA []byte, err error) {
+func (m *MsgBanUser) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1496,12 +1496,12 @@ func (m *MsgBlockUser) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockUser) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgBanUser) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgBanUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1530,7 +1530,7 @@ func (m *MsgBlockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgBlockUserResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgBanUserResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1540,12 +1540,12 @@ func (m *MsgBlockUserResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockUserResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgBanUserResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgBanUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1553,7 +1553,7 @@ func (m *MsgBlockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUnblockUser) Marshal() (dAtA []byte, err error) {
+func (m *MsgUnbanUser) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1563,12 +1563,12 @@ func (m *MsgUnblockUser) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUnblockUser) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUnbanUser) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUnblockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUnbanUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1597,7 +1597,7 @@ func (m *MsgUnblockUser) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUnblockUserResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgUnbanUserResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1607,12 +1607,12 @@ func (m *MsgUnblockUserResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUnblockUserResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUnbanUserResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUnblockUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUnbanUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1818,7 +1818,7 @@ func (m *MsgUnregisterUserResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgBlockUser) Size() (n int) {
+func (m *MsgBanUser) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1839,7 +1839,7 @@ func (m *MsgBlockUser) Size() (n int) {
 	return n
 }
 
-func (m *MsgBlockUserResponse) Size() (n int) {
+func (m *MsgBanUserResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1848,7 +1848,7 @@ func (m *MsgBlockUserResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgUnblockUser) Size() (n int) {
+func (m *MsgUnbanUser) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1869,7 +1869,7 @@ func (m *MsgUnblockUser) Size() (n int) {
 	return n
 }
 
-func (m *MsgUnblockUserResponse) Size() (n int) {
+func (m *MsgUnbanUserResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3112,7 +3112,7 @@ func (m *MsgUnregisterUserResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgBlockUser) Unmarshal(dAtA []byte) error {
+func (m *MsgBanUser) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3135,10 +3135,10 @@ func (m *MsgBlockUser) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockUser: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgBanUser: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockUser: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgBanUser: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3258,7 +3258,7 @@ func (m *MsgBlockUser) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgBlockUserResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgBanUserResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3281,10 +3281,10 @@ func (m *MsgBlockUserResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockUserResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgBanUserResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgBanUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -3308,7 +3308,7 @@ func (m *MsgBlockUserResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUnblockUser) Unmarshal(dAtA []byte) error {
+func (m *MsgUnbanUser) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3331,10 +3331,10 @@ func (m *MsgUnblockUser) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUnblockUser: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUnbanUser: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUnblockUser: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUnbanUser: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3454,7 +3454,7 @@ func (m *MsgUnblockUser) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUnblockUserResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgUnbanUserResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3477,10 +3477,10 @@ func (m *MsgUnblockUserResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUnblockUserResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUnbanUserResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUnblockUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUnbanUserResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

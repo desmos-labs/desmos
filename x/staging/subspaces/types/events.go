@@ -8,10 +8,9 @@ const (
 	EventTypeRemoveAdmin    = "remove_admin"
 	EventTypeRegisterUser   = "register_user"
 	EventTypeUnregisterUser = "unregister_user"
-	EventTypeBlockUser      = "block_user"
-	EventTypeUnblockUser    = "unblock_user"
+	EventTypeBanUser        = "ban_user"
+	EventTypeUnbanUser      = "unban_user"
 
-	// Subspaces attributes
 	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeySubspaceName         = "subspace_name"
 	AttributeKeySubspaceCreator      = "subspace_creator"
@@ -19,7 +18,7 @@ const (
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"
 	AttributeKeyRegisteredUser       = "registered_user"
 	AttributeKeyUnregisteredUser     = "unregistered_user"
-	AttributeKeyBlockedUser          = "blocked_user"
-	AttributeKeyUnblockedUser        = "unblocked_user"
+	AttributeKeyBanUser              = "banned_user"
+	AttributeKeyUnbannedUser         = "unbanned_user"
 	AttributeKeyNewOwner             = "new_owner"
 )

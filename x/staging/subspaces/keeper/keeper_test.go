@@ -77,7 +77,7 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 				suite.k.SaveSubspace(suite.ctx, *test.subspace)
 			}
 
-			exists := suite.k.DoesSubspaceExists(suite.ctx, test.subspaceID)
+			exists := suite.k.DoesSubspaceExist(suite.ctx, test.subspaceID)
 			suite.Equal(test.exists, exists)
 		})
 	}
@@ -180,7 +180,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 		subspaceID       string
 		user             string
 		owner            string
-		expAdmins        *types.Users
+		expAdmins        []string
 		expError         bool
 	}{
 		{
@@ -199,21 +199,17 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				Admins: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				Admins: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			owner:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expAdmins: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expAdmins: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: true,
 		},
@@ -224,20 +220,16 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				Admins: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				Admins: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			owner:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expAdmins: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expAdmins: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: false,
 		},
@@ -259,7 +251,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.existentSubspace.ID)
 				suite.True(found)
-				suite.Equal(*test.expAdmins, subspace.Admins)
+				suite.Equal(test.expAdmins, subspace.Admins)
 			}
 		})
 	}
@@ -272,7 +264,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 		subspaceID       string
 		user             string
 		owner            string
-		expAdmins        *types.Users
+		expAdmins        []string
 		expError         bool
 	}{
 		{
@@ -291,19 +283,15 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				Admins: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				Admins: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			owner:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expAdmins: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expAdmins: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: true,
 		},
@@ -314,20 +302,16 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				Admins: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				Admins: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			owner:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expAdmins: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expAdmins: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: false,
 		},
@@ -349,7 +333,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(*test.expAdmins, subspace.Admins)
+				suite.Equal(test.expAdmins, subspace.Admins)
 			}
 		})
 	}
@@ -362,7 +346,7 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 		subspaceID       string
 		user             string
 		admin            string
-		expUsers         *types.Users
+		expUsers         []string
 		expError         bool
 	}{
 		{
@@ -381,21 +365,17 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				RegisteredUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				RegisteredUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: true,
 		},
@@ -406,20 +386,16 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				RegisteredUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				RegisteredUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: false,
 		},
@@ -441,7 +417,7 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(*test.expUsers, subspace.RegisteredUsers)
+				suite.Equal(test.expUsers, subspace.RegisteredUsers)
 			}
 		})
 	}
@@ -454,7 +430,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 		subspaceID       string
 		user             string
 		admin            string
-		expUsers         *types.Users
+		expUsers         []string
 		expError         bool
 	}{
 		{
@@ -473,19 +449,15 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				RegisteredUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				RegisteredUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: true,
 		},
@@ -496,20 +468,16 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				RegisteredUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				RegisteredUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: false,
 		},
@@ -531,20 +499,20 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(*test.expUsers, subspace.RegisteredUsers)
+				suite.Equal(test.expUsers, subspace.RegisteredUsers)
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
+func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 	tests := []struct {
 		name             string
 		existentSubspace *types.Subspace
 		subspaceID       string
 		user             string
 		admin            string
-		expUsers         *types.Users
+		expUsers         []string
 		expError         bool
 	}{
 		{
@@ -563,21 +531,17 @@ func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				BlockedUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: true,
 		},
@@ -588,20 +552,16 @@ func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				BlockedUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: false,
 		},
@@ -615,7 +575,7 @@ func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
 				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
 			}
 
-			err := suite.k.BlockUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			err := suite.k.BanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
 			if test.expError {
 				suite.NotNil(err)
 				suite.Error(err)
@@ -623,20 +583,20 @@ func (suite *KeeperTestsuite) TestKeeper_BlockPostsForUser() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(*test.expUsers, subspace.BlockedUsers)
+				suite.Equal(test.expUsers, subspace.BlockedUsers)
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
+func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 	tests := []struct {
 		name             string
 		existentSubspace *types.Subspace
 		subspaceID       string
 		user             string
 		admin            string
-		expUsers         *types.Users
+		expUsers         []string
 		expError         bool
 	}{
 		{
@@ -655,19 +615,15 @@ func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					},
+				BlockedUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: true,
 		},
@@ -678,20 +634,16 @@ func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: types.Users{
-					Users: []string{
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					},
+				BlockedUsers: []string{
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			subspaceID: "123",
 			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expUsers: &types.Users{
-				Users: []string{
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				},
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			expError: false,
 		},
@@ -705,7 +657,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
 				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
 			}
 
-			err := suite.k.UnblockUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			err := suite.k.UnbanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
 			if test.expError {
 				suite.NotNil(err)
 				suite.Error(err)
@@ -713,7 +665,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnblockPostsForUser() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(*test.expUsers, subspace.BlockedUsers)
+				suite.Equal(test.expUsers, subspace.BlockedUsers)
 			}
 		})
 	}

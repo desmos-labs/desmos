@@ -20,6 +20,7 @@ func GetQueryCmd() *cobra.Command {
 	}
 	subspaceQuerycmd.AddCommand(
 		GetCmdQuerySubspace(),
+		GetCmdQuerySubspaces(),
 	)
 	return subspaceQuerycmd
 }
@@ -40,6 +41,35 @@ func GetCmdQuerySubspace() *cobra.Command {
 			res, err := queryClient.Subspace(
 				context.Background(),
 				&types.QuerySubspaceRequest{SubspaceID: args[0]},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdQuerySubspaces() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subspaces",
+		Short: "Get all the subspaces",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Subspaces(
+				context.Background(),
+				&types.QuerySubspacesRequest{},
 			)
 			if err != nil {
 				return err

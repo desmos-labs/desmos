@@ -26,11 +26,11 @@ service Msg {
   // UnregisterUser defines the method to unregister a user from a subspace
   rpc UnregisterUser(MsgUnregisterUser) returns (MsgUnregisterUserResponse);
 
-  // BlockUser defines the method to block a user inside a specific subspace
-  rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);
+  // BanUser defines the method to ban a user inside a specific subspace
+  rpc BanUser(MsgBanUser) returns (MsgBanUserResponse);
 
-  // UnblockUser defines the method to unblock a user inside a specific subspace
-  rpc UnblockUser(MsgUnblockUser) returns (MsgUnblockUserResponse);
+  // UnbanUser defines the method to unban a user inside a specific subspace
+  rpc UnbanUser(MsgUnbanUser) returns (MsgUnbanUserResponse);
 
 }
 
@@ -168,8 +168,8 @@ message MsgUnregisterUserResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgBlockUser represents the message used to block a user to post inside a specific subspace
-message MsgBlockUser {
+// MsgBanUser represents the message used to ban a user inside a specific subspace
+message MsgBanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -182,13 +182,13 @@ message MsgBlockUser {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgBlockUserResponse defines the Msg/MsgBlockUser response type
-message MsgBlockUserResponse{}
+// MsgBanUserResponse defines the Msg/MsgBanUser response type
+message MsgBanUserResponse{}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnblockUser represents the message used to unblock a user inside a specific subspace
-message MsgUnblockUser {
+// MsgUnbanUser represents the message used to unban a user inside a specific subspace
+message MsgUnbanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -201,6 +201,6 @@ message MsgUnblockUser {
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
-// MsgUnblockUserResponse defines the Msg/MsgUnblockUser response type
-message MsgUnblockUserResponse{}
+// MsgUnbanUserResponse defines the Msg/MsgUnbanUser response type
+message MsgUnbanUserResponse{}
 

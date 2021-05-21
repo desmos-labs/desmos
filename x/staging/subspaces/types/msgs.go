@@ -33,7 +33,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
@@ -93,7 +93,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -149,7 +149,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -201,7 +201,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -253,7 +253,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -277,9 +277,9 @@ func (msg MsgUnregisterUser) MarshalJSON() ([]byte, error) {
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgBlockUser is a constructor function for MsgBlockUser
-func NewMsgBlockUser(user, id, admin string) *MsgBlockUser {
-	return &MsgBlockUser{
+// NewMsgBanUser is a constructor function for MsgBanUser
+func NewMsgBanUser(user, id, admin string) *MsgBanUser {
+	return &MsgBanUser{
 		User:       user,
 		SubspaceID: id,
 		Admin:      admin,
@@ -287,13 +287,13 @@ func NewMsgBlockUser(user, id, admin string) *MsgBlockUser {
 }
 
 // Route should return the name of the module
-func (msg MsgBlockUser) Route() string { return RouterKey }
+func (msg MsgBanUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgBlockUser) Type() string { return ActionBlockUser }
+func (msg MsgBanUser) Type() string { return ActionBlockUser }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgBlockUser) ValidateBasic() error {
+func (msg MsgBanUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -305,33 +305,33 @@ func (msg MsgBlockUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgBlockUser) GetSignBytes() []byte {
+func (msg MsgBanUser) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
+func (msg MsgBanUser) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgBlockUser) MarshalJSON() ([]byte, error) {
-	type temp MsgBlockUser
+func (msg MsgBanUser) MarshalJSON() ([]byte, error) {
+	type temp MsgBanUser
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgUnblockUser is a constructor function for MsgUnblockUser
-func NewMsgUnblockUser(user, id, admin string) *MsgUnblockUser {
-	return &MsgUnblockUser{
+// NewMsgUnbanUser is a constructor function for MsgUnbanUser
+func NewMsgUnbanUser(user, id, admin string) *MsgUnbanUser {
+	return &MsgUnbanUser{
 		User:       user,
 		SubspaceID: id,
 		Admin:      admin,
@@ -339,13 +339,13 @@ func NewMsgUnblockUser(user, id, admin string) *MsgUnblockUser {
 }
 
 // Route should return the name of the module
-func (msg MsgUnblockUser) Route() string { return RouterKey }
+func (msg MsgUnbanUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgUnblockUser) Type() string { return ActionUnblockUser }
+func (msg MsgUnbanUser) Type() string { return ActionUnblockUser }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgUnblockUser) ValidateBasic() error {
+func (msg MsgUnbanUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -357,27 +357,27 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgUnblockUser) GetSignBytes() []byte {
+func (msg MsgUnbanUser) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
+func (msg MsgUnbanUser) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }
 
 // MarshalJSON implements the json.Mashaler interface.
 // This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgUnblockUser) MarshalJSON() ([]byte, error) {
-	type temp MsgUnblockUser
+func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
+	type temp MsgUnbanUser
 	return json.Marshal(temp(msg))
 }
 
@@ -416,7 +416,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.ID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid sha-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil

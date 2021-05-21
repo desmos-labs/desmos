@@ -42,7 +42,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				true,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace creator address returns error",
@@ -146,7 +146,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -247,7 +247,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -352,7 +352,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -457,7 +457,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -553,7 +553,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -618,8 +618,8 @@ func TestMsgUnregisterUser_GetSigners(t *testing.T) {
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
-func TestMsgBlockUser_Route(t *testing.T) {
-	msg := types.NewMsgBlockUser(
+func TestMsgBanUser_Route(t *testing.T) {
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -627,8 +627,8 @@ func TestMsgBlockUser_Route(t *testing.T) {
 	require.Equal(t, "subspaces", msg.Route())
 }
 
-func TestMsgBlockUser_Type(t *testing.T) {
-	msg := types.NewMsgBlockUser(
+func TestMsgBanUser_Type(t *testing.T) {
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -636,24 +636,24 @@ func TestMsgBlockUser_Type(t *testing.T) {
 	require.Equal(t, "block_user", msg.Type())
 }
 
-func TestMsgBlockUser_ValidateBasic(t *testing.T) {
+func TestMsgBanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   *types.MsgBlockUser
+		msg   *types.MsgBanUser
 		error error
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
@@ -662,7 +662,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -671,7 +671,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -694,8 +694,8 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgBlockUser_GetSignBytes(t *testing.T) {
-	msg := types.NewMsgBlockUser(
+func TestMsgBanUser_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -704,8 +704,8 @@ func TestMsgBlockUser_GetSignBytes(t *testing.T) {
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
-func TestMsgBlockUser_GetSigners(t *testing.T) {
-	msg := types.NewMsgBlockUser(
+func TestMsgBanUser_GetSigners(t *testing.T) {
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -714,8 +714,8 @@ func TestMsgBlockUser_GetSigners(t *testing.T) {
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
-func TestMsgUnblockUser_Route(t *testing.T) {
-	msg := types.NewMsgUnblockUser(
+func TestTestMsgUnbanUser_Route(t *testing.T) {
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -723,8 +723,8 @@ func TestMsgUnblockUser_Route(t *testing.T) {
 	require.Equal(t, "subspaces", msg.Route())
 }
 
-func TestMsgUnblockUser_Type(t *testing.T) {
-	msg := types.NewMsgUnblockUser(
+func TestTestMsgUnbanUser_Type(t *testing.T) {
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -732,24 +732,24 @@ func TestMsgUnblockUser_Type(t *testing.T) {
 	require.Equal(t, "unblock_user", msg.Type())
 }
 
-func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
+func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name  string
-		msg   *types.MsgUnblockUser
+		msg   *types.MsgUnbanUser
 		error error
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
@@ -758,7 +758,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -767,7 +767,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -790,8 +790,8 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
-	msg := types.NewMsgUnblockUser(
+func TestTestMsgUnbanUser_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -800,8 +800,8 @@ func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
-func TestMsgUnblockUser_GetSigners(t *testing.T) {
-	msg := types.NewMsgUnblockUser(
+func TestTestMsgUnbanUser_GetSigners(t *testing.T) {
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",

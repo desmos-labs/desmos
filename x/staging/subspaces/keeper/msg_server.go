@@ -24,7 +24,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the if the subspace already exists
-	if k.DoesSubspaceExists(ctx, msg.SubspaceID) {
+	if k.DoesSubspaceExist(ctx, msg.SubspaceID) {
 		return nil,
 			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s already exists", msg.SubspaceID)
 	}
@@ -136,34 +136,34 @@ func (k msgServer) UnregisterUser(goCtx context.Context, msg *types.MsgUnregiste
 	return &types.MsgUnregisterUserResponse{}, nil
 }
 
-func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
+func (k msgServer) BanUser(goCtx context.Context, msg *types.MsgBanUser) (*types.MsgBanUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.BlockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	if err := k.BanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeBlockUser,
-		sdk.NewAttribute(types.AttributeKeyBlockedUser, msg.User),
+		types.EventTypeBanUser,
+		sdk.NewAttribute(types.AttributeKeyBanUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 	))
 
-	return &types.MsgBlockUserResponse{}, nil
+	return &types.MsgBanUserResponse{}, nil
 }
 
-func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
+func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*types.MsgUnbanUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.UnblockUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	if err := k.UnbanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeUnblockUser,
-		sdk.NewAttribute(types.AttributeKeyUnblockedUser, msg.User),
+		types.EventTypeUnbanUser,
+		sdk.NewAttribute(types.AttributeKeyUnbannedUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 	))
 
-	return &types.MsgUnblockUserResponse{}, nil
+	return &types.MsgUnbanUserResponse{}, nil
 }

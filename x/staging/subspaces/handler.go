@@ -33,11 +33,11 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgUnregisterUser:
 			res, err := msgServer.UnregisterUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgBlockUser:
-			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgBanUser:
+			res, err := msgServer.BanUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgUnblockUser:
-			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUnbanUser:
+			res, err := msgServer.UnbanUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:

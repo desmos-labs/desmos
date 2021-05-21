@@ -13,6 +13,27 @@ import (
 func registerQueryRouters(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/subspaces/{subspace_id}",
 		querySubspaceHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/subspaces",
+		querySubspacesHandlerFn(cliCtx)).Methods("GET")
+}
+
+func querySubspacesHandlerFn(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QuerySubspaces)
+		res, height, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
 }
 
 func querySubspaceHandlerFn(cliCtx client.Context) http.HandlerFunc {

@@ -29,8 +29,8 @@ func NewTxCmd() *cobra.Command {
 		GetCmdRemoveSubspaceAdmin(),
 		GetCmdRegisterUser(),
 		GetCmdUnregisterUser(),
-		GetCmdBlockUser(),
-		GetCmdUnblockUser(),
+		GetCmdBanUser(),
+		GetCmdUnbanUser(),
 		GetCmdEditSubspace(),
 	)
 
@@ -78,7 +78,7 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 // GetCmdAddSubspaceAdmin returns the command to add an admin to a subspace
 func GetCmdAddSubspaceAdmin() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-admin [address] [subspace-id]",
+		Use:   "add-admin [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Add a new admin to the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -87,12 +87,12 @@ func GetCmdAddSubspaceAdmin() *cobra.Command {
 				return err
 			}
 
-			newAdminAddress, err := sdk.AccAddressFromBech32(args[0])
+			newAdminAddress, err := sdk.AccAddressFromBech32(args[1])
 			if err != nil {
 				return err
 			}
 
-			subspaceID := args[1]
+			subspaceID := args[0]
 
 			msg := types.NewMsgAddAdmin(subspaceID, newAdminAddress.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
@@ -111,7 +111,7 @@ func GetCmdAddSubspaceAdmin() *cobra.Command {
 // GetCmdRemoveSubspaceAdmin returns the command to remove an admin from a subspace
 func GetCmdRemoveSubspaceAdmin() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-admin [address] [subspace-id]",
+		Use:   "remove-admin [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Remove an existent admin from the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -120,12 +120,12 @@ func GetCmdRemoveSubspaceAdmin() *cobra.Command {
 				return err
 			}
 
-			existentAdminAddress, err := sdk.AccAddressFromBech32(args[0])
+			existentAdminAddress, err := sdk.AccAddressFromBech32(args[1])
 			if err != nil {
 				return err
 			}
 
-			subspaceID := args[1]
+			subspaceID := args[0]
 
 			msg := types.NewMsgRemoveAdmin(subspaceID, existentAdminAddress.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
@@ -144,7 +144,7 @@ func GetCmdRemoveSubspaceAdmin() *cobra.Command {
 // GetCmdRegisterUser returns the command to register a user inside a subspace
 func GetCmdRegisterUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-user [address] [subspace-id]",
+		Use:   "register-user [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Register a user inside the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -153,11 +153,14 @@ func GetCmdRegisterUser() *cobra.Command {
 				return err
 			}
 
-			user := args[0]
-			subspaceID := args[1]
+			user, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+			subspaceID := args[0]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgRegisterUser(user, subspaceID, admin)
 
+			msg := types.NewMsgRegisterUser(user.String(), subspaceID, admin)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -174,7 +177,7 @@ func GetCmdRegisterUser() *cobra.Command {
 // GetCmdUnregisterUser returns the command to unregister a user from a subspace
 func GetCmdUnregisterUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unregister-user [address] [subspace-id]",
+		Use:   "unregister-user [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Unregister a user from the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -183,10 +186,13 @@ func GetCmdUnregisterUser() *cobra.Command {
 				return err
 			}
 
-			user := args[0]
-			subspaceID := args[1]
+			user, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+			subspaceID := args[0]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgUnregisterUser(user, subspaceID, admin)
+			msg := types.NewMsgUnregisterUser(user.String(), subspaceID, admin)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -201,22 +207,25 @@ func GetCmdUnregisterUser() *cobra.Command {
 	return cmd
 }
 
-// GetCmdBlockUser returns the command to block a user inside a subspace
-func GetCmdBlockUser() *cobra.Command {
+// GetCmdBanUser returns the command to ban a user inside a subspace
+func GetCmdBanUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "block-user [address] [subspace-id]",
+		Use:   "ban-user [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Block a user inside the subspace with the given id",
+		Short: "Ban a user inside the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			user := args[0]
-			subspaceID := args[1]
+			user, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+			subspaceID := args[0]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgBlockUser(user, subspaceID, admin)
+			msg := types.NewMsgBanUser(user.String(), subspaceID, admin)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -231,22 +240,25 @@ func GetCmdBlockUser() *cobra.Command {
 	return cmd
 }
 
-// GetCmdUnblockUser returns the command to unblock a user from a subspace
-func GetCmdUnblockUser() *cobra.Command {
+// GetCmdUnbanUser returns the command to unban a user from a subspace
+func GetCmdUnbanUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unblock-user [address] [subspace-id]",
+		Use:   "unban-user [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Unblock a user inside the subspace with the given id",
+		Short: "Unban a user inside the subspace with the given id",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			user := args[0]
-			subspaceID := args[1]
+			user, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+			subspaceID := args[0]
 			admin := clientCtx.FromAddress.String()
-			msg := types.NewMsgBlockUser(user, subspaceID, admin)
+			msg := types.NewMsgBanUser(user.String(), subspaceID, admin)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -261,20 +273,12 @@ func GetCmdUnblockUser() *cobra.Command {
 	return cmd
 }
 
+// GetCmdEditSubspace returns the command to edit a subspace
 func GetCmdEditSubspace() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit [subspace-id]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Edit an existent subspace with the given id",
-		Long: fmt.Sprintf(`Edit a subspace with the given id.
-E.g 
-1) Edit the owner only
-%s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e --owner "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-2) Edit the name only
-%s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e --name "star"
-3) Edit both owner and name
-%s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e --name "star" --owner "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-`, version.AppName, version.AppName, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

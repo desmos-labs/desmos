@@ -10,8 +10,8 @@ import (
 
 const (
 	Admin          = "admin"
-	RegisteredUser = "registered-user"
-	BlockedUser    = "blocked-user"
+	RegisteredUser = "registered user"
+	BlockedUser    = "blocked user"
 )
 
 // NewSubspace is a constructor for the Subspace type
@@ -42,7 +42,7 @@ func (sub Subspace) WithOwner(owner string) Subspace {
 
 func (sub Subspace) Validate() error {
 	if !commons.IsValidSubspace(sub.ID) {
-		return fmt.Errorf("invalid subspace id: %s it must be a valid sha-256 hash", sub.ID)
+		return fmt.Errorf("invalid subspace id: %s it must be a valid SHA-256 hash", sub.ID)
 	}
 
 	if strings.TrimSpace(sub.Name) == "" {
@@ -61,17 +61,48 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
-	if err := sub.Admins.ValidateUsers(Admin); err != nil {
+	if err := ValidateUsers(sub.Admins, Admin); err != nil {
 		return err
 	}
 
-	if err := sub.BlockedUsers.ValidateUsers(BlockedUser); err != nil {
+	if err := ValidateUsers(sub.BlockedUsers, BlockedUser); err != nil {
 		return err
 	}
 
-	if err := sub.RegisteredUsers.ValidateUsers(RegisteredUser); err != nil {
+	if err := ValidateUsers(sub.RegisteredUsers, RegisteredUser); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// IsPresent checks if the given address is a present inside the users slice
+func IsPresent(users []string, address string) bool {
+	for _, user := range users {
+		if user == address {
+			return true
+		}
+	}
+	return false
+}
+
+// RemoveUser remove the given address from the users slice
+func RemoveUser(users []string, address string) []string {
+	for index, user := range users {
+		if user == address {
+			users = append(users[:index], users[index+1:]...)
+		}
+	}
+	return users
+}
+
+// ValidateUsers checks the validity of the given wrapped users slice that contains users of the given userType.
+// It returns error if one of them is invalid.
+func ValidateUsers(users []string, userType string) error {
+	for _, user := range users {
+		if user == "" {
+			return fmt.Errorf("invalid subspace %s address", userType)
+		}
+	}
 	return nil
 }

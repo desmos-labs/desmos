@@ -21,8 +21,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		if err := subspace.Validate(); err != nil {
 			panic(err)
 		}
-		if k.DoesSubspaceExists(ctx, subspace.ID) {
-			panic(fmt.Sprintf("The subspace %s already exist", subspace.ID))
+		if k.DoesSubspaceExist(ctx, subspace.ID) {
+			panic(fmt.Sprintf("The subspace with ID %s already exists", subspace.ID))
 		}
 		k.SaveSubspace(ctx, subspace)
 	}

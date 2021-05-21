@@ -199,7 +199,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddAdmin() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				Admins:       types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				Admins:       []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
 	}
@@ -260,7 +260,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveAdmin() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				Admins:       types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				Admins:       []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgRemoveAdmin(
 				"123",
@@ -359,7 +359,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RegisterUser() {
 				Creator:         "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime:    time.Time{},
 				Open:            false,
-				RegisteredUsers: types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				RegisteredUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
 	}
@@ -420,7 +420,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnregisterUser() {
 				Creator:         "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime:    time.Time{},
 				Open:            false,
-				RegisteredUsers: types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				RegisteredUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgUnregisterUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -476,7 +476,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 	tests := []struct {
 		name           string
 		storedSubspace *types.Subspace
-		msg            *types.MsgBlockUser
+		msg            *types.MsgBanUser
 		expErr         bool
 		expEvent       sdk.Event
 		expSubspace    types.Subspace
@@ -484,7 +484,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 		{
 			name:           "subspace doesn't exists returns error",
 			storedSubspace: nil,
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"123",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -501,15 +501,15 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 				Open:         false,
 				CreationTime: time.Time{},
 			},
-			msg: types.NewMsgBlockUser(
+			msg: types.NewMsgBanUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"123",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expErr: false,
 			expEvent: sdk.NewEvent(
-				types.EventTypeBlockUser,
-				sdk.NewAttribute(types.AttributeKeyBlockedUser, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
+				types.EventTypeBanUser,
+				sdk.NewAttribute(types.AttributeKeyBanUser, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				sdk.NewAttribute(types.AttributeKeySubspaceID, "123"),
 			),
 			expSubspace: types.Subspace{
@@ -519,7 +519,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				BlockedUsers: types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				BlockedUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
 	}
@@ -534,7 +534,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := handler.BanUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Error(err)
@@ -556,7 +556,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 	tests := []struct {
 		name           string
 		storedSubspace *types.Subspace
-		msg            *types.MsgUnblockUser
+		msg            *types.MsgUnbanUser
 		expErr         bool
 		expEvent       sdk.Event
 		expSubspace    types.Subspace
@@ -564,7 +564,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 		{
 			name:           "subspace doesn't exists returns error",
 			storedSubspace: nil,
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"123",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -580,17 +580,17 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				BlockedUsers: types.Users{Users: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"}},
+				BlockedUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
-			msg: types.NewMsgUnblockUser(
+			msg: types.NewMsgUnbanUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"123",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expErr: false,
 			expEvent: sdk.NewEvent(
-				types.EventTypeUnblockUser,
-				sdk.NewAttribute(types.AttributeKeyUnblockedUser, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
+				types.EventTypeUnbanUser,
+				sdk.NewAttribute(types.AttributeKeyUnbannedUser, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				sdk.NewAttribute(types.AttributeKeySubspaceID, "123"),
 			),
 			expSubspace: types.Subspace{
@@ -614,7 +614,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.UnblockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := handler.UnbanUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Error(err)

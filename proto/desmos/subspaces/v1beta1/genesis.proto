@@ -3,7 +3,6 @@ package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v1beta1/subspace.proto";
-import "desmos/subspaces/v1beta1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 

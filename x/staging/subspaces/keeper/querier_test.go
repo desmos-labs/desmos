@@ -77,3 +77,71 @@ func (suite *KeeperTestsuite) Test_querySubspace() {
 		})
 	}
 }
+
+func (suite *KeeperTestsuite) Test_querySubspaces() {
+	tests := []struct {
+		name            string
+		path            []string
+		storedSubspaces []types.Subspace
+		expErr          bool
+		expResult       types.QuerySubspacesResponse
+	}{
+		{
+			name: "Return all the subspaces correctly",
+			path: []string{types.QuerySubspaces},
+			storedSubspaces: []types.Subspace{
+				{
+					ID:           "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Name:         "test",
+					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					CreationTime: time.Time{},
+				},
+				{
+					ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					Name:         "test",
+					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					CreationTime: time.Time{},
+				},
+			},
+			expErr: false,
+			expResult: types.QuerySubspacesResponse{
+				Subspaces: []types.Subspace{
+					{
+						ID:           "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						Name:         "test",
+						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						CreationTime: time.Time{},
+					},
+					{
+						ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						Name:         "test",
+						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						CreationTime: time.Time{},
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			for _, subspace := range test.storedSubspaces {
+				suite.k.SaveSubspace(suite.ctx, subspace)
+			}
+
+			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
+			result, err := querier(suite.ctx, test.path, abci.RequestQuery{})
+
+			if test.expErr {
+				suite.Error(err)
+			} else {
+				suite.NoError(err)
+				expected := codec.MustMarshalJSONIndent(suite.legacyAminoCdc, &test.expResult)
+				suite.Equal(string(expected), string(result))
+			}
+		})
+	}
+}

@@ -2,7 +2,6 @@ syntax = "proto3";
 package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v1beta1/models.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
@@ -35,17 +34,17 @@ message Subspace {
     (gogoproto.moretags) = "yaml:\"open\""
   ];
 
-  Users admins = 7 [
+  repeated string admins = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"admins\""
     ];
 
-  Users blocked_users = 8 [
+  repeated string blocked_users = 8 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"blocked_users\""
   ];
 
-  Users registered_users = 9 [
+  repeated string registered_users = 9 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"registered_users\""
   ];

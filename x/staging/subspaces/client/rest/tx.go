@@ -210,7 +210,7 @@ func blockUserHandler(clientCtx client.Context) http.HandlerFunc {
 
 		subspaceID := vars[SubspaceID]
 
-		msg := types.NewMsgBlockUser(req.Address, subspaceID, req.BaseReq.From)
+		msg := types.NewMsgBanUser(req.Address, subspaceID, req.BaseReq.From)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
@@ -236,7 +236,7 @@ func unblockUserHandler(clientCtx client.Context) http.HandlerFunc {
 
 		subspaceID := vars[SubspaceID]
 
-		msg := types.NewMsgUnblockUser(req.Address, subspaceID, req.BaseReq.From)
+		msg := types.NewMsgUnbanUser(req.Address, subspaceID, req.BaseReq.From)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
