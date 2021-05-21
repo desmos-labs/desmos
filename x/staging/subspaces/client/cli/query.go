@@ -29,7 +29,7 @@ func GetQueryCmd() *cobra.Command {
 func GetCmdQuerySubspace() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "subspace [id]",
-		Short: "Get the subspace with the given [id]",
+		Short: "Get the subspace with the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
