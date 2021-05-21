@@ -12,7 +12,7 @@ import (
 // NewMsgReportPost returns a MsgReportPost object
 func NewMsgReportPost(id string, reportType, message string, user string) *MsgReportPost {
 	return &MsgReportPost{
-		PostId:     id,
+		PostID:     id,
 		ReportType: reportType,
 		Message:    message,
 		User:       user,
@@ -27,8 +27,8 @@ func (msg MsgReportPost) Type() string { return ActionReportPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgReportPost) ValidateBasic() error {
-	if !poststypes.IsValidPostID(msg.PostId) {
-		return sdkerrors.Wrapf(poststypes.ErrInvalidPostID, msg.PostId)
+	if !poststypes.IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrapf(poststypes.ErrInvalidPostID, msg.PostID)
 	}
 
 	if strings.TrimSpace(msg.ReportType) == "" {

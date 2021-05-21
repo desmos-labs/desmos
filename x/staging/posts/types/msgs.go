@@ -21,7 +21,7 @@ func NewMsgCreatePost(
 ) *MsgCreatePost {
 	return &MsgCreatePost{
 		Message:        message,
-		ParentId:       parentID,
+		ParentID:       parentID,
 		AllowsComments: allowsComments,
 		Subspace:       subspace,
 		OptionalData:   optionalData,
@@ -44,8 +44,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator")
 	}
 
-	if msg.ParentId != "" && !IsValidPostID(msg.ParentId) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentId)
+	if msg.ParentID != "" && !IsValidPostID(msg.ParentID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentID)
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
@@ -95,10 +95,10 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // NewMsgEditPost is the constructor function for MsgEditPost
 func NewMsgEditPost(
-	id string, message string, attachments Attachments, pollData *PollData, owner string,
+	postID string, message string, attachments Attachments, pollData *PollData, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
-		PostId:      id,
+		PostID:      postID,
 		Message:     message,
 		Attachments: attachments,
 		PollData:    pollData,
@@ -114,8 +114,8 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgEditPost) ValidateBasic() error {
-	if !IsValidPostID(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
@@ -161,7 +161,7 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
 func NewMsgAddPostReaction(postID string, value string, user string) *MsgAddPostReaction {
 	return &MsgAddPostReaction{
-		PostId:   postID,
+		PostID:   postID,
 		User:     user,
 		Reaction: value,
 	}
@@ -175,8 +175,8 @@ func (msg MsgAddPostReaction) Type() string { return ActionAddPostReaction }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddPostReaction) ValidateBasic() error {
-	if !IsValidPostID(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -208,7 +208,7 @@ func (msg MsgAddPostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgRemovePostReaction is the constructor of MsgRemovePostReaction
 func NewMsgRemovePostReaction(postID string, user string, value string) *MsgRemovePostReaction {
 	return &MsgRemovePostReaction{
-		PostId:   postID,
+		PostID:   postID,
 		User:     user,
 		Reaction: value,
 	}
@@ -222,8 +222,8 @@ func (msg MsgRemovePostReaction) Type() string { return ActionRemovePostReaction
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemovePostReaction) ValidateBasic() error {
-	if !IsValidPostID(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -255,7 +255,7 @@ func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
 func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) *MsgAnswerPoll {
 	return &MsgAnswerPoll{
-		PostId:      id,
+		PostID:      id,
 		UserAnswers: providedAnswers,
 		Answerer:    answerer,
 	}
@@ -269,8 +269,8 @@ func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAnswerPoll) ValidateBasic() error {
-	if !IsValidPostID(msg.PostId) {
-		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostId)
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Answerer)

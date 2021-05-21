@@ -27,10 +27,10 @@ const (
 	EventTypeBlockUser   = "block_user"
 	EventTypeUnblockUser = "unblock_user"
 
-	AttributeUserBlockBlocker = "blocker"
-	AttributeUserBlockBlocked = "blocked"
-	AttributeUserBlockReason  = "reason"
-	AttributeSubspace         = "subspace"
+	AttributeKeyUserBlockBlocker = "blocker"
+	AttributeKeyUserBlockBlocked = "blocked"
+	AttributeKeyUserBlockReason  = "reason"
+	AttributeKeySubspace         = "subspace"
 
 	EventTypeLink   = "link"
 	EventTypeUnlink = "unlink"

@@ -132,13 +132,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 
 			for _, entry := range test.data.userAnswerEntries {
 				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
 				}
 			}
 
 			for _, entry := range test.data.postReactionsEntries {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}

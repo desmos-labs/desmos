@@ -12,7 +12,7 @@ import (
 // NewReport returns a Report
 func NewReport(postID string, reportType string, message string, user string) Report {
 	return Report{
-		PostId:  postID,
+		PostID:  postID,
 		Type:    reportType,
 		Message: message,
 		User:    user,
@@ -21,8 +21,8 @@ func NewReport(postID string, reportType string, message string, user string) Re
 
 // Validate implements validator
 func (r Report) Validate() error {
-	if !poststypes.IsValidPostID(r.PostId) {
-		return fmt.Errorf("invalid post id: %s", r.PostId)
+	if !poststypes.IsValidPostID(r.PostID) {
+		return fmt.Errorf("invalid post id: %s", r.PostID)
 	}
 
 	if len(strings.TrimSpace(r.Type)) == 0 {

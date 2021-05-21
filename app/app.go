@@ -325,6 +325,7 @@ func NewDesmosApp(
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
 		AddRoute(ibchost.RouterKey, ibcclient.NewClientUpdateProposalHandler(app.IBCKeeper.ClientKeeper))
 
@@ -540,8 +541,14 @@ func NewDesmosApp(
 	// --- Morpheus-apollo-1 migration to fix vesting accounts
 
 	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
-		migrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
-		err := migrator.Migrate1to2(ctx)
+		authMigrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
+		err := authMigrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfileKeeper)
+		err = profilesMigrator.Migrate1to2(ctx)
 		if err != nil {
 			panic(err)
 		}

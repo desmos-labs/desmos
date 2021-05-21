@@ -73,15 +73,15 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
-			Key:   types.PostStoreKey(post.PostId),
+			Key:   types.PostStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&post),
 		},
 		{
-			Key:   types.PostCommentsStoreKey(post.PostId),
+			Key:   types.PostCommentsStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&comments),
 		},
 		{
-			Key:   types.PostReactionsStoreKey(post.PostId),
+			Key:   types.PostReactionsStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&postReactions),
 		},
 		{
@@ -89,7 +89,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
-			Key:   types.PostIndexedIDStoreKey(post.PostId),
+			Key:   types.PostIndexedIDStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&totalPosts),
 		},
 		{

@@ -340,10 +340,10 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeBlockUser,
-		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker),
-		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
-		sdk.NewAttribute(types.AttributeUserBlockReason, msg.Reason),
+		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
+		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
+		sdk.NewAttribute(types.AttributeKeySubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeKeyUserBlockReason, msg.Reason),
 	))
 
 	return &types.BlockUserResponse{}, nil
@@ -359,9 +359,9 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnblockUser,
-		sdk.NewAttribute(types.AttributeUserBlockBlocker, msg.Blocker),
-		sdk.NewAttribute(types.AttributeUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeSubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
+		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
+		sdk.NewAttribute(types.AttributeKeySubspace, msg.Subspace),
 	))
 
 	return &types.UnblockUserResponse{}, nil

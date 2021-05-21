@@ -19,6 +19,7 @@ message MsgReportPost {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
+    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
