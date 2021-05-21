@@ -65,3 +65,10 @@ type UserUnblockReq struct {
 	Blocked  string       `json:"blocked"`
 	Subspace string       `json:"subspace"`
 }
+
+type LinkReq struct {
+	BaseReq              rest.BaseReq `json: "base_req"`
+	DestinationAddress   string       `json: destination_address`
+	SourceSignature      string       `json: source_signature`
+	DestinationSignature string       `json: destination_signature`
+}

@@ -26,6 +26,9 @@ func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 
 	r.HandleFunc("/profiles/parameters",
 		queryProfilesParamsHandlerFn(cliCtx)).Methods("GET")
+
+	r.HandleFunc(fmt.Sprintf("/profiles/link/{chain_id}/{%s}", ParamsAddress),
+		queryLink(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query all the incoming DTag transfer requests of a user
@@ -124,6 +127,28 @@ func queryUserBlocks(cliCtx client.Context) func(http.ResponseWriter, *http.Requ
 		address := vars[ParamsAddress]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryUserBlocks, address)
+		res, height, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func queryLink(cliCtx client.Context) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		address := vars[ParamsAddress]
+		chainID := vars["chain_id"]
+		route := fmt.Sprintf("custom/%s/%s/%s/%s", types.QuerierRoute, types.QueryLink, chainID, address)
 		res, height, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())

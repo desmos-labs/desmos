@@ -44,6 +44,9 @@ func registerTxRoutes(clientCtx client.Context, r *mux.Router) {
 
 	r.HandleFunc("/blocklist",
 		unblockUserHandler(clientCtx)).Methods("DELETE")
+
+	r.HandleFunc("/link",
+		linkHandler(clientCtx)).Methods("POST")
 }
 
 func saveProfileHandler(clientCtx client.Context) http.HandlerFunc {
@@ -361,6 +364,41 @@ func unblockUserHandler(cliCtx client.Context) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgUnblockUser(user.String(), blocked.String(), req.Subspace)
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
+	}
+}
+
+func linkHandler(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req LinkReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &r) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		user, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		destAddr, err := sdk.AccAddressFromBech32(req.DestinationAddress)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "invalid destination address given")
+			return
+		}
+
+		msg := types.NewMsgLink(user.String(), destAddr.String(), req.SourceSignature, req.DestinationSignature)
 		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
 			return
 		}
