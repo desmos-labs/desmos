@@ -1121,6 +1121,46 @@ func (suite *KeeperTestSuite) Test_handleMsgLink() {
 			expStoredLinks: nil,
 		},
 		{
+			name: "existent profile on source address returns error",
+			malleate: func() {
+				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+
+				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
+
+				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
+				suite.Require().NoError(err)
+				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc.SetPubKey(destPubKey)
+				suite.ak.SetAccount(suite.ctx, destBaseAcc)
+
+				existentProfiles = []*types.Profile{
+					suite.CheckProfileNoError(types.NewProfile(
+						"custom_dtag",
+						"my-nickname",
+						"my-bio",
+						types.NewPictures(
+							"https://test.com/profile-picture",
+							"https://test.com/cover-pic",
+						),
+						suite.testData.profile.CreationDate,
+						srcBaseAcc,
+					)),
+				}
+			},
+			msg: types.NewMsgLink(
+				srcAddr,
+				destAddr,
+				srcSigHex,
+				destSigHex,
+			),
+			shouldErr:      true,
+			expEvents:      sdk.EmptyEvents(),
+			expStoredLinks: nil,
+		},
+		{
 			name: "non existent profile on destination address returns error",
 			malleate: func() {
 				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)

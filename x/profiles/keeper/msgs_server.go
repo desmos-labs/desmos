@@ -406,7 +406,17 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "failed to verify source signature")
 	}
 
-	// Check if address has the profile and get the profile
+	// Check if source address has the profile
+	_, found, err := k.GetProfile(ctx, msg.SourceAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	if found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, ("existent profile on source address"))
+	}
+
+	// Check if destination address has the profile and get the profile
 	profile, found, err := k.GetProfile(ctx, msg.DestinationAddress)
 	if err != nil {
 		return nil, err
