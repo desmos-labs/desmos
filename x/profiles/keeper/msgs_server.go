@@ -413,7 +413,7 @@ func (k msgServer) Link(goCtx context.Context, msg *types.MsgLink) (*types.LinkR
 	}
 
 	if found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, ("existent profile on source address"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "existent profile on source address")
 	}
 
 	// Check if destination address has the profile and get the profile
